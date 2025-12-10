@@ -1,6 +1,5 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import type { InvoiceFormDto } from "@/modules/invoices/domain/dto";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";
 import {
@@ -8,7 +7,6 @@ import {
   type CreateInvoiceOutput,
   CreateInvoiceSchema,
 } from "@/modules/invoices/domain/invoice.schema";
-import type { InvoiceStatus } from "@/modules/invoices/domain/types";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/server/application/utils/error-messages";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";
@@ -30,6 +28,9 @@ import { ROUTES } from "@/shared/routes/routes";
 
 const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
 
+const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
+  typeof v === "string" ? v : undefined;
+
 /**
  * Server action for creating a new invoice.
  */
@@ -38,54 +39,56 @@ export async function createInvoiceAction(
   _prevState: FormResult<CreateInvoiceOutput>,
   formData: FormData,
 ): Promise<FormResult<CreateInvoiceOutput>> {
-  try {
-    const input: InvoiceFormDto = {
-      amount: Number(formData.get("amount")),
-      customerId: String(formData.get("customerId")),
-      date: String(formData.get("date")),
-      sensitiveData: String(formData.get("sensitiveData")),
-      status: String(formData.get("status")) as InvoiceStatus,
-    };
+  // 1. Parse Input: Extract raw strings so Zod schemas (and codecs) can handle coercion/validation
+  const rawInput = {
+    amount: toOptionalString(formData.get("amount")),
+    customerId: toOptionalString(formData.get("customerId")),
+    date: toOptionalString(formData.get("date")),
+    sensitiveData: toOptionalString(formData.get("sensitiveData")),
+    status: toOptionalString(formData.get("status")),
+  };
 
-    const parsed = CreateInvoiceSchema.safeParse(input);
+  const parsed = CreateInvoiceSchema.safeParse(rawInput);
 
-    if (parsed.success) {
-      const repo = new InvoiceRepository(getAppDb());
-      const service = new InvoiceService(repo);
-      const result = await service.createInvoice(parsed.data);
-
-      if (!result.ok) {
-        return formError<CreateInvoiceFieldNames>({
-          fieldErrors: {
-            amount: [],
-            customerId: [],
-            date: [],
-            sensitiveData: [],
-            status: [],
-          },
-          message: toInvoiceErrorMessage(result.error),
-        });
-      }
-
-      const invoice = result.value;
-
-      const { EventBus } = await import("@/server-core/events/event-bus");
-      await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {
-        eventId: crypto.randomUUID(),
-        eventTimestamp: new Date().toISOString(),
-        invoice,
-        operation: "invoice_created",
-      });
-
-      revalidatePath(ROUTES.dashboard.root);
-
-      return formOk(parsed.data, translator(INVOICE_MSG.createSuccess));
-    }
-
+  if (!parsed.success) {
     return formError<CreateInvoiceFieldNames>({
       fieldErrors: mapZodErrorToDenseFieldErrors(parsed.error, allowed),
       message: translator(INVOICE_MSG.validationFailed),
     });
+  }
+
+  // 2. Perform Async Operation
+  try {
+    const repo = new InvoiceRepository(getAppDb());
+    const service = new InvoiceService(repo);
+    const result = await service.createInvoice(parsed.data);
+
+    if (!result.ok) {
+      return formError<CreateInvoiceFieldNames>({
+        fieldErrors: {
+          amount: [],
+          customerId: [],
+          date: [],
+          sensitiveData: [],
+          status: [],
+        },
+        message: toInvoiceErrorMessage(result.error),
+      });
+    }
+
+    const invoice = result.value;
+
+    const { EventBus } = await import("@/server-core/events/event-bus");
+    await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {
+      eventId: crypto.randomUUID(),
+      eventTimestamp: new Date().toISOString(),
+      invoice,
+      operation: "invoice_created",
+    });
+
+    // 3. Success: Revalidate but do NOT redirect so the form can show the success message
+    revalidatePath(ROUTES.dashboard.invoices);
+    return formOk(parsed.data, translator(INVOICE_MSG.createSuccess));
   } catch (error) {
     // Decide the top-level user-facing message based on error type
     const baseMessage = isZodErrorInstance(error)

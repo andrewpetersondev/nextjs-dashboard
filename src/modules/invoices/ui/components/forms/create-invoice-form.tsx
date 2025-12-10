@@ -1,5 +1,5 @@
 "use client";
-import { type JSX, useActionState, useId } from "react";
+import { type JSX, useActionState, useEffect, useId, useRef } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { getTodayIsoDate } from "@/modules/invoices/domain/date.utils";
 import {
@@ -93,12 +93,20 @@ export function CreateInvoiceForm({
 }: {
   customers: CustomerField[];
 }): JSX.Element {
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, action, pending] = useActionState<
     FormResult<CreateInvoiceOutput>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 
   const showAlert = useFormMessage(state);
+
+  // Reset form on success
+  useEffect(() => {
+    if (state.ok && formRef.current) {
+      formRef.current.reset();
+    }
+  }, [state.ok]);
 
   const fieldErrors = state.ok
     ? undefined
@@ -110,7 +118,7 @@ export function CreateInvoiceForm({
       <section>
         <p>Create a new invoice for a customer.</p>
       </section>
-      <form action={action}>
+      <form action={action} ref={formRef}>
         <div className="space-y-6">
           <CreateInvoiceFormFields
             customers={customers}
