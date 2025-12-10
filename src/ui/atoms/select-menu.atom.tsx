@@ -1,5 +1,6 @@
 import React from "react";
 import type { FieldError } from "@/shared/forms/types/form.types";
+import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 import { cn } from "@/ui/utils/cn";
 
 type GenericSelectMenu = <T extends { id: string; name: string }>(
@@ -66,13 +67,12 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
       error && error.length > 0 ? (errorId ?? `${name}-error`) : undefined;
 
     return (
-      <div className="relative">
+      <div className="relative flex items-center">
         <select
           aria-describedby={errorDescriptionId}
           aria-label={placeholder}
           className={cn(
-            "peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
-            Icon ? "pr-10 pl-3" : "pl-3",
+            "peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 pl-3 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
             className,
           )}
           data-cy={dataCy}
@@ -96,7 +96,13 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
           ))}
         </select>
         {Icon && (
-          <Icon className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 h-[18px] w-[18px] text-text-primary" />
+          <Icon
+            className={cn(
+              "ml-3 shrink-0",
+              INPUT_ICON_CLASS,
+              "h-[18px] w-[18px]",
+            )}
+          />
         )}
       </div>
     );
