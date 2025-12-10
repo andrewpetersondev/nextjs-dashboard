@@ -10,19 +10,18 @@ import {
   type SignupField,
 } from "@/modules/auth/domain/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
-import { AuthServerMessage } from "@/modules/auth/ui/components/shared/auth-server-message";
 import { AuthSubmitButton } from "@/modules/auth/ui/components/shared/auth-submit-button";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
+import { FormAlert } from "@/ui/molecules/form-alert"; // Add this
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
+import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 const INITIAL_STATE =
   createInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
-
-const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 interface SignupFormProps {
   action: (
@@ -69,7 +68,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           defaultValue={values?.username}
           describedById={`${usernameId}-errors`}
           error={fieldErrors?.username}
-          icon={<UserIcon aria-hidden="true" className={iconClass} />}
+          icon={<UserIcon aria-hidden="true" className={INPUT_ICON_CLASS} />}
           id={usernameId}
           label="Username"
           name="username"
@@ -82,7 +81,9 @@ export const SignupForm: FC<SignupFormProps> = ({
           defaultValue={values?.email}
           describedById={`${emailId}-errors`}
           error={fieldErrors?.email}
-          icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
+          icon={
+            <AtSymbolIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
+          }
           id={emailId}
           label="Email address"
           name="email"
@@ -95,7 +96,9 @@ export const SignupForm: FC<SignupFormProps> = ({
           dataCy="signup-password-input"
           describedById={`${passwordId}-errors`}
           error={fieldErrors?.password}
-          icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
+          icon={
+            <LockClosedIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
+          }
           id={passwordId}
           label="Password"
           name="password"
@@ -112,10 +115,18 @@ export const SignupForm: FC<SignupFormProps> = ({
       </form>
       {state.ok
         ? state.value.message && (
-            <AuthServerMessage message={state.value.message} />
+            <FormAlert
+              dataCy="auth-server-message"
+              message={state.value.message}
+              type="success"
+            />
           )
         : state.error.message && (
-            <AuthServerMessage message={state.error.message} />
+            <FormAlert
+              dataCy="auth-server-message"
+              message={state.error.message}
+              type="error"
+            />
           )}
     </>
   );

@@ -14,11 +14,10 @@ import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { FormInputWrapper } from "@/ui/molecules/form-input-wrapper";
 import { InputField } from "@/ui/molecules/input-field";
+import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 const INITIAL_STATE =
   createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
-
-const iconClass = "pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent";
 
 interface LoginFormProps {
   action: (
@@ -66,7 +65,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           defaultValue={values?.email}
           describedById={`${emailId}-errors`}
           error={fieldErrors?.email}
-          icon={<AtSymbolIcon aria-hidden="true" className={iconClass} />}
+          icon={
+            <AtSymbolIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
+          }
           id={emailId}
           label="Email address"
           name="email"
@@ -79,7 +80,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           dataCy="login-password-input"
           describedById={`${passwordId}-errors`}
           error={fieldErrors?.password}
-          icon={<LockClosedIcon aria-hidden="true" className={iconClass} />}
+          icon={
+            <LockClosedIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
+          }
           id={passwordId}
           label="Password"
           name="password"
