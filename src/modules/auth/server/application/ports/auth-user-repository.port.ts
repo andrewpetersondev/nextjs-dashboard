@@ -9,12 +9,6 @@ import type {
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 
 export interface AuthUserRepositoryPort<TRepo = unknown> {
-  withTransaction<TResult>(
-    fn: (txRepo: AuthUserRepositoryPort<TRepo>) => Promise<TResult>,
-  ): Promise<TResult>;
-
-  signup(input: AuthSignupPayload): Promise<AuthUserEntity>;
-
   /**
    * Increments the demo user counter for a specific role.
    */
@@ -30,4 +24,10 @@ export interface AuthUserRepositoryPort<TRepo = unknown> {
    * DAL-level errors are propagated and mapped by the repo/domain error mappers.
    */
   login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null>;
+
+  signup(input: AuthSignupPayload): Promise<AuthUserEntity>;
+
+  withTransaction<TResult>(
+    fn: (txRepo: AuthUserRepositoryPort<TRepo>) => Promise<TResult>,
+  ): Promise<TResult>;
 }

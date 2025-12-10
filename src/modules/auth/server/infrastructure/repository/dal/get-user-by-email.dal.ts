@@ -1,4 +1,3 @@
-// src/server/auth/infrastructure/repository/dal/get-user-by-email.dal.ts
 import "server-only";
 import { eq } from "drizzle-orm";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";

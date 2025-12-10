@@ -1,5 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/constants/auth-error-messages.constants";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
@@ -11,11 +12,14 @@ import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { ROUTES } from "@/shared/routes/routes";
 
-const DEMO_USER_ERROR_MESSAGE = "Failed to create demo user. Please try again.";
-
 /**
  * Internal helper: creates a demo user for the given role.
  * Used by both role-specific adapters.
+ *
+ * @remarks
+ * - Demo users receive randomly generated passwords (16 characters).
+ * - Transaction ensures user + counter increment are atomic.
+ * - Request ID propagates through all layers for observability.
  *
  * @internal
  */
@@ -26,17 +30,16 @@ async function createDemoUserInternal(
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
 
-  logAuth(
-    "info",
-    "Demo user creation started",
-    AuthLog.action.demoUser.start(),
-    {
-      additionalData: { ip, role, userAgent },
-      requestId,
-    },
-  );
+  logAuth("info", "Demo user action started", AuthLog.action.demoUser.start(), {
+    additionalData: { ip, role, userAgent },
+    requestId,
+  });
 
-  const service = createAuthUserServiceFactory(getAppDb());
+  const service = createAuthUserServiceFactory(
+    getAppDb(),
+    undefined,
+    requestId,
+  );
 
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(role, service.createDemoUser.bind(service)),
@@ -60,7 +63,7 @@ async function createDemoUserInternal(
 
     return formError({
       fieldErrors: {} as Record<string, readonly string[]>,
-      message: error.message || DEMO_USER_ERROR_MESSAGE,
+      message: error.message || AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
     });
   }
 
@@ -98,7 +101,7 @@ export async function demoUserActionAdapter(
   if (!role) {
     return formError({
       fieldErrors: {} as Record<string, readonly string[]>,
-      message: DEMO_USER_ERROR_MESSAGE,
+      message: AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
     });
   }
 

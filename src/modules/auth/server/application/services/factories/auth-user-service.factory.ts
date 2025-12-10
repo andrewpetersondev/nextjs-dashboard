@@ -14,7 +14,7 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  *
  * @param db - Database connection used by the repository implementation.
  * @param logger - Optional logger; defaults to the shared logger.
- * @param requestId - Optional request ID for tracing.
+ * @param requestId - Optional request ID for tracing across layers.
  * @returns A configured `AuthUserService`.
  */
 export function createAuthUserServiceFactory(
@@ -26,5 +26,5 @@ export function createAuthUserServiceFactory(
   const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =
     new AuthUserRepositoryAdapter(repo);
   const hasherPort: PasswordHasherPort = new BcryptPasswordHasherAdapter();
-  return new AuthUserService(repoPort, hasherPort);
+  return new AuthUserService(repoPort, hasherPort, requestId);
 }

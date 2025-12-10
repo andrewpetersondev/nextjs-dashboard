@@ -25,9 +25,9 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  */
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
-  private readonly transactionLogger: TransactionLogger;
-  private readonly requestId?: string;
   private readonly logger: LoggingClientContract;
+  private readonly requestId?: string;
+  private readonly transactionLogger: TransactionLogger;
 
   constructor(
     db: AppDatabase,
@@ -38,74 +38,6 @@ export class AuthUserRepositoryImpl {
     this.logger = logger ?? defaultLogger;
     this.requestId = requestId;
     this.transactionLogger = new TransactionLogger(requestId);
-  }
-
-  /**
-   * Runs a sequence of operations within a database transaction.
-   * Keep thin; retries belong to a separate policy layer if needed.
-   *
-   * @param fn - Callback that receives a transactional repository instance
-   * @returns The result of the callback function
-   * @throws Re-throws any errors from the transaction
-   */
-  async withTransaction<T>(
-    fn: (txRepo: AuthUserRepositoryImpl) => Promise<T>,
-  ): Promise<T> {
-    const dbWithTx = this.db as AppDatabase & {
-      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
-    };
-
-    if (typeof dbWithTx.transaction !== "function") {
-      throw new Error("Database does not support transactions");
-    }
-
-    const transactionId = randomUUID();
-
-    this.transactionLogger.start(transactionId);
-
-    try {
-      const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
-        const txRepo = new AuthUserRepositoryImpl(
-          tx,
-          this.logger,
-          this.requestId,
-        );
-        return await fn(txRepo);
-      });
-
-      this.transactionLogger.commit(transactionId);
-      return result;
-    } catch (err) {
-      this.transactionLogger.rollback(transactionId, err);
-      throw err;
-    }
-  }
-
-  /**
-   * Creates a new user for the signup flow.
-   *
-   * @param input - Signup payload with user credentials
-   * @returns The created user entity
-   *
-   * Errors:
-   * - DAL-level errors are propagated as-is for higher layers to map.
-   */
-  async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
-    const row = await insertUserDal(
-      this.db,
-      input,
-      this.logger,
-      this.requestId,
-    );
-
-    logAuth(
-      "info",
-      "User created successfully",
-      AuthLog.repository.signup.success({ email: input.email }),
-      { requestId: this.requestId },
-    );
-
-    return newUserDbRowToEntity(row);
   }
 
   /**
@@ -153,5 +85,73 @@ export class AuthUserRepositoryImpl {
     );
 
     return userDbRowToEntity(row);
+  }
+
+  /**
+   * Creates a new user for the signup flow.
+   *
+   * @param input - Signup payload with user credentials
+   * @returns The created user entity
+   *
+   * Errors:
+   * - DAL-level errors are propagated as-is for higher layers to map.
+   */
+  async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
+    const row = await insertUserDal(
+      this.db,
+      input,
+      this.logger,
+      this.requestId,
+    );
+
+    logAuth(
+      "info",
+      "User created successfully",
+      AuthLog.repository.signup.success({ email: input.email }),
+      { requestId: this.requestId },
+    );
+
+    return newUserDbRowToEntity(row);
+  }
+
+  /**
+   * Runs a sequence of operations within a database transaction.
+   * Keep thin; retries belong to a separate policy layer if needed.
+   *
+   * @param fn - Callback that receives a transactional repository instance
+   * @returns The result of the callback function
+   * @throws Re-throws any errors from the transaction
+   */
+  async withTransaction<T>(
+    fn: (txRepo: AuthUserRepositoryImpl) => Promise<T>,
+  ): Promise<T> {
+    const dbWithTx = this.db as AppDatabase & {
+      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
+    };
+
+    if (typeof dbWithTx.transaction !== "function") {
+      throw new Error("Database does not support transactions");
+    }
+
+    const transactionId = randomUUID();
+
+    this.transactionLogger.start(transactionId);
+
+    try {
+      const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
+        const txRepo = new AuthUserRepositoryImpl(
+          tx,
+          this.logger,
+          this.requestId,
+        );
+        return await fn(txRepo);
+      });
+
+      this.transactionLogger.commit(transactionId);
+      return result;
+    } catch (err) {
+      this.transactionLogger.rollback(transactionId, err);
+      throw err;
+    }
   }
 }

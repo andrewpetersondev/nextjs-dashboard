@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/constants/auth-error-messages.constants";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import {
   LOGIN_FIELDS_LIST,
@@ -31,6 +32,11 @@ const fields = LOGIN_FIELDS_LIST;
  * - Establish session → on failure, map to UI-safe FormResult.
  * - Redirect to dashboard on success.
  *
+ * @remarks
+ * - No transaction needed (read-only operation).
+ * - Request ID propagates through all layers for observability.
+ * - Password verification happens in service layer.
+ *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
@@ -42,7 +48,6 @@ export async function loginAction(
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
 
-  // Start
   logAuth("info", "Login action started", AuthLog.action.login.start(), {
     additionalData: { ip, userAgent },
     requestId,
@@ -57,7 +62,6 @@ export async function loginAction(
       validated.error?.metadata?.fieldErrors || {},
     ).length;
 
-    // Validation failure
     logAuth(
       "warn",
       "Login validation failed",
@@ -77,7 +81,6 @@ export async function loginAction(
 
   const input: LoginData = validated.value.data;
 
-  // Validation complete
   logAuth(
     "info",
     "Login form validated",
@@ -91,7 +94,11 @@ export async function loginAction(
     },
   );
 
-  const service = createAuthUserServiceFactory(getAppDb());
+  const service = createAuthUserServiceFactory(
+    getAppDb(),
+    undefined,
+    requestId,
+  );
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.login.bind(service)),
   );
@@ -105,9 +112,9 @@ export async function loginAction(
       AuthLog.action.login.error(error, { email: input.email, ip }),
       {
         additionalData: {
+          ...tracker.getMetrics(),
           email: input.email,
           ip,
-          ...tracker.getMetrics(),
         },
         requestId,
       },
@@ -119,22 +126,21 @@ export async function loginAction(
     return formError<LoginField>({
       code: error.code,
       fieldErrors,
-      message,
+      message: message || AUTH_ERROR_MESSAGES.LOGIN_FAILED,
       values: input,
     });
   }
 
   const { id: userId, role } = sessionResult.value;
 
-  // Success
   logAuth(
     "info",
     "Login action completed successfully",
     AuthLog.action.login.success({ email: input.email, userId }),
     {
       additionalData: {
-        role,
         ...tracker.getMetrics(),
+        role,
       },
       requestId,
     },

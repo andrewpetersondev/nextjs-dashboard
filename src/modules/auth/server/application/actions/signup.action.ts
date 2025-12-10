@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/constants/auth-error-messages.constants";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import {
   SIGNUP_FIELDS_LIST,
@@ -31,9 +32,14 @@ const fields = SIGNUP_FIELDS_LIST;
  * - Establish session → on failure, map to UI-safe FormResult.
  * - Redirect to dashboard on success.
  *
+ * @remarks
+ * - Transaction ensures user + initial data are created atomically.
+ * - Request ID propagates through all layers for observability.
+ * - Password is hashed before storage (never stored in plain text).
+ *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup flow is inherently multi-step
 export async function signupAction(
   _prevState: FormResult<SignupField>,
   formData: FormData,
@@ -42,7 +48,6 @@ export async function signupAction(
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
 
-  // Start
   logAuth("info", "Signup action started", AuthLog.action.signup.start(), {
     additionalData: { ip, userAgent },
     requestId,
@@ -57,7 +62,6 @@ export async function signupAction(
       validated.error?.metadata?.fieldErrors || {},
     ).length;
 
-    // Validation failure
     logAuth(
       "warn",
       "Signup validation failed",
@@ -77,7 +81,6 @@ export async function signupAction(
 
   const input: SignupData = validated.value.data;
 
-  // Validation complete
   logAuth(
     "info",
     "Signup form validated",
@@ -94,7 +97,11 @@ export async function signupAction(
     },
   );
 
-  const service = createAuthUserServiceFactory(getAppDb());
+  const service = createAuthUserServiceFactory(
+    getAppDb(),
+    undefined,
+    requestId,
+  );
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.signup.bind(service)),
   );
@@ -102,7 +109,6 @@ export async function signupAction(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    // Authentication failure
     logAuth(
       "error",
       "Signup authentication failed",
@@ -121,19 +127,18 @@ export async function signupAction(
       },
     );
 
-    const { message, fieldErrors } =
+    const { fieldErrors, message } =
       adaptAppErrorToFormPayload<SignupField>(error);
 
     return formError<SignupField>({
       code: error.code,
       fieldErrors,
-      message,
+      message: message || AUTH_ERROR_MESSAGES.SIGNUP_FAILED,
       values: input,
     });
   }
   const { id: userId, role } = sessionResult.value;
 
-  // Success
   logAuth(
     "info",
     "Signup action completed successfully",
@@ -144,8 +149,8 @@ export async function signupAction(
     }),
     {
       additionalData: {
-        role,
         ...tracker.getMetrics(),
+        role,
       },
       requestId,
     },

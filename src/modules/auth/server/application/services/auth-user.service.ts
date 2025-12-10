@@ -2,6 +2,7 @@ import "server-only";
 import { hasRequiredSignupFields } from "@/modules/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
+import { isValidDemoUserCounter } from "@/modules/auth/domain/demo-user/demo-user.guards";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
 import { createRandomPassword } from "@/modules/auth/domain/password/password-generator";
@@ -24,14 +25,21 @@ import type { Result } from "@/shared/result/result.types";
  * @remarks
  * - Returns discriminated Result objects instead of throwing.
  * - Depends on small ports (AuthUserRepositoryPort, PasswordHasherPort) for testability.
+ * - Accepts optional requestId for tracing across layers.
  */
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: PasswordHasherPort;
+  private readonly requestId?: string;
 
-  constructor(repo: AuthUserRepositoryPort, hasher: PasswordHasherPort) {
+  constructor(
+    repo: AuthUserRepositoryPort,
+    hasher: PasswordHasherPort,
+    requestId?: string,
+  ) {
     this.repo = repo;
     this.hasher = hasher;
+    this.requestId = requestId;
   }
 
   /**
@@ -40,16 +48,19 @@ export class AuthUserService {
    * @param role - The role assigned to the demo user.
    * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
    *
-   * @remarks Uses repository transaction support and the password hasher port.
+   * @remarks
+   * - Demo users receive randomly generated passwords for security.
+   * - Password length: 16 characters (alphanumeric + symbols).
+   * - Counter ensures unique email/username per role.
+   * - Transaction ensures user + counter increment are atomic.
    */
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const requestId = crypto.randomUUID();
     try {
       const counter = await this.repo.incrementDemoUserCounter(role);
 
-      if (!counter || counter <= 0) {
+      if (!isValidDemoUserCounter(counter)) {
         const error = normalizeToAppError(
           new Error("invalid_counter"),
           "validation",
@@ -58,7 +69,7 @@ export class AuthUserService {
           "error",
           "Invalid demo user counter",
           AuthLog.service.demoUser.error(error, { role }),
-          { additionalData: { counter }, requestId },
+          { additionalData: { counter }, requestId: this.requestId },
         );
         return Err(error);
       }
@@ -83,7 +94,7 @@ export class AuthUserService {
         AuthLog.service.demoUser.success({ role }),
         {
           additionalData: { email: uniqueEmail, username: uniqueUsername },
-          requestId,
+          requestId: this.requestId,
         },
       );
 
@@ -94,7 +105,7 @@ export class AuthUserService {
         "error",
         "Demo user creation failed",
         AuthLog.service.demoUser.error(error, { role }),
-        { requestId },
+        { requestId: this.requestId },
       );
       return Err(error);
     }
@@ -102,18 +113,19 @@ export class AuthUserService {
 
   /**
    * Service method for handling user signup flow.
-   * Only handles domain/infra errors from repository layer, never DB/PG errors directly.
    *
    * @param input - Readonly SignupData containing email, username and password.
    * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
    *
-   * @remarks The password is hashed and the operation is performed inside a repository transaction.
+   * @remarks
+   * - Password is hashed before storage.
+   * - All users are assigned the USER role.
+   * - Transaction ensures atomic user creation.
+   * - Only handles domain/infra errors from repository layer.
    */
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const requestId = crypto.randomUUID();
-
     if (!hasRequiredSignupFields(input)) {
       const error = normalizeToAppError(
         new Error("missing_fields"),
@@ -126,7 +138,7 @@ export class AuthUserService {
           email: input.email,
           username: input.username,
         }),
-        { requestId },
+        { requestId: this.requestId },
       );
       return Err(error);
     }
@@ -146,7 +158,7 @@ export class AuthUserService {
         "info",
         "Signup service success",
         AuthLog.service.signup.success({ email: input.email }),
-        { requestId },
+        { requestId: this.requestId },
       );
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
@@ -156,7 +168,7 @@ export class AuthUserService {
         "error",
         "Signup service failed",
         AuthLog.service.signup.error(error, { email: input.email }),
-        { requestId },
+        { requestId: this.requestId },
       );
       return Err(error);
     }
@@ -171,14 +183,13 @@ export class AuthUserService {
    * @remarks
    * - Repository returns `AuthUserEntity | null` and does not encode auth semantics.
    * - This method owns "invalid credentials" semantics and mapping to AppError.
-   * - All infra/repo errors are mapped via `mapAppErrorToFormPayload` into AppError.
+   * - Login is read-only; no transaction needed.
+   * - All infra/repo errors are mapped via `normalizeToAppError` into AppError.
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const requestId = crypto.randomUUID();
-
     try {
       const user = await this.repo.login({ email: input.email });
 
@@ -191,7 +202,7 @@ export class AuthUserService {
           "warn",
           "Login failed - user not found",
           AuthLog.service.login.error(error, { email: input.email }),
-          { requestId },
+          { requestId: this.requestId },
         );
         return Err(error);
       }
@@ -208,7 +219,7 @@ export class AuthUserService {
             email: input.email,
             userId: String(user.id),
           }),
-          { requestId },
+          { requestId: this.requestId },
         );
         return Err(error);
       }
@@ -227,7 +238,7 @@ export class AuthUserService {
           "warn",
           "Login failed - invalid password",
           AuthLog.service.login.error(error, { email: input.email }),
-          { requestId },
+          { requestId: this.requestId },
         );
         return Err(error);
       }
@@ -236,7 +247,10 @@ export class AuthUserService {
         "info",
         "Login succeeded",
         AuthLog.service.login.success({ email: input.email }),
-        { additionalData: { userId: String(user.id) }, requestId },
+        {
+          additionalData: { userId: String(user.id) },
+          requestId: this.requestId,
+        },
       );
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
@@ -246,7 +260,7 @@ export class AuthUserService {
         "error",
         "Login service unexpected error",
         AuthLog.service.login.error(error, { email: input.email }),
-        { requestId },
+        { requestId: this.requestId },
       );
       return Err(error);
     }
