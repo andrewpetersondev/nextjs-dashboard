@@ -1,10 +1,10 @@
 import { z } from "zod";
+import { USER_ROLES } from "@/modules/auth/domain/roles/auth.roles";
 import {
   EmailSchema,
   PasswordSchema,
   UsernameSchema,
-} from "@/modules/auth/domain/auth.schema";
-import { USER_ROLES } from "@/modules/auth/domain/roles/auth.roles";
+} from "@/modules/auth/domain/schema/auth.schema";
 import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
 
 const toUndefinedIfEmptyString = (v: unknown) =>

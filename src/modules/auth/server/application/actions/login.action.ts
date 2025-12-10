@@ -1,13 +1,13 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import {
   LOGIN_FIELDS_LIST,
   type LoginData,
   type LoginField,
   LoginSchema,
-} from "@/modules/auth/domain/auth.schema";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
+} from "@/modules/auth/domain/schema/auth.schema";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
