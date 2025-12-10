@@ -72,7 +72,7 @@ export const SelectMenu: SelectMenuComponent = React.memo(
           aria-describedby={errorDescriptionId}
           aria-label={placeholder}
           className={cn(
-            "peer block w-full cursor-pointer rounded-md border border-bg-accent py-2 pl-10 text-sm outline-2 placeholder:text-text-secondary",
+            "peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 pl-10 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
             className,
           )}
           data-cy={dataCy}
