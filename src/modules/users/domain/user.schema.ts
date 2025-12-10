@@ -10,30 +10,21 @@ import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
 const toUndefinedIfEmptyString = (v: unknown) =>
   typeof v === "string" && v.trim() === "" ? undefined : v;
 
-/**
- * Utility to create optional, preprocessed edit fields.
- *
- * - Converts empty strings to undefined (so optional() works for HTML forms).
- * - Wraps with .optional() at the end to preserve inner transforms.
- */
 function optionalEdit<T extends z.ZodType>(schema: T) {
   return z.preprocess(toUndefinedIfEmptyString, schema).optional();
 }
+
+const userRoleEnum = z.enum(USER_ROLES);
 
 /**
  * Role schema: trims, uppercases, and validates against allowed roles.
  * Uses pipe to ensure validation runs on the normalized value.
  */
-export const roleSchema = z
+export const userRoleSchema = z
   .string()
   .trim()
   .toUpperCase()
-  .pipe(
-    z.enum(USER_ROLES, {
-      error: (issue) =>
-        issue.input === undefined ? "Role is required." : "Invalid user role.",
-    }),
-  );
+  .pipe(userRoleEnum);
 
 /**
  * Base schema for user forms (create).
@@ -42,7 +33,7 @@ export const roleSchema = z
 export const UserFormBaseSchema = z.strictObject({
   email: EmailSchema, // already trims + lowercases via pipe
   password: PasswordSchema, // trims with strength rules
-  role: roleSchema, // normalized + validated
+  role: userRoleSchema, // normalized + validated
   username: UsernameSchema, // trims + lowercases
 });
 
@@ -54,7 +45,7 @@ export const CreateUserFormSchema = UserFormBaseSchema;
  */
 export const emailEdit = optionalEdit(EmailSchema);
 export const passwordEdit = optionalEdit(PasswordSchema);
-export const roleEdit = optionalEdit(roleSchema);
+export const roleEdit = optionalEdit(userRoleSchema);
 export const usernameEdit = optionalEdit(UsernameSchema);
 
 /**

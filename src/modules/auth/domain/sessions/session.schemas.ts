@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { roleSchema } from "@/modules/users/domain/user.schema";
+import { userRoleSchema } from "@/modules/users/domain/user.schema";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
@@ -37,7 +37,7 @@ export const EncryptPayloadSchema = z
   .object({
     user: z.object({
       expiresAt: expiresAtSchema,
-      role: roleSchema,
+      role: userRoleSchema,
       sessionStart: sessionStartSchema,
       userId: userIdSchema, // => UserId post-parse
     }),
