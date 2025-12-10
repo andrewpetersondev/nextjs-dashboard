@@ -11,7 +11,7 @@ import {
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { PerformanceTracker } from "@/modules/auth/server/application/actions/utils/performance-tracker";
 import { getRequestMetadata } from "@/modules/auth/server/application/actions/utils/request-metadata";
-import { createAuthUserService } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
+import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server-core/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";
@@ -94,7 +94,7 @@ export async function signupAction(
     },
   );
 
-  const service = createAuthUserService(getAppDb());
+  const service = createAuthUserServiceFactory(getAppDb());
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.signup.bind(service)),
   );

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSessionManager } from "@/modules/auth/server/application/services/factories/session-manager.factory";
+import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,
@@ -12,7 +12,7 @@ import {
 } from "@/shared/http/http-headers";
 
 export async function POST(): Promise<NextResponse> {
-  const outcome = await createSessionManager().rotate();
+  const outcome = await createSessionManagerFactory().rotate();
   const res = NextResponse.json(outcome, { status: 200 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);
@@ -22,7 +22,7 @@ export async function POST(): Promise<NextResponse> {
 }
 
 export async function GET(): Promise<NextResponse> {
-  const outcome = await createSessionManager().rotate();
+  const outcome = await createSessionManagerFactory().rotate();
   const res = NextResponse.json(outcome, { status: 200 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);
@@ -32,7 +32,7 @@ export async function GET(): Promise<NextResponse> {
 }
 
 export async function HEAD(): Promise<NextResponse> {
-  await createSessionManager().rotate();
+  await createSessionManagerFactory().rotate();
   const res = new NextResponse(null, { status: 204 });
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);
   res.headers.set(HEADER_PRAGMA, PRAGMA_NO_CACHE);

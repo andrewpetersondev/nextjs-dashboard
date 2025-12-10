@@ -11,7 +11,7 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  *
  * @param logger - optional logger to use; defaults to shared logger.
  */
-export function createSessionManager(
+export function createSessionManagerFactory(
   logger: LoggingClientContract = defaultLogger,
 ): SessionManager {
   return new SessionManager(

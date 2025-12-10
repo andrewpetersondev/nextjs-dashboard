@@ -17,7 +17,7 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  * @param requestId - Optional request ID for tracing.
  * @returns A configured `AuthUserService`.
  */
-export function createAuthUserService(
+export function createAuthUserServiceFactory(
   db: AppDatabase,
   logger: LoggingClientContract = defaultLogger,
   requestId?: string,
