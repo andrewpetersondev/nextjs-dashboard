@@ -1,15 +1,111 @@
 "use client";
-import { type JSX, useActionState } from "react";
+import {
+  AtSymbolIcon,
+  LockClosedIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import {
+  type JSX,
+  useActionState,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+} from "react";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
 import { updateUserAction } from "@/modules/users/server/application/actions/update-user.action";
+import { ServerMessage } from "@/modules/users/ui/components/server-message";
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
-import { UserForm } from "@/modules/users/ui/forms/user-form";
+import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
+import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/create-initial-form-state";
+import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { ROUTES } from "@/shared/routes/routes";
+import { H1 } from "@/ui/atoms/headings";
+import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
+import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
+import { TYPING_MS } from "@/ui/styles/timings.tokens";
+
+type EditUserFieldErrors = Partial<
+  Record<"email" | "password" | "role" | "username", FieldError>
+>;
+
+function EditUserFormFields({
+  disabled = false,
+  errors,
+  values,
+}: {
+  disabled?: boolean;
+  errors?: EditUserFieldErrors;
+  values: UserDto;
+}): JSX.Element {
+  const emailId = useId();
+  const passwordId = useId();
+  const usernameId = useId();
+  return (
+    <>
+      <InputFieldMolecule
+        autoComplete="username"
+        dataCy="user-username-input"
+        defaultValue={values.username}
+        disabled={disabled}
+        error={errors?.username}
+        icon={
+          <UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+        }
+        id={usernameId}
+        label="Username"
+        name="username"
+        required={true}
+        type="text"
+      />
+
+      <InputFieldMolecule
+        autoComplete="email"
+        dataCy="user-email-input"
+        defaultValue={values.email}
+        disabled={disabled}
+        error={errors?.email}
+        icon={
+          <AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+        }
+        id={emailId}
+        label="Email address"
+        name="email"
+        placeholder="steve@jobs.com"
+        required={true}
+        type="email"
+      />
+
+      <InputFieldMolecule
+        autoComplete="off"
+        dataCy="user-password-input"
+        disabled={disabled}
+        error={errors?.password}
+        icon={
+          <LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+        }
+        id={passwordId}
+        label="Password (leave blank to keep current)"
+        name="password"
+        placeholder="Enter new password"
+        required={false}
+        type="password"
+      />
+
+      <UserRoleSelect
+        dataCy="user-role-select"
+        defaultValue={values.role}
+        error={errors?.role}
+      />
+    </>
+  );
+}
 
 export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
+  const [showAlert, setShowAlert] = useState(false);
   const initialState =
     createInitialFailedFormStateFromSchema(EditUserFormSchema);
 
@@ -23,24 +119,42 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
     FormData
   >(updateUserWithId, initialState);
 
+  const message = useMemo<string | undefined>(() => {
+    return state.ok ? state.value.message : state.error.message;
+  }, [state]);
+
+  useEffect(() => {
+    if (message) {
+      setShowAlert(true);
+      const timer = setTimeout(() => setShowAlert(false), TYPING_MS);
+      return () => clearTimeout(timer);
+    }
+    setShowAlert(false);
+    return;
+  }, [message]);
+
+  const fieldErrors = state.ok
+    ? undefined
+    : (state.error?.metadata?.fieldErrors as EditUserFieldErrors | undefined);
+
   return (
-    <UserForm
-      action={action}
-      cancelHref={ROUTES.dashboard.users}
-      description="Admins can edit any profile."
-      extraContent={<UserInfoPanel user={user} />}
-      initialValues={{
-        email: user.email,
-        id: user.id,
-        role: user.role,
-        username: user.username,
-      }}
-      isEdit={true}
-      pending={pending}
-      showPassword={true}
-      state={state}
-      submitLabel="Save Changes"
-      title="Edit User"
-    />
+    <div>
+      <H1>Edit User</H1>
+      <section>
+        <p>Admins can edit any profile.</p>
+      </section>
+      <UserInfoPanel user={user} />
+      <form action={action} autoComplete="off">
+        <EditUserFormFields
+          disabled={pending}
+          errors={fieldErrors}
+          values={user}
+        />
+        <FormActionRow cancelHref={ROUTES.dashboard.users}>
+          <SubmitButtonMolecule label="Save Changes" pending={pending} />
+        </FormActionRow>
+      </form>
+      <ServerMessage showAlert={showAlert} state={state} />
+    </div>
   );
 }
