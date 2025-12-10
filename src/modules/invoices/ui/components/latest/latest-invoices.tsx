@@ -2,7 +2,7 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/types";
 import { LatestInvoiceItem } from "@/modules/invoices/ui/components/latest/latest-invoice-item";
-import { H2, H3 } from "@/ui/atoms/typography/headings";
+import { H2, H3 } from "@/ui/atoms/headings";
 
 interface LatestInvoicesProps {
   readonly latestInvoices: readonly InvoiceListFilter[];

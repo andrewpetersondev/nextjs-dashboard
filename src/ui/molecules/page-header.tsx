@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { FC, ReactNode } from "react";
-import { IMAGE_SIZES } from "@/ui/images.tokens";
+import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
 interface PageHeaderProps {
   /** Main heading text */

@@ -9,7 +9,7 @@ import {
 import { type ChangeEvent, type JSX, useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Label } from "@/ui/atoms/label";
-import { DEBOUNCE_MS } from "@/ui/timings.tokens";
+import { DEBOUNCE_MS } from "@/ui/styles/timings.tokens";
 import { cn } from "@/ui/utils/cn";
 
 /**

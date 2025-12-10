@@ -21,7 +21,7 @@ import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { Label } from "@/ui/atoms/label";
-import { ALERT_AUTO_HIDE_MS } from "@/ui/timings.tokens";
+import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
 
 const INITIAL_STATE = createInitialFailedFormState<CreateInvoiceFieldNames>(
   Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],

@@ -4,7 +4,7 @@ import { InvoicesSearchSkeleton } from "@/modules/invoices/ui/components/invoice
 import { fetchUsersPageCountAction } from "@/modules/users/server/application/actions/read-users-page-count.action";
 import { CreateUserLink } from "@/modules/users/ui/components/user-action-buttons";
 import { UsersTable } from "@/modules/users/ui/tables/users-table";
-import { H1 } from "@/ui/atoms/typography/headings";
+import { H1 } from "@/ui/atoms/headings";
 import { Search } from "@/ui/molecules/search-box";
 import { Pagination } from "@/ui/pagination/pagination";
 

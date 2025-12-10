@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { H3 } from "@/ui/atoms/typography/headings";
+import { H3 } from "@/ui/atoms/headings";
 
 interface StatCardProps {
   icon: React.ComponentType<{ className: string }>;

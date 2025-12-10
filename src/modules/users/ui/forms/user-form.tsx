@@ -6,8 +6,8 @@ import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { FormSubmitButton } from "@/shared/forms/components/form-submit-button";
 import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { H1 } from "@/ui/atoms/typography/headings";
-import { TYPING_MS } from "@/ui/timings.tokens";
+import { H1 } from "@/ui/atoms/headings";
+import { TYPING_MS } from "@/ui/styles/timings.tokens";
 
 // Make the form generic over field names to support both create and edit flows
 type Props = {

@@ -6,7 +6,7 @@ import { readCustomersAction } from "@/modules/customers/server/application/acti
 import type { InvoiceDto } from "@/modules/invoices/domain/dto";
 import { readInvoiceByIdAction } from "@/modules/invoices/server/application/actions/read-by-id";
 import { EditInvoiceForm } from "@/modules/invoices/ui/components/form/edit-invoice-form";
-import { H1 } from "@/ui/atoms/typography/headings";
+import { H1 } from "@/ui/atoms/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditInvoicePageParams {
