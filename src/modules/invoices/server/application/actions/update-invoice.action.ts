@@ -4,7 +4,7 @@ import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import {
   type UpdateInvoiceFieldNames,
-  type UpdateInvoiceOutput,
+  type UpdateInvoicePayload,
   UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
@@ -74,10 +74,10 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function updateInvoiceAction(
-  _prevState: FormResult<UpdateInvoiceOutput>,
+  _prevState: FormResult<UpdateInvoicePayload>,
   id: string,
   formData: FormData,
-): Promise<FormResult<UpdateInvoiceOutput>> {
+): Promise<FormResult<UpdateInvoicePayload>> {
   try {
     const input = {
       amount: formData.get("amount"),

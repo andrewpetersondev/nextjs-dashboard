@@ -4,7 +4,7 @@ import type { CustomerField } from "@/modules/customers/domain/types";
 import { getCurrentIsoDate } from "@/modules/invoices/domain/invoice.date-utils";
 import {
   type CreateInvoiceFieldNames,
-  type CreateInvoiceOutput,
+  type CreateInvoicePayload,
   CreateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { createInvoiceAction } from "@/modules/invoices/server/application/actions/create-invoice.action";
@@ -95,7 +95,7 @@ export function CreateInvoiceForm({
 }): JSX.Element {
   const formRef = useRef<HTMLFormElement>(null);
   const [state, action, pending] = useActionState<
-    FormResult<CreateInvoiceOutput>,
+    FormResult<CreateInvoicePayload>,
     FormData
   >(createInvoiceAction, INITIAL_STATE);
 

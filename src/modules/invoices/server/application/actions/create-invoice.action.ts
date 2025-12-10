@@ -4,7 +4,7 @@ import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";
 import {
   type CreateInvoiceFieldNames,
-  type CreateInvoiceOutput,
+  type CreateInvoicePayload,
   CreateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
@@ -36,9 +36,9 @@ const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function createInvoiceAction(
-  _prevState: FormResult<CreateInvoiceOutput>,
+  _prevState: FormResult<CreateInvoicePayload>,
   formData: FormData,
-): Promise<FormResult<CreateInvoiceOutput>> {
+): Promise<FormResult<CreateInvoicePayload>> {
   // 1. Parse Input: Extract raw strings so Zod schemas (and codecs) can handle coercion/validation
   const rawInput = {
     amount: toOptionalString(formData.get("amount")),

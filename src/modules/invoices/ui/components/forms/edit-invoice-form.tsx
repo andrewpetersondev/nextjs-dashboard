@@ -4,7 +4,7 @@ import type { CustomerField } from "@/modules/customers/domain/types";
 import {
   type EditInvoiceViewModel,
   type UpdateInvoiceFieldNames,
-  type UpdateInvoiceOutput,
+  type UpdateInvoicePayload,
   UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { updateInvoiceAction } from "@/modules/invoices/server/application/actions/update-invoice.action";
@@ -30,9 +30,9 @@ import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
   return async (
-    prevState: FormResult<UpdateInvoiceOutput>,
+    prevState: FormResult<UpdateInvoicePayload>,
     formData: FormData,
-  ): Promise<FormResult<UpdateInvoiceOutput>> =>
+  ): Promise<FormResult<UpdateInvoicePayload>> =>
     await updateInvoiceAction(prevState, invoiceId, formData);
 }
 
@@ -103,7 +103,7 @@ export const EditInvoiceForm = ({
   );
 
   const [state, action, pending] = useActionState<
-    FormResult<UpdateInvoiceOutput>,
+    FormResult<UpdateInvoicePayload>,
     FormData
   >(createWrappedUpdateAction(invoice.id), initialState);
   const currentInvoice: EditInvoiceViewModel =

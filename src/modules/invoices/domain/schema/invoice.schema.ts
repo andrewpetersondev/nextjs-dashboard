@@ -45,8 +45,8 @@ export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
 export type CreateInvoiceInput = z.input<typeof CreateInvoiceSchema>;
 export type UpdateInvoiceInput = z.input<typeof UpdateInvoiceSchema>;
 
-export type CreateInvoiceOutput = z.output<typeof CreateInvoiceSchema>;
-export type UpdateInvoiceOutput = z.output<typeof UpdateInvoiceSchema>;
+export type CreateInvoicePayload = z.output<typeof CreateInvoiceSchema>;
+export type UpdateInvoicePayload = z.output<typeof UpdateInvoiceSchema>;
 
 export type CreateInvoiceFieldNames = keyof CreateInvoiceInput;
 export type UpdateInvoiceFieldNames = keyof UpdateInvoiceInput;
