@@ -7,10 +7,10 @@ import type {
 } from "@/modules/invoices/domain/invoice.entity";
 import { entityToInvoiceDto } from "@/modules/invoices/server/infrastructure/adapters/codecs/invoice-codecs";
 import { BaseRepository } from "@/modules/invoices/server/infrastructure/repository/base-repository";
-import { createInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/create";
-import { deleteInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/delete";
-import { readInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/read";
-import { updateInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/update";
+import { createInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/create-invoice.dal";
+import { deleteInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/delete-invoice.dal";
+import { readInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/read-invoice.dal";
+import { updateInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/update-invoice.dal";
 import type { InvoiceId } from "@/shared/branding/brands";
 import { AppError } from "@/shared/errors/core/app-error.class";
 

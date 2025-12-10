@@ -12,7 +12,7 @@ import type {
 } from "@/modules/auth/domain/schema/auth.schema";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
-import { demoUserCounter } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter";
+import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { getAppDb } from "@/server-core/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.class";
@@ -56,11 +56,14 @@ export class AuthUserService {
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const requestId = crypto.randomUUID();
-
     try {
       const db = getAppDb();
-      const counter = await demoUserCounter(db, role, this.logger, requestId);
-
+      const counter = await demoUserCounterDal(
+        db,
+        role,
+        this.logger,
+        requestId,
+      );
       if (!counter || counter <= 0) {
         const error = normalizeToAppError(
           new Error("invalid_counter"),

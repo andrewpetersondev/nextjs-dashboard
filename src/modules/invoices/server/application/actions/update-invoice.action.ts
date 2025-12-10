@@ -8,7 +8,7 @@ import {
   UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
-import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";
+import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server-core/db/db.connection";
 import {
   type BaseInvoiceEvent,

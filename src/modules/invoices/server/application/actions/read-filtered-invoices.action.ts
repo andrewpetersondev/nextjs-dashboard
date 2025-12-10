@@ -1,7 +1,7 @@
 "use server";
 
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
-import { fetchFilteredInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-filtered";
+import { fetchFilteredInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-filtered-invoices.dal";
 import { getAppDb } from "@/server-core/db/db.connection";
 
 /**

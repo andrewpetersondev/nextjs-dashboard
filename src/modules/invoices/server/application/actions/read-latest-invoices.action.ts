@@ -1,5 +1,5 @@
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
-import { fetchLatestInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-latest";
+import { fetchLatestInvoicesDal } from "@/modules/invoices/server/infrastructure/repository/dal/fetch-latest-invoices.dal";
 import type { AppDatabase } from "@/server-core/db/db.connection";
 
 export async function readLatestInvoicesAction(

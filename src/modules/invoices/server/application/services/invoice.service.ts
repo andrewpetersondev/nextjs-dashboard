@@ -9,7 +9,7 @@ import {
   partialDtoToCreateInvoiceEntity,
 } from "@/modules/invoices/server/infrastructure/adapters/codecs/invoice-codecs";
 import { invoiceFormEntityToServiceEntity } from "@/modules/invoices/server/infrastructure/adapters/mappers/invoice.mapper";
-import type { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/repository";
+import type { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
 import { toInvoiceId } from "@/shared/branding/converters/id-converters";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";

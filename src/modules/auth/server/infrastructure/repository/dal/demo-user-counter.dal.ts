@@ -16,7 +16,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * @param requestId - Optional request ID for logging context
  * @returns The new counter value as a number
  */
-export async function demoUserCounter(
+export async function demoUserCounterDal(
   db: AppDatabase,
   role: UserRole,
   logger: LoggingClientContract,
