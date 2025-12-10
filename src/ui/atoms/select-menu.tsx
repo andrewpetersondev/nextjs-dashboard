@@ -1,4 +1,3 @@
-import { UserCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import type { FieldError } from "@/shared/forms/types/form.types";
 import { cn } from "@/ui/utils/cn";
@@ -54,7 +53,7 @@ export const SelectMenu: SelectMenuComponent = React.memo(
     disabled = false,
     error,
     errorId,
-    icon: Icon = UserCircleIcon,
+    icon: Icon,
     id,
     name,
     onChange,
@@ -72,12 +71,13 @@ export const SelectMenu: SelectMenuComponent = React.memo(
           aria-describedby={errorDescriptionId}
           aria-label={placeholder}
           className={cn(
-            "peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 pl-10 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
+            "peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
+            Icon ? "pr-10 pl-3" : "pl-3",
             className,
           )}
           data-cy={dataCy}
-          defaultValue={value === undefined ? defaultValue : undefined}
           // --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
+          defaultValue={value === undefined ? defaultValue : undefined}
           disabled={disabled}
           id={id}
           name={name}
@@ -95,7 +95,9 @@ export const SelectMenu: SelectMenuComponent = React.memo(
             </option>
           ))}
         </select>
-        <Icon className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] text-text-primary" />
+        {Icon && (
+          <Icon className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-3 h-[18px] w-[18px] text-text-primary" />
+        )}
       </div>
     );
   },

@@ -4,10 +4,12 @@
  * @module CustomerSelect
  */
 
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { type JSX, useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { ErrorMessage } from "@/shared/forms/components/error-message";
 import type { FieldError } from "@/shared/forms/types/form.types";
+import { Label } from "@/ui/atoms/label";
 import { SelectMenu, type SelectMenuProps } from "@/ui/atoms/select-menu";
 
 /**
@@ -31,30 +33,30 @@ export const CustomerSelect = ({
   error,
   ...props
 }: CustomerSelectProps): JSX.Element => {
-  const customerSelectMenuId = useId();
-  const ErrorId = "customer-select-error";
-  const hasError = Boolean(error && error.length > 0);
+  const id = useId();
+  const errorId = `${id}-error`;
+
   return (
-    <div>
+    <div className="mb-4">
+      <Label htmlFor={id} text="Choose customer" />
       <SelectMenu
-        aria-describedby={hasError ? ErrorId : undefined}
-        aria-invalid={hasError}
         defaultValue=""
-        id={customerSelectMenuId}
+        error={error}
+        errorId={errorId}
+        icon={UserCircleIcon}
+        id={id}
         name="customerId"
         options={[...customers]}
         placeholder="Select a customer"
         required={true}
         {...props}
       />
-      {hasError && (
-        <ErrorMessage
-          dataCy={ErrorId}
-          error={error}
-          id={ErrorId}
-          label="Customer selection error"
-        />
-      )}
+      <ErrorMessage
+        dataCy={props.dataCy ? `${props.dataCy}-error` : undefined}
+        error={error}
+        id={errorId}
+        label="Choose customer error"
+      />
     </div>
   );
 };

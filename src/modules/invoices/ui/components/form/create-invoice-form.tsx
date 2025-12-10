@@ -20,7 +20,6 @@ import { createInitialFailedFormState } from "@/shared/forms/infrastructure/crea
 import type { FieldError } from "@/shared/forms/types/form.types";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
-import { Label } from "@/ui/atoms/label";
 import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
 
 const INITIAL_STATE = createInitialFailedFormState<CreateInvoiceFieldNames>(
@@ -79,16 +78,13 @@ export const CreateInvoiceForm = ({
             error={fieldErrors?.sensitiveData as FieldError | undefined}
           />
 
-          <div className="mb-4">
-            <Label htmlFor="customerId" text="Choose customer" />
-            <CustomerSelect
-              customers={customers}
-              dataCy="customer-select"
-              defaultValue=""
-              disabled={pending}
-              error={fieldErrors?.customerId as FieldError | undefined}
-            />
-          </div>
+          <CustomerSelect
+            customers={customers}
+            dataCy="customer-select"
+            defaultValue=""
+            disabled={pending}
+            error={fieldErrors?.customerId as FieldError | undefined}
+          />
 
           <InvoiceAmountInput
             dataCy="amount-input"

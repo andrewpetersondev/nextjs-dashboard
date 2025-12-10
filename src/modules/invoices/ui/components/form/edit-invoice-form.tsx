@@ -25,7 +25,6 @@ import type {
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
-import { Label } from "@/ui/atoms/label";
 
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
@@ -53,22 +52,18 @@ function FormFields({
     <div className="rounded-md bg-bg-secondary p-4 md:p-6">
       <InvoiceDate data-cy="date-input" defaultValue={currentInvoice.date} />
 
-      {/*  TODO: Can I safely remove undefined from the error? */}
       <SensitiveData
         disabled={pending}
         error={errors.sensitiveData as FieldError | undefined}
       />
 
-      <div className="mb-4">
-        <Label htmlFor="customer" text="Choose customer" />
-        <CustomerSelect
-          customers={customers}
-          dataCy="customer-select"
-          defaultValue={currentInvoice.customerId}
-          disabled={pending}
-          error={errors.customerId as FieldError | undefined}
-        />
-      </div>
+      <CustomerSelect
+        customers={customers}
+        dataCy="customer-select"
+        defaultValue={currentInvoice.customerId}
+        disabled={pending}
+        error={errors.customerId as FieldError | undefined}
+      />
 
       <InvoiceAmountInput
         dataCy="amount-input"
