@@ -7,7 +7,7 @@ import { RevenueChartSkeleton } from "@/modules/revenues/ui/components/revenue-c
 import { CardWrapper } from "@/shell/dashboard/components/cards";
 import type { DashboardCardData } from "@/shell/dashboard/types";
 import { H1 } from "@/ui/atoms/typography/headings";
-import { CardsSkeleton } from "@/ui/feedback/skeleton/skeletons";
+import { CardsSkeleton } from "@/ui/skeletons/skeletons";
 
 interface DashboardProps {
   readonly dashboardCardData: DashboardCardData;

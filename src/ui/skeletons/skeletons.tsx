@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { shimmer } from "@/ui/feedback/skeleton/skeletons.constants";
+import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
 export function CardSkeleton(): JSX.Element {
   return (

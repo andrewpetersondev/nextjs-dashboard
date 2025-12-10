@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { TableRowSkeleton } from "@/ui/feedback/skeleton/skeletons";
-import { shimmer } from "@/ui/feedback/skeleton/skeletons.constants";
+import { TableRowSkeleton } from "@/ui/skeletons/skeletons";
+import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
 export function InvoiceSkeleton(): JSX.Element {
   return (
