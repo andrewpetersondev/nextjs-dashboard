@@ -2,7 +2,6 @@ import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import {
-  ONE_SECOND_MS,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
@@ -15,6 +14,8 @@ import { SessionManager } from "@/modules/auth/server/application/services/sessi
 import type { UserId } from "@/shared/branding/brands";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as realLogger } from "@/shared/logging/infrastructure/logging.client";
+
+const ONE_SECOND_MS = 1000 as const;
 
 class InMemoryCookie implements SessionPort {
   private value?: string;

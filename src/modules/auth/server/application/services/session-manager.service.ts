@@ -1,7 +1,6 @@
 import "server-only";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import {
-  ONE_SECOND_MS,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
@@ -19,6 +18,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
+const ONE_SECOND_MS = 1000 as const;
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
   SESSION_DURATION_MS / ONE_SECOND_MS,
