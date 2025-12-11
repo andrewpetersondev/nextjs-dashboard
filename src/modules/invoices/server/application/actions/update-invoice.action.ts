@@ -9,11 +9,11 @@ import {
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server-core/events/invoice/invoice-event.types";
+} from "@/server/events/invoice/invoice-event.types";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import {
@@ -32,7 +32,7 @@ async function publishUpdatedEvent(
   previousInvoice: InvoiceDto,
   updatedInvoice: InvoiceDto,
 ): Promise<void> {
-  const { EventBus } = await import("@/server-core/events/event-bus");
+  const { EventBus } = await import("@/server/events/event-bus");
   await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.updated, {
     eventId: crypto.randomUUID(),
     eventTimestamp: new Date().toISOString(),

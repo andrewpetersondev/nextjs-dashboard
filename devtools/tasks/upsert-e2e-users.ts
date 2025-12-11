@@ -3,8 +3,8 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
-import { sessions } from "@/server-core/db/schema/sessions";
-import { users } from "@/server-core/db/schema/users";
+import { sessions } from "@/server/db/schema/sessions";
+import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 

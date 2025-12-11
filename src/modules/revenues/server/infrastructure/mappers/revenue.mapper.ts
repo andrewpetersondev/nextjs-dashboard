@@ -7,7 +7,7 @@ import {
   isNonNegativeNumber,
   validateCondition,
 } from "@/modules/revenues/server/infrastructure/utils/validation";
-import type { RevenueRow } from "@/server-core/db/schema/revenues";
+import type { RevenueRow } from "@/server/db/schema/revenues";
 import {
   toPeriod,
   toRevenueId,

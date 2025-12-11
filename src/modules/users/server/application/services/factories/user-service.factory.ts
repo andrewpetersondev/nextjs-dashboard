@@ -3,7 +3,7 @@ import { BcryptPasswordHasherAdapter } from "@/modules/auth/server/infrastructur
 import { UserService } from "@/modules/users/server/application/services/user.service";
 import { UserRepositoryAdapter } from "@/modules/users/server/infrastructure/repository/adapters/user-repository.adapter";
 import { UserRepositoryImpl } from "@/modules/users/server/infrastructure/repository/user.repository";
-import type { AppDatabase } from "@/server-core/db/db.connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export function createUserService(db: AppDatabase): UserService {

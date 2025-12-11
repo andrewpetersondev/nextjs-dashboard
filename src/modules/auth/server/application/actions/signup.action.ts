@@ -11,7 +11,7 @@ import {
 } from "@/modules/auth/domain/schema/auth.schema";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import type { FormResult } from "@/shared/forms/types/form-result.types";

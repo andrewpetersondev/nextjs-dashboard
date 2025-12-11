@@ -3,7 +3,7 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { AppDatabase } from "@/server-core/db/db.connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { upsertRevenue } from "./upsert.revenue.dal";
 

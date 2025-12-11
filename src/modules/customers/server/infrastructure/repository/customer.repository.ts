@@ -11,7 +11,7 @@ import {
 import { fetchCustomersSelectDal } from "@/modules/customers/server/infrastructure/repository/dal/fetch-customers-select";
 import { fetchFilteredCustomersDal } from "@/modules/customers/server/infrastructure/repository/dal/fetch-filtered-customers";
 import { fetchTotalCustomersCountDal } from "@/modules/customers/server/infrastructure/repository/dal/fetch-total-count";
-import type { AppDatabase } from "@/server-core/db/db.connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 
 /**
  * Repository for Customers.

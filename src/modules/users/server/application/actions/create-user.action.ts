@@ -9,7 +9,7 @@ import {
   CreateUserFormSchema,
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import {

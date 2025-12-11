@@ -6,7 +6,7 @@ import {
 } from "@/modules/revenues/server/application/mappers/revenue-dto.mapper";
 import { RevenueStatisticsService } from "@/modules/revenues/server/application/services/revenue-statistics.service";
 import { RevenueRepository } from "@/modules/revenues/server/infrastructure/repository/revenue.repository";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

@@ -2,7 +2,7 @@ import "server-only";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
-import type { NewUserRow, UserRow } from "@/server-core/db/schema/users";
+import type { NewUserRow, UserRow } from "@/server/db/schema/users";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**

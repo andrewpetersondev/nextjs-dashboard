@@ -1,7 +1,7 @@
 "use server";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**

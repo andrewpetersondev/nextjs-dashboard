@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { users } from "@/server-core/db/schema/users";
+import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 import { firstRow } from "../seed-support/pg-utils";
 

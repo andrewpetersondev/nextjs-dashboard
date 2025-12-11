@@ -1,4 +1,4 @@
-import type { CustomerRow } from "@/server-core/db/schema";
+import type { CustomerRow } from "@/server/db/schema";
 import type { CustomerId } from "@/shared/branding/brands";
 
 /**

@@ -10,11 +10,11 @@ import {
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/server/application/utils/error-messages";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server-core/events/invoice/invoice-event.types";
+} from "@/server/events/invoice/invoice-event.types";
 import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
 import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
 import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";
@@ -78,7 +78,7 @@ export async function createInvoiceAction(
 
     const invoice = result.value;
 
-    const { EventBus } = await import("@/server-core/events/event-bus");
+    const { EventBus } = await import("@/server/events/event-bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),

@@ -4,11 +4,11 @@ import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server-core/events/invoice/invoice-event.types";
+} from "@/server/events/invoice/invoice-event.types";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { Err, Ok } from "@/shared/result/result";
@@ -55,7 +55,7 @@ export async function deleteInvoiceAction(
     const invoice: InvoiceDto = deleteResult.value;
 
     // Publish event (may throw) and revalidate cache
-    const { EventBus } = await import("@/server-core/events/event-bus");
+    const { EventBus } = await import("@/server/events/event-bus");
     await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.deleted, {
       eventId: crypto.randomUUID(),
       eventTimestamp: new Date().toISOString(),

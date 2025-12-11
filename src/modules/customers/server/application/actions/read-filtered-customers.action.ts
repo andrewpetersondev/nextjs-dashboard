@@ -3,7 +3,7 @@
 import { toFormattedCustomersTableRow } from "@/modules/customers/domain/mappers";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
 import { createCustomersRepository } from "@/modules/customers/server/infrastructure/repository/customer.repository";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 
 /**
  * Server action to fetch filtered customers for the customers table.

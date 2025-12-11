@@ -10,7 +10,7 @@ import { fetchUserByIdDal } from "@/modules/users/server/infrastructure/reposito
 import { fetchUsersPagesDal } from "@/modules/users/server/infrastructure/repository/dal/fetch-users-pages.dal";
 import { updateUserDal } from "@/modules/users/server/infrastructure/repository/dal/update-user.dal";
 import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
-import type { AppDatabase } from "@/server-core/db/db.connection";
+import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserId } from "@/shared/branding/brands";
 
 export class UserRepositoryImpl {

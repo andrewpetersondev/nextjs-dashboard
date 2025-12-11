@@ -5,7 +5,7 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
-import type { invoices } from "@/server-core/db/schema/invoices";
+import type { invoices } from "@/server/db/schema/invoices";
 import type { Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import { SEED_CONFIG } from "./constants";

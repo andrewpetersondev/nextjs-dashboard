@@ -2,8 +2,8 @@ import "server-only";
 import { asc } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerSelectRowRaw } from "@/modules/customers/domain/types";
-import type { AppDatabase } from "@/server-core/db/db.connection";
-import { customers } from "@/server-core/db/schema/customers";
+import type { AppDatabase } from "@/server/db/db.connection";
+import { customers } from "@/server/db/schema/customers";
 import { AppError } from "@/shared/errors/core/app-error.class";
 
 /**

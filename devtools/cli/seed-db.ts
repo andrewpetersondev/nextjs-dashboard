@@ -1,5 +1,5 @@
-import { invoices } from "@/server-core/db/schema/invoices";
-import { type NewUserRow, users } from "@/server-core/db/schema/users";
+import { invoices } from "@/server/db/schema/invoices";
+import { type NewUserRow, users } from "@/server/db/schema/users";
 import {
   buildRandomInvoiceRows,
   buildUserSeed,

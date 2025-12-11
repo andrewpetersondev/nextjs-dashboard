@@ -11,7 +11,7 @@ import {
   EditUserFormSchema,
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
-import { getAppDb } from "@/server-core/db/db.connection";
+import { getAppDb } from "@/server/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
 import { validateForm } from "@/shared/forms/server/validate-form";

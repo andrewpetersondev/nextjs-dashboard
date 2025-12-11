@@ -3,8 +3,8 @@ import { asc, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
 import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
-import type { AppDatabase } from "@/server-core/db/db.connection";
-import { users } from "@/server-core/db/schema/users";
+import type { AppDatabase } from "@/server/db/db.connection";
+import { users } from "@/server/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error.class";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 

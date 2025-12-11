@@ -3,13 +3,13 @@ import "server-only";
 import type {
   BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server-core/events/invoice/invoice-event.types";
+} from "@/server/events/invoice/invoice-event.types";
 
 /**
  * Module augmentation for the EventBus DomainEvents map.
  * Centralizes known event names and payload types for strong typing.
  */
-declare module "@/server-core/events/event-bus" {
+declare module "@/server/events/event-bus" {
   type InvoiceEventNames = (typeof INVOICE_EVENTS)[keyof typeof INVOICE_EVENTS];
 
   type InvoiceEventsMap = {

@@ -2,8 +2,8 @@ import "server-only";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
-import type { AppDatabase } from "@/server-core/db/db.connection";
-import { demoUserCounters } from "@/server-core/db/schema/demo-users";
+import type { AppDatabase } from "@/server/db/db.connection";
+import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 

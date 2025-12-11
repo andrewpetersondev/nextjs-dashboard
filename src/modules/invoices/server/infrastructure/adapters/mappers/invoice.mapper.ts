@@ -6,7 +6,7 @@ import type {
   InvoiceServiceEntity,
 } from "@/modules/invoices/domain/invoice.entity";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
-import type { InvoiceRow } from "@/server-core/db/schema/invoices";
+import type { InvoiceRow } from "@/server/db/schema/invoices";
 import {
   toCustomerId,
   toInvoiceId,
