@@ -6,7 +6,7 @@ import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
-import type { FlatEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
+import type { AuthEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 import type {
   SessionPort,
   SessionTokenCodecPort,
@@ -35,7 +35,7 @@ class InMemoryCookie implements SessionPort {
 // Extremely simple JWT stub that just base64-encodes/decodes JSON without signing.
 class JsonStubJwt implements SessionTokenCodecPort {
   // biome-ignore lint/suspicious/useAwait: interface requires async methods
-  async decode(token: string): Promise<FlatEncryptPayload | undefined> {
+  async decode(token: string): Promise<AuthEncryptPayload | undefined> {
     try {
       const json = Buffer.from(token, "base64").toString("utf8");
       return Promise.resolve(JSON.parse(json));
@@ -45,7 +45,7 @@ class JsonStubJwt implements SessionTokenCodecPort {
   }
   // biome-ignore lint/suspicious/useAwait: interface requires async methods
   async encode(
-    claims: FlatEncryptPayload,
+    claims: AuthEncryptPayload,
     _expiresAtMs: number,
   ): Promise<string> {
     return Promise.resolve(

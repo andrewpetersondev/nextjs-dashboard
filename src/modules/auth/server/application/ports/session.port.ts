@@ -1,6 +1,6 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import type { FlatEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
+import type { AuthEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 
 export interface SessionPort {
   delete(): Promise<void>;
@@ -9,6 +9,6 @@ export interface SessionPort {
 }
 
 export interface SessionTokenCodecPort {
-  decode(token: string): Promise<FlatEncryptPayload | undefined>;
-  encode(claims: FlatEncryptPayload, expiresAtMs: number): Promise<string>;
+  decode(token: string): Promise<AuthEncryptPayload | undefined>;
+  encode(claims: AuthEncryptPayload, expiresAtMs: number): Promise<string>;
 }

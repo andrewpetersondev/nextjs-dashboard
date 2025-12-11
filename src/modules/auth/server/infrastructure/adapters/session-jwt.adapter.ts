@@ -1,6 +1,6 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
-import type { FlatEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
+import type { AuthEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -63,7 +63,7 @@ export class SessionJwtAdapter {
    * @throws Error if signing fails (e.g., invalid claims, crypto errors)
    */
   async encode(
-    claims: FlatEncryptPayload,
+    claims: AuthEncryptPayload,
     expiresAtMs: number,
   ): Promise<string> {
     try {
@@ -94,9 +94,9 @@ export class SessionJwtAdapter {
    * Note: This method returns undefined for both expected failures (expired tokens)
    * and unexpected failures (configuration errors). Failures are logged as warnings.
    */
-  async decode(token: string): Promise<FlatEncryptPayload | undefined> {
+  async decode(token: string): Promise<AuthEncryptPayload | undefined> {
     try {
-      const { payload } = await jwtVerify<FlatEncryptPayload>(
+      const { payload } = await jwtVerify<AuthEncryptPayload>(
         token,
         this.encodedKey,
         this.verifyOptions,

@@ -10,13 +10,15 @@ export interface SessionVerificationResult {
   role: UserRole;
 }
 
-export type FlatEncryptPayload = {
+export type AuthEncryptPayload = FlatEncryptPayload<UserRole>;
+
+export type FlatEncryptPayload<R = string> = {
+  exp?: number;
   expiresAt: number;
-  role: UserRole;
+  iat?: number;
+  role: R;
   sessionStart: number;
   userId: string;
-  exp?: number;
-  iat?: number;
 };
 
 /**
