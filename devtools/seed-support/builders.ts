@@ -1,10 +1,10 @@
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
+import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { invoices } from "@/server/db/schema/invoices";
 import type { Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
@@ -23,7 +23,7 @@ import {
 export async function buildUserSeed(): Promise<
   ReadonlyArray<{
     readonly email: string;
-    readonly password: PasswordHash;
+    readonly password: Hash;
     readonly role: UserRole;
     readonly username: string;
   }>

@@ -1,6 +1,6 @@
 import "server-only";
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { UserId } from "@/shared/branding/brands";
 
 /**
@@ -10,7 +10,7 @@ import type { UserId } from "@/shared/branding/brands";
 export interface UserEntity {
   readonly email: string;
   readonly id: UserId;
-  readonly password: PasswordHash;
+  readonly password: Hash;
   readonly role: UserRole;
   readonly sensitiveData: string;
   readonly username: string;
@@ -22,7 +22,7 @@ export interface UserEntity {
  */
 export interface CreateUserProps {
   readonly email: string;
-  readonly password: PasswordHash;
+  readonly password: Hash;
   readonly role: UserRole;
   readonly username: string;
 }

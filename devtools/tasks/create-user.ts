@@ -1,15 +1,15 @@
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import {
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
+import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 
 export async function createUser(user: {
   email: string;
-  password: PasswordHash;
+  password: Hash;
   username: string;
   role?: UserRole;
 }): Promise<void> {

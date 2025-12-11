@@ -9,12 +9,12 @@
 
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
 } from "@/modules/auth/domain/roles/auth.roles";
+import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { UserId } from "@/shared/branding/brands";
 import { sessions } from "./sessions";
 
@@ -24,9 +24,7 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
   id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
-  password: varchar("password", { length: 255 })
-    .notNull()
-    .$type<PasswordHash>(),
+  password: varchar("password", { length: 255 }).notNull().$type<Hash>(),
   role: roleEnum("role").default(USER_ROLE).notNull().$type<UserRole>(),
   sensitiveData: varchar("sensitive_data", { length: 255 })
     .notNull()

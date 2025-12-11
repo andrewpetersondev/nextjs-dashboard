@@ -1,5 +1,5 @@
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { UserId } from "@/shared/branding/brands";
 
 /**
@@ -8,7 +8,7 @@ import type { UserId } from "@/shared/branding/brands";
 export interface AuthUserEntity {
   readonly email: string;
   readonly id: UserId;
-  readonly password: PasswordHash;
+  readonly password: Hash;
   readonly role: UserRole;
   readonly sensitiveData: string;
   readonly username: string;
@@ -21,11 +21,11 @@ export interface AuthLoginRepoInput {
 
 /**
  * Unified signup payload used across Service → Repo → DAL boundaries.
- * Keeps strong types (PasswordHash, UserRole).
+ * Keeps strong types (Hash, UserRole).
  */
 export interface AuthSignupPayload {
   readonly email: string;
-  readonly password: PasswordHash;
+  readonly password: Hash;
   readonly role: UserRole;
   readonly username: string;
 }

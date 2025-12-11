@@ -4,16 +4,16 @@ import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
 import { isValidDemoUserCounter } from "@/modules/auth/domain/demo-user/demo-user.guards";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import { asPasswordHash } from "@/modules/auth/domain/password/password.types";
-import { createRandomPassword } from "@/modules/auth/domain/password/password-generator";
+import { createRandomPassword } from "@/modules/auth/domain/password/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import type {
   LoginData,
   SignupData,
 } from "@/modules/auth/domain/schema/auth.schema";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
+import type { HashingService } from "@/server/crypto/hashing/hashing.service";
+import { asHash } from "@/server/crypto/hashing/hashing.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import { Err, Ok } from "@/shared/result/result";
@@ -24,17 +24,17 @@ import type { Result } from "@/shared/result/result.types";
  *
  * @remarks
  * - Returns discriminated Result objects instead of throwing.
- * - Depends on small ports (AuthUserRepositoryPort, PasswordHasherPort) for testability.
+ * - Depends on small ports (AuthUserRepositoryPort, HashingService) for testability.
  * - Accepts optional requestId for tracing across layers.
  */
 export class AuthUserService {
   private readonly repo: AuthUserRepositoryPort;
-  private readonly hasher: PasswordHasherPort;
+  private readonly hasher: HashingService;
   private readonly requestId?: string;
 
   constructor(
     repo: AuthUserRepositoryPort,
-    hasher: PasswordHasherPort,
+    hasher: HashingService,
     requestId?: string,
   ) {
     this.repo = repo;
@@ -226,7 +226,7 @@ export class AuthUserService {
 
       const passwordOk = await this.hasher.compare(
         input.password,
-        asPasswordHash(user.password),
+        asHash(user.password),
       );
 
       if (!passwordOk) {

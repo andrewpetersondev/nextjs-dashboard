@@ -1,10 +1,10 @@
 import "server-only";
-import type { PasswordHash } from "@/modules/auth/domain/password/password.types";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { Hash } from "@/server/crypto/hashing/hashing.types";
 
 export type UserPersistencePatch = {
   email?: string;
-  password?: PasswordHash;
+  password?: Hash;
   role?: UserRole;
   username?: string;
 };
