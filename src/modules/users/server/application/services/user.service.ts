@@ -1,5 +1,4 @@
 import "server-only";
-import type { PasswordHasherPort } from "@/modules/auth/server/application/ports/password-hasher.port";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import type { CreateUserProps } from "@/modules/users/domain/user.entity";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
@@ -10,6 +9,7 @@ import type {
 import type { UserRepositoryPort } from "@/modules/users/server/application/ports/user-repository.port";
 import { userEntityToDto } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
+import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
@@ -18,13 +18,13 @@ import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 export class UserService {
-  private readonly repo: UserRepositoryPort;
-  private readonly hasher: PasswordHasherPort;
+  private readonly hasher: HashingService;
   private readonly logger: LoggingClientContract;
+  private readonly repo: UserRepositoryPort;
 
   constructor(
     repo: UserRepositoryPort,
-    hasher: PasswordHasherPort,
+    hasher: HashingService,
     logger: LoggingClientContract,
   ) {
     this.repo = repo;
@@ -34,7 +34,6 @@ export class UserService {
 
   async createUser(input: CreateUserData): Promise<Result<UserDto, AppError>> {
     try {
-      // Hash password before sending to repo
       const hashedPassword = await this.hasher.hash(input.password);
 
       const creationParams: CreateUserProps = {
@@ -78,10 +77,11 @@ export class UserService {
       let finalPatch: UserPersistencePatch;
 
       if (patch.password) {
+        const hashedPassword = await this.hasher.hash(patch.password);
         finalPatch = {
           ...patch,
-          password: await this.hasher.hash(patch.password),
-        } as UserPersistencePatch;
+          password: hashedPassword,
+        };
       } else {
         finalPatch = { ...patch } as UserPersistencePatch;
       }

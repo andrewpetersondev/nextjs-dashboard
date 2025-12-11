@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AuthUserRepositoryPort } from "../../ports/auth-user-repository.port";
-import type { PasswordHasherPort } from "../../ports/password-hasher.port";
-import { AuthUserService } from "../auth-user.service";
+import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
+import { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
+import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: test suite requires multiple scenarios
 describe("AuthUserService", () => {
   let mockRepo: AuthUserRepositoryPort;
-  let mockHasher: PasswordHasherPort;
+  let mockHasher: HashingService;
   let service: AuthUserService;
 
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe("AuthUserService", () => {
     mockHasher = {
       compare: vi.fn(),
       hash: vi.fn(),
-    };
+    } as unknown as HashingService;
 
     service = new AuthUserService(mockRepo, mockHasher);
   });
