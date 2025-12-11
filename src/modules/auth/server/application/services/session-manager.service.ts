@@ -1,34 +1,82 @@
 import "server-only";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import {
-  MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
 import { userIdCodec } from "@/modules/auth/domain/sessions/session.schemas";
-import {
-  absoluteLifetime,
-  buildSessionCookieOptions,
-  timeLeftMs,
-} from "@/modules/auth/domain/sessions/session.utils";
 import type { UpdateSessionResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import type {
   SessionPort,
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
 import type { UserId } from "@/shared/branding/brands";
+import { isProd } from "@/shared/config/env-shared";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
+const SESSION_COOKIE_SECURE_FALLBACK = false as const;
+const SESSION_COOKIE_PATH = "/" as const;
+const SESSION_COOKIE_SAMESITE = "lax" as const;
+const SESSION_COOKIE_HTTPONLY = true as const;
+const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
+const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
+  SESSION_DURATION_MS / ONE_SECOND_MS,
+);
+
+/** Compute absolute lifetime status from immutable sessionStart. */
+function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
+  exceeded: boolean;
+  age: number;
+} {
+  const start = user?.sessionStart ?? 0;
+  const age = Date.now() - start;
+  return { age, exceeded: !start || age > MAX_ABSOLUTE_SESSION_MS };
+}
+
+/**
+ * Milliseconds remaining until token expiry (negative if expired).
+ *
+ * Refactored to support the new flat JWT claims shape. Prefers `expiresAt`
+ * (milliseconds) when present; falls back to `exp` (seconds) for legacy callers.
+ */
+function timeLeftMs(payload?: { expiresAt?: number; exp?: number }): number {
+  if (payload?.expiresAt && Number.isFinite(payload.expiresAt)) {
+    return payload.expiresAt - Date.now();
+  }
+  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
+  return expMs - Date.now();
+}
+
+const buildSessionCookieOptions = (expiresAtMs: number) =>
+  ({
+    expires: new Date(expiresAtMs),
+    httpOnly: SESSION_COOKIE_HTTPONLY,
+    maxAge: ROLLING_COOKIE_MAX_AGE_S,
+    path: SESSION_COOKIE_PATH,
+    sameSite: SESSION_COOKIE_SAMESITE,
+    secure: isProd() ? true : SESSION_COOKIE_SECURE_FALLBACK,
+  }) as const;
+
 export interface SessionUser {
   readonly id: UserId;
   readonly role: UserRole;
 }
 
+/**
+ * Manages session lifecycle including establishment, rotation, and cleanup.
+ *
+ * Handles rolling session behavior with a 15-minute idle timeout and 30-day absolute limit.
+ * Uses Result pattern for error handling and JWT tokens stored in secure cookies.
+ *
+ * @example
+ * const manager = new SessionManager(cookieAdapter, jwtCodec, logger);
+ * const result = await manager.establish({ id: userId, role: "admin" });
+ */
 export class SessionManager {
   private readonly cookie: SessionPort;
   private readonly jwt: SessionTokenCodecPort;
@@ -44,6 +92,15 @@ export class SessionManager {
     this.logger = logger.child({ scope: "service" });
   }
 
+  /**
+   * Establishes a new session for the given user.
+   *
+   * Creates a JWT token with role and session metadata, sets secure cookie,
+   * and logs the establishment event.
+   *
+   * @param user - User object containing id and role
+   * @returns Result containing the user on success, or AppError on failure
+   */
   async establish(user: SessionUser): Promise<Result<SessionUser, AppError>> {
     const requestId = crypto.randomUUID();
     try {
@@ -74,6 +131,11 @@ export class SessionManager {
     }
   }
 
+  /**
+   * Clears the current session by deleting the cookie.
+   *
+   * @returns Result with void on success, or AppError on failure
+   */
   async clear(): Promise<Result<void, AppError>> {
     const requestId = crypto.randomUUID();
     try {
@@ -93,6 +155,14 @@ export class SessionManager {
     }
   }
 
+  /**
+   * Reads the current session from the cookie.
+   *
+   * Decodes the JWT token and extracts user role and id.
+   * Returns undefined if no valid session exists.
+   *
+   * @returns Object with role and userId, or undefined if no session
+   */
   async read(): Promise<{ role: UserRole; userId: UserId } | undefined> {
     try {
       const token = await this.cookie.get();
@@ -119,28 +189,33 @@ export class SessionManager {
     }
   }
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
+  /**
+   * Rotates the session token if necessary based on refresh threshold.
+   *
+   * Extends session expiration if under 2 minutes remaining, respecting the
+   * 30-day absolute lifetime limit.
+   *
+   * @returns UpdateSessionResult containing refresh status and metadata
+   */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async rotate(): Promise<UpdateSessionResult> {
     try {
       const current = await this.cookie.get();
       if (!current) {
         return { reason: "no_cookie", refreshed: false };
       }
-      // Decode using injected JWT codec port (flat claims)
+
       const decoded = await this.jwt.decode(current);
-      if (!decoded) {
+      if (!decoded?.userId) {
         return { reason: "invalid_or_missing_user", refreshed: false };
       }
-      const user = decoded?.userId
-        ? {
-            role: decoded.role,
-            sessionStart: decoded.sessionStart,
-            userId: userIdCodec.decode(decoded.userId),
-          }
-        : undefined;
-      if (!user?.userId) {
-        return { reason: "invalid_or_missing_user", refreshed: false };
-      }
+
+      const user = {
+        role: decoded.role,
+        sessionStart: decoded.sessionStart,
+        userId: userIdCodec.decode(decoded.userId),
+      };
+
       const { exceeded, age } = absoluteLifetime(user);
       if (exceeded) {
         await this.cookie.delete();
@@ -163,33 +238,20 @@ export class SessionManager {
           userId: user.userId,
         };
       }
-      // Use helpers with the new flat claims shape
+
       const remaining = timeLeftMs({
         exp: decoded.exp,
         expiresAt: decoded.expiresAt,
       });
       if (remaining > SESSION_REFRESH_THRESHOLD_MS) {
-        this.logger.debug("Session re-issue skipped", {
-          logging: { reason: "not_needed", timeLeftMs: remaining },
-        });
         return {
           reason: "not_needed",
           refreshed: false,
           timeLeftMs: remaining,
         };
       }
-      // Re-issue token using original sessionStart for rolling behavior
-      const now = user.sessionStart;
-      const expiresAtMs = now + SESSION_DURATION_MS;
-      const claims = {
-        exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
-        expiresAt: expiresAtMs,
-        iat: Math.floor(now / ONE_SECOND_MS),
-        role: user.role,
-        sessionStart: now,
-        userId: user.userId,
-      };
-      const token = await this.jwt.encode(claims, expiresAtMs);
+
+      const { expiresAtMs, token } = await this.issueToken(user);
       await this.cookie.set(token, buildSessionCookieOptions(expiresAtMs));
       this.logger.info("Session token re-issued", {
         logging: {
@@ -212,5 +274,28 @@ export class SessionManager {
       });
       return { reason: "unexpected_error", refreshed: false };
     }
+  }
+  /**
+   * Issues a new session token with updated expiration.
+   *
+   * @param user - User with session metadata
+   * @returns Encoded JWT token and expiration timestamp
+   */
+  private async issueToken(user: {
+    role: UserRole;
+    userId: UserId;
+  }): Promise<{ token: string; expiresAtMs: number }> {
+    const now = Date.now();
+    const expiresAtMs = now + SESSION_DURATION_MS;
+    const claims = {
+      exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
+      expiresAt: expiresAtMs,
+      iat: Math.floor(now / ONE_SECOND_MS),
+      role: user.role,
+      sessionStart: now,
+      userId: user.userId,
+    };
+    const token = await this.jwt.encode(claims, expiresAtMs);
+    return { expiresAtMs, token };
   }
 }
