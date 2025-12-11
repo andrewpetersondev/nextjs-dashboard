@@ -1,13 +1,21 @@
 import {
   MAX_ABSOLUTE_SESSION_MS,
   ONE_SECOND_MS,
-  ROLLING_COOKIE_MAX_AGE_S,
-  SESSION_COOKIE_HTTPONLY,
-  SESSION_COOKIE_PATH,
-  SESSION_COOKIE_SAMESITE,
-  SESSION_COOKIE_SECURE_FALLBACK,
+  SESSION_DURATION_MS,
 } from "@/modules/auth/domain/sessions/session.constants";
 import { isProd } from "@/shared/config/env-shared";
+
+const SESSION_COOKIE_SECURE_FALLBACK = false as const;
+
+const SESSION_COOKIE_PATH = "/" as const;
+
+const SESSION_COOKIE_SAMESITE = "lax" as const;
+
+const SESSION_COOKIE_HTTPONLY = true as const;
+
+const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
+  SESSION_DURATION_MS / ONE_SECOND_MS,
+);
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 export function absoluteLifetime(user?: {

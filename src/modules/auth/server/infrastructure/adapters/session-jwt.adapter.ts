@@ -1,11 +1,5 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
-import {
-  CLOCK_TOLERANCE_SEC,
-  JWT_ALG_HS256,
-  JWT_TYP_JWT,
-  MIN_HS256_KEY_LENGTH,
-} from "@/modules/auth/domain/sessions/session.constants";
 import type { FlatEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 import {
   SESSION_AUDIENCE,
@@ -13,6 +7,11 @@ import {
   SESSION_SECRET,
 } from "@/server/config/env-server";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
+
+const MIN_HS256_KEY_LENGTH = 32 as const;
+const CLOCK_TOLERANCE_SEC = 5 as const;
+const JWT_ALG_HS256 = "HS256" as const;
+const JWT_TYP_JWT = "JWT" as const;
 
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
   new TextEncoder();

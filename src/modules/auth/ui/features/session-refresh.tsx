@@ -1,10 +1,5 @@
 "use client";
 import { useEffect, useRef } from "react";
-import {
-  SESSION_KICKOFF_TIMEOUT_MS,
-  SESSION_REFRESH_JITTER_MS,
-  SESSION_REFRESH_PING_MS,
-} from "@/modules/auth/domain/sessions/session.constants";
 import type { UpdateSessionResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/ui/auth-ui.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
@@ -15,9 +10,10 @@ import {
 } from "@/shared/http/http-headers";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
-const INTERVAL_MS = SESSION_REFRESH_PING_MS;
-const kickoffTimeout = SESSION_KICKOFF_TIMEOUT_MS;
-const JITTER_MS = SESSION_REFRESH_JITTER_MS;
+// biome-ignore lint/style/noMagicNumbers: <60 x 1 second>
+const REFRESH_INTERVAL_MS = 60 * 1000;
+const KICKOFF_TIMEOUT_MS = 1500;
+const REFRESH_JITTER_MS = 1000;
 
 /**
  * Checks if the session needs a refresh and performs the request.
@@ -91,7 +87,7 @@ function useSessionRefresh(): void {
       () => {
         ping();
       },
-      kickoffTimeout + Math.floor(Math.random() * JITTER_MS),
+      KICKOFF_TIMEOUT_MS + Math.floor(Math.random() * REFRESH_JITTER_MS),
     );
 
     // Periodic checks; ping also runs on focus/visibilitychange.
@@ -99,7 +95,7 @@ function useSessionRefresh(): void {
       () => {
         ping();
       },
-      INTERVAL_MS + Math.floor(Math.random() * JITTER_MS),
+      REFRESH_INTERVAL_MS + Math.floor(Math.random() * REFRESH_JITTER_MS),
     );
 
     const onFocus = (): void => {
