@@ -1,6 +1,7 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import type { CookiePort } from "@/server/cookies/cookie.port";
+import { isProd } from "@/shared/config/env-shared";
 
 /**
  * Generic cookie service with secure defaults.
@@ -30,7 +31,7 @@ export class CookieService {
       httpOnly: true,
       path: "/",
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: isProd(),
       ...options,
     };
     await this.adapter.set(name, value, secureOptions);

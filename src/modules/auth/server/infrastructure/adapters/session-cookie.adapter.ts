@@ -1,20 +1,21 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/domain/sessions/session.constants";
+import { createCookieService } from "@/server/cookies/cookie.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
- * Adapter for managing session cookies using Next.js cookie store.
+ * Adapter for managing session cookies using a shared CookieService.
  * Provides a clean interface for session cookie operations.
  */
 export class SessionCookieAdapter {
+  private readonly cookies = createCookieService();
+
   /**
    * Deletes the session cookie, effectively logging out the user.
    */
   async delete(): Promise<void> {
-    const cookieStore = await cookies();
-    cookieStore.delete(SESSION_COOKIE_NAME);
+    await this.cookies.delete(SESSION_COOKIE_NAME);
     logger.info("Session cookie deleted", {
       logging: { context: "SessionCookieAdapter.delete" },
     });
@@ -25,8 +26,7 @@ export class SessionCookieAdapter {
    * @returns The session cookie value, or undefined if not set
    */
   async get(): Promise<string | undefined> {
-    const cookieStore = await cookies();
-    return cookieStore.get(SESSION_COOKIE_NAME)?.value;
+    return await this.cookies.get(SESSION_COOKIE_NAME);
   }
 
   /**
@@ -35,8 +35,7 @@ export class SessionCookieAdapter {
    * @param options - Cookie configuration options (httpOnly, secure, etc.)
    */
   async set(value: string, options: Partial<ResponseCookie>): Promise<void> {
-    const cookieStore = await cookies();
-    cookieStore.set(SESSION_COOKIE_NAME, value, options);
+    await this.cookies.set(SESSION_COOKIE_NAME, value, options);
     logger.debug("Session cookie set", {
       logging: { context: "SessionCookieAdapter.set" },
     });

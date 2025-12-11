@@ -2,18 +2,10 @@ import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
 import { SessionRefresh } from "@/modules/auth/ui/features/session-refresh";
+import { isBannerDismissed } from "@/modules/banner/server/banner-cookie";
+import { OneTimeBanner } from "@/modules/banner/ui/one-time-banner";
 import { notoSans } from "@/ui/styles/fonts";
 
-interface RootLayoutProps {
-  children: ReactNode;
-}
-
-/**
- * Root layout component.
- * Wraps the entire application.
- * @param props - Layout props
- * @returns The root layout
- */
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
   description: "The official Next.js Learn Dashboard is built with App Router.",
@@ -24,13 +16,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}): Promise<JSX.Element> {
+  const dismissed = await isBannerDismissed();
+
   return (
     <html className="scheme-light-dark h-full" lang="en">
       <body
         className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
       >
         <SessionRefresh />
+        {!dismissed && <OneTimeBanner />}
         {children}
       </body>
     </html>

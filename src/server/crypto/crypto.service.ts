@@ -3,30 +3,19 @@ import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { Hash } from "@/server/crypto/hashing/hashing.types";
 
 /**
- * Generic crypto service composing hashing, signing, etc.
+ * Small facade over shared crypto capabilities.
+ *
+ * @remarks
+ * Keep this minimal. Add methods only when you have at least two consumers.
  */
 export class CryptoService {
-  private readonly hashing: ReturnType<typeof createHashingService>;
-
-  constructor() {
-    this.hashing = createHashingService();
-  }
-
-  // Hashing methods (delegates to HashingService)
-  async hash(raw: string): Promise<Hash> {
-    return await this.hashing.hash(raw);
-  }
+  private readonly hashing = createHashingService();
 
   async compare(raw: string, hash: Hash): Promise<boolean> {
     return await this.hashing.compare(raw, hash);
   }
 
-  // Placeholder for signing (e.g., JWT) - expand as needed
-  async sign(
-    payload: Record<string, unknown>,
-    secret: string,
-  ): Promise<string> {
-    // Implement signing logic (e.g., using jose or crypto)
-    throw new Error("Signing not implemented yet");
+  async hash(raw: string): Promise<Hash> {
+    return await this.hashing.hash(raw);
   }
 }
