@@ -1,10 +1,10 @@
 "use server";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { LOGIN_PATH } from "@/modules/auth/domain/auth.constants";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { SessionVerificationResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
+import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
@@ -20,7 +20,7 @@ export const verifySessionOptimistic = cache(
         AuthLog.action.login.failure(),
         { additionalData: { reason: "no_session" } },
       );
-      redirect(LOGIN_PATH);
+      redirect(ROUTES.auth.login);
     }
     return {
       isAuthorized: true,

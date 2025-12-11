@@ -10,8 +10,7 @@ import {
 } from "@/shared/http/http-headers";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
-// biome-ignore lint/style/noMagicNumbers: <60 x 1 second>
-const REFRESH_INTERVAL_MS = 60 * 1000;
+const REFRESH_INTERVAL_MS = 60_000;
 const KICKOFF_TIMEOUT_MS = 1500;
 const REFRESH_JITTER_MS = 1000;
 
