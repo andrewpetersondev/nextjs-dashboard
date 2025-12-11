@@ -19,19 +19,24 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
-const SESSION_COOKIE_SECURE_FALLBACK = false as const;
-const SESSION_COOKIE_PATH = "/" as const;
-const SESSION_COOKIE_SAMESITE = "lax" as const;
-const SESSION_COOKIE_HTTPONLY = true as const;
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
   SESSION_DURATION_MS / ONE_SECOND_MS,
 );
+const SESSION_COOKIE_HTTPONLY = true as const;
+const SESSION_COOKIE_PATH = "/" as const;
+const SESSION_COOKIE_SAMESITE = "lax" as const;
+const SESSION_COOKIE_SECURE_FALLBACK = false as const;
+
+interface SessionUser {
+  readonly id: UserId;
+  readonly role: UserRole;
+}
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
-  exceeded: boolean;
   age: number;
+  exceeded: boolean;
 } {
   const start = user?.sessionStart ?? 0;
   const age = Date.now() - start;
@@ -44,7 +49,7 @@ function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
  * Refactored to support the new flat JWT claims shape. Prefers `expiresAt`
  * (milliseconds) when present; falls back to `exp` (seconds) for legacy callers.
  */
-function timeLeftMs(payload?: { expiresAt?: number; exp?: number }): number {
+function timeLeftMs(payload?: { exp?: number; expiresAt?: number }): number {
   if (payload?.expiresAt && Number.isFinite(payload.expiresAt)) {
     return payload.expiresAt - Date.now();
   }
@@ -62,9 +67,24 @@ const buildSessionCookieOptions = (expiresAtMs: number) =>
     secure: isProd() ? true : SESSION_COOKIE_SECURE_FALLBACK,
   }) as const;
 
-export interface SessionUser {
-  readonly id: UserId;
-  readonly role: UserRole;
+/**
+ * Determines if a session token should be refreshed based on remaining time.
+ *
+ * @param decoded - Decoded JWT payload
+ * @returns Object indicating if refresh is needed and time remaining
+ */
+function shouldRefreshToken(decoded: { exp?: number; expiresAt?: number }): {
+  refresh: boolean;
+  timeLeftMs: number;
+} {
+  const remaining = timeLeftMs({
+    exp: decoded.exp,
+    expiresAt: decoded.expiresAt,
+  });
+  return {
+    refresh: remaining <= SESSION_REFRESH_THRESHOLD_MS,
+    timeLeftMs: remaining,
+  };
 }
 
 /**
@@ -105,7 +125,9 @@ export class SessionManager {
     const requestId = crypto.randomUUID();
     try {
       const now = Date.now();
+
       const expiresAtMs = now + SESSION_DURATION_MS;
+
       const claims = {
         exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
         expiresAt: expiresAtMs,
@@ -114,19 +136,25 @@ export class SessionManager {
         sessionStart: now,
         userId: String(user.id),
       };
+
       const token = await this.jwt.encode(claims, expiresAtMs);
+
       await this.cookie.set(token, buildSessionCookieOptions(expiresAtMs));
+
       this.logger.info("Session established", {
         logging: { expiresAt: expiresAtMs, role: user.role, userId: user.id },
       });
+
       return Ok(user);
     } catch (err: unknown) {
       const base = normalizeToAppError(err, "unexpected");
+
       this.logger.error("Session establish failed", {
         error: String(err),
         logging: { code: "session_establish_failed" },
         requestId,
       });
+
       return Err(base);
     }
   }
@@ -140,17 +168,21 @@ export class SessionManager {
     const requestId = crypto.randomUUID();
     try {
       await this.cookie.delete();
+
       this.logger.info("Session cleared", {
         logging: { context: "SessionManager.clear" },
       });
+
       return Ok<void>(undefined);
     } catch (err: unknown) {
       const base = normalizeToAppError(err, "unexpected");
+
       this.logger.error("Session clear failed", {
         error: String(err),
         logging: { code: "session_clear_failed" },
         requestId,
       });
+
       return Err(base);
     }
   }
@@ -166,25 +198,30 @@ export class SessionManager {
   async read(): Promise<{ role: UserRole; userId: UserId } | undefined> {
     try {
       const token = await this.cookie.get();
+
       if (!token) {
         this.logger.warn("No session cookie present", {
           logging: { reason: "no_cookie" },
         });
         return;
       }
+
       const decoded = await this.jwt.decode(token);
+
       if (!decoded?.userId) {
         this.logger.warn("Invalid session payload", {
           logging: { reason: "invalid_payload" },
         });
         return;
       }
+
       return { role: decoded.role, userId: userIdCodec.decode(decoded.userId) };
     } catch (err: unknown) {
       this.logger.error("Session read failed", {
         error: String(err),
         logging: { code: "session_read_failed" },
       });
+
       return;
     }
   }
@@ -197,15 +234,17 @@ export class SessionManager {
    *
    * @returns UpdateSessionResult containing refresh status and metadata
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's ok>
   async rotate(): Promise<UpdateSessionResult> {
     try {
       const current = await this.cookie.get();
+
       if (!current) {
         return { reason: "no_cookie", refreshed: false };
       }
 
       const decoded = await this.jwt.decode(current);
+
       if (!decoded?.userId) {
         return { reason: "invalid_or_missing_user", refreshed: false };
       }
@@ -216,7 +255,8 @@ export class SessionManager {
         userId: userIdCodec.decode(decoded.userId),
       };
 
-      const { exceeded, age } = absoluteLifetime(user);
+      const { age, exceeded } = absoluteLifetime(user);
+
       if (exceeded) {
         await this.cookie.delete();
         this.logger.info(
@@ -239,11 +279,9 @@ export class SessionManager {
         };
       }
 
-      const remaining = timeLeftMs({
-        exp: decoded.exp,
-        expiresAt: decoded.expiresAt,
-      });
-      if (remaining > SESSION_REFRESH_THRESHOLD_MS) {
+      const { refresh, timeLeftMs: remaining } = shouldRefreshToken(decoded);
+
+      if (!refresh) {
         return {
           reason: "not_needed",
           refreshed: false,
@@ -251,8 +289,13 @@ export class SessionManager {
         };
       }
 
-      const { expiresAtMs, token } = await this.issueToken(user);
+      const { expiresAtMs, token } = await this.issueToken(
+        user,
+        decoded.sessionStart,
+      );
+
       await this.cookie.set(token, buildSessionCookieOptions(expiresAtMs));
+
       this.logger.info("Session token re-issued", {
         logging: {
           expiresAt: expiresAtMs,
@@ -260,6 +303,7 @@ export class SessionManager {
           userId: user.userId,
         },
       });
+
       return {
         expiresAt: expiresAtMs,
         reason: "rotated",
@@ -272,30 +316,37 @@ export class SessionManager {
         error: String(err),
         logging: { code: "session_rotate_failed" },
       });
+
       return { reason: "unexpected_error", refreshed: false };
     }
   }
+
   /**
    * Issues a new session token with updated expiration.
    *
-   * @param user - User with session metadata
+   * @param user - User with role and id
+   * @param sessionStart - Original session start timestamp to preserve
    * @returns Encoded JWT token and expiration timestamp
    */
-  private async issueToken(user: {
-    role: UserRole;
-    userId: UserId;
-  }): Promise<{ token: string; expiresAtMs: number }> {
+  private async issueToken(
+    user: { role: UserRole; userId: UserId },
+    sessionStart: number,
+  ): Promise<{ expiresAtMs: number; token: string }> {
     const now = Date.now();
+
     const expiresAtMs = now + SESSION_DURATION_MS;
+
     const claims = {
       exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
       expiresAt: expiresAtMs,
       iat: Math.floor(now / ONE_SECOND_MS),
       role: user.role,
-      sessionStart: now,
+      sessionStart,
       userId: user.userId,
     };
+
     const token = await this.jwt.encode(claims, expiresAtMs);
+
     return { expiresAtMs, token };
   }
 }
