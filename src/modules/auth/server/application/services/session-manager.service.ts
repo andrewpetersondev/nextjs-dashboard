@@ -12,7 +12,7 @@ import type {
 } from "@/modules/auth/server/application/ports/session.port";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
+import { normalizeToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

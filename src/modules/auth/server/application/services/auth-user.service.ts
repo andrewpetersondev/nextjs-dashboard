@@ -13,7 +13,7 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { asHash } from "@/server/crypto/hashing/hashing.types";
 import { createRandomPassword } from "@/shared/crypto/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
+import { normalizeToAppError } from "@/shared/errors/factories/app-error.factory";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";

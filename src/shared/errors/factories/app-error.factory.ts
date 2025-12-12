@@ -66,3 +66,16 @@ export function makeDatabaseError(
 export function makeIntegrityError(options: AppErrorOptions = {}): AppError {
   return makeAppError("integrity", options);
 }
+
+/**
+ * Normalize an unknown value into a AppError using {@link AppError.from}.
+ *
+ * This is the preferred entry-point for converting arbitrary thrown values
+ * into the canonical `AppError` type.
+ */
+export function normalizeToAppError(
+  error: unknown,
+  fallbackCode: AppErrorKey = "unknown",
+): AppError {
+  return AppError.from(error, fallbackCode);
+}
