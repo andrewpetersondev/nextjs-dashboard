@@ -19,9 +19,6 @@ import type { Result } from "@/shared/result/result.types";
 
 const ONE_SECOND_MS = 1000 as const;
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
-const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
-  SESSION_DURATION_MS / ONE_SECOND_MS,
-);
 
 interface SessionUser {
   readonly id: UserId;
@@ -51,12 +48,6 @@ function timeLeftMs(payload?: { exp?: number; expiresAt?: number }): number {
   const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
   return expMs - Date.now();
 }
-
-const buildSessionCookieOptions = (expiresAtMs: number) =>
-  ({
-    expires: new Date(expiresAtMs),
-    maxAge: ROLLING_COOKIE_MAX_AGE_S,
-  }) as const;
 
 /**
  * Determines if a session token should be refreshed based on remaining time.
@@ -130,7 +121,7 @@ export class SessionManager {
 
       const token = await this.jwt.encode(claims, expiresAtMs);
 
-      await this.cookie.set(token, buildSessionCookieOptions(expiresAtMs));
+      await this.cookie.set(token, expiresAtMs);
 
       this.logger.info("Session established", {
         logging: { expiresAt: expiresAtMs, role: user.role, userId: user.id },
@@ -285,7 +276,7 @@ export class SessionManager {
         decoded.sessionStart,
       );
 
-      await this.cookie.set(token, buildSessionCookieOptions(expiresAtMs));
+      await this.cookie.set(token, expiresAtMs);
 
       this.logger.info("Session token re-issued", {
         logging: {

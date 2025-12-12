@@ -4,17 +4,22 @@ import {
   BANNER_DISMISSED_MAX_AGE_S,
 } from "@/modules/banner/domain/banner.constants";
 import { createCookieService } from "@/server/cookies/cookie.factory";
+import { isProd } from "@/shared/config/env-shared";
 
-/**
- * Adapter for banner-related cookies.
- * Keeps cookie name + options centralized and provides semantic methods.
- */
+const BANNER_COOKIE_HTTPONLY = false as const;
+const BANNER_COOKIE_PATH = "/" as const;
+const BANNER_COOKIE_SAMESITE = "lax" as const;
+
 export class BannerCookieAdapter {
   private readonly cookies = createCookieService();
 
   async dismiss(): Promise<void> {
     await this.cookies.set(BANNER_DISMISSED_COOKIE, "1", {
+      httpOnly: BANNER_COOKIE_HTTPONLY,
       maxAge: BANNER_DISMISSED_MAX_AGE_S,
+      path: BANNER_COOKIE_PATH,
+      sameSite: BANNER_COOKIE_SAMESITE,
+      secure: isProd(),
     });
   }
 

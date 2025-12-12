@@ -1,11 +1,10 @@
 import "server-only";
-import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import type { AuthEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 
 export interface SessionPort {
   delete(): Promise<void>;
   get(): Promise<string | undefined>;
-  set(value: string, options: Partial<ResponseCookie>): Promise<void>;
+  set(value: string, expiresAtMs: number): Promise<void>;
 }
 
 export interface SessionTokenCodecPort {

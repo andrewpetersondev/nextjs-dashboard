@@ -1,13 +1,20 @@
 import "server-only";
-import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/domain/sessions/session.constants";
+import {
+  SESSION_COOKIE_NAME,
+  SESSION_DURATION_MS,
+} from "@/modules/auth/domain/sessions/session.constants";
 import { createCookieService } from "@/server/cookies/cookie.factory";
+import { isProd } from "@/shared/config/env-shared";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
-/**
- * Adapter for managing session cookies using a shared CookieService.
- * Provides a clean interface for session cookie operations.
- */
+const ONE_SECOND_MS = 1000 as const;
+
+const SESSION_COOKIE_HTTPONLY = true as const;
+const SESSION_COOKIE_PATH = "/" as const;
+const SESSION_COOKIE_SAMESITE = "lax" as const;
+
+const FIXED_MAX_AGE_S = Math.floor(SESSION_DURATION_MS / ONE_SECOND_MS);
+
 export class SessionCookieAdapter {
   private readonly cookies = createCookieService();
 
@@ -32,10 +39,18 @@ export class SessionCookieAdapter {
   /**
    * Sets the session cookie with the provided value and options.
    * @param value - The session token to store
-   * @param options - Cookie configuration options (httpOnly, secure, etc.)
+   * @param expiresAtMs - The expiration time in milliseconds since epoch
    */
-  async set(value: string, options: Partial<ResponseCookie>): Promise<void> {
-    await this.cookies.set(SESSION_COOKIE_NAME, value, options);
+  async set(value: string, expiresAtMs: number): Promise<void> {
+    await this.cookies.set(SESSION_COOKIE_NAME, value, {
+      expires: new Date(expiresAtMs),
+      httpOnly: SESSION_COOKIE_HTTPONLY,
+      maxAge: FIXED_MAX_AGE_S,
+      path: SESSION_COOKIE_PATH,
+      sameSite: SESSION_COOKIE_SAMESITE,
+      secure: isProd(),
+    });
+
     logger.debug("Session cookie set", {
       logging: { context: "SessionCookieAdapter.set" },
     });

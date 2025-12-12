@@ -19,23 +19,19 @@ const ONE_SECOND_MS = 1000 as const;
 
 class InMemoryCookie implements SessionPort {
   private value?: string;
-  // biome-ignore lint/suspicious/useAwait: interface requires async methods
   async delete(): Promise<void> {
     this.value = undefined;
   }
-  // biome-ignore lint/suspicious/useAwait: interface requires async methods
   async get(): Promise<string | undefined> {
     return this.value;
   }
-  // biome-ignore lint/suspicious/useAwait: interface requires async methods
-  async set(value: string, _options?: Partial<ResponseCookie>): Promise<void> {
+  async set(value: string, _expiresAtMs: number): Promise<void> {
     this.value = value;
   }
 }
 
 // Extremely simple JWT stub that just base64-encodes/decodes JSON without signing.
 class JsonStubJwt implements SessionTokenCodecPort {
-  // biome-ignore lint/suspicious/useAwait: interface requires async methods
   async decode(token: string): Promise<AuthEncryptPayload | undefined> {
     try {
       const json = Buffer.from(token, "base64").toString("utf8");
@@ -44,7 +40,6 @@ class JsonStubJwt implements SessionTokenCodecPort {
       return Promise.resolve(undefined);
     }
   }
-  // biome-ignore lint/suspicious/useAwait: interface requires async methods
   async encode(
     claims: AuthEncryptPayload,
     _expiresAtMs: number,
@@ -58,7 +53,6 @@ class JsonStubJwt implements SessionTokenCodecPort {
 // Quiet logger for tests
 const testLogger: LoggingClientContract = realLogger.child({ scope: "test" });
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: test suite with multiple test cases
 describe("SessionManager", () => {
   let cookie: InMemoryCookie;
   let jwt: JsonStubJwt;
@@ -105,7 +99,6 @@ describe("SessionManager", () => {
   });
 
   it("skips rotation when time left > threshold", async () => {
-    // Establish session at t0
     const res = await manager.establish({
       id: "u1" as UserId,
       role: "user" as UserRole,
