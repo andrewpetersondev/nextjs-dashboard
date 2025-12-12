@@ -25,7 +25,6 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
-  private readonly transactionLogger: TransactionLogger;
 
   constructor(
     db: AppDatabase,
@@ -35,7 +34,6 @@ export class AuthUserRepositoryImpl {
     this.db = db;
     const base = (logger ?? defaultLogger).withContext("auth:repo");
     this.logger = requestId ? base.withRequest(requestId) : base;
-    this.transactionLogger = new TransactionLogger(this.logger);
   }
 
   /**

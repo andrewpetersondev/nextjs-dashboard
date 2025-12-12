@@ -6,7 +6,11 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * Uses the shared logger.operation API.
  */
 export class TransactionLogger {
-  constructor(private readonly logger: LoggingClientContract) {}
+  private readonly logger: LoggingClientContract;
+
+  constructor(logger: LoggingClientContract) {
+    this.logger = logger;
+  }
 
   start(transactionId: string): void {
     this.logger.operation("debug", "Transaction start", {

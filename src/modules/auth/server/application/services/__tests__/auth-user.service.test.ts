@@ -2,11 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: test suite requires multiple scenarios
 describe("AuthUserService", () => {
   let mockRepo: AuthUserRepositoryPort;
   let mockHasher: HashingService;
+  let mockLogger: LoggingClientContract;
   let service: AuthUserService;
 
   beforeEach(() => {
@@ -22,7 +24,14 @@ describe("AuthUserService", () => {
       hash: vi.fn(),
     } as unknown as HashingService;
 
-    service = new AuthUserService(mockRepo, mockHasher);
+    mockLogger = {
+      child: vi.fn().mockReturnThis(),
+      operation: vi.fn(),
+      withContext: vi.fn().mockReturnThis(),
+      withRequest: vi.fn().mockReturnThis(),
+    } as unknown as LoggingClientContract;
+
+    service = new AuthUserService(mockRepo, mockHasher, mockLogger);
   });
 
   describe("signup", () => {
