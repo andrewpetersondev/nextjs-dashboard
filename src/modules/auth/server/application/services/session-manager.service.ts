@@ -11,7 +11,6 @@ import type {
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
 import type { UserId } from "@/shared/branding/brands";
-import { isProd } from "@/shared/config/env-shared";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -23,10 +22,6 @@ const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 const ROLLING_COOKIE_MAX_AGE_S = Math.floor(
   SESSION_DURATION_MS / ONE_SECOND_MS,
 );
-const SESSION_COOKIE_HTTPONLY = true as const;
-const SESSION_COOKIE_PATH = "/" as const;
-const SESSION_COOKIE_SAMESITE = "lax" as const;
-const SESSION_COOKIE_SECURE_FALLBACK = false as const;
 
 interface SessionUser {
   readonly id: UserId;
@@ -60,11 +55,7 @@ function timeLeftMs(payload?: { exp?: number; expiresAt?: number }): number {
 const buildSessionCookieOptions = (expiresAtMs: number) =>
   ({
     expires: new Date(expiresAtMs),
-    httpOnly: SESSION_COOKIE_HTTPONLY,
     maxAge: ROLLING_COOKIE_MAX_AGE_S,
-    path: SESSION_COOKIE_PATH,
-    sameSite: SESSION_COOKIE_SAMESITE,
-    secure: isProd() ? true : SESSION_COOKIE_SECURE_FALLBACK,
   }) as const;
 
 /**
