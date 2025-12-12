@@ -1,7 +1,6 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
-import { SessionRefresh } from "@/modules/auth/ui/features/session-refresh";
 import { isBannerDismissed } from "@/modules/banner/server/banner-cookie";
 import { OneTimeBanner } from "@/modules/banner/ui/one-time-banner";
 import { notoSans } from "@/ui/styles/fonts";
@@ -28,7 +27,6 @@ export default async function RootLayout({
       <body
         className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
       >
-        <SessionRefresh />
         {!dismissed && <OneTimeBanner />}
         {children}
       </body>

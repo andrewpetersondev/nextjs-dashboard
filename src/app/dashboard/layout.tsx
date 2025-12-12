@@ -1,5 +1,6 @@
-import type { FC, JSX, ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 import { logoutAction } from "@/modules/auth/server/application/actions/logout.action";
+import { SessionRefresh } from "@/modules/auth/ui/features/session-refresh";
 import { SideNav } from "@/shell/dashboard/components/sidenav";
 
 const ROOT_LAYOUT_CLASS =
@@ -7,13 +8,12 @@ const ROOT_LAYOUT_CLASS =
 const SIDENAV_WRAPPER_CLASS = "w-full flex-none md:w-64";
 const MAIN_CONTENT_CLASS = "grow p-6 md:overflow-y-auto md:p-12";
 
-interface LayoutProps {
-  readonly children: ReactNode;
-}
-
-const Layout: FC<LayoutProps> = ({ children }: LayoutProps): JSX.Element => {
+export default function DashboardLayout({
+  children,
+}: Readonly<{ children: ReactNode }>): JSX.Element {
   return (
     <section aria-label="Dashboard Layout" className={ROOT_LAYOUT_CLASS}>
+      <SessionRefresh />
       <aside aria-label="Sidebar Navigation" className={SIDENAV_WRAPPER_CLASS}>
         <SideNav logoutAction={logoutAction} />
       </aside>
@@ -22,6 +22,4 @@ const Layout: FC<LayoutProps> = ({ children }: LayoutProps): JSX.Element => {
       </main>
     </section>
   );
-};
-
-export default Layout;
+}
