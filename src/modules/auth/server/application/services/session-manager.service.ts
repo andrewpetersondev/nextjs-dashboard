@@ -12,7 +12,7 @@ import type {
 } from "@/modules/auth/server/application/ports/session.port";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { normalizeToAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -129,7 +129,7 @@ export class SessionManager {
 
       return Ok(user);
     } catch (err: unknown) {
-      const base = normalizeToAppError(err, "unexpected");
+      const base = makeAppErrorFromUnknown(err, "unexpected");
 
       this.logger.error("Session establish failed", {
         error: String(err),
@@ -157,7 +157,7 @@ export class SessionManager {
 
       return Ok<void>(undefined);
     } catch (err: unknown) {
-      const base = normalizeToAppError(err, "unexpected");
+      const base = makeAppErrorFromUnknown(err, "unexpected");
 
       this.logger.error("Session clear failed", {
         error: String(err),

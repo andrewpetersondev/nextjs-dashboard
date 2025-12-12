@@ -11,9 +11,9 @@ import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/p
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { asHash } from "@/server/crypto/hashing/hashing.types";
-import { createRandomPassword } from "@/shared/crypto/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
+import { createRandomPassword } from "@/shared/crypto/password-generator";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { normalizeToAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
@@ -66,7 +66,7 @@ export class AuthUserService {
       const counter = await this.repo.incrementDemoUserCounter(role);
 
       if (!isPositiveNumber(counter)) {
-        const error = normalizeToAppError(
+        const error = makeAppErrorFromUnknown(
           new Error("invalid_counter"),
           "validation",
         );
@@ -105,7 +105,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
-      const error = normalizeToAppError(err, "unexpected");
+      const error = makeAppErrorFromUnknown(err, "unexpected");
 
       logger.operation("error", "Demo user creation failed", {
         error,
@@ -134,7 +134,7 @@ export class AuthUserService {
     const logger = this.logger.child({ email: input.email });
 
     if (!hasRequiredSignupFields(input)) {
-      const error = normalizeToAppError(
+      const error = makeAppErrorFromUnknown(
         new Error("missing_fields"),
         "missingFields",
       );
@@ -175,7 +175,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(createdUser));
     } catch (err: unknown) {
-      const error = normalizeToAppError(err, "unexpected");
+      const error = makeAppErrorFromUnknown(err, "unexpected");
 
       logger.operation("error", "Signup service failed", {
         error,
@@ -214,7 +214,7 @@ export class AuthUserService {
       const user = await this.repo.login({ email: input.email });
 
       if (!user) {
-        const error = normalizeToAppError(
+        const error = makeAppErrorFromUnknown(
           new Error("user_not_found"),
           "notFound",
         );
@@ -229,7 +229,7 @@ export class AuthUserService {
       }
 
       if (!user.password) {
-        const error = normalizeToAppError(
+        const error = makeAppErrorFromUnknown(
           new Error("missing_password_hash"),
           "validation",
         );
@@ -249,7 +249,7 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        const error = normalizeToAppError(
+        const error = makeAppErrorFromUnknown(
           new Error("invalid_password"),
           "invalidCredentials",
         );
@@ -270,7 +270,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      const error = normalizeToAppError(err, "unexpected");
+      const error = makeAppErrorFromUnknown(err, "unexpected");
 
       logger.operation("error", "Login service unexpected error", {
         error,
