@@ -1,4 +1,3 @@
-import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
 import {
@@ -15,44 +14,47 @@ import type { UserId } from "@/shared/branding/brands";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as realLogger } from "@/shared/logging/infrastructure/logging.client";
 
+const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 const ONE_SECOND_MS = 1000 as const;
 
 class InMemoryCookie implements SessionPort {
   private value?: string;
-  async delete(): Promise<void> {
+
+  delete(): Promise<void> {
     this.value = undefined;
+    return Promise.resolve();
   }
-  async get(): Promise<string | undefined> {
-    return this.value;
+
+  get(): Promise<string | undefined> {
+    return Promise.resolve(this.value);
   }
-  async set(value: string, _expiresAtMs: number): Promise<void> {
+
+  set(value: string, _expiresAtMs: number): Promise<void> {
     this.value = value;
+    return Promise.resolve();
   }
 }
 
-// Extremely simple JWT stub that just base64-encodes/decodes JSON without signing.
 class JsonStubJwt implements SessionTokenCodecPort {
-  async decode(token: string): Promise<AuthEncryptPayload | undefined> {
+  decode(token: string): Promise<AuthEncryptPayload | undefined> {
     try {
       const json = Buffer.from(token, "base64").toString("utf8");
-      return Promise.resolve(JSON.parse(json));
+      return Promise.resolve(JSON.parse(json) as AuthEncryptPayload);
     } catch {
       return Promise.resolve(undefined);
     }
   }
-  async encode(
-    claims: AuthEncryptPayload,
-    _expiresAtMs: number,
-  ): Promise<string> {
+
+  encode(claims: AuthEncryptPayload, _expiresAtMs: number): Promise<string> {
     return Promise.resolve(
       Buffer.from(JSON.stringify(claims), "utf8").toString("base64"),
     );
   }
 }
 
-// Quiet logger for tests
 const testLogger: LoggingClientContract = realLogger.child({ scope: "test" });
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix>
 describe("SessionManager", () => {
   let cookie: InMemoryCookie;
   let jwt: JsonStubJwt;
@@ -66,64 +68,183 @@ describe("SessionManager", () => {
     manager = new SessionManager(cookie, jwt, testLogger);
   });
 
-  it("establishes a session and sets a cookie", async () => {
-    const res = await manager.establish({
-      id: "user-1" as UserId,
-      role: "user" as UserRole,
+  describe("establish", () => {
+    it("establishes a session and sets a cookie", async () => {
+      const res = await manager.establish({
+        id: "user-1" as UserId,
+        role: "user" as UserRole,
+      });
+      expect(res.ok).toBe(true);
+      const stored = await cookie.get();
+      expect(stored).toBeDefined();
+
+      if (stored !== undefined) {
+        const claims = await jwt.decode(stored);
+        expect(claims?.userId).toBe("user-1");
+        expect(claims?.role).toBe("user");
+        expect(claims?.expiresAt).toBe(
+          Number(new Date("2025-01-01T00:00:00.000Z")) + SESSION_DURATION_MS,
+        );
+        expect(claims?.sessionStart).toBe(
+          Number(new Date("2025-01-01T00:00:00.000Z")),
+        );
+      }
     });
-    expect(res.ok).toBe(true);
-    const stored = await cookie.get();
-    if (!stored) {
-      throw new Error("Cookie not set");
-    }
-    const claims = await jwt.decode(stored);
-    expect(claims?.userId).toBe("user-1");
-    expect(claims?.role).toBe("user");
-    // expiresAt should be now + SESSION_DURATION_MS
-    expect(claims?.expiresAt).toBe(
-      Number(new Date("2025-01-01T00:00:00.000Z")) + SESSION_DURATION_MS,
-    );
-  });
 
-  it("reads a session and returns user info", async () => {
-    await manager.establish({ id: "abc" as UserId, role: "admin" as UserRole });
-    const read = await manager.read();
-    expect(read).toEqual({ role: "admin", userId: "abc" });
-  });
+    it("returns error on unexpected failure", async () => {
+      const badJwt: SessionTokenCodecPort = {
+        decode: vi.fn(),
+        encode: vi.fn().mockRejectedValue(new Error("Encoding failed")),
+      };
 
-  it("clears a session", async () => {
-    await manager.establish({ id: "abc" as UserId, role: "user" as UserRole });
-    await manager.clear();
-    const after = await cookie.get();
-    expect(after).toBeUndefined();
-  });
+      const failManager = new SessionManager(cookie, badJwt, testLogger);
 
-  it("skips rotation when time left > threshold", async () => {
-    const res = await manager.establish({
-      id: "u1" as UserId,
-      role: "user" as UserRole,
+      const res = await failManager.establish({
+        id: "user-1" as UserId,
+        role: "user" as UserRole,
+      });
+
+      expect(res.ok).toBe(false);
     });
-    expect(res.ok).toBe(true);
-    // Advance time by a small amount less than duration - threshold
-    vi.advanceTimersByTime(
-      Math.max(
-        1,
-        SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS - ONE_SECOND_MS / 10,
-      ),
-    );
-    const rotate = await manager.rotate();
-    expect(rotate.refreshed).toBe(false);
-    expect(rotate.reason).toBe("not_needed");
   });
 
-  it("rotates when near expiry (<= threshold)", async () => {
-    await manager.establish({ id: "u2" as UserId, role: "user" as UserRole });
-    // Move time to just inside the refresh window
-    vi.advanceTimersByTime(
-      SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS + 10,
-    );
-    const r = await manager.rotate();
-    expect(r.refreshed).toBe(true);
-    expect(r.reason).toBe("rotated");
+  describe("read", () => {
+    it("reads a session and returns user info", async () => {
+      await manager.establish({
+        id: "abc" as UserId,
+        role: "admin" as UserRole,
+      });
+
+      const read = await manager.read();
+      expect(read).toEqual({ role: "admin", userId: "abc" });
+    });
+
+    it("returns undefined when no cookie exists", async () => {
+      const read = await manager.read();
+
+      expect(read).toBeUndefined();
+    });
+
+    it("returns undefined when payload is invalid", async () => {
+      await cookie.set("invalid-token", Date.now());
+
+      const read = await manager.read();
+
+      expect(read).toBeUndefined();
+    });
+  });
+
+  describe("clear", () => {
+    it("clears a session", async () => {
+      await manager.establish({
+        id: "abc" as UserId,
+        role: "user" as UserRole,
+      });
+
+      const res = await manager.clear();
+
+      expect(res.ok).toBe(true);
+
+      const after = await cookie.get();
+      expect(after).toBeUndefined();
+    });
+
+    it("returns error on unexpected failure", async () => {
+      const badCookie: SessionPort = {
+        delete: vi.fn().mockRejectedValue(new Error("Delete failed")),
+        get: vi.fn(),
+        set: vi.fn(),
+      };
+
+      const failManager = new SessionManager(badCookie, jwt, testLogger);
+
+      const res = await failManager.clear();
+
+      expect(res.ok).toBe(false);
+    });
+  });
+
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix>
+  describe("rotate", () => {
+    it("skips rotation when time left > threshold", async () => {
+      await manager.establish({
+        id: "u1" as UserId,
+        role: "user" as UserRole,
+      });
+
+      vi.advanceTimersByTime(
+        SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS - ONE_SECOND_MS,
+      );
+      const rotate = await manager.rotate();
+      expect(rotate.refreshed).toBe(false);
+      expect(rotate.reason).toBe("not_needed");
+    });
+
+    it("rotates when near expiry (<= threshold)", async () => {
+      await manager.establish({
+        id: "u2" as UserId,
+        role: "user" as UserRole,
+      });
+
+      vi.advanceTimersByTime(
+        SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS + 10,
+      );
+
+      const rotate = await manager.rotate();
+
+      expect(rotate.refreshed).toBe(true);
+      expect(rotate.reason).toBe("rotated");
+      if (rotate.refreshed) {
+        expect(rotate.userId).toBe("u2");
+      }
+      if (rotate.refreshed) {
+        expect(rotate.role).toBe("user");
+      }
+    });
+
+    it("returns no_cookie when no session exists", async () => {
+      const rotate = await manager.rotate();
+
+      expect(rotate.refreshed).toBe(false);
+      expect(rotate.reason).toBe("no_cookie");
+    });
+
+    it("prevents rotation when absolute lifetime exceeded", async () => {
+      await manager.establish({
+        id: "u3" as UserId,
+        role: "user" as UserRole,
+      });
+
+      vi.advanceTimersByTime(MAX_ABSOLUTE_SESSION_MS + ONE_SECOND_MS);
+
+      const rotate = await manager.rotate();
+
+      expect(rotate.refreshed).toBe(false);
+      expect(rotate.reason).toBe("absolute_lifetime_exceeded");
+
+      const cookieValue = await cookie.get();
+      expect(cookieValue).toBeUndefined();
+    });
+
+    it("preserves sessionStart across rotations", async () => {
+      const startTime = Date.now();
+      await manager.establish({
+        id: "u4" as UserId,
+        role: "user" as UserRole,
+      });
+
+      vi.advanceTimersByTime(
+        SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS + 10,
+      );
+
+      await manager.rotate();
+
+      const stored = await cookie.get();
+
+      if (stored !== undefined) {
+        const claims = await jwt.decode(stored);
+        expect(claims?.sessionStart).toBe(startTime);
+      }
+    });
   });
 });

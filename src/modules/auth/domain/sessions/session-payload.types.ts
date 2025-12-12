@@ -23,27 +23,25 @@ export type FlatEncryptPayload<R = string> = {
 
 /**
  * Re-issues the session JWT and updates the cookie if the current token is valid.
+ * Use discriminated union on `refreshed` to safely access user properties.
  */
 export type UpdateSessionResult =
-  | { readonly refreshed: false; readonly reason: "no_cookie" }
-  | { readonly refreshed: false; readonly reason: "invalid_or_missing_user" }
-  | { readonly refreshed: false; readonly reason: "unexpected_error" }
-  | {
-      readonly refreshed: false;
-      readonly reason: "absolute_lifetime_exceeded";
-      readonly ageMs: number;
-      readonly maxMs: number;
-      readonly userId?: UserId;
-    }
-  | {
-      readonly refreshed: false;
-      readonly reason: "not_needed";
-      readonly timeLeftMs: number;
-    }
   | {
       readonly refreshed: true;
       readonly reason: "rotated";
       readonly expiresAt: number;
-      readonly userId: UserId;
       readonly role: UserRole;
+      readonly userId: UserId;
+    }
+  | {
+      readonly refreshed: false;
+      readonly reason:
+        | "absolute_lifetime_exceeded"
+        | "invalid_or_missing_user"
+        | "no_cookie"
+        | "not_needed"
+        | "unexpected_error";
+      readonly ageMs?: number;
+      readonly maxMs?: number;
+      readonly timeLeftMs?: number;
     };

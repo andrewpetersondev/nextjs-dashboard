@@ -257,7 +257,6 @@ export class SessionManager {
           maxMs: MAX_ABSOLUTE_SESSION_MS,
           reason: "absolute_lifetime_exceeded",
           refreshed: false,
-          userId: user.userId,
         };
       }
 
