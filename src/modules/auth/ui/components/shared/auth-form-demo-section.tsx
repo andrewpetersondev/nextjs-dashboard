@@ -3,7 +3,7 @@ import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/domain/roles/auth.roles";
+} from "@/modules/auth/domain/schema/auth.roles";
 import {
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,

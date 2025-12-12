@@ -4,7 +4,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/domain/roles/auth.roles";
+} from "@/modules/auth/domain/schema/auth.roles";
 import { verifySessionOptimistic } from "@/modules/auth/server/application/actions/verify-session-optimistic.action";
 import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";

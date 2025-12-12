@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/constants/auth-error-messages.constants";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import {
   SIGNUP_FIELDS_LIST,

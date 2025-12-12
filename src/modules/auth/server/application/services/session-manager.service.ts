@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,

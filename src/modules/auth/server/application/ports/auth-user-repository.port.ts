@@ -6,7 +6,7 @@ import type {
   AuthSignupPayload,
   AuthUserEntity,
 } from "@/modules/auth/domain/auth.types";
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 
 export interface AuthUserRepositoryPort<TRepo = unknown> {
   /**

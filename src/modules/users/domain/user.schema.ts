@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/modules/auth/domain/roles/auth.roles";
+import { USER_ROLES } from "@/modules/auth/domain/schema/auth.roles";
 import {
   EmailSchema,
   PasswordSchema,

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { UserId } from "@/shared/branding/brands";
 

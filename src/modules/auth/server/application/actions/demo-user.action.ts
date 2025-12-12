@@ -1,8 +1,8 @@
 "use server";
 import { redirect } from "next/navigation";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/constants/auth-error-messages.constants";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";

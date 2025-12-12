@@ -1,6 +1,6 @@
 import "server-only";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";

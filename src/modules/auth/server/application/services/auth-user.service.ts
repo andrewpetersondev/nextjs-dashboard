@@ -2,10 +2,10 @@ import "server-only";
 import { hasRequiredSignupFields } from "@/modules/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
-import { isValidDemoUserCounter } from "@/modules/auth/domain/demo-user/demo-user.guards";
+import { isValidDemoUserCounter } from "@/modules/auth/domain/demo-user.guards";
 import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
-import { createRandomPassword } from "@/modules/auth/domain/password/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import { createRandomPassword } from "@/modules/auth/domain/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import type {
   LoginData,
   SignupData,

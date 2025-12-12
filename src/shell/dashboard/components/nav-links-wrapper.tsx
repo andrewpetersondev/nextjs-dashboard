@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { UserRole } from "@/modules/auth/domain/roles/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import type { SessionVerificationResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import { verifySessionOptimistic } from "@/modules/auth/server/application/actions/verify-session-optimistic.action";
 import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
