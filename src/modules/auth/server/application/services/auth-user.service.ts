@@ -2,8 +2,6 @@ import "server-only";
 import { hasRequiredSignupFields } from "@/modules/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
-import { isValidDemoUserCounter } from "@/modules/auth/domain/demo-user.guards";
-import { createRandomPassword } from "@/modules/auth/domain/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import type {
   LoginData,
@@ -13,8 +11,10 @@ import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/p
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { asHash } from "@/server/crypto/hashing/hashing.types";
+import { createRandomPassword } from "@/shared/crypto/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
+import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -65,7 +65,7 @@ export class AuthUserService {
     try {
       const counter = await this.repo.incrementDemoUserCounter(role);
 
-      if (!isValidDemoUserCounter(counter)) {
+      if (!isPositiveNumber(counter)) {
         const error = normalizeToAppError(
           new Error("invalid_counter"),
           "validation",
