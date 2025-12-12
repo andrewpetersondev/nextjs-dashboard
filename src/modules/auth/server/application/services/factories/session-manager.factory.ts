@@ -1,5 +1,5 @@
-// src/server/auth/application/services/factories/session-manager.factory.ts
 import "server-only";
+
 import { SessionManager } from "@/modules/auth/server/application/services/session-manager.service";
 import { createSessionCookieAdapter } from "@/modules/auth/server/infrastructure/adapters/session-cookie.adapter";
 import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/adapters/session-jwt.adapter";
@@ -9,7 +9,7 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
 /**
  * Lightweight factory to compose a SessionManager with default adapters.
  *
- * @param logger - optional logger to use; defaults to shared logger.
+ * @param logger - Optional logger to use; defaults to the shared logger.
  */
 export function createSessionManagerFactory(
   logger: LoggingClientContract = defaultLogger,

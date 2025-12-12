@@ -29,6 +29,34 @@ export function makeAppErrorFromUnknown(
 }
 
 /**
+ * Normalize an unknown value into an `unexpected` AppError.
+ *
+ * Use this in `catch` blocks when you want to preserve the thrown value as cause,
+ * while still tagging it with the canonical `unexpected` error code.
+ */
+export function makeUnexpectedErrorFromUnknown(
+  error: unknown,
+  options: Omit<AppErrorOptions, "cause" | "message"> &
+    Partial<Pick<AppErrorOptions, "message">> = {},
+): AppError {
+  const base = makeAppErrorFromUnknown(error, "unexpected");
+
+  // If no overrides were provided, return the normalized error as-is.
+  if (options.message === undefined && options.metadata === undefined) {
+    return base;
+  }
+
+  return makeAppError("unexpected", {
+    cause: base.originalCause,
+    message: options.message ?? base.message,
+    metadata: {
+      ...base.metadata,
+      ...(options.metadata ?? {}),
+    },
+  });
+}
+
+/**
  * Convenience factory for validation errors with form metadata.
  */
 export function makeValidationError(options: AppErrorOptions = {}): AppError {
@@ -37,6 +65,9 @@ export function makeValidationError(options: AppErrorOptions = {}): AppError {
 
 /**
  * Convenience factory for unexpected errors.
+ *
+ * Use this when you're *creating* an unexpected error (not normalizing a caught value).
+ * If you're in a `catch (err)`, prefer `makeUnexpectedErrorFromUnknown(err, ...)`.
  */
 export function makeUnexpectedError(options: AppErrorOptions = {}): AppError {
   return makeAppError("unexpected", options);
