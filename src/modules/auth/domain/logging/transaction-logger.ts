@@ -1,39 +1,15 @@
 import "server-only";
+
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import { TransactionLogger as SharedTransactionLogger } from "@/shared/logging/transaction-logger";
+import { TRANSACTION_LOGGING_CONTEXT } from "@/shared/logging/transaction-logging-context.types";
 
 /**
- * Lightweight transaction logger.
- * Uses the shared logger.operation API.
+ * Auth-flavored transaction logger.
+ * Keeps the existing import path stable, while using the shared implementation.
  */
-export class TransactionLogger {
-  private readonly logger: LoggingClientContract;
-
+export class TransactionLogger extends SharedTransactionLogger {
   constructor(logger: LoggingClientContract) {
-    this.logger = logger;
-  }
-
-  start(transactionId: string): void {
-    this.logger.operation("debug", "Transaction start", {
-      operationContext: "auth:repo",
-      operationIdentifiers: { transactionId },
-      operationName: "withTransaction.start",
-    });
-  }
-
-  commit(transactionId: string): void {
-    this.logger.operation("debug", "Transaction commit", {
-      operationContext: "auth:repo",
-      operationIdentifiers: { transactionId },
-      operationName: "withTransaction.commit",
-    });
-  }
-
-  rollback(transactionId: string, error: unknown): void {
-    this.logger.operation("error", "Transaction rollback", {
-      error,
-      operationContext: "auth:repo",
-      operationIdentifiers: { transactionId },
-      operationName: "withTransaction.rollback",
-    });
+    super({ operationContext: TRANSACTION_LOGGING_CONTEXT.authRepo }, logger);
   }
 }

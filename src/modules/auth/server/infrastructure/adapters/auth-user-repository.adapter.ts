@@ -22,13 +22,12 @@ export class AuthUserRepositoryAdapter
     this.repo = repo;
   }
 
-  withTransaction<T>(
-    fn: (txRepo: AuthUserRepositoryPort<AuthUserRepositoryImpl>) => Promise<T>,
-  ): Promise<T> {
-    return this.repo.withTransaction(async (txRepo) => {
-      const txAdapter = new AuthUserRepositoryAdapter(txRepo);
-      return await fn(txAdapter);
-    });
+  incrementDemoUserCounter(role: UserRole): Promise<number> {
+    return this.repo.incrementDemoUserCounter(role);
+  }
+
+  login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null> {
+    return this.repo.login(input);
   }
 
   signup(
@@ -37,11 +36,12 @@ export class AuthUserRepositoryAdapter
     return this.repo.signup(input);
   }
 
-  incrementDemoUserCounter(role: UserRole): Promise<number> {
-    return this.repo.incrementDemoUserCounter(role);
-  }
-
-  login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null> {
-    return this.repo.login(input);
+  withTransaction<T>(
+    fn: (txRepo: AuthUserRepositoryPort<AuthUserRepositoryImpl>) => Promise<T>,
+  ): Promise<T> {
+    return this.repo.withTransaction(async (txRepo) => {
+      const txAdapter = new AuthUserRepositoryAdapter(txRepo);
+      return await fn(txAdapter);
+    });
   }
 }

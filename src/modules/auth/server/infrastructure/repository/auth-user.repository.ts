@@ -1,4 +1,5 @@
 import "server-only";
+
 import { randomUUID } from "node:crypto";
 import type {
   AuthLoginRepoInput,
@@ -135,7 +136,7 @@ export class AuthUserRepositoryImpl {
       txEvents.commit(transactionId);
       return result;
     } catch (err) {
-      txEvents.rollback(transactionId, err);
+      txEvents.rollback(err, transactionId);
       throw err;
     }
   }
