@@ -1,40 +1,35 @@
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
+import "server-only";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
- * Lightweight transaction logger for auth-related DAL transactions.
- * Uses the unified AuthLog + logAuth API.
+ * Lightweight transaction logger.
+ * Uses the shared logger.operation API.
  */
 export class TransactionLogger {
-  private readonly requestId?: string;
-
-  constructor(requestId?: string) {
-    this.requestId = requestId;
-  }
+  constructor(private readonly logger: LoggingClientContract) {}
 
   start(transactionId: string): void {
-    logAuth(
-      "debug",
-      "Transaction start",
-      AuthLog.dal.withTransaction.start(transactionId),
-      { requestId: this.requestId },
-    );
+    this.logger.operation("debug", "Transaction start", {
+      operationContext: "auth:repo",
+      operationIdentifiers: { transactionId },
+      operationName: "withTransaction.start",
+    });
   }
 
   commit(transactionId: string): void {
-    logAuth(
-      "debug",
-      "Transaction commit",
-      AuthLog.dal.withTransaction.commit(transactionId),
-      { requestId: this.requestId },
-    );
+    this.logger.operation("debug", "Transaction commit", {
+      operationContext: "auth:repo",
+      operationIdentifiers: { transactionId },
+      operationName: "withTransaction.commit",
+    });
   }
 
   rollback(transactionId: string, error: unknown): void {
-    logAuth(
-      "error",
-      "Transaction rollback",
-      AuthLog.dal.withTransaction.error(transactionId, error),
-      { requestId: this.requestId },
-    );
+    this.logger.operation("error", "Transaction rollback", {
+      error,
+      operationContext: "auth:repo",
+      operationIdentifiers: { transactionId },
+      operationName: "withTransaction.rollback",
+    });
   }
 }

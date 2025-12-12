@@ -1,9 +1,8 @@
-// src/server/auth/application/actions/establish-session.action.ts
 "use server";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { SessionUser } from "@/modules/auth/domain/sessions/session-action.types";
 import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
 import type { AppError } from "@/shared/errors/core/app-error.class";
+import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -19,10 +18,13 @@ export async function establishSessionAction(
 ): Promise<Result<SessionUser, AppError>> {
   const requestId = crypto.randomUUID();
 
-  // Start (optional start event)
-  logAuth("info", "Establish session start", AuthLog.action.login.start(), {
-    additionalData: { role: user.role, userId: user.id },
-    requestId,
+  const logger = defaultLogger
+    .withContext("auth:action")
+    .withRequest(requestId)
+    .child({ role: user.role, userId: user.id });
+
+  logger.operation("info", "Establish session start", {
+    operationName: "session.establish.start",
   });
 
   const sessionManager = createSessionManagerFactory();
@@ -30,21 +32,18 @@ export async function establishSessionAction(
   const res = await sessionManager.establish(user);
 
   if (res.ok) {
-    logAuth(
-      "info",
-      "Session established successfully",
-      AuthLog.action.login.success({ role: user.role, userId: user.id }),
-      { requestId },
-    );
+    logger.operation("info", "Session established successfully", {
+      operationName: "session.establish.success",
+    });
     return Ok(user);
   }
 
   const error = res.error;
-  logAuth(
-    "error",
-    "Failed to establish session",
-    AuthLog.action.login.error(error, { role: user.role, userId: user.id }),
-    { requestId },
-  );
+
+  logger.operation("error", "Failed to establish session", {
+    error,
+    operationName: "session.establish.failed",
+  });
+
   return Err<AppError>(error);
 }

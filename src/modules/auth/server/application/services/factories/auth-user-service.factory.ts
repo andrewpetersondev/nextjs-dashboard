@@ -25,5 +25,10 @@ export function createAuthUserServiceFactory(
   const repoPort: AuthUserRepositoryPort<AuthUserRepositoryImpl> =
     new AuthUserRepositoryAdapter(repo);
   const hashingService = createHashingService();
-  return new AuthUserService(repoPort, hashingService, requestId);
+
+  const scopedLogger = requestId
+    ? logger.withContext("auth").withRequest(requestId)
+    : logger.withContext("auth");
+
+  return new AuthUserService(repoPort, hashingService, scopedLogger);
 }

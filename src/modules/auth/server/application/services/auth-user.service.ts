@@ -3,7 +3,6 @@ import { hasRequiredSignupFields } from "@/modules/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
 import { isValidDemoUserCounter } from "@/modules/auth/domain/demo-user.guards";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { createRandomPassword } from "@/modules/auth/domain/password-generator"; // Keep this if still needed; otherwise, consider moving to shared if reusable
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import type {
@@ -16,6 +15,7 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { asHash } from "@/server/crypto/hashing/hashing.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { normalizeToAppError } from "@/shared/errors/normalizers/app-error.normalizer";
+import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -25,21 +25,20 @@ import type { Result } from "@/shared/result/result.types";
  * @remarks
  * - Returns discriminated Result objects instead of throwing.
  * - Depends on small ports (AuthUserRepositoryPort, HashingService) for testability.
- * - Accepts optional requestId for tracing across layers.
  */
 export class AuthUserService {
-  private readonly repo: AuthUserRepositoryPort;
   private readonly hasher: HashingService;
-  private readonly requestId?: string;
+  private readonly logger: LoggingClientContract;
+  private readonly repo: AuthUserRepositoryPort;
 
   constructor(
     repo: AuthUserRepositoryPort,
     hasher: HashingService,
-    requestId?: string,
+    logger: LoggingClientContract,
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    this.requestId = requestId;
+    this.logger = logger.withContext("auth:service");
   }
 
   /**
@@ -57,6 +56,12 @@ export class AuthUserService {
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
+    const logger = this.logger.child({ role });
+
+    logger.operation("info", "Create demo user service started", {
+      operationName: "demoUser.start",
+    });
+
     try {
       const counter = await this.repo.incrementDemoUserCounter(role);
 
@@ -65,12 +70,13 @@ export class AuthUserService {
           new Error("invalid_counter"),
           "validation",
         );
-        logAuth(
-          "error",
-          "Invalid demo user counter",
-          AuthLog.service.demoUser.error(error, { role }),
-          { additionalData: { counter }, requestId: this.requestId },
-        );
+
+        logger.operation("error", "Invalid demo user counter", {
+          error,
+          operationIdentifiers: { counter, role },
+          operationName: "demoUser.counter.invalid",
+        });
+
         return Err(error);
       }
 
@@ -88,25 +94,24 @@ export class AuthUserService {
         }),
       );
 
-      logAuth(
-        "info",
-        "Demo user created",
-        AuthLog.service.demoUser.success({ role }),
-        {
-          additionalData: { email: uniqueEmail, username: uniqueUsername },
-          requestId: this.requestId,
+      logger.operation("info", "Demo user created", {
+        operationIdentifiers: {
+          email: uniqueEmail,
+          role,
+          username: uniqueUsername,
         },
-      );
+        operationName: "demoUser.success",
+      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
     } catch (err: unknown) {
       const error = normalizeToAppError(err, "unexpected");
-      logAuth(
-        "error",
-        "Demo user creation failed",
-        AuthLog.service.demoUser.error(error, { role }),
-        { requestId: this.requestId },
-      );
+
+      logger.operation("error", "Demo user creation failed", {
+        error,
+        operationName: "demoUser.error",
+      });
+
       return Err(error);
     }
   }
@@ -126,26 +131,32 @@ export class AuthUserService {
   async signup(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
+    const logger = this.logger.child({ email: input.email });
+
     if (!hasRequiredSignupFields(input)) {
       const error = normalizeToAppError(
         new Error("missing_fields"),
         "missingFields",
       );
-      logAuth(
-        "warn",
-        "Missing required signup fields",
-        AuthLog.service.signup.error(error, {
-          email: input.email,
-          username: input.username,
-        }),
-        { requestId: this.requestId },
-      );
+
+      logger.operation("warn", "Missing required signup fields", {
+        error,
+        operationIdentifiers: { email: input.email, username: input.username },
+        operationName: "signup.validation.missingFields",
+      });
+
       return Err(error);
     }
 
+    logger.operation("info", "Signup service started", {
+      operationIdentifiers: { email: input.email, username: input.username },
+      operationName: "signup.start",
+    });
+
     try {
       const passwordHash = await this.hasher.hash(input.password);
-      const demoUser = await this.repo.withTransaction(async (txRepo) =>
+
+      const createdUser = await this.repo.withTransaction(async (txRepo) =>
         txRepo.signup({
           email: input.email,
           password: passwordHash,
@@ -154,22 +165,24 @@ export class AuthUserService {
         }),
       );
 
-      logAuth(
-        "info",
-        "Signup service success",
-        AuthLog.service.signup.success({ email: input.email }),
-        { requestId: this.requestId },
-      );
+      logger.operation("info", "Signup service success", {
+        operationIdentifiers: {
+          email: input.email,
+          userId: String(createdUser.id),
+        },
+        operationName: "signup.success",
+      });
 
-      return Ok<AuthUserTransport>(toAuthUserTransport(demoUser));
+      return Ok<AuthUserTransport>(toAuthUserTransport(createdUser));
     } catch (err: unknown) {
       const error = normalizeToAppError(err, "unexpected");
-      logAuth(
-        "error",
-        "Signup service failed",
-        AuthLog.service.signup.error(error, { email: input.email }),
-        { requestId: this.requestId },
-      );
+
+      logger.operation("error", "Signup service failed", {
+        error,
+        operationIdentifiers: { email: input.email },
+        operationName: "signup.error",
+      });
+
       return Err(error);
     }
   }
@@ -190,7 +203,14 @@ export class AuthUserService {
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
+    const logger = this.logger.child({ email: input.email });
+
     try {
+      logger.operation("info", "Login service started", {
+        operationIdentifiers: { email: input.email },
+        operationName: "login.start",
+      });
+
       const user = await this.repo.login({ email: input.email });
 
       if (!user) {
@@ -198,12 +218,13 @@ export class AuthUserService {
           new Error("user_not_found"),
           "notFound",
         );
-        logAuth(
-          "warn",
-          "Login failed - user not found",
-          AuthLog.service.login.error(error, { email: input.email }),
-          { requestId: this.requestId },
-        );
+
+        logger.operation("warn", "Login failed - user not found", {
+          error,
+          operationIdentifiers: { email: input.email },
+          operationName: "login.user.notFound",
+        });
+
         return Err(error);
       }
 
@@ -212,15 +233,13 @@ export class AuthUserService {
           new Error("missing_password_hash"),
           "validation",
         );
-        logAuth(
-          "error",
-          "Login failed - missing password hash",
-          AuthLog.service.login.error(error, {
-            email: input.email,
-            userId: String(user.id),
-          }),
-          { requestId: this.requestId },
-        );
+
+        logger.operation("error", "Login failed - missing password hash", {
+          error,
+          operationIdentifiers: { email: input.email, userId: String(user.id) },
+          operationName: "login.user.missingPasswordHash",
+        });
+
         return Err(error);
       }
 
@@ -234,34 +253,31 @@ export class AuthUserService {
           new Error("invalid_password"),
           "invalidCredentials",
         );
-        logAuth(
-          "warn",
-          "Login failed - invalid password",
-          AuthLog.service.login.error(error, { email: input.email }),
-          { requestId: this.requestId },
-        );
+
+        logger.operation("warn", "Login failed - invalid password", {
+          error,
+          operationIdentifiers: { email: input.email },
+          operationName: "login.password.invalid",
+        });
+
         return Err(error);
       }
 
-      logAuth(
-        "info",
-        "Login succeeded",
-        AuthLog.service.login.success({ email: input.email }),
-        {
-          additionalData: { userId: String(user.id) },
-          requestId: this.requestId,
-        },
-      );
+      logger.operation("info", "Login succeeded", {
+        operationIdentifiers: { email: input.email, userId: String(user.id) },
+        operationName: "login.success",
+      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
       const error = normalizeToAppError(err, "unexpected");
-      logAuth(
-        "error",
-        "Login service unexpected error",
-        AuthLog.service.login.error(error, { email: input.email }),
-        { requestId: this.requestId },
-      );
+
+      logger.operation("error", "Login service unexpected error", {
+        error,
+        operationIdentifiers: { email: input.email },
+        operationName: "login.unexpectedError",
+      });
+
       return Err(error);
     }
   }

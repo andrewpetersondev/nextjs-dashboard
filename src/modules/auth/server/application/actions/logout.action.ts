@@ -1,14 +1,17 @@
 "use server";
 import { redirect } from "next/navigation";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 export async function logoutAction(): Promise<void> {
   const requestId = crypto.randomUUID();
 
-  logAuth("info", "Logout action start", AuthLog.action.login.start(), {
-    requestId,
+  const logger = defaultLogger
+    .withContext("auth:action")
+    .withRequest(requestId);
+
+  logger.operation("info", "Logout action start", {
+    operationName: "logout.start",
   });
 
   const sessionManager = createSessionManagerFactory();
@@ -16,17 +19,16 @@ export async function logoutAction(): Promise<void> {
   const res = await sessionManager.clear();
 
   if (res.ok) {
-    logAuth("info", "Logout success", AuthLog.action.login.success({}), {
-      requestId,
+    logger.operation("info", "Logout success", {
+      operationName: "logout.success",
     });
   } else {
-    const error: AppError = res.error;
-    logAuth(
-      "error",
-      "Logout session clear failed",
-      AuthLog.action.login.error(error, { reason: "session_clear_failed" }),
-      { requestId },
-    );
+    const error = res.error;
+    logger.operation("error", "Logout session clear failed", {
+      error,
+      operationIdentifiers: { reason: "session_clear_failed" },
+      operationName: "logout.failed",
+    });
   }
 
   redirect("/");

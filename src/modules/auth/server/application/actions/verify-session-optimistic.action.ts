@@ -1,9 +1,9 @@
 "use server";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { SessionVerificationResult } from "@/modules/auth/domain/sessions/session-payload.types";
 import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
+import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -11,17 +11,24 @@ import { ROUTES } from "@/shared/routes/routes";
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
+    const logger = defaultLogger.withContext("auth:action");
+
     const sessionManager = createSessionManagerFactory();
     const session = await sessionManager.read();
     if (!session?.userId) {
-      logAuth(
-        "warn",
-        "No valid session found",
-        AuthLog.action.login.failure(),
-        { additionalData: { reason: "no_session" } },
-      );
+      logger.operation("warn", "No valid session found", {
+        operationIdentifiers: { reason: "no_session" },
+        operationName: "session.verifyOptimistic.noSession",
+      });
+
       redirect(ROUTES.auth.login);
     }
+
+    logger.operation("info", "Session verified (optimistic)", {
+      operationIdentifiers: { role: session.role, userId: session.userId },
+      operationName: "session.verifyOptimistic.success",
+    });
+
     return {
       isAuthorized: true,
       role: session.role,

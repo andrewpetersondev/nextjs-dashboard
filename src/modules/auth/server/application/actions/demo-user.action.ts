@@ -1,7 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
@@ -9,6 +8,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
+import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -30,16 +30,16 @@ async function createDemoUserInternal(
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
 
-  logAuth("info", "Demo user action started", AuthLog.action.demoUser.start(), {
-    additionalData: { ip, role, userAgent },
-    requestId,
+  const logger = defaultLogger
+    .withContext("auth:action")
+    .withRequest(requestId)
+    .child({ ip, role, userAgent });
+
+  logger.operation("info", "Demo user action started", {
+    operationName: "demoUser.start",
   });
 
-  const service = createAuthUserServiceFactory(
-    getAppDb(),
-    undefined,
-    requestId,
-  );
+  const service = createAuthUserServiceFactory(getAppDb(), logger);
 
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(role, service.createDemoUser.bind(service)),
@@ -48,18 +48,11 @@ async function createDemoUserInternal(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    logAuth(
-      "error",
-      "Demo user creation failed",
-      AuthLog.action.demoUser.error(error, { role }),
-      {
-        additionalData: {
-          ...tracker.getMetrics(),
-          ip,
-        },
-        requestId,
-      },
-    );
+    logger.operation("error", "Demo user creation failed", {
+      error,
+      operationIdentifiers: { ip, role },
+      operationName: "demoUser.failed",
+    });
 
     return formError({
       fieldErrors: {} as Record<string, readonly string[]>,
@@ -67,17 +60,9 @@ async function createDemoUserInternal(
     });
   }
 
-  logAuth(
-    "info",
-    "Demo user created successfully",
-    AuthLog.action.demoUser.success({ role }),
-    {
-      additionalData: {
-        ...tracker.getMetrics(),
-      },
-      requestId,
-    },
-  );
+  logger.operation("info", "Demo user created successfully", {
+    operationName: "demoUser.success",
+  });
 
   redirect(ROUTES.dashboard.root);
 }

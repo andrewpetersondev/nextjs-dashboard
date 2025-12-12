@@ -1,6 +1,5 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
@@ -13,8 +12,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
-  parentLogger: LoggingClientContract,
-  requestId?: string,
+  logger: LoggingClientContract,
 ): Promise<UserRow | null> {
   return await executeDalOrThrow(
     async () => {
@@ -25,25 +23,21 @@ export async function getUserByEmailDal(
         .limit(1);
 
       if (!userRow) {
-        logAuth(
-          "info",
-          "User not found",
-          AuthLog.dal.getUserByEmail.notFound({ email }),
-          { requestId },
-        );
+        logger.operation("info", "User not found", {
+          operationIdentifiers: { email },
+          operationName: "getUserByEmail.notFound",
+        });
         return null;
       }
 
-      logAuth(
-        "info",
-        "User row fetched",
-        AuthLog.dal.getUserByEmail.success({ email }),
-        { requestId },
-      );
+      logger.operation("info", "User row fetched", {
+        operationIdentifiers: { email, userId: userRow.id },
+        operationName: "getUserByEmail.success",
+      });
 
       return userRow;
     },
     { identifiers: { email }, operation: "getUserByEmail" },
-    parentLogger,
+    logger,
   );
 }

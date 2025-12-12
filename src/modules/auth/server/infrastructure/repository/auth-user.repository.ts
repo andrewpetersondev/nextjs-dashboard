@@ -5,7 +5,6 @@ import type {
   AuthSignupPayload,
   AuthUserEntity,
 } from "@/modules/auth/domain/auth.types";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import { TransactionLogger } from "@/modules/auth/domain/logging/transaction-logger";
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
@@ -26,7 +25,6 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
 export class AuthUserRepositoryImpl {
   protected readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
-  private readonly requestId?: string;
   private readonly transactionLogger: TransactionLogger;
 
   constructor(
@@ -35,16 +33,16 @@ export class AuthUserRepositoryImpl {
     requestId?: string,
   ) {
     this.db = db;
-    this.logger = logger ?? defaultLogger;
-    this.requestId = requestId;
-    this.transactionLogger = new TransactionLogger(requestId);
+    const base = (logger ?? defaultLogger).withContext("auth:repo");
+    this.logger = requestId ? base.withRequest(requestId) : base;
+    this.transactionLogger = new TransactionLogger(this.logger);
   }
 
   /**
    * Increments the demo user counter.
    */
   async incrementDemoUserCounter(role: UserRole): Promise<number> {
-    return await demoUserCounterDal(this.db, role, this.logger, this.requestId);
+    return await demoUserCounterDal(this.db, role, this.logger);
   }
 
   /**
@@ -60,29 +58,24 @@ export class AuthUserRepositoryImpl {
   async login(
     input: Readonly<AuthLoginRepoInput>,
   ): Promise<AuthUserEntity | null> {
-    const row = await getUserByEmailDal(
-      this.db,
-      input.email,
-      this.logger,
-      this.requestId,
-    );
+    const row = await getUserByEmailDal(this.db, input.email, this.logger);
 
     if (!row?.password) {
-      logAuth(
+      this.logger.operation(
         "warn",
         "Login lookup resulted in no user with password",
-        AuthLog.repository.login.notFound({ email: input.email }),
-        { requestId: this.requestId },
+        {
+          operationIdentifiers: { email: input.email },
+          operationName: "login.notFound",
+        },
       );
       return null;
     }
 
-    logAuth(
-      "info",
-      "User retrieved successfully for login",
-      AuthLog.repository.login.success({ email: input.email, userId: row.id }),
-      { requestId: this.requestId },
-    );
+    this.logger.operation("info", "User retrieved successfully for login", {
+      operationIdentifiers: { email: input.email, userId: row.id },
+      operationName: "login.success",
+    });
 
     return userDbRowToEntity(row);
   }
@@ -97,19 +90,12 @@ export class AuthUserRepositoryImpl {
    * - DAL-level errors are propagated as-is for higher layers to map.
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
-    const row = await insertUserDal(
-      this.db,
-      input,
-      this.logger,
-      this.requestId,
-    );
+    const row = await insertUserDal(this.db, input, this.logger);
 
-    logAuth(
-      "info",
-      "User created successfully",
-      AuthLog.repository.signup.success({ email: input.email }),
-      { requestId: this.requestId },
-    );
+    this.logger.operation("info", "User created successfully", {
+      operationIdentifiers: { email: input.email, userId: row.id },
+      operationName: "signup.success",
+    });
 
     return newUserDbRowToEntity(row);
   }
@@ -134,23 +120,24 @@ export class AuthUserRepositoryImpl {
     }
 
     const transactionId = randomUUID();
+    const txLogger = this.logger
+      .child({ transactionId })
+      .withContext("auth:tx");
 
-    this.transactionLogger.start(transactionId);
+    const txEvents = new TransactionLogger(txLogger);
+
+    txEvents.start(transactionId);
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
-        const txRepo = new AuthUserRepositoryImpl(
-          tx,
-          this.logger,
-          this.requestId,
-        );
+        const txRepo = new AuthUserRepositoryImpl(tx, txLogger);
         return await fn(txRepo);
       });
 
-      this.transactionLogger.commit(transactionId);
+      txEvents.commit(transactionId);
       return result;
     } catch (err) {
-      this.transactionLogger.rollback(transactionId, err);
+      txEvents.rollback(transactionId, err);
       throw err;
     }
   }

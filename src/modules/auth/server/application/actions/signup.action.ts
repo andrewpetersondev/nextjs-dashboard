@@ -2,7 +2,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
-import { AuthLog, logAuth } from "@/modules/auth/domain/logging/auth-log";
 import {
   SIGNUP_FIELDS_LIST,
   type SignupData,
@@ -17,6 +16,7 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
+import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -48,9 +48,13 @@ export async function signupAction(
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
 
-  logAuth("info", "Signup action started", AuthLog.action.signup.start(), {
-    additionalData: { ip, userAgent },
-    requestId,
+  const logger = defaultLogger
+    .withContext("auth:action")
+    .withRequest(requestId)
+    .child({ ip, userAgent });
+
+  logger.operation("info", "Signup action started", {
+    operationName: "signup.start",
   });
 
   const validated = await tracker.measure("validation", () =>
@@ -62,46 +66,25 @@ export async function signupAction(
       validated.error?.metadata?.fieldErrors || {},
     ).length;
 
-    logAuth(
-      "warn",
-      "Signup validation failed",
-      AuthLog.action.signup.validation({ errorCount, ip }),
-      {
-        additionalData: {
-          duration: tracker.getTotalDuration(),
-          errorCount,
-          ip,
-        },
-        requestId,
-      },
-    );
+    logger.operation("warn", "Signup validation failed", {
+      duration: tracker.getTotalDuration(),
+      errorCount,
+      operationIdentifiers: { ip },
+      operationName: "signup.validation.failed",
+    });
 
     return validated;
   }
 
   const input: SignupData = validated.value.data;
 
-  logAuth(
-    "info",
-    "Signup form validated",
-    AuthLog.action.signup.success({
-      email: input.email,
-      username: input.username,
-    }),
-    {
-      additionalData: {
-        duration: tracker.getLastDuration("validation"),
-        email: input.email,
-      },
-      requestId,
-    },
-  );
+  logger.operation("info", "Signup form validated", {
+    duration: tracker.getLastDuration("validation"),
+    operationIdentifiers: { email: input.email },
+    operationName: "signup.validation.success",
+  });
 
-  const service = createAuthUserServiceFactory(
-    getAppDb(),
-    undefined,
-    requestId,
-  );
+  const service = createAuthUserServiceFactory(getAppDb(), logger);
   const sessionResult = await tracker.measure("authentication", () =>
     executeAuthPipeline(input, service.signup.bind(service)),
   );
@@ -109,23 +92,16 @@ export async function signupAction(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    logAuth(
-      "error",
-      "Signup authentication failed",
-      AuthLog.action.signup.error(error, {
+    logger.operation("error", "Signup authentication failed", {
+      duration: tracker.getTotalDuration(),
+      error,
+      operationIdentifiers: {
         email: input.email,
         ip,
         username: input.username,
-      }),
-      {
-        additionalData: {
-          ...tracker.getMetrics(),
-          email: input.email,
-          ip,
-        },
-        requestId,
       },
-    );
+      operationName: "signup.authentication.failed",
+    });
 
     const { fieldErrors, message } =
       adaptAppErrorToFormPayload<SignupField>(error);
@@ -139,22 +115,11 @@ export async function signupAction(
   }
   const { id: userId, role } = sessionResult.value;
 
-  logAuth(
-    "info",
-    "Signup action completed successfully",
-    AuthLog.action.signup.success({
-      email: input.email,
-      userId,
-      username: input.username,
-    }),
-    {
-      additionalData: {
-        ...tracker.getMetrics(),
-        role,
-      },
-      requestId,
-    },
-  );
+  logger.operation("info", "Signup action completed successfully", {
+    duration: tracker.getTotalDuration(),
+    operationIdentifiers: { email: input.email, role, userId },
+    operationName: "signup.success",
+  });
 
   revalidatePath(ROUTES.dashboard.root);
   redirect(ROUTES.dashboard.root);

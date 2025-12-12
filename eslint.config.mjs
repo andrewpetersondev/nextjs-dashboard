@@ -22,6 +22,22 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              message:
+                "Use LoggingClientContract (logger.operation / logger.errorWithDetails) instead of deprecated auth logging helpers.",
+              name: "@/modules/auth/domain/logging/auth-log",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;
