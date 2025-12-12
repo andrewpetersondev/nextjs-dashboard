@@ -1,11 +1,9 @@
 import { z } from "zod";
 import { USER_ROLES } from "@/modules/auth/domain/schema/auth.roles";
-import {
-  EmailSchema,
-  PasswordSchema,
-  UsernameSchema,
-} from "@/modules/auth/domain/schema/auth.schema";
 import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
+import { EmailSchema } from "@/shared/validation/zod/email.schema";
+import { PasswordSchema } from "@/shared/validation/zod/password.schema";
+import { UsernameSchema } from "@/shared/validation/zod/username.schema";
 
 const toUndefinedIfEmptyString = (v: unknown) =>
   typeof v === "string" && v.trim() === "" ? undefined : v;

@@ -1,0 +1,37 @@
+import { z } from "zod";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH_ERROR,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MIN_LENGTH_ERROR,
+  PASSWORD_RULE_REGEX_CONTAIN_LETTER,
+  PASSWORD_RULE_REGEX_CONTAIN_NUMBER,
+  PASSWORD_RULE_REGEX_CONTAIN_SPECIAL_CHARACTER,
+  PASSWORD_RULE_REGEX_ERROR_LETTER,
+  PASSWORD_RULE_REGEX_ERROR_NUMBER,
+  PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER,
+} from "@/shared/validation/password-policy";
+
+/**
+ * Validate a password with strength rules.
+ *
+ * Trims; enforces length and requires letter, number, and special char.
+ */
+export const PasswordSchema = z
+  .string()
+  .min(PASSWORD_MIN_LENGTH, {
+    error: PASSWORD_MIN_LENGTH_ERROR,
+  })
+  .max(PASSWORD_MAX_LENGTH, {
+    error: PASSWORD_MAX_LENGTH_ERROR,
+  })
+  .regex(PASSWORD_RULE_REGEX_CONTAIN_LETTER, {
+    error: PASSWORD_RULE_REGEX_ERROR_LETTER,
+  })
+  .regex(PASSWORD_RULE_REGEX_CONTAIN_NUMBER, {
+    error: PASSWORD_RULE_REGEX_ERROR_NUMBER,
+  })
+  .regex(PASSWORD_RULE_REGEX_CONTAIN_SPECIAL_CHARACTER, {
+    error: PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER,
+  })
+  .trim();

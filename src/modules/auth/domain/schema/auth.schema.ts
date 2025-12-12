@@ -1,72 +1,8 @@
 import { z } from "zod";
-import {
-  EMAIL_ERROR,
-  PASSWORD_MAX_LENGTH,
-  PASSWORD_MAX_LENGTH_ERROR,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MIN_LENGTH_ERROR,
-  PASSWORD_RULE_REGEX_CONTAIN_LETTER,
-  PASSWORD_RULE_REGEX_CONTAIN_NUMBER,
-  PASSWORD_RULE_REGEX_CONTAIN_SPECIAL_CHARACTER,
-  PASSWORD_RULE_REGEX_ERROR_LETTER,
-  PASSWORD_RULE_REGEX_ERROR_NUMBER,
-  PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER,
-  USERNAME_MAX_LENGTH,
-  USERNAME_MAX_LENGTH_ERROR,
-  USERNAME_MIN_LENGTH,
-  USERNAME_MIN_LENGTH_ERROR,
-} from "@/modules/auth/domain/schema/auth-schema.constants";
 import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
-
-/**
- * Validate and normalize a username.
- *
- * Trims, enforces length, then lowercases.
- */
-export const UsernameSchema = z
-  .string()
-  .min(USERNAME_MIN_LENGTH, {
-    error: USERNAME_MIN_LENGTH_ERROR,
-  })
-  .max(USERNAME_MAX_LENGTH, {
-    error: USERNAME_MAX_LENGTH_ERROR,
-  })
-  .trim()
-  .toLowerCase();
-
-/**
- * Validate and normalize an email.
- *
- * Trims, validates RFC email, then lowercases.
- */
-export const EmailSchema = z
-  .string()
-  .trim()
-  .pipe(z.email({ error: EMAIL_ERROR }).toLowerCase());
-
-/**
- * Validate a password with strength rules.
- *
- * Trims; enforces length and requires letter, number, and special char.
- */
-export const PasswordSchema = z
-  .string()
-  .min(PASSWORD_MIN_LENGTH, {
-    error: PASSWORD_MIN_LENGTH_ERROR,
-  })
-  .max(PASSWORD_MAX_LENGTH, {
-    error: PASSWORD_MAX_LENGTH_ERROR,
-  })
-  .regex(PASSWORD_RULE_REGEX_CONTAIN_LETTER, {
-    error: PASSWORD_RULE_REGEX_ERROR_LETTER,
-  })
-  .regex(PASSWORD_RULE_REGEX_CONTAIN_NUMBER, {
-    error: PASSWORD_RULE_REGEX_ERROR_NUMBER,
-  })
-  .regex(PASSWORD_RULE_REGEX_CONTAIN_SPECIAL_CHARACTER, {
-    error: PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER,
-  })
-  .trim();
+import { EmailSchema } from "@/shared/validation/zod/email.schema";
+import { PasswordSchema } from "@/shared/validation/zod/password.schema";
+import { UsernameSchema } from "@/shared/validation/zod/username.schema";
 
 /**
  * Object schema for email/password credentials.
