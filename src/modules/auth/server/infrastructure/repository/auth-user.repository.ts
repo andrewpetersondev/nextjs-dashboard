@@ -23,7 +23,7 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  * Repository for user authentication flows (signup/login).
  * Encapsulates DAL usage and provides a single point for cross-cutting policies.
  */
-export class AuthUserRepositoryImpl {
+export class AuthUserRepository {
   protected readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
 
@@ -108,7 +108,7 @@ export class AuthUserRepositoryImpl {
    * @throws Re-throws any errors from the transaction
    */
   async withTransaction<T>(
-    fn: (txRepo: AuthUserRepositoryImpl) => Promise<T>,
+    fn: (txRepo: AuthUserRepository) => Promise<T>,
   ): Promise<T> {
     const dbWithTx = this.db as AppDatabase & {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
@@ -129,7 +129,7 @@ export class AuthUserRepositoryImpl {
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
-        const txRepo = new AuthUserRepositoryImpl(tx, txLogger);
+        const txRepo = new AuthUserRepository(tx, txLogger);
         return await fn(txRepo);
       });
 

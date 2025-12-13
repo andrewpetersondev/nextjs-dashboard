@@ -7,7 +7,7 @@ import type {
 } from "@/modules/auth/domain/auth.types";
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import type { AuthUserRepositoryImpl } from "@/modules/auth/server/infrastructure/repository/auth-user.repository";
+import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/repository/auth-user.repository";
 
 /**
  * Thin adapter that translates the port interface to the repository implementation.
@@ -15,11 +15,11 @@ import type { AuthUserRepositoryImpl } from "@/modules/auth/server/infrastructur
  * No logging here - that's the repository's responsibility.
  */
 export class AuthUserRepositoryAdapter
-  implements AuthUserRepositoryPort<AuthUserRepositoryImpl>
+  implements AuthUserRepositoryPort<AuthUserRepository>
 {
-  private readonly repo: AuthUserRepositoryImpl;
+  private readonly repo: AuthUserRepository;
 
-  constructor(repo: AuthUserRepositoryImpl) {
+  constructor(repo: AuthUserRepository) {
     this.repo = repo;
   }
 
@@ -36,7 +36,7 @@ export class AuthUserRepositoryAdapter
   }
 
   withTransaction<T>(
-    fn: (txRepo: AuthUserRepositoryPort<AuthUserRepositoryImpl>) => Promise<T>,
+    fn: (txRepo: AuthUserRepositoryPort<AuthUserRepository>) => Promise<T>,
   ): Promise<T> {
     return this.repo.withTransaction(async (txRepo) => {
       const txAdapter = new AuthUserRepositoryAdapter(txRepo);
