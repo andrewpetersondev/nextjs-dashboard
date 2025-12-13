@@ -1,6 +1,5 @@
-// src/server/auth/application/actions/auth-pipeline.helper.ts
-
 import "server-only";
+
 import type { SessionUser } from "@/modules/auth/domain/sessions/session-action.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { pipeAsync } from "@/shared/result/async/result-pipe-async";

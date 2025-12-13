@@ -1,4 +1,5 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
@@ -8,7 +9,7 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/modules/auth/domain/schema/auth.schema";
-import { executeAuthPipeline } from "@/modules/auth/server/application/actions/auth-pipeline.helper";
+import { executeAuthPipeline } from "@/modules/auth/server/application/actions/execute-auth-pipeline";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";

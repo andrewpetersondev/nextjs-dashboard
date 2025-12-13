@@ -20,6 +20,18 @@ The core idea:
    Application / Domain
 ```
 
+```
+Service --> Port (interface)
+    ^           ^
+    |           |
+    |       implements
+    |           |
+    Adapter ----+
+      |
+      v
+Repository --> [ DAL / Database / External System ]
+```
+
 ---
 
 ## 2. Domain (Core)
