@@ -5,7 +5,7 @@ import {
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/session/session.constants";
 import { userIdCodec } from "@/modules/auth/domain/session/session.schemas";
-import type { UpdateSessionResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session-payload.types";
 import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   SessionPort,
@@ -231,30 +231,28 @@ export class SessionService {
   /**
    * Rotates the session token if necessary based on refresh threshold.
    *
-   * Extends session expiration if under 2 minutes remaining, respecting the
-   * 30-day absolute lifetime limit.
-   *
-   * @returns UpdateSessionResult containing refresh status and metadata
+   * - Returns `Ok(outcome)` for expected policy outcomes (including "not rotated").
+   * - Returns `Err(AppError)` for operational failures (token issue/cookie write/unexpected).
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's ok>
-  async rotate(): Promise<UpdateSessionResult> {
+  async rotate(): Promise<Result<UpdateSessionOutcome, AppError>> {
     try {
       const current = await this.cookie.get();
 
       if (!current) {
-        return { reason: "no_cookie", refreshed: false };
+        return Ok({ reason: "no_cookie", refreshed: false });
       }
 
       const decodedResult = await this.jwt.decode(current);
 
       if (!decodedResult.ok) {
-        return { reason: "invalid_or_missing_user", refreshed: false };
+        return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
-        return { reason: "invalid_or_missing_user", refreshed: false };
+        return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 
       const user = {
@@ -278,22 +276,23 @@ export class SessionService {
             },
           },
         );
-        return {
+
+        return Ok({
           ageMs: age,
           maxMs: MAX_ABSOLUTE_SESSION_MS,
           reason: "absolute_lifetime_exceeded",
           refreshed: false,
-        };
+        });
       }
 
       const { refresh, timeLeftMs: remaining } = shouldRefreshToken(decoded);
 
       if (!refresh) {
-        return {
+        return Ok({
           reason: "not_needed",
           refreshed: false,
           timeLeftMs: remaining,
-        };
+        });
       }
 
       const issuedResult = await this.issueToken(user, decoded.sessionStart);
@@ -304,7 +303,7 @@ export class SessionService {
           logging: { code: "session_rotate_issue_token_failed" },
         });
 
-        return { reason: "token_issue_failed", refreshed: false };
+        return Err(issuedResult.error);
       }
 
       const { expiresAtMs, token } = issuedResult.value;
@@ -319,20 +318,20 @@ export class SessionService {
         },
       });
 
-      return {
+      return Ok({
         expiresAt: expiresAtMs,
         reason: "rotated",
         refreshed: true,
         role: user.role,
         userId: user.userId,
-      };
+      });
     } catch (err: unknown) {
       this.logger.error("Session rotate failed", {
         error: String(err),
         logging: { code: "session_rotate_failed" },
       });
 
-      return { reason: "unexpected_error", refreshed: false };
+      return Err(makeAppErrorFromUnknown(err, "unexpected"));
     }
   }
 

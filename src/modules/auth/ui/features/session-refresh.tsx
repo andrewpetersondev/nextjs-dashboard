@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import type { UpdateSessionResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session-payload.types";
 import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/ui/auth-ui.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
@@ -44,7 +44,7 @@ async function performSessionPing(): Promise<void> {
 
     const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
     if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
-      const outcome = (await res.json()) as UpdateSessionResult;
+      const outcome = (await res.json()) as UpdateSessionOutcome;
       // Log based on environment
       const env = getPublicNodeEnv();
       if (env === "development") {

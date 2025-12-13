@@ -8,6 +8,7 @@ import {
   HEADER_EXPIRES,
   HEADER_PRAGMA,
   HEADER_VARY,
+  HTTP_STATUS_NO_CONTENT,
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
 } from "@/shared/http/http-headers";
@@ -30,17 +31,38 @@ async function rotateSession(): Promise<
   return await refreshSessionWorkflow({ sessionService });
 }
 
+function toRefreshResponse(
+  res: Awaited<ReturnType<typeof rotateSession>>,
+): NextResponse {
+  if (!res.ok) {
+    return new NextResponse(null, { status: 500 });
+  }
+
+  const outcome = res.value;
+
+  if (outcome.refreshed) {
+    return NextResponse.json(outcome, { status: 200 });
+  }
+
+  return new NextResponse(null, { status: HTTP_STATUS_NO_CONTENT });
+}
+
 export async function POST(): Promise<NextResponse> {
-  const outcome = await rotateSession();
-  return applyNoStoreHeaders(NextResponse.json(outcome, { status: 200 }));
+  const res = await rotateSession();
+  return applyNoStoreHeaders(toRefreshResponse(res));
 }
 
 export async function GET(): Promise<NextResponse> {
-  const outcome = await rotateSession();
-  return applyNoStoreHeaders(NextResponse.json(outcome, { status: 200 }));
+  const res = await rotateSession();
+  return applyNoStoreHeaders(toRefreshResponse(res));
 }
 
 export async function HEAD(): Promise<NextResponse> {
-  await rotateSession();
-  return applyNoStoreHeaders(new NextResponse(null, { status: 204 }));
+  const res = await rotateSession();
+  if (!res.ok) {
+    return applyNoStoreHeaders(new NextResponse(null, { status: 500 }));
+  }
+  return applyNoStoreHeaders(
+    new NextResponse(null, { status: HTTP_STATUS_NO_CONTENT }),
+  );
 }

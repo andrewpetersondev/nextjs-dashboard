@@ -25,11 +25,9 @@ export type UpdateSessionFailureReason =
   | "absolute_lifetime_exceeded"
   | "invalid_or_missing_user"
   | "no_cookie"
-  | "not_needed"
-  | "token_issue_failed"
-  | "unexpected_error";
+  | "not_needed";
 
-export type UpdateSessionFailure = {
+export type UpdateSessionNotRotated = {
   readonly ageMs?: number;
   readonly maxMs?: number;
   readonly reason: UpdateSessionFailureReason;
@@ -46,7 +44,11 @@ export type UpdateSessionSuccess = {
 };
 
 /**
- * Re-issues the session JWT and updates the cookie if the current token is valid.
- * Use discriminated union on `refreshed` to safely access user properties.
+ * Policy/outcome union for session refresh.
+ *
+ * - `refreshed: false` cases are expected outcomes (no cookie, not needed, policy exceeded, invalid user)
+ * - errors like crypto/cookie failures are represented as `Err(AppError)` at the service boundary
  */
-export type UpdateSessionResult = UpdateSessionSuccess | UpdateSessionFailure;
+export type UpdateSessionOutcome =
+  | UpdateSessionNotRotated
+  | UpdateSessionSuccess;
