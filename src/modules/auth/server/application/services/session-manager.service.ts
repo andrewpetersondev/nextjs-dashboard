@@ -1,4 +1,5 @@
 import "server-only";
+
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import {
   SESSION_DURATION_MS,
@@ -188,9 +189,19 @@ export class SessionManager {
         return;
       }
 
-      const decoded = await this.jwt.decode(token);
+      const decodedResult = await this.jwt.decode(token);
 
-      if (!decoded?.userId) {
+      if (!decodedResult.ok) {
+        this.logger.warn("Session decode failed", {
+          logging: { reason: "decode_error" },
+        });
+        // TODO: SHOULD THIS RETURN makeCryptoError or something similar?
+        return;
+      }
+
+      const decoded = decodedResult.value;
+
+      if (!decoded.userId) {
         this.logger.warn("Invalid session payload", {
           logging: { reason: "invalid_payload" },
         });
@@ -225,9 +236,15 @@ export class SessionManager {
         return { reason: "no_cookie", refreshed: false };
       }
 
-      const decoded = await this.jwt.decode(current);
+      const decodedResult = await this.jwt.decode(current);
 
-      if (!decoded?.userId) {
+      if (!decodedResult.ok) {
+        return { reason: "invalid_or_missing_user", refreshed: false };
+      }
+
+      const decoded = decodedResult.value;
+
+      if (!decoded.userId) {
         return { reason: "invalid_or_missing_user", refreshed: false };
       }
 

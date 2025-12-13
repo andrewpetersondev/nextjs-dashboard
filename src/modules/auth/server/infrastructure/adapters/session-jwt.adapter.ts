@@ -1,4 +1,5 @@
 import "server-only";
+
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import type { AuthEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
 import {
@@ -6,7 +7,11 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-server";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { makeUnexpectedErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 const MIN_HS256_KEY_LENGTH = 32 as const;
 const CLOCK_TOLERANCE_SEC = 5 as const;
@@ -81,6 +86,7 @@ export class SessionJwtAdapter {
       const token = await signer.sign(this.encodedKey);
       return token;
     } catch (err: unknown) {
+      // FIXME: WHY DOES THIS throw? why does it not use error factory?
       throw new Error("session_sign_failed", { cause: err });
     }
   }
@@ -89,24 +95,26 @@ export class SessionJwtAdapter {
    * Decodes and verifies a JWT token.
    *
    * @param token - The JWT token string to decode
-   * @returns The decoded payload if valid, undefined if verification fails
-   *
-   * Note: This method returns undefined for both expected failures (expired tokens)
-   * and unexpected failures (configuration errors). Failures are logged as warnings.
+   * @returns `Ok(payload)` if verification succeeds, `Err(appError)` otherwise
    */
-  async decode(token: string): Promise<AuthEncryptPayload | undefined> {
+  async decode(token: string): Promise<Result<AuthEncryptPayload, AppError>> {
     try {
       const { payload } = await jwtVerify<AuthEncryptPayload>(
         token,
         this.encodedKey,
         this.verifyOptions,
       );
-      return payload;
+      return Ok(payload);
     } catch (error: unknown) {
       logger.warn("JWT verification failed", {
         error: String(error),
       });
-      return;
+
+      return Err(
+        makeUnexpectedErrorFromUnknown(error, {
+          message: `JWT verification failed: ${String(error)}`,
+        }),
+      );
     }
   }
 }

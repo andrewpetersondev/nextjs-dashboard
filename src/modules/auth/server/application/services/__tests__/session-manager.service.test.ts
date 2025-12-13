@@ -11,8 +11,12 @@ import type {
 } from "@/modules/auth/server/application/ports/session.port";
 import { SessionManager } from "@/modules/auth/server/application/services/session-manager.service";
 import type { UserId } from "@/shared/branding/brands";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { logger as realLogger } from "@/shared/logging/infrastructure/logging.client";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 const ONE_SECOND_MS = 1000 as const;
@@ -36,12 +40,15 @@ class InMemoryCookie implements SessionPort {
 }
 
 class JsonStubJwt implements SessionTokenCodecPort {
-  decode(token: string): Promise<AuthEncryptPayload | undefined> {
+  decode(token: string): Promise<Result<AuthEncryptPayload, AppError>> {
     try {
       const json = Buffer.from(token, "base64").toString("utf8");
-      return Promise.resolve(JSON.parse(json) as AuthEncryptPayload);
+      const payload = JSON.parse(json) as AuthEncryptPayload;
+      return Promise.resolve(Ok(payload));
     } catch {
-      return Promise.resolve(undefined);
+      return Promise.resolve(
+        Err(makeAppError("validation", { message: "Invalid token" })),
+      );
     }
   }
 
@@ -79,15 +86,19 @@ describe("SessionManager", () => {
       expect(stored).toBeDefined();
 
       if (stored !== undefined) {
-        const claims = await jwt.decode(stored);
-        expect(claims?.userId).toBe("user-1");
-        expect(claims?.role).toBe("user");
-        expect(claims?.expiresAt).toBe(
-          Number(new Date("2025-01-01T00:00:00.000Z")) + SESSION_DURATION_MS,
-        );
-        expect(claims?.sessionStart).toBe(
-          Number(new Date("2025-01-01T00:00:00.000Z")),
-        );
+        const decoded = await jwt.decode(stored);
+        expect(decoded.ok).toBe(true);
+        if (decoded.ok) {
+          const claims = decoded.value;
+          expect(claims.userId).toBe("user-1");
+          expect(claims.role).toBe("user");
+          expect(claims.expiresAt).toBe(
+            Number(new Date("2025-01-01T00:00:00.000Z")) + SESSION_DURATION_MS,
+          );
+          expect(claims.sessionStart).toBe(
+            Number(new Date("2025-01-01T00:00:00.000Z")),
+          );
+        }
       }
     });
 
@@ -242,8 +253,12 @@ describe("SessionManager", () => {
       const stored = await cookie.get();
 
       if (stored !== undefined) {
-        const claims = await jwt.decode(stored);
-        expect(claims?.sessionStart).toBe(startTime);
+        const decoded = await jwt.decode(stored);
+        expect(decoded.ok).toBe(true);
+        if (decoded.ok) {
+          const claims = decoded.value;
+          expect(claims.sessionStart).toBe(startTime);
+        }
       }
     });
   });

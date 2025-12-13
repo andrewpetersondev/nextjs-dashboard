@@ -11,23 +11,21 @@ import {
 } from "@/shared/routes/routes";
 
 export default async function proxy(req: NextRequest) {
-  const path: string = normalizePath(req.nextUrl.pathname);
-  const isProtectedRoute: boolean = isProtectedRouteHelper(path);
-  const isAdminRoute: boolean = isAdminRouteHelper(path);
-  const isPublicRoute: boolean = isPublicRouteHelper(path);
+  const path = normalizePath(req.nextUrl.pathname);
+  const isProtectedRoute = isProtectedRouteHelper(path);
+  const isAdminRoute = isAdminRouteHelper(path);
+  const isPublicRoute = isPublicRouteHelper(path);
 
   // If route is not relevant for auth, skip work early (avoid cookie/session reads)
   if (!(isProtectedRoute || isAdminRoute || isPublicRoute)) {
     return NextResponse.next();
   }
 
-  // Retrieve and decode session only when needed
-  const cookie: string | undefined =
-    req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const jwt = createSessionJwtAdapter();
-  const claims = cookie ? await jwt.decode(cookie) : undefined;
+  const decodedResult = cookie ? await jwt.decode(cookie) : undefined;
+  const claims = decodedResult?.ok ? decodedResult.value : undefined;
 
-  // Admin-only routes
   if (isAdminRoute) {
     // Not authenticated: go straight to login (avoid double redirects)
     if (!claims?.userId) {
