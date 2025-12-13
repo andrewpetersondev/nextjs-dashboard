@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { logoutWorkflow } from "@/modules/auth/server/application/workflows/logout.workflow";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 export async function logoutAction(): Promise<void> {
@@ -15,18 +16,17 @@ export async function logoutAction(): Promise<void> {
     operationName: "logout.start",
   });
 
-  const sessionManager = createSessionServiceFactory();
+  const sessionService = createSessionServiceFactory(logger);
 
-  const res = await sessionManager.clear();
+  const res = await logoutWorkflow({ sessionService });
 
   if (res.ok) {
     logger.operation("info", "Logout success", {
       operationName: "logout.success",
     });
   } else {
-    const error = res.error;
     logger.operation("error", "Logout session clear failed", {
-      error,
+      error: res.error,
       operationIdentifiers: { reason: "session_clear_failed" },
       operationName: "logout.failed",
     });

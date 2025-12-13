@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
 import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { executeAuthPipeline } from "@/modules/auth/server/application/workflows/execute-auth-pipeline";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { createDemoUserWorkflow } from "@/modules/auth/server/application/workflows/create-demo-user.workflow";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
@@ -40,10 +41,11 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const service = createAuthUserServiceFactory(getAppDb(), logger);
+  const authUserService = createAuthUserServiceFactory(getAppDb(), logger);
+  const sessionService = createSessionServiceFactory(logger);
 
   const sessionResult = await tracker.measure("authentication", () =>
-    executeAuthPipeline(role, service.createDemoUser.bind(service)),
+    createDemoUserWorkflow(role, { authUserService, sessionService }),
   );
 
   if (!sessionResult.ok) {

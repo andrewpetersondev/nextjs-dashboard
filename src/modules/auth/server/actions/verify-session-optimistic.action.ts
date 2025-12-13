@@ -4,21 +4,29 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationResult } from "@/modules/auth/domain/session/session-payload.types";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { verifySessionOptimisticWorkflow } from "@/modules/auth/server/application/workflows/verify-session-optimistic.workflow";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
+ *
+ * Boundary responsibilities:
+ * - caching (React)
+ * - redirecting (Next.js)
+ * - logging
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
     const logger = defaultLogger.withContext("auth:action");
 
-    const sessionManager = createSessionServiceFactory();
-    const session = await sessionManager.read();
-    if (!session?.userId) {
+    const sessionService = createSessionServiceFactory(logger);
+
+    const res = await verifySessionOptimisticWorkflow({ sessionService });
+
+    if (!res.ok) {
       logger.operation("warn", "No valid session found", {
-        operationIdentifiers: { reason: "no_session" },
+        operationIdentifiers: { reason: res.error.reason },
         operationName: "session.verifyOptimistic.noSession",
       });
 
@@ -26,14 +34,10 @@ export const verifySessionOptimistic = cache(
     }
 
     logger.operation("info", "Session verified (optimistic)", {
-      operationIdentifiers: { role: session.role, userId: session.userId },
+      operationIdentifiers: { role: res.value.role, userId: res.value.userId },
       operationName: "session.verifyOptimistic.success",
     });
 
-    return {
-      isAuthorized: true,
-      role: session.role,
-      userId: session.userId,
-    };
+    return res.value;
   },
 );

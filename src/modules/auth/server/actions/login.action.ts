@@ -10,7 +10,8 @@ import {
   LoginSchema,
 } from "@/modules/auth/domain/user/schema/auth.schema";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { executeAuthPipeline } from "@/modules/auth/server/application/workflows/execute-auth-pipeline";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { loginWorkflow } from "@/modules/auth/server/application/workflows/login.workflow";
 import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";
@@ -24,23 +25,12 @@ import { ROUTES } from "@/shared/routes/routes";
 const fields = LOGIN_FIELDS_LIST;
 
 /**
- * Handles the login action by validating form data, finding the user,
- * establishing a session, and redirecting on success.
- *
- * Flow:
- * - Validate form → if invalid, return FormResult with field errors.
- * - Login → map Ok(user) to { id, role } only.
- * - Establish session → on failure, map to UI-safe FormResult.
- * - Redirect to dashboard on success.
- *
- * @remarks
- * - No transaction needed (read-only operation).
- * - Request ID propagates through all layers for observability.
- * - Password verification happens in service layer.
- *
- * @returns FormResult on validation/auth errors, never returns on success (redirects)
+ * Next.js Server Action boundary:
+ * - validate form
+ * - call workflow
+ * - unwrap Result into FormResult/redirect
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login boundary is inherently multi-step (validation + orchestration + mapping)
 export async function loginAction(
   _prevState: FormResult<LoginField>,
   formData: FormData,
@@ -84,9 +74,11 @@ export async function loginAction(
     operationName: "login.validation.success",
   });
 
-  const service = createAuthUserServiceFactory(getAppDb(), logger);
+  const authUserService = createAuthUserServiceFactory(getAppDb(), logger);
+  const sessionService = createSessionServiceFactory(logger);
+
   const sessionResult = await tracker.measure("authentication", () =>
-    executeAuthPipeline(input, service.login.bind(service)),
+    loginWorkflow(input, { authUserService, sessionService }),
   );
 
   if (!sessionResult.ok) {

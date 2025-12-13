@@ -10,7 +10,8 @@ import {
   SignupSchema,
 } from "@/modules/auth/domain/user/schema/auth.schema";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { executeAuthPipeline } from "@/modules/auth/server/application/workflows/execute-auth-pipeline";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { signupWorkflow } from "@/modules/auth/server/application/workflows/signup.workflow";
 import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";
@@ -85,9 +86,11 @@ export async function signupAction(
     operationName: "signup.validation.success",
   });
 
-  const service = createAuthUserServiceFactory(getAppDb(), logger);
+  const authUserService = createAuthUserServiceFactory(getAppDb(), logger);
+  const sessionService = createSessionServiceFactory(logger);
+
   const sessionResult = await tracker.measure("authentication", () =>
-    executeAuthPipeline(input, service.signup.bind(service)),
+    signupWorkflow(input, { authUserService, sessionService }),
   );
 
   if (!sessionResult.ok) {
