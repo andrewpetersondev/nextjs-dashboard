@@ -52,10 +52,14 @@ class JsonStubJwt implements SessionTokenCodecPort {
     }
   }
 
-  encode(claims: AuthEncryptPayload, _expiresAtMs: number): Promise<string> {
-    return Promise.resolve(
-      Buffer.from(JSON.stringify(claims), "utf8").toString("base64"),
+  encode(
+    claims: AuthEncryptPayload,
+    _expiresAtMs: number,
+  ): Promise<Result<string, AppError>> {
+    const token = Buffer.from(JSON.stringify(claims), "utf8").toString(
+      "base64",
     );
+    return Promise.resolve(Ok(token));
   }
 }
 

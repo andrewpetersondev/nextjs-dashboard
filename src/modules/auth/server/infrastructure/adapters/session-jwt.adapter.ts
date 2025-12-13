@@ -70,7 +70,7 @@ export class SessionJwtAdapter {
   async encode(
     claims: AuthEncryptPayload,
     expiresAtMs: number,
-  ): Promise<string> {
+  ): Promise<Result<string, AppError>> {
     try {
       let signer = new SignJWT(claims satisfies JWTPayload)
         .setProtectedHeader({ alg: JWT_ALG_HS256, typ: JWT_TYP_JWT })
@@ -84,10 +84,17 @@ export class SessionJwtAdapter {
         signer = signer.setAudience(SESSION_AUDIENCE);
       }
       const token = await signer.sign(this.encodedKey);
-      return token;
-    } catch (err: unknown) {
-      // FIXME: WHY DOES THIS throw? why does it not use error factory?
-      throw new Error("session_sign_failed", { cause: err });
+      return Ok(token);
+    } catch (error: unknown) {
+      logger.error("JWT signing failed", {
+        error: String(error),
+      });
+
+      return Err(
+        makeUnexpectedErrorFromUnknown(error, {
+          message: `JWT signing failed: ${String(error)}`,
+        }),
+      );
     }
   }
 

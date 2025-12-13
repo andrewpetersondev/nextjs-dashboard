@@ -11,5 +11,8 @@ export interface SessionPort {
 
 export interface SessionTokenCodecPort {
   decode(token: string): Promise<Result<AuthEncryptPayload, AppError>>;
-  encode(claims: AuthEncryptPayload, expiresAtMs: number): Promise<string>;
+  encode(
+    claims: AuthEncryptPayload,
+    expiresAtMs: number,
+  ): Promise<Result<string, AppError>>;
 }

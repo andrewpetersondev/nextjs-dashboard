@@ -120,9 +120,18 @@ export class SessionManager {
         userId: String(user.id),
       };
 
-      const token = await this.jwt.encode(claims, expiresAtMs);
+      const encodedResult = await this.jwt.encode(claims, expiresAtMs);
 
-      await this.cookie.set(token, expiresAtMs);
+      if (!encodedResult.ok) {
+        this.logger.error("Session establish failed", {
+          error: encodedResult.error.message,
+          logging: { code: "session_establish_failed" },
+          requestId,
+        });
+        return Err(encodedResult.error);
+      }
+
+      await this.cookie.set(encodedResult.value, expiresAtMs);
 
       this.logger.info("Session established", {
         logging: { expiresAt: expiresAtMs, role: user.role, userId: user.id },
@@ -287,10 +296,18 @@ export class SessionManager {
         };
       }
 
-      const { expiresAtMs, token } = await this.issueToken(
-        user,
-        decoded.sessionStart,
-      );
+      const issuedResult = await this.issueToken(user, decoded.sessionStart);
+
+      if (!issuedResult.ok) {
+        this.logger.error("Session rotate failed: token issue failed", {
+          error: issuedResult.error.message,
+          logging: { code: "session_rotate_issue_token_failed" },
+        });
+
+        return { reason: "token_issue_failed", refreshed: false };
+      }
+
+      const { expiresAtMs, token } = issuedResult.value;
 
       await this.cookie.set(token, expiresAtMs);
 
@@ -329,7 +346,7 @@ export class SessionManager {
   private async issueToken(
     user: { role: UserRole; userId: UserId },
     sessionStart: number,
-  ): Promise<{ expiresAtMs: number; token: string }> {
+  ): Promise<Result<{ expiresAtMs: number; token: string }, AppError>> {
     const now = Date.now();
 
     const expiresAtMs = now + SESSION_DURATION_MS;
@@ -343,8 +360,11 @@ export class SessionManager {
       userId: user.userId,
     };
 
-    const token = await this.jwt.encode(claims, expiresAtMs);
+    const encodedResult = await this.jwt.encode(claims, expiresAtMs);
+    if (!encodedResult.ok) {
+      return Err(encodedResult.error);
+    }
 
-    return { expiresAtMs, token };
+    return Ok({ expiresAtMs, token: encodedResult.value });
   }
 }
