@@ -80,7 +80,7 @@ function shouldRefreshToken(decoded: { exp?: number; expiresAt?: number }): {
  * const manager = new SessionManager(cookieAdapter, jwtCodec, logger);
  * const result = await manager.establish({ id: userId, role: "admin" });
  */
-export class SessionManager {
+export class SessionService {
   private readonly cookie: SessionPort;
   private readonly jwt: SessionTokenCodecPort;
   private readonly logger: LoggingClientContract;

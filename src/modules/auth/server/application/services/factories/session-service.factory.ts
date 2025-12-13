@@ -1,6 +1,6 @@
 import "server-only";
 
-import { SessionManager } from "@/modules/auth/server/application/services/session-manager.service";
+import { SessionService } from "@/modules/auth/server/application/services/session.service";
 import { createSessionCookieAdapter } from "@/modules/auth/server/infrastructure/adapters/session-cookie.adapter";
 import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/adapters/session-jwt.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -11,10 +11,10 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  *
  * @param logger - Optional logger to use; defaults to the shared logger.
  */
-export function createSessionManagerFactory(
+export function createSessionServiceFactory(
   logger: LoggingClientContract = defaultLogger,
-): SessionManager {
-  return new SessionManager(
+): SessionService {
+  return new SessionService(
     createSessionCookieAdapter(),
     createSessionJwtAdapter(),
     logger,

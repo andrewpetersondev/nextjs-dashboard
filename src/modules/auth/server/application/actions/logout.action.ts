@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 export async function logoutAction(): Promise<void> {
@@ -14,7 +14,7 @@ export async function logoutAction(): Promise<void> {
     operationName: "logout.start",
   });
 
-  const sessionManager = createSessionManagerFactory();
+  const sessionManager = createSessionServiceFactory();
 
   const res = await sessionManager.clear();
 

@@ -9,7 +9,7 @@ import type {
   SessionPort,
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
-import { SessionManager } from "@/modules/auth/server/application/services/session-manager.service";
+import { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -69,14 +69,14 @@ const testLogger: LoggingClientContract = realLogger.child({ scope: "test" });
 describe("SessionManager", () => {
   let cookie: InMemoryCookie;
   let jwt: JsonStubJwt;
-  let manager: SessionManager;
+  let manager: SessionService;
 
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
     cookie = new InMemoryCookie();
     jwt = new JsonStubJwt();
-    manager = new SessionManager(cookie, jwt, testLogger);
+    manager = new SessionService(cookie, jwt, testLogger);
   });
 
   describe("establish", () => {
@@ -112,7 +112,7 @@ describe("SessionManager", () => {
         encode: vi.fn().mockRejectedValue(new Error("Encoding failed")),
       };
 
-      const failManager = new SessionManager(cookie, badJwt, testLogger);
+      const failManager = new SessionService(cookie, badJwt, testLogger);
 
       const res = await failManager.establish({
         id: "user-1" as UserId,
@@ -171,7 +171,7 @@ describe("SessionManager", () => {
         set: vi.fn(),
       };
 
-      const failManager = new SessionManager(badCookie, jwt, testLogger);
+      const failManager = new SessionService(badCookie, jwt, testLogger);
 
       const res = await failManager.clear();
 

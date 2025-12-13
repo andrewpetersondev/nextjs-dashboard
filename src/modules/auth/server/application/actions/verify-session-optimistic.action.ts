@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationResult } from "@/modules/auth/domain/sessions/session-payload.types";
-import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -13,7 +13,7 @@ export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
     const logger = defaultLogger.withContext("auth:action");
 
-    const sessionManager = createSessionManagerFactory();
+    const sessionManager = createSessionServiceFactory();
     const session = await sessionManager.read();
     if (!session?.userId) {
       logger.operation("warn", "No valid session found", {

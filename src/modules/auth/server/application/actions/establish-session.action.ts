@@ -1,6 +1,6 @@
 "use server";
 import type { SessionUser } from "@/modules/auth/domain/sessions/session-action.types";
-import { createSessionManagerFactory } from "@/modules/auth/server/application/services/factories/session-manager.factory";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { Err, Ok } from "@/shared/result/result";
@@ -27,7 +27,7 @@ export async function establishSessionAction(
     operationName: "session.establish.start",
   });
 
-  const sessionManager = createSessionManagerFactory();
+  const sessionManager = createSessionServiceFactory();
 
   const res = await sessionManager.establish(user);
 
