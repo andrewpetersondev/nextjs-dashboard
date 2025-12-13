@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/domain/session/session.constants";
-import { ADMIN_ROLE } from "@/modules/auth/domain/user/schema/auth.roles";
+import { authorizeRequestWorkflow } from "@/modules/auth/server/application/workflows/authorize-request.workflow";
 import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/adapters/session-jwt.adapter";
+import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,
   isProtectedRoute as isProtectedRouteHelper,
@@ -10,41 +11,42 @@ import {
   ROUTES,
 } from "@/shared/routes/routes";
 
-export default async function proxy(req: NextRequest) {
+export default async function proxy(req: NextRequest): Promise<NextResponse> {
   const path = normalizePath(req.nextUrl.pathname);
-  const isProtectedRoute = isProtectedRouteHelper(path);
   const isAdminRoute = isAdminRouteHelper(path);
+  const isProtectedRoute = isProtectedRouteHelper(path);
   const isPublicRoute = isPublicRouteHelper(path);
 
-  // If route is not relevant for auth, skip work early (avoid cookie/session reads)
   if (!(isProtectedRoute || isAdminRoute || isPublicRoute)) {
     return NextResponse.next();
   }
 
   const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const jwt = createSessionJwtAdapter();
-  const decodedResult = cookie ? await jwt.decode(cookie) : undefined;
-  const claims = decodedResult?.ok ? decodedResult.value : undefined;
 
-  if (isAdminRoute) {
-    // Not authenticated: go straight to login (avoid double redirects)
-    if (!claims?.userId) {
-      return NextResponse.redirect(new URL(ROUTES.auth.login, req.nextUrl));
-    }
-    // Authenticated but not admin
-    if (claims.role !== ADMIN_ROLE) {
-      return NextResponse.redirect(new URL(ROUTES.dashboard.root, req.nextUrl));
-    }
-  }
+  const outcome = await authorizeRequestWorkflow(
+    { cookie, isAdminRoute, isProtectedRoute, isPublicRoute, path },
+    {
+      jwt,
+      routes: {
+        dashboardRoot: ROUTES.dashboard.root,
+        login: ROUTES.auth.login,
+      },
+    },
+  );
 
-  // Protected routes (folder-scoped)
-  if (isProtectedRoute && !claims?.userId) {
-    return NextResponse.redirect(new URL(ROUTES.auth.login, req.nextUrl));
-  }
+  if (outcome.kind === "redirect") {
+    const logger = defaultLogger.withContext("auth:middleware");
+    logger.operation("info", "Auth middleware redirect", {
+      operationIdentifiers: {
+        path,
+        reason: outcome.reason,
+        to: outcome.to,
+      },
+      operationName: "auth.middleware.redirect",
+    });
 
-  // Public routes: bounce authenticated users to dashboard
-  if (isPublicRoute && claims?.userId && !isProtectedRouteHelper(path)) {
-    return NextResponse.redirect(new URL(ROUTES.dashboard.root, req.nextUrl));
+    return NextResponse.redirect(new URL(outcome.to, req.nextUrl));
   }
 
   return NextResponse.next();
