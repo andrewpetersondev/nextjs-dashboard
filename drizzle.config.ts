@@ -4,8 +4,7 @@ import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle.config.ts ...");
 
-// TODO: IMPORT THE ENV VARIABLES FROM ENV-TOOLING
-// OR SHOULD I JUST ALLOW USING PROCESS FOR CLI
+// TODO: IMPORT THE ENV VARIABLES FROM ENV-TOOLING OR SHOULD I JUST ALLOW USING PROCESS FOR CLI
 
 const url = process.env.DATABASE_URL;
 
