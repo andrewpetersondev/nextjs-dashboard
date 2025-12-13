@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/style/useNamingConvention: <remove this biome rule> */
 
 import "server-only";
+
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
@@ -23,9 +24,9 @@ export interface AuthUserRepositoryPort<TRepo = unknown> {
    *
    * DAL-level errors are propagated and mapped by the repo/domain error mappers.
    */
-  login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null>;
+  login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity | null>;
 
-  signup(input: AuthSignupPayload): Promise<AuthUserEntity>;
+  signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity>;
 
   withTransaction<TResult>(
     fn: (txRepo: AuthUserRepositoryPort<TRepo>) => Promise<TResult>,

@@ -1,4 +1,5 @@
 import "server-only";
+
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
@@ -26,13 +27,11 @@ export class AuthUserRepositoryAdapter
     return this.repo.incrementDemoUserCounter(role);
   }
 
-  login(input: AuthLoginRepoInput): Promise<AuthUserEntity | null> {
+  login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity | null> {
     return this.repo.login(input);
   }
 
-  signup(
-    input: AuthSignupPayload,
-  ): ReturnType<AuthUserRepositoryImpl["signup"]> {
+  signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     return this.repo.signup(input);
   }
 
