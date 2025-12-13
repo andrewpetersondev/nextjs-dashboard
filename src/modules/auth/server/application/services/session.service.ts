@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/domain/sessions/session.constants";
-import { userIdCodec } from "@/modules/auth/domain/sessions/session.schemas";
-import type { UpdateSessionResult } from "@/modules/auth/domain/sessions/session-payload.types";
+} from "@/modules/auth/domain/session/session.constants";
+import { userIdCodec } from "@/modules/auth/domain/session/session.schemas";
+import type { UpdateSessionResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,

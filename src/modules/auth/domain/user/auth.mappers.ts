@@ -1,4 +1,4 @@
-import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";
+import type { AuthUserTransport } from "@/modules/auth/domain/user/auth.types";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 

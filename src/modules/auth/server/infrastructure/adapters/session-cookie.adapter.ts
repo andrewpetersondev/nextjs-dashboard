@@ -2,7 +2,7 @@ import "server-only";
 import {
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
-} from "@/modules/auth/domain/sessions/session.constants";
+} from "@/modules/auth/domain/session/session.constants";
 import { createCookieService } from "@/server/cookies/cookie.factory";
 import { isProd } from "@/shared/config/env-shared";
 import { logger } from "@/shared/logging/infrastructure/logging.client";

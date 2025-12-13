@@ -2,15 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
 import {
-  SIGNUP_FIELDS_LIST,
-  type SignupData,
-  type SignupField,
-  SignupSchema,
-} from "@/modules/auth/domain/schema/auth.schema";
-import { executeAuthPipeline } from "@/modules/auth/server/application/actions/execute-auth-pipeline";
+  LOGIN_FIELDS_LIST,
+  type LoginData,
+  type LoginField,
+  LoginSchema,
+} from "@/modules/auth/domain/user/schema/auth.schema";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
+import { executeAuthPipeline } from "@/modules/auth/server/application/workflows/execute-auth-pipeline";
 import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";
@@ -21,30 +21,30 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
-const fields = SIGNUP_FIELDS_LIST;
+const fields = LOGIN_FIELDS_LIST;
 
 /**
- * Handles the signup action by validating form data, creating the user,
+ * Handles the login action by validating form data, finding the user,
  * establishing a session, and redirecting on success.
  *
  * Flow:
  * - Validate form → if invalid, return FormResult with field errors.
- * - Signup → map Ok(user) to { id, role } only.
+ * - Login → map Ok(user) to { id, role } only.
  * - Establish session → on failure, map to UI-safe FormResult.
  * - Redirect to dashboard on success.
  *
  * @remarks
- * - Transaction ensures user + initial data are created atomically.
+ * - No transaction needed (read-only operation).
  * - Request ID propagates through all layers for observability.
- * - Password is hashed before storage (never stored in plain text).
+ * - Password verification happens in service layer.
  *
  * @returns FormResult on validation/auth errors, never returns on success (redirects)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup flow is inherently multi-step
-export async function signupAction(
-  _prevState: FormResult<SignupField>,
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
+export async function loginAction(
+  _prevState: FormResult<LoginField>,
   formData: FormData,
-): Promise<FormResult<SignupField>> {
+): Promise<FormResult<LoginField>> {
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
@@ -54,12 +54,12 @@ export async function signupAction(
     .withRequest(requestId)
     .child({ ip, userAgent });
 
-  logger.operation("info", "Signup action started", {
-    operationName: "signup.start",
+  logger.operation("info", "Login action started", {
+    operationName: "login.start",
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, SignupSchema, fields),
+    validateForm(formData, LoginSchema, fields),
   );
 
   if (!validated.ok) {
@@ -67,59 +67,55 @@ export async function signupAction(
       validated.error?.metadata?.fieldErrors || {},
     ).length;
 
-    logger.operation("warn", "Signup validation failed", {
+    logger.operation("warn", "Login validation failed", {
       duration: tracker.getTotalDuration(),
       errorCount,
-      operationIdentifiers: { ip },
-      operationName: "signup.validation.failed",
+      operationName: "login.validation.failed",
     });
 
     return validated;
   }
 
-  const input: SignupData = validated.value.data;
+  const input: LoginData = validated.value.data;
 
-  logger.operation("info", "Signup form validated", {
+  logger.operation("info", "Login form validated", {
     duration: tracker.getLastDuration("validation"),
     operationIdentifiers: { email: input.email },
-    operationName: "signup.validation.success",
+    operationName: "login.validation.success",
   });
 
   const service = createAuthUserServiceFactory(getAppDb(), logger);
   const sessionResult = await tracker.measure("authentication", () =>
-    executeAuthPipeline(input, service.signup.bind(service)),
+    executeAuthPipeline(input, service.login.bind(service)),
   );
 
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    logger.operation("error", "Signup authentication failed", {
+    logger.operation("error", "Login authentication failed", {
       duration: tracker.getTotalDuration(),
       error,
-      operationIdentifiers: {
-        email: input.email,
-        ip,
-        username: input.username,
-      },
-      operationName: "signup.authentication.failed",
+      operationIdentifiers: { email: input.email, ip },
+      operationName: "login.authentication.failed",
     });
 
     const { fieldErrors, message } =
-      adaptAppErrorToFormPayload<SignupField>(error);
+      adaptAppErrorToFormPayload<LoginField>(error);
 
-    return formError<SignupField>({
+    return formError<LoginField>({
       code: error.code,
       fieldErrors,
-      message: message || AUTH_ERROR_MESSAGES.SIGNUP_FAILED,
+      message: message || AUTH_ERROR_MESSAGES.LOGIN_FAILED,
       values: input,
     });
   }
+
   const { id: userId, role } = sessionResult.value;
 
-  logger.operation("info", "Signup action completed successfully", {
+  logger.operation("info", "Login action completed successfully", {
     duration: tracker.getTotalDuration(),
     operationIdentifiers: { email: input.email, role, userId },
-    operationName: "signup.success",
+    operationName: "login.success",
   });
 
   revalidatePath(ROUTES.dashboard.root);

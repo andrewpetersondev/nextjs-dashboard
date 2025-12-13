@@ -4,7 +4,7 @@ import { useId, useMemo } from "react";
 import {
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/domain/schema/auth.roles";
+} from "@/modules/auth/domain/user/schema/auth.roles";
 import type { FieldError } from "@/shared/forms/types/form.types";
 import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";

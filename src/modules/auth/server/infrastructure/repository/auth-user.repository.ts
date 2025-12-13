@@ -5,9 +5,9 @@ import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
-} from "@/modules/auth/domain/auth.types";
-import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
-import { TransactionLogger } from "@/modules/auth/domain/transaction-logger";
+} from "@/modules/auth/domain/user/auth.types";
+import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
+import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/repository/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/repository/dal/insert-user.dal";

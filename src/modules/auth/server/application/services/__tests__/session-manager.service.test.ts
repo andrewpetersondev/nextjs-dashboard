@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/domain/sessions/session.constants";
-import type { AuthEncryptPayload } from "@/modules/auth/domain/sessions/session-payload.types";
+} from "@/modules/auth/domain/session/session.constants";
+import type { AuthEncryptPayload } from "@/modules/auth/domain/session/session-payload.types";
+import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,

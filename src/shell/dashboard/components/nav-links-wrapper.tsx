@@ -1,7 +1,7 @@
 import type { JSX } from "react";
-import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
-import type { SessionVerificationResult } from "@/modules/auth/domain/sessions/session-payload.types";
-import { verifySessionOptimistic } from "@/modules/auth/server/application/actions/verify-session-optimistic.action";
+import type { SessionVerificationResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
+import { verifySessionOptimistic } from "@/modules/auth/server/actions/verify-session-optimistic.action";
 import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { NavLinks } from "@/shell/dashboard/components/nav-links";
 

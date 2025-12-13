@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal-or-throw.auth";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";

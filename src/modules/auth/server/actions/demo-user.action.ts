@@ -1,10 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/auth-error-messages.constants";
-import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
-import { executeAuthPipeline } from "@/modules/auth/server/application/actions/execute-auth-pipeline";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
+import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
+import { executeAuthPipeline } from "@/modules/auth/server/application/workflows/execute-auth-pipeline";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";

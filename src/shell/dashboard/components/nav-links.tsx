@@ -11,7 +11,7 @@ import type { ComponentType, JSX, SVGProps } from "react";
 import {
   ADMIN_ROLE,
   type UserRole,
-} from "@/modules/auth/domain/schema/auth.roles";
+} from "@/modules/auth/domain/user/schema/auth.roles";
 import { ROUTES } from "@/shared/routes/routes";
 import { cn } from "@/ui/utils/cn";
 

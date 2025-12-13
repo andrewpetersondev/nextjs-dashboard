@@ -1,4 +1,5 @@
 "use server";
+
 import { redirect } from "next/navigation";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";

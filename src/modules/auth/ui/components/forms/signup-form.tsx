@@ -8,7 +8,7 @@ import { type FC, type JSX, useActionState, useId } from "react";
 import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
-} from "@/modules/auth/domain/schema/auth.schema";
+} from "@/modules/auth/domain/user/schema/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
