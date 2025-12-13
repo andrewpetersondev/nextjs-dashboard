@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthSignupPayload } from "@/modules/auth/domain/auth.types";
-import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
+import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal-or-throw.auth";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
@@ -18,7 +18,7 @@ export async function insertUserDal(
   const { email, password, role, username } = input;
   const identifiers = { email, username } as Record<string, string>;
 
-  return await executeDalOrThrow(
+  return await executeDalOrThrowAuth(
     async () => {
       const [userRow] = await db
         .insert(users)

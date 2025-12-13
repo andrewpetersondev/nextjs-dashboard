@@ -11,7 +11,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * - log exactly once on failure (via logger.operation)
  * - rethrow AppError
  */
-export async function executeDalOrThrow<T>(
+export async function executeDalOrThrowAuth<T>(
   thunk: () => Promise<T>,
   dalContext: DalContextLite,
   logger: LoggingClientContract,

@@ -1,11 +1,43 @@
-- Use APIs compatible with Next.js v15+, React 19+, and TypeScript 5.9+. Do not use deprecated APIs.
-- Sort object literal properties, interfaces, and types alphabetically (Biome's style).
+## Use compatible APIs
+
+- Use APIs compatible with Next.js v16+, React 19+, and TypeScript 5.9+.
+- Avoid deprecated APIs.
+
+## Keep code style consistent
+
+- Sort object literal properties, interfaces, and types alphabetically (Biome style).
+- Avoid re-exports and avoid barrel files.
+- Explicitly type all function arguments and return values.
+
+## Follow the project structure
+
 - Organize features under `@/modules/{feature}/{domain,server,ui}`.
-- Place shared UI components in `@/ui` using Atomic Design (atoms, molecules).
-- Use the Result pattern (Ok/Err) from @/shared/result at system boundaries (adapters, services). Adapters must return Result and not throw; application layers handle mapping and policy.
-- Always explicitly type function return values and arguments.
-- Do not use re-exports or create barrel files.
-- Do not automatically add test files.
-- If generating documentation, use TSDoc. Avoid JSDoc.
-- Use error factories from `@/shared/errors/factories/app-error.factory`
+- Place shared UI in `@/ui` using Atomic Design (atoms, molecules).
+
+## Handle failures explicitly (Result-first)
+
+### Classify failures
+
+- Treat **expected failures** (validation issues, business-rule/policy violations, “not found”, “already exists”, etc.) as values.
+- Treat **unexpected failures** (programmer errors, broken invariants, impossible states) as exceptions.
+
+### Use Result for expected failures
+
+- Use the Result pattern (`Ok`/`Err`) from `@/shared/result` for all expected failures.
+- Return `Result` from DAL & repositories (infrastructure adapters) and never throw for expected failures.
+- Compose and map `Result`s in services (application core), including mapping policy violations to domain/app errors.
+- Unwrap `Result`s only at boundaries (e.g., Next.js actions) and translate outcomes into HTTP / UI responses.
+
+### Throw only for unexpected failures
+
+- Throw exceptions only for programmer errors or invariant violations.
+
+## Model errors consistently
+
+- Use and create error factories in `@/shared/errors/factories/app-error.factory`.
 - Use error codes instead of custom error subclasses.
+
+## Write docs and tests intentionally
+
+- Use TSDoc when generating documentation; avoid JSDoc.
+- Avoid automatically adding test files.

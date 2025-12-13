@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
+import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal-or-throw.auth";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -14,7 +14,7 @@ export async function getUserByEmailDal(
   email: string,
   logger: LoggingClientContract,
 ): Promise<UserRow | null> {
-  return await executeDalOrThrow(
+  return await executeDalOrThrowAuth(
     async () => {
       const [userRow] = await db
         .select()

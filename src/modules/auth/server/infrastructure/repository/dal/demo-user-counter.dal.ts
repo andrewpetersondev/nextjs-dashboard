@@ -1,6 +1,6 @@
 import "server-only";
 import type { UserRole } from "@/modules/auth/domain/schema/auth.roles";
-import { executeDalOrThrow } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal";
+import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal-or-throw.auth";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
@@ -15,7 +15,7 @@ export async function demoUserCounterDal(
   role: UserRole,
   logger: LoggingClientContract,
 ): Promise<number> {
-  return await executeDalOrThrow(
+  return await executeDalOrThrowAuth(
     async () => {
       const [counterRow] = await db
         .insert(demoUserCounters)
