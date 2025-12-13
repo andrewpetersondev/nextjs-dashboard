@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
 } from "@/modules/auth/domain/user/auth.types";
-import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/repository/auth-user.repository";
 

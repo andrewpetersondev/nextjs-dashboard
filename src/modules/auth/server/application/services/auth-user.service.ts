@@ -2,12 +2,12 @@ import "server-only";
 
 import { hasRequiredSignupFields } from "@/modules/auth/domain/user/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/user/auth.mappers";
-import type { AuthUserTransport } from "@/modules/auth/domain/user/auth.types";
-import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   LoginData,
   SignupData,
-} from "@/modules/auth/domain/user/schema/auth.schema";
+} from "@/modules/auth/domain/user/auth.schema";
+import type { AuthUserTransport } from "@/modules/auth/domain/user/auth.types";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";

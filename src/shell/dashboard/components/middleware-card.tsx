@@ -4,7 +4,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/domain/user/schema/auth.roles";
+} from "@/modules/auth/domain/user/auth.roles";
 import { verifySessionOptimistic } from "@/modules/auth/server/actions/verify-session-optimistic.action";
 import { H6 } from "@/ui/atoms/headings";
 

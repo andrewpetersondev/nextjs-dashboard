@@ -4,7 +4,7 @@ import {
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/session/session.constants";
 import type { AuthEncryptPayload } from "@/modules/auth/domain/session/session-payload.types";
-import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,

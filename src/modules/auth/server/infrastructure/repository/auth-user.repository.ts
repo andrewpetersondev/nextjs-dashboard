@@ -1,12 +1,12 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
+import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
 } from "@/modules/auth/domain/user/auth.types";
-import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/repository/dal/get-user-by-email.dal";

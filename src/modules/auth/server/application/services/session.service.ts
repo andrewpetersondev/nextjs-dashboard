@@ -6,7 +6,7 @@ import {
 } from "@/modules/auth/domain/session/session.constants";
 import { userIdCodec } from "@/modules/auth/domain/session/session.schemas";
 import type { UpdateSessionResult } from "@/modules/auth/domain/session/session-payload.types";
-import type { UserRole } from "@/modules/auth/domain/user/schema/auth.roles";
+import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,

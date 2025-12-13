@@ -2,13 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
 import {
   LOGIN_FIELDS_LIST,
   type LoginData,
   type LoginField,
   LoginSchema,
-} from "@/modules/auth/domain/user/schema/auth.schema";
+} from "@/modules/auth/domain/user/auth.schema";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import { loginWorkflow } from "@/modules/auth/server/application/workflows/login.workflow";

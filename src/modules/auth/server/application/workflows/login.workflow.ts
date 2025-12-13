@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionUser } from "@/modules/auth/domain/session/session-action.types";
-import type { LoginData } from "@/modules/auth/domain/user/schema/auth.schema";
+import type { LoginData } from "@/modules/auth/domain/user/auth.schema";
 import type { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { AppError } from "@/shared/errors/core/app-error.class";

@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { AuthEncryptPayload } from "@/modules/auth/domain/session/session-payload.types";
-import { ADMIN_ROLE } from "@/modules/auth/domain/user/schema/auth.roles";
+import { ADMIN_ROLE } from "@/modules/auth/domain/user/auth.roles";
 import type { SessionTokenCodecPort } from "@/modules/auth/server/application/ports/session.port";
 
 async function decodeClaims(
