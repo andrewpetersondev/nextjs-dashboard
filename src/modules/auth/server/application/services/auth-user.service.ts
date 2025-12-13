@@ -1,4 +1,5 @@
 import "server-only";
+
 import { hasRequiredSignupFields } from "@/modules/auth/domain/auth.guards";
 import { toAuthUserTransport } from "@/modules/auth/domain/auth.mappers";
 import type { AuthUserTransport } from "@/modules/auth/domain/auth.types";

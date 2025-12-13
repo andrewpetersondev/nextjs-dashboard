@@ -20,13 +20,40 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
- * Repository for user authentication flows (signup/login).
- * Encapsulates DAL usage and provides a single point for cross-cutting policies.
+ * Concrete infrastructure repository for auth-related user persistence.
+ *
+ * ## Layering
+ * This class sits in the **infrastructure** layer and encapsulates all direct
+ * database/DAL interactions needed by authentication flows.
+ *
+ * Application code should typically depend on an application-facing port
+ * (e.g., `AuthUserRepositoryPort`) and receive this repository via an adapter.
+ *
+ * ## Responsibilities
+ * - Call DAL functions to read/write user data required for auth use-cases
+ * - Convert raw database rows into domain entities via mappers
+ * - Emit structured logs for repository-level events
+ * - Provide transaction support via {@link withTransaction}
+ *
+ * ## Non-responsibilities
+ * - Defining authentication semantics (e.g., “invalid credentials”) — belongs in services
+ * - Mapping expected domain/app errors — higher layers handle that
+ *
+ * ## Server-only
+ * Intended for server execution (database access + Node crypto UUID).
  */
 export class AuthUserRepository {
+  /** Database connection (or transaction-scoped connection) used by DAL calls. */
   protected readonly db: AppDatabase;
+
+  /** Repository-scoped logger enriched with auth context and optional request id. */
   private readonly logger: LoggingClientContract;
 
+  /**
+   * @param db - Database connection used for all DAL operations.
+   * @param logger - Optional logger; defaults to the shared logger.
+   * @param requestId - Optional request id used to correlate logs across layers.
+   */
   constructor(
     db: AppDatabase,
     logger?: LoggingClientContract,
@@ -38,21 +65,32 @@ export class AuthUserRepository {
   }
 
   /**
-   * Increments the demo user counter.
+   * Increments the demo user counter for a given role.
+   *
+   * @param role - Role whose counter should be incremented.
+   * @returns The updated counter value.
+   *
+   * @remarks
+   * This method delegates to the DAL and returns its numeric result. Any DAL errors
+   * are allowed to propagate to be handled/mapped by higher layers.
    */
   async incrementDemoUserCounter(role: UserRole): Promise<number> {
     return await demoUserCounterDal(this.db, role, this.logger);
   }
 
   /**
-   * Fetches a user by email for login authentication.
+   * Fetches a user by email for login purposes.
    *
-   * Semantics:
-   * - Returns AuthUserEntity when a user with a password exists
-   * - Returns null when user does not exist or has no password
+   * ## Semantics
+   * - Returns an {@link AuthUserEntity} when the user exists **and** a password hash is present.
+   * - Returns `null` when the user does not exist or has no password set.
    *
-   * No auth/domain errors are thrown here; those belong to higher layers.
-   * DAL-level errors still propagate for centralized mapping.
+   * ## Logging
+   * Emits repository-level success/failure events for observability without enforcing
+   * auth semantics (that belongs to the service layer).
+   *
+   * @param input - Lookup input (email).
+   * @returns A user entity usable for authentication, or `null`.
    */
   async login(
     input: Readonly<AuthLoginRepoInput>,
@@ -82,11 +120,12 @@ export class AuthUserRepository {
   /**
    * Creates a new user for the signup flow.
    *
-   * @param input - Signup payload with user credentials
-   * @returns The created user entity
+   * @param input - Signup payload (already validated/normalized by higher layers as needed).
+   * @returns The created user entity.
    *
-   * Errors:
-   * - DAL-level errors are propagated as-is for higher layers to map.
+   * @remarks
+   * DAL-level errors are intentionally not translated here; they are propagated so
+   * upper layers can map them consistently.
    */
   async signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     const row = await insertUserDal(this.db, input, this.logger);
@@ -100,12 +139,20 @@ export class AuthUserRepository {
   }
 
   /**
-   * Runs a sequence of operations within a database transaction.
-   * Keep thin; retries belong to a separate policy layer if needed.
+   * Executes a callback inside a database transaction.
    *
-   * @param fn - Callback that receives a transactional repository instance
-   * @returns The result of the callback function
-   * @throws Re-throws any errors from the transaction
+   * ## Contract
+   * - The callback receives a **transaction-scoped** {@link AuthUserRepository} instance.
+   * - Use that instance for all reads/writes that must be atomic.
+   * - Commits when the callback resolves; rolls back when it rejects/throws.
+   *
+   * ## Observability
+   * - Generates a `transactionId` and logs transaction lifecycle events via {@link TransactionLogger}.
+   *
+   * @typeParam T - The result type returned by the transactional callback.
+   * @param fn - Callback that performs transactional work.
+   * @returns The callback result.
+   * @throws Re-throws any error produced by the callback or transaction machinery.
    */
   async withTransaction<T>(
     fn: (txRepo: AuthUserRepository) => Promise<T>,
