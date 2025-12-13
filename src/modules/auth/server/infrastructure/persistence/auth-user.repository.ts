@@ -8,9 +8,9 @@ import type {
   AuthUserEntity,
 } from "@/modules/auth/domain/user/auth.types";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
-import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/repository/dal/demo-user-counter.dal";
-import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/repository/dal/get-user-by-email.dal";
-import { insertUserDal } from "@/modules/auth/server/infrastructure/repository/dal/insert-user.dal";
+import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/persistence/dal/demo-user-counter.dal";
+import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/persistence/dal/get-user-by-email.dal";
+import { insertUserDal } from "@/modules/auth/server/infrastructure/persistence/dal/insert-user.dal";
 import {
   newUserDbRowToEntity,
   userDbRowToEntity,

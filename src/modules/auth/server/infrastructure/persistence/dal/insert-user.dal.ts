@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthSignupPayload } from "@/modules/auth/domain/user/auth.types";
-import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/repository/dal/execute-dal-or-throw.auth";
+import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/persistence/dal/execute-dal-or-throw.auth";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";

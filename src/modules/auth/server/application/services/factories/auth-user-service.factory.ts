@@ -2,8 +2,8 @@ import "server-only";
 
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
 import { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
-import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/adapters/auth-user-repository.adapter";
-import { AuthUserRepository } from "@/modules/auth/server/infrastructure/repository/auth-user.repository";
+import { AuthUserRepository } from "@/modules/auth/server/infrastructure/persistence/auth-user.repository";
+import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/persistence/auth-user-repository.adapter";
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

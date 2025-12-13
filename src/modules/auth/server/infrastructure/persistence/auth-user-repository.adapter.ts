@@ -7,7 +7,7 @@ import type {
   AuthUserEntity,
 } from "@/modules/auth/domain/user/auth.types";
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/repository/auth-user.repository";
+import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/persistence/auth-user.repository";
 
 /**
  * Adapter that exposes an infrastructure {@link AuthUserRepository} through the
