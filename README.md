@@ -2,11 +2,11 @@
 
 A modern dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS. It includes authentication, middleware-based route protection, database migrations/seeding, and end-to-end tests with Cypress.
 
-Last updated: 2025-09-08
+Last updated: 2025-12-13
 
 ## Tech Stack
 
-- Next.js 15 (App Router, Server/Client Components)
+- Next.js 16 (App Router, Server/Client Components)
 - React 19 + TypeScript 5 (strict)
 - Drizzle ORM (PostgreSQL)
 - Tailwind CSS v4
@@ -27,8 +27,8 @@ nextjs-dashboard/
 ├── public/                 # Static assets
 ├── src/                    # Application source
 │   ├── app/                # App router
-│   ├── modules/           # auth, customers, invoices, revenues, users
-│   ├── server-core/        # config, db, events
+│   ├── modules/            # auth, customers, invoices, revenues, users
+│   ├── server/             # config, db, events
 │   ├── shared/             # branding, config, errors, forms, http,  logging, result, routes, utilities
 │   ├── shell/              # dashbaord-wide components/screens/
 │   ├── ui/                 # atoms, brand, feedback, forms, molecules, navigation, styles
