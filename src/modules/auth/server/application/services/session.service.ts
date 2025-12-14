@@ -3,7 +3,7 @@ import "server-only";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/domain/session/session.constants";
+} from "@/modules/auth/domain/session/session.policy.constants";
 import { userIdCodec } from "@/modules/auth/domain/session/session.schemas";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session-payload.types";
 import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
@@ -11,6 +11,7 @@ import type {
   SessionPort,
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
+import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
@@ -20,11 +21,6 @@ import type { Result } from "@/shared/result/result.types";
 
 const ONE_SECOND_MS = 1000 as const;
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
-
-interface SessionUser {
-  readonly id: UserId;
-  readonly role: UserRole;
-}
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
@@ -104,7 +100,9 @@ export class SessionService {
    * @param user - User object containing id and role
    * @returns Result containing the user on success, or AppError on failure
    */
-  async establish(user: SessionUser): Promise<Result<SessionUser, AppError>> {
+  async establish(
+    user: SessionPrincipal,
+  ): Promise<Result<SessionPrincipal, AppError>> {
     const requestId = crypto.randomUUID();
     try {
       const now = Date.now();

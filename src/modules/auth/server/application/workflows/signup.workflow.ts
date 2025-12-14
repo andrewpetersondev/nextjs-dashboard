@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { SessionUser } from "@/modules/auth/domain/session/session-action.types";
 import type { SignupData } from "@/modules/auth/domain/user/auth.schema";
 import type { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
+import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -19,14 +19,14 @@ export async function signupWorkflow(
     authUserService: AuthUserService;
     sessionService: SessionService;
   }>,
-): Promise<Result<SessionUser, AppError>> {
+): Promise<Result<SessionPrincipal, AppError>> {
   const signupResult = await deps.authUserService.signup(input);
 
   if (!signupResult.ok) {
     return Err(signupResult.error);
   }
 
-  const user: SessionUser = {
+  const user: SessionPrincipal = {
     id: signupResult.value.id,
     role: signupResult.value.role,
   };

@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { SessionUser } from "@/modules/auth/domain/session/session-action.types";
 import type { LoginData } from "@/modules/auth/domain/user/auth.schema";
 import type { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
+import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -22,14 +22,14 @@ export async function loginWorkflow(
     authUserService: AuthUserService;
     sessionService: SessionService;
   }>,
-): Promise<Result<SessionUser, AppError>> {
+): Promise<Result<SessionPrincipal, AppError>> {
   const authResult = await deps.authUserService.login(input);
 
   if (!authResult.ok) {
     return Err(authResult.error);
   }
 
-  const user: SessionUser = {
+  const user: SessionPrincipal = {
     id: authResult.value.id,
     role: authResult.value.role,
   };

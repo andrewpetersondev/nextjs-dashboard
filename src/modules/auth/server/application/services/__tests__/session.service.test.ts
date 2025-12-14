@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/domain/session/session.constants";
+} from "@/modules/auth/domain/session/session.policy.constants";
 import type { AuthEncryptPayload } from "@/modules/auth/domain/session/session-payload.types";
 import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
