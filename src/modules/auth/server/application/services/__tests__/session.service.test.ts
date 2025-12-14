@@ -21,6 +21,13 @@ import type { Result } from "@/shared/result/result.types";
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 const ONE_SECOND_MS = 1000 as const;
 
+// Use UUID-ish values so userIdCodec.decode(...) succeeds at runtime.
+const USER_ID_ABC = "550e8400-e29b-41d4-a716-4466554400ab" as UserId;
+const USER_ID_1 = "550e8400-e29b-41d4-a716-446655440001" as UserId;
+const USER_ID_2 = "550e8400-e29b-41d4-a716-446655440002" as UserId;
+const USER_ID_3 = "550e8400-e29b-41d4-a716-446655440003" as UserId;
+const USER_ID_4 = "550e8400-e29b-41d4-a716-446655440004" as UserId;
+
 class InMemoryCookie implements SessionPort {
   private value?: string;
 
@@ -66,7 +73,7 @@ class JsonStubJwt implements SessionTokenCodecPort {
 const testLogger: LoggingClientContract = realLogger.child({ scope: "test" });
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix>
-describe("SessionManager", () => {
+describe("SessionService", () => {
   let cookie: InMemoryCookie;
   let jwt: JsonStubJwt;
   let manager: SessionService;
@@ -126,12 +133,12 @@ describe("SessionManager", () => {
   describe("read", () => {
     it("reads a session and returns user info", async () => {
       await manager.establish({
-        id: "abc" as UserId,
+        id: USER_ID_ABC,
         role: "admin" as UserRole,
       });
 
       const read = await manager.read();
-      expect(read).toEqual({ role: "admin", userId: "abc" });
+      expect(read).toEqual({ role: "admin", userId: USER_ID_ABC });
     });
 
     it("returns undefined when no cookie exists", async () => {
@@ -152,7 +159,7 @@ describe("SessionManager", () => {
   describe("clear", () => {
     it("clears a session", async () => {
       await manager.establish({
-        id: "abc" as UserId,
+        id: USER_ID_ABC,
         role: "user" as UserRole,
       });
 
@@ -183,21 +190,26 @@ describe("SessionManager", () => {
   describe("rotate", () => {
     it("skips rotation when time left > threshold", async () => {
       await manager.establish({
-        id: "u1" as UserId,
+        id: USER_ID_1,
         role: "user" as UserRole,
       });
 
       vi.advanceTimersByTime(
         SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS - ONE_SECOND_MS,
       );
-      const rotate = await manager.rotate();
-      expect(rotate.refreshed).toBe(false);
-      expect(rotate.reason).toBe("not_needed");
+
+      const rotateRes = await manager.rotate();
+      expect(rotateRes.ok).toBe(true);
+
+      if (rotateRes.ok) {
+        expect(rotateRes.value.refreshed).toBe(false);
+        expect(rotateRes.value.reason).toBe("not_needed");
+      }
     });
 
     it("rotates when near expiry (<= threshold)", async () => {
       await manager.establish({
-        id: "u2" as UserId,
+        id: USER_ID_2,
         role: "user" as UserRole,
       });
 
@@ -205,37 +217,45 @@ describe("SessionManager", () => {
         SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS + 10,
       );
 
-      const rotate = await manager.rotate();
+      const rotateRes = await manager.rotate();
+      expect(rotateRes.ok).toBe(true);
 
-      expect(rotate.refreshed).toBe(true);
-      expect(rotate.reason).toBe("rotated");
-      if (rotate.refreshed) {
-        expect(rotate.userId).toBe("u2");
-      }
-      if (rotate.refreshed) {
-        expect(rotate.role).toBe("user");
+      if (rotateRes.ok) {
+        expect(rotateRes.value.refreshed).toBe(true);
+        expect(rotateRes.value.reason).toBe("rotated");
+
+        if (rotateRes.value.refreshed) {
+          expect(rotateRes.value.userId).toBe(USER_ID_2);
+          expect(rotateRes.value.role).toBe("user");
+        }
       }
     });
 
     it("returns no_cookie when no session exists", async () => {
-      const rotate = await manager.rotate();
+      const rotateRes = await manager.rotate();
+      expect(rotateRes.ok).toBe(true);
 
-      expect(rotate.refreshed).toBe(false);
-      expect(rotate.reason).toBe("no_cookie");
+      if (rotateRes.ok) {
+        expect(rotateRes.value.refreshed).toBe(false);
+        expect(rotateRes.value.reason).toBe("no_cookie");
+      }
     });
 
     it("prevents rotation when absolute lifetime exceeded", async () => {
       await manager.establish({
-        id: "u3" as UserId,
+        id: USER_ID_3,
         role: "user" as UserRole,
       });
 
       vi.advanceTimersByTime(MAX_ABSOLUTE_SESSION_MS + ONE_SECOND_MS);
 
-      const rotate = await manager.rotate();
+      const rotateRes = await manager.rotate();
+      expect(rotateRes.ok).toBe(true);
 
-      expect(rotate.refreshed).toBe(false);
-      expect(rotate.reason).toBe("absolute_lifetime_exceeded");
+      if (rotateRes.ok) {
+        expect(rotateRes.value.refreshed).toBe(false);
+        expect(rotateRes.value.reason).toBe("absolute_lifetime_exceeded");
+      }
 
       const cookieValue = await cookie.get();
       expect(cookieValue).toBeUndefined();
@@ -244,7 +264,7 @@ describe("SessionManager", () => {
     it("preserves sessionStart across rotations", async () => {
       const startTime = Date.now();
       await manager.establish({
-        id: "u4" as UserId,
+        id: USER_ID_4,
         role: "user" as UserRole,
       });
 
@@ -252,7 +272,8 @@ describe("SessionManager", () => {
         SESSION_DURATION_MS - SESSION_REFRESH_THRESHOLD_MS + 10,
       );
 
-      await manager.rotate();
+      const rotateRes = await manager.rotate();
+      expect(rotateRes.ok).toBe(true);
 
       const stored = await cookie.get();
 

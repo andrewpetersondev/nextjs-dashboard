@@ -79,7 +79,7 @@ describe("AuthUserService", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.code).toBe("validation");
+        expect(result.error.code).toBe("missingFields");
       }
       expect(mockRepo.signup).not.toHaveBeenCalled();
     });
@@ -139,7 +139,7 @@ describe("AuthUserService", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.code).toBe("validation");
+        expect(result.error.code).toBe("invalidCredentials");
       }
     });
 
