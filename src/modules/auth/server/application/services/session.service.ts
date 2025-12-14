@@ -1,11 +1,11 @@
 import "server-only";
+import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session.policy";
 
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
 } from "@/modules/auth/domain/session/session.policy.constants";
 import { userIdCodec } from "@/modules/auth/domain/session/session.schemas";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session-payload.types";
 import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   SessionPort,

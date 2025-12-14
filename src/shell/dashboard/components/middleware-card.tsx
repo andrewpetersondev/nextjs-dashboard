@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { SessionVerificationResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { SessionVerificationResult } from "@/modules/auth/domain/session/session.transport";
 import {
   GUEST_ROLE,
   USER_ROLES,

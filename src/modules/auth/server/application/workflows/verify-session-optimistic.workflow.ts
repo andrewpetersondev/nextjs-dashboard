@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionVerificationResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { SessionVerificationResult } from "@/modules/auth/domain/session/session.transport";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 
 export type VerifySessionOptimisticFailure = Readonly<{

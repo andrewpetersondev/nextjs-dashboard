@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import type { SessionVerificationResult } from "@/modules/auth/domain/session/session-payload.types";
+import type { SessionVerificationResult } from "@/modules/auth/domain/session/session.transport";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/server/application/workflows/verify-session-optimistic.workflow";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";

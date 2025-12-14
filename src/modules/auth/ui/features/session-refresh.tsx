@@ -1,6 +1,7 @@
 "use client";
+
 import { useEffect, useRef } from "react";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session-payload.types";
+import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session.policy";
 import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/ui/auth-ui.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
