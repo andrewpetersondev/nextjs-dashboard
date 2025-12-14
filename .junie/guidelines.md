@@ -40,4 +40,3 @@
 ## Write docs and tests intentionally
 
 - Use TSDoc when generating documentation; avoid JSDoc.
-- Avoid automatically adding test files.
