@@ -1,17 +1,16 @@
 import "server-only";
 
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import { hasRequiredSignupFields } from "@/modules/auth/shared/user/auth.guards";
-import { toAuthUserTransport } from "@/modules/auth/shared/user/auth.mappers";
-import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
+import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
+import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type {
   LoginData,
   SignupData,
-} from "@/modules/auth/shared/user/auth.schema";
-import type { AuthUserTransport } from "@/modules/auth/shared/user/auth.types";
+} from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { asHash } from "@/server/crypto/hashing/hashing.types";
+import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
@@ -19,6 +18,52 @@ import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
+
+/**
+ * Type guard to ensure all required signup fields are present and non-empty.
+ * Returns true only if input has all required fields with valid values.
+ */
+function hasRequiredSignupFields(
+  input: Partial<SignupData> | null | undefined,
+): input is SignupData {
+  if (!input) {
+    return false;
+  }
+
+  const { email, password, username } = input;
+
+  return Boolean(
+    email &&
+      email.trim().length > 0 &&
+      password &&
+      password.length > 0 &&
+      username &&
+      username.trim().length > 0,
+  );
+}
+
+/**
+ * Maps database/entity representation to transport-safe AuthUserTransport.
+ * Validates and converts all fields to ensure type safety across boundaries.
+ */
+const toAuthUserTransport = (src: {
+  readonly email: string;
+  readonly id: string;
+  readonly role: string;
+  readonly username: string;
+}): AuthUserTransport => {
+  // Validate required fields exist
+  if (!(src.email && src.id && src.role && src.username)) {
+    throw new Error("Invalid user entity: missing required fields");
+  }
+
+  return {
+    email: src.email,
+    id: toUserId(src.id),
+    role: parseUserRole(src.role),
+    username: src.username,
+  };
+};
 
 /**
  * AuthUserService orchestrates authentication and user creation logic.

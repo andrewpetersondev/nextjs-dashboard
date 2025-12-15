@@ -3,7 +3,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/shared/domain/user/auth.roles";
 import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { invoices } from "@/server/db/schema/invoices";
 import type { Period } from "@/shared/branding/brands";

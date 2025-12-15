@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/modules/auth/shared/user/auth.roles";
+import { USER_ROLES } from "@/modules/auth/shared/domain/user/auth.roles";
 import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
 import { EmailSchema } from "@/shared/validation/zod/email.schema";
 import { PasswordSchema } from "@/shared/validation/zod/password.schema";

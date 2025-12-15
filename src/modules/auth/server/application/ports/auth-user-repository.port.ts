@@ -1,11 +1,11 @@
 import "server-only";
 
-import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
-} from "@/modules/auth/shared/user/auth.types";
+} from "@/modules/auth/server/types/auth.types";
+import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 
 /**
  * Application-layer repository port for user authentication persistence.

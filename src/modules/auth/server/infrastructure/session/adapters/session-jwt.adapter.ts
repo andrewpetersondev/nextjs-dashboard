@@ -1,7 +1,7 @@
 import "server-only";
 
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
-import type { AuthEncryptPayload } from "@/modules/auth/shared/session/session.codec";
+import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

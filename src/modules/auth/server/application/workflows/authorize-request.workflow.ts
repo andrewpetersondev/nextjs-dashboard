@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { SessionTokenCodecPort } from "@/modules/auth/server/application/ports/session.port";
-import type { AuthEncryptPayload } from "@/modules/auth/shared/session/session.codec";
-import { ADMIN_ROLE } from "@/modules/auth/shared/user/auth.roles";
+import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
+import { ADMIN_ROLE } from "@/modules/auth/shared/domain/user/auth.roles";
 
 async function decodeClaims(
   cookie: string | undefined,

@@ -1,5 +1,4 @@
-/** biome-ignore-all lint/style/useNamingConvention: <bad rule> */
-import "server-only";
+/** biome-ignore-all lint/style/useNamingConvention: <keep for now> */
 
 /**
  * Standardized error messages for authentication flows.

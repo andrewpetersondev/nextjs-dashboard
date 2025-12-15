@@ -4,12 +4,12 @@ import type {
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
 import { SessionService } from "@/modules/auth/server/application/services/session.service";
-import type { AuthEncryptPayload } from "@/modules/auth/shared/session/session.codec";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/shared/session/session.policy.constants";
-import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/server/types/session.policy.constants";
+import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
+import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

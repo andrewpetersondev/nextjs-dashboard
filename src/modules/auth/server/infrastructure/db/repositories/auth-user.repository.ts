@@ -2,15 +2,15 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
-import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/persistence/dal/demo-user-counter.dal";
-import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/persistence/dal/get-user-by-email.dal";
-import { insertUserDal } from "@/modules/auth/server/infrastructure/persistence/dal/insert-user.dal";
-import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
+import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/db/dal/demo-user-counter.dal";
+import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/db/dal/get-user-by-email.dal";
+import { insertUserDal } from "@/modules/auth/server/infrastructure/db/dal/insert-user.dal";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
-} from "@/modules/auth/shared/user/auth.types";
+} from "@/modules/auth/server/types/auth.types";
+import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import {
   newUserDbRowToEntity,
   userDbRowToEntity,

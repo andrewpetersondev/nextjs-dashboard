@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { refreshSessionWorkflow } from "@/modules/auth/server/application/workflows/refresh-session.workflow";
 import {
   CACHE_CONTROL_NO_STORE,

@@ -3,11 +3,11 @@ import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/shared/domain/user/auth.roles";
 import {
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
-} from "@/modules/auth/ui/auth.tokens";
+} from "@/modules/auth/shared/ui/auth.tokens";
 import { DemoForm } from "@/modules/auth/ui/components/forms/demo-form";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 

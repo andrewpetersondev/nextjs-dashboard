@@ -13,7 +13,7 @@ import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/shared/domain/user/auth.roles";
 import type { Hash } from "@/server/crypto/hashing/hashing.types";
 import type { UserId } from "@/shared/branding/brands";
 import { sessions } from "./sessions";

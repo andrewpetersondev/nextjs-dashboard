@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/server/application/workflows/verify-session-optimistic.workflow";
-import type { SessionVerificationResult } from "@/modules/auth/shared/session/session.transport";
+import type { SessionVerificationResult } from "@/modules/auth/shared/contracts/session.transport";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

@@ -1,11 +1,11 @@
 import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/modules/auth/server/actions/verify-session-optimistic.action";
-import type { SessionVerificationResult } from "@/modules/auth/shared/session/session.transport";
+import type { SessionVerificationResult } from "@/modules/auth/shared/contracts/session.transport";
 import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/shared/domain/user/auth.roles";
 import { H6 } from "@/ui/atoms/headings";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;

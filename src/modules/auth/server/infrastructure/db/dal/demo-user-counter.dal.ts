@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
+import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import { executeDalOrThrow } from "@/server/db/dal/execute-dal-or-throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";

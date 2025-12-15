@@ -3,7 +3,7 @@ import { integer, pgTable, serial } from "drizzle-orm/pg-core";
 import {
   GUEST_ROLE,
   type UserRole,
-} from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/shared/domain/user/auth.roles";
 import { roleEnum } from "./users";
 
 export const demoUserCounters = pgTable("demo_user_counters", {

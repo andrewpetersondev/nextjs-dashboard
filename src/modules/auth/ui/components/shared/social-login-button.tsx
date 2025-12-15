@@ -1,5 +1,5 @@
 import { type FC, type JSX, memo, type ReactNode } from "react";
-import type { OauthProvider } from "@/modules/auth/ui/auth-ui.constants";
+import type { OauthProvider } from "@/modules/auth/shared/ui/auth-ui.constants";
 import {
   GitHubIcon,
   GoogleIcon,

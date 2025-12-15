@@ -5,7 +5,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/shared/user/auth.roles";
+} from "@/modules/auth/shared/domain/user/auth.roles";
 import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
 import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";
