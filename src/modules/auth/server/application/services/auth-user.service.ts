@@ -9,7 +9,6 @@ import type {
 } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
-import { asHash } from "@/server/crypto/hashing/hashing.types";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
 import type { AppError } from "@/shared/errors/core/app-error.class";
@@ -99,6 +98,7 @@ export class AuthUserService {
    * - Counter ensures unique email/username per role.
    * - Transaction ensures user + counter increment are atomic.
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
   async createDemoUser(
     role: UserRole,
   ): Promise<Result<AuthUserTransport, AppError>> {
@@ -109,36 +109,49 @@ export class AuthUserService {
     });
 
     try {
-      const counter = await this.repo.incrementDemoUserCounter(role);
-
-      if (!isPositiveNumber(counter)) {
-        const error = makeAppErrorFromUnknown(
-          new Error("invalid_counter"),
-          "validation",
-        );
-
-        logger.operation("error", "Invalid demo user counter", {
-          error,
-          operationIdentifiers: { counter, role },
-          operationName: "demoUser.counter.invalid",
-        });
-
-        return Err(error);
-      }
-
       const demoPassword = createRandomPassword();
-      const uniqueEmail = `demo+${role}${counter}@demo.com`;
-      const uniqueUsername = `Demo_${role.toUpperCase()}_${counter}`;
       const passwordHash = await this.hasher.hash(demoPassword);
 
-      const demoUser = await this.repo.withTransaction(async (txRepo) =>
-        txRepo.signup({
-          email: uniqueEmail,
+      const txResult = await this.repo.withTransaction(async (txRepo) => {
+        const counter = await txRepo.incrementDemoUserCounter(role);
+
+        if (!isPositiveNumber(counter)) {
+          const error = makeAppErrorFromUnknown(
+            new Error("invalid_counter"),
+            "validation",
+          );
+
+          logger.operation("error", "Invalid demo user counter", {
+            error,
+            operationIdentifiers: { counter, role },
+            operationName: "demoUser.counter.invalid",
+          });
+
+          return Err<AppError>(error);
+        }
+
+        const txUniqueEmail = `demo+${role}${counter}@demo.com`;
+        const txUniqueUsername = `Demo_${role.toUpperCase()}_${counter}`;
+
+        const txDemoUser = await txRepo.signup({
+          email: txUniqueEmail,
           password: passwordHash,
           role,
-          username: uniqueUsername,
-        }),
-      );
+          username: txUniqueUsername,
+        });
+
+        return Ok({
+          demoUser: txDemoUser,
+          uniqueEmail: txUniqueEmail,
+          uniqueUsername: txUniqueUsername,
+        });
+      });
+
+      if (!txResult.ok) {
+        return Err(txResult.error);
+      }
+
+      const { demoUser, uniqueEmail, uniqueUsername } = txResult.value;
 
       logger.operation("info", "Demo user created", {
         operationIdentifiers: {
@@ -257,7 +270,19 @@ export class AuthUserService {
         operationName: "login.start",
       });
 
-      const user = await this.repo.login({ email: input.email });
+      const userResult = await this.repo.login({ email: input.email });
+
+      if (!userResult.ok) {
+        logger.operation("error", "Login failed - repository error", {
+          error: userResult.error,
+          operationIdentifiers: { email: input.email },
+          operationName: "login.repo.error",
+        });
+
+        return Err(userResult.error);
+      }
+
+      const user = userResult.value;
 
       if (!user) {
         const error = makeAppErrorFromUnknown(
@@ -274,24 +299,9 @@ export class AuthUserService {
         return Err(error);
       }
 
-      if (!user.password) {
-        const error = makeAppErrorFromUnknown(
-          new Error("missing_password_hash"),
-          "validation",
-        );
-
-        logger.operation("error", "Login failed - missing password hash", {
-          error,
-          operationIdentifiers: { email: input.email, userId: String(user.id) },
-          operationName: "login.user.missingPasswordHash",
-        });
-
-        return Err(error);
-      }
-
       const passwordOk = await this.hasher.compare(
         input.password,
-        asHash(user.password),
+        user.password,
       );
 
       if (!passwordOk) {

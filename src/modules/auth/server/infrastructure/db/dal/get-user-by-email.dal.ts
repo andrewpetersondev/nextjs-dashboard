@@ -1,10 +1,12 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import { executeDalOrThrow } from "@/server/db/dal/execute-dal-or-throw";
+import { executeDalResult } from "@/server/db/dal/execute-dal-result";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Finds a user by email for login.
@@ -13,14 +15,14 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * @param db - Database connection
  * @param email - User email to search
  * @param logger - Logging client
- * @returns Found user row or null if not found
+ * @returns Result of found user row or null if not found
  */
 export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
   logger: LoggingClientContract,
-): Promise<UserRow | null> {
-  return await executeDalOrThrow<UserRow | null>(
+): Promise<Result<UserRow | null, AppError>> {
+  return await executeDalResult<UserRow | null>(
     async (): Promise<UserRow | null> => {
       const [userRow] = await db
         .select()

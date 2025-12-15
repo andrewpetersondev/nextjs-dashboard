@@ -37,5 +37,5 @@ export async function signupWorkflow(
     return Err(sessionResult.error);
   }
 
-  return Ok(user);
+  return Ok(sessionResult.value);
 }

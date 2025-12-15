@@ -16,7 +16,10 @@ import {
   userDbRowToEntity,
 } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
+import type { AppError } from "@/shared/errors/core/app-error.class";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import { Err, Ok } from "@/shared/result/result";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.
@@ -80,42 +83,51 @@ export class AuthUserRepository {
   }
 
   /**
-   * Fetches a user by email for login purposes.
+   * Fetches a login candidate user by email.
    *
-   * ## Semantics
-   * - Returns an {@link AuthUserEntity} when the user exists **and** a password hash is present.
-   * - Returns `null` when the user does not exist or has no password set.
-   *
-   * ## Logging
-   * Emits repository-level success/failure events for observability without enforcing
-   * auth semantics (that belongs to the service layer).
+   * @remarks
+   * - Returns `Ok(null)` when the user does not exist.
+   * - Returns `Ok(candidate)` even if password is missing (service owns semantics).
+   * - Returns `Err(AppError)` for DAL/infra failures.
    *
    * @param input - Lookup input (email).
-   * @returns A user entity usable for authentication, or `null`.
    */
   async login(
     input: Readonly<AuthLoginRepoInput>,
-  ): Promise<AuthUserEntity | null> {
-    const row = await getUserByEmailDal(this.db, input.email, this.logger);
+  ): Promise<Result<AuthUserEntity | null, AppError>> {
+    const rowResult = await getUserByEmailDal(
+      this.db,
+      input.email,
+      this.logger,
+    );
 
-    if (!row?.password) {
-      this.logger.operation(
-        "warn",
-        "Login lookup resulted in no user with password",
-        {
-          operationIdentifiers: { email: input.email },
-          operationName: "login.notFound",
-        },
-      );
-      return null;
+    if (!rowResult.ok) {
+      this.logger.operation("error", "Login lookup failed (DAL)", {
+        error: rowResult.error,
+        operationIdentifiers: { email: input.email },
+        operationName: "login.lookup.error",
+      });
+
+      return Err(rowResult.error);
     }
 
-    this.logger.operation("info", "User retrieved successfully for login", {
+    const row = rowResult.value;
+
+    if (!row) {
+      this.logger.operation("info", "Login lookup: user not found", {
+        operationIdentifiers: { email: input.email },
+        operationName: "login.lookup.notFound",
+      });
+
+      return Ok<AuthUserEntity | null>(null);
+    }
+
+    this.logger.operation("info", "Login lookup: user retrieved", {
       operationIdentifiers: { email: input.email, userId: row.id },
-      operationName: "login.success",
+      operationName: "login.lookup.success",
     });
 
-    return userDbRowToEntity(row);
+    return Ok<AuthUserEntity>(userDbRowToEntity(row));
   }
 
   /**

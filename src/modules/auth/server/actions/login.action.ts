@@ -95,6 +95,23 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
+    const isCredentialFailure =
+      error.code === "invalidCredentials" || error.code === "notFound";
+
+    if (isCredentialFailure) {
+      const msg = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
+
+      return formError<LoginField>({
+        code: error.code,
+        fieldErrors: {
+          email: [msg],
+          password: [msg],
+        },
+        message: msg,
+        values: input,
+      });
+    }
+
     const { fieldErrors, message } =
       adaptAppErrorToFormPayload<LoginField>(error);
 

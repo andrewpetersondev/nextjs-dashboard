@@ -8,6 +8,7 @@
 - Sort object literal properties, interfaces, and types alphabetically (Biome style).
 - Avoid re-exports and avoid barrel files.
 - Explicitly type all function arguments and return values.
+- Use TSDoc when generating documentation; avoid JSDoc.
 
 ## Follow the project structure
 
@@ -36,7 +37,3 @@
 
 - Use and create error factories in `@/shared/errors/factories/app-error.factory`.
 - Use error codes instead of custom error subclasses.
-
-## Write docs and tests intentionally
-
-- Use TSDoc when generating documentation; avoid JSDoc.

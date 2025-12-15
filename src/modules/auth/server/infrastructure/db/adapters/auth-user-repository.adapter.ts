@@ -8,6 +8,8 @@ import type {
   AuthUserEntity,
 } from "@/modules/auth/server/types/auth.types";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Adapter that exposes an infrastructure {@link AuthUserRepository} through the
@@ -43,10 +45,9 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryPort {
     return this.repo.incrementDemoUserCounter(role);
   }
 
-  /**
-   * @inheritdoc
-   */
-  login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity | null> {
+  login(
+    input: Readonly<AuthLoginRepoInput>,
+  ): Promise<Result<AuthUserEntity | null, AppError>> {
     return this.repo.login(input);
   }
 

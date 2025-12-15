@@ -6,6 +6,8 @@ import type {
   AuthUserEntity,
 } from "@/modules/auth/server/types/auth.types";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
+import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { Result } from "@/shared/result/result.types";
 
 /**
  * Application-layer repository port for user authentication persistence.
@@ -35,19 +37,16 @@ export interface AuthUserRepositoryPort {
   incrementDemoUserCounter(role: UserRole): Promise<number>;
 
   /**
-   * Fetches a user suitable for login.
+   * Fetches a user suitable for password-based login.
    *
-   * ## Semantics
-   * - Returns an {@link AuthUserEntity} when a matching user exists **and** a password is present.
-   * - Returns `null` when the user does not exist or exists but has no password set.
-   *
-   * ## Errors
-   * Infrastructure/DAL failures are propagated and mapped by repository/domain error mappers.
-   *
-   * @param input - Credentials/identifier required to locate the login candidate user.
-   * @returns The user entity if login is possible; otherwise `null`.
+   * @remarks
+   * - Returns `Ok(null)` when user does not exist.
+   * - Returns `Ok(AuthUserEntity)` when user exists (password hash is required by schema).
+   * - Returns `Err(AppError)` for DAL/infra failures.
    */
-  login(input: Readonly<AuthLoginRepoInput>): Promise<AuthUserEntity | null>;
+  login(
+    input: Readonly<AuthLoginRepoInput>,
+  ): Promise<Result<AuthUserEntity | null, AppError>>;
 
   /**
    * Creates a new user account.
