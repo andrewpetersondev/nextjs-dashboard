@@ -7,7 +7,6 @@ import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repo
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
  * Composition root for the Auth module that wires up an {@link AuthUserService}
@@ -30,22 +29,22 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  * route handlers, and server actions).
  *
  * @param db - Database connection used by the repository implementation.
- * @param logger - Logger instance; defaults to the shared logger.
- * @param requestId - Optional request id for tracing/log correlation across layers.
+ * @param logger - Logger instance.
+ * @param requestId - request id for tracing/log correlation across layers.
  * @returns A configured {@link AuthUserService} instance ready for use.
  */
 export function createAuthUserServiceFactory(
   db: AppDatabase,
-  logger: LoggingClientContract = defaultLogger,
-  requestId?: string,
+  logger: LoggingClientContract,
+  requestId: string,
 ): AuthUserService {
-  const repo = new AuthUserRepository(db, logger, requestId);
-  const repoPort: AuthUserRepositoryPort = new AuthUserRepositoryAdapter(repo);
-  const hashingService = createHashingService();
+  const scopedLogger = logger.withContext("auth").withRequest(requestId);
 
-  const scopedLogger = requestId
-    ? logger.withContext("auth").withRequest(requestId)
-    : logger.withContext("auth");
+  const repo = new AuthUserRepository(db, scopedLogger, requestId);
+
+  const repoPort: AuthUserRepositoryPort = new AuthUserRepositoryAdapter(repo);
+
+  const hashingService = createHashingService();
 
   return new AuthUserService(repoPort, hashingService, scopedLogger);
 }

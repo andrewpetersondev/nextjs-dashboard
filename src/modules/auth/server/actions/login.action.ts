@@ -74,7 +74,11 @@ export async function loginAction(
     operationName: "login.validation.success",
   });
 
-  const authUserService = createAuthUserServiceFactory(getAppDb(), logger);
+  const authUserService = createAuthUserServiceFactory(
+    getAppDb(),
+    logger,
+    requestId,
+  );
   const sessionService = createSessionServiceFactory(logger);
 
   const sessionResult = await tracker.measure("authentication", () =>

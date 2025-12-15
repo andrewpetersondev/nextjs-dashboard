@@ -86,7 +86,11 @@ export async function signupAction(
     operationName: "signup.validation.success",
   });
 
-  const authUserService = createAuthUserServiceFactory(getAppDb(), logger);
+  const authUserService = createAuthUserServiceFactory(
+    getAppDb(),
+    logger,
+    requestId,
+  );
   const sessionService = createSessionServiceFactory(logger);
 
   const sessionResult = await tracker.measure("authentication", () =>

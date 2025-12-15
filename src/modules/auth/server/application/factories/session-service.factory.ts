@@ -4,15 +4,14 @@ import { SessionService } from "@/modules/auth/server/application/services/sessi
 import { createSessionCookieAdapter } from "@/modules/auth/server/infrastructure/session/adapters/session-cookie.adapter";
 import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/session/adapters/session-jwt.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
  * Lightweight factory to compose a SessionManager with default adapters.
  *
- * @param logger - Optional logger to use; defaults to the shared logger.
+ * @param logger - required logger to use.
  */
 export function createSessionServiceFactory(
-  logger: LoggingClientContract = defaultLogger,
+  logger: LoggingClientContract,
 ): SessionService {
   return new SessionService(
     createSessionCookieAdapter(),

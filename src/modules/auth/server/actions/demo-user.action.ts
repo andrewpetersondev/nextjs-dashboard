@@ -41,7 +41,11 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const authUserService = createAuthUserServiceFactory(getAppDb(), logger);
+  const authUserService = createAuthUserServiceFactory(
+    getAppDb(),
+    logger,
+    requestId,
+  );
   const sessionService = createSessionServiceFactory(logger);
 
   const sessionResult = await tracker.measure("authentication", () =>

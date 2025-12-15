@@ -17,7 +17,6 @@ import {
 } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.
@@ -49,19 +48,21 @@ export class AuthUserRepository {
   /** Repository-scoped logger enriched with auth context and optional request id. */
   private readonly logger: LoggingClientContract;
 
+  private readonly requestId: string;
+
   /**
    * @param db - Database connection used for all DAL operations.
-   * @param logger - Optional logger; defaults to the shared logger.
-   * @param requestId - Optional request id used to correlate logs across layers.
+   * @param logger - Logger (required).
+   * @param requestId - Request id used to correlate logs across layers (required).
    */
   constructor(
     db: AppDatabase,
-    logger?: LoggingClientContract,
-    requestId?: string,
+    logger: LoggingClientContract,
+    requestId: string,
   ) {
     this.db = db;
-    const base = (logger ?? defaultLogger).withContext("auth:repo");
-    this.logger = requestId ? base.withRequest(requestId) : base;
+    this.requestId = requestId;
+    this.logger = logger.withContext("auth:repo").withRequest(requestId);
   }
 
   /**
@@ -166,6 +167,7 @@ export class AuthUserRepository {
     }
 
     const transactionId = randomUUID();
+
     const txLogger = this.logger
       .child({ transactionId })
       .withContext("auth:tx");
@@ -176,7 +178,7 @@ export class AuthUserRepository {
 
     try {
       const result = await dbWithTx.transaction(async (tx: AppDatabase) => {
-        const txRepo = new AuthUserRepository(tx, txLogger);
+        const txRepo = new AuthUserRepository(tx, txLogger, this.requestId);
         return await fn(txRepo);
       });
 
