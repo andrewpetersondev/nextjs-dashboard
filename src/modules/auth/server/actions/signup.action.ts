@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createAuthUserServiceFactory } from "@/modules/auth/server/application/factories/auth-user-service.factory";
+import { createCreateUserUseCaseFactory } from "@/modules/auth/server/application/factories/create-user-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
+import { createUnitOfWorkFactory } from "@/modules/auth/server/application/factories/unit-of-work.factory";
 import { signupWorkflow } from "@/modules/auth/server/application/workflows/signup.workflow";
 import {
   SIGNUP_FIELDS_LIST,
@@ -86,15 +87,12 @@ export async function signupAction(
     operationName: "signup.validation.success",
   });
 
-  const authUserService = createAuthUserServiceFactory(
-    getAppDb(),
-    logger,
-    requestId,
-  );
+  const uow = createUnitOfWorkFactory(getAppDb(), logger, requestId);
+  const createUserUseCase = createCreateUserUseCaseFactory(uow, logger);
   const sessionService = createSessionServiceFactory(logger);
 
   const sessionResult = await tracker.measure("authentication", () =>
-    signupWorkflow(input, { authUserService, sessionService }),
+    signupWorkflow(input, { createUserUseCase, sessionService }),
   );
 
   if (!sessionResult.ok) {

@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { CreateDemoUserUseCase } from "@/modules/auth/server/application/use-cases/user/create-demo-user.use-case";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { Err, Ok } from "@/shared/result/result";
@@ -10,17 +10,17 @@ import type { Result } from "@/shared/result/result.types";
 
 /**
  * Orchestrates the demo-user "story":
- * - create demo user (role-based)
- * - establish session
+ * - create demo user (DB transaction)
+ * - establish session (cookie/JWT, non-transactional)
  */
 export async function createDemoUserWorkflow(
   role: UserRole,
   deps: Readonly<{
-    authUserService: AuthUserService;
+    createDemoUserUseCase: CreateDemoUserUseCase;
     sessionService: SessionService;
   }>,
 ): Promise<Result<SessionPrincipal, AppError>> {
-  const demoResult = await deps.authUserService.createDemoUser(role);
+  const demoResult = await deps.createDemoUserUseCase.execute(role);
 
   if (!demoResult.ok) {
     return Err(demoResult.error);
@@ -37,5 +37,5 @@ export async function createDemoUserWorkflow(
     return Err(sessionResult.error);
   }
 
-  return Ok(user);
+  return Ok(sessionResult.value);
 }

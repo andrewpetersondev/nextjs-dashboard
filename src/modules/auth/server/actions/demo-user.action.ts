@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createAuthUserServiceFactory } from "@/modules/auth/server/application/factories/auth-user-service.factory";
+import { createCreateDemoUserUseCaseFactory } from "@/modules/auth/server/application/factories/create-demo-user-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
+import { createUnitOfWorkFactory } from "@/modules/auth/server/application/factories/unit-of-work.factory";
 import { createDemoUserWorkflow } from "@/modules/auth/server/application/workflows/create-demo-user.workflow";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
@@ -17,11 +18,6 @@ import { ROUTES } from "@/shared/routes/routes";
 /**
  * Internal helper: creates a demo user for the given role.
  * Used by both role-specific adapters.
- *
- * @remarks
- * - Demo users receive randomly generated passwords (16 characters).
- * - Transaction ensures user + counter increment are atomic.
- * - Request ID propagates through all layers for observability.
  *
  * @internal
  */
@@ -41,15 +37,12 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const authUserService = createAuthUserServiceFactory(
-    getAppDb(),
-    logger,
-    requestId,
-  );
+  const uow = createUnitOfWorkFactory(getAppDb(), logger, requestId);
+  const createDemoUserUseCase = createCreateDemoUserUseCaseFactory(uow, logger);
   const sessionService = createSessionServiceFactory(logger);
 
   const sessionResult = await tracker.measure("authentication", () =>
-    createDemoUserWorkflow(role, { authUserService, sessionService }),
+    createDemoUserWorkflow(role, { createDemoUserUseCase, sessionService }),
   );
 
   if (!sessionResult.ok) {

@@ -57,20 +57,4 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryPort {
   signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
     return this.repo.signup(input);
   }
-
-  /**
-   * Runs the callback in a transaction, ensuring the callback receives an
-   * {@link AuthUserRepositoryPort} even though the infrastructure transaction API
-   * exposes an {@link AuthUserRepository}.
-   *
-   * @inheritdoc
-   */
-  withTransaction<T>(
-    fn: (txRepo: AuthUserRepositoryPort) => Promise<T>,
-  ): Promise<T> {
-    return this.repo.withTransaction(async (txRepo: AuthUserRepository) => {
-      const txAdapter = new AuthUserRepositoryAdapter(txRepo);
-      return await fn(txAdapter);
-    });
-  }
 }

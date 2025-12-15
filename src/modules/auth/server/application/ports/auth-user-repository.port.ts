@@ -19,13 +19,12 @@ import type { Result } from "@/shared/result/result.types";
  * implementations (often via an adapter).
  *
  * ## Usage
- * - Consumed by application services (e.g., `AuthUserService`)
+ * - Consumed by application services/use-cases
  * - Implemented by an adapter that delegates to an infrastructure repository
  *
  * ## Transactions
- * Use {@link withTransaction} to run a sequence of repository operations atomically.
- * The callback receives a transaction-scoped repository port instance that must be
- * used for all operations within the transaction.
+ * Transactions are owned by the application layer via {@link UnitOfWorkPort}.
+ * Repository ports should remain transaction-agnostic.
  */
 export interface AuthUserRepositoryPort {
   /**
@@ -55,20 +54,4 @@ export interface AuthUserRepositoryPort {
    * @returns The created user entity.
    */
   signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity>;
-
-  /**
-   * Executes the provided function within a database transaction.
-   *
-   * ## Contract
-   * - The callback receives a transaction-scoped repository port instance (`txRepo`).
-   * - All persistence operations that must be atomic should be performed via `txRepo`.
-   * - The transaction is committed if the callback resolves; rolled back if it rejects.
-   *
-   * @typeParam T - The result type produced by the callback.
-   * @param fn - Callback that performs transactional work using `txRepo`.
-   * @returns The callback result.
-   */
-  withTransaction<T>(
-    fn: (txRepo: AuthUserRepositoryPort) => Promise<T>,
-  ): Promise<T>;
 }
