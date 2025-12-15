@@ -1,11 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
 import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
 import { createDemoUserWorkflow } from "@/modules/auth/server/application/workflows/create-demo-user.workflow";
+import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/user/auth-error-messages.constants";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";

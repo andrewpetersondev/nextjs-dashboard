@@ -15,7 +15,7 @@ apply: always
 
 ## Follow the project structure
 
-- Organize features under `@/modules/{feature}/{domain,server,ui}`.
+- Organize features under `@/modules/{feature}/{shared,server,ui}`.
 - Place shared UI in `@/ui` using Atomic Design (atoms, molecules).
 
 ## Handle failures explicitly (Result-first)

@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AuthEncryptPayload } from "@/modules/auth/domain/session/session.codec";
-import {
-  SESSION_DURATION_MS,
-  SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/domain/session/session.policy.constants";
-import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
 import { SessionService } from "@/modules/auth/server/application/services/session.service";
+import type { AuthEncryptPayload } from "@/modules/auth/shared/session/session.codec";
+import {
+  SESSION_DURATION_MS,
+  SESSION_REFRESH_THRESHOLD_MS,
+} from "@/modules/auth/shared/session/session.policy.constants";
+import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

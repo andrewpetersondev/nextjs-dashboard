@@ -1,10 +1,11 @@
 "use client";
+
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type FC, type JSX, useActionState, useId } from "react";
 import {
   LOGIN_FIELDS_LIST,
   type LoginField,
-} from "@/modules/auth/domain/user/auth.schema";
+} from "@/modules/auth/shared/user/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";

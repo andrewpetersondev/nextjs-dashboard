@@ -2,7 +2,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/domain/user/auth.roles";
+} from "@/modules/auth/shared/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";

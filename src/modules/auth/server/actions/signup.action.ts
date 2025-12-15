@@ -2,16 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
+import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
+import { signupWorkflow } from "@/modules/auth/server/application/workflows/signup.workflow";
 import {
   SIGNUP_FIELDS_LIST,
   type SignupData,
   type SignupField,
   SignupSchema,
-} from "@/modules/auth/domain/user/auth.schema";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/domain/user/auth-error-messages.constants";
-import { createAuthUserServiceFactory } from "@/modules/auth/server/application/services/factories/auth-user-service.factory";
-import { createSessionServiceFactory } from "@/modules/auth/server/application/services/factories/session-service.factory";
-import { signupWorkflow } from "@/modules/auth/server/application/workflows/signup.workflow";
+} from "@/modules/auth/shared/user/auth.schema";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/user/auth-error-messages.constants";
 import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { validateForm } from "@/shared/forms/server/validate-form";

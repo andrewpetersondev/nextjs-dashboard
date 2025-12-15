@@ -1,4 +1,4 @@
-import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
+import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
 
 /**
  * Transport / boundary DTOs related to sessions.

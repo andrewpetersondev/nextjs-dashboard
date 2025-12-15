@@ -1,13 +1,13 @@
 import "server-only";
 
-import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
+import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
+import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/persistence/auth-user.repository";
+import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
 import type {
   AuthLoginRepoInput,
   AuthSignupPayload,
   AuthUserEntity,
-} from "@/modules/auth/domain/user/auth.types";
-import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/persistence/auth-user.repository";
+} from "@/modules/auth/shared/user/auth.types";
 
 /**
  * Adapter that exposes an infrastructure {@link AuthUserRepository} through the

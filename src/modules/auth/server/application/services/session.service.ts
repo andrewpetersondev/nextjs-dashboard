@@ -1,17 +1,16 @@
 import "server-only";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/session/session.policy";
-
-import {
-  SESSION_DURATION_MS,
-  SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/domain/session/session.policy.constants";
-import { userIdCodec } from "@/modules/auth/domain/session/session.schemas";
-import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
 import type {
   SessionPort,
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { UpdateSessionOutcome } from "@/modules/auth/shared/session/session.policy";
+import {
+  SESSION_DURATION_MS,
+  SESSION_REFRESH_THRESHOLD_MS,
+} from "@/modules/auth/shared/session/session.policy.constants";
+import { userIdCodec } from "@/modules/auth/shared/session/session.schemas";
+import type { UserRole } from "@/modules/auth/shared/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.class";
 import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
