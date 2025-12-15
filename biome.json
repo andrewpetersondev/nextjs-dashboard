@@ -206,6 +206,75 @@
   },
   "overrides": [
     {
+      "includes": ["src/modules/auth/shared/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/modules/auth/server/**"],
+                    "message": "auth/shared must be isomorphic: do not import from auth/server (enforced on path aliases)."
+                  },
+                  {
+                    "group": ["@/server/**"],
+                    "message": "auth/shared must be isomorphic: do not import from src/server (enforced on path aliases)."
+                  },
+                  {
+                    "group": ["next/**"],
+                    "message": "auth/shared must be isomorphic: do not import Next.js server APIs."
+                  },
+                  {
+                    "group": ["node:*"],
+                    "message": "auth/shared must be isomorphic: do not import Node-only APIs."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/modules/auth/server/application/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/modules/auth/server/infrastructure/**"],
+                    "message": "Clean/hex rule: application layer must not import infrastructure (enforced on path aliases)."
+                  },
+                  {
+                    "group": ["@/server/**"],
+                    "message": "Clean/hex rule: application layer must not import src/server adapters directly (enforced on path aliases)."
+                  },
+                  {
+                    "group": ["next/**", "react/**"],
+                    "message": "Clean/hex rule: application layer must be framework-agnostic (no next/react imports)."
+                  },
+                  {
+                    "group": [
+                      "drizzle-orm",
+                      "drizzle-orm/**",
+                      "drizzle-kit",
+                      "drizzle-kit/**"
+                    ],
+                    "message": "Clean/hex rule: application layer must not depend on DB libraries directly."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["src/shared/**/*.{ts,tsx}"],
       "linter": {
         "rules": {
