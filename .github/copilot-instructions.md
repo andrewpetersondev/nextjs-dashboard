@@ -13,6 +13,7 @@
 ## Follow the project structure
 
 - Organize features under `@/modules/{feature}/{shared,server,ui}`.
+- Use Clean/Hexagonal Architecture
 - Place shared UI in `@/ui` using Atomic Design (atoms, molecules).
 
 ## Handle failures explicitly (Result-first)
