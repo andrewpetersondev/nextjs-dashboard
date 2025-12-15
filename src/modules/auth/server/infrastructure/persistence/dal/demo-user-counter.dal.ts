@@ -1,6 +1,7 @@
 import "server-only";
+
 import type { UserRole } from "@/modules/auth/domain/user/auth.roles";
-import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/persistence/dal/execute-dal-or-throw.auth";
+import { executeDalOrThrow } from "@/server/db/dal/execute-dal-or-throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
@@ -9,14 +10,19 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 /**
  * Increments and retrieves the demo user counter for a given role.
  * Ensures the returned value is a valid number.
+ *
+ * @param db - Database connection
+ * @param role - Demo user role
+ * @param logger - Logging client
+ * @returns Counter id as number
  */
 export async function demoUserCounterDal(
   db: AppDatabase,
   role: UserRole,
   logger: LoggingClientContract,
 ): Promise<number> {
-  return await executeDalOrThrowAuth(
-    async () => {
+  return await executeDalOrThrow<number>(
+    async (): Promise<number> => {
       const [counterRow] = await db
         .insert(demoUserCounters)
         .values({ count: 1, role })
@@ -61,5 +67,6 @@ export async function demoUserCounterDal(
     },
     { identifiers: { role }, operation: "demoUserCounter" },
     logger,
+    { operationContext: "auth:dal" },
   );
 }

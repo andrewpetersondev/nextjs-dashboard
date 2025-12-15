@@ -1,6 +1,7 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
-import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/persistence/dal/execute-dal-or-throw.auth";
+import { executeDalOrThrow } from "@/server/db/dal/execute-dal-or-throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -8,14 +9,19 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 /**
  * Finds a user by email for login.
  * No password verification here; Service layer compares raw vs stored hash.
+ *
+ * @param db - Database connection
+ * @param email - User email to search
+ * @param logger - Logging client
+ * @returns Found user row or null if not found
  */
 export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
   logger: LoggingClientContract,
 ): Promise<UserRow | null> {
-  return await executeDalOrThrowAuth(
-    async () => {
+  return await executeDalOrThrow<UserRow | null>(
+    async (): Promise<UserRow | null> => {
       const [userRow] = await db
         .select()
         .from(users)
@@ -39,5 +45,6 @@ export async function getUserByEmailDal(
     },
     { identifiers: { email }, operation: "getUserByEmail" },
     logger,
+    { operationContext: "auth:dal" },
   );
 }

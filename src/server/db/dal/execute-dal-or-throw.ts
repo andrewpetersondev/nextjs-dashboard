@@ -15,7 +15,7 @@ export interface ExecuteDalOrThrowCoreOptions {
   readonly operationContext?: string;
 }
 
-export async function executeDalOrThrowCore<T>(
+export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
   logger: LoggingClientContract,

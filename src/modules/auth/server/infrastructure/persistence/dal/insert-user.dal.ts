@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthSignupPayload } from "@/modules/auth/domain/user/auth.types";
-import { executeDalOrThrowAuth } from "@/modules/auth/server/infrastructure/persistence/dal/execute-dal-or-throw.auth";
+import { executeDalOrThrow } from "@/server/db/dal/execute-dal-or-throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
@@ -8,7 +8,12 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
- * Never returns null; always throws on error or invariant violation.
+ * Throws on invariant violations; never returns null.
+ *
+ * @param db - Database connection
+ * @param input - Signup payload
+ * @param logger - Logging client
+ * @returns Inserted user row
  */
 export async function insertUserDal(
   db: AppDatabase,
@@ -16,10 +21,10 @@ export async function insertUserDal(
   logger: LoggingClientContract,
 ): Promise<NewUserRow> {
   const { email, password, role, username } = input;
-  const identifiers = { email, username } as Record<string, string>;
+  const identifiers: Record<string, string> = { email, username };
 
-  return await executeDalOrThrowAuth(
-    async () => {
+  return await executeDalOrThrow<NewUserRow>(
+    async (): Promise<NewUserRow> => {
       const [userRow] = await db
         .insert(users)
         .values({ email, password, role, username } satisfies NewUserRow)
@@ -41,5 +46,6 @@ export async function insertUserDal(
     },
     { identifiers, operation: "insertUser" },
     logger,
+    { operationContext: "auth:dal" },
   );
 }
