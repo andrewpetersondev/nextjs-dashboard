@@ -39,7 +39,7 @@ async function createDemoUserInternal(
 
   const uow = createUnitOfWorkFactory(getAppDb(), logger, requestId);
   const createDemoUserUseCase = createCreateDemoUserUseCaseFactory(uow, logger);
-  const sessionService = createSessionServiceFactory(logger);
+  const sessionService = createSessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
     createDemoUserWorkflow(role, { createDemoUserUseCase, sessionService }),

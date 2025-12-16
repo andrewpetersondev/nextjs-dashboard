@@ -18,9 +18,13 @@ import { ROUTES } from "@/shared/routes/routes";
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationResult> => {
-    const logger = defaultLogger.withContext("auth:action");
+    const requestId = crypto.randomUUID();
 
-    const sessionService = createSessionServiceFactory(logger);
+    const logger = defaultLogger
+      .withContext("auth:action")
+      .withRequest(requestId);
+
+    const sessionService = createSessionServiceFactory(logger, requestId);
 
     const res = await verifySessionOptimisticWorkflow({ sessionService });
 

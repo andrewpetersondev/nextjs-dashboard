@@ -16,7 +16,7 @@ export async function logoutAction(): Promise<void> {
     operationName: "logout.start",
   });
 
-  const sessionService = createSessionServiceFactory(logger);
+  const sessionService = createSessionServiceFactory(logger, requestId);
 
   const res = await logoutWorkflow({ sessionService });
 

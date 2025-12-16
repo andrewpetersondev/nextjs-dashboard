@@ -1,17 +1,22 @@
 import "server-only";
 
 import type { UnitOfWorkPort } from "@/modules/auth/server/application/ports/unit-of-work.port";
+import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
 import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
 import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.class";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import {
+  makeUnexpectedErrorFromUnknown,
+  makeValidationError,
+} from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
+// TODO: should i move this function to a shared location? why do i need this at all?
 function hasRequiredSignupFields(
   input: Partial<SignupData> | null | undefined,
 ): input is SignupData {
@@ -53,7 +58,10 @@ export class CreateUserUseCase {
 
     if (!hasRequiredSignupFields(input)) {
       return Err(
-        makeAppErrorFromUnknown(new Error("missing_fields"), "missingFields"),
+        makeValidationError({
+          message: "Missing required signup fields",
+          metadata: { input },
+        }),
       );
     }
 
@@ -61,12 +69,19 @@ export class CreateUserUseCase {
       const passwordHash = await this.hasher.hash(input.password);
 
       const createdResult = await this.uow.withTransaction(async (tx) => {
-        const created = await tx.authUsers.signup({
+        const createdResultTx = await tx.authUsers.signup({
           email: input.email,
           password: passwordHash,
           role: parseUserRole("USER"),
           username: input.username,
         });
+
+        if (!createdResultTx.ok) {
+          const mapped = toSignupUniquenessConflict(createdResultTx.error);
+          return Err(mapped ?? createdResultTx.error);
+        }
+
+        const created = createdResultTx.value;
 
         return Ok<AuthUserTransport>({
           email: created.email,
@@ -86,7 +101,7 @@ export class CreateUserUseCase {
 
       return Ok(createdResult.value);
     } catch (err: unknown) {
-      const error = makeAppErrorFromUnknown(err, "unexpected");
+      const error = makeUnexpectedErrorFromUnknown(err);
 
       logger.operation("error", "User creation failed", {
         error,

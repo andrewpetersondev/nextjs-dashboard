@@ -10,6 +10,12 @@ import { TRANSACTION_LOGGING_CONTEXT } from "@/shared/logging/transaction-loggin
  */
 export class TransactionLogger extends SharedTransactionLogger {
   constructor(logger: LoggingClientContract) {
-    super({ operationContext: TRANSACTION_LOGGING_CONTEXT.authRepo }, logger);
+    super(
+      {
+        operationContext: TRANSACTION_LOGGING_CONTEXT.authTx,
+        operationNamePrefix: "TransactionLogger",
+      },
+      logger,
+    );
   }
 }

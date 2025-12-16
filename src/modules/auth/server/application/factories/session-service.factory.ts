@@ -9,13 +9,17 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * Lightweight factory to compose a SessionManager with default adapters.
  *
  * @param logger - required logger to use.
+ * @param requestId - request id for tracing/log correlation across layers.
  */
 export function createSessionServiceFactory(
   logger: LoggingClientContract,
+  requestId: string,
 ): SessionService {
+  const scopedLogger = logger.withContext("auth").withRequest(requestId);
+
   return new SessionService(
     createSessionCookieAdapter(),
     createSessionJwtAdapter(),
-    logger,
+    scopedLogger,
   );
 }

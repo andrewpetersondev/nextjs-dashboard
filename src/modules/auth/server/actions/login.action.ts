@@ -79,7 +79,7 @@ export async function loginAction(
     logger,
     requestId,
   );
-  const sessionService = createSessionServiceFactory(logger);
+  const sessionService = createSessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
     loginWorkflow(input, { authUserService, sessionService }),

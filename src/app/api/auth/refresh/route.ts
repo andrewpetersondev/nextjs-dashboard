@@ -27,7 +27,7 @@ async function rotateSession(): Promise<
 > {
   const requestId = crypto.randomUUID();
   const logger = defaultLogger.withContext("auth:route").withRequest(requestId);
-  const sessionService = createSessionServiceFactory(logger);
+  const sessionService = createSessionServiceFactory(logger, requestId);
   return await refreshSessionWorkflow({ sessionService });
 }
 

@@ -51,7 +51,9 @@ export interface AuthUserRepositoryPort {
    * Creates a new user account.
    *
    * @param input - Signup payload required to create a user.
-   * @returns The created user entity.
+   * @returns Result with the created user entity, or AppError for expected failures.
    */
-  signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity>;
+  signup(
+    input: Readonly<AuthSignupPayload>,
+  ): Promise<Result<AuthUserEntity, AppError>>;
 }

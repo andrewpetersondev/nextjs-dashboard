@@ -22,7 +22,6 @@ import type { Result } from "@/shared/result/result.types";
  *
  * ## Responsibilities
  * - Delegate calls to the underlying repository implementation
- * - Translate transactional repositories into transactional *ports* (see {@link withTransaction})
  *
  * ## Non-responsibilities
  * - No logging: logging is the repository implementation’s job
@@ -51,10 +50,9 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryPort {
     return this.repo.login(input);
   }
 
-  /**
-   * @inheritdoc
-   */
-  signup(input: Readonly<AuthSignupPayload>): Promise<AuthUserEntity> {
+  signup(
+    input: Readonly<AuthSignupPayload>,
+  ): Promise<Result<AuthUserEntity, AppError>> {
     return this.repo.signup(input);
   }
 }

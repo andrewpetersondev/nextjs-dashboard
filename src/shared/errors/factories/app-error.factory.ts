@@ -1,3 +1,5 @@
+// TODO: Remove all defaults and fallbacks in favor of explicitness.
+
 import { AppError } from "@/shared/errors/core/app-error.class";
 import type {
   AppErrorOptions,
@@ -20,6 +22,9 @@ export function makeAppError(
  *
  * This is the preferred entry-point for converting arbitrary thrown values
  * into the canonical `AppError` type.
+ *
+ * TODO: determine how this is different than makeUnexpectedErrorFromUnknown and when to use which.
+ *  TODO: This was originally used to normalize all Postgres errors because Postgres throws native errors.
  */
 export function makeAppErrorFromUnknown(
   error: unknown,
@@ -33,6 +38,9 @@ export function makeAppErrorFromUnknown(
  *
  * Use this in `catch` blocks when you want to preserve the thrown value as cause,
  * while still tagging it with the canonical `unexpected` error code.
+ *
+ *  TODO: this is to similar to makeAppErrorFromUnknown. rethink error strategy to decrease cognitive load.
+ *  TODO: I may need to refactor AppError class but maybe not because errors are not being rethrown to other layers anymore.
  */
 export function makeUnexpectedErrorFromUnknown(
   error: unknown,

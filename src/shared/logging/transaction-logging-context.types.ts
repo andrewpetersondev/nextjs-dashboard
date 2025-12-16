@@ -1,6 +1,7 @@
 export const TRANSACTION_LOGGING_CONTEXT = {
   authRepo: "auth:repo",
   authServiceSession: "auth:service:session",
+  authTx: "auth:tx",
   invoicesRepo: "invoices:repo",
   invoicesService: "invoices:service",
   usersUseCase: "users:useCase",
