@@ -101,7 +101,10 @@ export class CreateUserUseCase {
 
       return Ok(createdResult.value);
     } catch (err: unknown) {
-      const error = makeUnexpectedErrorFromUnknown(err);
+      const error = makeUnexpectedErrorFromUnknown(err, {
+        message: "signup.user.create.unexpected",
+        metadata: { operation: "createUser" },
+      });
 
       logger.operation("error", "User creation failed", {
         error,

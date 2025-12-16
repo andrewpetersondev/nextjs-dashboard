@@ -33,19 +33,24 @@ const validateUuid = (
     return Err(
       new AppError("validation", {
         message: `Invalid ${label}: expected string, got ${typeof value}`,
+        metadata: { expectedType: "string", label, receivedType: typeof value },
       }),
     );
   }
   const v = value.trim();
   if (v.length === 0) {
     return Err(
-      new AppError("validation", { message: `${label} cannot be empty` }),
+      new AppError("validation", {
+        message: `${label} cannot be empty`,
+        metadata: { label },
+      }),
     );
   }
   if (!UUID_REGEX.test(v)) {
     return Err(
       new AppError("validation", {
         message: `Invalid ${label}: "${value}". Must be a valid UUID.`,
+        metadata: { label, value },
       }),
     );
   }

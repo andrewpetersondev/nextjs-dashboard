@@ -1,18 +1,19 @@
-// TODO: Remove all defaults and fallbacks in favor of explicitness.
-
 import { AppError } from "@/shared/errors/core/app-error.class";
 import type {
   AppErrorOptions,
   DatabaseErrorMetadata,
+  ErrorMetadata,
 } from "@/shared/errors/core/error.types";
 import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
 
 /**
  * Canonical factory for creating `AppError` instances.
+ *
+ * No defaults: callers must choose message + metadata explicitly.
  */
 export function makeAppError(
   code: AppErrorKey,
-  options: AppErrorOptions = {},
+  options: AppErrorOptions,
 ): AppError {
   return new AppError(code, options);
 }
@@ -20,15 +21,11 @@ export function makeAppError(
 /**
  * Normalize an unknown value into a AppError using {@link AppError.from}.
  *
- * This is the preferred entry-point for converting arbitrary thrown values
- * into the canonical `AppError` type.
- *
- * TODO: determine how this is different than makeUnexpectedErrorFromUnknown and when to use which.
- *  TODO: This was originally used to normalize all Postgres errors because Postgres throws native errors.
+ * No default fallback code: the caller must decide how to classify the unknown.
  */
 export function makeAppErrorFromUnknown(
   error: unknown,
-  fallbackCode: AppErrorKey = "unknown",
+  fallbackCode: AppErrorKey,
 ): AppError {
   return AppError.from(error, fallbackCode);
 }
@@ -36,23 +33,16 @@ export function makeAppErrorFromUnknown(
 /**
  * Normalize an unknown value into an `unexpected` AppError.
  *
- * Use this in `catch` blocks when you want to preserve the thrown value as cause,
- * while still tagging it with the canonical `unexpected` error code.
- *
- *  TODO: this is to similar to makeAppErrorFromUnknown. rethink error strategy to decrease cognitive load.
- *  TODO: I may need to refactor AppError class but maybe not because errors are not being rethrown to other layers anymore.
+ * Keep this as the recommended catch-block helper.
  */
 export function makeUnexpectedErrorFromUnknown(
   error: unknown,
-  options: Omit<AppErrorOptions, "cause" | "message"> &
-    Partial<Pick<AppErrorOptions, "message">> = {},
+  options: Omit<AppErrorOptions, "cause"> &
+    Partial<Pick<AppErrorOptions, "message">> & {
+      readonly metadata?: ErrorMetadata;
+    },
 ): AppError {
   const base = makeAppErrorFromUnknown(error, "unexpected");
-
-  // If no overrides were provided, return the normalized error as-is.
-  if (options.message === undefined && options.metadata === undefined) {
-    return base;
-  }
 
   return makeAppError("unexpected", {
     cause: base.originalCause,
@@ -67,17 +57,14 @@ export function makeUnexpectedErrorFromUnknown(
 /**
  * Convenience factory for validation errors with form metadata.
  */
-export function makeValidationError(options: AppErrorOptions = {}): AppError {
+export function makeValidationError(options: AppErrorOptions): AppError {
   return makeAppError("validation", options);
 }
 
 /**
  * Convenience factory for unexpected errors.
- *
- * Use this when you're *creating* an unexpected error (not normalizing a caught value).
- * If you're in a `catch (err)`, prefer `makeUnexpectedErrorFromUnknown(err, ...)`.
  */
-export function makeUnexpectedError(options: AppErrorOptions = {}): AppError {
+export function makeUnexpectedError(options: AppErrorOptions): AppError {
   return makeAppError("unexpected", options);
 }
 
@@ -86,7 +73,7 @@ export function makeUnexpectedError(options: AppErrorOptions = {}): AppError {
  */
 export function makeInvariantError(
   message: string,
-  metadata?: Record<string, unknown>,
+  metadata: Record<string, unknown> = {},
 ): AppError {
   return makeAppError("unexpected", {
     message: `Invariant failed: ${message}`,
@@ -97,9 +84,7 @@ export function makeInvariantError(
 /**
  * Convenience factory for infrastructure errors.
  */
-export function makeInfrastructureError(
-  options: AppErrorOptions = {},
-): AppError {
+export function makeInfrastructureError(options: AppErrorOptions): AppError {
   return makeAppError("infrastructure", options);
 }
 
@@ -107,7 +92,9 @@ export function makeInfrastructureError(
  * Convenience factory for database errors.
  */
 export function makeDatabaseError(
-  options: AppErrorOptions & { metadata?: DatabaseErrorMetadata } = {},
+  options: Omit<AppErrorOptions, "metadata"> & {
+    metadata: DatabaseErrorMetadata;
+  },
 ): AppError {
   return makeAppError("database", options);
 }
@@ -115,6 +102,6 @@ export function makeDatabaseError(
 /**
  * Convenience factory for integrity errors.
  */
-export function makeIntegrityError(options: AppErrorOptions = {}): AppError {
+export function makeIntegrityError(options: AppErrorOptions): AppError {
   return makeAppError("integrity", options);
 }

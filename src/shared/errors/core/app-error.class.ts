@@ -60,7 +60,7 @@ export class AppError extends Error {
   readonly retryable: boolean;
   readonly severity: Severity;
 
-  constructor(code: AppErrorKey, options: AppErrorOptions = {}) {
+  constructor(code: AppErrorKey, options: AppErrorOptions) {
     const meta = getAppErrorCodeMeta(code);
 
     const { cause, message, metadata } = options;
@@ -73,7 +73,7 @@ export class AppError extends Error {
       sanitizedCause = redactNonSerializable(cause);
     }
 
-    super(message ?? meta.description, { cause: sanitizedCause });
+    super(message, { cause: sanitizedCause });
 
     this.code = code;
     this.description = meta.description;
@@ -84,8 +84,8 @@ export class AppError extends Error {
     this.severity = meta.severity;
 
     const checked = isDev()
-      ? validateAndMaybeSanitizeMetadata(metadata ?? {})
-      : (metadata ?? {});
+      ? validateAndMaybeSanitizeMetadata(metadata)
+      : metadata;
     this.metadata = isDev()
       ? (deepFreezeDev(checked) as ErrorMetadata)
       : (Object.freeze(checked) as ErrorMetadata);
@@ -101,7 +101,7 @@ export class AppError extends Error {
     return val instanceof AppError;
   }
 
-  static from(error: unknown, fallbackCode: AppErrorKey = "unknown"): AppError {
+  static from(error: unknown, fallbackCode: AppErrorKey): AppError {
     if (error instanceof AppError) {
       return error;
     }
@@ -109,6 +109,7 @@ export class AppError extends Error {
       return new AppError(fallbackCode, {
         cause: error,
         message: error.message,
+        metadata: {},
       });
     }
     return new AppError(fallbackCode, {
@@ -118,13 +119,12 @@ export class AppError extends Error {
   }
 
   toJson(): AppErrorJson {
-    const hasMetadata = Object.keys(this.metadata).length > 0;
     return {
       code: this.code,
       description: this.description,
       layer: this.layer,
       message: this.message,
-      ...(hasMetadata ? { metadata: this.metadata } : {}),
+      metadata: this.metadata,
       retryable: this.retryable,
       severity: this.severity,
     };

@@ -38,6 +38,7 @@ export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
     return Err(
       makeInfrastructureError({
         message: "process.env is not available in this environment",
+        metadata: {},
       }),
     );
   }
@@ -87,6 +88,7 @@ export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
     return Err(
       makeInfrastructureError({
         message: "process.env is not available in this environment",
+        metadata: {},
       }),
     );
   }

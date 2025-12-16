@@ -65,7 +65,7 @@ export interface ErrorCoreMetadata {
  */
 export interface AppErrorJson extends ErrorCoreMetadata {
   readonly message: string;
-  readonly metadata?: ErrorMetadata;
+  readonly metadata: ErrorMetadata;
 }
 
 /**
@@ -73,6 +73,6 @@ export interface AppErrorJson extends ErrorCoreMetadata {
  */
 export interface AppErrorOptions {
   readonly cause?: unknown;
-  readonly message?: string;
-  readonly metadata?: ErrorMetadata;
+  readonly message: string;
+  readonly metadata: ErrorMetadata;
 }

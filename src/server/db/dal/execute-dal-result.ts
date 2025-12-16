@@ -8,8 +8,7 @@ import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 export interface ExecuteDalResultCoreOptions {
-  readonly message?: string;
-  readonly operationContext?: string;
+  readonly operationContext: string;
 }
 
 /**
@@ -23,19 +22,19 @@ export async function executeDalResult<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
   logger: LoggingClientContract,
-  options?: ExecuteDalResultCoreOptions,
+  options: ExecuteDalResultCoreOptions,
 ): Promise<Result<T, AppError>> {
-  const message = options?.message ?? "DAL operation failed";
-
   try {
     const value = await thunk();
     return Ok<T>(value);
   } catch (err: unknown) {
-    const error: AppError = normalizePgError(err, {});
+    const error: AppError = normalizePgError(err, {
+      operation: context.operation,
+    });
 
-    logger.operation("error", message, {
+    logger.operation("error", `${context.operation}.failed`, {
       error,
-      operationContext: options?.operationContext,
+      operationContext: options.operationContext,
       operationIdentifiers: context.identifiers,
       operationName: context.operation,
     });

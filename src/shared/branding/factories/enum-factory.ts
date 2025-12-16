@@ -19,6 +19,11 @@ export const createEnumValidator = <T extends string>(
       return Err(
         new AppError("validation", {
           message: `Invalid ${enumName}: expected string, got ${typeof value}`,
+          metadata: {
+            enumName,
+            expectedType: "string",
+            receivedType: typeof value,
+          },
         }),
       );
     }
@@ -29,6 +34,7 @@ export const createEnumValidator = <T extends string>(
     return Err(
       new AppError("validation", {
         message: `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
+        metadata: { allowedValues: enumValues, enumName, value },
       }),
     );
   };

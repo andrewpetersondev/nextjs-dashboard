@@ -20,6 +20,7 @@ export function parseIntResult(
     return Err(
       makeValidationError({
         message: "Cannot parse empty string to integer",
+        metadata: { radix, value },
       }),
     );
   }
@@ -49,6 +50,7 @@ export function parseFloatResult(value: string): Result<number, AppError> {
     return Err(
       makeValidationError({
         message: "Cannot parse empty string to float",
+        metadata: { value },
       }),
     );
   }
@@ -80,6 +82,7 @@ export function toNumberResult(value: unknown): Result<number, AppError> {
       () =>
         makeValidationError({
           message: "Value is NaN",
+          metadata: { value },
         }),
     );
   }
@@ -90,6 +93,7 @@ export function toNumberResult(value: unknown): Result<number, AppError> {
       return Err(
         makeValidationError({
           message: "Cannot convert empty string to number",
+          metadata: { value },
         }),
       );
     }

@@ -4,7 +4,6 @@ import {
 } from "@/shared/errors/adapters/postgres/postgres.codes";
 import type { PgErrorMapping } from "@/shared/errors/adapters/postgres/postgres-error.types";
 import { extractPgErrorMetadata } from "@/shared/errors/adapters/postgres/postgres-metadata.extractor";
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
 
 /**
  * Map a Postgres error to app error code + rich metadata.
@@ -25,13 +24,9 @@ export function mapPgError(err: unknown): PgErrorMapping | undefined {
 
   const pgErrorDef = PG_CODE_TO_META[code];
 
-  const condition = pgErrorDef.condition ?? "db_unknown_error";
-
-  const appCode: AppErrorKey = "integrity";
-
   return {
-    appCode,
-    condition,
+    appCode: pgErrorDef.appCode,
+    condition: pgErrorDef.condition,
     pgMetadata: pgErrorMetadata,
   };
 }

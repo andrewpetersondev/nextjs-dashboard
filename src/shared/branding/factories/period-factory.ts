@@ -11,7 +11,7 @@ import type { Result } from "@/shared/result/result.types";
  */
 function toFirstDayOfMonthUtc(date: Date): Date {
   if (!isValid(date)) {
-    throw new AppError("validation", { message: "Invalid Date" });
+    throw new AppError("validation", { message: "Invalid Date", metadata: {} });
   }
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
@@ -29,6 +29,7 @@ const validatePeriod = (value: unknown): Result<Date, AppError> => {
       return Err(
         new AppError("validation", {
           message: "Invalid period: Date instance is not valid",
+          metadata: {},
         }),
       );
     }
@@ -47,6 +48,7 @@ const validatePeriod = (value: unknown): Result<Date, AppError> => {
         return Err(
           new AppError("validation", {
             message: `Invalid period: date must be the first day of the month, got "${value}"`,
+            metadata: { value },
           }),
         );
       }
@@ -56,6 +58,7 @@ const validatePeriod = (value: unknown): Result<Date, AppError> => {
     return Err(
       new AppError("validation", {
         message: `Invalid period: "${value}". Expected "yyyy-MM" or "yyyy-MM-01"`,
+        metadata: { value },
       }),
     );
   }
@@ -63,6 +66,7 @@ const validatePeriod = (value: unknown): Result<Date, AppError> => {
   return Err(
     new AppError("validation", {
       message: `Invalid period: unsupported input type ${typeof value}`,
+      metadata: { actualType: typeof value },
     }),
   );
 };

@@ -92,7 +92,8 @@ export class SessionJwtAdapter {
 
       return Err(
         makeUnexpectedErrorFromUnknown(error, {
-          message: `JWT signing failed: ${String(error)}`,
+          message: "jwt.sign.failed",
+          metadata: { expiresAtMs },
         }),
       );
     }
@@ -119,7 +120,8 @@ export class SessionJwtAdapter {
 
       return Err(
         makeUnexpectedErrorFromUnknown(error, {
-          message: `JWT verification failed: ${String(error)}`,
+          message: "jwt.verify.failed",
+          metadata: {},
         }),
       );
     }

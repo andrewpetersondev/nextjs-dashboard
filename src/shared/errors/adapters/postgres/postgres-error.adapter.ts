@@ -35,7 +35,7 @@ function createGenericDbError(
   return makeDatabaseError({
     cause: err,
     message: "db_unknown_error",
-    metadata: additionalMetadata,
+    metadata: { ...(additionalMetadata ?? {}) },
   });
 }
 

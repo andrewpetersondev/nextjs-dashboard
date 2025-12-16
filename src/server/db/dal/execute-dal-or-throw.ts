@@ -11,26 +11,25 @@ export interface DalContextLite {
 }
 
 export interface ExecuteDalOrThrowCoreOptions {
-  readonly message?: string;
-  readonly operationContext?: string;
+  readonly operationContext: string;
 }
 
 export async function executeDalOrThrow<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
   logger: LoggingClientContract,
-  options?: ExecuteDalOrThrowCoreOptions,
+  options: ExecuteDalOrThrowCoreOptions,
 ): Promise<T> {
-  const message = options?.message ?? "DAL operation failed";
-
   try {
     return await thunk();
   } catch (err: unknown) {
-    const error: AppError = normalizePgError(err, {});
+    const error: AppError = normalizePgError(err, {
+      operation: context.operation,
+    });
 
-    logger.operation("error", message, {
+    logger.operation("error", `${context.operation}.failed`, {
       error,
-      operationContext: options?.operationContext,
+      operationContext: options.operationContext,
       operationIdentifiers: context.identifiers,
       operationName: context.operation,
     });

@@ -19,9 +19,9 @@ import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 export class CreateDemoUserUseCase {
-  private readonly uow: UnitOfWorkPort;
   private readonly hasher: HashingService;
   private readonly logger: LoggingClientContract;
+  private readonly uow: UnitOfWorkPort;
 
   constructor(
     uow: UnitOfWorkPort,
@@ -97,7 +97,10 @@ export class CreateDemoUserUseCase {
 
       return Ok(txResult.value);
     } catch (err: unknown) {
-      const error = makeUnexpectedErrorFromUnknown(err);
+      const error = makeUnexpectedErrorFromUnknown(err, {
+        message: "demoUser.unexpected",
+        metadata: { role },
+      });
 
       logger.operation("error", "Create demo user unexpected error", {
         error,
