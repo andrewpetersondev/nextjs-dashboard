@@ -13,7 +13,10 @@ export class FindRevenueByPeriodUseCase {
 
   async execute(period: Period): Promise<RevenueEntity | null> {
     if (!period) {
-      throw makeValidationError({ message: "Period is required" });
+      throw makeValidationError({
+        message: "Period is required",
+        metadata: { period },
+      });
     }
     return await this.repository.findByPeriod(period);
   }

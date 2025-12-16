@@ -45,6 +45,7 @@ export class InvoiceRepository extends BaseRepository<
     if (!input || typeof input !== "object") {
       throw new AppError("validation", {
         message: INVOICE_MSG.invalidInput,
+        metadata: { input },
       });
     }
 
@@ -95,6 +96,7 @@ export class InvoiceRepository extends BaseRepository<
     if (!data || typeof data !== "object") {
       throw new AppError("validation", {
         message: INVOICE_MSG.invalidInput,
+        metadata: { data },
       });
     }
 

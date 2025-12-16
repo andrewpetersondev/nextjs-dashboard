@@ -41,6 +41,7 @@ export async function readUserDal(
     });
     throw new AppError("database", {
       message: "Failed to read user by ID.",
+      metadata: { id: id.toString() },
     });
   }
 }

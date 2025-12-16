@@ -12,6 +12,7 @@ export function monthAbbreviationFromNumber(monthNumber: number): MonthName {
   if (!abbr) {
     throw makeValidationError({
       message: `Failed to get month abbreviation for month number ${monthNumber}`,
+      metadata: { monthNumber },
     });
   }
   return abbr;
@@ -21,6 +22,7 @@ export function validateMonthNumber(monthNumber: number, period: Date): void {
   if (monthNumber < MIN_MONTH_NUMBER || monthNumber > MAX_MONTH_NUMBER) {
     throw makeValidationError({
       message: `Invalid month number ${monthNumber} in period ${period}`,
+      metadata: { monthNumber, period },
     });
   }
 }

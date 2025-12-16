@@ -49,6 +49,7 @@ export async function fetchFilteredUsersDal(
     });
     throw new AppError("database", {
       message: "Failed to fetch filtered users.",
+      metadata: { currentPage, query },
     });
   }
 }

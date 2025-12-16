@@ -20,6 +20,7 @@ export class CreateRevenueUseCase {
     if (!revenue) {
       throw makeValidationError({
         message: "Invalid revenue data",
+        metadata: { revenue },
       });
     }
     const created = await this.repository.create(revenue);

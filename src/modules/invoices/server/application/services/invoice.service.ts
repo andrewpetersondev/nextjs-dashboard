@@ -64,6 +64,7 @@ export class InvoiceService {
       return Err(
         new AppError("validation", {
           message: INVOICE_MSG.invalidInput,
+          metadata: {},
         }),
       );
     }

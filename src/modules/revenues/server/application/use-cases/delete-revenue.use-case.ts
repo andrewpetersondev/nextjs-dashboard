@@ -12,7 +12,10 @@ export class DeleteRevenueUseCase {
 
   async execute(id: RevenueId): Promise<void> {
     if (!id) {
-      throw makeValidationError({ message: "Revenue ID is required" });
+      throw makeValidationError({
+        message: "Revenue ID is required",
+        metadata: {},
+      });
     }
     await this.repository.delete(id);
   }

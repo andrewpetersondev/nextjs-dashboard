@@ -21,6 +21,7 @@ export async function deleteRevenue(
   if (!id) {
     throw makeValidationError({
       message: "Revenue ID is required",
+      metadata: { id: id ?? "null" },
     });
   }
 
@@ -32,6 +33,7 @@ export async function deleteRevenue(
   if (!result) {
     throw makeDatabaseError({
       message: "Failed to delete revenue record",
+      metadata: { id: id ?? "null" },
     });
   }
 }

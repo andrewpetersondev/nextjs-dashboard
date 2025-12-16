@@ -49,6 +49,7 @@ export async function updateUserDal(
     });
     throw new AppError("database", {
       message: "Failed to update user.",
+      metadata: { id: id.toString(), patch },
     });
   }
 }

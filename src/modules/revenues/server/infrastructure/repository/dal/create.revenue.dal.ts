@@ -21,6 +21,7 @@ export async function createRevenue(
   if (!revenue) {
     throw makeValidationError({
       message: "Revenue data is required",
+      metadata: { revenue },
     });
   }
   return await upsertRevenue(db, revenue);

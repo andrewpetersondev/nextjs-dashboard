@@ -25,12 +25,14 @@ export async function upsertRevenue(
   if (!revenueData) {
     throw makeValidationError({
       message: "Revenue data is required",
+      metadata: { revenueData },
     });
   }
   if (!revenueData.period) {
     throw makeValidationError({
       message:
         "Revenue period (first-of-month DATE) is required and must be unique",
+      metadata: { revenueData },
     });
   }
 
@@ -60,6 +62,7 @@ export async function upsertRevenue(
     if (!data) {
       throw makeDatabaseError({
         message: "Failed to upsert revenue record",
+        metadata: { revenueData: revenueData ?? "null" },
       });
     }
 
@@ -67,6 +70,7 @@ export async function upsertRevenue(
     if (!result) {
       throw makeDatabaseError({
         message: "Failed to convert revenue record",
+        metadata: { revenueData: revenueData ?? "null" },
       });
     }
     return result;
@@ -74,6 +78,7 @@ export async function upsertRevenue(
     if (error instanceof Error && error.message.includes("unique constraint")) {
       throw makeValidationError({
         message: `Revenue record with period ${revenueData.period} already exists and could not be updated`,
+        metadata: { revenueData: revenueData ?? "null" },
       });
     }
     throw error;

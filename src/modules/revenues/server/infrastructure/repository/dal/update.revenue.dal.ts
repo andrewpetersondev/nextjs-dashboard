@@ -29,6 +29,7 @@ export async function updateRevenue(
   if (!(id && revenue)) {
     throw makeValidationError({
       message: "Revenue ID and data are required",
+      metadata: { id, revenue },
     });
   }
 
@@ -50,6 +51,7 @@ export async function updateRevenue(
   if (!data) {
     throw makeDatabaseError({
       message: "Failed to update revenue record",
+      metadata: {},
     });
   }
 
@@ -57,6 +59,7 @@ export async function updateRevenue(
   if (!result) {
     throw makeDatabaseError({
       message: "Failed to convert updated revenue record",
+      metadata: { id: id ?? "null" },
     });
   }
   return result;

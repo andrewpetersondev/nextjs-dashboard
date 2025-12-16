@@ -21,6 +21,7 @@ export async function fetchTotalPaidInvoicesDal(
   if (paid === undefined) {
     throw new AppError("database", {
       message: INVOICE_MSG.fetchTotalPaidFailed,
+      metadata: { paid: paid ?? 0 },
     });
   }
 

@@ -13,12 +13,14 @@ import { makeValidationError } from "@/shared/errors/factories/app-error.factory
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.
  * Moved here from server/application/mappers to allow domain usage.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <ignore>
 export function createRevenueDisplayEntity(
   revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
     throw makeValidationError({
       message: "Invalid revenue entity: expected non-null object",
+      metadata: { revenueEntity },
     });
   }
   try {
@@ -67,6 +69,10 @@ export function createRevenueDisplayEntity(
       message: `Failed to create display entity: ${
         error instanceof Error ? error.message : "Unknown error"
       }`,
+      metadata: {
+        error: error instanceof Error ? error : undefined,
+        revenueEntity,
+      },
     });
   }
 }

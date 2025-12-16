@@ -33,6 +33,7 @@ export function safeParseUserRole(role: unknown): Result<UserRole, AppError> {
     makeValidationError({
       cause: { role },
       message: "Invalid user role",
+      metadata: {},
     }),
   );
 }

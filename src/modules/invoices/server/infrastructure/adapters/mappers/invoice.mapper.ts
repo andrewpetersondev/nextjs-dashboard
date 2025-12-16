@@ -61,6 +61,7 @@ export function invoiceFormEntityToServiceEntity(
     return Err(
       new AppError("validation", {
         message: `Invalid date in form entity: ${formEntity.date}`,
+        metadata: { date: formEntity.date },
       }),
     );
   }

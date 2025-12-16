@@ -22,6 +22,7 @@ function getValidatedTemplate(): readonly RollingMonthData[] {
   if (!durationResult.ok) {
     throw makeValidationError({
       message: "Invalid interval duration",
+      metadata: { duration, startDate },
     });
   }
 
@@ -30,6 +31,7 @@ function getValidatedTemplate(): readonly RollingMonthData[] {
   if (template.length === 0) {
     throw makeValidationError({
       message: "Template generation failed: no months generated",
+      metadata: { duration: durationResult.value, startDate },
     });
   }
 
@@ -48,6 +50,7 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
   if (!(firstMonth && lastMonth)) {
     throw makeValidationError({
       message: "Template generation failed: invalid month data",
+      metadata: { template },
     });
   }
 

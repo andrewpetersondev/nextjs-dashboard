@@ -59,6 +59,7 @@ export async function fetchFilteredCustomersDal(
     console.error("Fetch Filtered Customers Error:", error);
     throw new AppError("database", {
       message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
+      metadata: { query },
     });
   }
 }

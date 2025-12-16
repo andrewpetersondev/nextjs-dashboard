@@ -43,6 +43,7 @@ export async function createUserDal(
     });
     throw new AppError("database", {
       message: "Failed to create a user in the database.",
+      metadata: { email, role, username },
     });
   }
 }

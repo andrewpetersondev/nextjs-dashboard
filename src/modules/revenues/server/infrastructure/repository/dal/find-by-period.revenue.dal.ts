@@ -25,6 +25,7 @@ export async function findRevenueByPeriod(
   if (!period) {
     throw makeValidationError({
       message: "Period is required",
+      metadata: { period },
     });
   }
 
@@ -43,6 +44,7 @@ export async function findRevenueByPeriod(
   if (!result) {
     throw makeDatabaseError({
       message: "Failed to convert revenue record",
+      metadata: { period },
     });
   }
   return result;

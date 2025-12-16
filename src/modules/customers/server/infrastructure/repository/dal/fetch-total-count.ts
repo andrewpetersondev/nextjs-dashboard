@@ -19,6 +19,7 @@ export async function fetchTotalCustomersCountDal(
   if (value === undefined) {
     throw new AppError("validation", {
       message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchTotalFailed,
+      metadata: {},
     });
   }
 

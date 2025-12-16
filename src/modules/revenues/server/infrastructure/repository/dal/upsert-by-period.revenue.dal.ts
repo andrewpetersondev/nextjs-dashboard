@@ -26,11 +26,13 @@ export async function upsertRevenueByPeriod(
   if (!period) {
     throw makeValidationError({
       message: "Period is required",
+      metadata: { period },
     });
   }
   if (!revenue) {
     throw makeValidationError({
       message: "Revenue data is required",
+      metadata: { revenue },
     });
   }
 

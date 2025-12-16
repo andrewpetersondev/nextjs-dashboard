@@ -26,6 +26,7 @@ export async function fetchCustomersSelectDal(
     console.error("Database Error:", error);
     throw new AppError("database", {
       message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
+      metadata: {},
     });
   }
 }

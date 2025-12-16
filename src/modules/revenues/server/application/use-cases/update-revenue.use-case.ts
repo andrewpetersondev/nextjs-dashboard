@@ -24,12 +24,14 @@ export class UpdateRevenueUseCase {
     if (!(id && revenue)) {
       throw makeValidationError({
         message: "Invalid revenue ID or data",
+        metadata: { id, revenue },
       });
     }
     const updated = await this.repository.update(id, revenue);
     if (!updated) {
       throw makeDatabaseError({
         message: `Failed to update revenue with ID ${id}`,
+        metadata: { id, revenue },
       });
     }
     return updated;

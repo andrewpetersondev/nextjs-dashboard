@@ -28,6 +28,7 @@ export async function updateInvoiceDal(
   if (!(db && id && updateData)) {
     throw new AppError("validation", {
       message: INVOICE_MSG.invalidInput,
+      metadata: {},
     });
   }
 
@@ -38,7 +39,10 @@ export async function updateInvoiceDal(
     .returning();
 
   if (!updated) {
-    throw new AppError("database", { message: INVOICE_MSG.updateFailed });
+    throw new AppError("database", {
+      message: INVOICE_MSG.updateFailed,
+      metadata: {},
+    });
   }
 
   const result = rawDbToInvoiceEntity(updated);

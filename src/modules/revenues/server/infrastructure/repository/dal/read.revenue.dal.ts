@@ -24,6 +24,7 @@ export async function readRevenue(
   if (!id) {
     throw makeValidationError({
       message: "Revenue ID is required",
+      metadata: { id: id ?? "null" },
     });
   }
 
@@ -37,6 +38,7 @@ export async function readRevenue(
   if (!data) {
     throw makeDatabaseError({
       message: "Revenue record not found",
+      metadata: {},
     });
   }
 
@@ -44,6 +46,7 @@ export async function readRevenue(
   if (!result) {
     throw makeDatabaseError({
       message: "Failed to convert revenue record",
+      metadata: { id: id ?? "null" },
     });
   }
   return result;
