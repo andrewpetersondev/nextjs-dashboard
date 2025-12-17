@@ -1,5 +1,5 @@
 ---
-apply: off
+apply: always
 ---
 
 ## Use compatible APIs

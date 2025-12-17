@@ -1,7 +1,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
-import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
@@ -31,7 +31,7 @@ export async function deleteUserDal(
     }
 
     // Map raw DB row to UserEntity for type safety
-    return userDbRowToEntity(deletedRow);
+    return toUserEntity(deletedRow);
   } catch (error) {
     logger.error("Failed to delete user.", {
       context: "deleteUserDal",

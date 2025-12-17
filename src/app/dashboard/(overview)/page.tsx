@@ -10,7 +10,7 @@ import { readTotalCustomersCountAction } from "@/modules/customers/server/applic
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
 import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";
 import { readLatestInvoicesAction } from "@/modules/invoices/server/application/actions/read-latest-invoices.action";
-import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
+import { normalizeUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { getAppDb } from "@/server/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
@@ -35,7 +35,7 @@ export default async function Page(): Promise<JSX.Element> {
       readTotalCustomersCountAction(),
     ]);
 
-  const role: UserRole = coerceUserRole(session?.role);
+  const role: UserRole = normalizeUserRole(session?.role);
 
   const dashboardData = {
     cards: {

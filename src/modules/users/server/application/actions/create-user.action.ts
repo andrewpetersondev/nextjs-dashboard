@@ -1,5 +1,5 @@
 "use server";
-import { coerceUserRole } from "@/modules/users/domain/role/user.role.parser";
+import { normalizeUserRole } from "@/modules/users/domain/role/user.role.parser";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
@@ -51,7 +51,7 @@ export async function createUserAction(
     const parsed = CreateUserFormSchema.safeParse({
       email: raw.email,
       password: raw.password,
-      role: coerceUserRole(raw.role),
+      role: normalizeUserRole(raw.role),
       username: raw.username,
     });
 

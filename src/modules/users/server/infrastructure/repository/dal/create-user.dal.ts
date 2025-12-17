@@ -3,7 +3,7 @@ import type {
   CreateUserProps,
   UserEntity,
 } from "@/modules/users/domain/user.entity";
-import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error";
@@ -32,7 +32,7 @@ export async function createUserDal(
     };
 
     const [userRow] = await db.insert(users).values(newUser).returning();
-    return userRow ? userDbRowToEntity(userRow) : null;
+    return userRow ? toUserEntity(userRow) : null;
   } catch (error) {
     logger.error("Failed to create a user in the database.", {
       context: "createUserDal",

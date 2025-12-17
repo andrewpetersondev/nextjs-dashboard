@@ -2,7 +2,7 @@ import "server-only";
 import { asc, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
-import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { AppError } from "@/shared/errors/core/app-error";
@@ -39,7 +39,7 @@ export async function fetchFilteredUsersDal(
       .offset(offset);
 
     // Map each raw row to UserEntity
-    return userRows.map((row) => userDbRowToEntity(row));
+    return userRows.map((row) => toUserEntity(row));
   } catch (error) {
     logger.error("Failed to fetch filtered users", {
       context: "fetchFilteredUsers",

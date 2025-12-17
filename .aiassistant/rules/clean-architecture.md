@@ -1,5 +1,5 @@
 ---
-apply: off
+apply: always
 ---
 
 # AI Rules: Clean Hexagonal Architecture for `src/modules/auth/server`

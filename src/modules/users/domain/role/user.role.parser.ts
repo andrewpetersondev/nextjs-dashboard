@@ -22,7 +22,7 @@ export function isUserRole(role: unknown): role is UserRole {
  * Validates and converts an unknown value to a valid UserRole (Result-based).
  * Does not throw.
  */
-export function safeParseUserRole(role: unknown): Result<UserRole, AppError> {
+export function toUserRole(role: unknown): Result<UserRole, AppError> {
   const value = typeof role === "string" ? role.trim().toUpperCase() : role;
 
   if (isUserRole(value)) {
@@ -42,7 +42,7 @@ export function safeParseUserRole(role: unknown): Result<UserRole, AppError> {
  * Throwing wrapper for call sites that expect exceptions on invalid input.
  */
 export function parseUserRole(role: unknown): UserRole {
-  const r = safeParseUserRole(role);
+  const r = toUserRole(role);
   if (r.ok) {
     return r.value;
   }
@@ -55,7 +55,7 @@ export function parseUserRole(role: unknown): UserRole {
  * @param role - The role to validate.
  * @returns {UserRole} - A valid user role.
  */
-export const coerceUserRole = (role: unknown): UserRole => {
-  const result = safeParseUserRole(role);
+export const normalizeUserRole = (role: unknown): UserRole => {
+  const result = toUserRole(role);
   return result.ok ? result.value : GUEST_ROLE;
 };

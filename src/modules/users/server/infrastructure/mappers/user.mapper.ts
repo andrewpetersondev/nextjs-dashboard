@@ -25,7 +25,7 @@ export function userEntityToDto(entity: UserEntity): UserDto {
  * @param row - The raw DB row.
  * @returns The corresponding UserEntity.
  */
-export function userDbRowToEntity(row: UserRow): UserEntity {
+export function toUserEntity(row: UserRow): UserEntity {
   if (
     !(
       row.id &&
@@ -54,7 +54,7 @@ export function userDbRowToEntity(row: UserRow): UserEntity {
  * @param row - The new DB row.
  * @returns The corresponding UserEntity.
  */
-export function newUserDbRowToEntity(row: NewUserRow): UserEntity {
+export function toNewUserEntity(row: NewUserRow): UserEntity {
   if (
     !(
       row.id &&

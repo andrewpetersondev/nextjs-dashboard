@@ -1,7 +1,7 @@
 import "server-only";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
-import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
+import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
@@ -39,7 +39,7 @@ export async function updateUserDal(
     }
 
     // Map raw DB row to UserEntity (brands id/role)
-    return userDbRowToEntity(userRow);
+    return toUserEntity(userRow);
   } catch (error) {
     logger.error("Failed to update user.", {
       context: "updateUserDal",

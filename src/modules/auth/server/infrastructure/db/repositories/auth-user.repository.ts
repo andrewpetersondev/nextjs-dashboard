@@ -10,8 +10,8 @@ import type {
 } from "@/modules/auth/server/types/auth.types";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import {
-  newUserDbRowToEntity,
-  userDbRowToEntity,
+  toNewUserEntity,
+  toUserEntity,
 } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error";
@@ -121,7 +121,7 @@ export class AuthUserRepository {
       operationName: "login.lookup.success",
     });
 
-    return Ok<AuthUserEntity>(userDbRowToEntity(row));
+    return Ok<AuthUserEntity>(toUserEntity(row));
   }
 
   /**
@@ -149,7 +149,7 @@ export class AuthUserRepository {
       return Err(rowResult.error);
     }
 
-    const entity = newUserDbRowToEntity(rowResult.value);
+    const entity = toNewUserEntity(rowResult.value);
 
     this.logger.operation("info", "User created successfully", {
       operationIdentifiers: { email: input.email, userId: entity.id },
