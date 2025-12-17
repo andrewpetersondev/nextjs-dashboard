@@ -1,9 +1,11 @@
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+import type { Condition } from "@/shared/errors/catalog/conditions";
+import { CONDITIONS } from "@/shared/errors/catalog/conditions";
+import type { AppErrorKey } from "@/shared/errors/catalog/registry";
 
 export interface PgErrorDefinition {
   readonly appCode: AppErrorKey;
   readonly code: string;
-  readonly condition: string;
+  readonly condition: Condition;
   readonly name: string;
 }
 
@@ -11,31 +13,31 @@ export const PG_ERROR_MAP = {
   checkViolation: {
     appCode: "integrity",
     code: "23514",
-    condition: "db_check_violation",
+    condition: CONDITIONS.db_check_violation,
     name: "checkViolation",
   },
   exclusionViolation: {
     appCode: "integrity",
     code: "23P01",
-    condition: "db_exclusion_violation",
+    condition: CONDITIONS.db_exclusion_violation,
     name: "exclusionViolation",
   },
   foreignKeyViolation: {
     appCode: "integrity",
     code: "23503",
-    condition: "db_foreign_key_violation",
+    condition: CONDITIONS.db_foreign_key_violation,
     name: "foreignKeyViolation",
   },
   notNullViolation: {
     appCode: "integrity",
     code: "23502",
-    condition: "db_not_null_violation",
+    condition: CONDITIONS.db_not_null_violation,
     name: "notNullViolation",
   },
   uniqueViolation: {
     appCode: "conflict",
     code: "23505",
-    condition: "db_unique_violation",
+    condition: CONDITIONS.db_unique_violation,
     name: "uniqueViolation",
   },
 } as const satisfies Record<string, PgErrorDefinition>;

@@ -2,9 +2,9 @@
  * Factories for creating form results and form errors.
  */
 
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+import type { AppErrorKey } from "@/shared/errors/catalog/registry";
+import type { AppError } from "@/shared/errors/core/app-error";
+import { makeAppError } from "@/shared/errors/factories/app-error";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,

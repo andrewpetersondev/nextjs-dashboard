@@ -5,7 +5,7 @@ import type { UserEntity } from "@/modules/users/domain/user.entity";
 import { userDbRowToEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

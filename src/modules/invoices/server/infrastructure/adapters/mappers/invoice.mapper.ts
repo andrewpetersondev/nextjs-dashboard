@@ -12,7 +12,7 @@ import {
   toInvoiceId,
   toPeriod,
 } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

@@ -9,7 +9,7 @@ import type {
   TemplateAndPeriods,
 } from "@/modules/revenues/domain/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 /**
  * Private helper to compute the validated template.

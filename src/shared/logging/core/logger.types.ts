@@ -1,7 +1,7 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { AppErrorJson } from "@/shared/errors/core/error.types";
-import type { Severity } from "@/shared/errors/core/error-definition.types";
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+import type { AppErrorKey } from "@/shared/errors/catalog/registry";
+import type { Severity } from "@/shared/errors/core/definitions";
+import type { AppErrorJson } from "@/shared/errors/core/types";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;
 

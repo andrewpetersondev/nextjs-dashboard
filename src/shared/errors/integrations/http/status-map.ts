@@ -1,4 +1,4 @@
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+import type { AppErrorKey } from "@/shared/errors/catalog/registry";
 
 export type HttpResponsibility = "client" | "server" | "infrastructure";
 

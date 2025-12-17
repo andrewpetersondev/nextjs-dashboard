@@ -2,7 +2,7 @@ import "server-only";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { Period } from "@/shared/branding/brands";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 export class FindRevenueByPeriodUseCase {
   private readonly repository: RevenueRepositoryInterface;

@@ -1,7 +1,3 @@
-import type {
-  AppErrorDefinition,
-  AppErrorLayer,
-} from "@/shared/errors/core/error-definition.types";
 import {
   API_ERRORS,
   AUTH_ERRORS,
@@ -9,7 +5,11 @@ import {
   INFRASTRUCTURE_ERRORS,
   SYSTEM_ERRORS,
   VALIDATION_ERRORS,
-} from "@/shared/errors/definitions/error-codes.definitions";
+} from "@/shared/errors/catalog/definitions";
+import type {
+  AppErrorDefinition,
+  AppErrorLayer,
+} from "@/shared/errors/core/definitions";
 
 /**
  * Canonical, transport-agnostic error code registry.

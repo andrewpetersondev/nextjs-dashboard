@@ -4,7 +4,7 @@ import {
   getIntervalCount,
 } from "@/modules/revenues/domain/time/range";
 import type { RollingMonthData } from "@/modules/revenues/domain/types";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 /**
  * Generates a template for the rolling period based on the start date and period type.

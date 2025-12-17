@@ -8,11 +8,11 @@ import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 import {
   makeUnexpectedErrorFromUnknown,
   makeValidationError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/errors/factories/app-error";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";

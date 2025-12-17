@@ -14,7 +14,7 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 import type { FormResult } from "@/shared/forms/types/form-result.types";
 import {
   selectSparseFieldErrors,

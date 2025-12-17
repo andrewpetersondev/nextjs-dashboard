@@ -4,7 +4,7 @@ import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import { executeDalOrThrow } from "@/server/db/dal/execute-dal-or-throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
+import { makeIntegrityError } from "@/shared/errors/factories/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**

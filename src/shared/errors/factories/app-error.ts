@@ -1,10 +1,10 @@
-import { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppErrorKey } from "@/shared/errors/catalog/registry";
+import { AppError } from "@/shared/errors/core/app-error";
 import type {
   AppErrorOptions,
   DatabaseErrorMetadata,
   ErrorMetadata,
-} from "@/shared/errors/core/error.types";
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+} from "@/shared/errors/core/types";
 
 /**
  * Canonical factory for creating `AppError` instances.

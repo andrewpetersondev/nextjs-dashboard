@@ -1,5 +1,5 @@
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import type { AppError } from "@/shared/errors/core/app-error";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 import type { Result } from "@/shared/result/result.types";
 import { fromPredicate } from "@/shared/result/sync/result-sync";
 

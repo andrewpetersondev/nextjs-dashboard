@@ -5,7 +5,7 @@ import {
   MONTH_ORDER,
   type MonthName,
 } from "@/modules/revenues/domain/constants";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 export function monthAbbreviationFromNumber(monthNumber: number): MonthName {
   const abbr = MONTH_ORDER[monthNumber - 1];

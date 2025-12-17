@@ -1,5 +1,5 @@
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { FormErrorMetadata } from "@/shared/errors/core/error.types";
+import type { AppError } from "@/shared/errors/core/app-error";
+import type { FormErrorMetadata } from "@/shared/errors/core/types";
 import type { FieldErrors, FormErrors } from "@/shared/forms/types/form.types";
 
 /**

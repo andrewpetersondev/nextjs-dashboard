@@ -8,7 +8,7 @@ import type { RevenueId } from "@/shared/branding/brands";
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/errors/factories/app-error";
 
 export class UpdateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;

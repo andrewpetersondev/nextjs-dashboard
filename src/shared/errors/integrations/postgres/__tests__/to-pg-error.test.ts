@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { mapPgError } from "@/shared/errors/adapters/postgres/postgres-code.translator";
+import { toPgError } from "@/shared/errors/integrations/postgres/to-pg-error";
 
-describe("mapPgError", () => {
+describe("toPgError", () => {
   it("maps a known Postgres code to appCode + condition + pg metadata", () => {
     const pgErr = {
       code: "23505",
@@ -9,7 +9,7 @@ describe("mapPgError", () => {
       table: "users",
     };
 
-    const mapping = mapPgError(pgErr);
+    const mapping = toPgError(pgErr);
 
     expect(mapping).toBeDefined();
     expect(mapping?.appCode).toBe("conflict");
@@ -28,7 +28,7 @@ describe("mapPgError", () => {
       },
     };
 
-    const mapping = mapPgError(wrapped);
+    const mapping = toPgError(wrapped);
 
     expect(mapping).toBeDefined();
     expect(mapping?.condition).toBe("db_not_null_violation");
@@ -37,8 +37,8 @@ describe("mapPgError", () => {
   });
 
   it("returns undefined for non-postgres errors", () => {
-    expect(mapPgError(new Error("nope"))).toBeUndefined();
-    expect(mapPgError({ code: "not-a-pg-code" })).toBeUndefined();
-    expect(mapPgError(null)).toBeUndefined();
+    expect(toPgError(new Error("nope"))).toBeUndefined();
+    expect(toPgError({ code: "not-a-pg-code" })).toBeUndefined();
+    expect(toPgError(null)).toBeUndefined();
   });
 });

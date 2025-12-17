@@ -8,7 +8,7 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

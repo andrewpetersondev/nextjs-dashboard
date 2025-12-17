@@ -12,7 +12,7 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 /**
  * Validates a revenue row from the database.

@@ -1,8 +1,8 @@
+import type { AppErrorKey } from "@/shared/errors/catalog/registry";
 import type {
   PgCode,
   PgErrorMeta,
-} from "@/shared/errors/adapters/postgres/postgres.codes";
-import type { AppErrorKey } from "@/shared/errors/registries/error-code.registry";
+} from "@/shared/errors/integrations/postgres/pg-codes";
 
 /**
  * Normalized Postgres error metadata extracted from pg error objects.
@@ -37,7 +37,7 @@ export interface PgErrorMapping {
  * boundary (e.g. "insertUser", "updateProfileEmail"), and optionally which
  * table/entity was involved.
  */
-export interface DatabaseOperationMetadata {
+export interface PgOperationMetadata {
   readonly entity?: string;
   readonly operation?: string;
   readonly table?: string;

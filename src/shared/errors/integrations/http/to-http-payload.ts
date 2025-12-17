@@ -1,9 +1,9 @@
+import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppErrorJson } from "@/shared/errors/core/types";
 import {
   HTTP_ERROR_MAP,
   type HttpResponsibility,
-} from "@/shared/errors/adapters/http/http-status-codes";
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { AppErrorJson } from "@/shared/errors/core/error.types";
+} from "@/shared/errors/integrations/http/status-map";
 
 export interface HttpErrorPayload extends AppErrorJson {
   readonly responsibility: HttpResponsibility;
@@ -16,7 +16,7 @@ export interface HttpErrorPayload extends AppErrorJson {
  * - Resolves status and responsibility using HTTP_ERROR_MAP
  * - Attaches them on top of the core AppErrorJson
  */
-export function mapAppErrorToHttpPayload(error: AppError): HttpErrorPayload {
+export function toHttpErrorPayload(error: AppError): HttpErrorPayload {
   const base: AppErrorJson = error.toJson();
 
   const httpDef = HTTP_ERROR_MAP[error.code] ?? {

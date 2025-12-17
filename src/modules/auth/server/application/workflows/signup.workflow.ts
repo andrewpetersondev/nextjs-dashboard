@@ -4,7 +4,7 @@ import type { SessionService } from "@/modules/auth/server/application/services/
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { CreateUserUseCase } from "@/modules/auth/server/application/use-cases/user/create-user.use-case";
 import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

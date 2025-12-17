@@ -4,7 +4,7 @@ import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messa
 import type { CustomerSelectRowRaw } from "@/modules/customers/domain/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 
 /**
  * Fetches all customers for select options.

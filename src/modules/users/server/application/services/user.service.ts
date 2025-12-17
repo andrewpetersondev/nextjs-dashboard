@@ -11,8 +11,8 @@ import { userEntityToDto } from "@/modules/users/server/infrastructure/mappers/u
 import type { UserPersistencePatch } from "@/modules/users/server/infrastructure/repository/user.repository.types";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import type { AppError } from "@/shared/errors/core/app-error";
+import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

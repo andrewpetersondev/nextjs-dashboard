@@ -1,4 +1,4 @@
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 
 /**
  * Type guard for narrowing to `AppError`.

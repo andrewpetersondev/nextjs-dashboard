@@ -6,7 +6,7 @@ import type { RevenueId } from "@/shared/branding/brands";
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/errors/factories/app-error";
 
 /**
  * Deletes a revenue record from the database.

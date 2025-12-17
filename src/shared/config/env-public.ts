@@ -13,11 +13,11 @@ import {
   type NodeEnvironment,
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 import {
   makeInfrastructureError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/errors/factories/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

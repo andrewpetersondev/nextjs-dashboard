@@ -1,19 +1,20 @@
-import { mapPgError } from "@/shared/errors/adapters/postgres/postgres-code.translator";
-import type { DatabaseOperationMetadata } from "@/shared/errors/adapters/postgres/postgres-error.types";
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import type { ErrorMetadata } from "@/shared/errors/core/error.types";
+import { CONDITIONS } from "@/shared/errors/catalog/conditions";
+import type { AppError } from "@/shared/errors/core/app-error";
+import type { ErrorMetadata } from "@/shared/errors/core/types";
 import {
   makeAppError,
   makeDatabaseError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/errors/factories/app-error";
+import type { PgOperationMetadata } from "@/shared/errors/integrations/postgres/pg-types";
+import { toPgError } from "@/shared/errors/integrations/postgres/to-pg-error";
 
 /**
  * Creates a specific AppError based on a successful Postgres mapping.
  */
 function createMappedPgError(
   err: unknown,
-  mapping: NonNullable<ReturnType<typeof mapPgError>>,
-  additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
+  mapping: NonNullable<ReturnType<typeof toPgError>>,
+  additionalMetadata?: ErrorMetadata & Partial<PgOperationMetadata>,
 ): AppError {
   return makeAppError(mapping.appCode, {
     cause: err,
@@ -30,11 +31,11 @@ function createMappedPgError(
  */
 function createGenericDbError(
   err: unknown,
-  additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
+  additionalMetadata?: ErrorMetadata & Partial<PgOperationMetadata>,
 ): AppError {
   return makeDatabaseError({
     cause: err,
-    message: "db_unknown_error",
+    message: CONDITIONS.db_unknown_error,
     metadata: { ...(additionalMetadata ?? {}) },
   });
 }
@@ -47,9 +48,9 @@ function createGenericDbError(
  */
 export function normalizePgError(
   err: unknown,
-  additionalMetadata?: ErrorMetadata & Partial<DatabaseOperationMetadata>,
+  additionalMetadata?: ErrorMetadata & Partial<PgOperationMetadata>,
 ): AppError {
-  const mapping = mapPgError(err);
+  const mapping = toPgError(err);
 
   if (mapping) {
     return createMappedPgError(err, mapping, additionalMetadata);

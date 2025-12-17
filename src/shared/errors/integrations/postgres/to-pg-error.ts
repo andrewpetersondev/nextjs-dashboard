@@ -1,9 +1,9 @@
 import {
   PG_CODE_TO_META,
   type PgCode,
-} from "@/shared/errors/adapters/postgres/postgres.codes";
-import type { PgErrorMapping } from "@/shared/errors/adapters/postgres/postgres-error.types";
-import { extractPgErrorMetadata } from "@/shared/errors/adapters/postgres/postgres-metadata.extractor";
+} from "@/shared/errors/integrations/postgres/pg-codes";
+import { extractPgErrorMetadata } from "@/shared/errors/integrations/postgres/pg-metadata";
+import type { PgErrorMapping } from "@/shared/errors/integrations/postgres/pg-types";
 
 /**
  * Map a Postgres error to app error code + rich metadata.
@@ -13,7 +13,7 @@ import { extractPgErrorMetadata } from "@/shared/errors/adapters/postgres/postgr
  * 2. Map pg code → app code via PG_CODE_TO_META
  * 3. Return normalized mapping ready for AppError construction
  */
-export function mapPgError(err: unknown): PgErrorMapping | undefined {
+export function toPgError(err: unknown): PgErrorMapping | undefined {
   const pgErrorMetadata = extractPgErrorMetadata(err);
 
   if (!pgErrorMetadata) {

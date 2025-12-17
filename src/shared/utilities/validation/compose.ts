@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 import type { Result } from "@/shared/result/result.types";
 import { collectAll, collectTuple } from "@/shared/result/sync/result-collect";
 

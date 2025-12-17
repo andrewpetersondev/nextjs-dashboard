@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { AsyncThunk, Result } from "@/shared/result/result.types";
 

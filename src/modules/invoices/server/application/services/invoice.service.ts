@@ -11,7 +11,7 @@ import {
 import { invoiceFormEntityToServiceEntity } from "@/modules/invoices/server/infrastructure/adapters/mappers/invoice.mapper";
 import type { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
 import { toInvoiceId } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";

@@ -1,6 +1,5 @@
-// src/shared/errors/utils/serialization.utils.ts
 import { isDev } from "@/shared/config/env-shared";
-import { AppError } from "@/shared/errors/core/app-error.class";
+import { AppError } from "@/shared/errors/core/app-error";
 import type { Result } from "@/shared/result/result.types";
 import { tryCatch } from "@/shared/result/sync/result-sync";
 

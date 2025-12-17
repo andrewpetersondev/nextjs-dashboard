@@ -6,7 +6,7 @@ import type {
   AuthUserEntity,
 } from "@/modules/auth/server/types/auth.types";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 import type { Result } from "@/shared/result/result.types";
 
 /**

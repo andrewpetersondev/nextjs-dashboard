@@ -17,8 +17,8 @@ import {
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
 import { getEnvVariable } from "@/shared/config/env-utils";
-import type { AppError } from "@/shared/errors/core/app-error.class";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import type { AppError } from "@/shared/errors/core/app-error";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

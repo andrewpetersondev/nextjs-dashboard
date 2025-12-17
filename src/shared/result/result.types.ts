@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error.class";
+import type { AppError } from "@/shared/errors/core/app-error";
 
 /**
  * Represents a failed Result.

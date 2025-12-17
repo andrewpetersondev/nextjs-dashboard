@@ -7,7 +7,7 @@ import {
 } from "@/modules/revenues/domain/constants";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.
