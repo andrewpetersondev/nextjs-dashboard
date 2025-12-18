@@ -17,22 +17,22 @@
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.4.0",
     "use-debounce": "^10.0.6",
-    "zod": "^4.2.0"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
+    "@biomejs/biome": "2.3.10",
     "@eslint/eslintrc": "^3.3.3",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/cypress": "^10.1.0",
     "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/node": "^25.0.2",
+    "@testing-library/react": "^16.3.1",
+    "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
     "axe-core": "^4.11.0",
-    "cypress": "^15.7.1",
+    "cypress": "^15.8.0",
     "cypress-axe": "^1.7.0",
     "depcheck": "^1.4.7",
     "drizzle-kit": "^0.31.8",
@@ -46,12 +46,12 @@
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^6.0.1",
-    "vitest": "^4.0.15",
+    "vite-tsconfig-paths": "^6.0.2",
+    "vitest": "^4.0.16",
     "wait-on": "^9.0.3"
   },
   "name": "nextjs-dashboard",
-  "packageManager": "pnpm@10.25.0+sha512.5e82639027af37cf832061bcc6d639c219634488e0f2baebe785028a793de7b525ffcd3f7ff574f5e9860654e098fe852ba8ac5dd5cefe1767d23a020a92f501",
+  "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402",
   "pnpm": {
     "overrides": {
       "esbuild": "^0.25.0"
