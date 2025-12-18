@@ -1,0 +1,39 @@
+---
+apply: always
+---
+
+# Global Standards
+
+General rules for API compatibility, code style, and project organization.
+
+## Use Compatible APIs
+
+- Use APIs compatible with Next.js v16+, React 19+, and TypeScript 5.9+.
+- Avoid deprecated APIs (e.g., use `use` instead of older patterns where applicable).
+
+## Code Style Consistency
+
+- **Alphabetization**: Sort object literal properties, interfaces, and types alphabetically (matches Biome/ESLint configuration).
+- **Explicit Typing**: Always explicitly type function arguments and return values. No `any`.
+- **Documentation**: Use **TSDoc** for describing intent and business context.
+  - Avoid repeating types in `@param` or `@returns` tags that are already defined in TypeScript.
+  - Avoid JSDoc.
+- **Imports**:
+  - Avoid re-exports and barrel files (`index.ts`).
+  - Use absolute paths with `@/` alias.
+
+## Project Structure
+
+Organize features using a Modular Hexagonal approach:
+
+- **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design).
+- **Feature Modules**: `@/modules/{feature_name}`.
+  - `shared/`: Logic used by both UI and Server (schemas, constants).
+  - `server/`: Hexagonal core (Actions, Use Cases, Ports, Infrastructure).
+  - `ui/`: Feature-specific components.
+
+## Module Boundaries
+
+- Feature modules should be self-contained "bounded contexts".
+- Cross-module imports are only allowed from a module's `shared` or `ui` folders, or from the global `src/shared`.
+- **Hard Rule**: Never import from another module's `server/**` directory.
