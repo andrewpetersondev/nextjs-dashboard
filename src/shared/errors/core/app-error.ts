@@ -6,7 +6,7 @@ import {
 import type {
   AppErrorLayer,
   Severity,
-} from "@/shared/errors/core/app-error.definitions";
+} from "@/shared/errors/core/app-error.schema";
 import type {
   AppErrorJson,
   AppErrorOptions,

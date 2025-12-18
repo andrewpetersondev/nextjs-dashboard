@@ -1,6 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { AppError } from "@/shared/errors/core/app-error";
-import type { Severity } from "@/shared/errors/core/app-error.definitions";
+import type { Severity } from "@/shared/errors/core/app-error.schema";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
 /**

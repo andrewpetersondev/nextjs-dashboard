@@ -5,8 +5,8 @@ import {
   INFRASTRUCTURE_ERRORS,
   SYSTEM_ERRORS,
   VALIDATION_ERRORS,
-} from "@/shared/errors/catalog/app-error.definitions";
-import type { AppErrorDefinition } from "@/shared/errors/core/app-error.definitions";
+} from "@/shared/errors/catalog/app-error.codes";
+import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 
 /**
  * Canonical, transport-agnostic error code registry.
@@ -21,7 +21,7 @@ export const APP_ERROR_MAP = {
   ...INFRASTRUCTURE_ERRORS,
   ...SYSTEM_ERRORS,
   ...VALIDATION_ERRORS,
-} as const satisfies Record<string, AppErrorDefinition>;
+} as const satisfies Record<string, AppErrorSchema>;
 
 export type AppErrorKey = keyof typeof APP_ERROR_MAP;
 
