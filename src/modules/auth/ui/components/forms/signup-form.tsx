@@ -17,6 +17,7 @@ import {
   extractFieldValues,
 } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
+import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
@@ -27,13 +28,10 @@ const INITIAL_STATE =
   createInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 interface SignupFormProps {
-  action: (
-    _prevState: FormResult<SignupField>,
-    formData: FormData,
-  ) => Promise<FormResult<SignupField>>;
+  action: FormAction<SignupField>;
 }
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <function is short and maintainable>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately, convert to function>
 export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
@@ -75,6 +73,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           id={usernameId}
           label="Username"
           name="username"
+          placeholder="Enter your username"
           required={true}
           type="text"
         />

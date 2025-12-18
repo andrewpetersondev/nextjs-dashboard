@@ -1,16 +1,21 @@
 import type { JSX } from "react";
 import { demoUserActionAdapter } from "@/modules/auth/server/actions/demo-user.action";
-import { signupAction } from "@/modules/auth/server/actions/signup.action";
+import type { SignupField } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/shared/ui/auth.tokens";
 import { SignupForm } from "@/modules/auth/ui/components/forms/signup-form";
 import { AuthFormDemoSection } from "@/modules/auth/ui/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/ui/components/shared/auth-form-social-section";
+import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
-export function SignupCard(): JSX.Element {
+interface SignupCardProps {
+  action: FormAction<SignupField>;
+}
+
+export function SignupCard({ action }: SignupCardProps): JSX.Element {
   return (
     <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-      <SignupForm action={signupAction} />
+      <SignupForm action={action} />
       <DividerAtom label={AUTH_DIVIDER_LABEL} />
       <AuthFormDemoSection
         demoAdminText="Sign Up as Demo Admin"

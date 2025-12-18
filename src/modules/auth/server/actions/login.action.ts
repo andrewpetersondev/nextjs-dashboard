@@ -62,6 +62,7 @@ export async function loginAction(
     logger.operation("warn", "Login validation failed", {
       duration: tracker.getTotalDuration(),
       errorCount,
+      operationIdentifiers: { ip },
       operationName: "login.validation.failed",
     });
 

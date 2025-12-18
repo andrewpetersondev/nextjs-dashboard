@@ -13,6 +13,7 @@ import {
   extractFieldValues,
 } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
+import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
@@ -23,22 +24,14 @@ const INITIAL_STATE =
   createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
 
 interface LoginFormProps {
-  action: LoginFormAction;
+  action: FormAction<LoginField>;
 }
-
-/**
- * Contract for the login form action.
- */
-export type LoginFormAction = (
-  _prevState: FormResult<LoginField>,
-  formData: FormData,
-) => Promise<FormResult<LoginField>>;
 
 /**
  * LoginForm component for user authentication.
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately, convert to function>
 export const LoginForm: FC<LoginFormProps> = ({
   action,
 }: LoginFormProps): JSX.Element => {

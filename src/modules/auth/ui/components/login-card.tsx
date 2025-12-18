@@ -1,16 +1,15 @@
 import type { JSX } from "react";
 import { demoUserActionAdapter } from "@/modules/auth/server/actions/demo-user.action";
+import type { LoginField } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/shared/ui/auth.tokens";
-import {
-  LoginForm,
-  type LoginFormAction,
-} from "@/modules/auth/ui/components/forms/login-form";
+import { LoginForm } from "@/modules/auth/ui/components/forms/login-form";
 import { AuthFormDemoSection } from "@/modules/auth/ui/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/ui/components/shared/auth-form-social-section";
+import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
 interface LoginCardProps {
-  action: LoginFormAction;
+  action: FormAction<LoginField>;
 }
 
 export function LoginCard({ action }: LoginCardProps): JSX.Element {
