@@ -21,6 +21,7 @@ import {
   formOk,
 } from "@/shared/forms/factories/form-result.factory";
 import { isZodErrorInstance } from "@/shared/forms/guards/zod.guard";
+import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
 import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
 import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
@@ -28,9 +29,6 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
 const allowed = toFieldNames(CreateInvoiceSchema);
-
-const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
-  typeof v === "string" ? v : undefined;
 
 /**
  * Server action for creating a new invoice.
@@ -40,15 +38,8 @@ export async function createInvoiceAction(
   _prevState: FormResult<CreateInvoicePayload>,
   formData: FormData,
 ): Promise<FormResult<CreateInvoicePayload>> {
-  // 1. Parse Input: Extract raw strings so Zod schemas (and codecs) can handle coercion/validation
-  const rawInput = {
-    amount: toOptionalString(formData.get("amount")),
-    customerId: toOptionalString(formData.get("customerId")),
-    date: toOptionalString(formData.get("date")),
-    sensitiveData: toOptionalString(formData.get("sensitiveData")),
-    status: toOptionalString(formData.get("status")),
-  };
-
+  // 1. Parse Input: Leverage infrastructure for consistent extraction
+  const rawInput = resolveRawFieldPayload(formData, allowed);
   const parsed = CreateInvoiceSchema.safeParse(rawInput);
 
   if (!parsed.success) {

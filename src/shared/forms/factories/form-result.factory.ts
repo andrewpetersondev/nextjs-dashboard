@@ -49,8 +49,8 @@ export const formError = <F extends string>(params: {
     message: params.message,
     metadata: {
       fieldErrors: params.fieldErrors,
-      ...(params.formErrors && { formErrors: params.formErrors }),
-      ...(params.values && { values: params.values }),
+      formErrors: params.formErrors,
+      values: params.values,
     },
   });
 
