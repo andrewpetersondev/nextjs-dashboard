@@ -1,3 +1,7 @@
+---
+apply: always
+---
+
 # Global Standards
 
 General rules for API compatibility, code style, and project organization.
