@@ -8,6 +8,7 @@ import {
 } from "@/modules/auth/shared/domain/user/auth.schema";
 import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
+import { AuthFormFeedback } from "@/modules/auth/ui/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import {
   extractFieldErrors,
@@ -15,47 +16,12 @@ import {
 } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
-import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 const INITIAL_STATE =
   createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
-
-interface LoginFormFeedbackProps {
-  state: FormResult<LoginField>;
-}
-
-function LoginFormFeedback({
-  state,
-}: LoginFormFeedbackProps): JSX.Element | null {
-  if (state.ok) {
-    if (state.value.message === undefined) {
-      return null;
-    }
-
-    return (
-      <FormAlert
-        dataCy="auth-server-message-success"
-        message={state.value.message}
-        type="success"
-      />
-    );
-  }
-
-  if (state.error.message === undefined) {
-    return null;
-  }
-
-  return (
-    <FormAlert
-      dataCy="auth-server-message-error"
-      message={state.error.message}
-      type="error"
-    />
-  );
-}
 
 /**
  * LoginForm component for user authentication.
@@ -129,7 +95,8 @@ export const LoginForm: FC<AuthActionProps<LoginField>> = ({
           pending={pending}
         />
       </form>
-      <LoginFormFeedback state={state} />
+
+      <AuthFormFeedback state={state} />
     </>
   );
 };

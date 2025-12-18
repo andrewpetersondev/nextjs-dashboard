@@ -1,11 +1,9 @@
-import { FORM_ERROR_MESSAGES } from "@/shared/forms/shared/form-messages.constants";
 import type {
   FormValidationOptions,
   FormValidationParams,
 } from "@/shared/forms/types/form-validation.dto";
 
 const DEFAULT_LOGGER_CONTEXT = "validateForm" as const;
-const DEFAULT_FAILURE_MESSAGE = FORM_ERROR_MESSAGES.validationFailed;
 
 /**
  * Resolve validation options by applying defaults for missing values.
@@ -19,7 +17,7 @@ export function resolveFormValidationOptions<T, K extends keyof T & string>(
   options: FormValidationOptions<T, K>,
 ): FormValidationParams<K> {
   return {
-    failureMessage: options.messages?.failureMessage ?? DEFAULT_FAILURE_MESSAGE,
+    failureMessage: options.messages?.failureMessage ?? "i hate defaults",
     fields: options.fields,
     loggerContext: options.loggerContext ?? DEFAULT_LOGGER_CONTEXT,
     raw: options.raw,
