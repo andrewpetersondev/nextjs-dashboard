@@ -98,7 +98,7 @@ export function Pagination({
         isDisabled={currentPage <= 1}
       />
 
-      <div className="-space-x-px flex">
+      <div className="flex -space-x-px">
         {allPages.map((page, index) => {
           let position: "first" | "last" | "single" | "middle" | undefined;
 

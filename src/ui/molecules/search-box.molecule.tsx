@@ -1,4 +1,5 @@
 "use client";
+
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
   type ReadonlyURLSearchParams,
@@ -58,7 +59,7 @@ export function SearchBoxMolecule({
       />
       <MagnifyingGlassIcon
         aria-hidden="true"
-        className="-translate-y-1/2 absolute top-1/2 left-3 h-[18px] w-[18px] text-text-accent peer-focus:text-text-focus"
+        className="absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-text-accent peer-focus:text-text-focus"
       />
     </div>
   );
