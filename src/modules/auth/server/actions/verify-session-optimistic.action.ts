@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/server/application/workflows/verify-session-optimistic.workflow";
-import type { SessionVerificationResult } from "@/modules/auth/shared/contracts/session.transport";
+import type { SessionTransport } from "@/modules/auth/shared/contracts/session.transport";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -17,7 +17,7 @@ import { ROUTES } from "@/shared/routes/routes";
  * - logging
  */
 export const verifySessionOptimistic = cache(
-  async (): Promise<SessionVerificationResult> => {
+  async (): Promise<SessionTransport> => {
     const requestId = crypto.randomUUID();
 
     const logger = defaultLogger

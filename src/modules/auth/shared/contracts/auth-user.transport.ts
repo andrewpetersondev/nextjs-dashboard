@@ -4,7 +4,7 @@ import type { UserId } from "@/shared/branding/brands";
 /**
  * Lightweight transport shape for authenticated user responses.
  */
-export interface AuthUserDto {
+export interface AuthUserTransport {
   readonly email: string;
   readonly id: UserId;
   readonly role: UserRole;

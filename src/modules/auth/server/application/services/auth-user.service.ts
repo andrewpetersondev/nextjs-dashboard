@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import type { AuthUserDto } from "@/modules/auth/shared/contracts/auth-user.dto";
+import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
@@ -21,7 +21,7 @@ const toAuthUserTransport = (src: {
   readonly id: string;
   readonly role: string;
   readonly username: string;
-}): AuthUserDto => {
+}): AuthUserTransport => {
   if (!(src.email && src.id && src.role && src.username)) {
     throw new Error("Invalid user entity: missing required fields");
   }
@@ -72,7 +72,7 @@ export class AuthUserService {
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
   async login(
     input: Readonly<LoginData>,
-  ): Promise<Result<AuthUserDto, AppError>> {
+  ): Promise<Result<AuthUserTransport, AppError>> {
     const logger = this.logger.child({ email: input.email });
 
     try {
@@ -135,7 +135,7 @@ export class AuthUserService {
         operationName: "login.success",
       });
 
-      return Ok<AuthUserDto>(toAuthUserTransport(user));
+      return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
       const error = makeAppErrorFromUnknown(err, "unexpected");
 

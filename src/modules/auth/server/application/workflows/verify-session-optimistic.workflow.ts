@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
-import type { SessionVerificationResult } from "@/modules/auth/shared/contracts/session.transport";
+import type { SessionTransport } from "@/modules/auth/shared/contracts/session.transport";
 
 export type VerifySessionOptimisticFailure = Readonly<{
   reason: "no_session";
@@ -9,7 +9,7 @@ export type VerifySessionOptimisticFailure = Readonly<{
 
 export type VerifySessionOptimisticResult =
   | Readonly<{ ok: false; error: VerifySessionOptimisticFailure }>
-  | Readonly<{ ok: true; value: SessionVerificationResult }>;
+  | Readonly<{ ok: true; value: SessionTransport }>;
 
 /**
  * Optimistically verifies the current session (cookie/JWT based).
