@@ -1,7 +1,3 @@
----
-apply: always
----
-
 # Global Standards
 
 General rules for API compatibility, code style, and project organization.
@@ -21,6 +17,13 @@ General rules for API compatibility, code style, and project organization.
 - **Imports**:
   - Avoid re-exports and barrel files (`index.ts`).
   - Use absolute paths with `@/` alias.
+
+    ## Strict Data Integrity
+
+    Avoid "drift" caused by silent fallbacks or implicit defaults.
+    - **Discourage Defaults**: Do not provide default values for configuration or domain properties. If a value is required, the system should fail fast if it is missing.
+    - **No Fallbacks**: Avoid patterns like `const value = input ?? 'default'`. This masks upstream issues and leads to inconsistent state.
+    - **Validation over Defaulting**: Use Zod schemas to validate presence. If a field is optional, it must be explicitly handled as `undefined` or `null` throughout the flow.
 
 ## Project Structure
 
