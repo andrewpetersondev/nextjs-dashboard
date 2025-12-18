@@ -1,9 +1,12 @@
-import type { LoginField } from "@/modules/auth/shared/domain/user/auth.schema";
+import type {
+  LoginField,
+  SignupField,
+} from "@/modules/auth/shared/domain/user/auth.schema";
 import type { FormAction } from "@/shared/forms/types/form-action.dto";
 
 /**
- * Shared props for components requiring a login form action.
+ * Shared props for components requiring a auth form action.
  */
-export interface AuthActionProps {
-  action: FormAction<LoginField>;
+export interface AuthActionProps<T extends LoginField | SignupField> {
+  action: FormAction<T>;
 }

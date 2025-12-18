@@ -12,7 +12,6 @@ import {
   type SignupField,
   SignupSchema,
 } from "@/modules/auth/shared/domain/user/auth.schema";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { makeFormError } from "@/shared/forms/factories/form-result.factory";
@@ -114,7 +113,7 @@ export async function signupAction(
     return makeFormError<SignupField>({
       code: error.code,
       fieldErrors,
-      message: message || AUTH_ERROR_MESSAGES.SIGNUP_FAILED,
+      message,
       values: input,
     });
   }

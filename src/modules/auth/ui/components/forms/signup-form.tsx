@@ -10,6 +10,7 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
 } from "@/modules/auth/shared/domain/user/auth.schema";
+import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import {
@@ -17,7 +18,6 @@ import {
   extractFieldValues,
 } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
-import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
@@ -27,10 +27,6 @@ import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 const INITIAL_STATE =
   createInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
-interface SignupFormProps {
-  action: FormAction<SignupField>;
-}
-
 interface SignupFormFeedbackProps {
   state: FormResult<SignupField>;
 }
@@ -39,32 +35,40 @@ function SignupFormFeedback({
   state,
 }: SignupFormFeedbackProps): JSX.Element | null {
   if (state.ok) {
-    return state.value.message ? (
+    if (state.value.message === undefined) {
+      return null;
+    }
+
+    return (
       <FormAlert
-        dataCy="auth-server-message"
+        dataCy="auth-server-message-success"
         message={state.value.message}
         type="success"
       />
-    ) : null;
+    );
   }
 
-  return state.error.message ? (
+  if (state.error.message === undefined) {
+    return null;
+  }
+
+  return (
     <FormAlert
-      dataCy="auth-server-message"
+      dataCy="auth-server-message-error"
       message={state.error.message}
       type="error"
     />
-  ) : null;
+  );
 }
 
 /**
  * SignupForm component for user registration.
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-export const SignupForm: FC<SignupFormProps> = ({
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup boundary handles orchestration of multiple field types
+export const SignupForm: FC<AuthActionProps<SignupField>> = ({
   action,
-}: SignupFormProps): JSX.Element => {
+}: AuthActionProps<SignupField>): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
     FormResult<SignupField>,
     FormData
@@ -79,21 +83,21 @@ export const SignupForm: FC<SignupFormProps> = ({
   const values = state.ok ? undefined : extractFieldValues(state.error);
 
   return (
-    <>
+    <div className="flex flex-col gap-y-6">
       <form
         action={boundAction}
         aria-label="Signup form"
         autoComplete="off"
-        className="space-y-6"
+        className="flex flex-col gap-y-6"
         data-cy="signup-form"
       >
         <InputFieldMolecule
           autoComplete="username"
           autoFocus={true}
           dataCy="signup-username-input"
-          defaultValue={values?.username}
+          defaultValue={values ? values.username : undefined}
           describedById={`${usernameId}-errors`}
-          error={fieldErrors?.username}
+          error={fieldErrors ? fieldErrors.username : undefined}
           icon={<UserIcon aria-hidden="true" className={INPUT_ICON_CLASS} />}
           id={usernameId}
           label="Username"
@@ -105,9 +109,9 @@ export const SignupForm: FC<SignupFormProps> = ({
         <InputFieldMolecule
           autoComplete="email"
           dataCy="signup-email-input"
-          defaultValue={values?.email}
+          defaultValue={values ? values.email : undefined}
           describedById={`${emailId}-errors`}
-          error={fieldErrors?.email}
+          error={fieldErrors ? fieldErrors.email : undefined}
           icon={
             <AtSymbolIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
           }
@@ -121,8 +125,9 @@ export const SignupForm: FC<SignupFormProps> = ({
         <InputFieldMolecule
           autoComplete="new-password"
           dataCy="signup-password-input"
+          defaultValue={values ? values.password : undefined}
           describedById={`${passwordId}-errors`}
-          error={fieldErrors?.password}
+          error={fieldErrors ? fieldErrors.password : undefined}
           icon={
             <LockClosedIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
           }
@@ -144,6 +149,6 @@ export const SignupForm: FC<SignupFormProps> = ({
         />
       </form>
       <SignupFormFeedback state={state} />
-    </>
+    </div>
   );
 };

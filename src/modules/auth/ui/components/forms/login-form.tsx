@@ -61,10 +61,10 @@ function LoginFormFeedback({
  * LoginForm component for user authentication.
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-export const LoginForm: FC<AuthActionProps> = ({
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login boundary handles orchestration of multiple field types
+export const LoginForm: FC<AuthActionProps<LoginField>> = ({
   action,
-}: AuthActionProps): JSX.Element => {
+}: AuthActionProps<LoginField>): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
     FormResult<LoginField>,
     FormData

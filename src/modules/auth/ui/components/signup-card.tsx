@@ -2,19 +2,17 @@ import type { JSX } from "react";
 import { demoUserActionAdapter } from "@/modules/auth/server/actions/demo-user.action";
 import type { SignupField } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/shared/ui/auth.tokens";
+import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { SignupForm } from "@/modules/auth/ui/components/forms/signup-form";
 import { AuthFormDemoSection } from "@/modules/auth/ui/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/ui/components/shared/auth-form-social-section";
-import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
-interface SignupCardProps {
-  action: FormAction<SignupField>;
-}
-
-export function SignupCard({ action }: SignupCardProps): JSX.Element {
+export function SignupCard({
+  action,
+}: AuthActionProps<SignupField>): JSX.Element {
   return (
-    <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+    <div className="flex flex-col gap-y-6 bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
       <SignupForm action={action} />
       <DividerAtom label={AUTH_DIVIDER_LABEL} />
       <AuthFormDemoSection
