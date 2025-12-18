@@ -2,7 +2,7 @@ import {
   PG_CODE_TO_META,
   type PgCode,
 } from "@/shared/errors/adapters/postgres/pg-codes";
-import type { PgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-types";
+import type { PgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-error-metadata.types";
 import { flattenErrorChain } from "@/shared/errors/utils/error-chain";
 
 function asString(val: unknown): string | undefined {

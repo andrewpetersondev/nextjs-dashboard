@@ -1,9 +1,20 @@
 import {
   PG_CODE_TO_META,
   type PgCode,
+  type PgErrorMeta,
 } from "@/shared/errors/adapters/postgres/pg-codes";
+import type { PgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-error-metadata.types";
 import { extractPgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-metadata";
-import type { PgErrorMapping } from "@/shared/errors/adapters/postgres/pg-types";
+import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
+
+/**
+ * Mapping result from Postgres error to app error code + metadata.
+ */
+interface PgErrorMapping {
+  readonly appCode: AppErrorKey;
+  readonly condition: PgErrorMeta["condition"];
+  readonly pgMetadata: PgErrorMetadata;
+}
 
 /**
  * Map a Postgres error to app error code + rich metadata.

@@ -1,12 +1,17 @@
-import type { PgOperationMetadata } from "@/shared/errors/adapters/postgres/pg-types";
 import { toPgError } from "@/shared/errors/adapters/postgres/to-pg-error";
 import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { ErrorMetadata } from "@/shared/errors/core/app-error.types";
+import type { DbOperationMetadata } from "@/shared/errors/core/app-error-metadata.types";
 import {
   makeAppError,
   makeDatabaseError,
 } from "@/shared/errors/factories/app-error.factory";
+
+/**
+ * Optional, high-level DB operation metadata supplied by callers.
+ */
+interface PgOperationMetadata extends DbOperationMetadata {}
 
 /**
  * Builds an AppError from a mapped Postgres error, merging metadata.
