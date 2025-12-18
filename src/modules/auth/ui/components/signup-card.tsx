@@ -12,7 +12,7 @@ export function SignupCard({
   action,
 }: AuthActionProps<SignupField>): JSX.Element {
   return (
-    <div className="flex flex-col gap-y-6 bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
+    <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
       <SignupForm action={action} />
       <DividerAtom label={AUTH_DIVIDER_LABEL} />
       <AuthFormDemoSection

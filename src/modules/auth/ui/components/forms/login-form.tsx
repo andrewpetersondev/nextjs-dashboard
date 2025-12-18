@@ -1,7 +1,7 @@
 "use client";
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { type FC, type JSX, useActionState, useId } from "react";
+import { type JSX, useActionState, useId } from "react";
 import {
   LOGIN_FIELDS_LIST,
   type LoginField,
@@ -28,9 +28,9 @@ const INITIAL_STATE =
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login boundary handles orchestration of multiple field types
-export const LoginForm: FC<AuthActionProps<LoginField>> = ({
+export function LoginForm({
   action,
-}: AuthActionProps<LoginField>): JSX.Element => {
+}: AuthActionProps<LoginField>): JSX.Element {
   const [state, boundAction, pending] = useActionState<
     FormResult<LoginField>,
     FormData
@@ -74,7 +74,7 @@ export const LoginForm: FC<AuthActionProps<LoginField>> = ({
           autoComplete="current-password"
           dataCy="login-password-input"
           describedById={`${passwordId}-errors`}
-          error={fieldErrors?.password}
+          error={fieldErrors ? fieldErrors.password : undefined}
           icon={
             <LockClosedIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
           }
@@ -99,4 +99,4 @@ export const LoginForm: FC<AuthActionProps<LoginField>> = ({
       <AuthFormFeedback state={state} />
     </>
   );
-};
+}

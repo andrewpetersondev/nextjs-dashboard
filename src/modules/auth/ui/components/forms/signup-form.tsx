@@ -5,7 +5,7 @@ import {
   LockClosedIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { type FC, type JSX, useActionState, useId } from "react";
+import { type JSX, useActionState, useId } from "react";
 import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
@@ -32,9 +32,9 @@ const INITIAL_STATE =
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup boundary handles orchestration of multiple field types
-export const SignupForm: FC<AuthActionProps<SignupField>> = ({
+export function SignupForm({
   action,
-}: AuthActionProps<SignupField>): JSX.Element => {
+}: AuthActionProps<SignupField>): JSX.Element {
   const [state, boundAction, pending] = useActionState<
     FormResult<SignupField>,
     FormData
@@ -45,16 +45,17 @@ export const SignupForm: FC<AuthActionProps<SignupField>> = ({
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
 
+  // Extract form details safely from AppError
   const fieldErrors = state.ok ? undefined : extractFieldErrors(state.error);
   const values = state.ok ? undefined : extractFieldValues(state.error);
 
   return (
-    <div className="flex flex-col gap-y-6">
+    <>
       <form
         action={boundAction}
         aria-label="Signup form"
         autoComplete="off"
-        className="flex flex-col gap-y-6"
+        className="space-y-6"
         data-cy="signup-form"
       >
         <InputFieldMolecule
@@ -74,6 +75,7 @@ export const SignupForm: FC<AuthActionProps<SignupField>> = ({
         />
         <InputFieldMolecule
           autoComplete="email"
+          autoFocus={true}
           dataCy="signup-email-input"
           defaultValue={values ? values.email : undefined}
           describedById={`${emailId}-errors`}
@@ -115,6 +117,6 @@ export const SignupForm: FC<AuthActionProps<SignupField>> = ({
       </form>
 
       <AuthFormFeedback state={state} />
-    </div>
+    </>
   );
-};
+}
