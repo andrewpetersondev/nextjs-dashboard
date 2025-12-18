@@ -30,24 +30,23 @@ export const SignupSchema = AuthCredentialsSchema.safeExtend({
   username: UsernameSchema,
 });
 
-// Derived types
-
+/** The raw input from the form (before Zod parsing) */
 export type LoginInput = z.input<typeof LoginSchema>;
+
+/** The raw input from the form (before Zod parsing) */
 export type SignupInput = z.input<typeof SignupSchema>;
 
-/** Post-parse login data type. */
+/** The validated data used by the Workflow and Services */
 export type LoginData = z.output<typeof LoginSchema>;
 
-/** Post-parse signup data type. */
+/** The validated data used by the Workflow and Services */
 export type SignupData = z.output<typeof SignupSchema>;
 
-/** Valid login field name union. */
+/** Field names for type-safe error handling in UI */
 export type LoginField = keyof LoginData;
 
-/** Valid signup field name union. */
+/** Field names for type-safe error handling in UI */
 export type SignupField = keyof SignupData;
-
-// --- Auto-synced, immutable field name lists ---
 
 export const LOGIN_FIELDS_LIST = getSchemaKeys(LoginSchema);
 export const SIGNUP_FIELDS_LIST = getSchemaKeys(SignupSchema);

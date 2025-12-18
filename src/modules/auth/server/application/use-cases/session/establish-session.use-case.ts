@@ -5,7 +5,7 @@ import type {
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/ports/session.port";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
-import { SESSION_DURATION_MS } from "@/modules/auth/server/types/session.policy.constants";
+import { SESSION_DURATION_MS } from "@/modules/auth/server/contracts/session.policy.constants";
 import type { AppError } from "@/shared/errors/core/app-error";
 import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

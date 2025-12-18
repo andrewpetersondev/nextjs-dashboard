@@ -1,6 +1,6 @@
 import "server-only";
+import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
 
-import type { AuthSignupPayload } from "@/modules/auth/server/types/auth.types";
 import { executeDalResult } from "@/server/db/dal/execute-dal-result";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";

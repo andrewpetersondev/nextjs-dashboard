@@ -7,7 +7,7 @@ import type {
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/server/types/session.policy.constants";
+} from "@/modules/auth/server/contracts/session.policy.constants";
 import type { UpdateSessionOutcome } from "@/modules/auth/shared/domain/session/session.policy";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";

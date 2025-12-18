@@ -1,13 +1,11 @@
 import "server-only";
 
+import type { AuthLoginRepoInput } from "@/modules/auth/server/contracts/auth-login-repo.dto";
+import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/db/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/db/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/db/dal/insert-user.dal";
-import type {
-  AuthLoginRepoInput,
-  AuthSignupPayload,
-  AuthUserEntity,
-} from "@/modules/auth/server/types/auth.types";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import {
   toNewUserEntity,

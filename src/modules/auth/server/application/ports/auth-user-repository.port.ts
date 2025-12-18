@@ -1,10 +1,8 @@
 import "server-only";
 
-import type {
-  AuthLoginRepoInput,
-  AuthSignupPayload,
-  AuthUserEntity,
-} from "@/modules/auth/server/types/auth.types";
+import type { AuthLoginRepoInput } from "@/modules/auth/server/contracts/auth-login-repo.dto";
+import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { Result } from "@/shared/result/result.types";
