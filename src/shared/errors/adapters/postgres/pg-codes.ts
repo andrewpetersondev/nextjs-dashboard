@@ -46,10 +46,10 @@ export type PgErrorKey = keyof typeof PG_ERROR_MAP;
 export type PgErrorMeta = (typeof PG_ERROR_MAP)[PgErrorKey];
 export type PgCode = PgErrorMeta["code"];
 
-export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = {
+export const PG_CODE_TO_META = {
   [PG_ERROR_MAP.checkViolation.code]: PG_ERROR_MAP.checkViolation,
   [PG_ERROR_MAP.exclusionViolation.code]: PG_ERROR_MAP.exclusionViolation,
   [PG_ERROR_MAP.foreignKeyViolation.code]: PG_ERROR_MAP.foreignKeyViolation,
   [PG_ERROR_MAP.notNullViolation.code]: PG_ERROR_MAP.notNullViolation,
   [PG_ERROR_MAP.uniqueViolation.code]: PG_ERROR_MAP.uniqueViolation,
-} as const;
+} as const satisfies Record<PgCode, PgErrorMeta>;

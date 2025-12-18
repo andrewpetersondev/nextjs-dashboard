@@ -5,6 +5,10 @@ import {
 import type { PgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-types";
 import { flattenErrorChain } from "@/shared/errors/utils/error-chain";
 
+function asString(val: unknown): string | undefined {
+  return typeof val === "string" ? val : undefined;
+}
+
 function extractMetadataFromObject(
   obj: Record<string, unknown>,
   code: PgCode,
@@ -22,10 +26,6 @@ function extractMetadataFromObject(
     table: asString(obj.table),
     where: asString(obj.where),
   };
-}
-
-function asString(val: unknown): string | undefined {
-  return typeof val === "string" ? val : undefined;
 }
 
 /**

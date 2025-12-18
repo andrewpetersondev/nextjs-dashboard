@@ -12,10 +12,10 @@ import type {
  * Normalized Postgres error metadata extracted from pg error objects.
  */
 export interface PgErrorMetadata extends PgErrorMetadataBase {
-  readonly pgCode: PgCode;
   readonly datatype?: string;
   readonly detail?: string;
   readonly hint?: string;
+  readonly pgCode: PgCode;
   readonly position?: string;
   readonly schema?: string;
   readonly severity?: string;
