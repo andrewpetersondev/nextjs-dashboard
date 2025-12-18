@@ -1,5 +1,5 @@
 import type { AppError } from "@/shared/errors/core/app-error";
-import type { DatabaseErrorMetadata } from "@/shared/errors/core/types";
+import type { DatabaseErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
 
 /**
  * Type guard to check if error metadata contains Postgres-specific information.

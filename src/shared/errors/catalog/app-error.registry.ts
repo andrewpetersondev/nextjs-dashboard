@@ -5,7 +5,7 @@ import {
   INFRASTRUCTURE_ERRORS,
   SYSTEM_ERRORS,
   VALIDATION_ERRORS,
-} from "@/shared/errors/catalog/definitions";
+} from "@/shared/errors/catalog/app-error.definitions";
 import type {
   AppErrorDefinition,
   AppErrorLayer,

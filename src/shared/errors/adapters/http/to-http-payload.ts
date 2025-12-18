@@ -3,7 +3,7 @@ import {
   type HttpResponsibility,
 } from "@/shared/errors/adapters/http/status-map";
 import type { AppError } from "@/shared/errors/core/app-error";
-import type { AppErrorJson } from "@/shared/errors/core/types";
+import type { AppErrorJson } from "@/shared/errors/core/app-error.types";
 
 export interface HttpErrorPayload extends AppErrorJson {
   readonly responsibility: HttpResponsibility;

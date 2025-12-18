@@ -1,6 +1,6 @@
+import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import type { Condition } from "@/shared/errors/catalog/conditions";
 import { CONDITIONS } from "@/shared/errors/catalog/conditions";
-import type { AppErrorKey } from "@/shared/errors/catalog/registry";
 
 export interface PgErrorDefinition {
   readonly appCode: AppErrorKey;
