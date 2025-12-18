@@ -1,4 +1,6 @@
-export type Severity = "ERROR" | "WARN" | "INFO";
+export const APP_ERROR_SEVERITIES = ["ERROR", "INFO", "WARN"] as const;
+
+export type Severity = (typeof APP_ERROR_SEVERITIES)[number];
 
 /**
  * Represents the distinct layers in an application where an error can occur.
@@ -6,25 +8,26 @@ export type Severity = "ERROR" | "WARN" | "INFO";
  * @remarks
  * This type is useful for categorizing errors based on the layer of the application architecture
  * they originate from, helping to organize error handling and debugging processes.
- *
- * @typeParam T - The specific error code or details that can be associated with the layer, if needed.
  */
-export type AppErrorLayer =
-  | "DOMAIN" // Business rules & domain logic
-  | "API" // HTTP transport & API interface
-  | "UI" // Presentation & UI components
-  | "DB" // Database & Persistence
-  | "SECURITY" // Authentication & Authorization
-  | "VALIDATION" // Input validation
-  | "INTERNAL"; // System, panic, & unexpected errors
+export const APP_ERROR_LAYERS = [
+  "API",
+  "DB",
+  "DOMAIN",
+  "INTERNAL",
+  "SECURITY",
+  "UI",
+  "VALIDATION",
+] as const;
+
+export type AppErrorLayer = (typeof APP_ERROR_LAYERS)[number];
 
 /**
  * Schema representing the structure of an application-specific error.
  *
  * @remarks
- * This interface is used as a contract to define the properties of a standardized error
- * within the application. It includes metadata such as error description, layer, severity,
- * and whether the error is retryable.
+ * This interface is the canonical contract for all error-code definitions.
+ * It is intentionally transport-agnostic and does not include HTTP status or
+ * protocol-specific information.
  */
 export interface AppErrorSchema {
   readonly description: string;

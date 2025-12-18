@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
+import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 
 /**
  * Canonical error code definitions organized by logical layer.
@@ -9,9 +10,6 @@
  * - retryable: Whether the operation that caused this error can be retried
  * - severity: Log level for this error type
  */
-
-import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
-
 export const API_ERRORS = {
   conflict: {
     description: "Resource state conflict",

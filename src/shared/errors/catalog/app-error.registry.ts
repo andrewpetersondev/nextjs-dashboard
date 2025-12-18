@@ -11,8 +11,10 @@ import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 /**
  * Canonical, transport-agnostic error code registry.
  *
- * NOTE: No HTTP status, no "client/server/infrastructure" responsibility here.
- * Those live in adapter layers (e.g. HTTP, message-bus) that map from codes.
+ * @remarks
+ * This is the single source of truth for all application error codes. It does
+ * not include HTTP status codes or protocol concerns; adapters are responsible
+ * for mapping from these codes to transport-specific representations.
  */
 export const APP_ERROR_MAP = {
   ...API_ERRORS,
@@ -23,19 +25,29 @@ export const APP_ERROR_MAP = {
   ...VALIDATION_ERRORS,
 } as const satisfies Record<string, AppErrorSchema>;
 
-export type AppErrorKey = keyof typeof APP_ERROR_MAP;
+export type AppErrorRegistry = typeof APP_ERROR_MAP;
+
+export type AppErrorKey = keyof AppErrorRegistry;
+
+/**
+ * Metadata for a given application error code.
+ */
+export type AppErrorMeta = AppErrorRegistry[AppErrorKey];
 
 /**
  * Registry of literal error keys for strict type safety in adapters.
- * Derived directly from APP_ERROR_MAP to ensure zero-drift synchronization.
+ *
+ * @remarks
+ * Derived directly from {@link APP_ERROR_MAP} to ensure zero-drift
+ * synchronization between the registry and consumers.
  */
 export const APP_ERROR_KEYS = Object.freeze(
-  Object.fromEntries(Object.keys(APP_ERROR_MAP).map((key) => [key, key])) as {
+  Object.fromEntries(
+    Object.keys(APP_ERROR_MAP).map((key: string) => [key, key]),
+  ) as {
     [K in AppErrorKey]: K;
   },
 );
-
-export type AppErrorMeta = (typeof APP_ERROR_MAP)[AppErrorKey];
 
 /**
  * Return metadata for a code.
