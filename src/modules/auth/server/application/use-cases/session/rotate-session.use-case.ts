@@ -13,7 +13,7 @@ import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schema
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error";
+import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

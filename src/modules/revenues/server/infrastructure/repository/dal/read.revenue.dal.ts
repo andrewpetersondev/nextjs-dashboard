@@ -8,7 +8,7 @@ import type { RevenueId } from "@/shared/branding/brands";
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Reads a revenue record by ID.

@@ -6,10 +6,7 @@ import {
   SYSTEM_ERRORS,
   VALIDATION_ERRORS,
 } from "@/shared/errors/catalog/app-error.definitions";
-import type {
-  AppErrorDefinition,
-  AppErrorLayer,
-} from "@/shared/errors/core/definitions";
+import type { AppErrorDefinition } from "@/shared/errors/core/app-error.definitions";
 
 /**
  * Canonical, transport-agnostic error code registry.
@@ -34,11 +31,4 @@ export type AppErrorMeta = (typeof APP_ERROR_MAP)[AppErrorKey];
  */
 export function getAppErrorCodeMeta(code: AppErrorKey): AppErrorMeta {
   return APP_ERROR_MAP[code];
-}
-
-/**
- * Return the logical layer for a given error code.
- */
-export function getAppErrorLayer(code: AppErrorKey): AppErrorLayer {
-  return APP_ERROR_MAP[code].layer;
 }

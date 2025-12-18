@@ -1,6 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { Severity } from "@/shared/errors/core/definitions";
-import { isAppError } from "@/shared/errors/guards/app-error";
+import { AppError } from "@/shared/errors/core/app-error";
+import type { Severity } from "@/shared/errors/core/app-error.definitions";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
 /**
@@ -11,7 +11,7 @@ import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
  * - If it's anything else (string, number, etc.), returns the string representation.
  */
 export function toSafeErrorShape(err: unknown): SafeErrorShape | unknown {
-  if (isAppError(err)) {
+  if (AppError.isAppError(err)) {
     return err;
   }
   if (err instanceof Error) {

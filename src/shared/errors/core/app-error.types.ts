@@ -1,5 +1,8 @@
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { AppErrorLayer, Severity } from "@/shared/errors/core/definitions";
+import type {
+  AppErrorLayer,
+  Severity,
+} from "@/shared/errors/core/app-error.definitions";
 
 /**
  * Generic error metadata container.

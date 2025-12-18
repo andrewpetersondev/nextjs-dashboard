@@ -7,7 +7,7 @@ import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repos
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 
 export class CreateRevenueUseCase {
   private readonly repository: RevenueRepositoryInterface;

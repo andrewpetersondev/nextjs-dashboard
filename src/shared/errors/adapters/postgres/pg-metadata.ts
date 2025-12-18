@@ -51,10 +51,3 @@ export function extractPgErrorMetadata(
 
   return;
 }
-
-/**
- * Type guard for Postgres errors.
- */
-export function isPgError(err: unknown): err is { code: PgCode } {
-  return extractPgErrorMetadata(err) !== undefined;
-}

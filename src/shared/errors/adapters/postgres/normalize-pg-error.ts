@@ -6,7 +6,7 @@ import type { ErrorMetadata } from "@/shared/errors/core/app-error.types";
 import {
   makeAppError,
   makeDatabaseError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Creates a specific AppError based on a successful Postgres mapping.

@@ -11,7 +11,7 @@ import type { RevenueId } from "@/shared/branding/brands";
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Updates a revenue record.

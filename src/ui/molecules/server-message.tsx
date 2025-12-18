@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isAppError } from "@/shared/errors/guards/app-error";
+import { AppError } from "@/shared/errors/core/app-error";
 import type {
   FormResult,
   FormSuccessPayload,
@@ -68,7 +68,7 @@ function extractMessageAndSuccess<Tdata>(
   // Error branch: state.error is AppError
   const error = state.error;
 
-  if (isAppError(error)) {
+  if (AppError.isAppError(error)) {
     return Object.freeze({
       message: error.message,
       success: false,

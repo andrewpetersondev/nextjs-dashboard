@@ -17,7 +17,7 @@ import type { AppError } from "@/shared/errors/core/app-error";
 import {
   makeInfrastructureError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

@@ -7,7 +7,7 @@ import type {
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 /**

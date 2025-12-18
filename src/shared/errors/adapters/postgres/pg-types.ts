@@ -3,21 +3,22 @@ import type {
   PgErrorMeta,
 } from "@/shared/errors/adapters/postgres/pg-codes";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
+import type {
+  DbOperationMetadata,
+  PgErrorMetadataBase,
+} from "@/shared/errors/core/app-error-metadata.types";
 
 /**
  * Normalized Postgres error metadata extracted from pg error objects.
  */
-export interface PgErrorMetadata {
+export interface PgErrorMetadata extends PgErrorMetadataBase {
   readonly pgCode: PgCode;
-  readonly column?: string;
-  readonly constraint?: string;
   readonly datatype?: string;
   readonly detail?: string;
   readonly hint?: string;
   readonly position?: string;
   readonly schema?: string;
   readonly severity?: string;
-  readonly table?: string;
   readonly where?: string;
 }
 
@@ -32,13 +33,5 @@ export interface PgErrorMapping {
 
 /**
  * Optional, high-level DB operation metadata supplied by callers.
- *
- * This describes *what* operation was being performed at the infrastructure
- * boundary (e.g. "insertUser", "updateProfileEmail"), and optionally which
- * table/entity was involved.
  */
-export interface PgOperationMetadata {
-  readonly entity?: string;
-  readonly operation?: string;
-  readonly table?: string;
-}
+export interface PgOperationMetadata extends DbOperationMetadata {}

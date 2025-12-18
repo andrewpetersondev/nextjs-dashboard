@@ -9,7 +9,7 @@ import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Upserts a revenue record.

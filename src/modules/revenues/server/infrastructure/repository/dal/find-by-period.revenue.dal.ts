@@ -9,7 +9,7 @@ import { toPeriod } from "@/shared/branding/converters/id-converters";
 import {
   makeDatabaseError,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Finds a revenue record by period.

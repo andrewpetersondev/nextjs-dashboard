@@ -4,7 +4,7 @@ import type {
   AppErrorOptions,
   ErrorMetadata,
 } from "@/shared/errors/core/app-error.types";
-import type { DatabaseErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
+import type { DbErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
 
 /**
  * Canonical factory for creating `AppError` instances.
@@ -62,26 +62,6 @@ export function makeValidationError(options: AppErrorOptions): AppError {
 }
 
 /**
- * Convenience factory for unexpected errors.
- */
-export function makeUnexpectedError(options: AppErrorOptions): AppError {
-  return makeAppError("unexpected", options);
-}
-
-/**
- * Convenience factory for invariant violations.
- */
-export function makeInvariantError(
-  message: string,
-  metadata: Record<string, unknown> = {},
-): AppError {
-  return makeAppError("unexpected", {
-    message: `Invariant failed: ${message}`,
-    metadata: { ...metadata, kind: "invariant" },
-  });
-}
-
-/**
  * Convenience factory for infrastructure errors.
  */
 export function makeInfrastructureError(options: AppErrorOptions): AppError {
@@ -93,7 +73,7 @@ export function makeInfrastructureError(options: AppErrorOptions): AppError {
  */
 export function makeDatabaseError(
   options: Omit<AppErrorOptions, "metadata"> & {
-    metadata: DatabaseErrorMetadata;
+    metadata: DbErrorMetadata;
   },
 ): AppError {
   return makeAppError("database", options);

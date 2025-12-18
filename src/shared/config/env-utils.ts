@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/style/noProcessEnv: <usage in env config is acceptable> */
 
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeValidationError } from "@/shared/errors/factories/app-error";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

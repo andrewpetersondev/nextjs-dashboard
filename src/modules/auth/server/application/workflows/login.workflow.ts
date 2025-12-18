@@ -6,7 +6,7 @@ import type { SessionPrincipal } from "@/modules/auth/server/application/types/s
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeValidationError } from "@/shared/errors/factories/app-error";
+import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 

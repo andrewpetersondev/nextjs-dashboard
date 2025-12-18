@@ -12,7 +12,7 @@ import type { AppError } from "@/shared/errors/core/app-error";
 import {
   makeUnexpectedErrorFromUnknown,
   makeValidationError,
-} from "@/shared/errors/factories/app-error";
+} from "@/shared/errors/factories/app-error.factory";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";

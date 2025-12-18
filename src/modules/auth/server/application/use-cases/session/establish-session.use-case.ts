@@ -7,7 +7,7 @@ import type {
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import { SESSION_DURATION_MS } from "@/modules/auth/server/contracts/session.policy.constants";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error";
+import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

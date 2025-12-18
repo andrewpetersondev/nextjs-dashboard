@@ -1,4 +1,4 @@
-import type { AppErrorDefinition } from "@/shared/errors/core/definitions";
+import type { AppErrorDefinition } from "@/shared/errors/core/app-error.definitions";
 
 /**
  * Canonical error code definitions organized by logical layer.

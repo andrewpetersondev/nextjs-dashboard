@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeAppError } from "@/shared/errors/factories/app-error";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 export function toSignupUniquenessConflict(error: AppError): AppError | null {
   if (error.code !== "integrity") {

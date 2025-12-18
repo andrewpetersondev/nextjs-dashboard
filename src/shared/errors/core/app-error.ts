@@ -4,11 +4,14 @@ import {
   getAppErrorCodeMeta,
 } from "@/shared/errors/catalog/app-error.registry";
 import type {
+  AppErrorLayer,
+  Severity,
+} from "@/shared/errors/core/app-error.definitions";
+import type {
   AppErrorJson,
   AppErrorOptions,
   ErrorMetadata,
 } from "@/shared/errors/core/app-error.types";
-import type { AppErrorLayer, Severity } from "@/shared/errors/core/definitions";
 import {
   buildUnknownValueMetadata,
   deepFreezeDev,

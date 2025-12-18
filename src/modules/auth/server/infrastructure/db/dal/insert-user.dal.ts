@@ -5,7 +5,7 @@ import { executeDalResult } from "@/server/db/dal/execute-dal-result";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeIntegrityError } from "@/shared/errors/factories/app-error";
+import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result.types";
 
