@@ -36,7 +36,9 @@ export async function loginAction(
   formData: FormData,
 ): Promise<FormResult<LoginField>> {
   const requestId = crypto.randomUUID();
+
   const { ip, userAgent } = await getRequestMetadata();
+
   const tracker = new PerformanceTracker();
 
   const logger = defaultLogger
@@ -79,6 +81,7 @@ export async function loginAction(
     logger,
     requestId,
   );
+
   const sessionService = createSessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
@@ -95,25 +98,21 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
-    const isCredentialFailure =
-      error.code === "invalidCredentials" || error.code === "notFound";
+    const { fieldErrors, message } =
+      adaptAppErrorToFormPayload<LoginField>(error);
 
-    if (isCredentialFailure) {
-      const msg = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
-
+    // If it's a credential error (unified by the workflow), apply to both fields for security
+    if (error.code === "invalidCredentials") {
       return formError<LoginField>({
         code: error.code,
         fieldErrors: {
-          email: [msg],
-          password: [msg],
+          email: [message],
+          password: [message],
         },
-        message: msg,
+        message,
         values: input,
       });
     }
-
-    const { fieldErrors, message } =
-      adaptAppErrorToFormPayload<LoginField>(error);
 
     return formError<LoginField>({
       code: error.code,

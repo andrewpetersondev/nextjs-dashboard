@@ -4,7 +4,9 @@ import type { AuthUserService } from "@/modules/auth/server/application/services
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import type { AppError } from "@/shared/errors/core/app-error";
+import { makeValidationError } from "@/shared/errors/factories/app-error";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -13,8 +15,8 @@ import type { Result } from "@/shared/result/result.types";
  * - authenticate user credentials
  * - establish a session for the authenticated user
  *
- * Expected failures are returned as Result values.
- * Unexpected failures should be handled by inner layers as AppError("unexpected") mapping.
+ * Maps specific authentication failures to a unified credential error
+ * to protect against account enumeration.
  */
 export async function loginWorkflow(
   input: Readonly<LoginData>,
@@ -26,7 +28,22 @@ export async function loginWorkflow(
   const authResult = await deps.authUserService.login(input);
 
   if (!authResult.ok) {
-    return Err(authResult.error);
+    const error = authResult.error;
+    const isCredentialFailure =
+      error.code === "invalidCredentials" || error.code === "notFound";
+
+    if (isCredentialFailure) {
+      return Err(
+        makeValidationError({
+          message: AUTH_ERROR_MESSAGES.LOGIN_FAILED,
+          metadata: {
+            code: "invalidCredentials",
+          },
+        }),
+      );
+    }
+
+    return Err(error);
   }
 
   const user: SessionPrincipal = {
