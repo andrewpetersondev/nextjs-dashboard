@@ -1,4 +1,9 @@
-import type { NonEmptyArray } from "@/shared/forms/types/form-utils.types";
+/**
+ * Array that is guaranteed to contain at least one element.
+ *
+ * @typeParam T - The type of elements in the array.
+ */
+export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
 /**
  * Represents an error associated with a field as a non-empty array of messages.

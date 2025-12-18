@@ -1,6 +1,9 @@
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { FormErrorMetadata } from "@/shared/errors/core/types";
-import type { FieldErrors, FormErrors } from "@/shared/forms/types/form.types";
+import type {
+  FieldErrors,
+  FormErrors,
+} from "@/shared/forms/types/field-error.value";
 
 /**
  * Type guard to check if error metadata contains form errors.

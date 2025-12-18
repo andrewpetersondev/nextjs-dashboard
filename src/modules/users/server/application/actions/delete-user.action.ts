@@ -1,12 +1,13 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { formError } from "@/shared/forms/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

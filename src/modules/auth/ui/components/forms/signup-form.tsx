@@ -12,10 +12,12 @@ import {
 } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
-import { getFieldValues } from "@/shared/forms/utilities/get-field-values";
+import {
+  extractFieldErrors,
+  extractFieldValues,
+} from "@/shared/forms/infrastructure/form-error-inspector";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
@@ -47,11 +49,11 @@ export const SignupForm: FC<SignupFormProps> = ({
 
   const fieldErrors = state.ok
     ? undefined
-    : getFieldErrors<SignupField>(state.error);
+    : extractFieldErrors<SignupField>(state.error);
 
   const values = state.ok
     ? undefined
-    : getFieldValues<SignupField>(state.error);
+    : extractFieldValues<SignupField>(state.error);
 
   return (
     <>

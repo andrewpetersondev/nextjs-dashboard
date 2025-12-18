@@ -1,4 +1,5 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";
@@ -15,18 +16,18 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
-import { isZodErrorInstance } from "@/shared/forms/infrastructure/zod/zod-guards";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
 import {
   formError,
   formOk,
-} from "@/shared/forms/utilities/factories/create-form-result.factory";
+} from "@/shared/forms/factories/form-result.factory";
+import { isZodErrorInstance } from "@/shared/forms/guards/zod.guard";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
-const allowed = deriveFieldNamesFromSchema(CreateInvoiceSchema);
+const allowed = toFieldNames(CreateInvoiceSchema);
 
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;

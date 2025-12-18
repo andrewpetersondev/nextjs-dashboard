@@ -1,4 +1,5 @@
 "use client";
+
 import {
   AtSymbolIcon,
   LockClosedIcon,
@@ -10,9 +11,9 @@ import { createUserAction } from "@/modules/users/server/application/actions/cre
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { useFormMessage } from "@/shared/forms/hooks/use-form-message";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
+import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
@@ -105,7 +106,7 @@ export function CreateUserForm(): JSX.Element {
 
   const fieldErrors = state.ok
     ? undefined
-    : getFieldErrors<CreateUserFieldNames>(state.error);
+    : extractFieldErrors<CreateUserFieldNames>(state.error);
 
   return (
     <div>

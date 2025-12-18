@@ -1,5 +1,5 @@
 import React from "react";
-import type { FieldError } from "@/shared/forms/types/form.types";
+import type { FieldError } from "@/shared/forms/types/field-error.value";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 import { cn } from "@/ui/utils/cn";
 

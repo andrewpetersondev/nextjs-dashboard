@@ -13,14 +13,14 @@ import {
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
-import { validateForm } from "@/shared/forms/server/validate-form";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/utilities/factories/create-error-map.factory";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/utilities/factories/create-form-result.factory";
+} from "@/shared/forms/factories/form-result.factory";
+import { resolveCanonicalFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
+import { validateForm } from "@/shared/forms/server/validate-form.action";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
@@ -46,7 +46,7 @@ function idInvalidResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
   return formError<F>({
-    fieldErrors: createEmptyDenseFieldErrorMap(fields),
+    fieldErrors: makeEmptyDenseFieldErrorMap(fields),
     message: USER_ERROR_MESSAGES.validationFailed,
   });
 }
@@ -55,7 +55,7 @@ function notFoundResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
   return formError<F>({
-    fieldErrors: createEmptyDenseFieldErrorMap(fields),
+    fieldErrors: makeEmptyDenseFieldErrorMap(fields),
     message: USER_ERROR_MESSAGES.notFound,
   });
 }
@@ -109,7 +109,7 @@ export async function updateUserAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
 ): Promise<FormResult<unknown>> {
-  const fields = resolveCanonicalFieldNamesFromSchema<
+  const fields = resolveCanonicalFieldNames<
     EditUserData,
     EditUserFormFieldNames
   >(EditUserFormSchema);
@@ -154,7 +154,7 @@ export async function updateUserAction(
 
     if (!result.ok) {
       return formError<EditUserFormFieldNames>({
-        fieldErrors: createEmptyDenseFieldErrorMap(fields),
+        fieldErrors: makeEmptyDenseFieldErrorMap(fields),
         message: result.error.message || USER_ERROR_MESSAGES.updateFailed,
       });
     }
@@ -163,7 +163,7 @@ export async function updateUserAction(
     return formOk(result.value, USER_SUCCESS_MESSAGES.updateSuccess);
   } catch (_error: unknown) {
     return formError<EditUserFormFieldNames>({
-      fieldErrors: createEmptyDenseFieldErrorMap(fields),
+      fieldErrors: makeEmptyDenseFieldErrorMap(fields),
       message: USER_ERROR_MESSAGES.unexpected,
     });
   }

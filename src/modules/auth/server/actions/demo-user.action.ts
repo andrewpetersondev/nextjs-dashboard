@@ -8,8 +8,8 @@ import { createDemoUserWorkflow } from "@/modules/auth/server/application/workfl
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { formError } from "@/shared/forms/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";

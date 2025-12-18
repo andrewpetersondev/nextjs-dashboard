@@ -14,9 +14,9 @@ import {
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
-import { validateForm } from "@/shared/forms/server/validate-form";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { formError } from "@/shared/forms/factories/form-result.factory";
+import { validateForm } from "@/shared/forms/server/validate-form.action";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";

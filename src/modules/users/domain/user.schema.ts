@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { USER_ROLES } from "@/modules/auth/shared/domain/user/auth.roles";
-import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
+import { toSchemaKeys } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import { EmailSchema } from "@/shared/validation/zod/email.schema";
 import { PasswordSchema } from "@/shared/validation/zod/password.schema";
 import { UsernameSchema } from "@/shared/validation/zod/username.schema";
@@ -72,5 +72,5 @@ export type EditUserData = z.output<typeof EditUserFormSchema>;
 export type CreateUserFormField = keyof CreateUserData;
 export type EditUserFormField = keyof EditUserData;
 
-export const CREATE_USER_FIELDS_LIST = getSchemaKeys(CreateUserFormSchema);
-export const EDIT_USER_FIELDS_LIST = getSchemaKeys(EditUserFormSchema);
+export const CREATE_USER_FIELDS_LIST = toSchemaKeys(CreateUserFormSchema);
+export const EDIT_USER_FIELDS_LIST = toSchemaKeys(EditUserFormSchema);

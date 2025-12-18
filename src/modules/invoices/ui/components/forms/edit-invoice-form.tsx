@@ -1,4 +1,5 @@
 "use client";
+
 import { type JSX, useActionState, useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import {
@@ -14,13 +15,13 @@ import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
+import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
 import type {
   DenseFieldErrorMap,
   FieldError,
-} from "@/shared/forms/types/form.types";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
+} from "@/shared/forms/types/field-error.value";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
 import { useAutoHideAlert } from "@/ui/hooks/useAutoHideAlert";
@@ -117,11 +118,11 @@ export const EditInvoiceForm = ({
 
   const stateFieldErrors = state.ok
     ? undefined
-    : getFieldErrors<UpdateInvoiceFieldNames>(state.error);
+    : extractFieldErrors<UpdateInvoiceFieldNames>(state.error);
 
   const emptyErrors = initialState.ok
     ? undefined
-    : getFieldErrors<UpdateInvoiceFieldNames>(initialState.error);
+    : extractFieldErrors<UpdateInvoiceFieldNames>(initialState.error);
 
   const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string> =
     externalErrors ??

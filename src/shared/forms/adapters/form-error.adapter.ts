@@ -1,7 +1,7 @@
 import type { AppError } from "@/shared/errors/core/app-error";
-import { getFieldErrors } from "@/shared/errors/guards/form-metadata";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
-import type { FormErrorPayload } from "@/shared/forms/types/form-result.types";
+import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value";
+import type { FormErrorPayload } from "@/shared/forms/types/form-result.dto";
 
 /**
  * Adapts an AppError to a form payload with field errors and a message.
@@ -16,9 +16,8 @@ import type { FormErrorPayload } from "@/shared/forms/types/form-result.types";
 export function adaptAppErrorToFormPayload<T extends string>(
   error: AppError,
 ): FormErrorPayload<T> {
-  const sparse = getFieldErrors(error) ?? {};
-  const fieldErrors: DenseFieldErrorMap<T, string> =
-    sparse as DenseFieldErrorMap<T, string>;
+  const fieldErrors =
+    extractFieldErrors<T>(error) ?? ({} as DenseFieldErrorMap<T, string>);
 
   return {
     fieldErrors,

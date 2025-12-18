@@ -3,8 +3,8 @@
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { formError } from "@/shared/forms/utilities/factories/create-form-result.factory";
+import { formError } from "@/shared/forms/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {

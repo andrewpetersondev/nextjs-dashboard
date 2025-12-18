@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getSchemaKeys } from "@/shared/forms/utilities/get-schema-keys";
+import { toSchemaKeys } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import { EmailSchema } from "@/shared/validation/zod/email.schema";
 import { PasswordSchema } from "@/shared/validation/zod/password.schema";
 import { UsernameSchema } from "@/shared/validation/zod/username.schema";
@@ -48,5 +48,5 @@ export type LoginField = keyof LoginData;
 /** Field names for type-safe error handling in UI */
 export type SignupField = keyof SignupData;
 
-export const LOGIN_FIELDS_LIST = getSchemaKeys(LoginSchema);
-export const SIGNUP_FIELDS_LIST = getSchemaKeys(SignupSchema);
+export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginSchema);
+export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupSchema);

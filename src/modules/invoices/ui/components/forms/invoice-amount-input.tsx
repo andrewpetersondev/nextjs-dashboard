@@ -1,6 +1,6 @@
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import type { InputHTMLAttributes, JSX } from "react";
-import type { FieldError } from "@/shared/forms/types/form.types";
+import type { FieldError } from "@/shared/forms/types/field-error.value";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 

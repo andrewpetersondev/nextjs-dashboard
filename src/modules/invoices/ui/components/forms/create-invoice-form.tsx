@@ -1,4 +1,5 @@
 "use client";
+
 import { type JSX, useActionState, useEffect, useId, useRef } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { getCurrentIsoDate } from "@/modules/invoices/domain/invoice.date-utils";
@@ -15,9 +16,9 @@ import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { useFormMessage } from "@/shared/forms/hooks/use-form-message";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { getFieldErrors } from "@/shared/forms/utilities/get-field-errors";
+import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
+import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { ServerMessage } from "@/ui/molecules/server-message";
@@ -110,7 +111,7 @@ export function CreateInvoiceForm({
 
   const fieldErrors = state.ok
     ? undefined
-    : getFieldErrors<CreateInvoiceFieldNames>(state.error);
+    : extractFieldErrors<CreateInvoiceFieldNames>(state.error);
 
   return (
     <div>

@@ -1,0 +1,50 @@
+import type { z } from "zod";
+import { isZodObjectSchema } from "@/shared/forms/guards/zod.guard";
+
+/**
+ * Extracts the string keys from the provided Zod object schema.
+ */
+export function toFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
+  schema: S,
+): readonly Extract<keyof z.output<S>, string>[] {
+  type Keys = Extract<keyof z.output<S>, string>;
+  const keys = Object.keys(schema.shape) as Keys[];
+  return keys as readonly Keys[];
+}
+
+/**
+ * Resolves the canonical array of field names for a Zod schema based on priority.
+ */
+export function resolveCanonicalFieldNames<T, K extends keyof T & string>(
+  schema: z.ZodType<T>,
+  allowedSubset?: readonly K[],
+  explicitFields?: readonly K[],
+): readonly K[] {
+  // Priority 1: explicit whitelist
+  if (explicitFields && explicitFields.length > 0) {
+    return explicitFields;
+  }
+
+  // Priority 2: allowed subset
+  if (allowedSubset && allowedSubset.length > 0) {
+    return allowedSubset;
+  }
+
+  // Priority 3: derive from object schema; otherwise return empty readonly array
+  return isZodObjectSchema(schema)
+    ? (toFieldNames(schema) as readonly K[])
+    : ([] as const);
+}
+
+/**
+ * Derive a frozen, readonly tuple of keys from a Zod object schema.
+ *
+ * Runtime and type-safe
+ * Always in sync with schema
+ * Prevents accidental mutation
+ */
+export function toSchemaKeys<const T extends z.ZodRawShape>(
+  schema: z.ZodObject<T>,
+): readonly (keyof T)[] {
+  return Object.freeze(Object.keys(schema.shape) as readonly (keyof T)[]);
+}

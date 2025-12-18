@@ -1,18 +1,14 @@
-/**
- * Factories for creating form results and form errors.
- */
-
 import type { AppErrorKey } from "@/shared/errors/catalog/registry";
 import type { AppError } from "@/shared/errors/core/app-error";
 import { makeAppError } from "@/shared/errors/factories/app-error";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/types/form.types";
+} from "@/shared/forms/types/field-error.value";
 import type {
   FormResult,
   FormSuccessPayload,
-} from "@/shared/forms/types/form-result.types";
+} from "@/shared/forms/types/form-result.dto";
 import { Err, Ok } from "@/shared/result/result";
 
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);

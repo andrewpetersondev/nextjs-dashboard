@@ -1,4 +1,5 @@
 "use client";
+
 import {
   AtSymbolIcon,
   LockClosedIcon,
@@ -18,9 +19,9 @@ import { updateUserAction } from "@/modules/users/server/application/actions/upd
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { FormActionRow } from "@/shared/forms/components/form-action-row";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/create-initial-form-state";
-import type { FieldError } from "@/shared/forms/types/form.types";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/initial-form-state";
+import type { FieldError } from "@/shared/forms/types/field-error.value";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";

@@ -1,22 +1,21 @@
 import "server-only";
+
 import type { z } from "zod";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
-import { resolveCanonicalFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/resolve-canonical-field-names";
-import {
-  isZodErrorInstance,
-  isZodErrorLikeShape,
-} from "@/shared/forms/infrastructure/zod/zod-guards";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/utilities/factories/create-error-map.factory";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/utilities/factories/create-form-result.factory";
-import { resolveRawFieldPayload } from "@/shared/forms/utilities/resolve-field-payload";
+} from "@/shared/forms/factories/form-result.factory";
+import { resolveFormValidationOptions } from "@/shared/forms/factories/form-validation-options.factory";
 import {
-  type FormValidationOptions,
-  resolveFormValidationOptions,
-} from "@/shared/forms/utilities/resolve-form-validation-options";
+  isZodErrorInstance,
+  isZodErrorLikeShape,
+} from "@/shared/forms/guards/zod.guard";
+import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
+import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
+import { resolveCanonicalFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FormValidationOptions } from "@/shared/forms/types/form-validation.dto";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
@@ -56,7 +55,7 @@ function createValidationFormError<Tfieldnames extends string>(
   const fieldErrors =
     isZodErrorInstance(error) || isZodErrorLikeShape(error)
       ? mapZodErrorToDenseFieldErrors<Tfieldnames>(error as z.ZodError, fields)
-      : createEmptyDenseFieldErrorMap<Tfieldnames, string>(fields);
+      : makeEmptyDenseFieldErrorMap<Tfieldnames, string>(fields);
 
   return formError<Tfieldnames>({
     fieldErrors,
@@ -95,7 +94,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
     successMessage,
   } = resolveFormValidationOptions(options);
 
-  const fields = resolveCanonicalFieldNamesFromSchema<Tin, Tfieldnames>(
+  const fields = resolveCanonicalFieldNames<Tin, Tfieldnames>(
     schema,
     allowedFields,
     explicitFields,

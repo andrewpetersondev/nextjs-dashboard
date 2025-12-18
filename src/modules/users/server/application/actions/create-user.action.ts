@@ -1,4 +1,5 @@
 "use server";
+
 import { normalizeUserRole } from "@/modules/users/domain/role/user.role.parser";
 import {
   USER_ERROR_MESSAGES,
@@ -10,17 +11,17 @@ import {
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { deriveFieldNamesFromSchema } from "@/shared/forms/infrastructure/zod/derive-field-names-from-schema";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
 import {
-  createEmptyDenseFieldErrorMap,
+  makeEmptyDenseFieldErrorMap,
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/utilities/factories/create-error-map.factory";
+} from "@/shared/forms/factories/field-error-map.factory";
 import {
   formError,
   formOk,
-} from "@/shared/forms/utilities/factories/create-form-result.factory";
+} from "@/shared/forms/factories/form-result.factory";
+import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;
@@ -44,7 +45,7 @@ export async function createUserAction(
   formData: FormData,
 ): Promise<FormResult<unknown>> {
   const db = getAppDb();
-  const allowed = deriveFieldNamesFromSchema(CreateUserFormSchema);
+  const allowed = toFieldNames(CreateUserFormSchema);
 
   try {
     const raw = pickCreateUserFormData(formData);
@@ -77,7 +78,7 @@ export async function createUserAction(
 
     if (!result.ok) {
       return formError({
-        fieldErrors: createEmptyDenseFieldErrorMap(allowed),
+        fieldErrors: makeEmptyDenseFieldErrorMap(allowed),
         message: result.error.message || USER_ERROR_MESSAGES.createFailed,
       });
     }

@@ -1,8 +1,8 @@
 import type { z } from "zod";
 import { AppError } from "@/shared/errors/core/app-error";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/form.types";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
-import { createEmptyDenseFieldErrorMap } from "@/shared/forms/utilities/factories/create-error-map.factory";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { Err } from "@/shared/result/result";
 
 /**
@@ -15,7 +15,7 @@ export function createInitialFailedFormState<T extends string>(
   fieldNames: readonly T[],
 ): FormResult<never> {
   const fieldErrors: DenseFieldErrorMap<T, string> =
-    createEmptyDenseFieldErrorMap<T, string>(fieldNames);
+    makeEmptyDenseFieldErrorMap<T, string>(fieldNames);
 
   const error = new AppError("validation", {
     // no message shown in UI; this is just an "empty" validation state

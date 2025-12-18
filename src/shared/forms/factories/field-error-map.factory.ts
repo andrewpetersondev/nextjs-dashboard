@@ -1,12 +1,8 @@
-/**
- * Factories for creating and transforming field error maps.
- */
-
+import { isNonEmptyArray } from "@/shared/forms/guards/form-result.guard";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
-} from "@/shared/forms/types/form.types";
-import { isNonEmptyArray } from "@/shared/forms/types/form-utils.types";
+} from "@/shared/forms/types/field-error.value";
 
 /**
  * Creates an empty dense error map (all fields present with empty arrays).
@@ -16,10 +12,9 @@ import { isNonEmptyArray } from "@/shared/forms/types/form-utils.types";
  * @param fields - Array of allowed field names.
  * @returns A frozen {@link DenseFieldErrorMap} with each field mapped to an empty array.
  */
-export function createEmptyDenseFieldErrorMap<
-  T extends string,
-  M extends string,
->(fields: readonly T[]): DenseFieldErrorMap<T, M> {
+export function makeEmptyDenseFieldErrorMap<T extends string, M extends string>(
+  fields: readonly T[],
+): DenseFieldErrorMap<T, M> {
   const result: Partial<Record<T, readonly M[]>> = {};
 
   for (const field of fields) {

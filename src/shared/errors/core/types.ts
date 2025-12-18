@@ -1,6 +1,9 @@
 import type { AppErrorKey } from "@/shared/errors/catalog/registry";
 import type { AppErrorLayer, Severity } from "@/shared/errors/core/definitions";
-import type { FieldErrors, FormErrors } from "@/shared/forms/types/form.types";
+import type {
+  FieldErrors,
+  FormErrors,
+} from "@/shared/forms/types/field-error.value";
 
 /**
  * Generic error metadata container.

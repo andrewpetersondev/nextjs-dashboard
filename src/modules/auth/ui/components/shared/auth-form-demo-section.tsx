@@ -9,7 +9,7 @@ import {
   DEMO_USER_LABEL,
 } from "@/modules/auth/shared/ui/auth.tokens";
 import { DemoForm } from "@/modules/auth/ui/components/forms/demo-form";
-import type { FormResult } from "@/shared/forms/types/form-result.types";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
 
 interface AuthFormDemoSectionProps {
   readonly demoAdminText: string;
