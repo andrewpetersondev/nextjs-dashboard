@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { DalContextLite } from "@/server/db/dal/execute-dal-or-throw";
+import type { DalContextLite } from "@/server/db/dal/execute-dal-throw";
 import { normalizePgError } from "@/shared/errors/adapters/postgres/normalize-pg-error";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
@@ -12,11 +12,11 @@ export interface ExecuteDalResultCoreOptions {
 }
 
 /**
- * Executes a DAL thunk and returns `Result` instead of throwing.
+ * Executes a DAL thunk and returns `Result` for expected failures.
  *
  * @remarks
- * - Use this for **expected infra failures as values** (Result-first).
- * - Still logs the normalized AppError.
+ * Normalizes errors to AppError (e.g., via makeDatabaseError internally)
+ * for consistent handling as values. Logs but does not throw.
  */
 export async function executeDalResult<T>(
   thunk: () => Promise<T>,

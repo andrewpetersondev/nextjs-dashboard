@@ -10,21 +10,11 @@ import type {
 import type { DbErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
 
 /**
- * Canonical factory for creating `AppError` instances.
+ * Converts an arbitrary unknown error into an AppError using a fallback code.
  *
- * No defaults: callers must choose message + metadata explicitly.
- */
-export function makeAppError(
-  code: AppErrorKey,
-  options: AppErrorOptions,
-): AppError {
-  return new AppError(code, options);
-}
-
-/**
- * Normalize an unknown value into a AppError using {@link AppError.from}.
- *
- * No default fallback code: the caller must decide how to classify the unknown.
+ * @remarks
+ * Ensures all errors are normalized to AppError for consistent handling,
+ * preserving metadata where possible. Use at boundaries to wrap external errors.
  */
 export function makeAppErrorFromUnknown(
   error: unknown,
@@ -34,11 +24,25 @@ export function makeAppErrorFromUnknown(
 }
 
 /**
- * Normalize an unknown value into an `unexpected` AppError.
+ * Creates a new AppError with the specified code and options.
  *
  * @remarks
- * Intentionally does not default the message: callers must provide a condition key
- * to avoid silent fallbacks and configuration drift.
+ * Base factory for constructing domain-friendly errors. Ensures stable codes
+ * and metadata for classification without subclasses.
+ */
+export function makeAppError(
+  code: AppErrorKey,
+  options: AppErrorOptions,
+): AppError {
+  return new AppError(code, options);
+}
+
+/**
+ * Wraps an unknown error as an unexpected AppError, merging metadata.
+ *
+ * @remarks
+ * For handling programmer errors or invariants—typically thrown, not returned
+ * as Result, to signal unrecoverable states.
  */
 export function makeUnexpectedErrorFromUnknown(
   error: unknown,
@@ -59,21 +63,33 @@ export function makeUnexpectedErrorFromUnknown(
 }
 
 /**
- * Convenience factory for validation errors with form metadata.
+ * Creates a validation-specific AppError.
+ *
+ * @remarks
+ * Convenience for expected failures like form or schema validation. Attach
+ * field/form errors in metadata for UI handling.
  */
 export function makeValidationError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, options);
 }
 
 /**
- * Convenience factory for infrastructure errors.
+ * Creates an infrastructure-specific AppError.
+ *
+ * @remarks
+ * For expected technical issues (e.g., network, config) at adapter layers.
+ * Normalize and return as Result.Err to treat as values.
  */
 export function makeInfrastructureError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.infrastructure, options);
 }
 
 /**
- * Convenience factory for database errors.
+ * Creates a database-specific AppError with required metadata.
+ *
+ * @remarks
+ * For DB failures like queries or constraints. Use with normalization utils
+ * (e.g., normalizePgError) to map vendor errors.
  */
 export function makeDatabaseError(
   options: Omit<AppErrorOptions, "metadata"> & {
@@ -84,7 +100,11 @@ export function makeDatabaseError(
 }
 
 /**
- * Convenience factory for integrity errors.
+ * Creates an integrity-specific AppError.
+ *
+ * @remarks
+ * For violations like duplicates or referential issues. Throw for unexpected
+ * invariants; otherwise, return as Result.Err.
  */
 export function makeIntegrityError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.integrity, options);

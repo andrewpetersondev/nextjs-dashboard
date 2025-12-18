@@ -9,7 +9,11 @@ import {
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
- * Creates a specific AppError based on a successful Postgres mapping.
+ * Builds an AppError from a mapped Postgres error, merging metadata.
+ *
+ * @remarks
+ * Used internally to create specific errors (e.g., integrity violations)
+ * with preserved PG details for diagnostics.
  */
 function createMappedPgError(
   err: unknown,
@@ -27,7 +31,11 @@ function createMappedPgError(
 }
 
 /**
- * Creates a generic fallback database error when mapping fails.
+ * Builds a fallback AppError for unmapped or non-Postgres errors.
+ *
+ * @remarks
+ * Ensures all failures are wrapped as database errors, preventing raw
+ * errors from propagating. Adds context for logging/tracing.
  */
 function createGenericDbError(
   err: unknown,
@@ -41,10 +49,12 @@ function createGenericDbError(
 }
 
 /**
- * Normalize a Postgres error into a AppError with rich metadata.
+ * Normalizes any error to an AppError, extracting Postgres metadata if present.
  *
- * Preserves all Postgres metadata while mapping to appropriate app error code.
- * If not a Postgres error, returns a generic database error.
+ * @remarks
+ * Adapter-layer utility for DALs: Maps PG codes to app codes, preserves details
+ * like constraints/tables for expected failures (e.g., unique violations).
+ * Use in try-catch to treat DB issues as values via Result.
  */
 export function normalizePgError(
   err: unknown,
