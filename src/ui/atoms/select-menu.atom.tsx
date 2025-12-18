@@ -51,7 +51,7 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
     className,
     dataCy,
     defaultValue,
-    disabled = false,
+    disabled,
     error,
     errorId,
     icon: Icon,
@@ -59,12 +59,11 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
     name,
     onChange,
     options,
-    placeholder = "Select an option",
+    placeholder,
     required,
     value,
   }: SelectMenuProps<T>): React.ReactElement {
-    const errorDescriptionId =
-      error && error.length > 0 ? (errorId ?? `${name}-error`) : undefined;
+    const errorDescriptionId = error && error.length > 0 ? errorId : undefined;
 
     return (
       <div className="relative flex items-center">
@@ -76,15 +75,13 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
             className,
           )}
           data-cy={dataCy}
-          // --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
-          defaultValue={value === undefined ? defaultValue : undefined}
+          defaultValue={defaultValue}
           disabled={disabled}
           id={id}
           name={name}
           onChange={onChange}
           required={required}
-          // --- Controlled: use value if provided, else fallback to defaultValue (uncontrolled) ---
-          value={value !== undefined ? value : undefined}
+          value={value}
         >
           <option disabled={true} value="">
             {placeholder}

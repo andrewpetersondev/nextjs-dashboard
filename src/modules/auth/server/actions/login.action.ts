@@ -101,15 +101,17 @@ export async function loginAction(
 
     const { fieldErrors, message } = toFormErrorPayload<LoginField>(error);
 
-    // If it's a credential error (unified by the workflow), apply to both fields for security
+    // Unified security response for credential failures
     if (error.code === "invalidCredentials") {
+      const credentialsErrorMessage = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
+
       return makeFormError<LoginField>({
         code: error.code,
         fieldErrors: {
-          email: [message],
-          password: [message],
+          email: [credentialsErrorMessage],
+          password: [credentialsErrorMessage],
         },
-        message,
+        message: credentialsErrorMessage,
         values: input,
       });
     }
@@ -117,7 +119,7 @@ export async function loginAction(
     return makeFormError<LoginField>({
       code: error.code,
       fieldErrors,
-      message: message || AUTH_ERROR_MESSAGES.LOGIN_FAILED,
+      message,
       values: input,
     });
   }

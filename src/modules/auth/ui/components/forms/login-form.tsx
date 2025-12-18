@@ -6,6 +6,7 @@ import {
   LOGIN_FIELDS_LIST,
   type LoginField,
 } from "@/modules/auth/shared/domain/user/auth.schema";
+import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import {
@@ -13,7 +14,6 @@ import {
   extractFieldValues,
 } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
-import type { FormAction } from "@/shared/forms/types/form-action.dto";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { FormAlert } from "@/ui/molecules/form-alert";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
@@ -23,10 +23,6 @@ import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 const INITIAL_STATE =
   createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
 
-interface LoginFormProps {
-  action: FormAction<LoginField>;
-}
-
 interface LoginFormFeedbackProps {
   state: FormResult<LoginField>;
 }
@@ -35,22 +31,30 @@ function LoginFormFeedback({
   state,
 }: LoginFormFeedbackProps): JSX.Element | null {
   if (state.ok) {
-    return state.value.message ? (
+    if (state.value.message === undefined) {
+      return null;
+    }
+
+    return (
       <FormAlert
-        dataCy="auth-server-message"
+        dataCy="auth-server-message-success"
         message={state.value.message}
         type="success"
       />
-    ) : null;
+    );
   }
 
-  return state.error.message ? (
+  if (state.error.message === undefined) {
+    return null;
+  }
+
+  return (
     <FormAlert
-      dataCy="auth-server-message"
+      dataCy="auth-server-message-error"
       message={state.error.message}
       type="error"
     />
-  ) : null;
+  );
 }
 
 /**
@@ -58,9 +62,9 @@ function LoginFormFeedback({
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-export const LoginForm: FC<LoginFormProps> = ({
+export const LoginForm: FC<AuthActionProps> = ({
   action,
-}: LoginFormProps): JSX.Element => {
+}: AuthActionProps): JSX.Element => {
   const [state, boundAction, pending] = useActionState<
     FormResult<LoginField>,
     FormData
@@ -87,9 +91,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           autoComplete="email"
           autoFocus={true}
           dataCy="login-email-input"
-          defaultValue={values?.email}
+          defaultValue={values ? values.email : undefined}
           describedById={`${emailId}-errors`}
-          error={fieldErrors?.email}
+          error={fieldErrors ? fieldErrors.email : undefined}
           icon={
             <AtSymbolIcon aria-hidden="true" className={INPUT_ICON_CLASS} />
           }
