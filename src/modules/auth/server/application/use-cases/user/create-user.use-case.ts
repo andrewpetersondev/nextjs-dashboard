@@ -8,33 +8,10 @@ import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error";
-import {
-  makeUnexpectedErrorFromUnknown,
-  makeValidationError,
-} from "@/shared/errors/factories/app-error";
+import { makeUnexpectedErrorFromUnknown } from "@/shared/errors/factories/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
-
-// TODO: should i move this function to a shared location? why do i need this at all?
-function hasRequiredSignupFields(
-  input: Partial<SignupData> | null | undefined,
-): input is SignupData {
-  if (!input) {
-    return false;
-  }
-
-  const { email, password, username } = input;
-
-  return Boolean(
-    email &&
-      email.trim().length > 0 &&
-      password &&
-      password.length > 0 &&
-      username &&
-      username.trim().length > 0,
-  );
-}
 
 export class CreateUserUseCase {
   private readonly hasher: HashingService;
@@ -46,24 +23,19 @@ export class CreateUserUseCase {
     hasher: HashingService,
     logger: LoggingClientContract,
   ) {
-    this.uow = uow;
     this.hasher = hasher;
     this.logger = logger.child({ scope: "use-case", useCase: "createUser" });
+    this.uow = uow;
   }
 
+  /**
+   * Executes the user creation process.
+   * Assumes input has been validated at the boundary.
+   */
   async execute(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const logger = this.logger.child({ email: input.email });
-
-    if (!hasRequiredSignupFields(input)) {
-      return Err(
-        makeValidationError({
-          message: "Missing required signup fields",
-          metadata: { input },
-        }),
-      );
-    }
 
     try {
       const passwordHash = await this.hasher.hash(input.password);

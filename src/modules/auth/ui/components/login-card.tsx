@@ -1,16 +1,22 @@
 import type { JSX } from "react";
 import { demoUserActionAdapter } from "@/modules/auth/server/actions/demo-user.action";
-import { loginAction } from "@/modules/auth/server/actions/login.action";
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/shared/ui/auth.tokens";
-import { LoginForm } from "@/modules/auth/ui/components/forms/login-form";
+import {
+  LoginForm,
+  type LoginFormAction,
+} from "@/modules/auth/ui/components/forms/login-form";
 import { AuthFormDemoSection } from "@/modules/auth/ui/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/ui/components/shared/auth-form-social-section";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
-export function LoginCard(): JSX.Element {
+interface LoginCardProps {
+  action: LoginFormAction;
+}
+
+export function LoginCard({ action }: LoginCardProps): JSX.Element {
   return (
     <div className="bg-bg-primary px-6 py-12 shadow-sm sm:rounded-lg sm:px-12">
-      <LoginForm action={loginAction} />
+      <LoginForm action={action} />
       <DividerAtom label={AUTH_DIVIDER_LABEL} />
       <AuthFormDemoSection
         demoAdminText="Login as Demo Admin"

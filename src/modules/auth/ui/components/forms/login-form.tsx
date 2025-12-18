@@ -21,14 +21,20 @@ const INITIAL_STATE =
   createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
 
 interface LoginFormProps {
-  action: (
-    _prevState: FormResult<LoginField>,
-    formData: FormData,
-  ) => Promise<FormResult<LoginField>>;
+  action: LoginFormAction;
 }
 
 /**
+ * Contract for the login form action.
+ */
+export type LoginFormAction = (
+  _prevState: FormResult<LoginField>,
+  formData: FormData,
+) => Promise<FormResult<LoginField>>;
+
+/**
  * LoginForm component for user authentication.
+ * Follows Hexagonal Adapter pattern for UI boundaries.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately>
 export const LoginForm: FC<LoginFormProps> = ({
