@@ -1,4 +1,7 @@
-import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
+import {
+  APP_ERROR_KEYS,
+  type AppErrorKey,
+} from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error";
 import type {
   AppErrorOptions,
@@ -33,20 +36,21 @@ export function makeAppErrorFromUnknown(
 /**
  * Normalize an unknown value into an `unexpected` AppError.
  *
- * Keep this as the recommended catch-block helper.
+ * @remarks
+ * Intentionally does not default the message: callers must provide a condition key
+ * to avoid silent fallbacks and configuration drift.
  */
 export function makeUnexpectedErrorFromUnknown(
   error: unknown,
-  options: Omit<AppErrorOptions, "cause"> &
-    Partial<Pick<AppErrorOptions, "message">> & {
-      readonly metadata?: ErrorMetadata;
-    },
+  options: Omit<AppErrorOptions, "cause"> & {
+    readonly metadata?: ErrorMetadata;
+  },
 ): AppError {
-  const base = makeAppErrorFromUnknown(error, "unexpected");
+  const base = makeAppErrorFromUnknown(error, APP_ERROR_KEYS.unexpected);
 
-  return makeAppError("unexpected", {
+  return makeAppError(APP_ERROR_KEYS.unexpected, {
     cause: base.originalCause,
-    message: options.message ?? base.message,
+    message: options.message,
     metadata: {
       ...base.metadata,
       ...(options.metadata ?? {}),
@@ -58,14 +62,14 @@ export function makeUnexpectedErrorFromUnknown(
  * Convenience factory for validation errors with form metadata.
  */
 export function makeValidationError(options: AppErrorOptions): AppError {
-  return makeAppError("validation", options);
+  return makeAppError(APP_ERROR_KEYS.validation, options);
 }
 
 /**
  * Convenience factory for infrastructure errors.
  */
 export function makeInfrastructureError(options: AppErrorOptions): AppError {
-  return makeAppError("infrastructure", options);
+  return makeAppError(APP_ERROR_KEYS.infrastructure, options);
 }
 
 /**
@@ -76,12 +80,12 @@ export function makeDatabaseError(
     metadata: DbErrorMetadata;
   },
 ): AppError {
-  return makeAppError("database", options);
+  return makeAppError(APP_ERROR_KEYS.database, options);
 }
 
 /**
  * Convenience factory for integrity errors.
  */
 export function makeIntegrityError(options: AppErrorOptions): AppError {
-  return makeAppError("integrity", options);
+  return makeAppError(APP_ERROR_KEYS.integrity, options);
 }
