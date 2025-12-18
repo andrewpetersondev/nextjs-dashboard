@@ -1,7 +1,7 @@
 import "server-only";
 
+import { normalizePgError } from "@/shared/errors/adapters/postgres/normalize-pg-error";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { normalizePgError } from "@/shared/errors/integrations/postgres/normalize-pg-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 export type DalIdentifiers = Record<string, number | string>;

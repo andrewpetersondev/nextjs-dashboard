@@ -1,8 +1,8 @@
 import {
   PG_CODE_TO_META,
   type PgCode,
-} from "@/shared/errors/integrations/postgres/pg-codes";
-import type { PgErrorMetadata } from "@/shared/errors/integrations/postgres/pg-types";
+} from "@/shared/errors/adapters/postgres/pg-codes";
+import type { PgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-types";
 import { flattenErrorChain } from "@/shared/errors/utils/error-chain";
 
 function extractMetadataFromObject(

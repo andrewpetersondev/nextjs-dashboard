@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { DalContextLite } from "@/server/db/dal/execute-dal-or-throw";
+import { normalizePgError } from "@/shared/errors/adapters/postgres/normalize-pg-error";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { normalizePgError } from "@/shared/errors/integrations/postgres/normalize-pg-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

@@ -1,9 +1,9 @@
 import {
   PG_CODE_TO_META,
   type PgCode,
-} from "@/shared/errors/integrations/postgres/pg-codes";
-import { extractPgErrorMetadata } from "@/shared/errors/integrations/postgres/pg-metadata";
-import type { PgErrorMapping } from "@/shared/errors/integrations/postgres/pg-types";
+} from "@/shared/errors/adapters/postgres/pg-codes";
+import { extractPgErrorMetadata } from "@/shared/errors/adapters/postgres/pg-metadata";
+import type { PgErrorMapping } from "@/shared/errors/adapters/postgres/pg-types";
 
 /**
  * Map a Postgres error to app error code + rich metadata.

@@ -1,12 +1,25 @@
 # `src/shared/errors`
 
-Canonical error modeling for the app.
+Canonical error modeling for the app (Ports & Adapters friendly).
 
-This folder exists to make failures:
+This package exists to make failures:
 
-- **traceable** (DB → adapter → AppError → HTTP/UI),
+- **traceable** (DB → adapter → `AppError` → HTTP/UI),
 - **deterministic** (stable shapes; minimal branching),
 - **low cognitive load** (clear responsibilities by folder).
+
+---
+
+## Architectural intent (Hexagonal)
+
+This folder is structured like a small hexagon:
+
+- **Core (inside)**: canonical error type + stable boundary shape
+- **Registry (meaning)**: transport-agnostic error codes and their semantics
+- **Adapters (outside)**: translate foreign failures into/from `AppError`
+- **Utilities/Guards**: helpers for safe narrowing and serialization
+
+**Dependency direction**: adapters/utilities may depend on core/registry, never the other way around.
 
 ---
 
@@ -16,15 +29,16 @@ This folder exists to make failures:
 
 Source of truth:
 
-- `definitions/error-codes.definitions.ts`
-- `registries/error-code.registry.ts`
+- `catalog/definitions.ts` (code definitions grouped by concern)
+- `catalog/registry.ts` (merged registry + lookup helpers)
+- `catalog/conditions.ts` (stable “condition keys” used as messages)
 
 Defines:
 
 - `AppErrorKey`
 - `layer`, `severity`, `retryable`, `description`
 
-**Never** put HTTP status codes or Postgres codes in the registry.
+**Never** put HTTP status codes or Postgres codes into the registry.
 
 ---
 
@@ -35,7 +49,7 @@ Adapters are translation-only:
 - `adapters/postgres/*`: unknown DB error → canonical `AppError`
 - `adapters/http/*`: canonical `AppError` → HTTP payload/status
 
-Adapters must preserve traceability by attaching metadata.
+Adapters must preserve traceability by attaching metadata (no silent fallbacks).
 
 ---
 
@@ -64,12 +78,12 @@ Pipeline:
 
 1. Postgres throws an error containing `code`.
 2. `extractPgErrorMetadata()` extracts `pgCode` and related fields (even through `cause` chains).
-3. `mapPgError()` maps `pgCode → { appCode, condition, pgMetadata }`.
+3. `toPgError()` maps `pgCode → { appCode, condition, pgMetadata }`.
 4. `normalizePgError()` produces the canonical `AppError`:
 
 - `code = appCode`
 - `message = condition`
-- `metadata` includes `pgCode` and any operation context we attach at the DAL boundary
+- `metadata` includes `pgCode` plus optional operation context attached at the DAL boundary
 
 5. HTTP/UI serializes via `AppError.toJson()` and (optionally) maps to transport semantics.
 
@@ -77,11 +91,10 @@ Pipeline:
 
 ## Folder map (where to look)
 
-- `core/`: canonical types + `AppError`
-- `definitions/`: error code definitions by logical group
-- `registries/`: code registry + lookup helpers
-- `factories/`: `AppError` construction helpers (keep them small and explicit)
-- `adapters/`: translation layers (postgres/http)
+- `core/`: canonical types + `AppError` (framework-agnostic core)
+- `catalog/`: transport-agnostic registry (codes, definitions, condition keys)
+- `factories/`: `AppError` construction helpers (small and explicit)
+- `adapters/`: adapters/translation layers (e.g. Postgres, HTTP)
 - `guards/`: safe narrowers for metadata patterns
 - `utils/`: error-chain + serialization helpers
 
@@ -90,6 +103,6 @@ Pipeline:
 ## Rules of thumb
 
 - Prefer **one canonical error type** (`AppError`) over subclasses.
-- Keep **message = condition key** for standardization over time.
-- Avoid optional boundary fields; stability beats convenience.
+- Keep **`message = condition key`** for standardization over time.
+- Keep adapters **pure translators**: map in/out, preserve metadata, avoid business logic.
 - Attach operation context at the **DAL boundary** so it survives to UI.

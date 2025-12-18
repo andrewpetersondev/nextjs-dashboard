@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/useNamingConvention: <bad rule> */
+/** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 
 export const CONDITIONS = {
   db_check_violation: "db_check_violation",

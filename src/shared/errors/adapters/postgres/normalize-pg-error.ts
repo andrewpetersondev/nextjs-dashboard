@@ -1,3 +1,5 @@
+import type { PgOperationMetadata } from "@/shared/errors/adapters/postgres/pg-types";
+import { toPgError } from "@/shared/errors/adapters/postgres/to-pg-error";
 import { CONDITIONS } from "@/shared/errors/catalog/conditions";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { ErrorMetadata } from "@/shared/errors/core/types";
@@ -5,8 +7,6 @@ import {
   makeAppError,
   makeDatabaseError,
 } from "@/shared/errors/factories/app-error";
-import type { PgOperationMetadata } from "@/shared/errors/integrations/postgres/pg-types";
-import { toPgError } from "@/shared/errors/integrations/postgres/to-pg-error";
 
 /**
  * Creates a specific AppError based on a successful Postgres mapping.
