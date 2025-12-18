@@ -14,9 +14,9 @@ describe("toPgError", () => {
     expect(mapping).toBeDefined();
     expect(mapping?.appCode).toBe("conflict");
     expect(mapping?.condition).toBe("pg_unique_violation");
-    expect(mapping?.pgMetadata.pgCode).toBe("23505");
-    expect(mapping?.pgMetadata.constraint).toBe("users_email_key");
-    expect(mapping?.pgMetadata.table).toBe("users");
+    expect(mapping?.metadata.pgCode).toBe("23505");
+    expect(mapping?.metadata.constraint).toBe("users_email_key");
+    expect(mapping?.metadata.table).toBe("users");
   });
 
   it("finds pg error metadata through a cause chain", () => {
@@ -32,8 +32,8 @@ describe("toPgError", () => {
 
     expect(mapping).toBeDefined();
     expect(mapping?.condition).toBe("pg_not_null_violation");
-    expect(mapping?.pgMetadata.pgCode).toBe("23502");
-    expect(mapping?.pgMetadata.column).toBe("email");
+    expect(mapping?.metadata.pgCode).toBe("23502");
+    expect(mapping?.metadata.column).toBe("email");
   });
 
   it("returns undefined for non-postgres errors", () => {

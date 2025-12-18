@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 
+import type { PgErrorDefinition } from "@/shared/errors/adapters/postgres/pg-error.metadata";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
-import type { PgErrorDefinition } from "./pg-error.definition";
 
 /**
  * Registry of known Postgres error codes.
@@ -37,10 +37,8 @@ export const PG_ERROR_MAP = {
 } as const satisfies Record<string, PgErrorDefinition>;
 
 export type PgCode = keyof typeof PG_ERROR_MAP;
-export type PgErrorMeta = (typeof PG_ERROR_MAP)[PgCode];
 
 /**
  * High-performance lookup mapping PG codes to application error metadata.
- * Direct reference to PG_ERROR_MAP ensures 1:1 parity between codes and definitions.
  */
-export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = PG_ERROR_MAP;
+export const PG_CODE_TO_META: Record<PgCode, PgErrorDefinition> = PG_ERROR_MAP;
