@@ -12,13 +12,15 @@ apply: always
 - Sort object literal properties, interfaces, and types alphabetically (Biome style).
 - Avoid re-exports and avoid barrel files.
 - Explicitly type all function arguments and return values.
-- Use TSDoc when generating documentation; avoid JSDoc.
+- Use TSDoc for describing intent and business context; avoid repeating types in @param tags that are already defined in TypeScript. Avoid JSDoc.
 
 ## Follow the project structure
 
 - Organize features under `@/modules/{feature}/{shared,server,ui}`.
-- Use Clean/Hexagonal Architecture
-- Place shared UI in `@/ui` using Atomic Design (atoms, molecules).
+- Use Clean/Hexagonal Architecture.
+- UI Organization:
+  - Place global, reusable UI in `@/ui` using Atomic Design (atoms, molecules).
+  - Place feature-specific UI in `@/modules/{feature}/ui` (can follow Atomic Design if complex, otherwise flat).
 
 ## Handle failures explicitly (Result-first)
 

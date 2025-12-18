@@ -47,14 +47,14 @@ This document standardizes naming across the project to keep code discoverable, 
   | `.port.ts`      | Dependency boundary interface          | Application    |
   | `.record.ts`    | Persistence/Database row shape         | Infrastructure |
   | `.command.ts`   | Input for a use case/workflow          | Application    |
-  | `.result.ts`    | Output of a use case/workflow          | Application    |
+  | `.output.ts`    | Data payload of a use case/workflow    | Application    |
   | `.event.ts`     | Domain or System event fact            | Domain / App   |
   | `.tokens.ts`    | Dependency injection tokens/constants  | Module Root    |
 
   **Guidelines:**
   - **No `*.types.ts` files.** If you have one, split it based on the table above.
-  - **One concept per file.** The filename must match the primary exported type.
-  - **Locality.** Use-case specific types (`.command.ts`, `.result.ts`) sit next to the use case implementation.
+  - **One concept per file.** The filename must match the primary exported type (e.g., `user.entity.ts` exports `User` or `UserEntity`).
+    - **Locality.** Use-case specific types (`.command.ts`, `.output.ts`) sit next to the use case implementation.
 
 ### Folders
 
