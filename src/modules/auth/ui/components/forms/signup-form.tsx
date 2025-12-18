@@ -31,7 +31,37 @@ interface SignupFormProps {
   action: FormAction<SignupField>;
 }
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately, convert to function>
+interface SignupFormFeedbackProps {
+  state: FormResult<SignupField>;
+}
+
+function SignupFormFeedback({
+  state,
+}: SignupFormFeedbackProps): JSX.Element | null {
+  if (state.ok) {
+    return state.value.message ? (
+      <FormAlert
+        dataCy="auth-server-message"
+        message={state.value.message}
+        type="success"
+      />
+    ) : null;
+  }
+
+  return state.error.message ? (
+    <FormAlert
+      dataCy="auth-server-message"
+      message={state.error.message}
+      type="error"
+    />
+  ) : null;
+}
+
+/**
+ * SignupForm component for user registration.
+ * Follows Hexagonal Adapter pattern for UI boundaries.
+ */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export const SignupForm: FC<SignupFormProps> = ({
   action,
 }: SignupFormProps): JSX.Element => {
@@ -45,13 +75,8 @@ export const SignupForm: FC<SignupFormProps> = ({
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
 
-  const fieldErrors = state.ok
-    ? undefined
-    : extractFieldErrors<SignupField>(state.error);
-
-  const values = state.ok
-    ? undefined
-    : extractFieldValues<SignupField>(state.error);
+  const fieldErrors = state.ok ? undefined : extractFieldErrors(state.error);
+  const values = state.ok ? undefined : extractFieldValues(state.error);
 
   return (
     <>
@@ -118,21 +143,7 @@ export const SignupForm: FC<SignupFormProps> = ({
           pending={pending}
         />
       </form>
-      {state.ok
-        ? state.value.message && (
-            <FormAlert
-              dataCy="auth-server-message"
-              message={state.value.message}
-              type="success"
-            />
-          )
-        : state.error.message && (
-            <FormAlert
-              dataCy="auth-server-message"
-              message={state.error.message}
-              type="error"
-            />
-          )}
+      <SignupFormFeedback state={state} />
     </>
   );
 };

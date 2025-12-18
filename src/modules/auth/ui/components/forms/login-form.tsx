@@ -27,11 +27,37 @@ interface LoginFormProps {
   action: FormAction<LoginField>;
 }
 
+interface LoginFormFeedbackProps {
+  state: FormResult<LoginField>;
+}
+
+function LoginFormFeedback({
+  state,
+}: LoginFormFeedbackProps): JSX.Element | null {
+  if (state.ok) {
+    return state.value.message ? (
+      <FormAlert
+        dataCy="auth-server-message"
+        message={state.value.message}
+        type="success"
+      />
+    ) : null;
+  }
+
+  return state.error.message ? (
+    <FormAlert
+      dataCy="auth-server-message"
+      message={state.error.message}
+      type="error"
+    />
+  ) : null;
+}
+
 /**
  * LoginForm component for user authentication.
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix immediately, convert to function>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export const LoginForm: FC<LoginFormProps> = ({
   action,
 }: LoginFormProps): JSX.Element => {
@@ -45,13 +71,8 @@ export const LoginForm: FC<LoginFormProps> = ({
   const passwordId = `${baseId}-password`;
 
   // Extract form details safely from AppError
-  const fieldErrors = state.ok
-    ? undefined
-    : extractFieldErrors<LoginField>(state.error);
-
-  const values = state.ok
-    ? undefined
-    : extractFieldValues<LoginField>(state.error);
+  const fieldErrors = state.ok ? undefined : extractFieldErrors(state.error);
+  const values = state.ok ? undefined : extractFieldValues(state.error);
 
   return (
     <>
@@ -104,21 +125,7 @@ export const LoginForm: FC<LoginFormProps> = ({
           pending={pending}
         />
       </form>
-      {state.ok
-        ? state.value.message && (
-            <FormAlert
-              dataCy="auth-server-message"
-              message={state.value.message}
-              type="success"
-            />
-          )
-        : state.error.message && (
-            <FormAlert
-              dataCy="auth-server-message"
-              message={state.error.message}
-              type="error"
-            />
-          )}
+      <LoginFormFeedback state={state} />
     </>
   );
 };
