@@ -1,10 +1,11 @@
 import "server-only";
 
 import type { z } from "zod";
+import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
 import {
-  formError,
-  formOk,
+  makeFormError,
+  makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
 import { resolveFormValidationOptions } from "@/shared/forms/factories/form-validation-options.factory";
 import {
@@ -12,59 +13,39 @@ import {
   isZodErrorLikeShape,
 } from "@/shared/forms/guards/zod.guard";
 import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
 import { resolveCanonicalFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import type { FormValidationOptions } from "@/shared/forms/types/form-validation.dto";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
- * Transform an error into a `FormResult` containing validation errors.
- *
- * @typeParam Tfieldnames - String literal union of field names.
- * @param error - The validation error to transform.
- * @param fields - Array of canonical field names used for error mapping.
- * @param loggerContext - Context identifier used when logging the error.
- * @param failureMessage - Message to include in the returned form error.
- * @returns A `FormResult` representing a failed validation with field errors.
- *
- * @remarks
- * Logs a structured error, converts Zod error shapes to a dense field error map,
- * and returns a `formError` populated with the message and field errors.
+ * Internal helper to log and wrap validation errors.
  */
-function createValidationFormError<Tfieldnames extends string>(
+function toValidationFormError<Tfieldnames extends string>(
   error: unknown,
   fields: readonly Tfieldnames[],
   loggerContext: string,
   failureMessage: string,
 ): FormResult<never> {
-  // Log validation failure
-  const name = isZodErrorLikeShape(error) ? error.name : undefined;
-  const issues =
-    isZodErrorLikeShape(error) && Array.isArray(error.issues)
-      ? error.issues.length
-      : undefined;
   logger.error(failureMessage, {
     context: loggerContext,
-    issues,
-    message: failureMessage,
-    name,
+    issues: isZodErrorLikeShape(error) ? error.issues?.length : undefined,
+    name: isZodErrorLikeShape(error) ? error.name : "UnknownValidationError",
   });
 
-  // Transform error to dense field errors
   const fieldErrors =
     isZodErrorInstance(error) || isZodErrorLikeShape(error)
-      ? mapZodErrorToDenseFieldErrors<Tfieldnames>(error as z.ZodError, fields)
+      ? fromZodError<Tfieldnames>(error as z.ZodError, fields)
       : makeEmptyDenseFieldErrorMap<Tfieldnames, string>(fields);
 
-  return formError<Tfieldnames>({
+  return makeFormError<Tfieldnames>({
     fieldErrors,
     message: failureMessage,
   });
 }
 
 /**
- * Validate `FormData` against a Zod schema and return a `FormResult`.
+ * Validates FormData against a Zod schema.
  *
  * @typeParam Tin - The expected shape of the validated data.
  * @typeParam Tfieldnames - Keys of fields within `Tin` that are validated.
@@ -107,7 +88,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     // Unexpected errors during validation (e.g., async refinements throwing)
-    return createValidationFormError<Tfieldnames>(
+    return toValidationFormError<Tfieldnames>(
       e,
       fields,
       loggerContext,
@@ -117,7 +98,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 
   // Zod validation failed
   if (!parsed.success) {
-    return createValidationFormError<Tfieldnames>(
+    return toValidationFormError<Tfieldnames>(
       parsed.error,
       fields,
       loggerContext,
@@ -125,5 +106,5 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
     );
   }
 
-  return formOk<Tin>(parsed.data, successMessage);
+  return makeFormOk<Tin>(parsed.data, successMessage);
 }

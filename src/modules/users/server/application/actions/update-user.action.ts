@@ -15,8 +15,8 @@ import { getAppDb } from "@/server/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
 import {
-  formError,
-  formOk,
+  makeFormError,
+  makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
@@ -45,7 +45,7 @@ function diffShallowPatch<T extends Record<string, unknown>>(
 function idInvalidResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
-  return formError<F>({
+  return makeFormError<F>({
     fieldErrors: makeEmptyDenseFieldErrorMap(fields),
     message: USER_ERROR_MESSAGES.validationFailed,
   });
@@ -54,7 +54,7 @@ function idInvalidResult<F extends string>(
 function notFoundResult<F extends string>(
   fields: readonly F[],
 ): FormResult<never> {
-  return formError<F>({
+  return makeFormError<F>({
     fieldErrors: makeEmptyDenseFieldErrorMap(fields),
     message: USER_ERROR_MESSAGES.notFound,
   });
@@ -146,23 +146,23 @@ export async function updateUserAction(
     );
 
     if (Object.keys(patch).length === 0) {
-      return formOk(existing, USER_SUCCESS_MESSAGES.noChanges);
+      return makeFormOk(existing, USER_SUCCESS_MESSAGES.noChanges);
     }
 
     // Apply patch via service
     const result = await service.updateUser(idRes.value, patch);
 
     if (!result.ok) {
-      return formError<EditUserFormFieldNames>({
+      return makeFormError<EditUserFormFieldNames>({
         fieldErrors: makeEmptyDenseFieldErrorMap(fields),
         message: result.error.message || USER_ERROR_MESSAGES.updateFailed,
       });
     }
 
     revalidatePath(ROUTES.dashboard.users);
-    return formOk(result.value, USER_SUCCESS_MESSAGES.updateSuccess);
+    return makeFormOk(result.value, USER_SUCCESS_MESSAGES.updateSuccess);
   } catch (_error: unknown) {
-    return formError<EditUserFormFieldNames>({
+    return makeFormError<EditUserFormFieldNames>({
       fieldErrors: makeEmptyDenseFieldErrorMap(fields),
       message: USER_ERROR_MESSAGES.unexpected,
     });

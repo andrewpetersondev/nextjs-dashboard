@@ -17,8 +17,8 @@ import {
   toDenseFieldErrorMap,
 } from "@/shared/forms/factories/field-error-map.factory";
 import {
-  formError,
-  formOk,
+  makeFormError,
+  makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
 import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
@@ -57,7 +57,7 @@ export async function createUserAction(
     });
 
     if (!parsed.success) {
-      return formError({
+      return makeFormError({
         fieldErrors: toDenseFieldErrorMap(
           selectSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
           allowed,
@@ -77,16 +77,16 @@ export async function createUserAction(
     });
 
     if (!result.ok) {
-      return formError({
+      return makeFormError({
         fieldErrors: makeEmptyDenseFieldErrorMap(allowed),
         message: result.error.message || USER_ERROR_MESSAGES.createFailed,
       });
     }
 
-    return formOk(result.value, USER_SUCCESS_MESSAGES.createSuccess);
+    return makeFormOk(result.value, USER_SUCCESS_MESSAGES.createSuccess);
   } catch (_error: unknown) {
     // Catch generic unexpected errors not caught by service
-    return formError({
+    return makeFormError({
       fieldErrors: toDenseFieldErrorMap({}, allowed),
       message: USER_ERROR_MESSAGES.unexpected,
     });

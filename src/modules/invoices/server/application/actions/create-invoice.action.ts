@@ -16,13 +16,13 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
+import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
 import {
-  formError,
-  formOk,
+  makeFormError,
+  makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
 import { isZodErrorInstance } from "@/shared/forms/guards/zod.guard";
 import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
-import { mapZodErrorToDenseFieldErrors } from "@/shared/forms/infrastructure/zod/map-zod-errors-to-field-errors";
 import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
@@ -43,8 +43,8 @@ export async function createInvoiceAction(
   const parsed = CreateInvoiceSchema.safeParse(rawInput);
 
   if (!parsed.success) {
-    return formError<CreateInvoiceFieldNames>({
-      fieldErrors: mapZodErrorToDenseFieldErrors(parsed.error, allowed),
+    return makeFormError<CreateInvoiceFieldNames>({
+      fieldErrors: fromZodError(parsed.error, allowed),
       message: translator(INVOICE_MSG.validationFailed),
     });
   }
@@ -56,7 +56,7 @@ export async function createInvoiceAction(
     const result = await service.createInvoice(parsed.data);
 
     if (!result.ok) {
-      return formError<CreateInvoiceFieldNames>({
+      return makeFormError<CreateInvoiceFieldNames>({
         fieldErrors: {
           amount: [],
           customerId: [],
@@ -80,7 +80,7 @@ export async function createInvoiceAction(
 
     // 3. Success: Revalidate but do NOT redirect so the form can show the success message
     revalidatePath(ROUTES.dashboard.invoices);
-    return formOk(parsed.data, translator(INVOICE_MSG.createSuccess));
+    return makeFormOk(parsed.data, translator(INVOICE_MSG.createSuccess));
   } catch (error) {
     // Decide the top-level user-facing message based on error type
     const baseMessage = isZodErrorInstance(error)
@@ -93,9 +93,9 @@ export async function createInvoiceAction(
       message: baseMessage,
     });
 
-    return formError<CreateInvoiceFieldNames>({
+    return makeFormError<CreateInvoiceFieldNames>({
       fieldErrors: isZodErrorInstance(error)
-        ? mapZodErrorToDenseFieldErrors(error, allowed)
+        ? fromZodError(error, allowed)
         : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
       message: baseMessage,
     });

@@ -13,8 +13,8 @@ import {
 } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
-import { formError } from "@/shared/forms/factories/form-result.factory";
+import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
+import { makeFormError } from "@/shared/forms/factories/form-result.factory";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
@@ -98,12 +98,11 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
-    const { fieldErrors, message } =
-      adaptAppErrorToFormPayload<LoginField>(error);
+    const { fieldErrors, message } = toFormErrorPayload<LoginField>(error);
 
     // If it's a credential error (unified by the workflow), apply to both fields for security
     if (error.code === "invalidCredentials") {
-      return formError<LoginField>({
+      return makeFormError<LoginField>({
         code: error.code,
         fieldErrors: {
           email: [message],
@@ -114,7 +113,7 @@ export async function loginAction(
       });
     }
 
-    return formError<LoginField>({
+    return makeFormError<LoginField>({
       code: error.code,
       fieldErrors,
       message: message || AUTH_ERROR_MESSAGES.LOGIN_FAILED,

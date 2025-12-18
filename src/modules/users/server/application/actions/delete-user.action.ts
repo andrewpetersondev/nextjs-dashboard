@@ -6,7 +6,7 @@ import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { formError } from "@/shared/forms/factories/form-result.factory";
+import { makeFormError } from "@/shared/forms/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -25,7 +25,7 @@ export async function deleteUserAction(id: string): Promise<FormResult<never>> {
       redirect(ROUTES.dashboard.users);
     }
 
-    return formError<"_root">({
+    return makeFormError<"_root">({
       fieldErrors: {
         _root: [
           result.error.message || USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
@@ -34,7 +34,7 @@ export async function deleteUserAction(id: string): Promise<FormResult<never>> {
       message: USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
     });
   } catch (_error: unknown) {
-    return formError<"_root">({
+    return makeFormError<"_root">({
       fieldErrors: { _root: [USER_ERROR_MESSAGES.unexpected] },
       message: USER_ERROR_MESSAGES.unexpected,
     });

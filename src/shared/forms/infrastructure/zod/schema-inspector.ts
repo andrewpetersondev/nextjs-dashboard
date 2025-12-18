@@ -13,7 +13,8 @@ export function toFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
 }
 
 /**
- * Resolves the canonical array of field names for a Zod schema based on priority.
+ * Resolves the canonical array of field names for a Zod schema.
+ * Respects explicit field lists if provided.
  */
 export function resolveCanonicalFieldNames<T, K extends keyof T & string>(
   schema: z.ZodType<T>,
@@ -33,7 +34,7 @@ export function resolveCanonicalFieldNames<T, K extends keyof T & string>(
   // Priority 3: derive from object schema; otherwise return empty readonly array
   return isZodObjectSchema(schema)
     ? (toFieldNames(schema) as readonly K[])
-    : ([] as const);
+    : (Object.freeze([]) as readonly K[]);
 }
 
 /**

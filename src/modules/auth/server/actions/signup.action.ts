@@ -14,8 +14,8 @@ import {
 } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { adaptAppErrorToFormPayload } from "@/shared/forms/adapters/form-error.adapter";
-import { formError } from "@/shared/forms/factories/form-result.factory";
+import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
+import { makeFormError } from "@/shared/forms/factories/form-result.factory";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
@@ -109,10 +109,9 @@ export async function signupAction(
       operationName: "signup.authentication.failed",
     });
 
-    const { fieldErrors, message } =
-      adaptAppErrorToFormPayload<SignupField>(error);
+    const { fieldErrors, message } = toFormErrorPayload<SignupField>(error);
 
-    return formError<SignupField>({
+    return makeFormError<SignupField>({
       code: error.code,
       fieldErrors,
       message: message || AUTH_ERROR_MESSAGES.SIGNUP_FAILED,

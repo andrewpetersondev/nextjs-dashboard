@@ -4,16 +4,12 @@ import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value"
 import type { FormErrorPayload } from "@/shared/forms/types/form-result.dto";
 
 /**
- * Adapts an AppError to a form payload with field errors and a message.
+ * Adapts a canonical AppError into a shape the Form UI can consume.
  *
- * An adapter translates an interface (AppError) into another (form payload) for compatibility.
- * A mapper typically transforms data between similar shapes or domains.
- *
- * @template T - Field name type.
- * @param error - The AppError instance.
- * @returns Object with alphabetically sorted properties: fieldErrors, message.
+ * @param error - The AppError from the service/action.
+ * @returns An object containing the top-level message and a map of field errors.
  */
-export function adaptAppErrorToFormPayload<T extends string>(
+export function toFormErrorPayload<T extends string>(
   error: AppError,
 ): FormErrorPayload<T> {
   const fieldErrors =

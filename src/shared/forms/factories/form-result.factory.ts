@@ -21,7 +21,7 @@ const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);
  * @param message - Human-readable success message.
  * @returns A frozen {@link FormResult} containing an {@link FormSuccessPayload} with the given data and message.
  */
-export const formOk = <T>(data: T, message: string): FormResult<T> => {
+export const makeFormOk = <T>(data: T, message: string): FormResult<T> => {
   const value = freeze<FormSuccessPayload<T>>({ data, message });
   return Ok(value);
 };
@@ -37,8 +37,10 @@ export const formOk = <T>(data: T, message: string): FormResult<T> => {
  * @param params.message - Top-level error message.
  * @param params.values - Optional sparse map of submitted values to include in context.
  * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link AppError}.
+ *
+ * TODO: extract params object to an interface
  */
-export const formError = <F extends string>(params: {
+export const makeFormError = <F extends string>(params: {
   readonly code?: AppErrorKey;
   readonly fieldErrors: DenseFieldErrorMap<F, string>;
   readonly formErrors?: readonly string[];

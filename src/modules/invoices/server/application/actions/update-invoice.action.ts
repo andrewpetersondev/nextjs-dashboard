@@ -21,8 +21,8 @@ import {
   toDenseFieldErrorMap,
 } from "@/shared/forms/factories/field-error-map.factory";
 import {
-  formError,
-  formOk,
+  makeFormError,
+  makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
@@ -55,7 +55,7 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
     UpdateInvoiceSchema.shape,
   ) as readonly UpdateInvoiceFieldNames[];
 
-  return formError<UpdateInvoiceFieldNames>({
+  return makeFormError<UpdateInvoiceFieldNames>({
     fieldErrors: toDenseFieldErrorMap({}, schemaFields),
     message:
       error instanceof AppError
@@ -109,7 +109,7 @@ export async function updateInvoiceAction(
         schemaFields,
       );
 
-      return formError<UpdateInvoiceFieldNames>({
+      return makeFormError<UpdateInvoiceFieldNames>({
         fieldErrors: dense,
         message: INVOICE_MSG.validationFailed,
         values: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
@@ -133,7 +133,7 @@ export async function updateInvoiceAction(
     await publishUpdatedEvent(previousInvoice, updatedInvoice);
     revalidatePath(ROUTES.dashboard.root);
 
-    return formOk(
+    return makeFormOk(
       {
         amount: updatedInvoice.amount,
         customerId: updatedInvoice.customerId,
