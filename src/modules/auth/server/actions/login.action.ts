@@ -102,7 +102,7 @@ export async function loginAction(
     const { fieldErrors, message } = toFormErrorPayload<LoginField>(error);
 
     // Unified security response for credential failures
-    if (error.code === "invalidCredentials") {
+    if (error.code === "invalid_credentials") {
       const credentialsErrorMessage = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
 
       return makeFormError<LoginField>({

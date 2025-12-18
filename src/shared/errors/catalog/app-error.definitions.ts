@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
+
 import type { AppErrorDefinition } from "@/shared/errors/core/app-error.definitions";
 
 /**
@@ -21,7 +23,7 @@ export const API_ERRORS = {
     retryable: false,
     severity: "WARN",
   },
-  notFound: {
+  not_found: {
     description: "Resource not found",
     layer: "API",
     retryable: false,
@@ -46,7 +48,7 @@ export const AUTH_ERRORS = {
     retryable: false,
     severity: "WARN",
   },
-  invalidCredentials: {
+  invalid_credentials: {
     description: "Invalid credentials",
     layer: "SECURITY",
     retryable: false,
@@ -65,19 +67,19 @@ export const AUTH_ERRORS = {
 // ─────────────────────────────────────────────────────────────
 
 export const DOMAIN_ERRORS = {
-  applicationError: {
+  application_error: {
     description: "Application logic error",
     layer: "INTERNAL",
     retryable: false,
     severity: "ERROR",
   },
-  domainError: {
+  domain_error: {
     description: "Domain logic error",
     layer: "DOMAIN",
     retryable: false,
     severity: "ERROR",
   },
-  presentationError: {
+  presentation_error: {
     description: "Presentation layer error",
     layer: "UI",
     retryable: false,
@@ -115,7 +117,7 @@ export const INFRASTRUCTURE_ERRORS = {
 // ─────────────────────────────────────────────────────────────
 
 export const VALIDATION_ERRORS = {
-  missingFields: {
+  missing_fields: {
     description: "Required fields are missing",
     layer: "VALIDATION",
     retryable: false,

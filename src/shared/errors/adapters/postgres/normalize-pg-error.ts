@@ -1,6 +1,6 @@
 import type { PgOperationMetadata } from "@/shared/errors/adapters/postgres/pg-types";
 import { toPgError } from "@/shared/errors/adapters/postgres/to-pg-error";
-import { CONDITIONS } from "@/shared/errors/catalog/conditions";
+import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { ErrorMetadata } from "@/shared/errors/core/app-error.types";
 import {
@@ -35,7 +35,7 @@ function createGenericDbError(
 ): AppError {
   return makeDatabaseError({
     cause: err,
-    message: CONDITIONS.db_unknown_error,
+    message: PG_CONDITIONS.pg_unknown_error,
     metadata: { ...(additionalMetadata ?? {}) },
   });
 }

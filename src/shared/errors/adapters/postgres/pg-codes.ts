@@ -1,55 +1,46 @@
-import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { Condition } from "@/shared/errors/catalog/conditions";
-import { CONDITIONS } from "@/shared/errors/catalog/conditions";
+/** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 
-export interface PgErrorDefinition {
-  readonly appCode: AppErrorKey;
-  readonly code: string;
-  readonly condition: Condition;
-  readonly name: string;
-}
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
+import type { PgErrorDefinition } from "./pg-error.definition";
 
+/**
+ * Registry of known Postgres error codes.
+ * Keys are the native Postgres numeric codes to ensure zero-drift mapping.
+ */
 export const PG_ERROR_MAP = {
-  checkViolation: {
-    appCode: "integrity",
-    code: "23514",
-    condition: CONDITIONS.db_check_violation,
-    name: "checkViolation",
-  },
-  exclusionViolation: {
-    appCode: "integrity",
+  "23P01": {
+    appCode: APP_ERROR_KEYS.integrity,
     code: "23P01",
-    condition: CONDITIONS.db_exclusion_violation,
-    name: "exclusionViolation",
+    condition: PG_CONDITIONS.pg_exclusion_violation,
   },
-  foreignKeyViolation: {
-    appCode: "integrity",
-    code: "23503",
-    condition: CONDITIONS.db_foreign_key_violation,
-    name: "foreignKeyViolation",
-  },
-  notNullViolation: {
-    appCode: "integrity",
+  "23502": {
+    appCode: APP_ERROR_KEYS.integrity,
     code: "23502",
-    condition: CONDITIONS.db_not_null_violation,
-    name: "notNullViolation",
+    condition: PG_CONDITIONS.pg_not_null_violation,
   },
-  uniqueViolation: {
-    appCode: "conflict",
+  "23503": {
+    appCode: APP_ERROR_KEYS.integrity,
+    code: "23503",
+    condition: PG_CONDITIONS.pg_foreign_key_violation,
+  },
+  "23505": {
+    appCode: APP_ERROR_KEYS.conflict,
     code: "23505",
-    condition: CONDITIONS.db_unique_violation,
-    name: "uniqueViolation",
+    condition: PG_CONDITIONS.pg_unique_violation,
+  },
+  "23514": {
+    appCode: APP_ERROR_KEYS.integrity,
+    code: "23514",
+    condition: PG_CONDITIONS.pg_check_violation,
   },
 } as const satisfies Record<string, PgErrorDefinition>;
 
-export type PgErrorKey = keyof typeof PG_ERROR_MAP;
-export type PgErrorMeta = (typeof PG_ERROR_MAP)[PgErrorKey];
-export type PgCode = PgErrorMeta["code"];
+export type PgCode = keyof typeof PG_ERROR_MAP;
+export type PgErrorMeta = (typeof PG_ERROR_MAP)[PgCode];
 
-export const PG_CODE_TO_META = {
-  [PG_ERROR_MAP.checkViolation.code]: PG_ERROR_MAP.checkViolation,
-  [PG_ERROR_MAP.exclusionViolation.code]: PG_ERROR_MAP.exclusionViolation,
-  [PG_ERROR_MAP.foreignKeyViolation.code]: PG_ERROR_MAP.foreignKeyViolation,
-  [PG_ERROR_MAP.notNullViolation.code]: PG_ERROR_MAP.notNullViolation,
-  [PG_ERROR_MAP.uniqueViolation.code]: PG_ERROR_MAP.uniqueViolation,
-} as const satisfies Record<PgCode, PgErrorMeta>;
+/**
+ * High-performance lookup mapping PG codes to application error metadata.
+ * Direct reference to PG_ERROR_MAP ensures 1:1 parity between codes and definitions.
+ */
+export const PG_CODE_TO_META: Record<PgCode, PgErrorMeta> = PG_ERROR_MAP;

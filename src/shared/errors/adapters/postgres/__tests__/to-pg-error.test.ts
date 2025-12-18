@@ -13,7 +13,7 @@ describe("toPgError", () => {
 
     expect(mapping).toBeDefined();
     expect(mapping?.appCode).toBe("conflict");
-    expect(mapping?.condition).toBe("db_unique_violation");
+    expect(mapping?.condition).toBe("pg_unique_violation");
     expect(mapping?.pgMetadata.pgCode).toBe("23505");
     expect(mapping?.pgMetadata.constraint).toBe("users_email_key");
     expect(mapping?.pgMetadata.table).toBe("users");
@@ -31,7 +31,7 @@ describe("toPgError", () => {
     const mapping = toPgError(wrapped);
 
     expect(mapping).toBeDefined();
-    expect(mapping?.condition).toBe("db_not_null_violation");
+    expect(mapping?.condition).toBe("pg_not_null_violation");
     expect(mapping?.pgMetadata.pgCode).toBe("23502");
     expect(mapping?.pgMetadata.column).toBe("email");
   });

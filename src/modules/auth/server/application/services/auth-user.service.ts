@@ -98,7 +98,7 @@ export class AuthUserService {
       if (!user) {
         const error = makeAppErrorFromUnknown(
           new Error("user_not_found"),
-          "notFound",
+          "not_found",
         );
 
         logger.operation("warn", "Login failed - user not found", {
@@ -118,7 +118,7 @@ export class AuthUserService {
       if (!passwordOk) {
         const error = makeAppErrorFromUnknown(
           new Error("invalid_password"),
-          "invalidCredentials",
+          "invalid_credentials",
         );
 
         logger.operation("warn", "Login failed - invalid password", {

@@ -11,7 +11,7 @@ describe("normalizePgError", () => {
     });
 
     expect(appErr.code).toBe("conflict");
-    expect(appErr.message).toBe("db_unique_violation");
+    expect(appErr.message).toBe("pg_unique_violation");
 
     // metadata is always present; pg fields should exist
     expect(appErr.metadata).toBeDefined();
@@ -27,7 +27,7 @@ describe("normalizePgError", () => {
     const appErr = normalizePgError(notPg, { operation: "queryX" });
 
     expect(appErr.code).toBe("database");
-    expect(appErr.message).toBe("db_unknown_error");
+    expect(appErr.message).toBe("pg_unknown_error");
     expect(appErr.metadata.operation).toBe("queryX");
   });
 });

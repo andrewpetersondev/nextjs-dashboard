@@ -24,6 +24,17 @@ export const APP_ERROR_MAP = {
 } as const satisfies Record<string, AppErrorDefinition>;
 
 export type AppErrorKey = keyof typeof APP_ERROR_MAP;
+
+/**
+ * Registry of literal error keys for strict type safety in adapters.
+ * Derived directly from APP_ERROR_MAP to ensure zero-drift synchronization.
+ */
+export const APP_ERROR_KEYS = Object.freeze(
+  Object.fromEntries(Object.keys(APP_ERROR_MAP).map((key) => [key, key])) as {
+    [K in AppErrorKey]: K;
+  },
+);
+
 export type AppErrorMeta = (typeof APP_ERROR_MAP)[AppErrorKey];
 
 /**

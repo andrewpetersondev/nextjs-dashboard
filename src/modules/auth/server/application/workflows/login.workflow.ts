@@ -30,7 +30,7 @@ export async function loginWorkflow(
   if (!authResult.ok) {
     const error = authResult.error;
     const isCredentialFailure =
-      error.code === "invalidCredentials" || error.code === "notFound";
+      error.code === "invalid_credentials" || error.code === "not_found";
 
     if (isCredentialFailure) {
       return Err(

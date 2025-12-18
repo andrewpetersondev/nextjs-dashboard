@@ -120,7 +120,7 @@ export class UserService {
         return Err(
           makeAppErrorFromUnknown(
             new Error(USER_ERROR_MESSAGES.notFoundOrDeleteFailed),
-            "notFound",
+            "not_found",
           ),
         );
       }
