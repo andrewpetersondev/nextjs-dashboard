@@ -2,7 +2,7 @@ import "server-only";
 
 import type { UnitOfWorkPort } from "@/modules/auth/server/application/ports/unit-of-work.port";
 import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
-import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
+import type { AuthUserDto } from "@/modules/auth/shared/contracts/auth-user.dto";
 import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
@@ -53,7 +53,7 @@ export class CreateUserUseCase {
 
   async execute(
     input: Readonly<SignupData>,
-  ): Promise<Result<AuthUserTransport, AppError>> {
+  ): Promise<Result<AuthUserDto, AppError>> {
     const logger = this.logger.child({ email: input.email });
 
     if (!hasRequiredSignupFields(input)) {
@@ -83,7 +83,7 @@ export class CreateUserUseCase {
 
         const created = createdResultTx.value;
 
-        return Ok<AuthUserTransport>({
+        return Ok<AuthUserDto>({
           email: created.email,
           id: toUserId(created.id),
           role: parseUserRole(created.role),

@@ -31,6 +31,31 @@ This document standardizes naming across the project to keep code discoverable, 
   - If a file exports multiple related utilities, name it by the **domain of utilities**:
     - ✅ `pg-metadata.ts` exports `extractPgErrorMetadata`, `isPgError`
 
+  ### Types and Interfaces (Boundary-Explicit Suffixes)
+
+  To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the type's role and boundary.
+
+  | Suffix          | Meaning                                | Layer/Boundary |
+  | :-------------- | :------------------------------------- | :------------- |
+  | `.entity.ts`    | Stateful domain object (with identity) | Domain         |
+  | `.value.ts`     | Value object / Branded primitive       | Domain         |
+  | `.policy.ts`    | Interface for business rules/logic     | Domain         |
+  | `.schema.ts`    | Zod/Validation schema                  | Domain ↔ App   |
+  | `.dto.ts`       | Stable data transfer object            | App / Shared   |
+  | `.transport.ts` | Wire/HTTP/Cookie-only shape            | Adapter        |
+  | `.view.ts`      | Server → Client UI shape               | UI Boundary    |
+  | `.port.ts`      | Dependency boundary interface          | Application    |
+  | `.record.ts`    | Persistence/Database row shape         | Infrastructure |
+  | `.command.ts`   | Input for a use case/workflow          | Application    |
+  | `.result.ts`    | Output of a use case/workflow          | Application    |
+  | `.event.ts`     | Domain or System event fact            | Domain / App   |
+  | `.tokens.ts`    | Dependency injection tokens/constants  | Module Root    |
+
+  **Guidelines:**
+  - **No `*.types.ts` files.** If you have one, split it based on the table above.
+  - **One concept per file.** The filename must match the primary exported type.
+  - **Locality.** Use-case specific types (`.command.ts`, `.result.ts`) sit next to the use case implementation.
+
 ### Folders
 
 - Use **nouns** for folders: `catalog/`, `core/`, `factories/`, `guards/`, `integrations/`, `utils/`.
