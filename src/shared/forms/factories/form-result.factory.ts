@@ -27,26 +27,28 @@ export const makeFormOk = <T>(data: T, message: string): FormResult<T> => {
 };
 
 /**
- * Create a form validation error with a dense field error map.
+ * Parameters for creating a form error result.
  *
  * @typeParam F - Type for field name keys present in `fieldErrors`.
- * @param params - Error construction parameters.
- * @param params.code - Optional error code; defaults to `"validation"`.
- * @param params.fieldErrors - Dense map of per-field error messages.
- * @param params.formErrors - Optional global form-level errors.
- * @param params.message - Top-level error message.
- * @param params.values - Optional sparse map of submitted values to include in context.
- * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link AppError}.
- *
- * TODO: extract params object to an interface
  */
-export const makeFormError = <F extends string>(params: {
+export interface FormErrorParams<F extends string> {
   readonly code?: AppErrorKey;
   readonly fieldErrors: DenseFieldErrorMap<F, string>;
   readonly formErrors?: readonly string[];
   readonly message: string;
   readonly values?: SparseFieldValueMap<F, string>;
-}): FormResult<never> => {
+}
+
+/**
+ * Create a form validation error with a dense field error map.
+ *
+ * @typeParam F - Type for field name keys present in `fieldErrors`.
+ * @param params - Error construction parameters.
+ * @returns A frozen {@link FormResult} representing an error (`Err`) containing a {@link AppError}.
+ */
+export const makeFormError = <F extends string>(
+  params: FormErrorParams<F>,
+): FormResult<never> => {
   const error: AppError = makeAppError(params.code ?? "validation", {
     message: params.message,
     metadata: {
