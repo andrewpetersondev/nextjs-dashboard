@@ -59,7 +59,7 @@ export async function updateRevenue(
   if (!result) {
     throw makeDatabaseError({
       message: "Failed to convert updated revenue record",
-      metadata: { id: id ?? "null" },
+      metadata: { table: "revenues" },
     });
   }
   return result;

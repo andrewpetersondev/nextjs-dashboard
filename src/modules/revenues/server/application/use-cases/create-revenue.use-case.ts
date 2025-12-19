@@ -27,7 +27,7 @@ export class CreateRevenueUseCase {
     if (!created) {
       throw makeDatabaseError({
         message: "Failed to create a revenue record",
-        metadata: { revenue },
+        metadata: { table: "revenues" },
       });
     }
     return created;

@@ -44,7 +44,7 @@ export async function findRevenueByPeriod(
   if (!result) {
     throw makeDatabaseError({
       message: "Failed to convert revenue record",
-      metadata: { period },
+      metadata: { table: "revenues" },
     });
   }
   return result;

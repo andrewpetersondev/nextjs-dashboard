@@ -31,7 +31,7 @@ export class UpdateRevenueUseCase {
     if (!updated) {
       throw makeDatabaseError({
         message: `Failed to update revenue with ID ${id}`,
-        metadata: { id, revenue },
+        metadata: { table: "revenues" },
       });
     }
     return updated;

@@ -62,7 +62,7 @@ export async function upsertRevenue(
     if (!data) {
       throw makeDatabaseError({
         message: "Failed to upsert revenue record",
-        metadata: { revenueData: revenueData ?? "null" },
+        metadata: { table: "revenues" },
       });
     }
 
@@ -70,7 +70,7 @@ export async function upsertRevenue(
     if (!result) {
       throw makeDatabaseError({
         message: "Failed to convert revenue record",
-        metadata: { revenueData: revenueData ?? "null" },
+        metadata: { table: "revenues" },
       });
     }
     return result;
