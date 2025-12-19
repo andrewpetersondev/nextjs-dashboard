@@ -1,19 +1,12 @@
 import "server-only";
 
+import type {
+  DalContextLite,
+  ExecuteDalCoreOptions,
+} from "@/server/db/dal/types";
 import type { AppError } from "@/shared/errors/core/app-error";
 import { makeUnexpectedErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-
-export type DalIdentifiers = Record<string, number | string>;
-
-export interface DalContextLite {
-  readonly identifiers: DalIdentifiers;
-  readonly operation: string;
-}
-
-export interface ExecuteDalOrThrowCoreOptions {
-  readonly operationContext: string;
-}
 
 /**
  * Executes a DAL thunk and throws for unexpected failures (invariants).
@@ -26,7 +19,7 @@ export async function executeDalThrow<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
   logger: LoggingClientContract,
-  options: ExecuteDalOrThrowCoreOptions,
+  options: ExecuteDalCoreOptions,
 ): Promise<T> {
   try {
     return await thunk();

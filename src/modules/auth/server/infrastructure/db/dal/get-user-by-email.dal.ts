@@ -45,7 +45,7 @@ export async function getUserByEmailDal(
 
       return userRow;
     },
-    { identifiers: { email }, operation: "getUserByEmail" },
+    { entity: "user", identifiers: { email }, operation: "getUserByEmail" },
     logger,
     { operationContext: "auth:dal" },
   );

@@ -65,7 +65,11 @@ export async function demoUserCounterDal(
 
       return counterRow.id;
     },
-    { identifiers: { role }, operation: "demoUserCounter" },
+    {
+      entity: "demoUserCounter",
+      identifiers: { role },
+      operation: "demoUserCounter",
+    },
     logger,
     { operationContext: "auth:dal" },
   );

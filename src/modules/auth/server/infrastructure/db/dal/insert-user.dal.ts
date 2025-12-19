@@ -24,7 +24,6 @@ export async function insertUserDal(
   logger: LoggingClientContract,
 ): Promise<Result<NewUserRow, AppError>> {
   const { email, password, role, username } = input;
-  const identifiers: Record<string, string> = { email, username };
 
   return await executeDalResult<NewUserRow>(
     async (): Promise<NewUserRow> => {
@@ -47,7 +46,11 @@ export async function insertUserDal(
 
       return userRow;
     },
-    { identifiers, operation: "insertUser" },
+    {
+      entity: "user",
+      identifiers: { email, username },
+      operation: "insertUser",
+    },
     logger,
     { operationContext: "auth:dal" },
   );

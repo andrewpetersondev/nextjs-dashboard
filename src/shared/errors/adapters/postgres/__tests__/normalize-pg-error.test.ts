@@ -21,12 +21,15 @@ describe("normalizePgError", () => {
     expect(appErr.metadata.entity).toBe("user");
   });
 
-  it("falls back to a database error when mapping fails", () => {
+  it("falls back to a unknown error when mapping fails", () => {
     const notPg = { message: "not pg" };
 
-    const appErr = normalizePgError(notPg, { operation: "queryX" });
+    const appErr = normalizePgError(notPg, {
+      entity: "user",
+      operation: "queryX",
+    });
 
-    expect(appErr.code).toBe("database");
+    expect(appErr.code).toBe("unknown");
     expect(appErr.message).toBe("pg_unknown_error");
     expect(appErr.metadata.operation).toBe("queryX");
   });

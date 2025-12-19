@@ -8,7 +8,7 @@
 # TOOLING
 # ======================================================
 .gitignore
-# biome.json
+biome.json
 devtools
 drizzle
 eslint.config.mjs
@@ -27,15 +27,17 @@ cypress/downloads
 # ======================================================
 # DOCUMENTATION & STORAGE
 # ======================================================
-# docs
+docs
 storage
 
 # ======================================================
 # NEXT.JS PROJECT CODE
 # ======================================================
 public
-# src
-
+src/modules/customers
+src/modules/revenues
+src/modules/invoices
+*.tsx
 # ======================================================
 # BUILD / OUTPUT FILES
 # ======================================================
