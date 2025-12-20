@@ -44,7 +44,7 @@ export interface DbErrorMetadata {
  * Represents **intrinsic fields extracted from Postgres error objects**.
  */
 export interface PgErrorMetadataBase extends DbErrorMetadata {
-  readonly pgCode?: string;
+  readonly pgCode: string;
 }
 
 /**
