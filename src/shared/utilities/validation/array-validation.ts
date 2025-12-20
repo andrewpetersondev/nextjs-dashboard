@@ -22,6 +22,7 @@ export function validateNonEmptyArray<T>(
     (arr) => arr.length > 0,
     () =>
       makeValidationError({
+        cause: "Array cannot be empty",
         message: `${fieldName} cannot be empty`,
         metadata: { fieldName },
       }),
@@ -47,6 +48,7 @@ export function validateMinArrayLength<T>(
     (arr) => arr.length >= minLength,
     (arr) =>
       makeValidationError({
+        cause: "Array must have at least one item",
         message: `${fieldName} must have at least ${minLength} items, got ${arr.length}`,
         metadata: { actualLength: arr.length, fieldName, minLength },
       }),
@@ -72,6 +74,7 @@ export function validateMaxArrayLength<T>(
     (arr) => arr.length <= maxLength,
     (arr) =>
       makeValidationError({
+        cause: "Array must have at most one item",
         message: `${fieldName} must have at most ${maxLength} items, got ${arr.length}`,
         metadata: { actualLength: arr.length, fieldName, maxLength },
       }),
@@ -99,6 +102,7 @@ export function validateArrayElements<T, U>(
   if (!collected.ok) {
     return Err(
       makeValidationError({
+        cause: "Array contains invalid element(s)",
         message: `${fieldName} contains invalid element`,
         metadata: { fieldName },
       }),
@@ -137,6 +141,7 @@ export function validateUniqueArray<T>(
     },
     () =>
       makeValidationError({
+        cause: "Array must contain unique elements",
         message: `${fieldName} must contain unique elements`,
         metadata: { fieldName },
       }),
@@ -157,6 +162,7 @@ export function validateIsArray(
   if (!Array.isArray(value)) {
     return Err(
       makeValidationError({
+        cause: "Value is not an array",
         message: `${fieldName} must be an array`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -184,6 +190,7 @@ export function validateAllElements<T>(
     (arr) => arr.every((item, index) => predicate(item, index)),
     () =>
       makeValidationError({
+        cause: "Array contains elements that fail validation",
         message: `${fieldName} contains elements that fail validation`,
         metadata: { fieldName },
       }),

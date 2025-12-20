@@ -23,6 +23,7 @@ export class UpdateRevenueUseCase {
   ): Promise<RevenueEntity> {
     if (!(id && revenue)) {
       throw makeValidationError({
+        cause: "",
         message: "Invalid revenue ID or data",
         metadata: { id, revenue },
       });
@@ -30,6 +31,7 @@ export class UpdateRevenueUseCase {
     const updated = await this.repository.update(id, revenue);
     if (!updated) {
       throw makeDatabaseError({
+        cause: "",
         message: `Failed to update revenue with ID ${id}`,
         metadata: { table: "revenues" },
       });

@@ -20,6 +20,7 @@ export async function deleteRevenue(
 ): Promise<void> {
   if (!id) {
     throw makeValidationError({
+      cause: "",
       message: "Revenue ID is required",
       metadata: { id: id ?? "null" },
     });
@@ -32,6 +33,7 @@ export async function deleteRevenue(
 
   if (!result) {
     throw makeDatabaseError({
+      cause: "",
       message: "Failed to delete revenue record",
       metadata: { table: "revenues" },
     });

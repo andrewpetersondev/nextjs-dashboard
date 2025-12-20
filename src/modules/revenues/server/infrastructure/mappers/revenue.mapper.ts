@@ -67,6 +67,7 @@ function validateRevenueRow(revenueRow: RevenueRow): void {
 export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
   if (!revenueRow || typeof revenueRow !== "object") {
     throw makeValidationError({
+      cause: "",
       message: "Invalid revenue row data: expected non-null object",
       metadata: { revenueRow },
     });
@@ -82,6 +83,7 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
           ? sourceResult.value
           : (() => {
               throw makeValidationError({
+                cause: "",
                 message: `Invalid calculationSource: ${sourceResult.error.message}`,
                 metadata: { revenueRow },
               });
@@ -101,6 +103,7 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
     };
   } catch (error) {
     throw makeValidationError({
+      cause: "",
       message: `Failed to map revenue row to entity: ${error instanceof Error ? error.message : "Unknown error"}`,
       metadata: { revenueRow },
     });
@@ -118,6 +121,7 @@ export function mapRevenueRowsToEntities(
 ): RevenueEntity[] {
   if (!Array.isArray(revenueRows)) {
     throw makeValidationError({
+      cause: "",
       message: "Invalid revenue rows data: expected array",
       metadata: { revenueRows },
     });
@@ -127,6 +131,7 @@ export function mapRevenueRowsToEntities(
       return mapRevenueRowToEntity(revenueRow);
     } catch (error) {
       throw makeValidationError({
+        cause: "",
         message: `Failed to map revenue row at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
         metadata: { index, revenueRow },
       });

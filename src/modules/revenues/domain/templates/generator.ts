@@ -21,6 +21,7 @@ export function generateMonthsTemplate(
 
   if (intervalCount <= 0) {
     throw makeValidationError({
+      cause: "",
       message: `Invalid interval count: ${intervalCount}`,
       metadata: { duration, startDate },
     });
@@ -32,6 +33,7 @@ export function generateMonthsTemplate(
 
   if (template.length === 0) {
     throw makeValidationError({
+      cause: "",
       message: "Failed to generate a template: an empty array created",
       metadata: {},
     });

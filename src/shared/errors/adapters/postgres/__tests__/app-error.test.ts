@@ -3,7 +3,11 @@ import { AppError } from "@/shared/errors/core/app-error";
 
 describe("AppError", () => {
   it("toJson always includes metadata", () => {
-    const err = new AppError("unexpected", { message: "x", metadata: {} });
+    const err = new AppError("unexpected", {
+      cause: "",
+      message: "x",
+      metadata: {},
+    });
     const json = err.toJson();
 
     expect(json.metadata).toEqual({});

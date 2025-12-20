@@ -44,6 +44,7 @@ export async function fetchUsersPagesDal(
     });
 
     throw new AppError("database", {
+      cause: "",
       message: "Failed to fetch the total number of users.",
       metadata: { query },
     });

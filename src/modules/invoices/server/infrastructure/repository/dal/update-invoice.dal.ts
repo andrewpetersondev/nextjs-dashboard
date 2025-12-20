@@ -27,6 +27,7 @@ export async function updateInvoiceDal(
 ): Promise<InvoiceEntity> {
   if (!(db && id && updateData)) {
     throw new AppError("validation", {
+      cause: "",
       message: INVOICE_MSG.invalidInput,
       metadata: {},
     });
@@ -40,6 +41,7 @@ export async function updateInvoiceDal(
 
   if (!updated) {
     throw new AppError("database", {
+      cause: "",
       message: INVOICE_MSG.updateFailed,
       metadata: {},
     });

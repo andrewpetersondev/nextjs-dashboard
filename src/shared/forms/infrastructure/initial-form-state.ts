@@ -18,7 +18,7 @@ export function createInitialFailedFormState<T extends string>(
     makeEmptyDenseFieldErrorMap<T, string>(fieldNames);
 
   const error = new AppError("validation", {
-    // no message shown in UI; this is just an "empty" validation state
+    cause: "",
     message: "",
     metadata: {
       fieldErrors,

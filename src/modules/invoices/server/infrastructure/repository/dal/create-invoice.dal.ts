@@ -38,6 +38,7 @@ export async function createInvoiceDal(
 
     if (!createdInvoice) {
       throw new AppError("database", {
+        cause: "",
         message: INVOICE_MSG.createFailed,
         metadata: {
           input,

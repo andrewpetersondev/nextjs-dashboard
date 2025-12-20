@@ -32,6 +32,7 @@ export class InvoiceService {
     if (Number.isNaN(parsed.getTime())) {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: INVOICE_MSG.invalidFormData,
           metadata: { date },
         }),
@@ -63,6 +64,7 @@ export class InvoiceService {
     if (!dto) {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: INVOICE_MSG.invalidInput,
           metadata: {},
         }),
@@ -95,6 +97,7 @@ export class InvoiceService {
     if (!id) {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: INVOICE_MSG.invalidId,
           metadata: { id },
         }),
@@ -110,6 +113,7 @@ export class InvoiceService {
     if (!(id && dto)) {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: INVOICE_MSG.invalidInput,
           metadata: { hasDto: Boolean(dto), id },
         }),
@@ -150,6 +154,7 @@ export class InvoiceService {
     if (!id) {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: INVOICE_MSG.invalidId,
           metadata: { id },
         }),

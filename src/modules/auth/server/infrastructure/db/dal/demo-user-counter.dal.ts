@@ -40,6 +40,7 @@ export async function demoUserCounterDal(
         );
 
         throw makeIntegrityError({
+          cause: "",
           message: "Invariant: insert did not return a row",
           metadata: { kind: "invariant" },
         });
@@ -53,6 +54,7 @@ export async function demoUserCounterDal(
         });
 
         throw makeIntegrityError({
+          cause: "",
           message: "Invariant: demo user counter row returned with null id",
           metadata: { counterRow, kind: "invariant" },
         });

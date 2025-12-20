@@ -38,6 +38,7 @@ export function getEnvVariableResult<K extends EnvVariables>(
     console.log(`Env var ${key} is missing or empty`);
     return Err(
       makeValidationError({
+        cause: "",
         message: `Missing required environment variable: ${key}`,
         metadata: { key },
       }),
@@ -99,6 +100,7 @@ export function validateEnvResult(
     console.error(`❌ ${errorMessage}`);
     return Err(
       makeValidationError({
+        cause: "",
         message: errorMessage,
         metadata: { missing },
       }),

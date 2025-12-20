@@ -19,6 +19,7 @@ export function parseIntResult(
   if (trimmed === "") {
     return Err(
       makeValidationError({
+        cause: "",
         message: "Cannot parse empty string to integer",
         metadata: { radix, value },
       }),
@@ -32,6 +33,7 @@ export function parseIntResult(
     (n) => !Number.isNaN(n),
     () =>
       makeValidationError({
+        cause: "",
         message: `Failed to parse "${value}" as integer`,
         metadata: { radix, value },
       }),
@@ -49,6 +51,7 @@ export function parseFloatResult(value: string): Result<number, AppError> {
   if (trimmed === "") {
     return Err(
       makeValidationError({
+        cause: "",
         message: "Cannot parse empty string to float",
         metadata: { value },
       }),
@@ -62,6 +65,7 @@ export function parseFloatResult(value: string): Result<number, AppError> {
     (n) => !Number.isNaN(n),
     () =>
       makeValidationError({
+        cause: "",
         message: `Failed to parse "${value}" as float`,
         metadata: { value },
       }),
@@ -81,6 +85,7 @@ export function toNumberResult(value: unknown): Result<number, AppError> {
       (n) => !Number.isNaN(n),
       () =>
         makeValidationError({
+          cause: "",
           message: "Value is NaN",
           metadata: { value },
         }),
@@ -92,6 +97,7 @@ export function toNumberResult(value: unknown): Result<number, AppError> {
     if (trimmed === "") {
       return Err(
         makeValidationError({
+          cause: "",
           message: "Cannot convert empty string to number",
           metadata: { value },
         }),
@@ -103,6 +109,7 @@ export function toNumberResult(value: unknown): Result<number, AppError> {
       (n) => !Number.isNaN(n),
       () =>
         makeValidationError({
+          cause: "",
           message: `Failed to convert "${value}" to number`,
           metadata: { value },
         }),
@@ -111,6 +118,7 @@ export function toNumberResult(value: unknown): Result<number, AppError> {
 
   return Err(
     makeValidationError({
+      cause: "",
       message: "Cannot convert value to number",
       metadata: {
         actualType: typeof value,
@@ -137,6 +145,7 @@ export function validateNumberRange(
     (n) => n >= min && n <= max,
     (n) =>
       makeValidationError({
+        cause: "",
         message: `Number ${n} is out of range [${min}, ${max}]`,
         metadata: { max, min, value: n },
       }),
@@ -155,6 +164,7 @@ export function validatePositive(value: number): Result<number, AppError> {
     (n) => n > 0,
     (n) =>
       makeValidationError({
+        cause: "",
         message: `Expected positive number, got ${n}`,
         metadata: {
           value: n,
@@ -175,6 +185,7 @@ export function validateNonNegative(value: number): Result<number, AppError> {
     (n) => n >= 0,
     (n) =>
       makeValidationError({
+        cause: "",
         message: `Expected non-negative number, got ${n}`,
         metadata: {
           value: n,
@@ -195,6 +206,7 @@ export function validateInteger(value: number): Result<number, AppError> {
     (n) => Number.isInteger(n),
     (n) =>
       makeValidationError({
+        cause: "",
         message: `Expected integer, got ${n}`,
         metadata: {
           value: n,

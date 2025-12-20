@@ -25,12 +25,14 @@ export async function upsertRevenueByPeriod(
 ): Promise<RevenueEntity> {
   if (!period) {
     throw makeValidationError({
+      cause: "",
       message: "Period is required",
       metadata: { period },
     });
   }
   if (!revenue) {
     throw makeValidationError({
+      cause: "",
       message: "Revenue data is required",
       metadata: { revenue },
     });

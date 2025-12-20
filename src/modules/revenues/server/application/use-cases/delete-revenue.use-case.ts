@@ -13,6 +13,7 @@ export class DeleteRevenueUseCase {
   async execute(id: RevenueId): Promise<void> {
     if (!id) {
       throw makeValidationError({
+        cause: "",
         message: "Revenue ID is required",
         metadata: {},
       });

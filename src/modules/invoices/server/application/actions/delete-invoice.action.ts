@@ -30,12 +30,12 @@ export async function deleteInvoiceAction(
     if (!id) {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: INVOICE_MSG.invalidId,
           metadata: { id },
         }),
       );
     }
-
     // Dependency injection: repository -> service
     const repo: InvoiceRepository = new InvoiceRepository(getAppDb());
     const service: InvoiceService = new InvoiceService(repo);
@@ -77,6 +77,7 @@ export async function deleteInvoiceAction(
       error instanceof AppError
         ? error
         : new AppError("unknown", {
+            cause: "",
             message: INVOICE_MSG.serviceError,
             metadata: { error, id },
           });

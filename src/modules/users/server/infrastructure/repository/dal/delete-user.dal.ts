@@ -39,6 +39,7 @@ export async function deleteUserDal(
       userId,
     });
     throw new AppError("database", {
+      cause: "",
       message: "An unexpected error occurred. Please try again.",
       metadata: { userId: userId.toString() },
     });

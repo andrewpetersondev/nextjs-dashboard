@@ -28,6 +28,7 @@ export async function updateRevenue(
 ): Promise<RevenueEntity> {
   if (!(id && revenue)) {
     throw makeValidationError({
+      cause: "",
       message: "Revenue ID and data are required",
       metadata: { id, revenue },
     });
@@ -50,6 +51,7 @@ export async function updateRevenue(
 
   if (!data) {
     throw makeDatabaseError({
+      cause: "",
       message: "Failed to update revenue record",
       metadata: {},
     });
@@ -58,6 +60,7 @@ export async function updateRevenue(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeDatabaseError({
+      cause: "",
       message: "Failed to convert updated revenue record",
       metadata: { table: "revenues" },
     });

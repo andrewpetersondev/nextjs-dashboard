@@ -41,7 +41,7 @@ export interface AppErrorJson extends ErrorCoreMetadata {
  * Options for constructing an application error instance.
  */
 export interface AppErrorOptions {
-  readonly cause?: unknown;
+  readonly cause: unknown;
   readonly message: string;
   readonly metadata: ErrorMetadata;
 }

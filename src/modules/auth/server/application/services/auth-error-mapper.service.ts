@@ -26,6 +26,7 @@ export function toSignupUniquenessConflict(error: AppError): AppError | null {
   }
 
   return makeAppError("conflict", {
+    cause: error,
     message: "Signup failed: value already in use",
     metadata: { fieldErrors },
   });

@@ -10,6 +10,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
       throw new AppError("validation", {
+        cause: "",
         message: INVOICE_MSG.invalidId,
         metadata: { id },
       });
@@ -19,6 +20,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     const result = await service.readInvoice(id);
     if (!result.ok) {
       throw new AppError(result.error.code, {
+        cause: "",
         message: result.error.message,
         metadata: result.error.metadata,
       });
@@ -26,6 +28,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     return result.value;
   } catch (error) {
     throw new AppError("database", {
+      cause: "",
       message: INVOICE_MSG.dbError,
       metadata: { error },
     });

@@ -22,6 +22,7 @@ export async function readInvoiceDal(
 ): Promise<InvoiceEntity> {
   if (!(db && id)) {
     throw new AppError("validation", {
+      cause: "",
       message: INVOICE_MSG.invalidInput,
       metadata: { id },
     });
@@ -31,6 +32,7 @@ export async function readInvoiceDal(
 
   if (!data) {
     throw new AppError("database", {
+      cause: "",
       message: INVOICE_MSG.notFound,
       metadata: { id },
     });

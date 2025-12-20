@@ -20,6 +20,7 @@ export async function createRevenue(
 ): Promise<RevenueEntity> {
   if (!revenue) {
     throw makeValidationError({
+      cause: "",
       message: "Revenue data is required",
       metadata: { revenue },
     });

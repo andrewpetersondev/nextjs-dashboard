@@ -18,6 +18,7 @@ export const createEnumValidator = <T extends string>(
     if (typeof value !== "string") {
       return Err(
         new AppError("validation", {
+          cause: "",
           message: `Invalid ${enumName}: expected string, got ${typeof value}`,
           metadata: {
             enumName,
@@ -33,6 +34,7 @@ export const createEnumValidator = <T extends string>(
     }
     return Err(
       new AppError("validation", {
+        cause: "",
         message: `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
         metadata: { allowedValues: enumValues, enumName, value },
       }),

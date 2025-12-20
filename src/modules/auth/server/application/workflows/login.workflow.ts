@@ -35,6 +35,7 @@ export async function loginWorkflow(
     if (isCredentialFailure) {
       return Err(
         makeValidationError({
+          cause: "",
           message: AUTH_ERROR_MESSAGES.LOGIN_FAILED,
           metadata: {
             code: "invalidCredentials",

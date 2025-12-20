@@ -34,6 +34,7 @@ export async function insertUserDal(
 
       if (!userRow) {
         throw makeIntegrityError({
+          cause: "Database returned empty result set for insert",
           message: "Insert did not return a row",
           metadata: { kind: "invariant" },
         });

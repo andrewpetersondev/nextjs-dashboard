@@ -19,6 +19,7 @@ export function createRevenueDisplayEntity(
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
     throw makeValidationError({
+      cause: "",
       message: "Invalid revenue entity: expected non-null object",
       metadata: { revenueEntity },
     });
@@ -34,6 +35,7 @@ export function createRevenueDisplayEntity(
       yearNumber > MAX_REVENUE_YEAR
     ) {
       throw makeValidationError({
+        cause: "",
         message: "Invalid year extracted from period",
         metadata: { period: revenueEntity.period, yearNumber },
       });
@@ -41,6 +43,7 @@ export function createRevenueDisplayEntity(
 
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
       throw makeValidationError({
+        cause: "",
         message: "Invalid month number extracted from period",
         metadata: { monthNumber, period: revenueEntity.period },
       });
@@ -49,6 +52,7 @@ export function createRevenueDisplayEntity(
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
       throw makeValidationError({
+        cause: "",
         message: "Invalid month name computed from month number",
         metadata: { monthNumber },
       });

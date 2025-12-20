@@ -48,6 +48,7 @@ export async function fetchFilteredUsersDal(
       query,
     });
     throw new AppError("database", {
+      cause: "",
       message: "Failed to fetch filtered users.",
       metadata: { currentPage, query },
     });

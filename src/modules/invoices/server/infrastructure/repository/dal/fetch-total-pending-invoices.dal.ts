@@ -20,6 +20,7 @@ export async function fetchTotalPendingInvoicesDal(
 
   if (pending === undefined) {
     throw new AppError("database", {
+      cause: "",
       message: INVOICE_MSG.fetchTotalPendingFailed,
       metadata: { pending: pending ?? 0 },
     });

@@ -65,11 +65,11 @@ export class AppError extends Error {
 
     const { cause, message, metadata } = options;
 
-    // Ensure cause is an Error, otherwise sanitize or set as undefined for safe error chaining.
+    // Ensure cause is an Error, otherwise sanitize for safe error chaining.
     let sanitizedCause: unknown;
     if (cause instanceof Error) {
       sanitizedCause = cause;
-    } else if (cause !== undefined) {
+    } else {
       sanitizedCause = redactNonSerializable(cause);
     }
 
@@ -113,6 +113,7 @@ export class AppError extends Error {
       });
     }
     return new AppError(fallbackCode, {
+      cause: error,
       message: safeStringifyUnknown(error),
       metadata: buildUnknownValueMetadata(error),
     });

@@ -50,6 +50,7 @@ export const makeFormError = <F extends string>(
   params: FormErrorParams<F>,
 ): FormResult<never> => {
   const error: AppError = makeAppError(params.code ?? "validation", {
+    cause: "",
     message: params.message,
     metadata: {
       fieldErrors: params.fieldErrors,

@@ -26,6 +26,7 @@ export async function findRevenuesByDateRange(
 ): Promise<RevenueEntity[]> {
   if (!(startPeriod && endPeriod)) {
     throw makeValidationError({
+      cause: "",
       message: "Start and end periods are required",
       metadata: { endPeriod, startPeriod },
     });
@@ -44,6 +45,7 @@ export async function findRevenuesByDateRange(
 
   if (!revenueRows) {
     throw makeDatabaseError({
+      cause: "",
       message: "Failed to retrieve revenue records",
       metadata: { table: "revenues" },
     });

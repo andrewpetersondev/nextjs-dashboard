@@ -36,6 +36,7 @@ export async function fetchUserByIdDal(
       id,
     });
     throw new AppError("database", {
+      cause: "",
       message: "Failed to fetch user by id.",
       metadata: { id: id.toString() },
     });

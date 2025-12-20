@@ -24,12 +24,14 @@ export async function upsertRevenue(
 ): Promise<RevenueEntity> {
   if (!revenueData) {
     throw makeValidationError({
+      cause: "",
       message: "Revenue data is required",
       metadata: { revenueData },
     });
   }
   if (!revenueData.period) {
     throw makeValidationError({
+      cause: "",
       message:
         "Revenue period (first-of-month DATE) is required and must be unique",
       metadata: { revenueData },
@@ -58,17 +60,17 @@ export async function upsertRevenue(
         target: revenues.period,
       })
       .returning()) as RevenueRow[];
-
     if (!data) {
       throw makeDatabaseError({
+        cause: "",
         message: "Failed to upsert revenue record",
         metadata: { table: "revenues" },
       });
     }
-
     const result: RevenueEntity = mapRevenueRowToEntity(data);
     if (!result) {
       throw makeDatabaseError({
+        cause: "",
         message: "Failed to convert revenue record",
         metadata: { table: "revenues" },
       });
@@ -77,6 +79,7 @@ export async function upsertRevenue(
   } catch (error) {
     if (error instanceof Error && error.message.includes("unique constraint")) {
       throw makeValidationError({
+        cause: "",
         message: `Revenue record with period ${revenueData.period} already exists and could not be updated`,
         metadata: { revenueData: revenueData ?? "null" },
       });

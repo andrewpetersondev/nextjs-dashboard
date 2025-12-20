@@ -37,6 +37,7 @@ export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (!hasProcessEnv()) {
     return Err(
       makeInfrastructureError({
+        cause: "",
         message: "process.env is not available in this environment",
         metadata: {},
       }),
@@ -46,6 +47,7 @@ export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (!raw) {
     return Err(
       makeValidationError({
+        cause: "",
         message: "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
         metadata: { key: "NEXT_PUBLIC_NODE_ENV" },
       }),
@@ -55,6 +57,7 @@ export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (!result.success) {
     return Err(
       makeValidationError({
+        cause: "",
         message: `Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`,
         metadata: { raw, zodError: result.error.issues },
       }),
@@ -87,6 +90,7 @@ export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
   if (!hasProcessEnv()) {
     return Err(
       makeInfrastructureError({
+        cause: "",
         message: "process.env is not available in this environment",
         metadata: {},
       }),
@@ -96,6 +100,7 @@ export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
   if (!raw) {
     return Err(
       makeValidationError({
+        cause: "",
         message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
         metadata: { key: "NEXT_PUBLIC_LOG_LEVEL" },
       }),
@@ -105,6 +110,7 @@ export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
   if (!result.success) {
     return Err(
       makeValidationError({
+        cause: "",
         message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
         metadata: { raw, zodError: result.error.issues },
       }),

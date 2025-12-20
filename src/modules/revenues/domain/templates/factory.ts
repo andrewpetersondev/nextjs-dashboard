@@ -44,6 +44,7 @@ export function createMonthTemplateData(
   const monthName = MONTH_ORDER[calendarMonthIndex];
   if (!monthName) {
     throw makeValidationError({
+      cause: "",
       message: `Invalid month index: ${calendarMonthIndex}. Expected 0-11.`,
       metadata: { calendarMonthIndex, monthDate },
     });

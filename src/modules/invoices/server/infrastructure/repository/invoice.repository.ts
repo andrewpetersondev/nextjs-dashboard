@@ -44,6 +44,7 @@ export class InvoiceRepository extends BaseRepository<
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
       throw new AppError("validation", {
+        cause: "",
         message: INVOICE_MSG.invalidInput,
         metadata: { input },
       });
@@ -64,6 +65,7 @@ export class InvoiceRepository extends BaseRepository<
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
       throw new AppError("validation", {
+        cause: "",
         message: INVOICE_MSG.invalidId,
         metadata: { id },
       });
@@ -89,12 +91,14 @@ export class InvoiceRepository extends BaseRepository<
   ): Promise<InvoiceDto> {
     if (!id) {
       throw new AppError("validation", {
+        cause: "",
         message: INVOICE_MSG.invalidId,
         metadata: { id },
       });
     }
     if (!data || typeof data !== "object") {
       throw new AppError("validation", {
+        cause: "",
         message: INVOICE_MSG.invalidInput,
         metadata: { data },
       });
@@ -117,6 +121,7 @@ export class InvoiceRepository extends BaseRepository<
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
       throw new AppError("validation", {
+        cause: "",
         message: INVOICE_MSG.invalidId,
         metadata: { id },
       });

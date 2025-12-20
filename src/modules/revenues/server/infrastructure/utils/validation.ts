@@ -11,7 +11,7 @@ export const validateCondition = (
   message: string,
 ): void => {
   if (!condition) {
-    throw makeValidationError({ message, metadata: { condition } });
+    throw makeValidationError({ cause: "", message, metadata: { condition } });
   }
 };
 

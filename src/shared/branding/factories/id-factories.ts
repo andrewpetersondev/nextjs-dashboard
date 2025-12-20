@@ -32,6 +32,7 @@ const validateUuid = (
   if (typeof value !== "string") {
     return Err(
       new AppError("validation", {
+        cause: "",
         message: `Invalid ${label}: expected string, got ${typeof value}`,
         metadata: { expectedType: "string", label, receivedType: typeof value },
       }),
@@ -41,6 +42,7 @@ const validateUuid = (
   if (v.length === 0) {
     return Err(
       new AppError("validation", {
+        cause: "",
         message: `${label} cannot be empty`,
         metadata: { label },
       }),
@@ -49,6 +51,7 @@ const validateUuid = (
   if (!UUID_REGEX.test(v)) {
     return Err(
       new AppError("validation", {
+        cause: "",
         message: `Invalid ${label}: "${value}". Must be a valid UUID.`,
         metadata: { label, value },
       }),

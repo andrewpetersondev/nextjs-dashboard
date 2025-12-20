@@ -24,6 +24,7 @@ export async function findRevenueByPeriod(
 ): Promise<RevenueEntity | null> {
   if (!period) {
     throw makeValidationError({
+      cause: "",
       message: "Period is required",
       metadata: { period },
     });
@@ -43,6 +44,7 @@ export async function findRevenueByPeriod(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeDatabaseError({
+      cause: "",
       message: "Failed to convert revenue record",
       metadata: { table: "revenues" },
     });

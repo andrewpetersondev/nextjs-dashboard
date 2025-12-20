@@ -25,6 +25,7 @@ export async function fetchCustomersSelectDal(
     // Use structured logging in production
     console.error("Database Error:", error);
     throw new AppError("database", {
+      cause: "",
       message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
       metadata: {},
     });

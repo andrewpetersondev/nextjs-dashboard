@@ -42,6 +42,7 @@ export function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (!result.success) {
     return Err(
       makeValidationError({
+        cause: "",
         message: `Invalid NODE_ENV value "${raw}": ${result.error.message}`,
         metadata: { raw, zodError: result.error.issues },
       }),
@@ -77,6 +78,7 @@ export function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
   if (!result.success) {
     return Err(
       makeValidationError({
+        cause: "",
         message: `Invalid DATABASE_ENV value "${raw}": ${result.error.message}`,
         metadata: { raw, zodError: result.error.issues },
       }),
@@ -111,6 +113,7 @@ export function getLogLevelResult(): Result<LogLevel, AppError> {
   if (!result.success) {
     return Err(
       makeValidationError({
+        cause: "",
         message: `Invalid LOG_LEVEL value "${raw}": ${result.error.message}`,
         metadata: { raw, zodError: result.error.issues },
       }),

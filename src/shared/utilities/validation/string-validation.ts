@@ -22,6 +22,7 @@ export function validateNonEmpty(
     (s) => s.length > 0,
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} cannot be empty`,
         metadata: { fieldName },
       }),
@@ -46,6 +47,7 @@ export function validateMinLength(
     (s) => s.length >= minLength,
     (s) =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be at least ${minLength} characters, got ${s.length}`,
         metadata: { actualLength: s.length, fieldName, minLength },
       }),
@@ -70,6 +72,7 @@ export function validateMaxLength(
     (s) => s.length <= maxLength,
     (s) =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be at most ${maxLength} characters, got ${s.length}`,
         metadata: { actualLength: s.length, fieldName, maxLength },
       }),
@@ -94,6 +97,7 @@ export function validatePattern(
     (s) => pattern.test(s),
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} does not match required pattern`,
         metadata: { fieldName, pattern: pattern.source },
       }),
@@ -112,6 +116,7 @@ export function validateEmail(value: string): Result<string, AppError> {
     (s) => EMAIL_PATTERN.test(s),
     () =>
       makeValidationError({
+        cause: "",
         message: "Invalid email address format",
         metadata: { value },
       }),
@@ -149,6 +154,7 @@ export function validateTrimmed(
     (s) => s.length > 0,
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} cannot be empty or whitespace only`,
         metadata: { fieldName },
       }),
@@ -174,6 +180,7 @@ export function validateOneOf<T extends string>(
     (v) => allowedValues.includes(v),
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be one of: ${allowedValues.join(", ")}`,
         metadata: { allowedValues, fieldName, value },
       }),
@@ -199,6 +206,7 @@ export function validateUrl(value: string): Result<string, AppError> {
     },
     () =>
       makeValidationError({
+        cause: "",
         message: "Invalid URL format",
         metadata: { value },
       }),

@@ -19,6 +19,7 @@ export function validateIsString(
     (v): v is string => typeof v === "string",
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be a string`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -41,6 +42,7 @@ export function validateIsNumber(
     (v): v is number => typeof v === "number" && !Number.isNaN(v),
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be a number`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -63,6 +65,7 @@ export function validateIsBoolean(
     (v): v is boolean => typeof v === "boolean",
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be a boolean`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -86,6 +89,7 @@ export function validateIsObject(
       typeof v === "object" && v !== null && !Array.isArray(v),
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be an object`,
         metadata: {
           actualType: typeof value,
@@ -113,6 +117,7 @@ export function validateIsFunction(
     (v): v is (...args: unknown[]) => unknown => typeof v === "function",
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be a function`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -135,6 +140,7 @@ export function validateIsDate(
     (v): v is Date => v instanceof Date && !Number.isNaN(v.getTime()),
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be a valid Date`,
         metadata: {
           actualType: typeof value,
@@ -161,6 +167,7 @@ export function validateIsNull(
     (v): v is null => v === null,
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be null`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -183,6 +190,7 @@ export function validateIsUndefined(
     (v): v is undefined => v === undefined,
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be undefined`,
         metadata: { actualType: typeof value, fieldName },
       }),
@@ -206,6 +214,7 @@ export function validateIsDefined<T>(
     (v): v is T => v !== null && v !== undefined,
     () =>
       makeValidationError({
+        cause: "",
         message: `${fieldName} must be defined`,
         metadata: {
           fieldName,
@@ -234,6 +243,7 @@ export function validateInstanceOf<T>(
       (v): v is T => v instanceof ctor,
       () =>
         makeValidationError({
+          cause: "",
           message: `${fieldName} must be an instance of ${ctor.name}`,
           metadata: {
             actualType: typeof value,

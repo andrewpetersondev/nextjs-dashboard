@@ -23,6 +23,7 @@ export async function readRevenue(
 ): Promise<RevenueEntity> {
   if (!id) {
     throw makeValidationError({
+      cause: "",
       message: "Revenue ID is required",
       metadata: { id: id ?? "null" },
     });
@@ -37,6 +38,7 @@ export async function readRevenue(
 
   if (!data) {
     throw makeDatabaseError({
+      cause: "",
       message: "Revenue record not found",
       metadata: {},
     });
@@ -45,6 +47,7 @@ export async function readRevenue(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeDatabaseError({
+      cause: "",
       message: "Failed to convert revenue record",
       metadata: { table: "revenues" },
     });

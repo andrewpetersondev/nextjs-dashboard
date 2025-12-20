@@ -27,6 +27,8 @@ export async function executeDalResult<T>(
     const value = await thunk();
     return Ok<T>(value);
   } catch (err: unknown) {
+    console.log("EXECUTE DAL RESULT ERROR");
+    console.log(err);
     // Provide required operational context to normalizePgError
     const error: AppError = normalizePgError(err, {
       entity: context.entity,

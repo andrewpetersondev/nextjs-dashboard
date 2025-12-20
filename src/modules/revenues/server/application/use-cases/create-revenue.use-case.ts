@@ -19,6 +19,7 @@ export class CreateRevenueUseCase {
   async execute(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
       throw makeValidationError({
+        cause: "",
         message: "Invalid revenue data",
         metadata: { revenue },
       });
@@ -26,6 +27,7 @@ export class CreateRevenueUseCase {
     const created = await this.repository.create(revenue);
     if (!created) {
       throw makeDatabaseError({
+        cause: "",
         message: "Failed to create a revenue record",
         metadata: { table: "revenues" },
       });
