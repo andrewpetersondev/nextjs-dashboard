@@ -8,7 +8,7 @@ import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeUnexpectedErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -73,7 +73,7 @@ export class CreateUserUseCase {
 
       return Ok(createdResult.value);
     } catch (err: unknown) {
-      const error = makeUnexpectedErrorFromUnknown(err, {
+      const error = makeUnexpectedError(err, {
         message: "signup.user.create.unexpected",
         metadata: { operation: "createUser" },
       });

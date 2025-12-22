@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionPort } from "@/modules/auth/server/application/ports/session.port";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -40,7 +40,7 @@ export class ClearSessionUseCase {
 
       return Ok<void>(undefined);
     } catch (err: unknown) {
-      const error = makeAppErrorFromUnknown(err, "unexpected");
+      const error = normalizeUnknownToAppError(err, "unexpected");
 
       this.logger.error("Session clear failed", {
         error: String(err),

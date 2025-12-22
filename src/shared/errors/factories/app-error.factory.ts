@@ -38,7 +38,7 @@ export function makeAppError(
  * - Wrapping third-party library errors
  * - Action/workflow error recovery
  */
-export function makeAppErrorFromUnknown(
+export function normalizeUnknownToAppError(
   error: unknown,
   fallbackCode: AppErrorKey,
 ): AppError {
@@ -54,7 +54,7 @@ export function makeAppErrorFromUnknown(
  * rather than returned as `Result.Err`.
  *
  * This factory:
- * - Normalizes the error via {@link makeAppErrorFromUnknown}
+ * - Normalizes the error via {@link normalizeUnknownToAppError}
  * - Merges provided metadata with normalized metadata
  * - Preserves the original cause chain for debugging
  *
@@ -71,13 +71,13 @@ export function makeAppErrorFromUnknown(
  * }
  * ```
  */
-export function makeUnexpectedErrorFromUnknown(
+export function makeUnexpectedError(
   error: unknown,
   options: Omit<AppErrorOptions, "cause"> & {
     readonly metadata?: ErrorMetadata;
   },
 ): AppError {
-  const normalizedError = makeAppErrorFromUnknown(
+  const normalizedError = normalizeUnknownToAppError(
     error,
     APP_ERROR_KEYS.unexpected,
   );

@@ -12,7 +12,7 @@ import type { UserPersistencePatch } from "@/modules/users/server/infrastructure
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -47,7 +47,7 @@ export class UserService {
 
       if (!user) {
         return Err(
-          makeAppErrorFromUnknown(
+          normalizeUnknownToAppError(
             new Error(USER_ERROR_MESSAGES.createFailed),
             "database",
           ),
@@ -60,7 +60,7 @@ export class UserService {
 
       return Ok(userEntityToDto(user));
     } catch (err) {
-      const error = makeAppErrorFromUnknown(err, "unexpected");
+      const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("User creation failed", {
         error,
         logging: { email: input.email },
@@ -90,7 +90,7 @@ export class UserService {
 
       if (!updated) {
         return Err(
-          makeAppErrorFromUnknown(
+          normalizeUnknownToAppError(
             new Error(USER_ERROR_MESSAGES.updateFailed),
             "database",
           ),
@@ -103,7 +103,7 @@ export class UserService {
 
       return Ok(userEntityToDto(updated));
     } catch (err) {
-      const error = makeAppErrorFromUnknown(err, "unexpected");
+      const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("User update failed", {
         error,
         logging: { userId: id },
@@ -118,7 +118,7 @@ export class UserService {
 
       if (!deleted) {
         return Err(
-          makeAppErrorFromUnknown(
+          normalizeUnknownToAppError(
             new Error(USER_ERROR_MESSAGES.notFoundOrDeleteFailed),
             "not_found",
           ),
@@ -131,7 +131,7 @@ export class UserService {
 
       return Ok(userEntityToDto(deleted));
     } catch (err) {
-      const error = makeAppErrorFromUnknown(err, "unexpected");
+      const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("User deletion failed", {
         error,
         logging: { userId: id },

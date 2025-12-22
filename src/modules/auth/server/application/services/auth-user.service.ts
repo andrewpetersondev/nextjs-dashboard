@@ -7,7 +7,7 @@ import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeAppErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -96,7 +96,7 @@ export class AuthUserService {
       const user = userResult.value;
 
       if (!user) {
-        const error = makeAppErrorFromUnknown(
+        const error = normalizeUnknownToAppError(
           new Error("user_not_found"),
           "not_found",
         );
@@ -116,7 +116,7 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        const error = makeAppErrorFromUnknown(
+        const error = normalizeUnknownToAppError(
           new Error("invalid_password"),
           "invalid_credentials",
         );
@@ -137,7 +137,7 @@ export class AuthUserService {
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      const error = makeAppErrorFromUnknown(err, "unexpected");
+      const error = normalizeUnknownToAppError(err, "unexpected");
 
       logger.operation("error", "Login service unexpected error", {
         error,

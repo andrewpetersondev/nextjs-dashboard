@@ -5,7 +5,7 @@ import type {
   ExecuteDalCoreOptions,
 } from "@/server/db/dal/types";
 import type { AppError } from "@/shared/errors/core/app-error";
-import { makeUnexpectedErrorFromUnknown } from "@/shared/errors/factories/app-error.factory";
+import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**
@@ -24,7 +24,7 @@ export async function executeDalThrow<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    const error: AppError = makeUnexpectedErrorFromUnknown(err, {
+    const error: AppError = makeUnexpectedError(err, {
       message: `Unexpected DAL failure in ${context.operation}`,
       metadata: {
         operation: context.operation,

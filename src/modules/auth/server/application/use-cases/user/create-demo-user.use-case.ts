@@ -10,7 +10,7 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
 import type { AppError } from "@/shared/errors/core/app-error";
 import {
-  makeUnexpectedErrorFromUnknown,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
@@ -97,7 +97,7 @@ export class CreateDemoUserUseCase {
 
       return Ok(txResult.value);
     } catch (err: unknown) {
-      const error = makeUnexpectedErrorFromUnknown(err, {
+      const error = makeUnexpectedError(err, {
         message: "demoUser.unexpected",
         metadata: { role },
       });
