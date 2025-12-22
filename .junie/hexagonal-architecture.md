@@ -1,7 +1,3 @@
----
-apply: always
----
-
 # Hexagonal Architecture (Ports & Adapters)
 
 Rules for maintaining clean boundaries within module `server/` directories.

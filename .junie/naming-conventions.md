@@ -1,7 +1,3 @@
----
-apply: always
----
-
 # Naming Conventions
 
 Standardized naming to ensure predictability, discoverability, and easy refactoring.
