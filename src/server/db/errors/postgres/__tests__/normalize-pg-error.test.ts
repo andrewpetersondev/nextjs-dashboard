@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizePgError } from "@/shared/errors/adapters/postgres/normalize-pg-error";
+import { normalizePgError } from "@/server/db/errors/postgres/normalize-pg-error";
 
 describe("normalizePgError", () => {
   it("uses pg condition as AppError.message and preserves pgCode", () => {

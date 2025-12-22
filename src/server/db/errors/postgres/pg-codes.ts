@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
+import "server-only";
 
-import type { PgErrorDefinition } from "@/shared/errors/adapters/postgres/pg-error.metadata";
+import type { PgErrorDefinition } from "@/server/db/errors/postgres/pg-error.metadata";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
 

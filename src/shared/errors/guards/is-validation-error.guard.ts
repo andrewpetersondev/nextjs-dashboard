@@ -1,6 +1,10 @@
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error";
 import type { ErrorMetadata } from "@/shared/errors/core/app-error.types";
+import type {
+  FieldErrors,
+  FormErrors,
+} from "@/shared/forms/types/field-error.value";
 
 /**
  * Metadata shape for validation errors.
@@ -9,25 +13,28 @@ import type { ErrorMetadata } from "@/shared/errors/core/app-error.types";
  * Validation errors commonly attach:
  * - `fieldErrors`: per-field messages (e.g. `{ email: ["required"] }`)
  * - `formErrors`: form-level messages (e.g. `["Please fix errors"]`)
+ *
+ * This intentionally reuses the canonical form error types from `shared/forms`
+ * so error metadata and form infrastructure stay aligned.
  */
 export interface ValidationErrorMetadata extends ErrorMetadata {
-  readonly fieldErrors?: Readonly<Record<string, readonly string[]>>;
-  readonly formErrors?: readonly string[];
+  readonly fieldErrors?: FieldErrors;
+  readonly formErrors?: FormErrors;
 }
 
 /**
  * Type guard that narrows an unknown value to an `AppError` carrying
- * validation metadata.
+ * validation metadata compatible with the shared form types.
  *
  * @remarks
  * This checks:
  * - the value is an `AppError`
  * - the error code is the canonical `validation` code
- * - `metadata.fieldErrors` (when present) is a map of string → string[]
- * - `metadata.formErrors` (when present) is a string[]
+ * - `metadata.fieldErrors` (when present) matches {@link FieldErrors}
+ * - `metadata.formErrors` (when present) matches {@link FormErrors}
  *
  * Useful with `fromGuard` or similar helpers to turn generic errors into
- * strongly-typed validation failures.
+ * strongly-typed validation failures that the forms layer can consume.
  */
 export function isValidationError(
   error: unknown,
@@ -53,6 +60,7 @@ export function isValidationError(
   const isStringArray = (value: unknown): value is readonly string[] =>
     Array.isArray(value) && value.every((item) => typeof item === "string");
 
+  // Structural check for FieldErrors: Record<string, readonly string[]>
   if (
     fieldErrors !== undefined &&
     (fieldErrors === null ||
@@ -64,6 +72,7 @@ export function isValidationError(
     return false;
   }
 
+  // Structural check for FormErrors: readonly string[]
   if (formErrors !== undefined && !isStringArray(formErrors)) {
     return false;
   }

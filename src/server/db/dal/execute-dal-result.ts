@@ -4,7 +4,7 @@ import type {
   DalContextLite,
   ExecuteDalCoreOptions,
 } from "@/server/db/dal/dal-context.schema";
-import { normalizePgError } from "@/shared/errors/adapters/postgres/normalize-pg-error";
+import { normalizePgError } from "@/server/db/errors/postgres/normalize-pg-error";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";

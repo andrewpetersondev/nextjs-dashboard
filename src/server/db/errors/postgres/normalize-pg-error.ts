@@ -1,4 +1,6 @@
-import { toPgError } from "@/shared/errors/adapters/postgres/to-pg-error";
+import "server-only";
+
+import { toPgError } from "@/server/db/errors/postgres/to-pg-error";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
 import type { AppError } from "@/shared/errors/core/app-error";
