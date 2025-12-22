@@ -1,9 +1,9 @@
 /** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 import "server-only";
 
+import { PG_CONDITIONS } from "@/server/db/errors/postgres/pg-conditions";
 import type { PgErrorDefinition } from "@/server/db/errors/postgres/pg-error.metadata";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
 
 /**
  * Registry of known Postgres error codes.

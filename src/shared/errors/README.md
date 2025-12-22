@@ -36,7 +36,7 @@ Source of truth:
 
 - `catalog/app-error.codes.ts` (code definitions grouped by concern)
 - `catalog/app-error.registry.ts` (merged registry + lookup helpers)
-- `catalog/pg-conditions.ts` (stable “condition keys” used as messages)
+- `catalog/pg-conditions.ts` (stable "condition keys" used as messages)
 
 Defines:
 
@@ -49,10 +49,13 @@ Defines:
 
 ### 2) Adapters translate foreign failures into `AppError`
 
-Adapters are translation-only:
+Adapters are translation-only and located in `src/server/db/errors/postgres/`:
 
-- `adapters/postgres/*`: unknown DB error → canonical `AppError`
-- `adapters/http/*` (when present): canonical `AppError` → HTTP payload/status
+- `to-pg-error.ts`: normalize raw Postgres errors into a standard shape
+- `normalize-pg-error.ts`: translate normalized Postgres errors into canonical `AppError`
+- `is-pg-error-metadata.guard.ts`: safely narrow metadata to Postgres\-specific shape
+- `pg-codes.ts`: mapping of Postgres error codes to app error semantics
+- `pg-error.metadata.ts`: type definitions for Postgres error metadata
 
 Adapters must preserve traceability by attaching metadata (no silent fallbacks).
 
@@ -95,14 +98,14 @@ Pipeline:
 
 ## Folder map (where to look)
 
-- `core/`: canonical types + `AppError` (framework-agnostic core)
-- `catalog/`: transport-agnostic registry (codes, definitions, condition keys)
-- `factories/`: `AppError` construction helpers (small and explicit)
-- `adapters/`: adapters/translation layers (e.g. Postgres, HTTP)
-- `guards/`: safe narrowers for error and metadata patterns
-  - e.g. `isPgErrorMetadata` (narrow `metadata` to Postgres-specific shape)
+- `src/shared/errors/core/`: canonical types + `AppError` (framework\-agnostic core)
+- `src/shared/errors/catalog/`: transport\-agnostic registry (codes, definitions, condition keys)
+- `src/shared/errors/factories/`: `AppError` construction helpers (small and explicit)
+- `src/server/db/errors/postgres/`: Postgres adapter (translate Postgres errors → `AppError`)
+- `src/shared/errors/guards/`: safe narrowers for error and metadata patterns
+  - e.g. `isPgErrorMetadata` (narrow `metadata` to Postgres\-specific shape)
   - e.g. `isValidationError` (narrow `AppError` to validation failures)
-- `utils/`: error-chain + serialization helpers
+- `src/shared/errors/utils/`: error\-chain + serialization helpers
 
 ---
 
@@ -112,4 +115,4 @@ Pipeline:
 - Keep **`message = condition key`** for standardization over time.
 - Keep adapters **pure translators**: map in/out, preserve metadata, avoid business logic.
 - Attach operation context at the **DAL boundary** so it survives to UI.
-- Use guards (`guards/`) at the edges to branch on **capabilities** (e.g. “has PG metadata”, “is validation error”) instead of ad-hoc `typeof` checks.
+- Use guards (`guards/`) at the edges to branch on **capabilities** (e.g. "has PG metadata", "is validation error") instead of ad\-hoc `typeof` checks.

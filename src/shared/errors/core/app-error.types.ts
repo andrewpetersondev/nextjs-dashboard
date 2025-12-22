@@ -46,4 +46,7 @@ export interface AppErrorOptions {
   readonly metadata: ErrorMetadata;
 }
 
+/**
+ * Options for {@link makeUnexpectedError} with caller-supplied context.
+ */
 export type UnexpectedErrorOptions = Omit<AppErrorOptions, "cause">;

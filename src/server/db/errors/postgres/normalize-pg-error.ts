@@ -1,8 +1,8 @@
 import "server-only";
 
+import { PG_CONDITIONS } from "@/server/db/errors/postgres/pg-conditions";
 import { toPgError } from "@/server/db/errors/postgres/to-pg-error";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { PG_CONDITIONS } from "@/shared/errors/catalog/pg-conditions";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { DbOperationMetadata } from "@/shared/errors/core/app-error-metadata.types";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

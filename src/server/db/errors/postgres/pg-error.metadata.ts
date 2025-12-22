@@ -1,7 +1,7 @@
 import "server-only";
 
+import type { PgCondition } from "@/server/db/errors/postgres/pg-conditions";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { PgCondition } from "@/shared/errors/catalog/pg-conditions";
 import type { PgErrorMetadataBase } from "@/shared/errors/core/app-error-metadata.types";
 
 /**

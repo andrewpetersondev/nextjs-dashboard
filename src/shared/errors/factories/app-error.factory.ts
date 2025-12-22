@@ -10,6 +10,13 @@ import type {
 } from "@/shared/errors/core/app-error.types";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
+/**
+ * Builds metadata for unknown values by capturing their type and safe representation.
+ *
+ * @remarks
+ * Used internally when normalizing thrown non-Error values to preserve
+ * context for debugging while keeping the error serializable.
+ */
 function buildUnknownValueMetadata(
   value: unknown,
   extra: ErrorMetadata = {},
@@ -21,6 +28,13 @@ function buildUnknownValueMetadata(
   };
 }
 
+/**
+ * Safely converts an unknown value to a string for error messages.
+ *
+ * @remarks
+ * Handles edge cases like circular structures and bigints.
+ * Used internally by {@link normalizeUnknownToAppError}.
+ */
 function safeStringifyUnknown(value: unknown): string {
   try {
     if (typeof value === "string") {
@@ -72,6 +86,10 @@ export function makeAppError(
  * layer so intrinsic database metadata (`pgCode`, `constraint`, `table`, etc.)
  * and condition mapping are preserved.
  *
+ * **Metadata handling**:
+ * - `Error` instances: metadata is empty `{}` (message is preserved in cause)
+ * - Non-Error values: metadata includes `originalType` and `originalValue` for reconstruction
+ *
  * Ideal for:
  * - Catch blocks at infrastructure boundaries (DAL for non-PG stores, HTTP clients)
  * - Wrapping third-party library errors
@@ -103,7 +121,7 @@ export function normalizeUnknownToAppError(
  *
  * @remarks
  * - Normalizes the error via {@link normalizeUnknownToAppError}.
- * - Merges provided metadata with normalized metadata.
+ * - Merges provided metadata **after** normalized metadata (provided values take precedence).
  * - Preserves the original cause chain for debugging.
  *
  * Callers MUST provide a `metadata` object, even when empty (`{}`), to keep
