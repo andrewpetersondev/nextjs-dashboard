@@ -40,7 +40,7 @@ function flattenErrorChain(root: unknown): ErrorCandidate[] {
     const current = queue.shift();
 
     if (!current || seen.has(current)) {
-      // biome-ignore lint/nursery/noContinue: <explanation>
+      // biome-ignore lint/nursery/noContinue: <safe for now>
       continue;
     }
 

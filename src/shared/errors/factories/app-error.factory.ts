@@ -8,6 +8,10 @@ import type {
   ErrorMetadata,
 } from "@/shared/errors/core/app-error.types";
 import type { DbErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
+import {
+  buildUnknownValueMetadata,
+  safeStringifyUnknown,
+} from "@/shared/errors/utils/serialization";
 
 /**
  * Base factory for constructing domain-friendly errors with stable codes.
@@ -15,8 +19,7 @@ import type { DbErrorMetadata } from "@/shared/errors/core/app-error-metadata.ty
  * @remarks
  * Ensures all errors have a canonical code and optional metadata for
  * classification and traceability. Prefer specialized factories like
- * {@link makeValidationError} or {@link makeDatabaseError} for clarity
- * at call sites.
+ * {@link makeValidationError} for clarity at call sites.
  */
 export function makeAppError(
   code: AppErrorKey,
@@ -30,8 +33,6 @@ export function makeAppError(
  *
  * @remarks
  * Use at integration boundaries to ensure all errors are handled consistently.
- * This function delegates to {@link AppError.from} which already implements
- * the normalization logic—no need to duplicate.
  *
  * Ideal for:
  * - Catch blocks at infrastructure boundaries (DAL, HTTP clients)
@@ -42,34 +43,29 @@ export function normalizeUnknownToAppError(
   error: unknown,
   fallbackCode: AppErrorKey,
 ): AppError {
-  return AppError.from(error, fallbackCode);
+  if (error instanceof AppError) {
+    return error;
+  }
+  if (error instanceof Error) {
+    return makeAppError(fallbackCode, {
+      cause: error,
+      message: error.message,
+      metadata: {},
+    });
+  }
+  return makeAppError(fallbackCode, {
+    cause: error,
+    message: safeStringifyUnknown(error),
+    metadata: buildUnknownValueMetadata(error),
+  });
 }
 
 /**
- * Wraps an unknown error as an unexpected AppError with contextual metadata.
- *
- * @remarks
- * Use this for programmer errors, invariant violations, or impossible states
- * that should **never** occur in normal operation. These are typically **thrown**
- * rather than returned as `Result.Err`.
- *
+ * Wraps an unknown error as an unexpected AppError (invariant violation).
  * This factory:
  * - Normalizes the error via {@link normalizeUnknownToAppError}
  * - Merges provided metadata with normalized metadata
  * - Preserves the original cause chain for debugging
- *
- * @example
- * ```ts
- * if (!session) {
- *   throw makeUnexpectedErrorFromUnknown(
- *     new Error("Session missing after validation"),
- *     {
- *       message: "Invariant violation: session must exist",
- *       metadata: { operation: "establishSession" }
- *     }
- *   );
- * }
- * ```
  */
 export function makeUnexpectedError(
   error: unknown,
@@ -77,17 +73,17 @@ export function makeUnexpectedError(
     readonly metadata?: ErrorMetadata;
   },
 ): AppError {
-  const normalizedError = normalizeUnknownToAppError(
+  const normalized = normalizeUnknownToAppError(
     error,
     APP_ERROR_KEYS.unexpected,
   );
 
   return makeAppError(APP_ERROR_KEYS.unexpected, {
-    cause: normalizedError.originalCause,
+    cause: normalized.originalCause,
     message: options.message,
     metadata: {
-      ...normalizedError.metadata,
-      ...(options.metadata ?? {}),
+      ...normalized.metadata,
+      ...options.metadata,
     },
   });
 }
@@ -97,6 +93,7 @@ export function makeUnexpectedError(
  *
  * @remarks
  * Prefer this over generic {@link makeAppError} at validation boundaries for clarity.
+ * TODO: IS THIS USED FOR VALIDATING PARAMETERS? IF IT IS ONLY USED FOR FORMS THEN I SHOULD PROBABLY RENAME IT TO MAKEFORMVALIDATIONERROR AND PLACE IT IN THE SRC/SHARED/FORMS/ FOLDER.
  *
  * Validation errors are **expected failures** and must be returned as `Result.Err`,
  * never thrown.
@@ -122,33 +119,7 @@ export function makeValidationError(options: AppErrorOptions): AppError {
 
 /**
  * Creates a database-specific AppError with required DB metadata.
- *
- * @remarks
- * Use this for database failures like query errors, timeouts, or constraint violations.
- * Must be used with normalization utilities (e.g., `normalizePgError`) at the
- * infrastructure boundary to map vendor-specific errors.
- *
- * Database errors are **expected failures** and must be returned as `Result.Err`.
- *
- * Required metadata fields:
- * - `table`: The database table involved
- * - `operation`: The operation being performed (e.g., "insert", "select")
- * - `constraint`: Optional constraint name for violations
- * - `pgCode`: Postgres error code (for PG adapters)
- *
- * @example
- * ```ts
- * return Err(makeDatabaseError({
- *   message: "db_unique_violation",
- *   cause: pgError,
- *   metadata: {
- *     table: "users",
- *     operation: "insert",
- *     constraint: "users_email_key",
- *     pgCode: "23505"
- *   }
- * }));
- * ```
+ * @deprecated: remove because it invites drift when normalize-pg-error.ts is better suited.
  */
 export function makeDatabaseError(
   options: Omit<AppErrorOptions, "metadata"> & {

@@ -13,10 +13,8 @@ import type {
   ErrorMetadata,
 } from "@/shared/errors/core/app-error.types";
 import {
-  buildUnknownValueMetadata,
   deepFreezeDev,
   redactNonSerializable,
-  safeStringifyUnknown,
   validateAndMaybeSanitizeMetadata,
 } from "@/shared/errors/utils/serialization";
 
@@ -95,28 +93,6 @@ export class AppError extends Error {
     } catch {
       /* silent */
     }
-  }
-
-  /**
-   * todo: remove because it invites drift
-   * @deprecated
-   */
-  static from(error: unknown, fallbackCode: AppErrorKey): AppError {
-    if (error instanceof AppError) {
-      return error;
-    }
-    if (error instanceof Error) {
-      return new AppError(fallbackCode, {
-        cause: error,
-        message: error.message,
-        metadata: {},
-      });
-    }
-    return new AppError(fallbackCode, {
-      cause: error,
-      message: safeStringifyUnknown(error),
-      metadata: buildUnknownValueMetadata(error),
-    });
   }
 
   toJson(): AppErrorJson {
