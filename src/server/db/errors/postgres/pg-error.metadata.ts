@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { PgCondition } from "@/server/db/errors/postgres/pg-conditions";
+import type { PgErrorMetadataBase } from "@/server/db/errors/postgres/pg-error-metadata.base";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { PgErrorMetadataBase } from "@/shared/errors/core/app-error-metadata.types";
 
 /**
  * Static mapping between a Postgres code and application logic.
