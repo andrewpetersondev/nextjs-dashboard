@@ -97,10 +97,10 @@ export class AppError extends Error {
     }
   }
 
-  static isAppError(val: unknown): val is AppError {
-    return val instanceof AppError;
-  }
-
+  /**
+   * todo: remove because it invites drift
+   * @deprecated
+   */
   static from(error: unknown, fallbackCode: AppErrorKey): AppError {
     if (error instanceof AppError) {
       return error;
