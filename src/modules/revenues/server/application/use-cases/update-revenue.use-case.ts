@@ -6,7 +6,7 @@ import type {
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { RevenueId } from "@/shared/branding/brands";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -30,8 +30,7 @@ export class UpdateRevenueUseCase {
     }
     const updated = await this.repository.update(id, revenue);
     if (!updated) {
-      throw makeDatabaseError({
-        cause: "",
+      throw makeUnexpectedError("", {
         message: `Failed to update revenue with ID ${id}`,
         metadata: { table: "revenues" },
       });

@@ -7,7 +7,7 @@ import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -61,16 +61,14 @@ export async function upsertRevenue(
       })
       .returning()) as RevenueRow[];
     if (!data) {
-      throw makeDatabaseError({
-        cause: "",
+      throw makeUnexpectedError("", {
         message: "Failed to upsert revenue record",
         metadata: { table: "revenues" },
       });
     }
     const result: RevenueEntity = mapRevenueRowToEntity(data);
     if (!result) {
-      throw makeDatabaseError({
-        cause: "",
+      throw makeUnexpectedError("", {
         message: "Failed to convert revenue record",
         metadata: { table: "revenues" },
       });

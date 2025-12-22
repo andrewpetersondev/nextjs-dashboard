@@ -4,7 +4,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -32,8 +32,7 @@ export async function deleteRevenue(
     .returning();
 
   if (!result) {
-    throw makeDatabaseError({
-      cause: "",
+    throw makeUnexpectedError("", {
       message: "Failed to delete revenue record",
       metadata: { table: "revenues" },
     });

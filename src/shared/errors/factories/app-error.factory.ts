@@ -6,14 +6,14 @@ import { AppError } from "@/shared/errors/core/app-error";
 import type {
   AppErrorOptions,
   ErrorMetadata,
+  UnexpectedErrorOptions,
 } from "@/shared/errors/core/app-error.types";
-import type { DbErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
 function buildUnknownValueMetadata(
   value: unknown,
-  extra: Record<string, unknown> = {},
-): Record<string, unknown> {
+  extra: ErrorMetadata = {},
+): ErrorMetadata {
   return {
     ...extra,
     originalType: value === null ? "null" : typeof value,
@@ -111,7 +111,7 @@ export function normalizeUnknownToAppError(
  */
 export function makeUnexpectedError(
   error: unknown,
-  options: Omit<AppErrorOptions, "cause">,
+  options: UnexpectedErrorOptions,
 ): AppError {
   const normalized = normalizeUnknownToAppError(
     error,
@@ -142,21 +142,6 @@ export function makeUnexpectedError(
  */
 export function makeValidationError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, options);
-}
-
-/**
- * Creates a database-specific AppError with required DB metadata.
- *
- * @deprecated Prefer `normalizePgError` in the Postgres adapter layer, or a
- * vendor-specific normalizer for other databases. This factory invites drift
- * in DB metadata and should be removed once all usages are migrated.
- */
-export function makeDatabaseError(
-  options: Omit<AppErrorOptions, "metadata"> & {
-    readonly metadata: DbErrorMetadata & ErrorMetadata;
-  },
-): AppError {
-  return makeAppError(APP_ERROR_KEYS.database, options);
 }
 
 /**

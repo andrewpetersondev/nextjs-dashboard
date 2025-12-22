@@ -1,8 +1,9 @@
 import "server-only";
 
-import type {
-  DalContextLite,
-  ExecuteDalCoreOptions,
+import {
+  buildDalErrorMetadata,
+  type DalContextLite,
+  type ExecuteDalCoreOptions,
 } from "@/server/db/dal/types";
 import type { AppError } from "@/shared/errors/core/app-error";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
@@ -29,9 +30,7 @@ export async function executeDalThrow<T>(
   } catch (err: unknown) {
     const error: AppError = makeUnexpectedError(err, {
       message: `Unexpected DAL failure in ${context.operation}`,
-      metadata: {
-        operation: context.operation,
-      },
+      metadata: buildDalErrorMetadata(context, options),
     });
 
     logger.operation("error", `${context.operation}.failed`, {

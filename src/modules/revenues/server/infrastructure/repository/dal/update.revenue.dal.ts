@@ -9,7 +9,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -50,8 +50,7 @@ export async function updateRevenue(
     .returning()) as RevenueRow[];
 
   if (!data) {
-    throw makeDatabaseError({
-      cause: "",
+    throw makeUnexpectedError("", {
       message: "Failed to update revenue record",
       metadata: {},
     });
@@ -59,8 +58,7 @@ export async function updateRevenue(
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw makeDatabaseError({
-      cause: "",
+    throw makeUnexpectedError("", {
       message: "Failed to convert updated revenue record",
       metadata: { table: "revenues" },
     });

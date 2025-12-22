@@ -46,9 +46,3 @@ export interface DbErrorMetadata {
 export interface PgErrorMetadataBase extends DbErrorMetadata {
   readonly pgCode: string;
 }
-
-/**
- * Convenience union for callers that work with DB-related errors but do not
- * care which specific backend produced them.
- */
-export type AnyDbErrorMetadata = DbErrorMetadata | PgErrorMetadataBase;

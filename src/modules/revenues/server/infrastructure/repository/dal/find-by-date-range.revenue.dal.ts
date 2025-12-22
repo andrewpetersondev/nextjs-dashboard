@@ -7,7 +7,7 @@ import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -44,8 +44,7 @@ export async function findRevenuesByDateRange(
     .orderBy(desc(revenues.period))) as RevenueRow[];
 
   if (!revenueRows) {
-    throw makeDatabaseError({
-      cause: "",
+    throw makeUnexpectedError("", {
       message: "Failed to retrieve revenue records",
       metadata: { table: "revenues" },
     });

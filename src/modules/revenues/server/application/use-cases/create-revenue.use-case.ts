@@ -5,7 +5,7 @@ import type {
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -26,8 +26,7 @@ export class CreateRevenueUseCase {
     }
     const created = await this.repository.create(revenue);
     if (!created) {
-      throw makeDatabaseError({
-        cause: "",
+      throw makeUnexpectedError("", {
         message: "Failed to create a revenue record",
         metadata: { table: "revenues" },
       });

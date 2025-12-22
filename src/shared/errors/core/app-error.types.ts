@@ -45,3 +45,5 @@ export interface AppErrorOptions {
   readonly message: string;
   readonly metadata: ErrorMetadata;
 }
+
+export type UnexpectedErrorOptions = Omit<AppErrorOptions, "cause">;

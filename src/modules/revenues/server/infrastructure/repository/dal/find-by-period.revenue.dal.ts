@@ -7,7 +7,7 @@ import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import {
-  makeDatabaseError,
+  makeUnexpectedError,
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
@@ -43,8 +43,7 @@ export async function findRevenueByPeriod(
 
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
-    throw makeDatabaseError({
-      cause: "",
+    throw makeUnexpectedError("", {
       message: "Failed to convert revenue record",
       metadata: { table: "revenues" },
     });

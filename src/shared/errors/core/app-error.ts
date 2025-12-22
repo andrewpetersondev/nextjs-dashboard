@@ -14,22 +14,14 @@ import type {
 } from "@/shared/errors/core/app-error.types";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
-function isSerializable(value: unknown): boolean {
-  try {
-    JSON.stringify(value);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function validateAndMaybeSanitizeMetadata(
   ctx: Record<string, unknown>,
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const key of Object.keys(ctx).sort()) {
     const val = ctx[key];
-    out[key] = isSerializable(val) ? val : redactNonSerializable(val);
+    // Centralized serializability + redaction logic
+    out[key] = redactNonSerializable(val);
   }
   return out;
 }
