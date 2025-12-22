@@ -44,6 +44,7 @@
       "!.github",
       "!.idea",
       "!.junie",
+      "!cypress",
       "!**/*.js",
       "!**/*.jsx",
       "!drizzle",
@@ -69,7 +70,6 @@
     "formatter": {
       "enabled": true
     },
-    "globals": ["cy", "Cypress"],
     "linter": {
       "enabled": true
     }
@@ -89,6 +89,10 @@
     }
   },
   "linter": {
+    "domains": {
+      "next": "all",
+      "project": "recommended"
+    },
     "enabled": true,
     "rules": {
       "a11y": {
@@ -109,11 +113,20 @@
         "noChildrenProp": "on",
         "noGlobalDirnameFilename": "on",
         "noNestedComponentDefinitions": "on",
-        "noPrivateImports": "error",
-        "noUndeclaredVariables": "on"
+        "noNodejsModules": "on",
+        "noPrivateImports": "on",
+        "noProcessGlobal": "on",
+        "noReactPropAssignments": "on",
+        "noUndeclaredVariables": "on",
+        "useJsonImportAttributes": "on",
+        "useSingleJsDocAsterisk": "on",
+        "useUniqueElementIds": "on"
       },
       "nursery": {
         "noContinue": "on",
+        "noDeprecatedImports": "on",
+        "noDuplicateDependencies": "on",
+        "noDuplicatedSpreadProps": "on",
         "noShadow": "on",
         "noUselessUndefined": "on",
         "useExplicitType": "off",
@@ -193,6 +206,7 @@
         "noEmptyBlockStatements": "on",
         "noEvolvingTypes": "on",
         "noMisplacedAssertion": "on",
+        "noRedeclare": "on",
         "noSkippedTests": "on",
         "noUnassignedVariables": "on",
         "noVar": "on",
@@ -200,7 +214,8 @@
         "useErrorMessage": "on",
         "useGuardForIn": "on",
         "useNumberToFixedDigitsArgument": "on",
-        "useStaticResponseMethods": "on"
+        "useStaticResponseMethods": "on",
+        "useStrictMode": "on"
       }
     }
   },
@@ -215,12 +230,8 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/modules/auth/server/**"],
-                    "message": "auth/shared must be isomorphic: do not import from auth/server (enforced on path aliases)."
-                  },
-                  {
-                    "group": ["@/server/**"],
-                    "message": "auth/shared must be isomorphic: do not import from src/server (enforced on path aliases)."
+                    "group": ["@/modules/auth/server/**", "@/server/**"],
+                    "message": "auth/shared must be isomorphic: do not import server-only modules."
                   },
                   {
                     "group": ["next/**"],
@@ -247,16 +258,15 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/modules/auth/server/infrastructure/**"],
-                    "message": "Clean/hex rule: application layer must not import infrastructure (enforced on path aliases)."
-                  },
-                  {
-                    "group": ["@/server/**"],
-                    "message": "Clean/hex rule: application layer must not import src/server adapters directly (enforced on path aliases)."
+                    "group": [
+                      "@/modules/auth/server/infrastructure/**",
+                      "@/server/**"
+                    ],
+                    "message": "Clean/hex rule: application layer must not import infrastructure or server adapters."
                   },
                   {
                     "group": ["next/**", "react/**"],
-                    "message": "Clean/hex rule: application layer must be framework-agnostic (no next/react imports)."
+                    "message": "Clean/hex rule: application layer must be framework-agnostic."
                   },
                   {
                     "group": [
@@ -265,7 +275,7 @@
                       "drizzle-kit",
                       "drizzle-kit/**"
                     ],
-                    "message": "Clean/hex rule: application layer must not depend on DB libraries directly."
+                    "message": "Clean/hex rule: application layer must not depend on DB libraries."
                   }
                 ]
               }
@@ -285,16 +295,16 @@
                 "patterns": [
                   {
                     "group": ["../**"],
-                    "message": "src/shared may only import from src/shared (or node_modules)."
+                    "message": "src/shared may only import from src/shared or node_modules."
                   },
                   {
                     "group": [
                       "@/app/**",
                       "@/modules/**",
-                      "@/server-core/**",
+                      "@/server/**",
                       "@/shell/**"
                     ],
-                    "message": "src/shared cannot import from application-layer modules."
+                    "message": "src/shared must not import from higher-level application modules."
                   }
                 ]
               }
@@ -316,10 +326,10 @@
                     "group": [
                       "@/app/**",
                       "@/modules/**",
-                      "@/server-core/**",
+                      "@/server/**",
                       "@/shell/**"
                     ],
-                    "message": "src/ui can import only from src/ui and src/shared (and npm packages)."
+                    "message": "src/ui may only import from src/ui, src/shared, or npm packages."
                   }
                 ]
               }
@@ -339,7 +349,7 @@
                 "patterns": [
                   {
                     "group": ["@/app/**", "@/shell/**"],
-                    "message": "src/modules cannot import from src/app or src/shell."
+                    "message": "src/modules must not import from src/app or src/shell."
                   }
                 ]
               }
@@ -380,16 +390,10 @@
                   {
                     "group": [
                       "@/shared/logging/**",
-                      "@/shared/logging/logger.shared",
-                      "@/shared/logging/logger.shared.ts",
                       "../logging/**",
-                      "../logging/logger.shared",
-                      "../logging/logger.shared.ts",
-                      "../../shared/logging/**",
-                      "../../shared/logging/logger.shared",
-                      "../../shared/logging/logger.shared.ts"
+                      "../../shared/logging/**"
                     ],
-                    "message": "config should not import the logger — it initializes too early."
+                    "message": "config must not import the logger — it initializes too early."
                   }
                 ]
               }
@@ -413,12 +417,62 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/server-core/db/schema/**"],
-                    "message": "Client/UI code cannot import sensitive DB schema files from server-core. Use types or DTOs instead."
+                    "group": ["@/server/db/schema/**"],
+                    "message": "Client/UI code must not import DB schema files. Use DTOs or shared types."
                   }
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/server/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off",
+            "noProcessGlobal": "off"
+          },
+          "style": {
+            "noProcessEnv": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/**/*.{test.ts,test.tsx,spec.ts,spec.tsx}",
+        "src/**/__tests__/**/*.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noExcessiveLinesPerFunction": "off"
+          },
+          "style": {
+            "noMagicNumbers": "off"
+          },
+          "suspicious": {
+            "noSkippedTests": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["cypress/**/*.{ts,tsx}", "cypress.config.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noNodejsModules": "off",
+            "noProcessGlobal": "off",
+            "noUndeclaredVariables": "off"
+          },
+          "style": {
+            "noMagicNumbers": "off",
+            "noProcessEnv": "off"
           }
         }
       }

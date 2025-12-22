@@ -34,14 +34,7 @@ export function FieldErrorComponent({
       {label && <p>{label}</p>}
       <ul>
         {error.map((message, index) => (
-          <li
-            key={`${message}-${
-              // biome-ignore lint/suspicious/noArrayIndexKey: <unique enough>
-              index
-            }`}
-          >
-            - {message}
-          </li>
+          <li key={`${message}-${index}`}>- {message}</li>
         ))}
       </ul>
     </div>
