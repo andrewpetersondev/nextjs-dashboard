@@ -3,27 +3,24 @@ import {
   type AppErrorKey,
   getAppErrorCodeMeta,
 } from "@/shared/errors/catalog/app-error.registry";
+import type { AppErrorOptions } from "@/shared/errors/core/app-error.options";
 import type {
   AppErrorLayer,
   Severity,
 } from "@/shared/errors/core/app-error.schema";
-import type {
-  AppErrorJson,
-  AppErrorOptions,
-  ErrorMetadata,
-} from "@/shared/errors/core/app-error.types";
+import type { AppErrorJsonDto } from "@/shared/errors/core/app-error-json.dto";
+import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
-function validateAndMaybeSanitizeMetadata(
-  ctx: Record<string, unknown>,
-): Record<string, unknown> {
+function validateAndMaybeSanitizeMetadata<T extends ErrorMetadataValue>(
+  ctx: T,
+): T {
+  const source = ctx as Record<string, unknown>;
   const out: Record<string, unknown> = {};
-  for (const key of Object.keys(ctx).sort()) {
-    const val = ctx[key];
-    // Centralized serializability + redaction logic
-    out[key] = redactNonSerializable(val);
+  for (const key of Object.keys(source).sort()) {
+    out[key] = redactNonSerializable(source[key]);
   }
-  return out;
+  return out as T;
 }
 
 function deepFreezeDev<T>(obj: T): T {
@@ -38,10 +35,10 @@ function deepFreezeDev<T>(obj: T): T {
     seen.add(o);
 
     for (const key of Object.getOwnPropertyNames(o)) {
-      const v = (o as Record<string, unknown>)[key];
-      if (v && typeof v === "object") {
+      const value = (o as Record<string, unknown>)[key];
+      if (value && typeof value === "object") {
         try {
-          freeze(v as object);
+          freeze(value as object);
         } catch {
           /* silent */
         }
@@ -59,58 +56,33 @@ function deepFreezeDev<T>(obj: T): T {
 
 /**
  * Standardized application error with transport-agnostic error codes.
- *
- * Form validation errors are stored in metadata:
- * - `metadata.fieldErrors`: per-field validation messages
- * - `metadata.formErrors`: global form-level messages
- *
- * Database errors preserve Postgres metadata in the metadata object.
- *
- * @example
- * // Form validation error
- * new AppError("validation", {
- *   message: "Invalid input",
- *   metadata: {
- *     fieldErrors: { email: ["required"] },
- *     formErrors: ["Please fix errors"]
- *   }
- * })
- *
- * @example
- * // Database error with PG metadata
- * new AppError("database", {
- *   message: "Duplicate key",
- *   cause: pgError,
- *   metadata: {
- *     table: "users",
- *     constraint: "users_email_key",
- *     pgCode: "23505"
- *   }
- * })
  */
-export class AppError extends Error {
+export class AppError<
+  T extends ErrorMetadataValue = ErrorMetadataValue,
+> extends Error {
   readonly code: AppErrorKey;
   readonly description: string;
   readonly layer: AppErrorLayer;
-  readonly metadata: ErrorMetadata;
+  readonly metadata: T;
   readonly originalCause: unknown;
   readonly retryable: boolean;
   readonly severity: Severity;
 
-  constructor(code: AppErrorKey, options: AppErrorOptions) {
+  constructor(code: AppErrorKey, options: AppErrorOptions<T>) {
     const meta = getAppErrorCodeMeta(code);
 
     const { cause, message, metadata } = options;
 
-    // Ensure cause is an Error, otherwise sanitize for safe error chaining.
-    let sanitizedCause: unknown;
-    if (cause instanceof Error) {
-      sanitizedCause = cause;
-    } else {
-      sanitizedCause = redactNonSerializable(cause);
-    }
+    const sanitizedCause =
+      cause instanceof Error || cause === undefined
+        ? cause
+        : redactNonSerializable(cause);
 
-    super(message, { cause: sanitizedCause });
+    if (sanitizedCause === undefined) {
+      super(message);
+    } else {
+      super(message, { cause: sanitizedCause });
+    }
 
     this.code = code;
     this.description = meta.description;
@@ -120,12 +92,13 @@ export class AppError extends Error {
     this.retryable = meta.retryable;
     this.severity = meta.severity;
 
-    const checked = isDev()
+    const checkedMetadata = isDev()
       ? validateAndMaybeSanitizeMetadata(metadata)
       : metadata;
-    this.metadata = isDev()
-      ? (deepFreezeDev(checked) as ErrorMetadata)
-      : (Object.freeze(checked) as ErrorMetadata);
+
+    this.metadata = (
+      isDev() ? deepFreezeDev(checkedMetadata) : Object.freeze(checkedMetadata)
+    ) as T;
 
     try {
       Object.freeze(this);
@@ -134,7 +107,7 @@ export class AppError extends Error {
     }
   }
 
-  toJson(): AppErrorJson {
+  toJson(): AppErrorJsonDto<T> {
     return {
       code: this.code,
       description: this.description,

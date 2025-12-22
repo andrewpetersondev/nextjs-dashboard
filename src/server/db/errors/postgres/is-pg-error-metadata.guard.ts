@@ -8,7 +8,7 @@ import type { PgErrorMetadata } from "@/server/db/errors/postgres/pg-error.metad
  * - required: `pgCode` (non-empty string)
  * - optional: all other known PG metadata fields, when present, must be strings.
  *
- * Intended to be used at boundaries that receive generic `ErrorMetadata`
+ * Intended to be used at boundaries that receive generic `ErrorMetadataValue`
  * and need to branch on Postgres-specific information.
  */
 export function isPgErrorMetadata(value: unknown): value is PgErrorMetadata {

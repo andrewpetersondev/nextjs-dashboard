@@ -1,6 +1,7 @@
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error";
-import type { ErrorMetadata } from "@/shared/errors/core/app-error.types";
+
+import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import type {
   FieldErrors,
   FormErrors,
@@ -17,7 +18,7 @@ import type {
  * This intentionally reuses the canonical form error types from `shared/forms`
  * so error metadata and form infrastructure stay aligned.
  */
-export interface ValidationErrorMetadata extends ErrorMetadata {
+export interface ValidationErrorMetadata extends ErrorMetadataValue {
   readonly fieldErrors?: FieldErrors;
   readonly formErrors?: FormErrors;
 }

@@ -5,9 +5,9 @@ import {
 import { AppError } from "@/shared/errors/core/app-error";
 import type {
   AppErrorOptions,
-  ErrorMetadata,
   UnexpectedErrorOptions,
-} from "@/shared/errors/core/app-error.types";
+} from "@/shared/errors/core/app-error.options";
+import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
 /**
@@ -19,8 +19,8 @@ import { redactNonSerializable } from "@/shared/errors/utils/serialization";
  */
 function buildUnknownValueMetadata(
   value: unknown,
-  extra: ErrorMetadata = {},
-): ErrorMetadata {
+  extra: ErrorMetadataValue = {},
+): ErrorMetadataValue {
   return {
     ...extra,
     originalType: value === null ? "null" : typeof value,

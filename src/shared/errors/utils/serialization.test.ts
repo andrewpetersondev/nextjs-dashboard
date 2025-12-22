@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error";
-import type { AppErrorOptions } from "@/shared/errors/core/app-error.types";
+import type { AppErrorOptions } from "@/shared/errors/core/app-error.options";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
 const TEST_ERROR_CODE: AppErrorKey = APP_ERROR_KEYS.unexpected;

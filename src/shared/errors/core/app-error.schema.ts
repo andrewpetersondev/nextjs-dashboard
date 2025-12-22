@@ -1,5 +1,8 @@
 export const APP_ERROR_SEVERITIES = ["ERROR", "INFO", "WARN"] as const;
 
+/**
+ * Literal union of all supported error severities.
+ */
 export type Severity = (typeof APP_ERROR_SEVERITIES)[number];
 
 /**
@@ -19,19 +22,20 @@ export const APP_ERROR_LAYERS = [
   "VALIDATION",
 ] as const;
 
+/**
+ * Literal union of all supported application layers.
+ */
 export type AppErrorLayer = (typeof APP_ERROR_LAYERS)[number];
 
 /**
  * Schema representing the structure of an application-specific error.
  *
  * @remarks
- * This interface is the canonical contract for all error-code definitions.
- * It is intentionally transport-agnostic and does not include HTTP status or
- * protocol-specific information.
+ * This contract is transport-agnostic and mirrors the registry definition so changes stay in sync.
  */
-export interface AppErrorSchema {
-  readonly description: string;
-  readonly layer: AppErrorLayer;
-  readonly retryable: boolean;
-  readonly severity: Severity;
-}
+export type AppErrorSchema = Readonly<{
+  description: string;
+  layer: AppErrorLayer;
+  retryable: boolean;
+  severity: Severity;
+}>;

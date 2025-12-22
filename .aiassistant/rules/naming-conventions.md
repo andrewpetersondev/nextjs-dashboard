@@ -65,4 +65,4 @@ To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the typ
 ## Type Naming
 
 - Use **PascalCase**.
-- **Integration Scoping**: Mention the integration if the type is not generic (e.g., `PgErrorMetadata` vs `ErrorMetadata`).
+- **Integration Scoping**: Mention the integration if the type is not generic (e.g., `PgErrorMetadata` vs `ErrorMetadataValue`).

@@ -65,7 +65,7 @@ Adapters must preserve traceability by attaching metadata (no silent fallbacks).
 
 The boundary shape is:
 
-- `AppErrorJson` from `AppError.toJson()`
+- `AppErrorJsonDto` from `AppError.toJson()`
 
 Contract at boundaries:
 
