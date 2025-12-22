@@ -3,7 +3,7 @@ import "server-only";
 import type {
   DalContextLite,
   ExecuteDalCoreOptions,
-} from "@/server/db/dal/types";
+} from "@/server/db/dal/dal-context.schema";
 import { normalizePgError } from "@/shared/errors/adapters/postgres/normalize-pg-error";
 import type { AppError } from "@/shared/errors/core/app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

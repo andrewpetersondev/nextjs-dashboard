@@ -57,6 +57,7 @@ describe("redactNonSerializable", () => {
   });
 
   it("redacts non-serializable values with a bounded preview", () => {
+    // biome-ignore lint/style/noMagicNumbers: <ignore in tests>
     const large = { text: "x".repeat(10_000) };
 
     const redacted = redactNonSerializable(large) as {
@@ -64,9 +65,9 @@ describe("redactNonSerializable", () => {
       originalType: string;
       preview: string;
     };
-
     expect(redacted.note).toBe("non-serializable");
     expect(redacted.originalType).toBe("object");
+    // biome-ignore lint/style/noMagicNumbers: <ignore in tests>
     expect(redacted.preview.length).toBeLessThanOrEqual(600);
     expect(redacted.preview).toContain("…[truncated ");
   });

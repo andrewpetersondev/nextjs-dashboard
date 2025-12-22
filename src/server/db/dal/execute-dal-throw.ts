@@ -4,7 +4,7 @@ import {
   buildDalErrorMetadata,
   type DalContextLite,
   type ExecuteDalCoreOptions,
-} from "@/server/db/dal/types";
+} from "@/server/db/dal/dal-context.schema";
 import type { AppError } from "@/shared/errors/core/app-error";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

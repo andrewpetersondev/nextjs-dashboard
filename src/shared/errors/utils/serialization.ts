@@ -13,10 +13,17 @@ export function redactNonSerializable(value: unknown): unknown {
     // Fall through to redaction below
   }
 
-  const originalType =
-    value === null ? "null" : Array.isArray(value) ? "array" : typeof value;
+  let originalType: string;
 
-  let preview = "";
+  if (value === null) {
+    originalType = "null";
+  } else if (Array.isArray(value)) {
+    originalType = "array";
+  } else {
+    originalType = typeof value;
+  }
+
+  let preview: string;
   try {
     preview = JSON.stringify(value);
   } catch {

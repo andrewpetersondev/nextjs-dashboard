@@ -93,7 +93,7 @@ export class AppError extends Error {
   readonly description: string;
   readonly layer: AppErrorLayer;
   readonly metadata: ErrorMetadata;
-  readonly originalCause?: unknown;
+  readonly originalCause: unknown;
   readonly retryable: boolean;
   readonly severity: Severity;
 
