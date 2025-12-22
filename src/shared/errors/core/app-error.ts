@@ -12,11 +12,58 @@ import type {
   AppErrorOptions,
   ErrorMetadata,
 } from "@/shared/errors/core/app-error.types";
-import {
-  deepFreezeDev,
-  redactNonSerializable,
-  validateAndMaybeSanitizeMetadata,
-} from "@/shared/errors/utils/serialization";
+import { redactNonSerializable } from "@/shared/errors/utils/serialization";
+
+function isSerializable(value: unknown): boolean {
+  try {
+    JSON.stringify(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function validateAndMaybeSanitizeMetadata(
+  ctx: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of Object.keys(ctx).sort()) {
+    const val = ctx[key];
+    out[key] = isSerializable(val) ? val : redactNonSerializable(val);
+  }
+  return out;
+}
+
+function deepFreezeDev<T>(obj: T): T {
+  if (!isDev() || obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  const seen = new WeakSet<object>();
+  const freeze = (o: object): void => {
+    if (seen.has(o)) {
+      return;
+    }
+    seen.add(o);
+
+    for (const key of Object.getOwnPropertyNames(o)) {
+      const v = (o as Record<string, unknown>)[key];
+      if (v && typeof v === "object") {
+        try {
+          freeze(v as object);
+        } catch {
+          /* silent */
+        }
+      }
+    }
+    try {
+      Object.freeze(o);
+    } catch {
+      /* silent */
+    }
+  };
+  freeze(obj as unknown as object);
+  return obj;
+}
 
 /**
  * Standardized application error with transport-agnostic error codes.

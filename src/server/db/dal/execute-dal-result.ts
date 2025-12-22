@@ -11,11 +11,14 @@ import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 /**
- * Executes a DAL thunk and returns `Result` for expected failures.
+ * Executes a DAL thunk and returns `Result` for expected database failures.
  *
  * @remarks
- * Normalizes errors to AppError (e.g., via makeDatabaseError internally)
- * for consistent handling as values. Logs but does not throw.
+ * - On success, returns `Ok<T>`.
+ * - On failure, normalizes the raw Postgres error via {@link normalizePgError}
+ *   using the DAL context as {@link DbOperationMetadata}, and returns `Err<AppError>`.
+ * - Errors are logged but not thrown, enforcing a Result-first contract for
+ *   infrastructure/database failures.
  */
 export async function executeDalResult<T>(
   thunk: () => Promise<T>,
@@ -27,9 +30,6 @@ export async function executeDalResult<T>(
     const value = await thunk();
     return Ok<T>(value);
   } catch (err: unknown) {
-    console.log("EXECUTE DAL RESULT ERROR");
-    console.log(err);
-    // Provide required operational context to normalizePgError
     const error: AppError = normalizePgError(err, {
       entity: context.entity,
       operation: context.operation,

@@ -8,6 +8,12 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 /**
  * Normalizes a raw Postgres error into a structured AppError.
  *
+ *  Use only at Postgres boundaries.
+ *
+ * Do NOT use `normalizeUnknownToAppError` for PG errors, or you will
+ * lose `pgCode`/constraint metadata and condition mapping. The generic
+ * normalizer is intended for non-PG integrations (HTTP, FS, etc.).
+ *
  * @remarks
  * This utility ensures strict separation between:
  * 1. **Intrinsic Metadata**: Data extracted from the DB error object itself
@@ -25,22 +31,10 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
  *
  * **Fallback Behavior**: If the error cannot be mapped to a known Postgres
  * code, it's treated as an unknown infrastructure error since we have no
- * intrinsic DB metadata to attach.
+ * intrinsic DB metadata to attach (note the absence of `pgCode` in metadata).
  *
  * @param err - The raw error caught from the Postgres driver.
  * @param operationalContext - Caller-provided operational context (required).
- *
- * @example
- * ```ts
- * try {
- *   await db.insert(users).values(userData);
- * } catch (err) {
- *   return Err(normalizePgError(err, {
- *     operation: "createUser",
- *     entity: "user"
- *   }));
- * }
- * ```
  */
 export function normalizePgError(
   err: unknown,
@@ -53,19 +47,22 @@ export function normalizePgError(
       cause: err,
       message: mapping.condition,
       metadata: {
-        ...mapping.metadata, // Intrinsic PG metadata (pgCode, constraint, etc.)
-        ...operationalContext, // Caller-provided context (operation, entity)
+        // Intrinsic PG metadata (pgCode, constraint, etc.)
+        ...mapping.metadata,
+        // Caller-provided context (operation, entity)
+        ...operationalContext,
       },
     });
   }
 
-  // Fallback: unrecognized error from DB layer
-  // Since we have no intrinsic DB metadata (no pgCode), treat as unknown infrastructure error
+  // Fallback: unrecognized error from DB layer.
+  // Since we have no intrinsic DB metadata (no pgCode), treat as unknown
+  // infrastructure error and only attach the operational context.
   return makeAppError(APP_ERROR_KEYS.unknown, {
     cause: err,
     message: PG_CONDITIONS.pg_unknown_error,
     metadata: {
-      ...operationalContext, // Attach operational context for tracing
+      ...operationalContext,
     },
   });
 }

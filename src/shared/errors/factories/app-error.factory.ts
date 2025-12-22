@@ -8,18 +8,48 @@ import type {
   ErrorMetadata,
 } from "@/shared/errors/core/app-error.types";
 import type { DbErrorMetadata } from "@/shared/errors/core/app-error-metadata.types";
-import {
-  buildUnknownValueMetadata,
-  safeStringifyUnknown,
-} from "@/shared/errors/utils/serialization";
+import { redactNonSerializable } from "@/shared/errors/utils/serialization";
+
+function buildUnknownValueMetadata(
+  value: unknown,
+  extra: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    ...extra,
+    originalType: value === null ? "null" : typeof value,
+    originalValue: redactNonSerializable(value),
+  };
+}
+
+function safeStringifyUnknown(value: unknown): string {
+  try {
+    if (typeof value === "string") {
+      return value;
+    }
+    const json = JSON.stringify(value, (_k, v) =>
+      typeof v === "bigint" ? v.toString() : v,
+    );
+    const MaxLength = 10_000;
+    if (json.length > MaxLength) {
+      return `${json.slice(0, MaxLength)}…[truncated ${json.length - MaxLength} chars]`;
+    }
+    return json ?? String(value);
+  } catch {
+    return "Non-serializable thrown value";
+  }
+}
 
 /**
  * Base factory for constructing domain-friendly errors with stable codes.
  *
  * @remarks
- * Ensures all errors have a canonical code and optional metadata for
- * classification and traceability. Prefer specialized factories like
- * {@link makeValidationError} for clarity at call sites.
+ * Ensures all errors have a canonical code and metadata for
+ * classification and traceability. Call sites must provide an explicit
+ * metadata object (use `{}` when no additional details are available).
+ *
+ * Prefer more specific error factories at feature or boundary layers
+ * (for example, validation- or infrastructure-focused helpers) to make
+ * intent clearer at call sites.
  */
 export function makeAppError(
   code: AppErrorKey,
@@ -32,10 +62,18 @@ export function makeAppError(
  * Normalizes any unknown value into an AppError using a fallback code.
  *
  * @remarks
- * Use at integration boundaries to ensure all errors are handled consistently.
+ * Use at non-Postgres infrastructure boundaries to ensure all errors are
+ * handled consistently:
+ * - HTTP clients
+ * - File system operations
+ * - Third-party SDKs
+ *
+ * For Postgres, always prefer `normalizePgError` from the Postgres adapter
+ * layer so intrinsic database metadata (`pgCode`, `constraint`, `table`, etc.)
+ * and condition mapping are preserved.
  *
  * Ideal for:
- * - Catch blocks at infrastructure boundaries (DAL, HTTP clients)
+ * - Catch blocks at infrastructure boundaries (DAL for non-PG stores, HTTP clients)
  * - Wrapping third-party library errors
  * - Action/workflow error recovery
  */
@@ -62,16 +100,18 @@ export function normalizeUnknownToAppError(
 
 /**
  * Wraps an unknown error as an unexpected AppError (invariant violation).
- * This factory:
- * - Normalizes the error via {@link normalizeUnknownToAppError}
- * - Merges provided metadata with normalized metadata
- * - Preserves the original cause chain for debugging
+ *
+ * @remarks
+ * - Normalizes the error via {@link normalizeUnknownToAppError}.
+ * - Merges provided metadata with normalized metadata.
+ * - Preserves the original cause chain for debugging.
+ *
+ * Callers MUST provide a `metadata` object, even when empty (`{}`), to keep
+ * intent explicit and avoid silent defaults.
  */
 export function makeUnexpectedError(
   error: unknown,
-  options: Omit<AppErrorOptions, "cause"> & {
-    readonly metadata?: ErrorMetadata;
-  },
+  options: Omit<AppErrorOptions, "cause">,
 ): AppError {
   const normalized = normalizeUnknownToAppError(
     error,
@@ -93,25 +133,12 @@ export function makeUnexpectedError(
  *
  * @remarks
  * Prefer this over generic {@link makeAppError} at validation boundaries for clarity.
- * TODO: IS THIS USED FOR VALIDATING PARAMETERS? IF IT IS ONLY USED FOR FORMS THEN I SHOULD PROBABLY RENAME IT TO MAKEFORMVALIDATIONERROR AND PLACE IT IN THE SRC/SHARED/FORMS/ FOLDER.
- *
  * Validation errors are **expected failures** and must be returned as `Result.Err`,
  * never thrown.
  *
  * Attach field-level and form-level errors via metadata:
  * - `metadata.fieldErrors`: Map of field names to error messages
  * - `metadata.formErrors`: Array of form-level error messages
- *
- * @example
- * ```ts
- * return Err(makeValidationError({
- *   message: "validation_failed",
- *   metadata: {
- *     fieldErrors: { email: ["Invalid format"] },
- *     formErrors: ["Missing required fields"]
- *   }
- * }));
- * ```
  */
 export function makeValidationError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, options);
@@ -119,7 +146,10 @@ export function makeValidationError(options: AppErrorOptions): AppError {
 
 /**
  * Creates a database-specific AppError with required DB metadata.
- * @deprecated: remove because it invites drift when normalize-pg-error.ts is better suited.
+ *
+ * @deprecated Prefer `normalizePgError` in the Postgres adapter layer, or a
+ * vendor-specific normalizer for other databases. This factory invites drift
+ * in DB metadata and should be removed once all usages are migrated.
  */
 export function makeDatabaseError(
   options: Omit<AppErrorOptions, "metadata"> & {
@@ -141,15 +171,6 @@ export function makeDatabaseError(
  * Treatment depends on context:
  * - **Expected** (e.g., duplicate email on signup): Return as `Result.Err`
  * - **Unexpected** (e.g., broken invariant): Throw
- *
- * @example
- * ```ts
- * // Expected failure (return as value)
- * return Err(makeIntegrityError({
- *   message: "duplicate_email",
- *   metadata: { constraint: "users_email_key", table: "users" }
- * }));
- * ```
  */
 export function makeIntegrityError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.integrity, options);
@@ -167,15 +188,6 @@ export function makeIntegrityError(options: AppErrorOptions): AppError {
  *
  * Infrastructure errors are **expected failures** and should be returned as
  * `Result.Err` to allow graceful degradation or retry logic.
- *
- * @example
- * ```ts
- * return Err(makeInfrastructureError({
- *   message: "external_service_unavailable",
- *   cause: httpError,
- *   metadata: { service: "payment-gateway", statusCode: 503 }
- * }));
- * ```
  */
 export function makeInfrastructureError(options: AppErrorOptions): AppError {
   return makeAppError(APP_ERROR_KEYS.infrastructure, options);

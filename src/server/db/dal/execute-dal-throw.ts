@@ -12,8 +12,11 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * Executes a DAL thunk and throws for unexpected failures (invariants).
  *
  * @remarks
- * Wraps errors with makeUnexpectedErrorFromUnknown to classify as unexpected.
- * Use only where failure indicates a bug; prefer executeDalResult otherwise.
+ * - Use only where any failure indicates a bug or broken invariant.
+ * - Wraps the caught error with {@link makeUnexpectedError} so callers always
+ *   see an `AppError` with the `unexpected` code and DAL operation metadata.
+ * - Prefer {@link executeDalResult} for expected DB failures that should be
+ *   handled as `Result.Err`.
  */
 export async function executeDalThrow<T>(
   thunk: () => Promise<T>,
