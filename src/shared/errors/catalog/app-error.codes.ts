@@ -1,5 +1,7 @@
 /** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
+import { APP_ERROR_LAYER } from "@/shared/errors/core/app-error.layers";
 import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
+import { APP_ERROR_SEVERITY } from "@/shared/errors/core/app-error.severity";
 
 /**
  * Canonical error code definitions organized by logical layer.
@@ -13,113 +15,113 @@ import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 export const API_ERRORS = {
   conflict: {
     description: "Resource state conflict",
-    layer: "API",
+    layer: APP_ERROR_LAYER.API,
     retryable: false,
-    severity: "WARN",
+    severity: APP_ERROR_SEVERITY.WARN,
   },
   not_found: {
     description: "Resource not found",
-    layer: "API",
+    layer: APP_ERROR_LAYER.API,
     retryable: false,
-    severity: "INFO",
+    severity: APP_ERROR_SEVERITY.INFO,
   },
   parse: {
     description: "Parsing input failed",
-    layer: "API",
+    layer: APP_ERROR_LAYER.API,
     retryable: false,
-    severity: "WARN",
+    severity: APP_ERROR_SEVERITY.WARN,
   },
 } as const satisfies Record<string, AppErrorSchema>;
 
 export const AUTH_ERRORS = {
   forbidden: {
     description: "Operation not allowed",
-    layer: "SECURITY",
+    layer: APP_ERROR_LAYER.SECURITY,
     retryable: false,
-    severity: "WARN",
+    severity: APP_ERROR_SEVERITY.WARN,
   },
   invalid_credentials: {
     description: "Invalid credentials",
-    layer: "SECURITY",
+    layer: APP_ERROR_LAYER.SECURITY,
     retryable: false,
-    severity: "WARN",
+    severity: APP_ERROR_SEVERITY.WARN,
   },
   unauthorized: {
     description: "Unauthorized",
-    layer: "SECURITY",
+    layer: APP_ERROR_LAYER.SECURITY,
     retryable: false,
-    severity: "WARN",
+    severity: APP_ERROR_SEVERITY.WARN,
   },
 } as const satisfies Record<string, AppErrorSchema>;
 
 export const DOMAIN_ERRORS = {
   application_error: {
     description: "Application logic error",
-    layer: "INTERNAL",
+    layer: APP_ERROR_LAYER.INTERNAL,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
   domain_error: {
     description: "Domain logic error",
-    layer: "DOMAIN",
+    layer: APP_ERROR_LAYER.DOMAIN,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
   presentation_error: {
     description: "Presentation layer error",
-    layer: "UI",
+    layer: APP_ERROR_LAYER.UI,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
 } as const satisfies Record<string, AppErrorSchema>;
 
 export const INFRASTRUCTURE_ERRORS = {
   database: {
     description: "Database operation failed",
-    layer: "DB",
+    layer: APP_ERROR_LAYER.DB,
     retryable: true,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
   infrastructure: {
     description: "Infrastructure failure",
-    layer: "INTERNAL",
+    layer: APP_ERROR_LAYER.INTERNAL,
     retryable: true,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
   integrity: {
     description: "Data integrity violation",
-    layer: "DB",
+    layer: APP_ERROR_LAYER.DB,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
 } as const satisfies Record<string, AppErrorSchema>;
 
 export const VALIDATION_ERRORS = {
   missing_fields: {
     description: "Required fields are missing",
-    layer: "VALIDATION",
+    layer: APP_ERROR_LAYER.VALIDATION,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
   validation: {
     description: "Validation failed",
-    layer: "VALIDATION",
+    layer: APP_ERROR_LAYER.VALIDATION,
     retryable: false,
-    severity: "WARN",
+    severity: APP_ERROR_SEVERITY.WARN,
   },
 } as const satisfies Record<string, AppErrorSchema>;
 
 export const SYSTEM_ERRORS = {
   unexpected: {
     description: "An unexpected error occurred",
-    layer: "INTERNAL",
+    layer: APP_ERROR_LAYER.INTERNAL,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
   unknown: {
     description: "An unknown error occurred",
-    layer: "INTERNAL",
+    layer: APP_ERROR_LAYER.INTERNAL,
     retryable: false,
-    severity: "ERROR",
+    severity: APP_ERROR_SEVERITY.ERROR,
   },
 } as const satisfies Record<string, AppErrorSchema>;

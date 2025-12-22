@@ -4,9 +4,9 @@ import {
 } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error";
 import type {
-  AppErrorOptions,
-  UnexpectedErrorOptions,
-} from "@/shared/errors/core/app-error.options";
+  AppErrorParams,
+  UnexpectedErrorParams,
+} from "@/shared/errors/core/app-error.params";
 import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
@@ -67,7 +67,7 @@ function safeStringifyUnknown(value: unknown): string {
  */
 export function makeAppError(
   code: AppErrorKey,
-  options: AppErrorOptions,
+  options: AppErrorParams,
 ): AppError {
   return new AppError(code, options);
 }
@@ -129,7 +129,7 @@ export function normalizeUnknownToAppError(
  */
 export function makeUnexpectedError(
   error: unknown,
-  options: UnexpectedErrorOptions,
+  options: UnexpectedErrorParams,
 ): AppError {
   const normalized = normalizeUnknownToAppError(
     error,
@@ -158,7 +158,7 @@ export function makeUnexpectedError(
  * - `metadata.fieldErrors`: Map of field names to error messages
  * - `metadata.formErrors`: Array of form-level error messages
  */
-export function makeValidationError(options: AppErrorOptions): AppError {
+export function makeValidationError(options: AppErrorParams): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, options);
 }
 
@@ -175,7 +175,7 @@ export function makeValidationError(options: AppErrorOptions): AppError {
  * - **Expected** (e.g., duplicate email on signup): Return as `Result.Err`
  * - **Unexpected** (e.g., broken invariant): Throw
  */
-export function makeIntegrityError(options: AppErrorOptions): AppError {
+export function makeIntegrityError(options: AppErrorParams): AppError {
   return makeAppError(APP_ERROR_KEYS.integrity, options);
 }
 
@@ -192,6 +192,6 @@ export function makeIntegrityError(options: AppErrorOptions): AppError {
  * Infrastructure errors are **expected failures** and should be returned as
  * `Result.Err` to allow graceful degradation or retry logic.
  */
-export function makeInfrastructureError(options: AppErrorOptions): AppError {
+export function makeInfrastructureError(options: AppErrorParams): AppError {
   return makeAppError(APP_ERROR_KEYS.infrastructure, options);
 }

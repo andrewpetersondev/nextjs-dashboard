@@ -1,6 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { Severity } from "@/shared/errors/core/app-error.schema";
+import type { Severity } from "@/shared/errors/core/app-error.severity";
 import type { AppErrorJsonDto } from "@/shared/errors/core/app-error-json.dto";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;

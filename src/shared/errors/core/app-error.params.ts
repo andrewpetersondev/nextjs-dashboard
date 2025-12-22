@@ -3,7 +3,7 @@ import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.val
 /**
  * Options for constructing an application error instance.
  */
-export type AppErrorOptions<T extends ErrorMetadataValue = ErrorMetadataValue> =
+export type AppErrorParams<T extends ErrorMetadataValue = ErrorMetadataValue> =
   Readonly<{
     readonly cause: unknown;
     readonly message: string;
@@ -13,6 +13,6 @@ export type AppErrorOptions<T extends ErrorMetadataValue = ErrorMetadataValue> =
 /**
  * Options for {@link makeUnexpectedError} with caller-supplied context.
  */
-export type UnexpectedErrorOptions<
+export type UnexpectedErrorParams<
   T extends ErrorMetadataValue = ErrorMetadataValue,
-> = Omit<AppErrorOptions<T>, "cause">;
+> = Omit<AppErrorParams<T>, "cause">;

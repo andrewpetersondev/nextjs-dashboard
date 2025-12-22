@@ -3,11 +3,9 @@ import {
   type AppErrorKey,
   getAppErrorCodeMeta,
 } from "@/shared/errors/catalog/app-error.registry";
-import type { AppErrorOptions } from "@/shared/errors/core/app-error.options";
-import type {
-  AppErrorLayer,
-  Severity,
-} from "@/shared/errors/core/app-error.schema";
+import type { AppErrorLayer } from "@/shared/errors/core/app-error.layers";
+import type { AppErrorParams } from "@/shared/errors/core/app-error.params";
+import type { Severity } from "@/shared/errors/core/app-error.severity";
 import type { AppErrorJsonDto } from "@/shared/errors/core/app-error-json.dto";
 import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
@@ -68,7 +66,7 @@ export class AppError<
   readonly retryable: boolean;
   readonly severity: Severity;
 
-  constructor(code: AppErrorKey, options: AppErrorOptions<T>) {
+  constructor(code: AppErrorKey, options: AppErrorParams<T>) {
     const meta = getAppErrorCodeMeta(code);
 
     const { cause, message, metadata } = options;
