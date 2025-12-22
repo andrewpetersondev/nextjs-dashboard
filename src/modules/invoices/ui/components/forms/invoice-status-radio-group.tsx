@@ -1,8 +1,8 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
-import { ErrorMessage } from "@/shared/forms/components/error-message";
 import type { FieldError } from "@/shared/forms/types/field-error.value";
+import { ErrorMessage } from "@/shared/forms/ui/components/error-message";
 import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 
 /**

@@ -14,7 +14,6 @@ import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoi
 import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
-import { FormActionRow } from "@/shared/forms/components/form-action-row";
 import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
 import type {
@@ -22,6 +21,7 @@ import type {
   FieldError,
 } from "@/shared/forms/types/field-error.value";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
 import { useAutoHideAlert } from "@/ui/hooks/useAutoHideAlert";

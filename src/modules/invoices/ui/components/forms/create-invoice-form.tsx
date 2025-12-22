@@ -14,11 +14,11 @@ import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoi
 import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
-import { FormActionRow } from "@/shared/forms/components/form-action-row";
-import { useFormMessage } from "@/shared/forms/hooks/use-form-message";
 import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
 import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
+import { useFormMessage } from "@/shared/forms/ui/hooks/use-form-message";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { ServerMessage } from "@/ui/molecules/server-message";
