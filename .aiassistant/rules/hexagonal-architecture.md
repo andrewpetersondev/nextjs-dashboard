@@ -1,5 +1,6 @@
 ---
-apply: manually
+apply: by file patterns
+patterns: src/modules/**/*.ts
 ---
 
 # Hexagonal Architecture (Ports & Adapters)

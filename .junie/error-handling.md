@@ -50,19 +50,18 @@ All failures must be expressed as `AppError` with explicit metadata. Callers mus
 
 ### Error Normalizers
 
-Use dedicated normalizers at infrastructure boundaries so we never lose intrinsic metadata:
+Use dedicated normalizers at infrastructure boundaries so we never lose intrinsic pgErrorMetadata:
 
 - Use `normalizePgError` **only at Postgres boundaries**:
-  - Preserves intrinsic PG metadata (for example, `pgCode`, `constraint`, `table`, `column`)
-  - Merges it with `DbOperationMetadata` (`entity`, `operation`)
-  - Returns an `AppError` with the correct code for the PG condition, or a fallback code when unmapped
+  - Preserves intrinsic PG pgErrorMetadata (for example, `pgCode`, `constraint`, `table`, `column`)
+  - Returns an `AppError` with the correct pgCode for the PG pgCondition, or a fallback pgCode when unmapped
 - Use `normalizeUnknownToAppError` at **non‑Postgres boundaries**:
   - HTTP clients
   - File system
   - Third‑party SDKs
-  - Wraps any unknown thrown value into an `AppError` with a stable fallback code and diagnostic metadata
+  - Wraps any unknown thrown value into an `AppError` with a stable fallback pgCode and diagnostic pgErrorMetadata
 
-Do **not** use `normalizeUnknownToAppError` for Postgres errors, or you will lose `pgCode` and condition mapping.
+Do **not** use `normalizeUnknownToAppError` for Postgres errors, or you will lose `pgCode` and pgCondition mapping.
 
 ## Database Access Layer (DAL) Conventions
 
@@ -70,8 +69,8 @@ DAL wrappers are the only place that may catch raw database errors.
 
 - Use `executeDalResult` for **expected DB failures**:
   - Catches raw Postgres errors.
-  - Calls `normalizePgError` with `DbOperationMetadata` (`entity`, `operation`).
-  - Returns `Result<Ok, AppError>` with a mapped error code and PG metadata.
+  - Calls `normalizePgError`.
+  - Returns `Result<Ok, AppError>` with a mapped error pgCode and PG pgErrorMetadata.
   - Logs the error but does **not** throw.
 
 - Use `executeDalThrow` only for **unexpected DAL invariants**:
