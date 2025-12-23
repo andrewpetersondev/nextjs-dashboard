@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/useNamingConvention: <explanation> */
 import { z } from "zod";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";

@@ -42,13 +42,12 @@ export function toPgError(err: unknown): PgErrorMapping {
     }
   }
 
-  // Fallback for non-PG errors or invalid inputs
   return {
     appErrorKey: APP_ERROR_KEYS.unexpected,
     pgCondition: PG_CONDITIONS.pg_unexpected_error,
     pgErrorMetadata: {
       detail: err instanceof Error ? err.message : String(err),
-      pgCode: "criticalfuckup",
+      pgCode: "unknown_internal_error",
       severity: APP_ERROR_SEVERITY.ERROR,
     },
   };

@@ -11,14 +11,10 @@ type ErrorCandidate = Record<string, unknown>;
 /**
  * BFS to flatten the error chain, looking into common wrapper properties.
  *
- * @remarks
  * This is used primarily by adapters (like Postgres) to find the root cause
  * or specific technical pgErrorMetadata (like `pgCode`) buried inside nested errors.
  *
  * It uses a Breadth-First Search to ensure shallow causes are processed first.
- *
- * @param root - The starting error value.
- * @returns An array of objects found in the chain, sorted by depth.
  */
 export function flattenErrorChain(root: unknown): ErrorCandidate[] {
   if (!root || typeof root !== "object") {
@@ -35,7 +31,7 @@ export function flattenErrorChain(root: unknown): ErrorCandidate[] {
     const current = queue.shift();
 
     if (!current || seen.has(current)) {
-      // biome-ignore lint/nursery/noContinue: <safe for now>
+      // biome-ignore lint/nursery/noContinue: needed for BFS
       continue;
     }
     seen.add(current);

@@ -1,9 +1,7 @@
 import "server-only";
 
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { PG_CONDITIONS } from "@/shared/errors/server/adapters/postgres/pg-conditions";
 import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error";
 import { isAppError } from "@/shared/errors/utils/is-app-error";
 
@@ -29,39 +27,21 @@ function normalizePgCause(err: unknown): AppError | Error | string {
  *  Use only at Postgres boundaries.
  *
  * Do NOT use `normalizeUnknownToAppError` for PG errors, or you will
- * lose `pgCode`/constraint pgErrorMetadata and pgCondition mapping. The generic
- * normalizer is intended for non-PG integrations (HTTP, FS, etc.).
+ * lose `pgCode`/constraint metadata and condition mapping.
  *
  * @remarks
- * This utility enforces strict separation between:
- * 1. **Intrinsic Metadata**: Data extracted from the DB error object itself
- *    (constraints, codes, hints, severity).
- * 2. **Operational Context**: Caller-provided data for logging and tracing
- *    (operation name, entity) that must stay outside `AppError.pgErrorMetadata`.
- *
- * Intrinsic pgErrorMetadata only is attached to the error; operational context must
- * be passed to logging separately by the DAL wrapper.
- *
- * @param err - The raw error caught from the Postgres driver.
+ * This utility enforces strict separation between Intrinsic Metadata (DB fields)
+ * and Operational Context (caller-provided logging info).
  */
 export function normalizePgError(err: unknown): AppError {
   const cause = normalizePgCause(err);
   const mapping = toPgError(err);
 
-  if (mapping) {
-    return makeAppError(mapping.appErrorKey, {
-      cause,
-      message: mapping.pgCondition,
-      metadata: {
-        // Intrinsic PG pgErrorMetadata (pgCode, constraint, etc.)
-        ...mapping.pgErrorMetadata,
-      },
-    });
-  }
-
-  return makeAppError(APP_ERROR_KEYS.unknown, {
+  return makeAppError(mapping.appErrorKey, {
     cause,
-    message: PG_CONDITIONS.pg_unknown_error,
-    metadata: {},
+    message: mapping.pgCondition,
+    metadata: {
+      ...mapping.pgErrorMetadata,
+    },
   });
 }

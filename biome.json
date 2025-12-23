@@ -185,7 +185,6 @@
         "useForOf": "on",
         "useFragmentSyntax": "on",
         "useGroupedAccessorPairs": "on",
-        "useNamingConvention": "on",
         "useNumberNamespace": "on",
         "useNumericSeparators": "on",
         "useObjectSpread": "on",

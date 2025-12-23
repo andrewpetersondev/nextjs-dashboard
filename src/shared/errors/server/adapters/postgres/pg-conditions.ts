@@ -1,5 +1,7 @@
 /** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 
+import "server-only";
+
 /**
  * Registry of Postgres-specific error conditions.
  * Enforces 'pg_' prefix for all keys and values to maintain domain separation.
