@@ -34,20 +34,9 @@ export class ClearSessionUseCase {
     try {
       await this.cookie.delete();
 
-      this.logger.info("Session cleared", {
-        logging: { context: "ClearSessionUseCase.execute" },
-      });
-
       return Ok<void>(undefined);
     } catch (err: unknown) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-
-      this.logger.error("Session clear failed", {
-        error: String(err),
-        logging: { code: "session_clear_failed" },
-      });
-
-      return Err(error);
+      return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
   }
 }

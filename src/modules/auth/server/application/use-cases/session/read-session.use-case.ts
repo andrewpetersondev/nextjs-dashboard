@@ -40,42 +40,29 @@ export class ReadSessionUseCase {
     });
   }
 
+  // todo: why does this return type allow undefined? can i use type SessionPrincipal | undefined instead?
   async execute(): Promise<{ role: UserRole; userId: UserId } | undefined> {
     try {
       const token = await this.cookie.get();
 
       if (!token) {
-        this.logger.warn("No session cookie present", {
-          logging: { reason: "no_cookie" },
-        });
         return;
       }
 
       const decodedResult = await this.jwt.decode(token);
 
       if (!decodedResult.ok) {
-        this.logger.warn("Session decode failed", {
-          logging: { reason: "decode_error" },
-        });
         return;
       }
 
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
-        this.logger.warn("Invalid session payload", {
-          logging: { reason: "invalid_payload" },
-        });
         return;
       }
 
       return { role: decoded.role, userId: userIdCodec.decode(decoded.userId) };
-    } catch (err: unknown) {
-      this.logger.error("Session read failed", {
-        error: String(err),
-        logging: { code: "session_read_failed" },
-      });
-
+    } catch (_err: unknown) {
       return;
     }
   }

@@ -102,9 +102,8 @@ export async function signupAction(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    logger.operation("error", "Signup authentication failed", {
+    logger.errorWithDetails("Signup authentication failed", error, {
       duration: tracker.getTotalDuration(),
-      error,
       operationContext: "authentication",
       operationIdentifiers: {
         email: input.email,

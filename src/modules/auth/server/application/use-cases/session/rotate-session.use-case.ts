@@ -145,18 +145,6 @@ export class RotateSessionUseCase {
       if (exceeded) {
         await this.cookie.delete();
 
-        this.logger.info(
-          "Session not re-issued due to absolute lifetime limit",
-          {
-            logging: {
-              ageMs: age,
-              maxMs: MAX_ABSOLUTE_SESSION_MS,
-              reason: "absolute_lifetime_exceeded",
-              userId: user.userId,
-            },
-          },
-        );
-
         return Ok({
           ageMs: age,
           maxMs: MAX_ABSOLUTE_SESSION_MS,
@@ -178,25 +166,12 @@ export class RotateSessionUseCase {
       const issuedResult = await issueToken(this.jwt, user);
 
       if (!issuedResult.ok) {
-        this.logger.error("Session rotate failed: token issue failed", {
-          error: issuedResult.error.message,
-          logging: { code: "session_rotate_issue_token_failed" },
-        });
-
         return Err(issuedResult.error);
       }
 
       const { expiresAtMs, token } = issuedResult.value;
 
       await this.cookie.set(token, expiresAtMs);
-
-      this.logger.info("Session token re-issued", {
-        logging: {
-          expiresAt: expiresAtMs,
-          role: user.role,
-          userId: user.userId,
-        },
-      });
 
       return Ok({
         expiresAt: expiresAtMs,
@@ -206,11 +181,6 @@ export class RotateSessionUseCase {
         userId: user.userId,
       });
     } catch (err: unknown) {
-      this.logger.error("Session rotate failed", {
-        error: String(err),
-        logging: { code: "session_rotate_failed" },
-      });
-
       return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
   }

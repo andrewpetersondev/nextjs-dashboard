@@ -69,48 +69,24 @@ export class AuthUserService {
    * - This method owns "invalid credentials" semantics and mapping to AppError.
    * - Login is read-only; no transaction needed.
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login flow is inherently multi-step
   async login(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const logger = this.logger.child({ email: input.email });
+    const _logger = this.logger.child({ email: input.email });
 
     try {
-      logger.operation("info", "Login service started", {
-        operationContext: "auth.service",
-        operationIdentifiers: { email: input.email },
-        operationName: "login.start",
-      });
-
       const userResult = await this.repo.login({ email: input.email });
 
       if (!userResult.ok) {
-        logger.operation("error", "Login failed - repository error", {
-          error: userResult.error,
-          operationContext: "auth.service",
-          operationIdentifiers: { email: input.email },
-          operationName: "login.repo.error",
-        });
-
         return Err(userResult.error);
       }
 
       const user = userResult.value;
 
       if (!user) {
-        const error = normalizeUnknownToAppError(
-          new Error("user_not_found"),
-          "not_found",
+        return Err(
+          normalizeUnknownToAppError(new Error("user_not_found"), "not_found"),
         );
-
-        logger.operation("warn", "Login failed - user not found", {
-          error,
-          operationContext: "auth.service",
-          operationIdentifiers: { email: input.email },
-          operationName: "login.user.notFound",
-        });
-
-        return Err(error);
       }
 
       const passwordOk = await this.hasher.compare(
@@ -119,39 +95,17 @@ export class AuthUserService {
       );
 
       if (!passwordOk) {
-        const error = normalizeUnknownToAppError(
-          new Error("invalid_password"),
-          "invalid_credentials",
+        return Err(
+          normalizeUnknownToAppError(
+            new Error("invalid_password"),
+            "invalid_credentials",
+          ),
         );
-
-        logger.operation("warn", "Login failed - invalid password", {
-          error,
-          operationContext: "auth.service",
-          operationIdentifiers: { email: input.email },
-          operationName: "login.password.invalid",
-        });
-
-        return Err(error);
       }
-
-      logger.operation("info", "Login succeeded", {
-        operationContext: "auth.service",
-        operationIdentifiers: { email: input.email, userId: String(user.id) },
-        operationName: "login.success",
-      });
 
       return Ok<AuthUserTransport>(toAuthUserTransport(user));
     } catch (err: unknown) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-
-      logger.operation("error", "Login service unexpected error", {
-        error,
-        operationContext: "auth.service",
-        operationIdentifiers: { email: input.email },
-        operationName: "login.unexpectedError",
-      });
-
-      return Err(error);
+      return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
   }
 }

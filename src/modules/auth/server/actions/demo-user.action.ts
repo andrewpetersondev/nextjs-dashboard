@@ -51,9 +51,8 @@ async function createDemoUserInternal(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    logger.operation("error", "Demo user creation failed", {
+    logger.errorWithDetails("Demo user creation failed", error, {
       duration: tracker.getTotalDuration(),
-      error,
       operationContext: "authentication",
       operationIdentifiers: { ip, role },
       operationName: "demoUser.failed",

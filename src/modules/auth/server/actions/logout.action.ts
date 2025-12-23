@@ -32,8 +32,7 @@ export async function logoutAction(): Promise<void> {
       operationName: "logout.success",
     });
   } else {
-    logger.operation("error", "Logout session clear failed", {
-      error: res.error,
+    logger.errorWithDetails("Logout session clear failed", res.error, {
       operationContext: "authentication",
       operationIdentifiers: { ip, reason: "session_clear_failed" },
       operationName: "logout.failed",

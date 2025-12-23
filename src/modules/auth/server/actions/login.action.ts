@@ -96,9 +96,8 @@ export async function loginAction(
   if (!sessionResult.ok) {
     const error = sessionResult.error;
 
-    logger.operation("error", "Login authentication failed", {
+    logger.errorWithDetails("Login authentication failed", error, {
       duration: tracker.getTotalDuration(),
-      error,
       operationContext: "authentication",
       operationIdentifiers: { email: input.email, ip },
       operationName: "login.authentication.failed",

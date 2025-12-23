@@ -36,7 +36,7 @@ export class CreateUserUseCase {
   async execute(
     input: Readonly<SignupData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
-    const logger = this.logger.child({ email: input.email });
+    const _logger = this.logger.child({ email: input.email });
 
     try {
       const createdResult = await this.uow.withTransaction(async (tx) => {
@@ -64,29 +64,12 @@ export class CreateUserUseCase {
         });
       });
 
-      if (!createdResult.ok) {
-        return Err(createdResult.error);
-      }
-
-      logger.operation("info", "User created", {
-        operationContext: "auth:use-case",
-        operationIdentifiers: { email: input.email },
-        operationName: "signup.user.created",
-      });
-
-      return Ok(createdResult.value);
+      return createdResult;
     } catch (err: unknown) {
       const error = makeUnexpectedError(err, {
         key: APP_ERROR_KEYS.unexpected,
         message: "An unexpected error occurred during user creation.",
         metadata: { operation: "createUser" },
-      });
-
-      logger.operation("error", "User creation failed", {
-        error,
-        operationContext: "auth:use-case",
-        operationIdentifiers: { email: input.email },
-        operationName: "signup.user.create.failed",
       });
 
       return Err(error);

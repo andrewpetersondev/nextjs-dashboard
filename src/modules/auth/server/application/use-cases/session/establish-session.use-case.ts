@@ -60,29 +60,14 @@ export class EstablishSessionUseCase {
       const encodedResult = await this.jwt.encode(claims, expiresAtMs);
 
       if (!encodedResult.ok) {
-        this.logger.error("Session establish failed: token encode failed", {
-          error: encodedResult.error.message,
-          logging: { code: "session_establish_encode_failed" },
-        });
         return Err(encodedResult.error);
       }
 
       await this.cookie.set(encodedResult.value, expiresAtMs);
 
-      this.logger.info("Session established", {
-        logging: { expiresAt: expiresAtMs, role: user.role, userId: user.id },
-      });
-
       return Ok(user);
     } catch (err: unknown) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-
-      this.logger.error("Session establish failed", {
-        error: String(err),
-        logging: { code: "session_establish_failed" },
-      });
-
-      return Err(error);
+      return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
   }
 }
