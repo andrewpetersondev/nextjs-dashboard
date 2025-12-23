@@ -20,9 +20,9 @@ export class BcryptHashingAdapter implements HashingPort {
       return asHash(hashed);
     } catch (err) {
       throw makeAppError("infrastructure", {
-        cause: err,
+        cause: Error.isError(err) ? err : "fix this ",
         message: "Failed to hash value",
-        metadata: { cryptoOperation: "hash" },
+        metadata: {},
       });
     }
   }
@@ -32,9 +32,9 @@ export class BcryptHashingAdapter implements HashingPort {
       return await bcryptjs.compare(raw, String(hash));
     } catch (err) {
       throw makeAppError("infrastructure", {
-        cause: err,
+        cause: Error.isError(err) ? err : "fix this ",
         message: "Failed to compare hash",
-        metadata: { cryptoOperation: "compare" },
+        metadata: {},
       });
     }
   }

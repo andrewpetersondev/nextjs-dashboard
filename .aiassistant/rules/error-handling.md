@@ -39,14 +39,6 @@ All failures must be expressed as `AppError` with explicit metadata. Callers mus
 
 ### Specialized Factories vs `makeAppError`
 
-- Use `makeValidationError` for:
-  - Forms
-  - Command/DTO validation
-  - Policy checks where the caller can correct input
-- Use `makeIntegrityError` for:
-  - DB invariants that might be user‑correctable (duplicate email, foreign key that the caller can fix)
-- Use `makeInfrastructureError` for:
-  - Network / filesystem / configuration / external system issues that are expected but technical
 - Use `makeUnexpectedError` only for:
   - Truly impossible cases, programmer errors, invariant violations
   - Callers MUST provide a `metadata` object, even if empty (`{}`), to keep intent explicit

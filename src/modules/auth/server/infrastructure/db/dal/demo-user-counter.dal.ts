@@ -3,8 +3,10 @@ import "server-only";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { executeDalThrow } from "@/shared/errors/server/adapters/dal/execute-dal-throw";
+import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 /**
@@ -34,33 +36,38 @@ export async function demoUserCounterDal(
           "Invariant failed: demoUserCounter did not return row",
           {
             error: new Error("row_missing"),
+            operationContext: "auth:dal",
             operationIdentifiers: { role },
             operationName: "demoUserCounter.invariant.rowMissing",
           },
         );
 
-        throw makeIntegrityError({
+        throw makeAppError(APP_ERROR_KEYS.integrity, {
           cause: "",
           message: "Invariant: insert did not return a row",
-          metadata: { kind: "invariant" },
+          metadata: {
+            pgCode: PG_CODES.INVARIANT_NO_ROWS_RETURNED,
+          },
         });
       }
 
       if (counterRow.id == null) {
         logger.operation("error", "Invalid counter row returned: missing id", {
           error: new Error("missing_id"),
+          operationContext: "auth:dal",
           operationIdentifiers: { role },
           operationName: "demoUserCounter.invariant.missingId",
         });
 
-        throw makeIntegrityError({
+        throw makeAppError(APP_ERROR_KEYS.integrity, {
           cause: "",
           message: "Invariant: demo user counter row returned with null id",
-          metadata: { counterRow, kind: "invariant" },
+          metadata: { pgCode: PG_CODES.INVARIANT_NO_ROWS_RETURNED },
         });
       }
 
       logger.operation("info", "Demo user counter created for role", {
+        operationContext: "auth:dal",
         operationIdentifiers: { count: counterRow.id, role },
         operationName: "demoUserCounter.success",
       });

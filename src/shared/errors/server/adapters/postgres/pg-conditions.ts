@@ -15,5 +15,3 @@ export const PG_CONDITIONS = {
 } as const satisfies Record<`pg_${string}`, `pg_${string}`>;
 
 export type PgCondition = (typeof PG_CONDITIONS)[keyof typeof PG_CONDITIONS];
-
-export type _PgConditionKey = keyof typeof PG_CONDITIONS;

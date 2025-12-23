@@ -4,6 +4,7 @@ import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { APP_ERROR_SEVERITY } from "@/shared/errors/core/app-error.severity";
 import {
   PG_CODE_TO_META,
+  PG_CODES,
   type PgCode,
 } from "@/shared/errors/server/adapters/postgres/pg-codes";
 import { PG_CONDITIONS } from "@/shared/errors/server/adapters/postgres/pg-conditions";
@@ -47,7 +48,7 @@ export function toPgError(err: unknown): PgErrorMapping {
     pgCondition: PG_CONDITIONS.pg_unexpected_error,
     pgErrorMetadata: {
       detail: err instanceof Error ? err.message : String(err),
-      pgCode: "unknown_internal_error",
+      pgCode: PG_CODES.UNEXPECTED_INTERNAL_ERROR,
       severity: APP_ERROR_SEVERITY.ERROR,
     },
   };

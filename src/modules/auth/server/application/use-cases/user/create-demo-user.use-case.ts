@@ -8,10 +8,11 @@ import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -49,10 +50,10 @@ export class CreateDemoUserUseCase {
 
         if (!isPositiveNumber(counter)) {
           return Err(
-            makeValidationError({
+            makeAppError(APP_ERROR_KEYS.validation, {
               cause: "invalid_demo_user_counter",
               message: "Demo user counter returned invalid value",
-              metadata: { counter, role },
+              metadata: {},
             }),
           );
         }
@@ -85,6 +86,8 @@ export class CreateDemoUserUseCase {
       if (!txResult.ok) {
         logger.operation("warn", "Create demo user failed", {
           error: txResult.error,
+          operationContext: "create-demo-user.use-case",
+          operationIdentifiers: { role },
           operationName: "demoUser.failed",
         });
 
@@ -92,18 +95,23 @@ export class CreateDemoUserUseCase {
       }
 
       logger.operation("info", "Create demo user succeeded", {
+        operationContext: "create-demo-user.use-case",
+        operationIdentifiers: { role },
         operationName: "demoUser.success",
       });
 
       return Ok(txResult.value);
     } catch (err: unknown) {
       const error = makeUnexpectedError(err, {
+        key: APP_ERROR_KEYS.unexpected,
         message: "demoUser.unexpected",
         metadata: { role },
       });
 
       logger.operation("error", "Create demo user unexpected error", {
         error,
+        operationContext: "create-demo-user.use-case",
+        operationIdentifiers: { role },
         operationName: "demoUser.unexpected",
       });
 

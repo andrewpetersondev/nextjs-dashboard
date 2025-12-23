@@ -92,6 +92,7 @@ export class AuthUserRepository {
     if (!rowResult.ok) {
       this.logger.operation("error", "Login lookup failed (DAL)", {
         error: rowResult.error,
+        operationContext: "auth:dal",
         operationIdentifiers: { email: input.email },
         operationName: "login.lookup.error",
       });
@@ -103,6 +104,7 @@ export class AuthUserRepository {
 
     if (!row) {
       this.logger.operation("info", "Login lookup: user not found", {
+        operationContext: "auth:dal",
         operationIdentifiers: { email: input.email },
         operationName: "login.lookup.notFound",
       });
@@ -111,6 +113,7 @@ export class AuthUserRepository {
     }
 
     this.logger.operation("info", "Login lookup: user retrieved", {
+      operationContext: "auth:dal",
       operationIdentifiers: { email: input.email, userId: row.id },
       operationName: "login.lookup.success",
     });
@@ -136,6 +139,7 @@ export class AuthUserRepository {
     if (!rowResult.ok) {
       this.logger.operation("warn", "User creation failed (DAL)", {
         error: rowResult.error,
+        operationContext: "auth:dal",
         operationIdentifiers: { email: input.email, username: input.username },
         operationName: "signup.dal.error",
       });
@@ -146,6 +150,7 @@ export class AuthUserRepository {
     const entity = toNewUserEntity(rowResult.value);
 
     this.logger.operation("info", "User created successfully", {
+      operationContext: "auth:dal",
       operationIdentifiers: { email: input.email, userId: entity.id },
       operationName: "signup.success",
     });

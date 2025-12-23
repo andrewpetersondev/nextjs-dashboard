@@ -77,6 +77,7 @@ export class AuthUserService {
 
     try {
       logger.operation("info", "Login service started", {
+        operationContext: "auth.service",
         operationIdentifiers: { email: input.email },
         operationName: "login.start",
       });
@@ -86,6 +87,7 @@ export class AuthUserService {
       if (!userResult.ok) {
         logger.operation("error", "Login failed - repository error", {
           error: userResult.error,
+          operationContext: "auth.service",
           operationIdentifiers: { email: input.email },
           operationName: "login.repo.error",
         });
@@ -103,6 +105,7 @@ export class AuthUserService {
 
         logger.operation("warn", "Login failed - user not found", {
           error,
+          operationContext: "auth.service",
           operationIdentifiers: { email: input.email },
           operationName: "login.user.notFound",
         });
@@ -123,6 +126,7 @@ export class AuthUserService {
 
         logger.operation("warn", "Login failed - invalid password", {
           error,
+          operationContext: "auth.service",
           operationIdentifiers: { email: input.email },
           operationName: "login.password.invalid",
         });
@@ -131,6 +135,7 @@ export class AuthUserService {
       }
 
       logger.operation("info", "Login succeeded", {
+        operationContext: "auth.service",
         operationIdentifiers: { email: input.email, userId: String(user.id) },
         operationName: "login.success",
       });
@@ -141,6 +146,7 @@ export class AuthUserService {
 
       logger.operation("error", "Login service unexpected error", {
         error,
+        operationContext: "auth.service",
         operationIdentifiers: { email: input.email },
         operationName: "login.unexpectedError",
       });

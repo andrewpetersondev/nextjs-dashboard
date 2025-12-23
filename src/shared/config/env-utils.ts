@@ -1,8 +1,9 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <usage in env config is acceptable> */
 /** biome-ignore-all lint/style/noProcessEnv: <usage in env config is acceptable> */
 
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -37,10 +38,12 @@ export function getEnvVariableResult<K extends EnvVariables>(
   if (!value || value.trim() === "") {
     console.log(`Env var ${key} is missing or empty`);
     return Err(
-      makeValidationError({
-        cause: "",
+      makeAppError(APP_ERROR_KEYS.validation, {
+        cause: "Variable is undefined or empty string",
         message: `Missing required environment variable: ${key}`,
-        metadata: { key },
+        metadata: {
+          fieldErrors: { [key]: ["Environment variable is required"] },
+        },
       }),
     );
   }
@@ -99,10 +102,12 @@ export function validateEnvResult(
     const errorMessage = `Missing required environment variables: ${missing.join(", ")}`;
     console.error(`❌ ${errorMessage}`);
     return Err(
-      makeValidationError({
-        cause: "",
+      makeAppError(APP_ERROR_KEYS.validation, {
+        cause: "Startup validation failed",
         message: errorMessage,
-        metadata: { missing },
+        metadata: {
+          formErrors: [errorMessage],
+        },
       }),
     );
   }

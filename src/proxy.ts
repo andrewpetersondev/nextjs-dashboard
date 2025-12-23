@@ -38,6 +38,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   if (outcome.kind === "redirect") {
     const logger = defaultLogger.withContext("auth:middleware");
     logger.operation("info", "Auth middleware redirect", {
+      operationContext: "server",
       operationIdentifiers: {
         path,
         reason: outcome.reason,
