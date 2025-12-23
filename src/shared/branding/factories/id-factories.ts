@@ -11,7 +11,9 @@ import {
   USER_ID_BRAND,
   type UserId,
 } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -31,29 +33,29 @@ const validateUuid = (
 ): Result<string, AppError> => {
   if (typeof value !== "string") {
     return Err(
-      new AppError("validation", {
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Invalid ${label}: expected string, got ${typeof value}`,
-        metadata: { expectedType: "string", label, receivedType: typeof value },
+        metadata: {},
       }),
     );
   }
   const v = value.trim();
   if (v.length === 0) {
     return Err(
-      new AppError("validation", {
+      makeAppError("validation", {
         cause: "",
         message: `${label} cannot be empty`,
-        metadata: { label },
+        metadata: {},
       }),
     );
   }
   if (!UUID_REGEX.test(v)) {
     return Err(
-      new AppError("validation", {
+      makeAppError("validation", {
         cause: "",
         message: `Invalid ${label}: "${value}". Must be a valid UUID.`,
-        metadata: { label, value },
+        metadata: {},
       }),
     );
   }

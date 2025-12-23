@@ -1,12 +1,14 @@
 import "server-only";
+
 import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
 export class CreateRevenueUseCase {
@@ -18,17 +20,18 @@ export class CreateRevenueUseCase {
 
   async execute(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
     if (!revenue) {
-      throw makeValidationError({
+      throw makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: "Invalid revenue data",
-        metadata: { revenue },
+        metadata: {},
       });
     }
     const created = await this.repository.create(revenue);
     if (!created) {
       throw makeUnexpectedError("", {
+        key: APP_ERROR_KEYS.unexpected,
         message: "Failed to create a revenue record",
-        metadata: { table: "revenues" },
+        metadata: {},
       });
     }
     return created;

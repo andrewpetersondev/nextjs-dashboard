@@ -1,4 +1,5 @@
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Validates a condition and throws an error if false.
@@ -11,7 +12,11 @@ export const validateCondition = (
   message: string,
 ): void => {
   if (!condition) {
-    throw makeValidationError({ cause: "", message, metadata: { condition } });
+    throw makeAppError(APP_ERROR_KEYS.validation, {
+      cause: "",
+      message,
+      metadata: {},
+    });
   }
 };
 

@@ -1,4 +1,5 @@
 import "server-only";
+
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type {
   InvoiceEntity,
@@ -9,7 +10,8 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Creates a new invoice in the database.
@@ -37,12 +39,10 @@ export async function createInvoiceDal(
       .returning();
 
     if (!createdInvoice) {
-      throw new AppError("database", {
+      throw makeAppError(APP_ERROR_KEYS.database, {
         cause: "",
         message: INVOICE_MSG.createFailed,
-        metadata: {
-          input,
-        },
+        metadata: {},
       });
     }
 
