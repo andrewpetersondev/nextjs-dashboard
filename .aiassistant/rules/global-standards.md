@@ -1,5 +1,5 @@
 ---
-apply: always
+apply: manually
 ---
 
 # Global Standards
@@ -47,6 +47,8 @@ Organize features using a Modular Hexagonal approach:
   - `shared/`: Logic used by both UI and Server (schemas, constants).
   - `server/`: Hexagonal core (Actions, Use Cases, Ports, Infrastructure).
   - `ui/`: Feature-specific components.
+- **Shared Logic**: `@/shared/` (cross-cutting concerns like error handling, forms, and results).
+- **Server-Only**: `@/server/` (global server utilities, e.g., database client, server config, cookies, crypto, db schema).
 
 ## Module Boundaries
 
