@@ -1,11 +1,11 @@
 import "server-only";
 
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { DbOperationMetadata } from "@/shared/errors/core/db-operation.metadata";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { PG_CONDITIONS } from "@/shared/errors/server/postgres/pg-conditions";
-import { toPgError } from "@/shared/errors/server/postgres/to-pg-error";
+import { PG_CONDITIONS } from "@/shared/errors/server/adapters/postgres/pg-conditions";
+import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error";
 
 /**
  * Normalizes a raw Postgres error into a structured AppError.

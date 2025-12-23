@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 import type { AppErrorParams } from "@/shared/errors/core/app-error.params";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 

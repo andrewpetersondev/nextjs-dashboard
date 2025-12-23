@@ -1,5 +1,5 @@
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 
 import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import type {

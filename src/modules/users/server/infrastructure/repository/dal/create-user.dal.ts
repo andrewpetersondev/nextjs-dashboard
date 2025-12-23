@@ -6,7 +6,7 @@ import type {
 import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

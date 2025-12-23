@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { ErrResult, OkResult, Result } from "@/shared/result/result.types";
 
 /**

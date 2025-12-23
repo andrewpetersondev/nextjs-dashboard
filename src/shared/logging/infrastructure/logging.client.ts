@@ -1,5 +1,5 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import { isAppError } from "@/shared/errors/core/is-app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";

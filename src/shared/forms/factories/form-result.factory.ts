@@ -1,5 +1,5 @@
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type {
   DenseFieldErrorMap,

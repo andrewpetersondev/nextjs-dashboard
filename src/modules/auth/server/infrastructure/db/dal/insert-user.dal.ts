@@ -3,9 +3,9 @@ import "server-only";
 import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
-import { executeDalResult } from "@/shared/errors/server/dal/execute-dal-result";
+import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result.types";
 

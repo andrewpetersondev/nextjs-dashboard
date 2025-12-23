@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import {
   buildDalErrorMetadata,
   type DalContextLite,
   type ExecuteDalCoreOptions,
-} from "@/shared/errors/server/dal/dal-context.schema";
+} from "@/shared/errors/server/adapters/dal/dal-context.schema";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**

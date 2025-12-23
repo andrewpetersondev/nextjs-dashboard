@@ -3,8 +3,8 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
-import type { AppError } from "@/shared/errors/core/app-error";
-import { executeDalResult } from "@/shared/errors/server/dal/execute-dal-result";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result.types";
 

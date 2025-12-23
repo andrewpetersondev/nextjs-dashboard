@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { toPgError } from "@/shared/errors/server/postgres/to-pg-error";
+import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error";
 
 describe("toPgError", () => {
   it("maps a known Postgres code to appCode + condition + pg metadata", () => {

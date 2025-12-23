@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { NonEmptyArray } from "@/shared/forms/types/field-error.value";
 import type {
   FormResult,

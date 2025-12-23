@@ -1,4 +1,4 @@
-import type { PgErrorMetadata } from "@/shared/errors/server/postgres/pg-error.metadata";
+import type { PgErrorMetadata } from "@/shared/errors/server/adapters/postgres/pg-error.metadata";
 
 /**
  * Type guard for narrowing unknown metadata to {@link PgErrorMetadata}.

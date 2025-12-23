@@ -4,7 +4,7 @@ import type { AuthLoginRepoInput } from "@/modules/auth/server/contracts/auth-lo
 import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
 import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/result/result.types";
 
 /**

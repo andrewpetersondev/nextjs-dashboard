@@ -5,7 +5,7 @@ import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

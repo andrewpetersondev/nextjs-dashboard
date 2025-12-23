@@ -28,7 +28,7 @@ import {
   createUserId,
 } from "@/shared/branding/factories/id-factories";
 import { createPeriod } from "@/shared/branding/factories/period-factory";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/result/result.types";
 
 /**

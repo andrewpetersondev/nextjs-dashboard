@@ -9,7 +9,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 
 /**
  * Creates a new invoice in the database.

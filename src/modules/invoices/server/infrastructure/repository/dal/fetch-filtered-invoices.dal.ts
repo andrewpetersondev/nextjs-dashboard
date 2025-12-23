@@ -5,7 +5,7 @@ import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types"
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
 
 /**

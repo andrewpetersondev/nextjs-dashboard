@@ -1,4 +1,4 @@
-import { AppError } from "@/shared/errors/core/app-error";
+import { AppError } from "@/shared/errors/core/app-error.entity";
 
 /**
  * Checks whether a value is an `AppError`.

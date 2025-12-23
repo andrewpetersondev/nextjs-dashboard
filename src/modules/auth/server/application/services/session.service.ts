@@ -12,7 +12,7 @@ import { RotateSessionUseCase } from "@/modules/auth/server/application/use-case
 import type { UpdateSessionOutcome } from "@/modules/auth/shared/domain/session/session.policy";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type { Result } from "@/shared/result/result.types";
 

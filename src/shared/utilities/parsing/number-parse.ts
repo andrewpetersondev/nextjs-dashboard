@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
 import { Err } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
