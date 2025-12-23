@@ -1,10 +1,10 @@
 import "server-only";
 
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import { executeDalThrow } from "@/server/db/dal/execute-dal-throw";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
+import { executeDalThrow } from "@/shared/errors/server/dal/execute-dal-throw";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
 /**

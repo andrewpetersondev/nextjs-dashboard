@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { AppError } from "@/shared/errors/core/app-error";
 import type {
   DalContextLite,
   ExecuteDalCoreOptions,
-} from "@/server/db/dal/dal-context.schema";
-import { normalizePgError } from "@/server/db/errors/postgres/normalize-pg-error";
-import type { AppError } from "@/shared/errors/core/app-error";
+} from "@/shared/errors/server/dal/dal-context.schema";
+import { normalizePgError } from "@/shared/errors/server/postgres/normalize-pg-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";

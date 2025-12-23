@@ -3,11 +3,11 @@ import "server-only";
 import {
   PG_CODE_TO_META,
   type PgCode,
-} from "@/server/db/errors/postgres/pg-codes";
+} from "@/shared/errors/server/postgres/pg-codes";
 import type {
   PgErrorMapping,
   PgErrorMetadata,
-} from "@/server/db/errors/postgres/pg-error.metadata";
+} from "@/shared/errors/server/postgres/pg-error.metadata";
 
 /**
  * A object that might be part of an error chain.
