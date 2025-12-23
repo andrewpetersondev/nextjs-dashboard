@@ -15,27 +15,18 @@ import {
   toCauseUnion,
 } from "@/shared/errors/factories/app-error-factory.utils";
 
-export function createAppError<Key extends AppErrorKey>(
-  params: AppErrorParams<AppErrorMetadataValueByCode[Key]>,
-): AppError<AppErrorMetadataValueByCode[Key]> {
-  return new AppError<AppErrorMetadataValueByCode[Key]>(params);
-}
-
 /**
- * Creates an AppError for a specific key.
+ * Primary factory for creating structured application errors.
+ * Use this directly for most domain and application errors.
  */
 export function makeAppError<Key extends AppErrorKey>(
   key: Key,
   params: Omit<AppErrorParams<AppErrorMetadataValueByCode[Key]>, "key">,
 ): AppError<AppErrorMetadataValueByCode[Key]> {
-  // We construct the object explicitly to help TS inference without 'as'
-  const fullParams: AppErrorParams<AppErrorMetadataValueByCode[Key]> = {
-    cause: params.cause,
+  return new AppError<AppErrorMetadataValueByCode[Key]>({
+    ...params,
     key,
-    message: params.message,
-    metadata: params.metadata,
-  };
-  return createAppError<Key>(fullParams);
+  });
 }
 
 /**
@@ -46,10 +37,6 @@ export function normalizeUnknownToAppError<Key extends AppErrorKey>(
   fallbackKey: Key,
 ): AppError<AppErrorMetadataValueByCode[Key]> {
   if (error instanceof AppError) {
-    // If it's already an AppError, we return it.
-    // Note: The caller expects AppError<MetadataByCode[Key]>,
-    // but a pre-existing AppError might have different metadata.
-    // In normalization contexts, we usually return it as the base AppError.
     return error as AppError<AppErrorMetadataValueByCode[Key]>;
   }
   const cause = toCauseUnion(error);
@@ -70,7 +57,8 @@ export function normalizeUnknownToAppError<Key extends AppErrorKey>(
 }
 
 /**
- * Standard factory for unexpected (bug) errors, capturing the trigger error as cause.
+ * Standard factory for unexpected (bug) errors.
+ * It normalizes the 'error' (the trigger) and attaches it as the cause.
  */
 export function makeUnexpectedError(
   error: unknown,
@@ -89,28 +77,4 @@ export function makeUnexpectedError(
       ...params.metadata,
     },
   });
-}
-
-export function makeValidationError(
-  params: Omit<
-    AppErrorParams<AppErrorMetadataValueByCode["validation"]>,
-    "key"
-  >,
-): AppError<AppErrorMetadataValueByCode["validation"]> {
-  return makeAppError(APP_ERROR_KEYS.validation, params);
-}
-
-export function makeIntegrityError(
-  params: Omit<AppErrorParams<AppErrorMetadataValueByCode["integrity"]>, "key">,
-): AppError<AppErrorMetadataValueByCode["integrity"]> {
-  return makeAppError(APP_ERROR_KEYS.integrity, params);
-}
-
-export function makeInfrastructureError(
-  params: Omit<
-    AppErrorParams<AppErrorMetadataValueByCode["infrastructure"]>,
-    "key"
-  >,
-): AppError<AppErrorMetadataValueByCode["infrastructure"]> {
-  return makeAppError(APP_ERROR_KEYS.infrastructure, params);
 }
