@@ -1,12 +1,11 @@
 export const APP_ERROR_LAYER = {
   API: "API",
-  DB: "DB",
+  APPLICATION: "APPLICATION",
   DOMAIN: "DOMAIN",
+  INFRASTRUCTURE: "INFRASTRUCTURE",
   INTERNAL: "INTERNAL",
-  POSTGRES: "POSTGRES",
-  SECURITY: "SECURITY",
   UI: "UI",
-  VALIDATION: "VALIDATION",
 } as const;
 
-export type AppErrorLayer = keyof typeof APP_ERROR_LAYER;
+export type AppErrorLayer =
+  (typeof APP_ERROR_LAYER)[keyof typeof APP_ERROR_LAYER];

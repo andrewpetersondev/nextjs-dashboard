@@ -64,7 +64,6 @@ export async function upsertRevenue(
       .returning()) as RevenueRow[];
     if (!data) {
       throw makeUnexpectedError("", {
-        key: APP_ERROR_KEYS.unexpected,
         message: "Failed to upsert revenue record",
         metadata: { table: "revenues" },
       });
@@ -72,7 +71,6 @@ export async function upsertRevenue(
     const result: RevenueEntity = mapRevenueRowToEntity(data);
     if (!result) {
       throw makeUnexpectedError("", {
-        key: APP_ERROR_KEYS.unexpected,
         message: "Failed to convert revenue record",
         metadata: { table: "revenues" },
       });

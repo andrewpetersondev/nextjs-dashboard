@@ -7,7 +7,6 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-server";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
@@ -93,7 +92,6 @@ export class SessionJwtAdapter {
 
       return Err(
         makeUnexpectedError(error, {
-          key: APP_ERROR_KEYS.unexpected,
           message: "jwt.sign.failed",
           metadata: { expiresAtMs },
         }),
@@ -122,7 +120,6 @@ export class SessionJwtAdapter {
 
       return Err(
         makeUnexpectedError(error, {
-          key: APP_ERROR_KEYS.unexpected,
           message: "jwt.verify.failed",
           metadata: {},
         }),

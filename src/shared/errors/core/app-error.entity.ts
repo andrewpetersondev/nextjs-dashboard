@@ -34,10 +34,6 @@ export class AppError<
   constructor(params: AppErrorParams<T>) {
     const { cause, key, message, metadata } = params;
     const meta = getAppErrorCodeMeta(key);
-
-    // todo: what does this do exactly?
-    // This invokes the base class constructor while optionally attaching an underlying error to the property,
-    // but only if that cause is a valid error object; otherwise, it initializes without a nested cause. `cause`
     super(message, cause instanceof Error ? { cause } : undefined);
 
     this.name = this.constructor.name;

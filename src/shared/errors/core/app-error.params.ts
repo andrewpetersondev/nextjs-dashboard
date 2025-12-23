@@ -12,4 +12,4 @@ export type AppErrorParams<T extends AppErrorMetadata = AppErrorMetadata> =
 
 export type UnexpectedErrorParams<
   T extends AppErrorMetadata = AppErrorMetadata,
-> = Omit<AppErrorParams<T>, "cause">;
+> = Omit<AppErrorParams<T>, "cause" | "key">;

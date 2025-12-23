@@ -45,7 +45,6 @@ export async function findRevenueByPeriod(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeUnexpectedError("", {
-      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to convert revenue record",
       metadata: { table: "revenues" },
     });

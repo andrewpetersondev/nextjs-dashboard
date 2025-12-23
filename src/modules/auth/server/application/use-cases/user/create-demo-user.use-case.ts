@@ -103,7 +103,6 @@ export class CreateDemoUserUseCase {
       return Ok(txResult.value);
     } catch (err: unknown) {
       const error = makeUnexpectedError(err, {
-        key: APP_ERROR_KEYS.unexpected,
         message: "demoUser.unexpected",
         metadata: { role },
       });

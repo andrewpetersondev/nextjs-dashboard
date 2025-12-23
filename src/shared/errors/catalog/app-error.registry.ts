@@ -12,134 +12,133 @@ import {
 } from "@/shared/errors/core/error-metadata.value";
 
 /**
+ * Registry of all available Application Error Keys.
+ * Using a constant object ensures type safety and IDE autocompletion across the project.
+ */
+export const APP_ERROR_KEYS = {
+  conflict: "conflict",
+  database: "database",
+  forbidden: "forbidden",
+  infrastructure: "infrastructure",
+  integrity: "integrity",
+  invalid_credentials: "invalid_credentials",
+  missing_fields: "missing_fields",
+  not_found: "not_found",
+  parse: "parse",
+  unauthorized: "unauthorized",
+  unexpected: "unexpected",
+  unknown: "unknown",
+  validation: "validation",
+} as const;
+
+export type AppErrorKey = keyof typeof APP_ERROR_KEYS;
+
+/**
+ * Metadata associated with an error definition in the registry.
+ */
+export type AppErrorDefinition = AppErrorSchema & {
+  readonly metadataSchema: z.ZodType;
+};
+
+/**
  * Single source of truth for Error Definitions and their Metadata Schemas.
- * This prevents "Shotgun Surgery" when adding new error types.
+ * Maps each AppErrorKey to its architectural layer, severity, and validation schema.
  */
 export const APP_ERROR_DEFINITIONS = {
-  application_error: {
-    description: "Application logic error",
-    layer: APP_ERROR_LAYER.INTERNAL,
-    metadataSchema: UnknownErrorMetadataSchema,
-    retryable: false,
-    severity: APP_ERROR_SEVERITY.ERROR,
-  },
-  conflict: {
+  [APP_ERROR_KEYS.conflict]: {
     description: "Resource state conflict",
     layer: APP_ERROR_LAYER.API,
     metadataSchema: ConflictErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-  database: {
+  [APP_ERROR_KEYS.database]: {
     description: "Database operation failed",
-    layer: APP_ERROR_LAYER.POSTGRES,
+    layer: APP_ERROR_LAYER.INFRASTRUCTURE,
     metadataSchema: InfrastructureErrorMetadataSchema,
     retryable: true,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-  domain_error: {
-    description: "Domain logic error",
-    layer: APP_ERROR_LAYER.DOMAIN,
-    metadataSchema: UnknownErrorMetadataSchema,
-    retryable: false,
-    severity: APP_ERROR_SEVERITY.ERROR,
-  },
-  forbidden: {
+  [APP_ERROR_KEYS.forbidden]: {
     description: "Operation not allowed",
-    layer: APP_ERROR_LAYER.SECURITY,
+    layer: APP_ERROR_LAYER.API,
     metadataSchema: UnknownErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-  infrastructure: {
+  [APP_ERROR_KEYS.infrastructure]: {
     description: "Infrastructure failure",
-    layer: APP_ERROR_LAYER.INTERNAL,
+    layer: APP_ERROR_LAYER.INFRASTRUCTURE,
     metadataSchema: InfrastructureErrorMetadataSchema,
     retryable: true,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-  integrity: {
+  [APP_ERROR_KEYS.integrity]: {
     description: "Data integrity violation",
-    layer: APP_ERROR_LAYER.POSTGRES,
+    layer: APP_ERROR_LAYER.INFRASTRUCTURE,
     metadataSchema: IntegrityErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-  invalid_credentials: {
+  [APP_ERROR_KEYS.invalid_credentials]: {
     description: "Invalid credentials",
-    layer: APP_ERROR_LAYER.SECURITY,
+    layer: APP_ERROR_LAYER.API,
     metadataSchema: UnknownErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-  missing_fields: {
+  [APP_ERROR_KEYS.missing_fields]: {
     description: "Required fields are missing",
-    layer: APP_ERROR_LAYER.VALIDATION,
+    layer: APP_ERROR_LAYER.API,
     metadataSchema: ValidationErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-  not_found: {
+  [APP_ERROR_KEYS.not_found]: {
     description: "Resource not found",
     layer: APP_ERROR_LAYER.API,
     metadataSchema: UnknownErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.INFO,
   },
-  parse: {
+  [APP_ERROR_KEYS.parse]: {
     description: "Parsing input failed",
     layer: APP_ERROR_LAYER.API,
     metadataSchema: UnknownErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-  presentation_error: {
-    description: "Presentation layer error",
-    layer: APP_ERROR_LAYER.UI,
-    metadataSchema: UnknownErrorMetadataSchema,
-    retryable: false,
-    severity: APP_ERROR_SEVERITY.ERROR,
-  },
-  unauthorized: {
+  [APP_ERROR_KEYS.unauthorized]: {
     description: "Unauthorized",
-    layer: APP_ERROR_LAYER.SECURITY,
+    layer: APP_ERROR_LAYER.API,
     metadataSchema: UnknownErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-  unexpected: {
+  [APP_ERROR_KEYS.unexpected]: {
     description: "An unexpected error occurred",
     layer: APP_ERROR_LAYER.INTERNAL,
     metadataSchema: UnexpectedErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-  unknown: {
+  [APP_ERROR_KEYS.unknown]: {
     description: "An unknown error occurred",
     layer: APP_ERROR_LAYER.INTERNAL,
     metadataSchema: UnknownErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-  validation: {
+  [APP_ERROR_KEYS.validation]: {
     description: "Validation failed",
-    layer: APP_ERROR_LAYER.VALIDATION,
+    layer: APP_ERROR_LAYER.API,
     metadataSchema: ValidationErrorMetadataSchema,
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-} as const satisfies Record<
-  string,
-  AppErrorSchema & { metadataSchema: z.ZodType }
->;
-
-export type AppErrorKey = keyof typeof APP_ERROR_DEFINITIONS;
+} as const satisfies Record<AppErrorKey, AppErrorDefinition>;
 
 export type AppErrorMeta = (typeof APP_ERROR_DEFINITIONS)[AppErrorKey];
-
-export const APP_ERROR_KEYS = Object.freeze(
-  Object.fromEntries(Object.keys(APP_ERROR_DEFINITIONS).map((k) => [k, k])),
-) as { [K in AppErrorKey]: K };
 
 export function getAppErrorCodeMeta(code: AppErrorKey): AppErrorMeta {
   return APP_ERROR_DEFINITIONS[code];

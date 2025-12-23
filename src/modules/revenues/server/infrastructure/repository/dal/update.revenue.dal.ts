@@ -53,7 +53,6 @@ export async function updateRevenue(
 
   if (!data) {
     throw makeUnexpectedError("", {
-      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to update revenue record",
       metadata: {},
     });
@@ -62,7 +61,6 @@ export async function updateRevenue(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeUnexpectedError("", {
-      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to convert updated revenue record",
       metadata: { table: "revenues" },
     });

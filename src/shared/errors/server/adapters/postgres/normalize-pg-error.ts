@@ -6,12 +6,7 @@ import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error"
 import { isAppError } from "@/shared/errors/utils/is-app-error";
 
 function normalizePgCause(err: unknown): AppError | Error | string {
-  if (
-    isAppError(err) ||
-    err instanceof Error ||
-    Error.isError(err) ||
-    typeof err === "string"
-  ) {
+  if (isAppError(err) || err instanceof Error || typeof err === "string") {
     return err;
   }
   try {

@@ -47,7 +47,6 @@ export async function findRevenuesByDateRange(
 
   if (!revenueRows) {
     throw makeUnexpectedError("", {
-      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to retrieve revenue records",
       metadata: { table: "revenues" },
     });

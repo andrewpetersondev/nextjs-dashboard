@@ -1,6 +1,5 @@
 import "server-only";
 
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type {
   DalContextLite,
@@ -28,7 +27,6 @@ export async function executeDalThrow<T>(
     return await thunk();
   } catch (err: unknown) {
     const error = makeUnexpectedError(err, {
-      key: APP_ERROR_KEYS.unexpected,
       message: `Unexpected DAL failure in ${context.operation}`,
       metadata: {},
     });

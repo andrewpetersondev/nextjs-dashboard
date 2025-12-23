@@ -7,7 +7,6 @@ import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -67,7 +66,6 @@ export class CreateUserUseCase {
       return createdResult;
     } catch (err: unknown) {
       const error = makeUnexpectedError(err, {
-        key: APP_ERROR_KEYS.unexpected,
         message: "An unexpected error occurred during user creation.",
         metadata: { operation: "createUser" },
       });

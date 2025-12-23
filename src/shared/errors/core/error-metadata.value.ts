@@ -16,7 +16,7 @@ export const ValidationErrorMetadataSchema = z
     fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
     formErrors: z.array(z.string()).optional(),
   })
-  .loose() as z.ZodType<ValidationErrorMetadata>;
+  .passthrough() as z.ZodType<ValidationErrorMetadata>;
 
 export type InfrastructureErrorMetadata = Readonly<{
   readonly diagnosticId?: string;

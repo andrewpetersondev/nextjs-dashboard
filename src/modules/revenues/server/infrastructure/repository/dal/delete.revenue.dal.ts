@@ -35,7 +35,6 @@ export async function deleteRevenue(
 
   if (!result) {
     throw makeUnexpectedError("", {
-      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to delete revenue record",
       metadata: { table: "revenues" },
     });
