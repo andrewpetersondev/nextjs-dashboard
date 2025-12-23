@@ -1,4 +1,5 @@
 import "server-only";
+
 import type {
   CreateUserProps,
   UserEntity,
@@ -6,7 +7,8 @@ import type {
 import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
@@ -41,10 +43,10 @@ export async function createUserDal(
       role,
       username,
     });
-    throw new AppError("database", {
+    throw makeAppError(APP_ERROR_KEYS.database, {
       cause: "",
       message: "Failed to create a user in the database.",
-      metadata: { email, role, username },
+      metadata: {},
     });
   }
 }

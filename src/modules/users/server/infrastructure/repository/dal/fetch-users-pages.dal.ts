@@ -1,9 +1,11 @@
 import "server-only";
+
 import { count, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
@@ -43,10 +45,10 @@ export async function fetchUsersPagesDal(
       query,
     });
 
-    throw new AppError("database", {
+    throw makeAppError(APP_ERROR_KEYS.database, {
       cause: "",
       message: "Failed to fetch the total number of users.",
-      metadata: { query },
+      metadata: {},
     });
   }
 }

@@ -1,11 +1,13 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
 import { toUserEntity } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
@@ -35,10 +37,10 @@ export async function fetchUserByIdDal(
       error,
       id,
     });
-    throw new AppError("database", {
+    throw makeAppError(APP_ERROR_KEYS.database, {
       cause: "",
       message: "Failed to fetch user by id.",
-      metadata: { id: id.toString() },
+      metadata: {},
     });
   }
 }

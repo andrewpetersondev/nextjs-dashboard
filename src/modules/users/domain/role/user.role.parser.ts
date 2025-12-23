@@ -3,8 +3,9 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/modules/auth/shared/domain/user/auth.roles";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -30,8 +31,8 @@ export function toUserRole(role: unknown): Result<UserRole, AppError> {
   }
 
   return Err(
-    makeValidationError({
-      cause: { role },
+    makeAppError(APP_ERROR_KEYS.validation, {
+      cause: "",
       message: "Invalid user role",
       metadata: {},
     }),
