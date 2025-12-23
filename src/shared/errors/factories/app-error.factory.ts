@@ -1,16 +1,14 @@
 import {
   APP_ERROR_KEYS,
   type AppErrorKey,
+  type AppErrorMetadataValueByCode,
 } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error.entity";
 import type {
   AppErrorParams,
   UnexpectedErrorParams,
 } from "@/shared/errors/core/app-error.params";
-import type {
-  AppErrorMetadataValueByCode,
-  UnexpectedErrorMetadata,
-} from "@/shared/errors/core/error-metadata.value";
+import type { UnexpectedErrorMetadata } from "@/shared/errors/core/error-metadata.value";
 import {
   buildUnknownValueMetadata,
   safeStringifyUnknown,

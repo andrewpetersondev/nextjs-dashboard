@@ -1,6 +1,6 @@
 import "server-only";
-
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type {
   DalContextLite,

@@ -1,5 +1,9 @@
 import { z } from "zod";
-import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
+import {
+  type AppErrorKey,
+  type AppErrorMetadataValueByCode,
+  getAppErrorCodeMeta,
+} from "@/shared/errors/catalog/app-error.registry";
 import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";
 
 export type ValidationErrorMetadata = Readonly<{
@@ -62,37 +66,10 @@ export const UnexpectedErrorMetadataSchema = z
   .object({})
   .passthrough() as z.ZodType<UnexpectedErrorMetadata>;
 
-export const AppErrorMetadataSchemaByCode = {
-  application_error: UnknownErrorMetadataSchema,
-  conflict: ConflictErrorMetadataSchema,
-  database: InfrastructureErrorMetadataSchema,
-  domain_error: UnknownErrorMetadataSchema,
-  forbidden: UnknownErrorMetadataSchema,
-  infrastructure: InfrastructureErrorMetadataSchema,
-  integrity: IntegrityErrorMetadataSchema,
-  invalid_credentials: UnknownErrorMetadataSchema,
-  missing_fields: ValidationErrorMetadataSchema,
-  not_found: UnknownErrorMetadataSchema,
-  parse: UnknownErrorMetadataSchema,
-  presentation_error: UnknownErrorMetadataSchema,
-  unauthorized: UnknownErrorMetadataSchema,
-  unexpected: UnexpectedErrorMetadataSchema,
-  unknown: UnknownErrorMetadataSchema,
-  validation: ValidationErrorMetadataSchema,
-} as const satisfies Record<AppErrorKey, z.ZodType>;
-
-/**
- * This type is now automatically exhaustive.
- * If you add a key to the registry and forget it here, TS will scream.
- */
-export type AppErrorMetadataValueByCode = {
-  [K in AppErrorKey]: z.infer<(typeof AppErrorMetadataSchemaByCode)[K]>;
-};
-
 export type AppErrorMetadata = AppErrorMetadataValueByCode[AppErrorKey];
 
 export function getMetadataSchemaForCode(code: AppErrorKey): z.ZodType {
-  return AppErrorMetadataSchemaByCode[code];
+  return getAppErrorCodeMeta(code).metadataSchema;
 }
 
 export function isValidationMetadata(

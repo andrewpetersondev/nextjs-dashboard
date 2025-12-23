@@ -1,6 +1,6 @@
 import "server-only";
-
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+
 import { APP_ERROR_SEVERITY } from "@/shared/errors/core/app-error.severity";
 import {
   PG_CODE_TO_META,
