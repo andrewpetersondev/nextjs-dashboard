@@ -11,47 +11,11 @@ import type {
   AppErrorMetadataValueByCode,
   UnexpectedErrorMetadata,
 } from "@/shared/errors/core/error-metadata.value";
-import { redactNonSerializable } from "@/shared/errors/utils/serialization";
-
-function buildUnknownValueMetadata(
-  value: unknown,
-  extra: Record<string, unknown> = {},
-): UnexpectedErrorMetadata {
-  return {
-    ...extra,
-    originalType: value === null ? "null" : typeof value,
-    originalValue: redactNonSerializable(value),
-  };
-}
-
-function safeStringifyUnknown(value: unknown): string {
-  try {
-    if (typeof value === "string") {
-      return value;
-    }
-
-    const json = JSON.stringify(value, (_k, v) =>
-      typeof v === "bigint" ? v.toString() : v,
-    );
-    const MaxLength = 10_000;
-    if (json.length > MaxLength) {
-      return `${json.slice(0, MaxLength)}…[truncated ${json.length - MaxLength} chars]`;
-    }
-    return json ?? String(value);
-  } catch {
-    return "Non-serializable thrown value";
-  }
-}
-
-function toCauseUnion(value: unknown): AppError | Error | string {
-  if (value instanceof AppError || value instanceof Error) {
-    return value;
-  }
-  if (typeof value === "string") {
-    return value;
-  }
-  return safeStringifyUnknown(value);
-}
+import {
+  buildUnknownValueMetadata,
+  safeStringifyUnknown,
+  toCauseUnion,
+} from "@/shared/errors/factories/app-error-factory.utils";
 
 export function createAppError<Key extends AppErrorKey>(
   params: AppErrorParams<AppErrorMetadataValueByCode[Key]>,
