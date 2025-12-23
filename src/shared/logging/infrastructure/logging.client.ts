@@ -1,6 +1,5 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
 import { isAppError } from "@/shared/errors/utils/is-app-error";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
@@ -174,13 +173,19 @@ export class LoggingClient
     const baseJson = error.toJson();
     const diagnosticId = this.extractDiagnosticId(error.metadata);
 
-    // Extract form errors from metadata if present
-    const fieldErrors = error.metadata?.fieldErrors as
-      | Record<string, readonly string[]>
-      | undefined;
-    const formErrors = error.metadata?.formErrors as
-      | readonly string[]
-      | undefined;
+    // Extract validation errors from metadata if present (validation code only)
+    const fieldErrors =
+      error.code === "validation" || error.code === "missing_fields"
+        ? ((error.metadata as Record<string, unknown>)?.fieldErrors as
+            | Record<string, readonly string[]>
+            | undefined)
+        : undefined;
+    const formErrors =
+      error.code === "validation" || error.code === "missing_fields"
+        ? ((error.metadata as Record<string, unknown>)?.formErrors as
+            | readonly string[]
+            | undefined)
+        : undefined;
 
     const hasValidationErrors =
       (formErrors && formErrors.length > 0) ||
@@ -199,10 +204,10 @@ export class LoggingClient
       ...(formErrors && { formErrors }),
       ...(hasValidationErrors && { validationErrorPresent: true }),
       cause:
-        error.cause instanceof Error
-          ? (toSafeErrorShape(error.cause) as SerializedError)
+        error.originalCause instanceof Error
+          ? (toSafeErrorShape(error.originalCause) as SerializedError)
           : undefined,
-      ...(error.originalCause !== error.cause && {
+      ...(error.cause !== error.originalCause && {
         originalCauseRedacted: true,
         originalCauseType: typeof error.originalCause,
       }),
@@ -211,14 +216,13 @@ export class LoggingClient
   }
 
   private extractDiagnosticId(
-    context: ErrorMetadataValue | undefined,
+    metadata: Record<string, unknown> | undefined,
   ): string | undefined {
-    if (!context) {
+    if (!metadata) {
       return;
     }
 
-    const ctx = context as Record<string, unknown>;
-    const id = ctx.diagnosticId;
+    const id = metadata.diagnosticId;
 
     return typeof id === "string" ? id : undefined;
   }

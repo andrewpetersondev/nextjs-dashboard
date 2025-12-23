@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { PgErrorMetadataBase } from "@/shared/errors/core/db-error.metadata";
+import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";
 import type { PgCondition } from "@/shared/errors/server/adapters/postgres/pg-conditions";
 
 /**
@@ -11,21 +11,6 @@ export interface PgErrorDefinition {
   readonly appCode: AppErrorKey;
   readonly code: string;
   readonly condition: PgCondition;
-}
-
-/**
- * Intrinsic database metadata extracted from the error object.
- * These are "Error Metadata" properties.
- */
-export interface PgErrorMetadata extends PgErrorMetadataBase {
-  readonly datatype?: string;
-  readonly detail?: string;
-  readonly hint?: string;
-  readonly pgCode: string;
-  readonly position?: string;
-  readonly schema?: string;
-  readonly severity?: string;
-  readonly where?: string;
 }
 
 /**

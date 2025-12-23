@@ -7,20 +7,16 @@ import type {
   AppErrorParams,
   UnexpectedErrorParams,
 } from "@/shared/errors/core/app-error.params";
-import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
+import type {
+  AppErrorMetadataValueByCode,
+  UnexpectedErrorMetadata,
+} from "@/shared/errors/core/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
-/**
- * Builds metadata for unknown values by capturing their type and safe representation.
- *
- * @remarks
- * Used internally when normalizing thrown non-Error values to preserve
- * context for debugging while keeping the error serializable.
- */
 function buildUnknownValueMetadata(
   value: unknown,
-  extra: ErrorMetadataValue = {},
-): ErrorMetadataValue {
+  extra: Record<string, unknown> = {},
+): UnexpectedErrorMetadata {
   return {
     ...extra,
     originalType: value === null ? "null" : typeof value,
@@ -28,18 +24,12 @@ function buildUnknownValueMetadata(
   };
 }
 
-/**
- * Safely converts an unknown value to a string for error messages.
- *
- * @remarks
- * Handles edge cases like circular structures and bigints.
- * Used internally by {@link normalizeUnknownToAppError}.
- */
 function safeStringifyUnknown(value: unknown): string {
   try {
     if (typeof value === "string") {
       return value;
     }
+
     const json = JSON.stringify(value, (_k, v) =>
       typeof v === "bigint" ? v.toString() : v,
     );
@@ -53,145 +43,112 @@ function safeStringifyUnknown(value: unknown): string {
   }
 }
 
-/**
- * Base factory for constructing domain-friendly errors with stable codes.
- *
- * @remarks
- * Ensures all errors have a canonical code and metadata for
- * classification and traceability. Call sites must provide an explicit
- * metadata object (use `{}` when no additional details are available).
- *
- * Prefer more specific error factories at feature or boundary layers
- * (for example, validation- or infrastructure-focused helpers) to make
- * intent clearer at call sites.
- */
-export function makeAppError(
-  code: AppErrorKey,
-  options: AppErrorParams,
-): AppError {
-  return new AppError(code, options);
+function toCauseUnion(value: unknown): AppError | Error | string {
+  if (value instanceof AppError || value instanceof Error) {
+    return value;
+  }
+  if (typeof value === "string") {
+    return value;
+  }
+  return safeStringifyUnknown(value);
+}
+
+export function createAppError<Key extends AppErrorKey>(
+  params: AppErrorParams<AppErrorMetadataValueByCode[Key]>,
+): AppError<AppErrorMetadataValueByCode[Key]> {
+  return new AppError<AppErrorMetadataValueByCode[Key]>(params);
 }
 
 /**
- * Normalizes any unknown value into an AppError using a fallback code.
- *
- * @remarks
- * Use at non-Postgres infrastructure boundaries to ensure all errors are
- * handled consistently:
- * - HTTP clients
- * - File system operations
- * - Third-party SDKs
- *
- * For Postgres, always prefer `normalizePgError` from the Postgres adapter
- * layer so intrinsic database metadata (`pgCode`, `constraint`, `table`, etc.)
- * and condition mapping are preserved.
- *
- * **Metadata handling**:
- * - `Error` instances: metadata is empty `{}` (message is preserved in cause)
- * - Non-Error values: metadata includes `originalType` and `originalValue` for reconstruction
- *
- * Ideal for:
- * - Catch blocks at infrastructure boundaries (DAL for non-PG stores, HTTP clients)
- * - Wrapping third-party library errors
- * - Action/workflow error recovery
+ * Creates an AppError for a specific key.
  */
-export function normalizeUnknownToAppError(
+export function makeAppError<Key extends AppErrorKey>(
+  key: Key,
+  params: Omit<AppErrorParams<AppErrorMetadataValueByCode[Key]>, "key">,
+): AppError<AppErrorMetadataValueByCode[Key]> {
+  // We construct the object explicitly to help TS inference without 'as'
+  const fullParams: AppErrorParams<AppErrorMetadataValueByCode[Key]> = {
+    cause: params.cause,
+    key,
+    message: params.message,
+    metadata: params.metadata,
+  };
+  return createAppError<Key>(fullParams);
+}
+
+/**
+ * Normalizes any unknown thrown value into a structured AppError.
+ */
+export function normalizeUnknownToAppError<Key extends AppErrorKey>(
   error: unknown,
-  fallbackCode: AppErrorKey,
-): AppError {
+  fallbackKey: Key,
+): AppError<AppErrorMetadataValueByCode[Key]> {
   if (error instanceof AppError) {
-    return error;
+    // If it's already an AppError, we return it.
+    // Note: The caller expects AppError<MetadataByCode[Key]>,
+    // but a pre-existing AppError might have different metadata.
+    // In normalization contexts, we usually return it as the base AppError.
+    return error as AppError<AppErrorMetadataValueByCode[Key]>;
   }
-  if (error instanceof Error) {
-    return makeAppError(fallbackCode, {
-      cause: error,
-      message: error.message,
-      metadata: {},
+  const cause = toCauseUnion(error);
+  if (cause instanceof Error) {
+    return makeAppError(fallbackKey, {
+      cause,
+      message: cause.message,
+      metadata: {} as AppErrorMetadataValueByCode[Key],
     });
   }
-  return makeAppError(fallbackCode, {
-    cause: error,
+  return makeAppError(fallbackKey, {
+    cause,
     message: safeStringifyUnknown(error),
-    metadata: buildUnknownValueMetadata(error),
+    metadata: buildUnknownValueMetadata(
+      error,
+    ) as AppErrorMetadataValueByCode[Key],
   });
 }
 
 /**
- * Wraps an unknown error as an unexpected AppError (invariant violation).
- *
- * @remarks
- * - Normalizes the error via {@link normalizeUnknownToAppError}.
- * - Merges provided metadata **after** normalized metadata (provided values take precedence).
- * - Preserves the original cause chain for debugging.
- *
- * Callers MUST provide a `metadata` object, even when empty (`{}`), to keep
- * intent explicit and avoid silent defaults.
+ * Standard factory for unexpected (bug) errors, capturing the trigger error as cause.
  */
 export function makeUnexpectedError(
   error: unknown,
-  options: UnexpectedErrorParams,
-): AppError {
+  params: UnexpectedErrorParams<UnexpectedErrorMetadata>,
+): AppError<UnexpectedErrorMetadata> {
   const normalized = normalizeUnknownToAppError(
     error,
     APP_ERROR_KEYS.unexpected,
   );
 
   return makeAppError(APP_ERROR_KEYS.unexpected, {
-    cause: normalized.originalCause,
-    message: options.message,
+    cause: normalized.cause,
+    message: params.message,
     metadata: {
       ...normalized.metadata,
-      ...options.metadata,
+      ...params.metadata,
     },
   });
 }
 
-/**
- * Creates a validation-specific AppError for form, schema, or policy validation.
- *
- * @remarks
- * Prefer this over generic {@link makeAppError} at validation boundaries for clarity.
- * Validation errors are **expected failures** and must be returned as `Result.Err`,
- * never thrown.
- *
- * Attach field-level and form-level errors via metadata:
- * - `metadata.fieldErrors`: Map of field names to error messages
- * - `metadata.formErrors`: Array of form-level error messages
- */
-export function makeValidationError(options: AppErrorParams): AppError {
-  return makeAppError(APP_ERROR_KEYS.validation, options);
+export function makeValidationError(
+  params: Omit<
+    AppErrorParams<AppErrorMetadataValueByCode["validation"]>,
+    "key"
+  >,
+): AppError<AppErrorMetadataValueByCode["validation"]> {
+  return makeAppError(APP_ERROR_KEYS.validation, params);
 }
 
-/**
- * Creates an integrity-specific AppError for constraint or referential violations.
- *
- * @remarks
- * Use for data integrity issues like:
- * - Unique constraint violations
- * - Foreign key violations
- * - Check constraint failures
- *
- * Treatment depends on context:
- * - **Expected** (e.g., duplicate email on signup): Return as `Result.Err`
- * - **Unexpected** (e.g., broken invariant): Throw
- */
-export function makeIntegrityError(options: AppErrorParams): AppError {
-  return makeAppError(APP_ERROR_KEYS.integrity, options);
+export function makeIntegrityError(
+  params: Omit<AppErrorParams<AppErrorMetadataValueByCode["integrity"]>, "key">,
+): AppError<AppErrorMetadataValueByCode["integrity"]> {
+  return makeAppError(APP_ERROR_KEYS.integrity, params);
 }
 
-/**
- * Creates an infrastructure-specific AppError for technical adapter failures.
- *
- * @remarks
- * Use for expected technical issues at infrastructure boundaries:
- * - Network failures (HTTP clients, external APIs)
- * - Configuration issues (missing env vars, invalid config)
- * - File system errors
- * - External service unavailability
- *
- * Infrastructure errors are **expected failures** and should be returned as
- * `Result.Err` to allow graceful degradation or retry logic.
- */
-export function makeInfrastructureError(options: AppErrorParams): AppError {
-  return makeAppError(APP_ERROR_KEYS.infrastructure, options);
+export function makeInfrastructureError(
+  params: Omit<
+    AppErrorParams<AppErrorMetadataValueByCode["infrastructure"]>,
+    "key"
+  >,
+): AppError<AppErrorMetadataValueByCode["infrastructure"]> {
+  return makeAppError(APP_ERROR_KEYS.infrastructure, params);
 }

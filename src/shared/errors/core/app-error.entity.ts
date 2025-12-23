@@ -7,108 +7,72 @@ import type { AppErrorLayer } from "@/shared/errors/core/app-error.layers";
 import type { AppErrorParams } from "@/shared/errors/core/app-error.params";
 import type { Severity } from "@/shared/errors/core/app-error.severity";
 import type { AppErrorJsonDto } from "@/shared/errors/core/app-error-json.dto";
-import type { ErrorMetadataValue } from "@/shared/errors/core/error-metadata.value";
-import { redactNonSerializable } from "@/shared/errors/utils/serialization";
-
-function validateAndMaybeSanitizeMetadata<T extends ErrorMetadataValue>(
-  ctx: T,
-): T {
-  const source = ctx as Record<string, unknown>;
-  const out: Record<string, unknown> = {};
-  for (const key of Object.keys(source).sort()) {
-    out[key] = redactNonSerializable(source[key]);
-  }
-  return out as T;
-}
-
-function deepFreezeDev<T>(obj: T): T {
-  if (!isDev() || obj === null || typeof obj !== "object") {
-    return obj;
-  }
-  const seen = new WeakSet<object>();
-  const freeze = (o: object): void => {
-    if (seen.has(o)) {
-      return;
-    }
-    seen.add(o);
-
-    for (const key of Object.getOwnPropertyNames(o)) {
-      const value = (o as Record<string, unknown>)[key];
-      if (value && typeof value === "object") {
-        try {
-          freeze(value as object);
-        } catch {
-          /* silent */
-        }
-      }
-    }
-    try {
-      Object.freeze(o);
-    } catch {
-      /* silent */
-    }
-  };
-  freeze(obj as unknown as object);
-  return obj;
-}
+import type { AppErrorMetadata } from "@/shared/errors/core/error-metadata.value";
+import {
+  deepFreezeDev,
+  validateAndMaybeSanitizeMetadata,
+} from "@/shared/errors/utils/app-error-entity.utils";
 
 /**
  * Standardized application error with transport-agnostic error codes.
+ *
+ * @typeParam T - The type of the metadata associated with this error.
+ * Must extend {@link AppErrorMetadata}. Defaults to {@link AppErrorMetadata} if not specified.
+ * todo: default may be problematic
  */
 export class AppError<
-  T extends ErrorMetadataValue = ErrorMetadataValue,
+  T extends AppErrorMetadata = AppErrorMetadata,
 > extends Error {
-  readonly code: AppErrorKey;
+  readonly cause: AppError | Error | string;
+  readonly key: AppErrorKey;
   readonly description: string;
   readonly layer: AppErrorLayer;
+  readonly message: string;
   readonly metadata: T;
-  readonly originalCause: unknown;
   readonly retryable: boolean;
   readonly severity: Severity;
 
-  constructor(code: AppErrorKey, options: AppErrorParams<T>) {
-    const meta = getAppErrorCodeMeta(code);
+  constructor(params: AppErrorParams<T>) {
+    const { cause, key, message, metadata } = params;
+    const meta = getAppErrorCodeMeta(key);
 
-    const { cause, message, metadata } = options;
+    // todo: what does this do exactly?
+    // This invokes the base class constructor while optionally attaching an underlying error to the property,
+    // but only if that cause is a valid error object; otherwise, it initializes without a nested cause. `cause`
+    super(message, cause instanceof Error ? { cause } : undefined);
 
-    const sanitizedCause =
-      cause instanceof Error || cause === undefined
-        ? cause
-        : redactNonSerializable(cause);
+    this.name = this.constructor.name;
+    this.key = key;
+    this.cause = cause;
+    this.message = message;
 
-    if (sanitizedCause === undefined) {
-      super(message);
-    } else {
-      super(message, { cause: sanitizedCause });
-    }
-
-    this.code = code;
+    // Map registry metadata
     this.description = meta.description;
     this.layer = meta.layer;
-    this.name = this.constructor.name;
-    this.originalCause = cause;
     this.retryable = meta.retryable;
     this.severity = meta.severity;
 
-    const checkedMetadata = isDev()
-      ? validateAndMaybeSanitizeMetadata(metadata)
-      : metadata;
+    const processedMetadata = validateAndMaybeSanitizeMetadata(key, metadata);
+    this.metadata = isDev()
+      ? deepFreezeDev(processedMetadata)
+      : Object.freeze(processedMetadata);
 
-    this.metadata = (
-      isDev() ? deepFreezeDev(checkedMetadata) : Object.freeze(checkedMetadata)
-    ) as T;
-
-    try {
-      Object.freeze(this);
-    } catch {
-      /* silent */
+    if (!isDev()) {
+      try {
+        Object.freeze(this);
+      } catch {
+        /* silent */
+      }
     }
   }
 
+  /**
+   * Returns a plain object representation for manual serialization.
+   */
   toJson(): AppErrorJsonDto<T> {
     return {
-      code: this.code,
       description: this.description,
+      key: this.key,
       layer: this.layer,
       message: this.message,
       metadata: this.metadata,

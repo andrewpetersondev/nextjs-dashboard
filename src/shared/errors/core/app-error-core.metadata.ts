@@ -10,6 +10,6 @@ import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
  */
 export type AppErrorCoreMetadata = Readonly<
   AppErrorSchema & {
-    readonly code: AppErrorKey;
+    readonly key: AppErrorKey;
   }
 >;

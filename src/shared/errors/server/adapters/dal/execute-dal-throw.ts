@@ -2,10 +2,9 @@ import "server-only";
 
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
-import {
-  buildDalErrorMetadata,
-  type DalContextLite,
-  type ExecuteDalCoreOptions,
+import type {
+  DalContextLite,
+  ExecuteDalCoreOptions,
 } from "@/shared/errors/server/adapters/dal/dal-context.schema";
 import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 
@@ -30,7 +29,7 @@ export async function executeDalThrow<T>(
   } catch (err: unknown) {
     const error: AppError = makeUnexpectedError(err, {
       message: `Unexpected DAL failure in ${context.operation}`,
-      metadata: buildDalErrorMetadata(context, options),
+      metadata: {},
     });
 
     logger.operation("error", `${context.operation}.failed`, {

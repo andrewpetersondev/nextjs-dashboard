@@ -56,7 +56,11 @@ export async function loginAction(
 
   if (!validated.ok) {
     const errorCount = Object.keys(
-      validated.error?.metadata?.fieldErrors || {},
+      (
+        validated.error.metadata as {
+          fieldErrors?: Record<string, readonly string[]>;
+        }
+      ).fieldErrors || {},
     ).length;
 
     logger.operation("warn", "Login validation failed", {

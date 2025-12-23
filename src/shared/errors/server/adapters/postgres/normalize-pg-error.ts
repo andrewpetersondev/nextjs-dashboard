@@ -2,10 +2,26 @@ import "server-only";
 
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { DbOperationMetadata } from "@/shared/errors/core/db-operation.metadata";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { PG_CONDITIONS } from "@/shared/errors/server/adapters/postgres/pg-conditions";
 import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error";
+import { isAppError } from "@/shared/errors/utils/is-app-error";
+
+function normalizePgCause(err: unknown): AppError | Error | string {
+  if (
+    isAppError(err) ||
+    err instanceof Error ||
+    Error.isError(err) ||
+    typeof err === "string"
+  ) {
+    return err;
+  }
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
+  }
+}
 
 /**
  * Normalizes a raw Postgres error into a structured AppError.
@@ -17,54 +33,35 @@ import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error"
  * normalizer is intended for non-PG integrations (HTTP, FS, etc.).
  *
  * @remarks
- * This utility ensures strict separation between:
+ * This utility enforces strict separation between:
  * 1. **Intrinsic Metadata**: Data extracted from the DB error object itself
  *    (constraints, codes, hints, severity).
  * 2. **Operational Context**: Caller-provided data for logging and tracing
- *    (operation name, entity).
+ *    (operation name, entity) that must stay outside `AppError.metadata`.
  *
- * The two metadata sets are merged but **never overlap** due to disjoint
- * key spaces:
- * - `DbOperationMetadata`: `operation`, `entity`
- * - `PgErrorMetadata`: `pgCode`, `constraint`, `table`, `column`, etc.
- *
- * **Required Parameter**: `operationalContext` must be provided by the DAL
- * wrapper to ensure all errors have traceability context.
- *
- * **Fallback Behavior**: If the error cannot be mapped to a known Postgres
- * code, it's treated as an unknown infrastructure error since we have no
- * intrinsic DB metadata to attach (note the absence of `pgCode` in metadata).
+ * Intrinsic metadata only is attached to the error; operational context must
+ * be passed to logging separately by the DAL wrapper.
  *
  * @param err - The raw error caught from the Postgres driver.
- * @param operationalContext - Caller-provided operational context (required).
  */
-export function normalizePgError(
-  err: unknown,
-  operationalContext: DbOperationMetadata,
-): AppError {
+export function normalizePgError(err: unknown): AppError {
+  const cause = normalizePgCause(err);
   const mapping = toPgError(err);
 
   if (mapping) {
     return makeAppError(mapping.appCode, {
-      cause: err,
+      cause,
       message: mapping.condition,
       metadata: {
         // Intrinsic PG metadata (pgCode, constraint, etc.)
         ...mapping.metadata,
-        // Caller-provided context (operation, entity)
-        ...operationalContext,
       },
     });
   }
 
-  // Fallback: unrecognized error from DB layer.
-  // Since we have no intrinsic DB metadata (no pgCode), treat as unknown
-  // infrastructure error and only attach the operational context.
   return makeAppError(APP_ERROR_KEYS.unknown, {
-    cause: err,
+    cause,
     message: PG_CONDITIONS.pg_unknown_error,
-    metadata: {
-      ...operationalContext,
-    },
+    metadata: {},
   });
 }
