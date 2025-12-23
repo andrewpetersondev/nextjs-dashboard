@@ -22,13 +22,17 @@ export const extractFieldErrors = <T extends string>(
     return;
   }
 
-  const fieldErrors = error.metadata?.fieldErrors;
+  const metadata = error.metadata as {
+    fieldErrors?: DenseFieldErrorMap<T, string>;
+  };
+
+  const fieldErrors = metadata?.fieldErrors;
 
   if (!fieldErrors || typeof fieldErrors !== "object") {
     return;
   }
 
-  return fieldErrors as DenseFieldErrorMap<T, string>;
+  return fieldErrors;
 };
 
 /**

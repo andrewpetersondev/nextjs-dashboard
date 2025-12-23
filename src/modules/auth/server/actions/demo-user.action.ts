@@ -9,6 +9,7 @@ import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { makeFormError } from "@/shared/forms/factories/form-result.factory";
+import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
@@ -34,6 +35,8 @@ async function createDemoUserInternal(
     .child({ ip, role, userAgent });
 
   logger.operation("info", "Demo user action started", {
+    operationContext: "authentication",
+    operationIdentifiers: { ip, role },
     operationName: "demoUser.start",
   });
 
@@ -49,18 +52,23 @@ async function createDemoUserInternal(
     const error = sessionResult.error;
 
     logger.operation("error", "Demo user creation failed", {
+      duration: tracker.getTotalDuration(),
       error,
+      operationContext: "authentication",
       operationIdentifiers: { ip, role },
       operationName: "demoUser.failed",
     });
 
     return makeFormError({
-      fieldErrors: {} as Record<string, readonly string[]>,
+      fieldErrors: {} as DenseFieldErrorMap<string, string>,
       message: error.message || AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
     });
   }
 
   logger.operation("info", "Demo user created successfully", {
+    duration: tracker.getTotalDuration(),
+    operationContext: "authentication",
+    operationIdentifiers: { ip, role },
     operationName: "demoUser.success",
   });
 
@@ -85,7 +93,7 @@ export async function demoUserActionAdapter(
 
   if (!role) {
     return makeFormError({
-      fieldErrors: {} as Record<string, readonly string[]>,
+      fieldErrors: {} as DenseFieldErrorMap<string, string>,
       message: AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
     });
   }

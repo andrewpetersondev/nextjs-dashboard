@@ -17,8 +17,9 @@ import {
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
 import { getEnvVariable } from "@/shared/config/env-utils";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -41,10 +42,10 @@ export function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
   const result = NodeEnvironmentSchema.safeParse(raw);
   if (!result.success) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Invalid NODE_ENV value "${raw}": ${result.error.message}`,
-        metadata: { raw, zodError: result.error.issues },
+        metadata: {},
       }),
     );
   }
@@ -77,10 +78,10 @@ export function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
   const result = DatabaseEnvironmentSchema.safeParse(raw);
   if (!result.success) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Invalid DATABASE_ENV value "${raw}": ${result.error.message}`,
-        metadata: { raw, zodError: result.error.issues },
+        metadata: {},
       }),
     );
   }
@@ -112,10 +113,10 @@ export function getLogLevelResult(): Result<LogLevel, AppError> {
   const result = LogLevelSchema.safeParse(raw);
   if (!result.success) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Invalid LOG_LEVEL value "${raw}": ${result.error.message}`,
-        metadata: { raw, zodError: result.error.issues },
+        metadata: {},
       }),
     );
   }

@@ -15,6 +15,7 @@ import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-message
 import { getAppDb } from "@/server/db/db.connection";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { makeFormError } from "@/shared/forms/factories/form-result.factory";
+import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
@@ -47,6 +48,8 @@ export async function loginAction(
     .child({ ip, userAgent });
 
   logger.operation("info", "Login action started", {
+    operationContext: "authentication",
+    operationIdentifiers: { ip },
     operationName: "login.start",
   });
 
@@ -55,17 +58,13 @@ export async function loginAction(
   );
 
   if (!validated.ok) {
-    const errorCount = Object.keys(
-      (
-        validated.error.metadata as {
-          fieldErrors?: Record<string, readonly string[]>;
-        }
-      ).fieldErrors || {},
-    ).length;
+    const fieldErrors = extractFieldErrors<LoginField>(validated.error) || {};
+    const errorCount = Object.keys(fieldErrors).length;
 
     logger.operation("warn", "Login validation failed", {
       duration: tracker.getTotalDuration(),
       errorCount,
+      operationContext: "validation",
       operationIdentifiers: { ip },
       operationName: "login.validation.failed",
     });
@@ -77,7 +76,8 @@ export async function loginAction(
 
   logger.operation("info", "Login form validated", {
     duration: tracker.getLastDuration("validation"),
-    operationIdentifiers: { email: input.email },
+    operationContext: "validation",
+    operationIdentifiers: { email: input.email, ip },
     operationName: "login.validation.success",
   });
 
@@ -99,6 +99,7 @@ export async function loginAction(
     logger.operation("error", "Login authentication failed", {
       duration: tracker.getTotalDuration(),
       error,
+      operationContext: "authentication",
       operationIdentifiers: { email: input.email, ip },
       operationName: "login.authentication.failed",
     });
@@ -106,11 +107,11 @@ export async function loginAction(
     const { fieldErrors, message } = toFormErrorPayload<LoginField>(error);
 
     // Unified security response for credential failures
-    if (error.code === "invalid_credentials") {
+    if (error.key === "invalid_credentials") {
       const credentialsErrorMessage = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
 
       return makeFormError<LoginField>({
-        code: error.code,
+        code: error.key,
         fieldErrors: {
           email: [credentialsErrorMessage],
           password: [credentialsErrorMessage],
@@ -121,7 +122,7 @@ export async function loginAction(
     }
 
     return makeFormError<LoginField>({
-      code: error.code,
+      code: error.key,
       fieldErrors,
       message,
       values: input,
@@ -132,7 +133,8 @@ export async function loginAction(
 
   logger.operation("info", "Login action completed successfully", {
     duration: tracker.getTotalDuration(),
-    operationIdentifiers: { email: input.email, role, userId },
+    operationContext: "authentication",
+    operationIdentifiers: { email: input.email, ip, role, userId },
     operationName: "login.success",
   });
 

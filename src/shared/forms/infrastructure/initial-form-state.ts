@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
@@ -17,7 +17,7 @@ export function createInitialFailedFormState<T extends string>(
   const fieldErrors: DenseFieldErrorMap<T, string> =
     makeEmptyDenseFieldErrorMap<T, string>(fieldNames);
 
-  const error = new AppError("validation", {
+  const error = makeAppError("validation", {
     cause: "",
     message: "",
     metadata: {

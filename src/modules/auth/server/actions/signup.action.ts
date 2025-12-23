@@ -15,6 +15,7 @@ import {
 import { getAppDb } from "@/server/db/db.connection";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import { makeFormError } from "@/shared/forms/factories/form-result.factory";
+import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
@@ -56,6 +57,8 @@ export async function signupAction(
     .child({ ip, userAgent });
 
   logger.operation("info", "Signup action started", {
+    operationContext: "authentication",
+    operationIdentifiers: { ip },
     operationName: "signup.start",
   });
 
@@ -64,13 +67,13 @@ export async function signupAction(
   );
 
   if (!validated.ok) {
-    const errorCount = Object.keys(
-      validated.error?.metadata?.fieldErrors || {},
-    ).length;
+    const fieldErrors = extractFieldErrors<SignupField>(validated.error) || {};
+    const errorCount = Object.keys(fieldErrors).length;
 
     logger.operation("warn", "Signup validation failed", {
       duration: tracker.getTotalDuration(),
       errorCount,
+      operationContext: "validation",
       operationIdentifiers: { ip },
       operationName: "signup.validation.failed",
     });
@@ -82,7 +85,9 @@ export async function signupAction(
 
   logger.operation("info", "Signup form validated", {
     duration: tracker.getLastDuration("validation"),
+    operationContext: "validation",
     operationIdentifiers: { email: input.email },
+
     operationName: "signup.validation.success",
   });
 
@@ -100,6 +105,7 @@ export async function signupAction(
     logger.operation("error", "Signup authentication failed", {
       duration: tracker.getTotalDuration(),
       error,
+      operationContext: "authentication",
       operationIdentifiers: {
         email: input.email,
         ip,
@@ -111,7 +117,7 @@ export async function signupAction(
     const { fieldErrors, message } = toFormErrorPayload<SignupField>(error);
 
     return makeFormError<SignupField>({
-      code: error.code,
+      code: error.key,
       fieldErrors,
       message,
       values: input,
@@ -121,6 +127,7 @@ export async function signupAction(
 
   logger.operation("info", "Signup action completed successfully", {
     duration: tracker.getTotalDuration(),
+    operationContext: "authentication",
     operationIdentifiers: { email: input.email, role, userId },
     operationName: "signup.success",
   });

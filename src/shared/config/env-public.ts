@@ -13,11 +13,9 @@ import {
   type NodeEnvironment,
   NodeEnvironmentSchema,
 } from "@/shared/config/env-schemas";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import {
-  makeInfrastructureError,
-  makeValidationError,
-} from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -36,7 +34,7 @@ function hasProcessEnv(): boolean {
 export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (!hasProcessEnv()) {
     return Err(
-      makeInfrastructureError({
+      makeAppError(APP_ERROR_KEYS.infrastructure, {
         cause: "",
         message: "process.env is not available in this environment",
         metadata: {},
@@ -46,20 +44,20 @@ export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
   const raw = process.env.NEXT_PUBLIC_NODE_ENV;
   if (!raw) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
-        metadata: { key: "NEXT_PUBLIC_NODE_ENV" },
+        metadata: {},
       }),
     );
   }
   const result = NodeEnvironmentSchema.safeParse(raw.trim());
   if (!result.success) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`,
-        metadata: { raw, zodError: result.error.issues },
+        metadata: {},
       }),
     );
   }
@@ -89,7 +87,7 @@ export function getPublicNodeEnv(): NodeEnvironment {
 export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
   if (!hasProcessEnv()) {
     return Err(
-      makeInfrastructureError({
+      makeAppError(APP_ERROR_KEYS.infrastructure, {
         cause: "",
         message: "process.env is not available in this environment",
         metadata: {},
@@ -99,20 +97,20 @@ export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
   const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
   if (!raw) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
-        metadata: { key: "NEXT_PUBLIC_LOG_LEVEL" },
+        metadata: {},
       }),
     );
   }
   const result = LogLevelSchema.safeParse(raw.trim());
   if (!result.success) {
     return Err(
-      makeValidationError({
+      makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
-        metadata: { raw, zodError: result.error.issues },
+        metadata: {},
       }),
     );
   }
