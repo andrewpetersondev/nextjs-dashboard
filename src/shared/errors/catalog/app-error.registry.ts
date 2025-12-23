@@ -9,6 +9,27 @@ import {
 import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 
 /**
+ * Union of all error keys for strict typing.
+ */
+type AppErrorKeyUnion =
+  | "conflict"
+  | "not_found"
+  | "parse"
+  | "forbidden"
+  | "invalid_credentials"
+  | "unauthorized"
+  | "application_error"
+  | "domain_error"
+  | "presentation_error"
+  | "database"
+  | "infrastructure"
+  | "integrity"
+  | "unexpected"
+  | "unknown"
+  | "missing_fields"
+  | "validation";
+
+/**
  * Canonical, transport-agnostic error code registry.
  *
  * @remarks
@@ -23,7 +44,7 @@ export const APP_ERROR_MAP = {
   ...INFRASTRUCTURE_ERRORS,
   ...SYSTEM_ERRORS,
   ...VALIDATION_ERRORS,
-} as const satisfies Record<string, AppErrorSchema>;
+} as const satisfies Record<AppErrorKeyUnion, AppErrorSchema>;
 
 export type AppErrorRegistry = typeof APP_ERROR_MAP;
 

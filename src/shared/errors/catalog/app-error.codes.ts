@@ -31,7 +31,7 @@ export const API_ERRORS = {
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-} as const satisfies Record<string, AppErrorSchema>;
+} as const satisfies Record<"conflict" | "not_found" | "parse", AppErrorSchema>;
 
 export const AUTH_ERRORS = {
   forbidden: {
@@ -52,7 +52,10 @@ export const AUTH_ERRORS = {
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-} as const satisfies Record<string, AppErrorSchema>;
+} as const satisfies Record<
+  "forbidden" | "invalid_credentials" | "unauthorized",
+  AppErrorSchema
+>;
 
 export const DOMAIN_ERRORS = {
   application_error: {
@@ -73,7 +76,10 @@ export const DOMAIN_ERRORS = {
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-} as const satisfies Record<string, AppErrorSchema>;
+} as const satisfies Record<
+  "application_error" | "domain_error" | "presentation_error",
+  AppErrorSchema
+>;
 
 export const INFRASTRUCTURE_ERRORS = {
   database: {
@@ -94,22 +100,10 @@ export const INFRASTRUCTURE_ERRORS = {
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-} as const satisfies Record<string, AppErrorSchema>;
-
-export const VALIDATION_ERRORS = {
-  missing_fields: {
-    description: "Required fields are missing",
-    layer: APP_ERROR_LAYER.VALIDATION,
-    retryable: false,
-    severity: APP_ERROR_SEVERITY.ERROR,
-  },
-  validation: {
-    description: "Validation failed",
-    layer: APP_ERROR_LAYER.VALIDATION,
-    retryable: false,
-    severity: APP_ERROR_SEVERITY.WARN,
-  },
-} as const satisfies Record<string, AppErrorSchema>;
+} as const satisfies Record<
+  "database" | "infrastructure" | "integrity",
+  AppErrorSchema
+>;
 
 export const SYSTEM_ERRORS = {
   unexpected: {
@@ -124,4 +118,19 @@ export const SYSTEM_ERRORS = {
     retryable: false,
     severity: APP_ERROR_SEVERITY.ERROR,
   },
-} as const satisfies Record<string, AppErrorSchema>;
+} as const satisfies Record<"unexpected" | "unknown", AppErrorSchema>;
+
+export const VALIDATION_ERRORS = {
+  missing_fields: {
+    description: "Required fields are missing",
+    layer: APP_ERROR_LAYER.VALIDATION,
+    retryable: false,
+    severity: APP_ERROR_SEVERITY.ERROR,
+  },
+  validation: {
+    description: "Validation failed",
+    layer: APP_ERROR_LAYER.VALIDATION,
+    retryable: false,
+    severity: APP_ERROR_SEVERITY.WARN,
+  },
+} as const satisfies Record<"missing_fields" | "validation", AppErrorSchema>;
