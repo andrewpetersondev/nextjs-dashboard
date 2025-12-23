@@ -29,7 +29,7 @@ function normalizePgCause(err: unknown): AppError | Error | string {
  *  Use only at Postgres boundaries.
  *
  * Do NOT use `normalizeUnknownToAppError` for PG errors, or you will
- * lose `pgCode`/constraint metadata and condition mapping. The generic
+ * lose `pgCode`/constraint pgErrorMetadata and pgCondition mapping. The generic
  * normalizer is intended for non-PG integrations (HTTP, FS, etc.).
  *
  * @remarks
@@ -37,9 +37,9 @@ function normalizePgCause(err: unknown): AppError | Error | string {
  * 1. **Intrinsic Metadata**: Data extracted from the DB error object itself
  *    (constraints, codes, hints, severity).
  * 2. **Operational Context**: Caller-provided data for logging and tracing
- *    (operation name, entity) that must stay outside `AppError.metadata`.
+ *    (operation name, entity) that must stay outside `AppError.pgErrorMetadata`.
  *
- * Intrinsic metadata only is attached to the error; operational context must
+ * Intrinsic pgErrorMetadata only is attached to the error; operational context must
  * be passed to logging separately by the DAL wrapper.
  *
  * @param err - The raw error caught from the Postgres driver.
@@ -49,12 +49,12 @@ export function normalizePgError(err: unknown): AppError {
   const mapping = toPgError(err);
 
   if (mapping) {
-    return makeAppError(mapping.appCode, {
+    return makeAppError(mapping.appErrorKey, {
       cause,
-      message: mapping.condition,
+      message: mapping.pgCondition,
       metadata: {
-        // Intrinsic PG metadata (pgCode, constraint, etc.)
-        ...mapping.metadata,
+        // Intrinsic PG pgErrorMetadata (pgCode, constraint, etc.)
+        ...mapping.pgErrorMetadata,
       },
     });
   }

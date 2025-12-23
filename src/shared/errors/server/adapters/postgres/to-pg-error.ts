@@ -18,8 +18,8 @@ import {
  *
  * Pipeline:
  * 1. Flatten error chain (look through .cause)
- * 2. Find first candidate with a known PG 'code'
- * 3. Extract metadata and map to AppError requirements
+ * 2. Find first candidate with a known PG 'pgCode'
+ * 3. Extract pgErrorMetadata and map to AppError requirements
  * 4. Fallback to an internal error mapping if no match is found
  */
 export function toPgError(err: unknown): PgErrorMapping {
@@ -34,9 +34,9 @@ export function toPgError(err: unknown): PgErrorMapping {
         const definition = PG_CODE_TO_META[pgCode];
 
         return {
-          appCode: definition.appCode,
-          condition: definition.condition,
-          metadata: extractPgMetadata(candidate, pgCode),
+          appErrorKey: definition.appErrorKey,
+          pgCondition: definition.pgCondition,
+          pgErrorMetadata: extractPgMetadata(candidate, pgCode),
         };
       }
     }
@@ -44,9 +44,9 @@ export function toPgError(err: unknown): PgErrorMapping {
 
   // Fallback for non-PG errors or invalid inputs
   return {
-    appCode: APP_ERROR_KEYS.unexpected,
-    condition: PG_CONDITIONS.pg_unexpected_error,
-    metadata: {
+    appErrorKey: APP_ERROR_KEYS.unexpected,
+    pgCondition: PG_CONDITIONS.pg_unexpected_error,
+    pgErrorMetadata: {
       detail: err instanceof Error ? err.message : String(err),
       pgCode: "criticalfuckup",
       severity: APP_ERROR_SEVERITY.ERROR,

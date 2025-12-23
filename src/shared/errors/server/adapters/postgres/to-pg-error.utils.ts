@@ -13,7 +13,7 @@ type ErrorCandidate = Record<string, unknown>;
  *
  * @remarks
  * This is used primarily by adapters (like Postgres) to find the root cause
- * or specific technical metadata (like `code`) buried inside nested errors.
+ * or specific technical pgErrorMetadata (like `pgCode`) buried inside nested errors.
  *
  * It uses a Breadth-First Search to ensure shallow causes are processed first.
  *
