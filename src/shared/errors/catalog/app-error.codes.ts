@@ -2,15 +2,6 @@ import { APP_ERROR_LAYER } from "@/shared/errors/core/app-error.layers";
 import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 import { APP_ERROR_SEVERITY } from "@/shared/errors/core/app-error.severity";
 
-/**
- * Canonical error code definitions organized by logical layer.
- *
- * Each error code defines:
- * - description: Human-readable description for logging/debugging
- * - layer: Logical application layer where this error originates
- * - retryable: Whether the operation that caused this error can be retried
- * - severity: Log level for this error type
- */
 export const API_ERRORS = {
   conflict: {
     description: "Resource state conflict",

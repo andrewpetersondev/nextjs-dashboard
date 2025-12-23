@@ -1,10 +1,3 @@
-/**
- * Represents the distinct layers in an application where an error can occur.
- *
- * @remarks
- * This type is useful for categorizing errors based on the layer of the application architecture
- * they originate from, helping to organize error handling and debugging processes.
- */
 export const APP_ERROR_LAYERS = [
   "API",
   "DB",
@@ -15,18 +8,8 @@ export const APP_ERROR_LAYERS = [
   "VALIDATION",
 ] as const;
 
-/**
- * Literal union of all supported application layers.
- */
 export type AppErrorLayer = (typeof APP_ERROR_LAYERS)[number];
 
-/**
- * Object map of application layers for stable, property-based access.
- *
- * @remarks
- * Prefer using this object to reference layers (e.g., `APP_ERROR_LAYER.API`)
- * to avoid stringly-typed values and enable auto-complete.
- */
 export const APP_ERROR_LAYER: Readonly<{
   API: AppErrorLayer;
   DB: AppErrorLayer;

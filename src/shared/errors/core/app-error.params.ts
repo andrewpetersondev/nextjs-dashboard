@@ -2,9 +2,6 @@ import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { AppErrorMetadata } from "@/shared/errors/core/error-metadata.value";
 
-/**
- * Options for constructing an application error instance.
- */
 export type AppErrorParams<T extends AppErrorMetadata = AppErrorMetadata> =
   Readonly<{
     readonly cause: AppError | Error | string;
@@ -13,9 +10,6 @@ export type AppErrorParams<T extends AppErrorMetadata = AppErrorMetadata> =
     readonly metadata: T;
   }>;
 
-/**
- * Options for {@link makeUnexpectedError} with caller-supplied context.
- */
 export type UnexpectedErrorParams<
   T extends AppErrorMetadata = AppErrorMetadata,
 > = Omit<AppErrorParams<T>, "cause">;

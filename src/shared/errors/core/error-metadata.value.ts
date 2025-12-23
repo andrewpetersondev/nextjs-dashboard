@@ -110,31 +110,20 @@ export const AppErrorMetadataSchemaByCode = {
   validation: ValidationErrorMetadataSchema,
 } as const satisfies Record<keyof AppErrorMetadataValueByCode, z.ZodType>;
 
-/**
- * Get the Zod schema for a given error code's metadata.
- */
+
 export function getMetadataSchemaForCode(code: AppErrorKey): z.ZodType {
   return AppErrorMetadataSchemaByCode[code];
 }
 
-/**
- * Union of all possible metadata types across error codes.
- */
 export type AppErrorMetadata =
   AppErrorMetadataValueByCode[keyof AppErrorMetadataValueByCode];
 
-/**
- * Type guard to check if metadata contains validation error fields.
- */
 export function isValidationMetadata(
   metadata: AppErrorMetadata,
 ): metadata is ValidationErrorMetadata {
   return "fieldErrors" in metadata || "formErrors" in metadata;
 }
 
-/**
- * Type guard to check if metadata contains PG error fields.
- */
 export function isPgMetadata(
   metadata: AppErrorMetadata,
 ): metadata is ConflictErrorMetadata | IntegrityErrorMetadata {
