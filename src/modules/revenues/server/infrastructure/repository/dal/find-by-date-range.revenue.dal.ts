@@ -1,4 +1,5 @@
 import "server-only";
+
 import { and, desc, gte, lte } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowsToEntities } from "@/modules/revenues/server/infrastructure/mappers/revenue.mapper";
@@ -6,9 +7,10 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
@@ -25,10 +27,10 @@ export async function findRevenuesByDateRange(
   endPeriod: Period,
 ): Promise<RevenueEntity[]> {
   if (!(startPeriod && endPeriod)) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Start and end periods are required",
-      metadata: { endPeriod, startPeriod },
+      metadata: {},
     });
   }
 
@@ -45,6 +47,7 @@ export async function findRevenuesByDateRange(
 
   if (!revenueRows) {
     throw makeUnexpectedError("", {
+      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to retrieve revenue records",
       metadata: { table: "revenues" },
     });

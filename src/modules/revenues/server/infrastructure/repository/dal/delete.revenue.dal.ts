@@ -1,11 +1,13 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
@@ -19,10 +21,10 @@ export async function deleteRevenue(
   id: RevenueId,
 ): Promise<void> {
   if (!id) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Revenue ID is required",
-      metadata: { id: id ?? "null" },
+      metadata: {},
     });
   }
 
@@ -33,6 +35,7 @@ export async function deleteRevenue(
 
   if (!result) {
     throw makeUnexpectedError("", {
+      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to delete revenue record",
       metadata: { table: "revenues" },
     });

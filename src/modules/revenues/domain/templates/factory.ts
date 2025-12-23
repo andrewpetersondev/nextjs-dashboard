@@ -8,7 +8,8 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.
@@ -43,10 +44,10 @@ export function createMonthTemplateData(
 ): RollingMonthData {
   const monthName = MONTH_ORDER[calendarMonthIndex];
   if (!monthName) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: `Invalid month index: ${calendarMonthIndex}. Expected 0-11.`,
-      metadata: { calendarMonthIndex, monthDate },
+      metadata: {},
     });
   }
 

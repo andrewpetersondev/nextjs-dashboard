@@ -1,13 +1,15 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
@@ -22,10 +24,10 @@ export async function readRevenue(
   id: RevenueId,
 ): Promise<RevenueEntity> {
   if (!id) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Revenue ID is required",
-      metadata: { id: id ?? "null" },
+      metadata: {},
     });
   }
 
@@ -38,6 +40,7 @@ export async function readRevenue(
 
   if (!data) {
     throw makeUnexpectedError("", {
+      key: APP_ERROR_KEYS.unexpected,
       message: "Revenue record not found",
       metadata: {},
     });
@@ -46,6 +49,7 @@ export async function readRevenue(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeUnexpectedError("", {
+      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to convert revenue record",
       metadata: { table: "revenues" },
     });

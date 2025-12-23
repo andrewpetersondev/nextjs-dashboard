@@ -1,4 +1,5 @@
 import "server-only";
+
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { computeStatistics } from "@/modules/revenues/domain/statistics/calculator";
 import { createEmptyStatistics } from "@/modules/revenues/domain/statistics/factory";

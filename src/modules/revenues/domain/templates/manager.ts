@@ -1,4 +1,5 @@
 import "server-only";
+
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
 import { createDefaultRevenueData } from "@/modules/revenues/domain/templates/factory";
 import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/generator";
@@ -9,7 +10,8 @@ import type {
   TemplateAndPeriods,
 } from "@/modules/revenues/domain/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Private helper to compute the validated template.
@@ -20,20 +22,20 @@ function getValidatedTemplate(): readonly RollingMonthData[] {
 
   const durationResult = toIntervalDuration(duration);
   if (!durationResult.ok) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Invalid interval duration",
-      metadata: { duration, startDate },
+      metadata: {},
     });
   }
 
   const template = generateMonthsTemplate(startDate, durationResult.value);
 
   if (template.length === 0) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Template generation failed: no months generated",
-      metadata: { duration: durationResult.value, startDate },
+      metadata: {},
     });
   }
 
@@ -50,10 +52,10 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
   const firstMonth = template[0];
   const lastMonth = template.at(-1);
   if (!(firstMonth && lastMonth)) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Template generation failed: invalid month data",
-      metadata: { template },
+      metadata: {},
     });
   }
 

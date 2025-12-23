@@ -1,4 +1,5 @@
 import "server-only";
+
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -7,7 +8,8 @@ import type {
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { upsertRevenue } from "./upsert.revenue.dal";
 
 /**
@@ -24,17 +26,17 @@ export async function upsertRevenueByPeriod(
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
   if (!period) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Period is required",
-      metadata: { period },
+      metadata: {},
     });
   }
   if (!revenue) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Revenue data is required",
-      metadata: { revenue },
+      metadata: {},
     });
   }
 

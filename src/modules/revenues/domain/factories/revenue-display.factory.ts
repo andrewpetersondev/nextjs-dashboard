@@ -7,21 +7,21 @@ import {
 } from "@/modules/revenues/domain/constants";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.
  * Moved here from server/application/mappers to allow domain usage.
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <ignore>
 export function createRevenueDisplayEntity(
   revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
   if (!revenueEntity || typeof revenueEntity !== "object") {
-    throw makeValidationError({
+    throw makeAppError("validation", {
       cause: "",
       message: "Invalid revenue entity: expected non-null object",
-      metadata: { revenueEntity },
+      metadata: {},
     });
   }
   try {
@@ -34,27 +34,27 @@ export function createRevenueDisplayEntity(
       yearNumber < MIN_REVENUE_YEAR ||
       yearNumber > MAX_REVENUE_YEAR
     ) {
-      throw makeValidationError({
+      throw makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: "Invalid year extracted from period",
-        metadata: { period: revenueEntity.period, yearNumber },
+        metadata: {},
       });
     }
 
     if (monthNumber < MIN_REVENUE_MONTHS || monthNumber > MAX_REVENUE_MONTHS) {
-      throw makeValidationError({
+      throw makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: "Invalid month number extracted from period",
-        metadata: { monthNumber, period: revenueEntity.period },
+        metadata: {},
       });
     }
 
     const monthName = MONTH_ORDER[monthNumber - 1];
     if (!monthName) {
-      throw makeValidationError({
+      throw makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: "Invalid month name computed from month number",
-        metadata: { monthNumber },
+        metadata: {},
       });
     }
 
@@ -68,15 +68,12 @@ export function createRevenueDisplayEntity(
     if (error instanceof Error && error.name === "AppError") {
       throw error;
     }
-    throw makeValidationError({
-      cause: error instanceof Error ? error : undefined,
+    throw makeAppError(APP_ERROR_KEYS.validation, {
+      cause: error instanceof Error ? error : "fix this later",
       message: `Failed to create display entity: ${
         error instanceof Error ? error.message : "Unknown error"
       }`,
-      metadata: {
-        error: error instanceof Error ? error : undefined,
-        revenueEntity,
-      },
+      metadata: {},
     });
   }
 }

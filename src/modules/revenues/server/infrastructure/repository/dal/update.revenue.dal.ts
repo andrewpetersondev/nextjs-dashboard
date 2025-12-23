@@ -1,4 +1,5 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import type {
   RevenueEntity,
@@ -8,9 +9,10 @@ import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
@@ -27,10 +29,10 @@ export async function updateRevenue(
   revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
   if (!(id && revenue)) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Revenue ID and data are required",
-      metadata: { id, revenue },
+      metadata: {},
     });
   }
 
@@ -51,6 +53,7 @@ export async function updateRevenue(
 
   if (!data) {
     throw makeUnexpectedError("", {
+      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to update revenue record",
       metadata: {},
     });
@@ -59,6 +62,7 @@ export async function updateRevenue(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeUnexpectedError("", {
+      key: APP_ERROR_KEYS.unexpected,
       message: "Failed to convert updated revenue record",
       metadata: { table: "revenues" },
     });

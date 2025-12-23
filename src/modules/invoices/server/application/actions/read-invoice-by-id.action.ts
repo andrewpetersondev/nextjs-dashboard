@@ -29,7 +29,7 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     return result.value;
   } catch (error) {
     throw makeAppError("database", {
-      cause: "",
+      cause: Error.isError(error) ? error : "fix this later",
       message: INVOICE_MSG.dbError,
       metadata: {},
     });

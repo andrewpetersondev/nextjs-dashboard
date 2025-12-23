@@ -1,4 +1,5 @@
 import "server-only";
+
 import type {
   RevenueCreateEntity,
   RevenueEntity,
@@ -6,9 +7,10 @@ import type {
 import { mapRevenueRowToEntity } from "@/modules/revenues/server/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
+  makeAppError,
   makeUnexpectedError,
-  makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
@@ -23,18 +25,18 @@ export async function upsertRevenue(
   revenueData: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
   if (!revenueData) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message: "Revenue data is required",
-      metadata: { revenueData },
+      metadata: {},
     });
   }
   if (!revenueData.period) {
-    throw makeValidationError({
+    throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
       message:
         "Revenue period (first-of-month DATE) is required and must be unique",
-      metadata: { revenueData },
+      metadata: {},
     });
   }
 
@@ -62,6 +64,7 @@ export async function upsertRevenue(
       .returning()) as RevenueRow[];
     if (!data) {
       throw makeUnexpectedError("", {
+        key: APP_ERROR_KEYS.unexpected,
         message: "Failed to upsert revenue record",
         metadata: { table: "revenues" },
       });
@@ -69,6 +72,7 @@ export async function upsertRevenue(
     const result: RevenueEntity = mapRevenueRowToEntity(data);
     if (!result) {
       throw makeUnexpectedError("", {
+        key: APP_ERROR_KEYS.unexpected,
         message: "Failed to convert revenue record",
         metadata: { table: "revenues" },
       });
@@ -76,10 +80,10 @@ export async function upsertRevenue(
     return result;
   } catch (error) {
     if (error instanceof Error && error.message.includes("unique constraint")) {
-      throw makeValidationError({
+      throw makeAppError(APP_ERROR_KEYS.validation, {
         cause: "",
         message: `Revenue record with period ${revenueData.period} already exists and could not be updated`,
-        metadata: { revenueData: revenueData ?? "null" },
+        metadata: {},
       });
     }
     throw error;
