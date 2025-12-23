@@ -1,7 +1,7 @@
 /**
  * Base shape for metadata dictionaries.
  */
-export type ErrorMetadataShape = Record<string, unknown>;
+type ErrorMetadataShape = Record<string, unknown>;
 
 /**
  * Generic error metadata container.
