@@ -1,6 +1,6 @@
 import "server-only";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { PG_CONDITIONS } from "@/shared/errors/server/adapters/postgres/pg-conditions";
 import type { PgErrorDefinition } from "@/shared/errors/server/adapters/postgres/pg-error.metadata";
 
