@@ -1,25 +1,26 @@
 "use server";
+
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/server/application/services/invoice.service";
 import { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
   try {
     if (!id) {
-      throw new AppError("validation", {
+      throw makeAppError("validation", {
         cause: "",
         message: INVOICE_MSG.invalidId,
-        metadata: { id },
+        metadata: {},
       });
     }
     const repo = new InvoiceRepository(getAppDb());
     const service = new InvoiceService(repo);
     const result = await service.readInvoice(id);
     if (!result.ok) {
-      throw new AppError(result.error.code, {
+      throw makeAppError(result.error.key, {
         cause: "",
         message: result.error.message,
         metadata: result.error.metadata,
@@ -27,10 +28,10 @@ export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
     }
     return result.value;
   } catch (error) {
-    throw new AppError("database", {
+    throw makeAppError("database", {
       cause: "",
       message: INVOICE_MSG.dbError,
-      metadata: { error },
+      metadata: {},
     });
   }
 }

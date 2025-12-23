@@ -1,10 +1,11 @@
 import "server-only";
+
 import { count, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
 
 /**
@@ -49,13 +50,10 @@ export async function fetchInvoicesPagesDal(
 
   // TODO: Refactor. Empty result does not mean that an error occurred.
   if (!total || total < 0) {
-    throw new AppError("database", {
+    throw makeAppError("database", {
       cause: "",
       message: INVOICE_MSG.fetchPagesFailed,
-      metadata: {
-        query,
-        total,
-      },
+      metadata: {},
     });
   }
 

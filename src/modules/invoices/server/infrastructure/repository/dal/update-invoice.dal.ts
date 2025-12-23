@@ -1,4 +1,5 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type {
@@ -9,7 +10,7 @@ import { rawDbToInvoiceEntity } from "@/modules/invoices/server/infrastructure/a
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Updates an invoice in the database.
@@ -26,7 +27,7 @@ export async function updateInvoiceDal(
   updateData: Partial<InvoiceFormEntity>,
 ): Promise<InvoiceEntity> {
   if (!(db && id && updateData)) {
-    throw new AppError("validation", {
+    throw makeAppError("validation", {
       cause: "",
       message: INVOICE_MSG.invalidInput,
       metadata: {},
@@ -40,7 +41,7 @@ export async function updateInvoiceDal(
     .returning();
 
   if (!updated) {
-    throw new AppError("database", {
+    throw makeAppError("database", {
       cause: "",
       message: INVOICE_MSG.updateFailed,
       metadata: {},

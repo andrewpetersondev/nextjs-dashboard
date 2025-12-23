@@ -1,4 +1,5 @@
 import "server-only";
+
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import type {
@@ -12,7 +13,7 @@ import { deleteInvoiceDal } from "@/modules/invoices/server/infrastructure/repos
 import { readInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/read-invoice.dal";
 import { updateInvoiceDal } from "@/modules/invoices/server/infrastructure/repository/dal/update-invoice.dal";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Repository for managing invoice data.
@@ -43,10 +44,10 @@ export class InvoiceRepository extends BaseRepository<
    */
   async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
     if (!input || typeof input !== "object") {
-      throw new AppError("validation", {
+      throw makeAppError("validation", {
         cause: "",
         message: INVOICE_MSG.invalidInput,
-        metadata: { input },
+        metadata: {},
       });
     }
 
@@ -64,10 +65,10 @@ export class InvoiceRepository extends BaseRepository<
   async read(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new AppError("validation", {
+      throw makeAppError("validation", {
         cause: "",
         message: INVOICE_MSG.invalidId,
-        metadata: { id },
+        metadata: {},
       });
     }
 
@@ -90,17 +91,17 @@ export class InvoiceRepository extends BaseRepository<
     data: InvoiceFormPartialEntity,
   ): Promise<InvoiceDto> {
     if (!id) {
-      throw new AppError("validation", {
+      throw makeAppError("validation", {
         cause: "",
         message: INVOICE_MSG.invalidId,
-        metadata: { id },
+        metadata: {},
       });
     }
     if (!data || typeof data !== "object") {
-      throw new AppError("validation", {
+      throw makeAppError("validation", {
         cause: "",
         message: INVOICE_MSG.invalidInput,
-        metadata: { data },
+        metadata: {},
       });
     }
 
@@ -120,10 +121,10 @@ export class InvoiceRepository extends BaseRepository<
   async delete(id: InvoiceId): Promise<InvoiceDto> {
     // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
     if (!id) {
-      throw new AppError("validation", {
+      throw makeAppError("validation", {
         cause: "",
         message: INVOICE_MSG.invalidId,
-        metadata: { id },
+        metadata: {},
       });
     }
 

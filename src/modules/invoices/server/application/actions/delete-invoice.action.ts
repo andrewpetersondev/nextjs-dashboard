@@ -1,4 +1,5 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
@@ -9,7 +10,9 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
@@ -29,10 +32,10 @@ export async function deleteInvoiceAction(
     // Input validation -> return Err instead of throwing
     if (!id) {
       return Err(
-        new AppError("validation", {
+        makeAppError(APP_ERROR_KEYS.validation, {
           cause: "",
           message: INVOICE_MSG.invalidId,
-          metadata: { id },
+          metadata: {},
         }),
       );
     }
@@ -76,7 +79,7 @@ export async function deleteInvoiceAction(
     const appError: AppError =
       error instanceof AppError
         ? error
-        : new AppError("unknown", {
+        : makeAppError("unknown", {
             cause: "",
             message: INVOICE_MSG.serviceError,
             metadata: { error, id },

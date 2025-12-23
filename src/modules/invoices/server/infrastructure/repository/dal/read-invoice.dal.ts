@@ -1,4 +1,5 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceEntity } from "@/modules/invoices/domain/invoice.entity";
@@ -6,7 +7,7 @@ import { rawDbToInvoiceEntity } from "@/modules/invoices/server/infrastructure/a
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Reads an invoice by ID.
@@ -21,20 +22,20 @@ export async function readInvoiceDal(
   id: InvoiceId,
 ): Promise<InvoiceEntity> {
   if (!(db && id)) {
-    throw new AppError("validation", {
+    throw makeAppError("validation", {
       cause: "",
       message: INVOICE_MSG.invalidInput,
-      metadata: { id },
+      metadata: {},
     });
   }
 
   const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
   if (!data) {
-    throw new AppError("database", {
+    throw makeAppError("database", {
       cause: "",
       message: INVOICE_MSG.notFound,
-      metadata: { id },
+      metadata: {},
     });
   }
 

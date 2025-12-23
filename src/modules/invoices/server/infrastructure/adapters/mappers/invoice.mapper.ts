@@ -1,4 +1,5 @@
 import "server-only";
+
 import { isValid } from "date-fns";
 import type {
   InvoiceEntity,
@@ -12,7 +13,8 @@ import {
   toInvoiceId,
   toPeriod,
 } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -59,10 +61,10 @@ export function invoiceFormEntityToServiceEntity(
 ): Result<InvoiceServiceEntity, AppError> {
   if (!isValid(formEntity.date)) {
     return Err(
-      new AppError("validation", {
+      makeAppError("validation", {
         cause: "",
         message: `Invalid date in form entity: ${formEntity.date}`,
-        metadata: { date: formEntity.date },
+        metadata: {},
       }),
     );
   }

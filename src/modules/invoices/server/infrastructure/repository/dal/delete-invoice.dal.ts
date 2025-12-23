@@ -1,4 +1,5 @@
 import "server-only";
+
 import { eq } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceEntity } from "@/modules/invoices/domain/invoice.entity";
@@ -6,7 +7,7 @@ import { rawDbToInvoiceEntity } from "@/modules/invoices/server/infrastructure/a
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Deletes an invoice by ID.
@@ -21,10 +22,10 @@ export async function deleteInvoiceDal(
 ): Promise<InvoiceEntity> {
   // Ensure db and id are not empty
   if (!(db && id)) {
-    throw new AppError("validation", {
+    throw makeAppError("validation", {
       cause: "",
       message: INVOICE_MSG.invalidInput,
-      metadata: { id },
+      metadata: {},
     });
   }
 
@@ -36,10 +37,10 @@ export async function deleteInvoiceDal(
 
   // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
   if (!deletedInvoice) {
-    throw new AppError("database", {
+    throw makeAppError("database", {
       cause: "",
       message: INVOICE_MSG.deleteFailed,
-      metadata: { id },
+      metadata: {},
     });
   }
 

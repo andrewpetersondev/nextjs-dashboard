@@ -1,8 +1,9 @@
 import "server-only";
+
 import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**
@@ -25,13 +26,10 @@ export async function fetchTotalInvoicesCountDal(
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    const metadata = error instanceof Error ? {} : { error };
-    const cause = error instanceof Error ? error : undefined;
-
-    throw new AppError("database", {
-      cause,
+    throw makeAppError("database", {
+      cause: "",
       message: "Failed to fetch dashboard cards.",
-      metadata,
+      metadata: {},
     });
   }
 }

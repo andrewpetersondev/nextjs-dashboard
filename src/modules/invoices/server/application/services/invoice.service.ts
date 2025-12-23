@@ -1,4 +1,5 @@
 import "server-only";
+
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type {
   InvoiceDto,
@@ -11,7 +12,8 @@ import {
 import { invoiceFormEntityToServiceEntity } from "@/modules/invoices/server/infrastructure/adapters/mappers/invoice.mapper";
 import type { InvoiceRepository } from "@/modules/invoices/server/infrastructure/repository/invoice.repository";
 import { toInvoiceId } from "@/shared/branding/converters/id-converters";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
@@ -31,10 +33,10 @@ export class InvoiceService {
     const parsed = new Date(date);
     if (Number.isNaN(parsed.getTime())) {
       return Err(
-        new AppError("validation", {
+        makeAppError("validation", {
           cause: "",
           message: INVOICE_MSG.invalidFormData,
-          metadata: { date },
+          metadata: {},
         }),
       );
     }
@@ -63,7 +65,7 @@ export class InvoiceService {
   ): Promise<Result<InvoiceDto, AppError>> {
     if (!dto) {
       return Err(
-        new AppError("validation", {
+        makeAppError("validation", {
           cause: "",
           message: INVOICE_MSG.invalidInput,
           metadata: {},
@@ -96,10 +98,10 @@ export class InvoiceService {
   async readInvoice(id: string): Promise<Result<InvoiceDto, AppError>> {
     if (!id) {
       return Err(
-        new AppError("validation", {
+        makeAppError("validation", {
           cause: "",
           message: INVOICE_MSG.invalidId,
-          metadata: { id },
+          metadata: {},
         }),
       );
     }
@@ -112,10 +114,10 @@ export class InvoiceService {
   ): Promise<Result<InvoiceDto, AppError>> {
     if (!(id && dto)) {
       return Err(
-        new AppError("validation", {
+        makeAppError("validation", {
           cause: "",
           message: INVOICE_MSG.invalidInput,
-          metadata: { hasDto: Boolean(dto), id },
+          metadata: {},
         }),
       );
     }
@@ -153,10 +155,10 @@ export class InvoiceService {
   async deleteInvoice(id: string): Promise<Result<InvoiceDto, AppError>> {
     if (!id) {
       return Err(
-        new AppError("validation", {
+        makeAppError("validation", {
           cause: "",
           message: INVOICE_MSG.invalidId,
-          metadata: { id },
+          metadata: {},
         }),
       );
     }

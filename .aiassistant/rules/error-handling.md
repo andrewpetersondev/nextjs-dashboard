@@ -22,57 +22,57 @@ Use `Result<Ok, Err>` from `@/shared/result` for all **expected failures**.
 - **Application (Services/Use Cases)**: Compose, map, and wrap results. Map technical errors to domain errors.
 - **Actions (Boundaries)**: Unwrap the `Result` and translate it into a UI response (Redirect, Error message).
 
+### Async Composition
+
+When composing asynchronous operations, use functional utilities to maintain the `Result` chain:
+
+- **`tapOkAsync` / `tapErrorAsync`**: Execute side effects without altering the result.
+- **`tapOkAsyncSafe` / `tapErrorAsyncSafe`**: Execute side effects and catch potential internal failures, mapping them back to an `AppError` via a provided mapper.
+
 ## Error Modeling
 
-- **No Custom Subclasses**: Use the error factory in `@/shared/errors/factories/app-error.factory`.
-- **Error Codes**: Use stable string codes instead of `instanceof` checks.
+- **Single Source of Truth**: All error types must be defined in `@/shared/errors/catalog/app-error.registry.ts`.
+  - This registry defines the `layer`, `severity`, `retryable` status, and the `metadataSchema` (Zod).
+- **No Custom Subclasses**: Always use the `AppError` entity.
+- **Error Keys**: Use the `APP_ERROR_KEYS` constants for stability instead of `instanceof` or magic strings.
 - **Throwing**: Use `throw` **only** for programmer errors or invariant violations.
-
-## Testing Errors
-
-- Tests should verify that the correct error code is returned in the `Err` branch of a `Result`.
-- Test files must mirror the unit name: `to-pg-error.test.ts` for `toPgError`.
 
 ## Error Factories & Normalizers
 
-All failures must be expressed as `AppError` with explicit metadata. Callers must always pass a `metadata` object (use `{}` if no additional details are available).
+### Metadata Validation
 
-### Specialized Factories vs `makeAppError`
+The `AppError` constructor automatically validates and sanitizes `metadata` against the Zod schema defined in the registry for that specific key.
 
-- Use `makeUnexpectedError` only for:
-  - Truly impossible cases, programmer errors, invariant violations
-  - Callers MUST provide a `metadata` object, even if empty (`{}`), to keep intent explicit
-- Use `makeAppError` directly only when:
-  - You are inside a very generic, cross‑cutting area (for example, central registry migrations) where the specialized factories do not fit
+- In **development**, validation failures will throw immediately to catch contract violations.
+- In **production**, they are logged but allowed to pass to prevent application crashes.
 
-### Error Normalizers
+### Specialized Factories
 
-Use dedicated normalizers at infrastructure boundaries so we never lose intrinsic pgErrorMetadata:
+- **`makeAppError`**: Standard factory for domain/application errors.
+- **`makeUnexpectedError`**: Wraps a trigger (the `error` parameter) into an `unexpected` key. It preserves the trigger's properties as the `cause`.
+- **`normalizeUnknownToAppError`**: Converts any caught `unknown` (string, Error, etc.) into a structured `AppError`.
 
-- Use `normalizePgError` **only at Postgres boundaries**:
-  - Preserves intrinsic PG pgErrorMetadata (for example, `pgCode`, `constraint`, `table`, `column`)
-  - Returns an `AppError` with the correct pgCode for the PG pgCondition, or a fallback pgCode when unmapped
-- Use `normalizeUnknownToAppError` at **non‑Postgres boundaries**:
-  - HTTP clients
-  - File system
-  - Third‑party SDKs
-  - Wraps any unknown thrown value into an `AppError` with a stable fallback pgCode and diagnostic pgErrorMetadata
+### Infrastructure Normalizers
 
-Do **not** use `normalizeUnknownToAppError` for Postgres errors, or you will lose `pgCode` and pgCondition mapping.
+- **`normalizePgError`**: Use **only at Postgres boundaries**.
+  - Uses `toPgError` to perform a Breadth-First Search (BFS) through the error chain to find native Postgres codes.
+  - Maps `pgCode` to `pgCondition` (e.g., `23505` -> `pg_unique_violation`).
+  - Preserves native metadata like `constraint`, `table`, and `column`.
 
 ## Database Access Layer (DAL) Conventions
 
-DAL wrappers are the only place that may catch raw database errors.
+DAL wrappers are the only place permitted to catch raw database errors.
 
-- Use `executeDalResult` for **expected DB failures**:
-  - Catches raw Postgres errors.
-  - Calls `normalizePgError`.
-  - Returns `Result<Ok, AppError>` with a mapped error pgCode and PG pgErrorMetadata.
-  - Logs the error but does **not** throw.
+- **`executeDalResult`**:
+  - For **expected** failures (e.g., unique constraint violations).
+  - Returns `Result<T, AppError>`.
+  - Automatically logs the failure with the operation context and identifiers.
+- **`executeDalThrow`**:
+  - For **unexpected** failures (bugs/invariants).
+  - Throws an `AppError` with the `unexpected` key.
+  - Useful when a query _must_ succeed for the system to remain in a valid state.
 
-- Use `executeDalThrow` only for **unexpected DAL invariants**:
-  - Wraps unknown errors with `makeUnexpectedError`.
-  - Logs and rethrows the `AppError`.
-  - Callers should treat this as a bug or invariant violation, not a normal control path.
+## Testing Errors
 
-Application services and use cases must not talk to the DB directly; they call the DAL, receive `Result<_, AppError>`, and map/compose at the application layer.
+- Tests must verify the specific `key` and `metadata` (e.g., `pgCode`) returned in the `Err` branch.
+- Test files must mirror the implementation: `to-pg-error.test.ts` for `toPgError`.
