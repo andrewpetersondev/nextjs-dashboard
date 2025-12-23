@@ -1,6 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 
-import type { Severity } from "@/shared/errors/core/app-error.severity";
+import type { AppErrorSeverity } from "@/shared/errors/core/app-error.severity";
 import { isAppError } from "@/shared/errors/utils/is-app-error";
 import type { SafeErrorShape } from "@/shared/logging/core/logger.types";
 
@@ -28,7 +28,7 @@ export function toSafeErrorShape(err: unknown): SafeErrorShape | unknown {
 /**
  * Map domain `Severity` to `LogLevel` with an exhaustive check.
  */
-export function mapSeverityToLogLevel(severity: Severity): LogLevel {
+export function mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
   switch (severity) {
     case "WARN":
       return "warn";

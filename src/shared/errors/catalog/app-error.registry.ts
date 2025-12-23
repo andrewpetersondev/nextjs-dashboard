@@ -6,25 +6,6 @@ import {
   SYSTEM_ERRORS,
   VALIDATION_ERRORS,
 } from "@/shared/errors/catalog/app-error.codes";
-import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
-
-export type AppErrorKeyUnion =
-  | "conflict"
-  | "not_found"
-  | "parse"
-  | "forbidden"
-  | "invalid_credentials"
-  | "unauthorized"
-  | "application_error"
-  | "domain_error"
-  | "presentation_error"
-  | "database"
-  | "infrastructure"
-  | "integrity"
-  | "unexpected"
-  | "unknown"
-  | "missing_fields"
-  | "validation";
 
 export const APP_ERROR_MAP = {
   ...API_ERRORS,
@@ -33,22 +14,24 @@ export const APP_ERROR_MAP = {
   ...INFRASTRUCTURE_ERRORS,
   ...SYSTEM_ERRORS,
   ...VALIDATION_ERRORS,
-} as const satisfies Record<AppErrorKeyUnion, AppErrorSchema>;
+} as const;
 
-export type AppErrorRegistry = typeof APP_ERROR_MAP;
+/**
+ * Automatically derived from the keys of APP_ERROR_MAP.
+ * No more manual union maintenance!
+ */
+export type AppErrorKey = keyof typeof APP_ERROR_MAP;
 
-export type AppErrorKey = keyof AppErrorRegistry;
+export type AppErrorMeta = (typeof APP_ERROR_MAP)[AppErrorKey];
 
-export type AppErrorMeta = AppErrorRegistry[AppErrorKey];
-
+// Helper for runtime checks without Object.keys overhead
 export const APP_ERROR_KEYS = Object.freeze(
-  Object.fromEntries(
-    Object.keys(APP_ERROR_MAP).map((key: string) => [key, key]),
-  ) as {
-    [K in AppErrorKey]: K;
-  },
-);
+  Object.fromEntries(Object.keys(APP_ERROR_MAP).map((k) => [k, k])),
+) as { [K in AppErrorKey]: K };
 
+/**
+ * Returns the schema/metadata for a given error code.
+ */
 export function getAppErrorCodeMeta(code: AppErrorKey): AppErrorMeta {
   return APP_ERROR_MAP[code];
 }

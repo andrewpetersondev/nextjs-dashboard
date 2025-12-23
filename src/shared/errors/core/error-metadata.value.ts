@@ -22,43 +22,33 @@ export const InfrastructureErrorMetadataSchema = z
   .object({
     diagnosticId: z.string().optional(),
   })
-  .loose() as z.ZodType<InfrastructureErrorMetadata>;
+  .passthrough() as z.ZodType<InfrastructureErrorMetadata>;
+
+export const PgErrorMetadataSchema = z
+  .object({
+    column: z.string().optional(),
+    constraint: z.string().optional(),
+    datatype: z.string().optional(),
+    detail: z.string().optional(),
+    hint: z.string().optional(),
+    pgCode: z.string(),
+    position: z.string().optional(),
+    schema: z.string().optional(),
+    severity: z.string().optional(),
+    table: z.string().optional(),
+    where: z.string().optional(),
+  })
+  .passthrough();
 
 export type ConflictErrorMetadata = Readonly<PgErrorMetadata>;
 
-export const ConflictErrorMetadataSchema = z
-  .object({
-    column: z.string().optional(),
-    constraint: z.string().optional(),
-    datatype: z.string().optional(),
-    detail: z.string().optional(),
-    hint: z.string().optional(),
-    pgCode: z.string(),
-    position: z.string().optional(),
-    schema: z.string().optional(),
-    severity: z.string().optional(),
-    table: z.string().optional(),
-    where: z.string().optional(),
-  })
-  .passthrough() as z.ZodType<ConflictErrorMetadata>;
+export const ConflictErrorMetadataSchema =
+  PgErrorMetadataSchema as z.ZodType<ConflictErrorMetadata>;
 
 export type IntegrityErrorMetadata = Readonly<PgErrorMetadata>;
 
-export const IntegrityErrorMetadataSchema = z
-  .object({
-    column: z.string().optional(),
-    constraint: z.string().optional(),
-    datatype: z.string().optional(),
-    detail: z.string().optional(),
-    hint: z.string().optional(),
-    pgCode: z.string(),
-    position: z.string().optional(),
-    schema: z.string().optional(),
-    severity: z.string().optional(),
-    table: z.string().optional(),
-    where: z.string().optional(),
-  })
-  .passthrough() as z.ZodType<IntegrityErrorMetadata>;
+export const IntegrityErrorMetadataSchema =
+  PgErrorMetadataSchema as z.ZodType<IntegrityErrorMetadata>;
 
 export type UnknownErrorMetadata = Readonly<Record<string, unknown>>;
 
@@ -71,25 +61,6 @@ export type UnexpectedErrorMetadata = Readonly<Record<string, unknown>>;
 export const UnexpectedErrorMetadataSchema = z
   .object({})
   .passthrough() as z.ZodType<UnexpectedErrorMetadata>;
-
-export type AppErrorMetadataValueByCode = Readonly<{
-  conflict: ConflictErrorMetadata;
-  not_found: UnknownErrorMetadata;
-  parse: UnknownErrorMetadata;
-  forbidden: UnknownErrorMetadata;
-  invalid_credentials: UnknownErrorMetadata;
-  unauthorized: UnknownErrorMetadata;
-  application_error: UnknownErrorMetadata;
-  domain_error: UnknownErrorMetadata;
-  presentation_error: UnknownErrorMetadata;
-  database: InfrastructureErrorMetadata;
-  infrastructure: InfrastructureErrorMetadata;
-  integrity: IntegrityErrorMetadata;
-  unexpected: UnexpectedErrorMetadata;
-  unknown: UnknownErrorMetadata;
-  missing_fields: ValidationErrorMetadata;
-  validation: ValidationErrorMetadata;
-}>;
 
 export const AppErrorMetadataSchemaByCode = {
   application_error: UnknownErrorMetadataSchema,
@@ -108,14 +79,21 @@ export const AppErrorMetadataSchemaByCode = {
   unexpected: UnexpectedErrorMetadataSchema,
   unknown: UnknownErrorMetadataSchema,
   validation: ValidationErrorMetadataSchema,
-} as const satisfies Record<keyof AppErrorMetadataValueByCode, z.ZodType>;
+} as const satisfies Record<AppErrorKey, z.ZodType>;
+
+/**
+ * This type is now automatically exhaustive.
+ * If you add a key to the registry and forget it here, TS will scream.
+ */
+export type AppErrorMetadataValueByCode = {
+  [K in AppErrorKey]: z.infer<(typeof AppErrorMetadataSchemaByCode)[K]>;
+};
+
+export type AppErrorMetadata = AppErrorMetadataValueByCode[AppErrorKey];
 
 export function getMetadataSchemaForCode(code: AppErrorKey): z.ZodType {
   return AppErrorMetadataSchemaByCode[code];
 }
-
-export type AppErrorMetadata =
-  AppErrorMetadataValueByCode[keyof AppErrorMetadataValueByCode];
 
 export function isValidationMetadata(
   metadata: AppErrorMetadata,

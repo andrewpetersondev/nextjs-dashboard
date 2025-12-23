@@ -5,7 +5,7 @@ import {
 } from "@/shared/errors/catalog/app-error.registry";
 import type { AppErrorLayer } from "@/shared/errors/core/app-error.layers";
 import type { AppErrorParams } from "@/shared/errors/core/app-error.params";
-import type { Severity } from "@/shared/errors/core/app-error.severity";
+import type { AppErrorSeverity } from "@/shared/errors/core/app-error.severity";
 import type { AppErrorJsonDto } from "@/shared/errors/core/app-error-json.dto";
 import type { AppErrorMetadata } from "@/shared/errors/core/error-metadata.value";
 import {
@@ -30,7 +30,7 @@ export class AppError<
   readonly message: string;
   readonly metadata: T;
   readonly retryable: boolean;
-  readonly severity: Severity;
+  readonly severity: AppErrorSeverity;
 
   constructor(params: AppErrorParams<T>) {
     const { cause, key, message, metadata } = params;

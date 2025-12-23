@@ -1,6 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import type { Severity } from "@/shared/errors/core/app-error.severity";
+import type { AppErrorSeverity } from "@/shared/errors/core/app-error.severity";
 import type { AppErrorJsonDto } from "@/shared/errors/core/app-error-json.dto";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;
@@ -18,7 +18,7 @@ export interface SerializedError {
   readonly code?: AppErrorKey;
   readonly message: string;
   readonly name: string;
-  readonly severity?: Severity;
+  readonly severity?: AppErrorSeverity;
   readonly stack?: string;
 }
 
