@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 import "server-only";
 
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

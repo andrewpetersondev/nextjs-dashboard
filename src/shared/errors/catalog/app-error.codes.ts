@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
 import { APP_ERROR_LAYER } from "@/shared/errors/core/app-error.layers";
 import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
 import { APP_ERROR_SEVERITY } from "@/shared/errors/core/app-error.severity";

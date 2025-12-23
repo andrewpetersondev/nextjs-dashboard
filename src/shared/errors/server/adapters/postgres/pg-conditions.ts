@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/style/useNamingConvention: Public contract constant; keep stable identifier.*/
-
 import "server-only";
 
 /**

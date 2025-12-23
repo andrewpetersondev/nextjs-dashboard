@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/style/useNamingConvention: Domain constants use ALL_CAPS and PascalCase for clarity, auto-complete, and to match business terminology. */
-
 /**
  * Represents the distinct severities used to classify application errors.
  *
