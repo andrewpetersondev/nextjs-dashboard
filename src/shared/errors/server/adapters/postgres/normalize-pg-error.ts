@@ -25,13 +25,6 @@ function normalizePgCause(err: unknown): AppError | Error | string {
  * Normalizes a raw Postgres error into a structured AppError.
  *
  *  Use only at Postgres boundaries.
- *
- * Do NOT use `normalizeUnknownToAppError` for PG errors, or you will
- * lose `pgCode`/constraint metadata and condition mapping.
- *
- * @remarks
- * This utility enforces strict separation between Intrinsic Metadata (DB fields)
- * and Operational Context (caller-provided logging info).
  */
 export function normalizePgError(err: unknown): AppError {
   const cause = normalizePgCause(err);
