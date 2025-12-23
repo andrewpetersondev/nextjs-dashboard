@@ -110,7 +110,6 @@ export const AppErrorMetadataSchemaByCode = {
   validation: ValidationErrorMetadataSchema,
 } as const satisfies Record<keyof AppErrorMetadataValueByCode, z.ZodType>;
 
-
 export function getMetadataSchemaForCode(code: AppErrorKey): z.ZodType {
   return AppErrorMetadataSchemaByCode[code];
 }
