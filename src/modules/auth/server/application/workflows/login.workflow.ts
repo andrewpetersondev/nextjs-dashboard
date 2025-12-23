@@ -5,8 +5,9 @@ import type { SessionService } from "@/modules/auth/server/application/services/
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeValidationError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -30,12 +31,12 @@ export async function loginWorkflow(
   if (!authResult.ok) {
     const error = authResult.error;
     const isCredentialFailure =
-      error.code === "invalid_credentials" || error.code === "not_found";
+      error.key === "invalid_credentials" || error.key === "not_found";
 
     if (isCredentialFailure) {
       return Err(
-        makeValidationError({
-          cause: "",
+        makeAppError(APP_ERROR_KEYS.invalid_credentials, {
+          cause: "Authentication failed due to invalid email or password.",
           message: AUTH_ERROR_MESSAGES.LOGIN_FAILED,
           metadata: {
             code: "invalidCredentials",

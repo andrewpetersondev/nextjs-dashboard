@@ -3,9 +3,11 @@ import "server-only";
 import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
+import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import type { Result } from "@/shared/result/result.types";
 
@@ -33,14 +35,15 @@ export async function insertUserDal(
         .returning();
 
       if (!userRow) {
-        throw makeIntegrityError({
+        throw makeAppError(APP_ERROR_KEYS.integrity, {
           cause: "Database returned empty result set for insert",
           message: "Insert did not return a row",
-          metadata: { kind: "invariant" },
+          metadata: { pgCode: PG_CODES.UNEXPECTED_INTERNAL_ERROR },
         });
       }
 
       logger.operation("info", "User row inserted", {
+        operationContext: "auth:dal",
         operationIdentifiers: { email, role, userId: userRow.id, username },
         operationName: "insertUser.success",
       });

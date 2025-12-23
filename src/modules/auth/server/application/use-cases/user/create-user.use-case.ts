@@ -7,6 +7,7 @@ import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -38,9 +39,9 @@ export class CreateUserUseCase {
     const logger = this.logger.child({ email: input.email });
 
     try {
-      const passwordHash = await this.hasher.hash(input.password);
-
       const createdResult = await this.uow.withTransaction(async (tx) => {
+        const passwordHash = await this.hasher.hash(input.password);
+
         const createdResultTx = await tx.authUsers.signup({
           email: input.email,
           password: passwordHash,
@@ -68,18 +69,23 @@ export class CreateUserUseCase {
       }
 
       logger.operation("info", "User created", {
+        operationContext: "auth:use-case",
+        operationIdentifiers: { email: input.email },
         operationName: "signup.user.created",
       });
 
       return Ok(createdResult.value);
     } catch (err: unknown) {
       const error = makeUnexpectedError(err, {
-        message: "signup.user.create.unexpected",
+        key: APP_ERROR_KEYS.unexpected,
+        message: "An unexpected error occurred during user creation.",
         metadata: { operation: "createUser" },
       });
 
       logger.operation("error", "User creation failed", {
         error,
+        operationContext: "auth:use-case",
+        operationIdentifiers: { email: input.email },
         operationName: "signup.user.create.failed",
       });
 

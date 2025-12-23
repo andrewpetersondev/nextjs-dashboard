@@ -32,6 +32,7 @@ export async function getUserByEmailDal(
 
       if (!userRow) {
         logger.operation("info", "User not found", {
+          operationContext: "auth:dal",
           operationIdentifiers: { email },
           operationName: "getUserByEmail.notFound",
         });
@@ -39,6 +40,7 @@ export async function getUserByEmailDal(
       }
 
       logger.operation("info", "User row fetched", {
+        operationContext: "auth:dal",
         operationIdentifiers: { email, userId: userRow.id },
         operationName: "getUserByEmail.success",
       });

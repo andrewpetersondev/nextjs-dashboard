@@ -1,6 +1,6 @@
 ---
 apply: by file patterns
-patterns: src/shared/errors/**/*.ts
+patterns: src/shared/errors/**/*.ts, src/modules/**/*.ts, src/modules/**/*.tsx
 ---
 
 # Error Handling & Result Pattern
