@@ -33,8 +33,6 @@ export function normalizePgError(err: unknown): AppError {
   return makeAppError(mapping.appErrorKey, {
     cause,
     message: mapping.pgCondition,
-    metadata: {
-      ...mapping.pgErrorMetadata,
-    },
+    metadata: mapping.pgErrorMetadata,
   });
 }

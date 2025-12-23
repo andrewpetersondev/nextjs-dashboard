@@ -18,7 +18,6 @@ import {
  *
  * @typeParam T - The type of the metadata associated with this error.
  * Must extend {@link AppErrorMetadata}. Defaults to {@link AppErrorMetadata} if not specified.
- * todo: default may be problematic
  */
 export class AppError<
   T extends AppErrorMetadata = AppErrorMetadata,
