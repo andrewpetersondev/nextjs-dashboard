@@ -1,9 +1,8 @@
-// src/shared/logging/infra/abstract-logger.ts
-
 import { isPublicProd } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
 import type { LogEntry } from "@/shared/logging/core/logger.types";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import {
   consoleMethod,
   currentLogLevelPriority,
@@ -11,6 +10,10 @@ import {
 } from "@/shared/logging/infrastructure/logging.levels";
 import { toSafeErrorShape } from "@/shared/logging/infrastructure/logging.mappers";
 import { createRedactor } from "@/shared/logging/redaction/redaction";
+import {
+  DEFAULT_MASK,
+  DEFAULT_MAX_DEPTH,
+} from "@/shared/logging/redaction/redaction.constants";
 
 /**
  * Get process ID if available (server-side only).
@@ -26,8 +29,14 @@ let processMetadata: Record<string, unknown> = {};
 
 /**
  * Redactor for log payloads, built on the core redaction system.
+ * Configured with strict defaults to avoid drift.
  */
-const redactLogData = createRedactor();
+const redactLogData = createRedactor({
+  extraKeys: [],
+  mask: DEFAULT_MASK,
+  maxDepth: DEFAULT_MAX_DEPTH,
+  partialMask: true,
+});
 
 export abstract class AbstractLogger {
   protected readonly loggerContext?: string;
@@ -52,11 +61,11 @@ export abstract class AbstractLogger {
     processMetadata = { ...processMetadata, ...context };
   }
 
-  abstract withContext(context: string): this;
+  abstract withContext(context: string): LoggingClientPort;
 
-  abstract withRequest(requestId: string): this;
+  abstract withRequest(requestId: string): LoggingClientPort;
 
-  abstract child(bindings: Record<string, unknown>): this;
+  abstract child(bindings: Record<string, unknown>): LoggingClientPort;
 
   debug<T>(message: string, data?: T): void {
     this.logAt("debug", message, data);
@@ -93,7 +102,7 @@ export abstract class AbstractLogger {
   protected createEntry<T>(
     level: LogLevel,
     message: string,
-    data?: T,
+    data: T | undefined,
   ): LogEntry<T> {
     // We are now trusting the caller (LoggingClient) to have prepared 'data'.
     // We only apply minimal safety if 'data' itself IS an Error object,

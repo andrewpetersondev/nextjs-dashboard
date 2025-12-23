@@ -24,8 +24,8 @@ export class AppError<
   T extends AppErrorMetadata = AppErrorMetadata,
 > extends Error {
   readonly cause: AppError | Error | string;
-  readonly key: AppErrorKey;
   readonly description: string;
+  readonly key: AppErrorKey;
   readonly layer: AppErrorLayer;
   readonly message: string;
   readonly metadata: T;
@@ -42,13 +42,11 @@ export class AppError<
     super(message, cause instanceof Error ? { cause } : undefined);
 
     this.name = this.constructor.name;
-    this.key = key;
     this.cause = cause;
-    this.message = message;
-
-    // Map registry metadata
     this.description = meta.description;
+    this.key = key;
     this.layer = meta.layer;
+    this.message = message;
     this.retryable = meta.retryable;
     this.severity = meta.severity;
 

@@ -5,7 +5,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type UserRow, users } from "@/server/db/schema/users";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import type { Result } from "@/shared/result/result.types";
 
 /**
@@ -20,7 +20,7 @@ import type { Result } from "@/shared/result/result.types";
 export async function getUserByEmailDal(
   db: AppDatabase,
   email: string,
-  logger: LoggingClientContract,
+  logger: LoggingClientPort,
 ): Promise<Result<UserRow | null, AppError>> {
   return await executeDalResult<UserRow | null>(
     async (): Promise<UserRow | null> => {

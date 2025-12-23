@@ -51,8 +51,8 @@ export interface LogEntry<T = unknown> extends BaseLogEntry {
  * Operation metadata for DAL/repository pattern logging.
  */
 export interface LogOperationMetadata {
-  readonly operationContext?: string;
-  readonly operationIdentifiers?: Record<string, unknown>;
+  readonly operationContext: string;
+  readonly operationIdentifiers: Record<string, unknown>;
   readonly operationName: string;
 }
 
@@ -66,12 +66,12 @@ export type LogOperationData<T extends object = Record<string, unknown>> = T &
  * Options for logging AppError instances.
  */
 export interface LogBaseErrorOptions {
-  readonly levelOverride?: LogLevel;
-  readonly loggingContext?: LogEventContext;
-  readonly message?: string;
+  readonly levelOverride: LogLevel;
+  readonly loggingContext: LogEventContext;
+  readonly message: string;
 }
 
 /**
  * Public safe error shape used when logging arbitrary `unknown` errors.
  */
-export type SafeErrorShape = string | SerializedError;
+export type SafeErrorShape = SerializedError | string;

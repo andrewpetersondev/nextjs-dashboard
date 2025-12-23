@@ -1,8 +1,4 @@
-import {
-  DEFAULT_MASK,
-  DEFAULT_MAX_DEPTH,
-  DEFAULT_SENSITIVE_KEYS,
-} from "@/shared/logging/redaction/redaction.constants";
+import { DEFAULT_SENSITIVE_KEYS } from "@/shared/logging/redaction/redaction.constants";
 import {
   handleArray,
   handleObject,
@@ -72,13 +68,8 @@ function createVisit(cfg: InternalConfig, seen: WeakSet<object>): Visitor {
 /**
  * Build a normalized redaction config from options.
  */
-function buildConfig(options?: RedactOptions): InternalConfig {
-  const {
-    extraKeys = [],
-    mask = DEFAULT_MASK,
-    maxDepth = DEFAULT_MAX_DEPTH,
-    partialMask = true,
-  } = options ?? {};
+function buildConfig(options: RedactOptions): InternalConfig {
+  const { extraKeys, mask, maxDepth, partialMask } = options;
 
   return {
     mask,
@@ -105,7 +96,7 @@ function makeVisitor(cfg: InternalConfig): () => Visitor {
  * - Safe: guards against circular references per invocation.
  */
 export function createRedactor(
-  options?: RedactOptions,
+  options: RedactOptions,
 ): (value: unknown) => unknown {
   const cfg = buildConfig(options);
   const getVisitor = makeVisitor(cfg);

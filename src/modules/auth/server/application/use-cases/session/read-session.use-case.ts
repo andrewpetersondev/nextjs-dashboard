@@ -7,12 +7,12 @@ import type {
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 export type ReadSessionDeps = Readonly<{
   cookie: SessionPort;
   jwt: SessionTokenCodecPort;
-  logger: LoggingClientContract;
+  logger: LoggingClientPort;
 }>;
 
 /**
@@ -29,7 +29,7 @@ export type ReadSessionDeps = Readonly<{
 export class ReadSessionUseCase {
   private readonly cookie: SessionPort;
   private readonly jwt: SessionTokenCodecPort;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
 
   constructor(deps: ReadSessionDeps) {
     this.cookie = deps.cookie;

@@ -3,13 +3,13 @@ import "server-only";
 import type { SessionPort } from "@/modules/auth/server/application/ports/session.port";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 export type ClearSessionDeps = Readonly<{
   cookie: SessionPort;
-  logger: LoggingClientContract;
+  logger: LoggingClientPort;
 }>;
 
 /**
@@ -20,7 +20,7 @@ export type ClearSessionDeps = Readonly<{
  */
 export class ClearSessionUseCase {
   private readonly cookie: SessionPort;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
 
   constructor(deps: ClearSessionDeps) {
     this.cookie = deps.cookie;

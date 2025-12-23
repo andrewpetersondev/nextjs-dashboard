@@ -7,18 +7,14 @@ import type { AuthTxDeps } from "@/modules/auth/server/application/types/auth-tx
 import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/db/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 export class DbUnitOfWorkAdapter implements UnitOfWorkPort {
   private readonly db: AppDatabase;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
   private readonly requestId: string;
 
-  constructor(
-    db: AppDatabase,
-    logger: LoggingClientContract,
-    requestId: string,
-  ) {
+  constructor(db: AppDatabase, logger: LoggingClientPort, requestId: string) {
     this.db = db;
     this.logger = logger;
     this.requestId = requestId;

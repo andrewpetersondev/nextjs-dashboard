@@ -1,27 +1,33 @@
 import "server-only";
 
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
-import type { TransactionLoggingContext } from "@/shared/logging/transaction-logging-context.types";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { TransactionLoggingContext } from "@/shared/logging/transaction-logging-context.tokens";
 
-// TODO: I made operationNamePrefix required. I moved the transaction out of auth-user.repository and into use-cases.
-//  so i need to update the usages. I need to standardize TransactionLoggingContext and operationNamePrefix across the
-//  app. Consider making a factory function to create TransactionLogger instances with standard configs.
-export type TransactionLoggerConfig = {
+/**
+ * Configuration for the transaction lifecycle logger.
+ */
+export type TransactionLoggerConfig = Readonly<{
   operationContext: TransactionLoggingContext;
   operationNamePrefix: string;
-};
+}>;
 
+/**
+ * Standardized logger for database or multi-step unit-of-work transactions.
+ */
 export class TransactionLogger {
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
   private readonly operationContext: TransactionLoggingContext;
   private readonly operationNamePrefix: string;
 
-  constructor(config: TransactionLoggerConfig, logger: LoggingClientContract) {
+  constructor(config: TransactionLoggerConfig, logger: LoggingClientPort) {
     this.logger = logger;
     this.operationContext = config.operationContext;
     this.operationNamePrefix = config.operationNamePrefix;
   }
 
+  /**
+   * Records the initiation of a transaction.
+   */
   start(transactionId: string): void {
     this.logger.operation("debug", "Transaction start", {
       operationContext: this.operationContext,
@@ -30,6 +36,9 @@ export class TransactionLogger {
     });
   }
 
+  /**
+   * Records a successful transaction completion.
+   */
   commit(transactionId: string): void {
     this.logger.operation("debug", "Transaction commit", {
       operationContext: this.operationContext,
@@ -38,6 +47,9 @@ export class TransactionLogger {
     });
   }
 
+  /**
+   * Records a transaction failure and rollback.
+   */
   rollback(error: unknown, transactionId: string): void {
     this.logger.operation("error", "Transaction rollback", {
       error,

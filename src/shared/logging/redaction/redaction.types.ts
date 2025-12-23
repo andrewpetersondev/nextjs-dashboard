@@ -22,8 +22,8 @@ export interface ObjectRedactOptions {
 }
 
 export interface RedactOptions {
-  readonly extraKeys?: readonly string[];
-  readonly mask?: string;
-  readonly maxDepth?: number;
-  readonly partialMask?: boolean;
+  readonly extraKeys: readonly string[];
+  readonly mask: string;
+  readonly maxDepth: number;
+  readonly partialMask: boolean;
 }

@@ -9,19 +9,19 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 export class CreateUserUseCase {
   private readonly hasher: HashingService;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
   private readonly uow: UnitOfWorkPort;
 
   constructor(
     uow: UnitOfWorkPort,
     hasher: HashingService,
-    logger: LoggingClientContract,
+    logger: LoggingClientPort,
   ) {
     this.hasher = hasher;
     this.logger = logger.child({ scope: "use-case", useCase: "createUser" });

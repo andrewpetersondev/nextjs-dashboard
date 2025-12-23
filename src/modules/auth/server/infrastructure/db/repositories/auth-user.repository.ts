@@ -13,7 +13,7 @@ import {
 } from "@/modules/users/server/infrastructure/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -44,18 +44,14 @@ export class AuthUserRepository {
   protected readonly db: AppDatabase;
 
   /** Repository-scoped logger enriched with auth context and optional request id. */
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
 
   /**
    * @param db - Database connection used for all DAL operations.
    * @param logger - Logger (required).
    * @param requestId - Request id used to correlate logs across layers (required).
    */
-  constructor(
-    db: AppDatabase,
-    logger: LoggingClientContract,
-    requestId: string,
-  ) {
+  constructor(db: AppDatabase, logger: LoggingClientPort, requestId: string) {
     this.db = db;
     this.logger = logger.withContext("auth:repo").withRequest(requestId);
   }

@@ -14,19 +14,19 @@ import {
   makeValidationError,
 } from "@/shared/errors/factories/app-error.factory";
 import { isPositiveNumber } from "@/shared/guards/number.guards";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
 export class CreateDemoUserUseCase {
   private readonly hasher: HashingService;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
   private readonly uow: UnitOfWorkPort;
 
   constructor(
     uow: UnitOfWorkPort,
     hasher: HashingService,
-    logger: LoggingClientContract,
+    logger: LoggingClientPort,
   ) {
     this.logger = logger.child({
       scope: "use-case",

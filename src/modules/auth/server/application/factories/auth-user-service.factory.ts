@@ -6,7 +6,7 @@ import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/
 import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 /**
  * Composition root for the Auth module that wires up an {@link AuthUserService}
@@ -35,7 +35,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  */
 export function createAuthUserServiceFactory(
   db: AppDatabase,
-  logger: LoggingClientContract,
+  logger: LoggingClientPort,
   requestId: string,
 ): AuthUserService {
   const scopedLogger = logger.withContext("auth").withRequest(requestId);

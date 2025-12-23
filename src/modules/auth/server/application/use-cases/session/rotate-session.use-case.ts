@@ -14,7 +14,7 @@ import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -24,7 +24,7 @@ const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 type RotateSessionDeps = Readonly<{
   cookie: SessionPort;
   jwt: SessionTokenCodecPort;
-  logger: LoggingClientContract;
+  logger: LoggingClientPort;
 }>;
 
 /** Compute absolute lifetime status from immutable sessionStart. */
@@ -102,7 +102,7 @@ async function issueToken(
 export class RotateSessionUseCase {
   private readonly cookie: SessionPort;
   private readonly jwt: SessionTokenCodecPort;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
 
   constructor(deps: RotateSessionDeps) {
     this.cookie = deps.cookie;

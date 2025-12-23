@@ -8,7 +8,7 @@ import type { SessionPrincipal } from "@/modules/auth/server/application/types/s
 import { SESSION_DURATION_MS } from "@/modules/auth/server/contracts/session.policy.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -17,7 +17,7 @@ const ONE_SECOND_MS = 1000 as const;
 export type EstablishSessionDeps = Readonly<{
   cookie: SessionPort;
   jwt: SessionTokenCodecPort;
-  logger: LoggingClientContract;
+  logger: LoggingClientPort;
 }>;
 
 /**
@@ -30,7 +30,7 @@ export type EstablishSessionDeps = Readonly<{
 export class EstablishSessionUseCase {
   private readonly cookie: SessionPort;
   private readonly jwt: SessionTokenCodecPort;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
 
   constructor(deps: EstablishSessionDeps) {
     this.cookie = deps.cookie;

@@ -13,7 +13,7 @@ import type { UpdateSessionOutcome } from "@/modules/auth/shared/domain/session/
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import type { Result } from "@/shared/result/result.types";
 
 /**
@@ -29,12 +29,12 @@ import type { Result } from "@/shared/result/result.types";
 export class SessionService {
   private readonly cookie: SessionPort;
   private readonly jwt: SessionTokenCodecPort;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
 
   constructor(
     cookie: SessionPort,
     jwt: SessionTokenCodecPort,
-    logger: LoggingClientContract,
+    logger: LoggingClientPort,
   ) {
     this.cookie = cookie;
     this.jwt = jwt;

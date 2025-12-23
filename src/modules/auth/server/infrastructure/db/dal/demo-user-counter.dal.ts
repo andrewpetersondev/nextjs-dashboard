@@ -5,7 +5,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import { makeIntegrityError } from "@/shared/errors/factories/app-error.factory";
 import { executeDalThrow } from "@/shared/errors/server/adapters/dal/execute-dal-throw";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 /**
  * Increments and retrieves the demo user counter for a given role.
@@ -19,7 +19,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
 export async function demoUserCounterDal(
   db: AppDatabase,
   role: UserRole,
-  logger: LoggingClientContract,
+  logger: LoggingClientPort,
 ): Promise<number> {
   return await executeDalThrow<number>(
     async (): Promise<number> => {

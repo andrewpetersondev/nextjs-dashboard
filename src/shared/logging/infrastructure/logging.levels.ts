@@ -1,4 +1,3 @@
-// src/shared/logging/infra/logging.levels.ts
 import { getPublicLogLevel } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 

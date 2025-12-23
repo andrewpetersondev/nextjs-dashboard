@@ -3,7 +3,7 @@ import "server-only";
 import { SessionService } from "@/modules/auth/server/application/services/session.service";
 import { createSessionCookieAdapter } from "@/modules/auth/server/infrastructure/session/adapters/session-cookie.adapter";
 import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/session/adapters/session-jwt.adapter";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 /**
  * Lightweight factory to compose a SessionManager with default adapters.
@@ -12,7 +12,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logger.contrac
  * @param requestId - request id for tracing/log correlation across layers.
  */
 export function createSessionServiceFactory(
-  logger: LoggingClientContract,
+  logger: LoggingClientPort,
   requestId: string,
 ): SessionService {
   const scopedLogger = logger.withContext("auth").withRequest(requestId);

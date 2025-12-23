@@ -1,3 +1,9 @@
+import "server-only";
+
+/**
+ * Shared tokens for transaction logging contexts.
+ * Used to ensure consistency across infrastructure and application layers.
+ */
 export const TRANSACTION_LOGGING_CONTEXT = {
   authRepo: "auth:repo",
   authServiceSession: "auth:service:session",

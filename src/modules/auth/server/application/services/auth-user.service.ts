@@ -8,7 +8,7 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/result/result";
 import type { Result } from "@/shared/result/result.types";
 
@@ -45,13 +45,13 @@ const toAuthUserTransport = (src: {
  */
 export class AuthUserService {
   private readonly hasher: HashingService;
-  private readonly logger: LoggingClientContract;
+  private readonly logger: LoggingClientPort;
   private readonly repo: AuthUserRepositoryPort;
 
   constructor(
     repo: AuthUserRepositoryPort,
     hasher: HashingService,
-    logger: LoggingClientContract,
+    logger: LoggingClientPort,
   ) {
     this.repo = repo;
     this.hasher = hasher;

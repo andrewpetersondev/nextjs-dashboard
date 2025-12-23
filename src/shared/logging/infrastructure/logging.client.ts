@@ -1,7 +1,6 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { isAppError } from "@/shared/errors/utils/is-app-error";
-import type { LoggingClientContract } from "@/shared/logging/core/logger.contracts";
 import type {
   BaseErrorLogPayload,
   LogBaseErrorOptions,
@@ -9,85 +8,45 @@ import type {
   LogOperationData,
   SerializedError,
 } from "@/shared/logging/core/logger.types";
+import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { AbstractLogger } from "@/shared/logging/infrastructure/abstract-logger";
-import {
-  mapSeverityToLogLevel,
-  toSafeErrorShape,
-} from "@/shared/logging/infrastructure/logging.mappers";
+import { toSafeErrorShape } from "@/shared/logging/infrastructure/logging.mappers";
 
 /**
- * Sensitivity-aware structured logger.
+ * Sensitivity-aware structured logger implementation.
+ * Handles AppError serialization and operational metadata injection.
  */
-export class LoggingClient
-  extends AbstractLogger
-  implements LoggingClientContract
-{
-  debug<T>(message: string, data?: T): void {
-    this.logAt("debug", message, { log: data });
-  }
-
-  info<T>(message: string, data?: T): void {
-    this.logAt("info", message, { log: data });
-  }
-
-  warn<T>(message: string, data?: T): void {
-    this.logAt("warn", message, { log: data });
-  }
-
-  error<T>(message: string, data?: T): void {
-    this.logAt("error", message, { log: data });
-  }
-
-  trace<T>(message: string, data?: T): void {
-    this.logAt("trace", message, { log: data });
-  }
-
+export class LoggingClient extends AbstractLogger implements LoggingClientPort {
   /**
-   * Create a child logger with additional context.
+   * @inheritdoc
    */
-  withContext(context: string): this {
+  override withContext(context: string): LoggingClient {
     const combined = this.loggerContext
       ? `${this.loggerContext}:${context}`
       : context;
 
-    return new LoggingClient(
-      combined,
-      this.loggerRequestId,
-      this.bindings,
-    ) as this;
+    return new LoggingClient(combined, this.loggerRequestId, this.bindings);
   }
 
   /**
-   * Attach a request ID for correlation (useful in SSR or API contexts).
+   * @inheritdoc
    */
-  withRequest(requestId: string): this {
-    return new LoggingClient(
-      this.loggerContext,
-      requestId,
-      this.bindings,
-    ) as this;
+  override withRequest(requestId: string): LoggingClient {
+    return new LoggingClient(this.loggerContext, requestId, this.bindings);
   }
 
   /**
-   * Create a child logger with persistent structured bound data.
+   * @inheritdoc
    */
-  child(bindings: Record<string, unknown>): this {
+  override child(bindings: Record<string, unknown>): LoggingClient {
     return new LoggingClient(this.loggerContext, this.loggerRequestId, {
       ...this.bindings,
       ...bindings,
-    }) as this;
+    });
   }
 
   /**
    * Logs a structured application “operation” event.
-   *
-   * Designed for high‑level, business‑meaningful events such as
-   * “Signup action started”, “Demo user creation failed”, or
-   * “Transaction commit”.
-   *
-   * @param level - Log level to use for the event (e.g. `"info"`, `"error"`).
-   * @param message - Human‑readable description of the operation event.
-   * @param operationPayload - Structured operation data.
    */
   operation<T extends Record<string, unknown>>(
     level: LogLevel,
@@ -97,66 +56,54 @@ export class LoggingClient
     const { operationContext, operationIdentifiers, operationName, ...rest } =
       operationPayload;
 
-    // Extract error if it exists to keep it nested
-    // This prevents error properties (code, stack, etc.) from polluting the top-level log
     const { error, ...otherData } = rest as Record<string, unknown>;
 
-    // Now safely handled by the mapper regardless of whether it's AppError or standard Error
     const safeError = error ? toSafeErrorShape(error) : undefined;
 
-    // We construct the payload explicitly to ensure standard fields are present
-    // and easy to query in logs.
     const operationLogPayload = {
+      ...(safeError ? { error: safeError } : {}),
       log: {
         ...otherData,
-        ...(operationIdentifiers ? { identifiers: operationIdentifiers } : {}),
+        identifiers: operationIdentifiers,
         operationName,
       },
-      ...(safeError ? { error: safeError } : {}), // Keep error nested
     };
 
-    const target = operationContext ? this.withContext(operationContext) : this;
+    const target = this.withContext(operationContext);
     target.logAt(level, message, operationLogPayload);
   }
 
   /**
    * Log a AppError with structured, sanitized output.
    */
-  logBaseError(error: AppError, options?: LogBaseErrorOptions): void {
-    const { levelOverride, loggingContext, message } = options ?? {};
+  logBaseError(error: AppError, options: LogBaseErrorOptions): void {
+    const { levelOverride, loggingContext, message } = options;
 
-    const level = levelOverride ?? mapSeverityToLogLevel(error.severity);
-
+    const level = levelOverride;
     const baseLogPayload = this.buildErrorPayload(error);
 
     const mergedLogPayload = {
       error: baseLogPayload,
-      ...(loggingContext ? { log: loggingContext } : {}),
+      log: loggingContext,
     };
 
-    this.logAt(level, message ?? error.message, mergedLogPayload);
+    this.logAt(level, message, mergedLogPayload);
   }
 
   /**
    * Logs an unknown error value with rich, sanitized details.
-   * @param message - Log message describing the failure context
-   * @param error - The error or thrown value to log
-   * @param loggingContext - Optional operational metadata attached at log-time
-   *   (e.g. requestId, hostname, traceId)
    */
   errorWithDetails(
     message: string,
     error: unknown,
-    loggingContext?: LogEventContext,
+    loggingContext: LogEventContext,
   ): void {
     if (!isAppError(error)) {
-      // Pass the raw error through. AbstractLogger will handle basic serialization
-      // if it's an Error object, but we won't force redaction or shape-shifting here.
       const safeError = toSafeErrorShape(error);
 
       const errorPayload = {
         error: safeError,
-        ...(loggingContext ? { log: loggingContext } : {}),
+        log: loggingContext,
       };
 
       this.logAt("error", message, errorPayload);
@@ -169,56 +116,63 @@ export class LoggingClient
     });
   }
 
-  private buildErrorPayload(error: AppError): BaseErrorLogPayload {
+  private buildErrorPayload(error: AppError<any>): BaseErrorLogPayload {
     const baseJson = error.toJson();
     const diagnosticId = this.extractDiagnosticId(error.metadata);
 
-    // Extract validation errors from metadata if present (validation code only)
-    const fieldErrors =
-      error.code === "validation" || error.code === "missing_fields"
-        ? ((error.metadata as Record<string, unknown>)?.fieldErrors as
-            | Record<string, readonly string[]>
-            | undefined)
-        : undefined;
-    const formErrors =
-      error.code === "validation" || error.code === "missing_fields"
-        ? ((error.metadata as Record<string, unknown>)?.formErrors as
-            | readonly string[]
-            | undefined)
-        : undefined;
+    const isValidation =
+      error.key === "validation" || error.key === "missing_fields";
+
+    const fieldErrors = isValidation
+      ? ((error.metadata as Record<string, unknown>)?.fieldErrors as
+          | Record<string, readonly string[]>
+          | undefined)
+      : undefined;
+
+    const formErrors = isValidation
+      ? ((error.metadata as Record<string, unknown>)?.formErrors as
+          | readonly string[]
+          | undefined)
+      : undefined;
 
     const hasValidationErrors =
       (formErrors && formErrors.length > 0) ||
       (fieldErrors && Object.keys(fieldErrors).length > 0);
 
+    // Double cast to bypass missing index signature in AppError
+    const rawError = error as unknown as Record<string, unknown>;
+    const originalCause = rawError["originalCause"];
+    const hasOriginalCause = originalCause !== undefined;
+
     return {
-      code: baseJson.code,
+      cause:
+        error.cause instanceof Error
+          ? (toSafeErrorShape(error.cause) as SerializedError)
+          : undefined,
       description: baseJson.description,
       diagnosticId,
+      key: baseJson.key,
       layer: baseJson.layer,
       message: baseJson.message,
       metadata: baseJson.metadata,
       retryable: baseJson.retryable,
       severity: baseJson.severity,
+      stack: error.stack,
       ...(fieldErrors && { fieldErrors }),
       ...(formErrors && { formErrors }),
       ...(hasValidationErrors && { validationErrorPresent: true }),
-      cause:
-        error.originalCause instanceof Error
-          ? (toSafeErrorShape(error.originalCause) as SerializedError)
-          : undefined,
-      ...(error.cause !== error.originalCause && {
-        originalCauseRedacted: true,
-        originalCauseType: typeof error.originalCause,
-      }),
-      stack: error.stack,
+      ...(hasOriginalCause &&
+        error.cause !== originalCause && {
+          originalCauseRedacted: true,
+          originalCauseType: typeof originalCause,
+        }),
     };
   }
 
   private extractDiagnosticId(
     metadata: Record<string, unknown> | undefined,
   ): string | undefined {
-    if (!metadata) {
+    if (metadata === undefined) {
       return;
     }
 
@@ -228,4 +182,4 @@ export class LoggingClient
   }
 }
 
-export const logger = new LoggingClient();
+export const logger: LoggingClient = new LoggingClient();
