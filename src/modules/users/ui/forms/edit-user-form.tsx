@@ -18,6 +18,7 @@ import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
 import { updateUserAction } from "@/modules/users/server/application/actions/update-user.action";
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
+import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value";
 import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/initial-form-state";
 import type { FieldError } from "@/shared/forms/types/field-error.value";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
@@ -134,9 +135,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
     return;
   }, [message]);
 
-  const fieldErrors = state.ok
-    ? undefined
-    : (state.error?.metadata?.fieldErrors as EditUserFieldErrors | undefined);
+  const fieldErrors =
+    !state.ok && isValidationMetadata(state.error.metadata)
+      ? (state.error.metadata.fieldErrors as EditUserFieldErrors)
+      : undefined;
 
   return (
     <div>
