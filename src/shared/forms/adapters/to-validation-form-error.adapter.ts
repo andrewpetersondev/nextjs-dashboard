@@ -12,7 +12,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
 /**
  * Internal helper to log and wrap validation errors.
  */
-export function toValidationFormError<Tfieldnames extends string>(
+export function toValidationFormErrorAdapter<Tfieldnames extends string>(
   error: unknown,
   fields: readonly Tfieldnames[],
   loggerContext: string,

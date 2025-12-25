@@ -2,12 +2,12 @@ import "server-only";
 
 import type { z } from "zod";
 import { resolveRawFieldPayload } from "@/shared/forms/adapters/form-data.adapter";
+import { toValidationFormErrorAdapter } from "@/shared/forms/adapters/to-validation-form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationOptions } from "@/shared/forms/core/types/form-validation.dto";
 import { makeFormOk } from "@/shared/forms/logic/factories/form-result.factory";
 import { resolveFormValidationOptions } from "@/shared/forms/logic/factories/validation-options.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { toValidationFormError } from "@/shared/forms/server/to-validation-form-error";
 
 /**
  * Validates FormData against a Zod schema.
@@ -53,7 +53,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     // Unexpected errors during validation (e.g., async refinements throwing)
-    return toValidationFormError<Tfieldnames>(
+    return toValidationFormErrorAdapter<Tfieldnames>(
       e,
       fields,
       loggerContext,
@@ -63,7 +63,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 
   // Zod validation failed
   if (!parsed.success) {
-    return toValidationFormError<Tfieldnames>(
+    return toValidationFormErrorAdapter<Tfieldnames>(
       parsed.error,
       fields,
       loggerContext,

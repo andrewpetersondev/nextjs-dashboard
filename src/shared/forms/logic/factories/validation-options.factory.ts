@@ -3,23 +3,18 @@ import type {
   FormValidationParams,
 } from "@/shared/forms/core/types/form-validation.dto";
 
-const DEFAULT_LOGGER_CONTEXT = "validateForm" as const;
-
 /**
  * Resolve validation options by applying defaults for missing values.
  *
- * @typeParam T - The input object type being validated.
- * @typeParam K - A string literal union of keys from `T`.
- * @param options - Validation options to resolve.
- * @returns An object containing resolved validation parameters.
+ * @deprecated Use explicit parameters. Moving towards strict data integrity.
  */
 export function resolveFormValidationOptions<T, K extends keyof T & string>(
   options: FormValidationOptions<T, K>,
 ): FormValidationParams<K> {
   return {
-    failureMessage: options.messages?.failureMessage ?? "i hate defaults",
+    failureMessage: options.messages?.failureMessage ?? "",
     fields: options.fields,
-    loggerContext: options.loggerContext ?? DEFAULT_LOGGER_CONTEXT,
+    loggerContext: options.loggerContext ?? "FormValidation",
     raw: options.raw,
     successMessage: options.messages?.successMessage ?? "",
   };

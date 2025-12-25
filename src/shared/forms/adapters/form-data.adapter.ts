@@ -42,10 +42,9 @@ export function resolveRawFieldPayload<T extends string>(
     const out: Partial<Record<T, string>> = {};
 
     for (const f of fields) {
-      const v = explicitRaw[f];
-
-      if (v !== undefined) {
-        out[f] = String(v);
+      const value = explicitRaw[f];
+      if (value !== undefined && value !== null) {
+        out[f] = String(value);
       }
     }
 

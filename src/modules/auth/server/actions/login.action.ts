@@ -17,7 +17,7 @@ import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { validateForm } from "@/shared/forms/server/validate-form.action";
+import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";

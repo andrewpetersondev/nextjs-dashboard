@@ -21,7 +21,7 @@ import {
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { validateForm } from "@/shared/forms/server/validate-form.action";
+import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { ROUTES } from "@/shared/routes/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
