@@ -3,6 +3,7 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type {
   DenseFieldErrorMap,
+  FormErrors,
   SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
 import type {
@@ -34,7 +35,7 @@ export const makeFormOk = <T>(data: T, message: string): FormResult<T> => {
 export interface FormErrorParams<F extends string> {
   readonly code?: AppErrorKey;
   readonly fieldErrors: DenseFieldErrorMap<F, string>;
-  readonly formErrors?: readonly string[];
+  readonly formErrors?: FormErrors;
   readonly message: string;
   readonly values?: SparseFieldValueMap<F, string>;
 }

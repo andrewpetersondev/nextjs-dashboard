@@ -1,5 +1,8 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
+import type {
+  DenseFieldErrorMap,
+  FormErrors,
+} from "@/shared/forms/core/types/field-error.value";
 import type { Result } from "@/shared/result/result.types";
 
 /**
@@ -19,7 +22,7 @@ export interface FormSuccessPayload<T> {
 }
 
 /**
- * Payload for form errors, including field-specific errors and a general message.
+ * Payload for form errors, including field-specific errors, form-level errors, and a general message.
  *
  * @typeParam T - The type of the field names.
  *
@@ -29,12 +32,14 @@ export interface FormSuccessPayload<T> {
  *     email: ["Email is required."],
  *     password: []
  *   },
+ *   formErrors: ["Generic error."],
  *   message: "There were errors with your submission."
  * };
  */
 export type FormErrorPayload<T extends string> = {
-  fieldErrors: DenseFieldErrorMap<T, string>;
-  message: string;
+  readonly fieldErrors: DenseFieldErrorMap<T, string>;
+  readonly formErrors: FormErrors;
+  readonly message: string;
 };
 
 /**
