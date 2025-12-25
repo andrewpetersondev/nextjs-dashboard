@@ -3,22 +3,22 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
+import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { Err } from "@/shared/result/result";
 
 /**
- * Creates the initial failed form state with empty field errors.
- *
- * @param fieldNames - An array of field names for which the error map will be initialized.
- * @returns A failed FormResult with validation errors.
+ * Creates the initial form state with empty field errors.
+ * This is technically a "failed" result (Err) to satisfy useActionState requirements
+ * before the first submission, but with empty messages.
  */
-export function makeInitialFailedFormState<T extends string>(
+export function makeInitialFormState<T extends string>(
   fieldNames: readonly T[],
 ): FormResult<never> {
   const fieldErrors: DenseFieldErrorMap<T, string> =
     makeEmptyDenseFieldErrorMap<T, string>(fieldNames);
 
   const error = makeAppError("validation", {
-    cause: "",
+    cause: "INITIAL_STATE",
     message: "",
     metadata: {
       fieldErrors,
@@ -29,18 +29,12 @@ export function makeInitialFailedFormState<T extends string>(
 }
 
 /**
- * Generates the initial failed form state based on the provided Zod object schema.
- *
- * @typeParam S - The Zod schema describing the shape of the form.
- * @param schema - The Zod object schema used to determine the form fields.
- * @returns An initial failed form state with all fields initialized.
+ * Generates the initial form state based on the provided Zod object schema.
+ * Extracts field names automatically from the schema shape.
  */
-export function makeInitialFailedFormStateFromSchema<
+export function makeInitialFormStateFromSchema<
   S extends z.ZodObject<z.ZodRawShape>,
 >(schema: S): FormResult<never> {
-  type FieldNames = keyof S["shape"] & string;
-  const fields = Object.freeze(
-    Object.keys(schema.shape),
-  ) as readonly FieldNames[];
-  return makeInitialFailedFormState<FieldNames>(fields);
+  const fields = extractSchemaFieldNames(schema);
+  return makeInitialFormState(fields);
 }

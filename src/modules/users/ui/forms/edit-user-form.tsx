@@ -21,7 +21,7 @@ import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value";
 import type { FieldError } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFailedFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
+import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
@@ -108,7 +108,7 @@ function EditUserFormFields({
 
 export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
   const [showAlert, setShowAlert] = useState(false);
-  const initialState = makeInitialFailedFormStateFromSchema(EditUserFormSchema);
+  const initialState = makeInitialFormStateFromSchema(EditUserFormSchema);
 
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: FormResult<unknown>,

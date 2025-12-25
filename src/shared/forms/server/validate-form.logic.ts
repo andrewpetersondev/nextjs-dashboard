@@ -34,9 +34,9 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 ): Promise<FormResult<Tin>> {
   const {
     fields: explicitFields,
-    raw: explicitRaw,
     loggerContext,
     failureMessage,
+    raw: explicitRaw,
     successMessage,
   } = resolveFormValidationOptions(options);
 

@@ -15,7 +15,7 @@ import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions
 import { AuthFormFeedback } from "@/modules/auth/ui/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import {
   extractFieldErrors,
   extractFieldValues,
@@ -24,8 +24,7 @@ import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
-const INITIAL_STATE =
-  makeInitialFailedFormState<SignupField>(SIGNUP_FIELDS_LIST);
+const INITIAL_STATE = makeInitialFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 /**
  * SignupForm component for user registration.

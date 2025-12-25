@@ -15,7 +15,7 @@ import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { useFormMessage } from "@/shared/forms/ui/hooks/use-form-message";
@@ -24,7 +24,7 @@ import { H1 } from "@/ui/atoms/headings";
 import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
-const INITIAL_STATE = makeInitialFailedFormState<CreateInvoiceFieldNames>(
+const INITIAL_STATE = makeInitialFormState<CreateInvoiceFieldNames>(
   Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],
 );
 

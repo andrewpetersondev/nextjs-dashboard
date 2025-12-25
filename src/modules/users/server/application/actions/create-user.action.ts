@@ -21,7 +21,7 @@ import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
-import { toFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;
@@ -45,7 +45,7 @@ export async function createUserAction(
   formData: FormData,
 ): Promise<FormResult<unknown>> {
   const db = getAppDb();
-  const allowed = toFieldNames(CreateUserFormSchema);
+  const allowed = extractSchemaFieldNames(CreateUserFormSchema);
 
   try {
     const raw = pickCreateUserFormData(formData);

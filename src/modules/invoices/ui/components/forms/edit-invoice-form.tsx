@@ -19,7 +19,7 @@ import type {
   FieldError,
 } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
@@ -97,7 +97,7 @@ export const EditInvoiceForm = ({
   customers: CustomerField[];
   errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
 }): JSX.Element => {
-  const initialState = makeInitialFailedFormState<UpdateInvoiceFieldNames>(
+  const initialState = makeInitialFormState<UpdateInvoiceFieldNames>(
     Object.keys(
       UpdateInvoiceSchema.shape,
     ) as readonly UpdateInvoiceFieldNames[],

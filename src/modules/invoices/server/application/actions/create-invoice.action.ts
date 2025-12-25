@@ -24,11 +24,11 @@ import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
-import { toFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
-const allowed = toFieldNames(CreateInvoiceSchema);
+const allowed = extractSchemaFieldNames(CreateInvoiceSchema);
 
 /**
  * Server action for creating a new invoice.

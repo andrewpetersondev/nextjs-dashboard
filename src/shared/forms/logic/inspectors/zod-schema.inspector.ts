@@ -2,14 +2,15 @@ import type { z } from "zod";
 import { isZodObjectSchema } from "@/shared/forms/core/guards/zod.guard";
 
 /**
- * Extracts the string keys from the provided Zod object schema.
+ * Extracts the string keys from a Zod object schema as a frozen array.
+ * Use this to get field names for form initialization or mapping.
  */
-export function toFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
+export function extractSchemaFieldNames<S extends z.ZodObject<z.ZodRawShape>>(
   schema: S,
-): readonly Extract<keyof z.output<S>, string>[] {
-  type Keys = Extract<keyof z.output<S>, string>;
-  const keys = Object.keys(schema.shape) as Keys[];
-  return keys as readonly Keys[];
+): readonly (keyof S["shape"] & string)[] {
+  return Object.freeze(
+    Object.keys(schema.shape),
+  ) as readonly (keyof S["shape"] & string)[];
 }
 
 /**
@@ -33,7 +34,7 @@ export function resolveCanonicalFieldNames<T, K extends keyof T & string>(
 
   // Priority 3: derive from object schema; otherwise return empty readonly array
   return isZodObjectSchema(schema)
-    ? (toFieldNames(schema) as readonly K[])
+    ? (extractSchemaFieldNames(schema) as readonly K[])
     : (Object.freeze([]) as readonly K[]);
 }
 

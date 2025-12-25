@@ -10,7 +10,7 @@ import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
 import { createUserAction } from "@/modules/users/server/application/actions/create-user.action";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { useFormMessage } from "@/shared/forms/ui/hooks/use-form-message";
@@ -22,7 +22,7 @@ import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 type CreateUserFieldNames = "email" | "password" | "role" | "username";
 
-const INITIAL_STATE = makeInitialFailedFormState<CreateUserFieldNames>(
+const INITIAL_STATE = makeInitialFormState<CreateUserFieldNames>(
   Object.keys(CreateUserFormSchema.shape) as readonly CreateUserFieldNames[],
 );
 
