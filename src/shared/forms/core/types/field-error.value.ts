@@ -23,6 +23,17 @@ export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 export type FormErrors = readonly string[];
 
 /**
+ * Combined form validation errors including field and form-level errors.
+ *
+ * @typeParam T - Field name literal union.
+ * @typeParam M - Error message type.
+ */
+export interface ValidationErrors<T extends string, M = string> {
+  readonly fieldErrors: DenseFieldErrorMap<T, M>;
+  readonly formErrors: FormErrors;
+}
+
+/**
  * A sparse map of field errors, where only fields with errors are present.
  *
  * @typeParam T - Field name keys.

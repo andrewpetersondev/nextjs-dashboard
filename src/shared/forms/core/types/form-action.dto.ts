@@ -3,9 +3,10 @@ import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 /**
  * Standard contract for a Next.js Server Action used with useActionState.
  *
- * @typeParam T - The union of allowed field names for validation errors.
+ * @typeParam Tfieldnames - The union of allowed field names for validation errors.
+ * @typeParam Tresult - The type of data returned on success.
  */
-export type FormAction<T extends string> = (
-  _prevState: FormResult<T>,
+export type FormAction<Tfieldnames extends string, Tresult = unknown> = (
+  _prevState: FormResult<Tresult>,
   formData: FormData,
-) => Promise<FormResult<T>>;
+) => Promise<FormResult<Tresult>>;

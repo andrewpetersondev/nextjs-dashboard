@@ -6,7 +6,6 @@ import { toValidationFormErrorAdapter } from "@/shared/forms/adapters/to-validat
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationOptions } from "@/shared/forms/core/types/form-validation.dto";
 import { makeFormOk } from "@/shared/forms/logic/factories/form-result.factory";
-import { resolveFormValidationOptions } from "@/shared/forms/logic/factories/validation-options.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 
 /**
@@ -34,11 +33,10 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 ): Promise<FormResult<Tin>> {
   const {
     fields: explicitFields,
-    loggerContext,
-    failureMessage,
+    loggerContext = "FormValidation",
+    messages: { failureMessage = "", successMessage = "" } = {},
     raw: explicitRaw,
-    successMessage,
-  } = resolveFormValidationOptions(options);
+  } = options;
 
   const fields = resolveCanonicalFieldNames<Tin, Tfieldnames>(
     schema,

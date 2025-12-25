@@ -1,23 +1,37 @@
 import { z } from "zod";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
+import type {
+  DenseFieldErrorMap,
+  ValidationErrors,
+} from "@/shared/forms/core/types/field-error.value";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
 } from "@/shared/forms/logic/factories/field-error-map.factory";
 
 /**
+ * Adapts a ZodError (foreign) into a canonical representation of field and form errors.
+ */
+export function fromZodError<T extends string>(
+  error: z.ZodError,
+  fields: readonly T[],
+): ValidationErrors<T, string> {
+  const { fieldErrors, formErrors } = z.flattenError(error);
+
+  const sparse = selectSparseFieldErrors<T, string>(fieldErrors, fields);
+
+  return {
+    fieldErrors: toDenseFieldErrorMap<T, string>(sparse, fields),
+    formErrors: Object.freeze(formErrors),
+  };
+}
+
+/**
  * Adapts a ZodError (foreign) into a DenseFieldErrorMap (canonical).
+ * @deprecated Use fromZodError to get both field and form errors.
  */
 export function toDenseFieldErrorMapFromZod<T extends string>(
   error: z.ZodError,
   fields: readonly T[],
 ): DenseFieldErrorMap<T, string> {
-  const { fieldErrors, formErrors } = z.flattenError(error);
-
-  // TODO: include form errors at some point
-  console.log("eventually include form errors", formErrors);
-
-  const sparse = selectSparseFieldErrors<T, string>(fieldErrors, fields);
-
-  return toDenseFieldErrorMap<T, string>(sparse, fields);
+  return fromZodError(error, fields).fieldErrors;
 }

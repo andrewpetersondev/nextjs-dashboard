@@ -15,8 +15,12 @@ export function toFormErrorPayload<T extends string>(
   const fieldErrors =
     extractFieldErrors<T>(error) ?? ({} as DenseFieldErrorMap<T, string>);
 
+  const formErrors =
+    (error.metadata?.formErrors as readonly string[] | undefined) ?? [];
+
   return {
     fieldErrors,
+    formErrors,
     message: error.message,
   };
 }

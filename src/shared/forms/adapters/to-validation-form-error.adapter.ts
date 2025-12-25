@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { toDenseFieldErrorMapFromZod } from "@/shared/forms/adapters/zod-error.adapter";
+import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
@@ -18,19 +18,24 @@ export function toValidationFormErrorAdapter<Tfieldnames extends string>(
   loggerContext: string,
   failureMessage: string,
 ): FormResult<never> {
+  const isZod = isZodErrorInstance(error) || isZodErrorLikeShape(error);
+
   logger.error(failureMessage, {
     context: loggerContext,
     issues: isZodErrorLikeShape(error) ? error.issues?.length : undefined,
     name: isZodErrorLikeShape(error) ? error.name : "UnknownValidationError",
   });
 
-  const fieldErrors =
-    isZodErrorInstance(error) || isZodErrorLikeShape(error)
-      ? toDenseFieldErrorMapFromZod<Tfieldnames>(error as z.ZodError, fields)
-      : makeEmptyDenseFieldErrorMap<Tfieldnames, string>(fields);
+  const { fieldErrors, formErrors } = isZod
+    ? fromZodError<Tfieldnames>(error as z.ZodError, fields)
+    : {
+        fieldErrors: makeEmptyDenseFieldErrorMap<Tfieldnames, string>(fields),
+        formErrors: Object.freeze([]) as readonly string[],
+      };
 
   return makeFormError<Tfieldnames>({
     fieldErrors,
+    formErrors,
     message: failureMessage,
   });
 }
