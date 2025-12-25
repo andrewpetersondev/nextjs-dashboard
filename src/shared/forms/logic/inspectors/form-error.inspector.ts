@@ -5,6 +5,7 @@ import type {
   FormErrors,
   SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
+import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
 
 /**
  * Extracts dense field errors from an AppError.
@@ -29,18 +30,12 @@ export const extractFieldErrors = <T extends string>(
 /**
  * Extracts echoed field values from an AppError.
  * Returns undefined if not present.
- *
- * @example
- * const values = getFieldValues<'email' | 'username'>(AppError);
- * if (values?.email) {
- *   console.log(values.email); // string
- * }
  */
 export const extractFieldValues = <T extends string>(
   error: AppError,
 ): SparseFieldValueMap<T, string> | undefined => {
   if (isFormValidationError<T>(error)) {
-    return error.metadata.values;
+    return error.metadata.formData;
   }
 
   return;
@@ -57,3 +52,20 @@ export const extractFormErrors = (error: AppError): FormErrors => {
 
   return Object.freeze([]);
 };
+
+/**
+ * Helper to extract form-specific error payload from a generic Result.
+ * Essential for UI components to display fieldErrors and formErrors.
+ */
+export function getFormErrorPayload<F extends string>(
+  error: AppError,
+): FormErrorPayload<F> {
+  return {
+    fieldErrors:
+      extractFieldErrors<F>(error) ??
+      (Object.freeze({}) as DenseFieldErrorMap<F, string>),
+    formData: extractFieldValues<F>(error) ?? Object.freeze({}),
+    formErrors: extractFormErrors(error),
+    message: error.message,
+  };
+}

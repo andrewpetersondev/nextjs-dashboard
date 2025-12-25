@@ -13,11 +13,6 @@ export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 export type FieldError<T = string> = NonEmptyArray<T>;
 
 /**
- * Represents all field errors in a form, mapping field names to arrays of error messages.
- */
-export type FieldErrors = Readonly<Record<string, readonly string[]>>;
-
-/**
  * Represents general form-level errors as an array of strings.
  */
 export type FormErrors = readonly string[];
@@ -33,20 +28,22 @@ export const EMPTY_FORM_ERRORS: FormErrors = Object.freeze([]);
  * @typeParam T - Field name literal union.
  * @typeParam M - Error message type.
  */
-export interface ValidationErrors<T extends string, M = string> {
+export type ValidationErrors<T extends string, M = string> = {
   readonly fieldErrors: DenseFieldErrorMap<T, M>;
   readonly formErrors: FormErrors;
-}
+};
 
 /**
  * Metadata stored within an AppError specifically for form validation failures.
  *
  * @typeParam T - Field name literal union.
  */
-export interface FormValidationMetadata<T extends string>
-  extends ValidationErrors<T, string> {
-  readonly values?: SparseFieldValueMap<T, string>;
-}
+export type FormValidationMetadata<T extends string> = ValidationErrors<
+  T,
+  string
+> & {
+  readonly formData: SparseFieldValueMap<T, string>;
+};
 
 /**
  * A sparse map of field errors, where only fields with errors are present.
@@ -68,11 +65,6 @@ export type SparseFieldErrorMap<T extends string, M> = Partial<
  *
  * @typeParam T - Field name keys.
  * @typeParam V - Value type.
- *
- * @example
- * const values: SparseFieldValueMap<"email" | "password", string> = {
- *   email: "alice@example.com"
- * };
  */
 export type SparseFieldValueMap<T extends string, V> = Readonly<
   Partial<Record<T, V>>

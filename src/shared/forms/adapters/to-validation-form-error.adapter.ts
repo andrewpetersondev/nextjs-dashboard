@@ -5,6 +5,7 @@ import {
 } from "@/shared/forms/core/guards/zod.guard";
 import {
   EMPTY_FORM_ERRORS,
+  type SparseFieldValueMap,
   type ValidationErrors,
 } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -34,9 +35,16 @@ export function mapToValidationErrors<T extends string>(
  */
 export function toValidationFormErrorAdapter<Tfieldnames extends string>(
   error: unknown,
-  fields: readonly Tfieldnames[],
   loggerContext: string,
-  failureMessage: string,
+  {
+    fields,
+    failureMessage,
+    formData = Object.freeze({}),
+  }: {
+    fields: readonly Tfieldnames[];
+    failureMessage: string;
+    formData?: SparseFieldValueMap<Tfieldnames, string>;
+  },
 ): FormResult<never> {
   const isZodShape = isZodErrorLikeShape(error);
 
@@ -53,7 +61,9 @@ export function toValidationFormErrorAdapter<Tfieldnames extends string>(
 
   return makeFormError<Tfieldnames>({
     fieldErrors,
+    formData,
     formErrors,
+    key: "validation",
     message: failureMessage,
   });
 }

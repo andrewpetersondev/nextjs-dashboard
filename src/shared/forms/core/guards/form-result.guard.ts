@@ -4,31 +4,34 @@ import type { FormValidationMetadata } from "@/shared/forms/core/types/field-err
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 
 /**
- * Type guard: checks if the form result is successful.
- */
-export const isFormOk = <T>(
-  r: FormResult<T>,
-): r is Extract<FormResult<T>, { ok: true }> => r.ok;
-
-/**
  * Type guard: checks if the form result is an error.
  */
-export const isFormErr = <T>(
-  r: FormResult<T>,
-): r is Extract<FormResult<T>, { ok: false }> => !r.ok;
+export const isFormErr = <TData>(
+  result: FormResult<TData>,
+): result is Extract<FormResult<TData>, { ok: false }> => {
+  return !result.ok;
+};
+
+/**
+ * Type guard: checks if the form result is successful.
+ */
+export const isFormOk = <TData>(
+  result: FormResult<TData>,
+): result is Extract<FormResult<TData>, { ok: true }> => {
+  return result.ok;
+};
 
 /**
  * Type guard: checks if an AppError contains form validation details.
- *
- * @param error - The error to check.
- * @returns True if the error is a validation error with field errors.
  */
-export function isFormValidationError<T extends string>(
+export function isFormValidationError<TFields extends string>(
   error: AppError,
-): error is AppError<FormValidationMetadata<T>> {
+): error is AppError & { readonly metadata: FormValidationMetadata<TFields> } {
   return (
     error.key === APP_ERROR_KEYS.validation &&
     error.metadata !== undefined &&
+    error.metadata !== null &&
+    typeof error.metadata === "object" &&
     "fieldErrors" in error.metadata
   );
 }

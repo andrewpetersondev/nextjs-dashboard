@@ -4,6 +4,7 @@ import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
   extractFieldErrors,
+  extractFieldValues,
   extractFormErrors,
 } from "@/shared/forms/logic/inspectors/form-error.inspector";
 
@@ -28,6 +29,7 @@ export function toFormErrorPayload<T extends string>(
         : // Fallback for when fields are not provided and it's not a validation error.
           // This cast is only safe if the consumer doesn't expect all fields to be present.
           (Object.freeze({}) as DenseFieldErrorMap<T, string>)),
+    formData: extractFieldValues<T>(error) ?? Object.freeze({}),
     formErrors: extractFormErrors(error),
     message: error.message,
   };

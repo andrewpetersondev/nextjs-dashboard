@@ -51,21 +51,23 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
     parsed = await schema.safeParseAsync(raw);
   } catch (e: unknown) {
     // Unexpected errors during validation (e.g., async refinements throwing)
-    return toValidationFormErrorAdapter<Tfieldnames>(
-      e,
-      fields,
-      loggerContext,
+    return toValidationFormErrorAdapter<Tfieldnames>(e, loggerContext, {
       failureMessage,
-    );
+      fields,
+      formData: raw,
+    });
   }
 
   // Zod validation failed
   if (!parsed.success) {
     return toValidationFormErrorAdapter<Tfieldnames>(
       parsed.error,
-      fields,
       loggerContext,
-      failureMessage,
+      {
+        failureMessage,
+        fields,
+        formData: raw,
+      },
     );
   }
 

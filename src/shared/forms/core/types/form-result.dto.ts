@@ -2,6 +2,7 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type {
   DenseFieldErrorMap,
   FormErrors,
+  SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
 import type { Result } from "@/shared/result/result.types";
 
@@ -40,6 +41,7 @@ export type FormErrorPayload<T extends string> = {
   readonly fieldErrors: DenseFieldErrorMap<T, string>;
   readonly formErrors: FormErrors;
   readonly message: string;
+  readonly formData: SparseFieldValueMap<T, string>;
 };
 
 /**

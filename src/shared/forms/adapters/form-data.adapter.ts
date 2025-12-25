@@ -64,20 +64,13 @@ export function resolveRawFieldPayload<T extends string>(
  * @param fields - The list of field names to include.
  * @param redactFields - The list of field names to omit from the result.
  * @returns An immutable map of field names to string values.
- *
- * @example
- * const raw = { name: "Alice", email: "alice@example.com", age: 30 };
- * const fields = ["name", "email"] as const;
- * const redactFields = ["email"] as const;
- * const result = extractDisplayableFieldValues(raw, fields, redactFields);
- * // result: { name: "Alice" }
  */
 export function extractDisplayableFieldValues<T extends string>(
   raw: Readonly<Record<string, unknown>>,
   fields: readonly T[],
   redactFields: readonly T[],
 ): SparseFieldValueMap<T, string> {
-  const values = {} as Record<T, string>;
+  const formData = {} as Record<T, string>;
 
   for (const key of fields) {
     const shouldRedact = redactFields.includes(key);
@@ -85,9 +78,9 @@ export function extractDisplayableFieldValues<T extends string>(
     const v = raw[key];
 
     if (!shouldRedact && typeof v === "string") {
-      values[key] = v;
+      formData[key] = v;
     }
   }
 
-  return Object.freeze(values);
+  return Object.freeze(formData);
 }

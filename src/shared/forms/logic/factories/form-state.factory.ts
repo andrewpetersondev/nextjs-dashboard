@@ -25,6 +25,7 @@ export function makeInitialFormState<T extends string>(
     message: "",
     metadata: Object.freeze({
       fieldErrors,
+      formData: Object.freeze({}),
       formErrors: EMPTY_FORM_ERRORS,
     }),
   });

@@ -6,7 +6,7 @@ import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
  * @typeParam Tfieldnames - The union of allowed field names for validation errors.
  * @typeParam Tresult - The type of data returned on success.
  */
-export type FormAction<Tfieldnames extends string, Tresult = unknown> = (
+export type FormAction<_Tfieldnames extends string, Tresult = unknown> = (
   _prevState: FormResult<Tresult>,
   formData: FormData,
 ) => Promise<FormResult<Tresult>>;
