@@ -113,16 +113,14 @@ export async function signupAction(
       operationName: "signup.authentication.failed",
     });
 
-    const { fieldErrors, message } = toFormErrorPayload<SignupField>(
-      error,
-      fields,
-    );
+    const payload = toFormErrorPayload<SignupField>(error, fields);
 
     return makeFormError<SignupField>({
-      code: error.key,
-      fieldErrors,
-      message,
-      values: input,
+      ...payload,
+      formData: input,
+      formErrors:
+        payload.formErrors.length > 0 ? payload.formErrors : [payload.message],
+      key: error.key,
     });
   }
   const { id: userId, role } = sessionResult.value;

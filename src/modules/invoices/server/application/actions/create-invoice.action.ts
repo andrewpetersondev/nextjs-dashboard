@@ -16,6 +16,7 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
+import { isAppError } from "@/shared/errors/utils/is-app-error";
 import { resolveRawFieldPayload } from "@/shared/forms/adapters/form-data.adapter";
 import { toDenseFieldErrorMapFromZod } from "@/shared/forms/adapters/zod-error.adapter";
 import { isZodErrorInstance } from "@/shared/forms/core/guards/zod.guard";
@@ -45,6 +46,9 @@ export async function createInvoiceAction(
   if (!parsed.success) {
     return makeFormError<CreateInvoiceFieldNames>({
       fieldErrors: toDenseFieldErrorMapFromZod(parsed.error, allowed),
+      formData: rawInput,
+      formErrors: [],
+      key: "validation",
       message: translator(INVOICE_MSG.validationFailed),
     });
   }
@@ -64,6 +68,9 @@ export async function createInvoiceAction(
           sensitiveData: [],
           status: [],
         },
+        formData: rawInput,
+        formErrors: [],
+        key: isAppError(result.error) ? result.error.key : "unknown",
         message: toInvoiceErrorMessage(result.error),
       });
     }
@@ -97,6 +104,9 @@ export async function createInvoiceAction(
       fieldErrors: isZodErrorInstance(error)
         ? toDenseFieldErrorMapFromZod(error, allowed)
         : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
+      formData: {},
+      formErrors: [],
+      key: isAppError(error) ? error.key : "unknown",
       message: baseMessage,
     });
   }

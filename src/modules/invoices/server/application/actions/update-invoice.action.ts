@@ -57,6 +57,9 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
 
   return makeFormError<UpdateInvoiceFieldNames>({
     fieldErrors: toDenseFieldErrorMap({}, schemaFields),
+    formData: {},
+    formErrors: [],
+    key: error instanceof AppError ? error.key : "unknown",
     message:
       error instanceof AppError
         ? INVOICE_MSG.invalidInput
@@ -111,8 +114,10 @@ export async function updateInvoiceAction(
 
       return makeFormError<UpdateInvoiceFieldNames>({
         fieldErrors: dense,
+        formData: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
+        formErrors: [],
+        key: "validation",
         message: INVOICE_MSG.validationFailed,
-        values: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
       });
     }
 

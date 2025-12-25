@@ -60,6 +60,9 @@ async function createDemoUserInternal(
 
     return makeFormError({
       fieldErrors: {} as DenseFieldErrorMap<string, string>,
+      formData: {},
+      formErrors: [error.message || AUTH_ERROR_MESSAGES.DEMO_USER_FAILED],
+      key: error.key,
       message: error.message || AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
     });
   }
@@ -93,6 +96,9 @@ export async function demoUserActionAdapter(
   if (!role) {
     return makeFormError({
       fieldErrors: {} as DenseFieldErrorMap<string, string>,
+      formData: {},
+      formErrors: [AUTH_ERROR_MESSAGES.DEMO_USER_FAILED],
+      key: "validation",
       message: AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
     });
   }

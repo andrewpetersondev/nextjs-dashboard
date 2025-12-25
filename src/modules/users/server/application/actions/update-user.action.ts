@@ -14,6 +14,7 @@ import {
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
@@ -48,6 +49,9 @@ function idInvalidResult<F extends string>(
 ): FormResult<never> {
   return makeFormError<F>({
     fieldErrors: makeEmptyDenseFieldErrorMap(fields),
+    formData: {} as Readonly<Partial<Record<F, string>>>,
+    formErrors: [],
+    key: APP_ERROR_KEYS.validation,
     message: USER_ERROR_MESSAGES.validationFailed,
   });
 }
@@ -57,6 +61,9 @@ function notFoundResult<F extends string>(
 ): FormResult<never> {
   return makeFormError<F>({
     fieldErrors: makeEmptyDenseFieldErrorMap(fields),
+    formData: {} as Readonly<Partial<Record<F, string>>>,
+    formErrors: [],
+    key: APP_ERROR_KEYS.not_found,
     message: USER_ERROR_MESSAGES.notFound,
   });
 }
@@ -105,6 +112,7 @@ function buildPatch(
 /**
  * Updates an existing user (admin only).
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function updateUserAction(
   id: string,
   _prevState: FormResult<unknown>,
@@ -156,6 +164,11 @@ export async function updateUserAction(
     if (!result.ok) {
       return makeFormError<EditUserFormFieldNames>({
         fieldErrors: makeEmptyDenseFieldErrorMap(fields),
+        formData: {} as Readonly<
+          Partial<Record<EditUserFormFieldNames, string>>
+        >,
+        formErrors: [],
+        key: APP_ERROR_KEYS.validation,
         message: result.error.message || USER_ERROR_MESSAGES.updateFailed,
       });
     }
@@ -165,6 +178,9 @@ export async function updateUserAction(
   } catch (_error: unknown) {
     return makeFormError<EditUserFormFieldNames>({
       fieldErrors: makeEmptyDenseFieldErrorMap(fields),
+      formData: {} as Readonly<Partial<Record<EditUserFormFieldNames, string>>>,
+      formErrors: [],
+      key: APP_ERROR_KEYS.unexpected,
       message: USER_ERROR_MESSAGES.unexpected,
     });
   }

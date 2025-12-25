@@ -11,6 +11,7 @@ import {
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   makeEmptyDenseFieldErrorMap,
@@ -40,6 +41,7 @@ function pickCreateUserFormData(
 /**
  * Creates a new user (admin only).
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 export async function createUserAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
@@ -62,6 +64,11 @@ export async function createUserAction(
           selectSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
           allowed,
         ),
+        formData: {} as Readonly<
+          Partial<Record<(typeof allowed)[number], string>>
+        >,
+        formErrors: [],
+        key: APP_ERROR_KEYS.validation,
         message: USER_ERROR_MESSAGES.validationFailed,
       });
     }
@@ -79,6 +86,11 @@ export async function createUserAction(
     if (!result.ok) {
       return makeFormError({
         fieldErrors: makeEmptyDenseFieldErrorMap(allowed),
+        formData: {} as Readonly<
+          Partial<Record<(typeof allowed)[number], string>>
+        >,
+        formErrors: [],
+        key: APP_ERROR_KEYS.validation,
         message: result.error.message || USER_ERROR_MESSAGES.createFailed,
       });
     }
@@ -88,6 +100,11 @@ export async function createUserAction(
     // Catch generic unexpected errors not caught by service
     return makeFormError({
       fieldErrors: toDenseFieldErrorMap({}, allowed),
+      formData: {} as Readonly<
+        Partial<Record<(typeof allowed)[number], string>>
+      >,
+      formErrors: [],
+      key: APP_ERROR_KEYS.unexpected,
       message: USER_ERROR_MESSAGES.unexpected,
     });
   }

@@ -103,31 +103,31 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
-    const { fieldErrors, message } = toFormErrorPayload<LoginField>(
-      error,
-      fields,
-    );
+    const payload = toFormErrorPayload<LoginField>(error, fields);
 
     // Unified security response for credential failures
     if (error.key === "invalid_credentials") {
       const credentialsErrorMessage = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
 
       return makeFormError<LoginField>({
-        code: error.key,
+        ...payload,
         fieldErrors: {
           email: [credentialsErrorMessage],
           password: [credentialsErrorMessage],
         },
+        formData: input,
+        formErrors: [credentialsErrorMessage],
+        key: error.key,
         message: credentialsErrorMessage,
-        values: input,
       });
     }
 
     return makeFormError<LoginField>({
-      code: error.key,
-      fieldErrors,
-      message,
-      values: input,
+      ...payload,
+      formData: input,
+      formErrors:
+        payload.formErrors.length > 0 ? payload.formErrors : [payload.message],
+      key: error.key,
     });
   }
 
