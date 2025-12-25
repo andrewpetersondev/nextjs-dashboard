@@ -1,6 +1,9 @@
 import type { z } from "zod";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
+import {
+  type DenseFieldErrorMap,
+  EMPTY_FORM_ERRORS,
+} from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
@@ -20,9 +23,10 @@ export function makeInitialFormState<T extends string>(
   const error = makeAppError("validation", {
     cause: "INITIAL_STATE",
     message: "",
-    metadata: {
+    metadata: Object.freeze({
       fieldErrors,
-    },
+      formErrors: EMPTY_FORM_ERRORS,
+    }),
   });
 
   return Err(error);

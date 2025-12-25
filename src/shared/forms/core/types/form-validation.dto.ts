@@ -1,3 +1,5 @@
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-error.value";
+
 /**
  * Input options for form validation.
  *
@@ -11,5 +13,5 @@ export interface FormValidationOptions<T, K extends keyof T & string> {
     readonly failureMessage?: string;
     readonly successMessage?: string;
   };
-  readonly raw?: Readonly<Partial<Record<K, unknown>>>;
+  readonly raw?: SparseFieldValueMap<K, unknown>;
 }

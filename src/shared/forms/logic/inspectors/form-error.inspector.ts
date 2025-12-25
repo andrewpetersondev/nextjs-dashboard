@@ -2,6 +2,7 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
 import type {
   DenseFieldErrorMap,
+  FormErrors,
   SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
 
@@ -18,21 +19,11 @@ import type {
 export const extractFieldErrors = <T extends string>(
   error: AppError,
 ): DenseFieldErrorMap<T, string> | undefined => {
-  if (!isFormValidationError(error)) {
-    return;
+  if (isFormValidationError<T>(error)) {
+    return error.metadata.fieldErrors;
   }
 
-  const metadata = error.metadata as {
-    fieldErrors?: DenseFieldErrorMap<T, string>;
-  };
-
-  const fieldErrors = metadata?.fieldErrors;
-
-  if (!fieldErrors || typeof fieldErrors !== "object") {
-    return;
-  }
-
-  return fieldErrors;
+  return;
 };
 
 /**
@@ -48,18 +39,21 @@ export const extractFieldErrors = <T extends string>(
 export const extractFieldValues = <T extends string>(
   error: AppError,
 ): SparseFieldValueMap<T, string> | undefined => {
-  const metadata = error?.metadata;
-
-  if (!metadata || typeof metadata !== "object") {
-    return;
+  if (isFormValidationError<T>(error)) {
+    return error.metadata.values;
   }
 
-  const values = (metadata as { values?: SparseFieldValueMap<T, string> })
-    .values;
+  return;
+};
 
-  if (!values || typeof values !== "object") {
-    return;
+/**
+ * Extracts form-level errors from an AppError.
+ * Returns empty array if not present.
+ */
+export const extractFormErrors = (error: AppError): FormErrors => {
+  if (isFormValidationError(error)) {
+    return error.metadata.formErrors;
   }
 
-  return values;
+  return Object.freeze([]);
 };

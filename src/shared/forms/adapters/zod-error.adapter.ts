@@ -9,13 +9,23 @@ import {
 } from "@/shared/forms/logic/factories/field-error-map.factory";
 
 /**
+ * Loose shape matching a ZodError for flattening.
+ */
+export type ZodErrorLike = {
+  readonly issues: readonly {
+    readonly path: readonly (string | number | symbol)[];
+    readonly message: string;
+  }[];
+};
+
+/**
  * Adapts a ZodError (foreign) into a canonical representation of field and form errors.
  */
 export function fromZodError<T extends string>(
-  error: z.ZodError,
+  error: ZodErrorLike,
   fields: readonly T[],
 ): ValidationErrors<T, string> {
-  const { fieldErrors, formErrors } = z.flattenError(error);
+  const { fieldErrors, formErrors } = z.flattenError(error as z.ZodError);
 
   const sparse = selectSparseFieldErrors<T, string>(fieldErrors, fields);
 

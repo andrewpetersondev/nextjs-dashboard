@@ -10,14 +10,16 @@ import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-error.
 export function extractFormDataFields<T extends string>(
   fd: FormData,
   allowed: readonly T[],
-): Readonly<Partial<Record<T, string>>> {
-  const out: Partial<Record<T, string>> = {};
+): SparseFieldValueMap<T, string> {
+  const out = {} as Record<T, string>;
+
   for (const k of allowed) {
     const v = fd.get(k);
     if (v !== null) {
       out[k] = typeof v === "string" ? v : String(v);
     }
   }
+
   return Object.freeze(out);
 }
 
@@ -36,10 +38,10 @@ export function extractFormDataFields<T extends string>(
 export function resolveRawFieldPayload<T extends string>(
   formData: FormData,
   fields: readonly T[],
-  explicitRaw?: Readonly<Partial<Record<T, unknown>>>,
-): Readonly<Partial<Record<T, string>>> {
+  explicitRaw?: SparseFieldValueMap<T, unknown>,
+): SparseFieldValueMap<T, string> {
   if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    const out: Partial<Record<T, string>> = {};
+    const out = {} as Record<T, string>;
 
     for (const f of fields) {
       const value = explicitRaw[f];
@@ -75,17 +77,17 @@ export function extractDisplayableFieldValues<T extends string>(
   fields: readonly T[],
   redactFields: readonly T[],
 ): SparseFieldValueMap<T, string> {
-  const values: Partial<Record<T, string>> = {};
+  const values = {} as Record<T, string>;
 
   for (const key of fields) {
     const shouldRedact = redactFields.includes(key);
 
-    const v = raw[key as string];
+    const v = raw[key];
 
     if (!shouldRedact && typeof v === "string") {
       values[key] = v;
     }
   }
 
-  return Object.freeze(values) as SparseFieldValueMap<T, string>;
+  return Object.freeze(values);
 }

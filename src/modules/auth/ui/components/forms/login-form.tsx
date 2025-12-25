@@ -31,7 +31,7 @@ export function LoginForm({
   action,
 }: AuthActionProps<LoginField>): JSX.Element {
   const [state, boundAction, pending] = useActionState<
-    FormResult<LoginField>,
+    FormResult<never>,
     FormData
   >(action, INITIAL_STATE);
 

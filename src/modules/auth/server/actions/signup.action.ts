@@ -44,9 +44,9 @@ const fields = SIGNUP_FIELDS_LIST;
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup flow is inherently multi-step
 export async function signupAction(
-  _prevState: FormResult<SignupField>,
+  _prevState: FormResult<unknown>,
   formData: FormData,
-): Promise<FormResult<SignupField>> {
+): Promise<FormResult<never>> {
   const requestId = crypto.randomUUID();
   const { ip, userAgent } = await getRequestMetadata();
   const tracker = new PerformanceTracker();
@@ -113,7 +113,10 @@ export async function signupAction(
       operationName: "signup.authentication.failed",
     });
 
-    const { fieldErrors, message } = toFormErrorPayload<SignupField>(error);
+    const { fieldErrors, message } = toFormErrorPayload<SignupField>(
+      error,
+      fields,
+    );
 
     return makeFormError<SignupField>({
       code: error.key,

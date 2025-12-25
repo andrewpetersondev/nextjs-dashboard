@@ -38,7 +38,7 @@ src/modules/customers
 src/modules/revenues
 src/modules/invoices
 src/modules/users
-*.tsx
+# *.tsx
 # ======================================================
 # BUILD / OUTPUT FILES
 # ======================================================

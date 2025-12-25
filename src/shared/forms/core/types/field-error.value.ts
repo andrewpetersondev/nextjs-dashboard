@@ -23,6 +23,11 @@ export type FieldErrors = Readonly<Record<string, readonly string[]>>;
 export type FormErrors = readonly string[];
 
 /**
+ * An empty, frozen array of form errors.
+ */
+export const EMPTY_FORM_ERRORS: FormErrors = Object.freeze([]);
+
+/**
  * Combined form validation errors including field and form-level errors.
  *
  * @typeParam T - Field name literal union.
@@ -31,6 +36,16 @@ export type FormErrors = readonly string[];
 export interface ValidationErrors<T extends string, M = string> {
   readonly fieldErrors: DenseFieldErrorMap<T, M>;
   readonly formErrors: FormErrors;
+}
+
+/**
+ * Metadata stored within an AppError specifically for form validation failures.
+ *
+ * @typeParam T - Field name literal union.
+ */
+export interface FormValidationMetadata<T extends string>
+  extends ValidationErrors<T, string> {
+  readonly values?: SparseFieldValueMap<T, string>;
 }
 
 /**
@@ -59,7 +74,9 @@ export type SparseFieldErrorMap<T extends string, M> = Partial<
  *   email: "alice@example.com"
  * };
  */
-export type SparseFieldValueMap<T extends string, V> = Partial<Record<T, V>>;
+export type SparseFieldValueMap<T extends string, V> = Readonly<
+  Partial<Record<T, V>>
+>;
 
 /**
  * A dense map of field errors, where all fields are present.

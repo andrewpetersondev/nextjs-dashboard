@@ -33,9 +33,9 @@ const fields = LOGIN_FIELDS_LIST;
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: login boundary is inherently multi-step (validation + orchestration + mapping)
 export async function loginAction(
-  _prevState: FormResult<LoginField>,
+  _prevState: FormResult<unknown>,
   formData: FormData,
-): Promise<FormResult<LoginField>> {
+): Promise<FormResult<never>> {
   const requestId = crypto.randomUUID();
 
   const { ip, userAgent } = await getRequestMetadata();
@@ -103,7 +103,10 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
-    const { fieldErrors, message } = toFormErrorPayload<LoginField>(error);
+    const { fieldErrors, message } = toFormErrorPayload<LoginField>(
+      error,
+      fields,
+    );
 
     // Unified security response for credential failures
     if (error.key === "invalid_credentials") {

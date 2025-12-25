@@ -35,7 +35,7 @@ export function SignupForm({
   action,
 }: AuthActionProps<SignupField>): JSX.Element {
   const [state, boundAction, pending] = useActionState<
-    FormResult<SignupField>,
+    FormResult<never>,
     FormData
   >(action, INITIAL_STATE);
 

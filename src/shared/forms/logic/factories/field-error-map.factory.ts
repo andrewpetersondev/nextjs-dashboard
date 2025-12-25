@@ -1,5 +1,6 @@
 import type {
   DenseFieldErrorMap,
+  FieldError,
   SparseFieldErrorMap,
 } from "@/shared/forms/core/types/field-error.value";
 import { isNonEmptyArray } from "@/shared/utilities/array";
@@ -15,13 +16,13 @@ import { isNonEmptyArray } from "@/shared/utilities/array";
 export function makeEmptyDenseFieldErrorMap<T extends string, M extends string>(
   fields: readonly T[],
 ): DenseFieldErrorMap<T, M> {
-  const result: Partial<Record<T, readonly M[]>> = {};
+  const result = {} as Record<T, readonly M[]>;
 
   for (const field of fields) {
-    result[field] = Object.freeze([]) as readonly M[];
+    result[field] = Object.freeze([]);
   }
 
-  return Object.freeze(result) as DenseFieldErrorMap<T, M>;
+  return Object.freeze(result);
 }
 
 /**
@@ -37,16 +38,16 @@ export function toDenseFieldErrorMap<T extends string, M extends string>(
   sparse: SparseFieldErrorMap<T, M> | undefined,
   fields: readonly T[],
 ): DenseFieldErrorMap<T, M> {
-  const result: Partial<Record<T, readonly M[]>> = {};
+  const result = {} as Record<T, readonly M[]>;
 
   for (const field of fields) {
-    const value = sparse?.[field] as readonly M[] | undefined;
+    const value = sparse?.[field];
 
     result[field] = Array.isArray(value)
-      ? (Object.freeze([...value]) as readonly M[])
-      : (Object.freeze([]) as readonly M[]);
+      ? Object.freeze([...value])
+      : Object.freeze([]);
   }
-  return Object.freeze(result) as DenseFieldErrorMap<T, M>;
+  return Object.freeze(result);
 }
 
 /**
@@ -59,21 +60,17 @@ export function toDenseFieldErrorMap<T extends string, M extends string>(
  * @returns A frozen {@link SparseFieldErrorMap} containing only allowed fields that have non-empty errors.
  */
 export function selectSparseFieldErrors<T extends string, M extends string>(
-  fieldErrors:
-    | Partial<Record<T, readonly M[] | undefined>>
-    | Record<string, readonly M[] | undefined>,
+  fieldErrors: Record<string, readonly M[] | undefined>,
   allowedFields: readonly T[],
 ): SparseFieldErrorMap<T, M> {
-  const result: SparseFieldErrorMap<T, M> = {};
+  const result = {} as Record<T, FieldError<M>>;
 
   for (const field of allowedFields) {
-    const maybeErrors = (
-      fieldErrors as Record<string, readonly M[] | undefined>
-    )[field];
+    const maybeErrors = fieldErrors[field];
 
     if (isNonEmptyArray(maybeErrors)) {
       result[field] = Object.freeze([...maybeErrors]);
     }
   }
-  return Object.freeze(result) as SparseFieldErrorMap<T, M>;
+  return Object.freeze(result);
 }

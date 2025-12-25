@@ -22,37 +22,36 @@ export const isZodErrorInstance = (err: unknown): err is z.ZodError =>
 /**
  * Loose shape check for a value resembling a {@link z.ZodError}.
  *
- * This performs a non-strict (duck-typed) check to see if the value is a non-null
- * object that exposes ZodError-like properties (`name`, `issues`, or `flatten`).
+ * This performs a duck-typed check to see if the value is a non-null
+ * object that exposes standard ZodError properties (`name` and `issues`).
  *
  * @param err - The value to test.
- * @returns `true` if `err` looks like a ZodError (has `name`, `issues`, or `flatten`); otherwise `false`.
+ * @returns `true` if `err` looks like a ZodError; otherwise `false`.
  */
 export const isZodErrorLikeShape = (
   err: unknown,
 ): err is {
-  name?: string;
-  issues?: unknown[];
-  flatten?: () => {
-    fieldErrors: Record<string, readonly string[] | undefined>;
-  };
+  name: string;
+  issues: { path: (string | number | symbol)[]; message: string }[];
 } => {
-  if (typeof err !== "object" || err === null) {
+  if (
+    typeof err !== "object" ||
+    err === null ||
+    !("name" in err) ||
+    err.name !== "ZodError" ||
+    !("issues" in err) ||
+    !Array.isArray(err.issues)
+  ) {
     return false;
   }
 
-  const anyErr = err as {
-    name?: unknown;
-    issues?: unknown;
-    flatten?: unknown;
-  };
-
-  const nameLooksRight =
-    typeof anyErr.name === "string" && anyErr.name === "ZodError";
-
-  const issuesLooksRight = Array.isArray(anyErr.issues);
-
-  const flattenLooksRight = typeof anyErr.flatten === "function";
-
-  return nameLooksRight || issuesLooksRight || flattenLooksRight;
+  return err.issues.every(
+    (issue) =>
+      typeof issue === "object" &&
+      issue !== null &&
+      "path" in issue &&
+      Array.isArray(issue.path) &&
+      "message" in issue &&
+      typeof issue.message === "string",
+  );
 };

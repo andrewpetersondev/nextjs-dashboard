@@ -1,10 +1,14 @@
-import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
+import {
+  APP_ERROR_KEYS,
+  type AppErrorKey,
+} from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import type {
-  DenseFieldErrorMap,
-  FormErrors,
-  SparseFieldValueMap,
+import {
+  type DenseFieldErrorMap,
+  EMPTY_FORM_ERRORS,
+  type FormErrors,
+  type SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
 import type {
   FormResult,
@@ -50,14 +54,14 @@ export interface FormErrorParams<F extends string> {
 export const makeFormError = <F extends string>(
   params: FormErrorParams<F>,
 ): FormResult<never> => {
-  const error: AppError = makeAppError(params.code ?? "validation", {
-    cause: "",
+  const error: AppError = makeAppError(APP_ERROR_KEYS.validation, {
+    cause: params?.code ?? "",
     message: params.message,
-    metadata: {
+    metadata: freeze({
       fieldErrors: params.fieldErrors,
-      formErrors: params.formErrors,
+      formErrors: params.formErrors ?? EMPTY_FORM_ERRORS,
       values: params.values,
-    },
+    }),
   });
 
   return Err(error);
