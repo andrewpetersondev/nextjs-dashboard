@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { z } from "zod";
-import { makeFormOk } from "@/shared/forms/factories/form-result.factory";
-import { resolveFormValidationOptions } from "@/shared/forms/factories/form-validation-options.factory";
-import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
-import { toValidationFormError } from "@/shared/forms/server/to-validation-form.error";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
-import type { FormValidationOptions } from "@/shared/forms/types/form-validation.dto";
-import { resolveCanonicalFieldNames } from "@/shared/forms/zod/schema-inspector";
+import { resolveRawFieldPayload } from "@/shared/forms/adapters/form-data.adapter";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type { FormValidationOptions } from "@/shared/forms/core/types/form-validation.dto";
+import { makeFormOk } from "@/shared/forms/logic/factories/form-result.factory";
+import { resolveFormValidationOptions } from "@/shared/forms/logic/factories/validation-options.factory";
+import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { toValidationFormError } from "@/shared/forms/server/to-validation-form-error";
 
 /**
  * Validates FormData against a Zod schema.

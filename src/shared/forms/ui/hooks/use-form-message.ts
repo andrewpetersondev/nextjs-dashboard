@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
 
 export function useFormMessage<T>(state: FormResult<T>) {

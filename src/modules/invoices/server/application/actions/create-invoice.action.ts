@@ -16,15 +16,15 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
+import { resolveRawFieldPayload } from "@/shared/forms/adapters/form-data.adapter";
+import { toDenseFieldErrorMapFromZod } from "@/shared/forms/adapters/zod-error.adapter";
+import { isZodErrorInstance } from "@/shared/forms/core/guards/zod.guard";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   makeFormError,
   makeFormOk,
-} from "@/shared/forms/factories/form-result.factory";
-import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
-import { toFieldNames } from "@/shared/forms/zod/schema-inspector";
-import { isZodErrorInstance } from "@/shared/forms/zod/zod.guard";
-import { fromZodError } from "@/shared/forms/zod/zod-error.adapter";
+} from "@/shared/forms/logic/factories/form-result.factory";
+import { toFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -44,7 +44,7 @@ export async function createInvoiceAction(
 
   if (!parsed.success) {
     return makeFormError<CreateInvoiceFieldNames>({
-      fieldErrors: fromZodError(parsed.error, allowed),
+      fieldErrors: toDenseFieldErrorMapFromZod(parsed.error, allowed),
       message: translator(INVOICE_MSG.validationFailed),
     });
   }
@@ -95,7 +95,7 @@ export async function createInvoiceAction(
 
     return makeFormError<CreateInvoiceFieldNames>({
       fieldErrors: isZodErrorInstance(error)
-        ? fromZodError(error, allowed)
+        ? toDenseFieldErrorMapFromZod(error, allowed)
         : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
       message: baseMessage,
     });

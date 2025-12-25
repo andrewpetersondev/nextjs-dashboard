@@ -11,17 +11,17 @@ import {
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   makeEmptyDenseFieldErrorMap,
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/factories/field-error-map.factory";
+} from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
   makeFormError,
   makeFormOk,
-} from "@/shared/forms/factories/form-result.factory";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
-import { toFieldNames } from "@/shared/forms/zod/schema-inspector";
+} from "@/shared/forms/logic/factories/form-result.factory";
+import { toFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;

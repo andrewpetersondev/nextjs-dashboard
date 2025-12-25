@@ -14,13 +14,13 @@ import { InvoiceAmountInput } from "@/modules/invoices/ui/components/forms/invoi
 import { InvoiceDate } from "@/modules/invoices/ui/components/forms/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/ui/components/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/ui/components/forms/sensitive-data";
-import { createInitialFailedFormState } from "@/shared/forms/factories/initial-form-state";
-import { extractFieldErrors } from "@/shared/forms/infrastructure/form-error-inspector";
 import type {
   DenseFieldErrorMap,
   FieldError,
-} from "@/shared/forms/types/field-error.value";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+} from "@/shared/forms/core/types/field-error.value";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
 import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
@@ -97,7 +97,7 @@ export const EditInvoiceForm = ({
   customers: CustomerField[];
   errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
 }): JSX.Element => {
-  const initialState = createInitialFailedFormState<UpdateInvoiceFieldNames>(
+  const initialState = makeInitialFailedFormState<UpdateInvoiceFieldNames>(
     Object.keys(
       UpdateInvoiceSchema.shape,
     ) as readonly UpdateInvoiceFieldNames[],

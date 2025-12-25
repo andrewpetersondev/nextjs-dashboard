@@ -1,5 +1,5 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { Result } from "@/shared/result/result.types";
 
 /**

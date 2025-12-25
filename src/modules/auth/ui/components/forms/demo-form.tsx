@@ -3,8 +3,8 @@
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import { createInitialFailedFormState } from "@/shared/forms/factories/initial-form-state";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {
@@ -27,7 +27,7 @@ export const DemoForm: FC<DemoFormProps> = ({
   label,
   action,
 }: DemoFormProps): JSX.Element => {
-  const initialState = createInitialFailedFormState([]);
+  const initialState = makeInitialFailedFormState([]);
 
   const [state, boundAction, pending] = useActionState<
     FormResult<never>,

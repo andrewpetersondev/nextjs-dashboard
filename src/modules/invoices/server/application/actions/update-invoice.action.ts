@@ -16,15 +16,15 @@ import {
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
 import { AppError } from "@/shared/errors/core/app-error.entity";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/factories/field-error-map.factory";
+} from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
   makeFormError,
   makeFormOk,
-} from "@/shared/forms/factories/form-result.factory";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+} from "@/shared/forms/logic/factories/form-result.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

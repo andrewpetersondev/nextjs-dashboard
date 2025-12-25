@@ -1,4 +1,4 @@
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 
 /**
  * Standard contract for a Next.js Server Action used with useActionState.

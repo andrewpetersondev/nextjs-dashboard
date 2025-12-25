@@ -2,7 +2,7 @@ import type {
   LoginField,
   SignupField,
 } from "@/modules/auth/shared/domain/user/auth.schema";
-import type { FormAction } from "@/shared/forms/types/form-action.dto";
+import type { FormAction } from "@/shared/forms/core/types/form-action.dto";
 
 /**
  * Shared props for components requiring an auth form action.

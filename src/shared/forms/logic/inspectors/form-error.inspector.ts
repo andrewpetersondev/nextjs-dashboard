@@ -1,9 +1,9 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { isFormValidationError } from "@/shared/forms/guards/form-result.guard";
+import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.value";
 
 /**
  * Extracts dense field errors from an AppError.

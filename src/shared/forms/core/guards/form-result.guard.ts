@@ -1,10 +1,10 @@
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { NonEmptyArray } from "@/shared/forms/types/field-error.value";
+import type { NonEmptyArray } from "@/shared/forms/core/types/field-error.value";
 import type {
   FormResult,
   FormSuccessPayload,
-} from "@/shared/forms/types/form-result.dto";
+} from "@/shared/forms/core/types/form-result.dto";
 import type { Result } from "@/shared/result/result.types";
 
 /**

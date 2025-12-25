@@ -1,14 +1,14 @@
 import { z } from "zod";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/factories/field-error-map.factory";
-import type { DenseFieldErrorMap } from "@/shared/forms/types/field-error.value";
+} from "@/shared/forms/logic/factories/field-error-map.factory";
 
 /**
  * Adapts a ZodError (foreign) into a DenseFieldErrorMap (canonical).
  */
-export function fromZodError<T extends string>(
+export function toDenseFieldErrorMapFromZod<T extends string>(
   error: z.ZodError,
   fields: readonly T[],
 ): DenseFieldErrorMap<T, string> {

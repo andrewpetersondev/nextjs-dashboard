@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { FormAlert } from "@/ui/molecules/form-alert";
 
 interface AuthFormFeedbackProps<F extends string> {

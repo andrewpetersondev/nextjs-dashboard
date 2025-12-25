@@ -4,11 +4,11 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type {
   DenseFieldErrorMap,
   SparseFieldValueMap,
-} from "@/shared/forms/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.value";
 import type {
   FormResult,
   FormSuccessPayload,
-} from "@/shared/forms/types/form-result.dto";
+} from "@/shared/forms/core/types/form-result.dto";
 import { Err, Ok } from "@/shared/result/result";
 
 const freeze = <T extends object>(o: T): Readonly<T> => Object.freeze(o);

@@ -1,8 +1,8 @@
-import { isNonEmptyArray } from "@/shared/forms/guards/form-result.guard";
+import { isNonEmptyArray } from "@/shared/forms/core/guards/form-result.guard";
 import type {
   DenseFieldErrorMap,
   SparseFieldErrorMap,
-} from "@/shared/forms/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.value";
 
 /**
  * Creates an empty dense error map (all fields present with empty arrays).

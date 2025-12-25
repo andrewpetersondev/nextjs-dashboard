@@ -19,9 +19,9 @@ import { updateUserAction } from "@/modules/users/server/application/actions/upd
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/factories/initial-form-state";
-import type { FieldError } from "@/shared/forms/types/field-error.value";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FieldError } from "@/shared/forms/core/types/field-error.value";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { makeInitialFailedFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
@@ -108,8 +108,7 @@ function EditUserFormFields({
 
 export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
   const [showAlert, setShowAlert] = useState(false);
-  const initialState =
-    createInitialFailedFormStateFromSchema(EditUserFormSchema);
+  const initialState = makeInitialFailedFormStateFromSchema(EditUserFormSchema);
 
   const updateUserWithId = updateUserAction.bind(null, user.id) as (
     prevState: FormResult<unknown>,

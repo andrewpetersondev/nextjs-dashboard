@@ -10,18 +10,17 @@ import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/ui/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
-import { createInitialFailedFormState } from "@/shared/forms/factories/initial-form-state";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { makeInitialFailedFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import {
   extractFieldErrors,
   extractFieldValues,
-} from "@/shared/forms/infrastructure/form-error-inspector";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
+} from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
-const INITIAL_STATE =
-  createInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
+const INITIAL_STATE = makeInitialFailedFormState<LoginField>(LOGIN_FIELDS_LIST);
 
 /**
  * LoginForm component for user authentication.

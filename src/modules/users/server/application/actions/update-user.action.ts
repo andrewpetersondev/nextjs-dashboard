@@ -1,4 +1,5 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import {
@@ -13,14 +14,14 @@ import {
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
   makeFormError,
   makeFormOk,
-} from "@/shared/forms/factories/form-result.factory";
+} from "@/shared/forms/logic/factories/form-result.factory";
+import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
-import { resolveCanonicalFieldNames } from "@/shared/forms/zod/schema-inspector";
 import { ROUTES } from "@/shared/routes/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

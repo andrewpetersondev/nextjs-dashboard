@@ -1,4 +1,4 @@
-import type { SparseFieldValueMap } from "@/shared/forms/types/field-error.value";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-error.value";
 
 /**
  * Extracts specified fields and their values from a FormData object.
@@ -68,7 +68,7 @@ export function resolveRawFieldPayload<T extends string>(
  * const raw = { name: "Alice", email: "alice@example.com", age: 30 };
  * const fields = ["name", "email"] as const;
  * const redactFields = ["email"] as const;
- * const result = selectDisplayableStringFieldValues(raw, fields, redactFields);
+ * const result = extractDisplayableFieldValues(raw, fields, redactFields);
  * // result: { name: "Alice" }
  */
 export function extractDisplayableFieldValues<T extends string>(

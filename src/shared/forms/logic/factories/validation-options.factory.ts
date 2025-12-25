@@ -1,7 +1,7 @@
 import type {
   FormValidationOptions,
   FormValidationParams,
-} from "@/shared/forms/types/form-validation.dto";
+} from "@/shared/forms/core/types/form-validation.dto";
 
 const DEFAULT_LOGGER_CONTEXT = "validateForm" as const;
 
