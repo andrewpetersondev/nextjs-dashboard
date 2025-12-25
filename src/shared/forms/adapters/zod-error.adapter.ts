@@ -37,7 +37,6 @@ export function fromZodError<T extends string>(
 
 /**
  * Adapts a ZodError (foreign) into a DenseFieldErrorMap (canonical).
- * @deprecated Use fromZodError to get both field and form errors.
  */
 export function toDenseFieldErrorMapFromZod<T extends string>(
   error: z.ZodError,
