@@ -1,48 +1,13 @@
 import "server-only";
 
 import type { z } from "zod";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
-import {
-  makeFormError,
-  makeFormOk,
-} from "@/shared/forms/factories/form-result.factory";
+import { makeFormOk } from "@/shared/forms/factories/form-result.factory";
 import { resolveFormValidationOptions } from "@/shared/forms/factories/form-validation-options.factory";
 import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
+import { toValidationFormError } from "@/shared/forms/server/to-validation-form.error";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import type { FormValidationOptions } from "@/shared/forms/types/form-validation.dto";
 import { resolveCanonicalFieldNames } from "@/shared/forms/zod/schema-inspector";
-import {
-  isZodErrorInstance,
-  isZodErrorLikeShape,
-} from "@/shared/forms/zod/zod.guard";
-import { fromZodError } from "@/shared/forms/zod/zod-error.adapter";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
-
-/**
- * Internal helper to log and wrap validation errors.
- */
-function toValidationFormError<Tfieldnames extends string>(
-  error: unknown,
-  fields: readonly Tfieldnames[],
-  loggerContext: string,
-  failureMessage: string,
-): FormResult<never> {
-  logger.error(failureMessage, {
-    context: loggerContext,
-    issues: isZodErrorLikeShape(error) ? error.issues?.length : undefined,
-    name: isZodErrorLikeShape(error) ? error.name : "UnknownValidationError",
-  });
-
-  const fieldErrors =
-    isZodErrorInstance(error) || isZodErrorLikeShape(error)
-      ? fromZodError<Tfieldnames>(error as z.ZodError, fields)
-      : makeEmptyDenseFieldErrorMap<Tfieldnames, string>(fields);
-
-  return makeFormError<Tfieldnames>({
-    fieldErrors,
-    message: failureMessage,
-  });
-}
 
 /**
  * Validates FormData against a Zod schema.
