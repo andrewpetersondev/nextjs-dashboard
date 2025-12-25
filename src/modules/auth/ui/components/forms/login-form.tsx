@@ -10,11 +10,11 @@ import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/ui/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";
+import { createInitialFailedFormState } from "@/shared/forms/factories/initial-form-state";
 import {
   extractFieldErrors,
   extractFieldValues,
 } from "@/shared/forms/infrastructure/form-error-inspector";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";

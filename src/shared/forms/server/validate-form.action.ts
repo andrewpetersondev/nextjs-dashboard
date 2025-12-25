@@ -1,21 +1,21 @@
 import "server-only";
 
 import type { z } from "zod";
-import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/factories/field-error-map.factory";
 import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
 import { resolveFormValidationOptions } from "@/shared/forms/factories/form-validation-options.factory";
+import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
+import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import type { FormValidationOptions } from "@/shared/forms/types/form-validation.dto";
+import { resolveCanonicalFieldNames } from "@/shared/forms/zod/schema-inspector";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/guards/zod.guard";
-import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
-import { resolveCanonicalFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
-import type { FormResult } from "@/shared/forms/types/form-result.dto";
-import type { FormValidationOptions } from "@/shared/forms/types/form-validation.dto";
+} from "@/shared/forms/zod/zod.guard";
+import { fromZodError } from "@/shared/forms/zod/zod-error.adapter";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 /**

@@ -20,8 +20,8 @@ import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
-import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import { toFieldNames } from "@/shared/forms/zod/schema-inspector";
 
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;

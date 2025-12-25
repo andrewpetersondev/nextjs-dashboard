@@ -19,7 +19,7 @@ import { updateUserAction } from "@/modules/users/server/application/actions/upd
 import { UserInfoPanel } from "@/modules/users/ui/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/ui/components/user-role-select";
 import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value";
-import { createInitialFailedFormStateFromSchema } from "@/shared/forms/infrastructure/initial-form-state";
+import { createInitialFailedFormStateFromSchema } from "@/shared/forms/factories/initial-form-state";
 import type { FieldError } from "@/shared/forms/types/field-error.value";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { FormActionRow } from "@/shared/forms/ui/components/form-action-row";

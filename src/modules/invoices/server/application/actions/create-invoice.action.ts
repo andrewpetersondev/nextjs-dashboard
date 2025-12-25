@@ -16,15 +16,15 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
 import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
-import { isZodErrorInstance } from "@/shared/forms/guards/zod.guard";
 import { resolveRawFieldPayload } from "@/shared/forms/infrastructure/form-data-extractor";
-import { toFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import { toFieldNames } from "@/shared/forms/zod/schema-inspector";
+import { isZodErrorInstance } from "@/shared/forms/zod/zod.guard";
+import { fromZodError } from "@/shared/forms/zod/zod-error.adapter";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

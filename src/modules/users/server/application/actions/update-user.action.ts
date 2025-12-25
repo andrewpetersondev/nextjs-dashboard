@@ -18,9 +18,9 @@ import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/factories/form-result.factory";
-import { resolveCanonicalFieldNames } from "@/shared/forms/infrastructure/zod/schema-inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.action";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
+import { resolveCanonicalFieldNames } from "@/shared/forms/zod/schema-inspector";
 import { ROUTES } from "@/shared/routes/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

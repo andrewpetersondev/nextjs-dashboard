@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { isZodObjectSchema } from "@/shared/forms/guards/zod.guard";
+import { isZodObjectSchema } from "@/shared/forms/zod/zod.guard";
 
 /**
  * Extracts the string keys from the provided Zod object schema.

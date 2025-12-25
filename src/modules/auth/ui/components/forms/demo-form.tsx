@@ -3,7 +3,7 @@
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import { createInitialFailedFormState } from "@/shared/forms/infrastructure/initial-form-state";
+import { createInitialFailedFormState } from "@/shared/forms/factories/initial-form-state";
 import type { FormResult } from "@/shared/forms/types/form-result.dto";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
