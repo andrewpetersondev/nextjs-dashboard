@@ -9,12 +9,14 @@ import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";
 export type ValidationErrorMetadata = Readonly<{
   readonly fieldErrors?: Record<string, readonly string[]>;
   readonly formErrors?: readonly string[];
+  readonly values?: Record<string, unknown>;
 }>;
 
 export const ValidationErrorMetadataSchema = z
   .object({
     fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
     formErrors: z.array(z.string()).optional(),
+    values: z.record(z.string(), z.unknown()).optional(),
   })
   .passthrough() as z.ZodType<ValidationErrorMetadata>;
 

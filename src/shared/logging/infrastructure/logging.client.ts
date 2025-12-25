@@ -145,18 +145,12 @@ export class LoggingClient extends AbstractLogger implements LoggingClientPort {
     const hasOriginalCause = originalCause !== undefined;
 
     return {
+      ...baseJson,
       cause:
         error.cause instanceof Error
           ? (toSafeErrorShape(error.cause) as SerializedError)
           : undefined,
-      description: baseJson.description,
       diagnosticId,
-      key: baseJson.key,
-      layer: baseJson.layer,
-      message: baseJson.message,
-      metadata: baseJson.metadata,
-      retryable: baseJson.retryable,
-      severity: baseJson.severity,
       stack: error.stack,
       ...(fieldErrors && { fieldErrors }),
       ...(formErrors && { formErrors }),

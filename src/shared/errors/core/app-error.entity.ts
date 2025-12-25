@@ -64,6 +64,7 @@ export class AppError<
    */
   toJson(): AppErrorJsonDto<T> {
     return {
+      _isAppError: true,
       description: this.description,
       key: this.key,
       layer: this.layer,
@@ -72,5 +73,20 @@ export class AppError<
       retryable: this.retryable,
       severity: this.severity,
     };
+  }
+
+  /**
+   * Reconstructs an AppError instance from a plain object DTO.
+   * Useful for hydrating errors received from a network request or Server Action.
+   */
+  static fromDto<TMeta extends AppErrorMetadata = AppErrorMetadata>(
+    dto: AppErrorJsonDto<TMeta>,
+  ): AppError<TMeta> {
+    return new AppError<TMeta>({
+      cause: "hydrated",
+      key: dto.key,
+      message: dto.message,
+      metadata: dto.metadata,
+    });
   }
 }

@@ -64,13 +64,14 @@ export function makeUnexpectedError(
   error: unknown,
   params: UnexpectedErrorParams<UnexpectedErrorMetadata>,
 ): AppError<UnexpectedErrorMetadata> {
+  const cause = toCauseUnion(error);
   const normalized = normalizeUnknownToAppError(
     error,
     APP_ERROR_KEYS.unexpected,
   );
 
   return makeAppError(APP_ERROR_KEYS.unexpected, {
-    cause: normalized.cause,
+    cause,
     message: params.message,
     metadata: {
       ...normalized.metadata,
