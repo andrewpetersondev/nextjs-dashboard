@@ -25,24 +25,24 @@ To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the typ
 
 - **No `*.types.ts` files.** If you have one, split it based on the table above.
 
-| Suffix          | Meaning                                | Layer/Boundary |
-| :-------------- | :------------------------------------- | :------------- |
-| `.entity.ts`    | Stateful domain object (with identity) | Domain         |
-| `.value.ts`     | Value object / Branded primitive       | Domain         |
-| `.policy.ts`    | Interface for business rules/logic     | Domain         |
-| `.schema.ts`    | Zod/Validation schema                  | Domain ↔ App   |
-| `.dto.ts`       | Stable data transfer object            | App / Shared   |
-| `.transport.ts` | Wire/HTTP/Cookie-only shape            | Adapter        |
-| `.view.ts`      | Server → Client UI shape               | UI Boundary    |
-| `.port.ts`      | Dependency boundary interface          | Application    |
-| `.record.ts`    | Persistence/Database row shape         | Infrastructure |
-| `.command.ts`   | Input for a use case/workflow          | Application    |
-| `.output.ts`    | Data payload of a use case/workflow    | Application    |
-| `.event.ts`     | Domain or System event fact            | Domain / App   |
-| `.tokens.ts`    | Dependency injection tokens/constants  | Module Root    |
-| `.use-case.ts`  | Single business capability             | Application    |
-| `.action.ts`    | Next.js Server Action                  | Adapter        |
-| `.workflow.ts`  | Multi-step orchestration               | Application    |
+| Suffix          | Meaning                                | Layer/Boundary     |
+| :-------------- | :------------------------------------- | :----------------- |
+| `.entity.ts`    | Stateful domain object (with identity) | Entities           |
+| `.value.ts`     | Value object / Branded primitive       | Entities           |
+| `.policy.ts`    | Interface for business rules/logic     | Entities           |
+| `.schema.ts`    | Zod/Validation schema                  | Entities ↔ App     |
+| `.dto.ts`       | Stable data transfer object            | Use Cases          |
+| `.transport.ts` | Wire/HTTP/Cookie-only shape            | Interface Adapters |
+| `.view.ts`      | Server → Client UI shape               | UI Boundary        |
+| `.contract.ts`  | Dependency boundary interface          | Use Cases          |
+| `.record.ts`    | Persistence/Database row shape         | Infrastructure     |
+| `.command.ts`   | Input for a use case/workflow          | Use Cases          |
+| `.output.ts`    | Data payload of a use case/workflow    | Use Cases          |
+| `.event.ts`     | Domain or System event fact            | Entities / App     |
+| `.tokens.ts`    | Dependency injection tokens/constants  | Module Root        |
+| `.use-case.ts`  | Single business capability             | Use Cases          |
+| `.action.ts`    | Next.js Server Action                  | Interface Adapters |
+| `.workflow.ts`  | Multi-step orchestration               | Use Cases          |
 
 ## Function Naming: Verb Vocabulary
 
