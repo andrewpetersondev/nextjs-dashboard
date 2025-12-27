@@ -30,12 +30,6 @@ export const SignupSchema = AuthCredentialsSchema.safeExtend({
   username: UsernameSchema,
 });
 
-/** The raw input from the form (before Zod parsing) */
-export type LoginInput = z.input<typeof LoginSchema>;
-
-/** The raw input from the form (before Zod parsing) */
-export type SignupInput = z.input<typeof SignupSchema>;
-
 /** The validated data used by the Workflow and Services */
 export type AuthLoginSchemaDto = z.output<typeof LoginSchema>;
 

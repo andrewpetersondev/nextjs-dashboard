@@ -4,7 +4,7 @@ import { AUTH_DIVIDER_LABEL } from "@/modules/auth/ui/auth.tokens";
 import type {
   AuthActionProps,
   SignupField,
-} from "@/modules/auth/ui/components/auth-ui.dto";
+} from "@/modules/auth/ui/auth-ui.dto";
 import { SignupForm } from "@/modules/auth/ui/components/forms/signup-form";
 import { AuthFormDemoSection } from "@/modules/auth/ui/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/ui/components/shared/auth-form-social-section";

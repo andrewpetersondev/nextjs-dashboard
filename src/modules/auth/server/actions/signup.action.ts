@@ -12,7 +12,7 @@ import {
   SIGNUP_FIELDS_LIST,
   SignupSchema,
 } from "@/modules/auth/shared/domain/user/auth-user.schema";
-import type { SignupField } from "@/modules/auth/ui/components/auth-ui.dto";
+import type { SignupField } from "@/modules/auth/ui/auth-ui.dto";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

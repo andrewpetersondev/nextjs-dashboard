@@ -6,7 +6,7 @@ import { LOGIN_FIELDS_LIST } from "@/modules/auth/shared/domain/user/auth-user.s
 import type {
   AuthActionProps,
   LoginField,
-} from "@/modules/auth/ui/components/auth-ui.dto";
+} from "@/modules/auth/ui/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/ui/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/ui/components/shared/form-row.wrapper";

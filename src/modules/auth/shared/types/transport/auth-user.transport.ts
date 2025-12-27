@@ -1,6 +1,8 @@
 /**
- * A safe, flattened version of the user for use across the wire (cookies/HTTP).
- * Uses primitives to ensure compatibility with serialization and foreign environments.
+ * Wire/HTTP/Cookie-only shape for an authenticated user.
+ *
+ * This transport object uses primitives to ensure compatibility with
+ * serialization (JSON/JWT) and foreign environments (Client Components).
  */
 export interface AuthUserTransport {
   readonly email: string;
