@@ -2,7 +2,7 @@ import "server-only";
 
 import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
 import type { UnitOfWorkContract } from "@/modules/auth/server/application/types/contracts/unit-of-work.contract";
-import type { AuthUserTransport } from "@/modules/auth/shared/types/transport/auth-user.transport";
+import type { AuthUserOutputDto } from "@/modules/auth/server/application/types/dtos/auth-user.output.dto";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
@@ -38,7 +38,7 @@ export class CreateDemoUserUseCase {
   }
 
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
-  async execute(role: UserRole): Promise<Result<AuthUserTransport, AppError>> {
+  async execute(role: UserRole): Promise<Result<AuthUserOutputDto, AppError>> {
     const logger = this.logger.child({ role });
 
     try {
@@ -75,7 +75,7 @@ export class CreateDemoUserUseCase {
 
         const created = createdResult.value;
 
-        return Ok<AuthUserTransport>({
+        return Ok<AuthUserOutputDto>({
           email: created.email,
           id: toUserId(created.id),
           role: parseUserRole(created.role),

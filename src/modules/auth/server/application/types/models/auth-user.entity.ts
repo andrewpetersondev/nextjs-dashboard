@@ -14,6 +14,5 @@ export interface AuthUserEntity {
   readonly id: UserId;
   readonly password: Hash;
   readonly role: UserRole;
-  readonly sensitiveData: string;
   readonly username: string;
 }

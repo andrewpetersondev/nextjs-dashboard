@@ -16,10 +16,6 @@ export function toAuthUserEntity(row: UserRow): AuthUserEntity {
     id: toUserId(row.id),
     password: toHash(row.password),
     role: parseUserRole(row.role),
-    sensitiveData: row.sensitiveData ?? "",
     username: row.username,
   };
 }
-
-// Remove toNewAuthUserEntity if it's redundant, or keep it as an alias
-export const toNewAuthUserEntity = toAuthUserEntity;

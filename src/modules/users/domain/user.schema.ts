@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/shared/domain/user/user-role.types";
+import { userRoleSchema } from "@/shared/domain/user/user-role.schema";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { EmailSchema } from "@/shared/validation/zod/email.schema";
 import { PasswordSchema } from "@/shared/validation/zod/password.schema";
@@ -11,18 +11,6 @@ const toUndefinedIfEmptyString = (v: unknown) =>
 function optionalEdit<T extends z.ZodType>(schema: T) {
   return z.preprocess(toUndefinedIfEmptyString, schema).optional();
 }
-
-const userRoleEnum = z.enum(USER_ROLES);
-
-/**
- * Role schema: trims, uppercases, and validates against allowed roles.
- * Uses pipe to ensure validation runs on the normalized value.
- */
-export const userRoleSchema = z
-  .string()
-  .trim()
-  .toUpperCase()
-  .pipe(userRoleEnum);
 
 /**
  * Base schema for user forms (create).

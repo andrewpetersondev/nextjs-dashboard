@@ -42,11 +42,5 @@ export type AuthLoginSchemaDto = z.output<typeof LoginSchema>;
 /** The validated data used by the Workflow and Services */
 export type AuthSignupSchemaDto = z.output<typeof SignupSchema>;
 
-/** Field names for type-safe error handling in UI */
-export type LoginField = keyof AuthLoginSchemaDto;
-
-/** Field names for type-safe error handling in UI */
-export type SignupField = keyof AuthSignupSchemaDto;
-
 export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginSchema);
 export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupSchema);

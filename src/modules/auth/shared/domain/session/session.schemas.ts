@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { userRoleSchema } from "@/modules/users/domain/user.schema";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
+import { userRoleSchema } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Issued At (iat) claim schema.

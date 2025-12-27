@@ -10,9 +10,9 @@ import { signupWorkflow } from "@/modules/auth/server/application/workflows/sign
 import {
   type AuthSignupSchemaDto,
   SIGNUP_FIELDS_LIST,
-  type SignupField,
   SignupSchema,
 } from "@/modules/auth/shared/domain/user/auth-user.schema";
+import type { SignupField } from "@/modules/auth/ui/components/auth-ui.dto";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

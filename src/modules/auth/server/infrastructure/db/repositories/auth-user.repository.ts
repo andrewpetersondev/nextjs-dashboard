@@ -6,10 +6,7 @@ import type { AuthUserEntity } from "@/modules/auth/server/application/types/mod
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/db/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/db/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/db/dal/insert-user.dal";
-import {
-  toAuthUserEntity,
-  toNewAuthUserEntity,
-} from "@/modules/auth/server/infrastructure/db/mappers/auth-user.mapper";
+import { toAuthUserEntity } from "@/modules/auth/server/infrastructure/db/mappers/auth-user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -121,7 +118,7 @@ export class AuthUserRepository {
       return Err(rowResult.error);
     }
 
-    const entity = toNewAuthUserEntity(rowResult.value);
+    const entity = toAuthUserEntity(rowResult.value);
 
     return Ok(entity);
   }

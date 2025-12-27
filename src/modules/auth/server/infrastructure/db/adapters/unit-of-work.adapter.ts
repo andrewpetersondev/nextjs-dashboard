@@ -2,7 +2,7 @@ import "server-only";
 
 import { randomUUID } from "node:crypto";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
-import type { AuthTxDeps } from "@/modules/auth/server/application/types/auth-tx-deps.types";
+import type { AuthTxDepsContract } from "@/modules/auth/server/application/types/contracts/auth-tx-deps.contract";
 import type { UnitOfWorkContract } from "@/modules/auth/server/application/types/contracts/unit-of-work.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/db/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";
@@ -20,7 +20,9 @@ export class DbUnitOfWorkAdapter implements UnitOfWorkContract {
     this.requestId = requestId;
   }
 
-  async withTransaction<T>(fn: (tx: AuthTxDeps) => Promise<T>): Promise<T> {
+  async withTransaction<T>(
+    fn: (tx: AuthTxDepsContract) => Promise<T>,
+  ): Promise<T> {
     const dbWithTx = this.db as AppDatabase & {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };
@@ -47,7 +49,7 @@ export class DbUnitOfWorkAdapter implements UnitOfWorkContract {
           txLogger,
           this.requestId,
         );
-        const txDeps: AuthTxDeps = {
+        const txDeps: AuthTxDepsContract = {
           authUsers: new AuthUserRepositoryAdapter(txAuthUserRepo),
         };
 

@@ -8,6 +8,6 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/server/applicati
  * Rule: only database-backed contracts (repositories) belong here.
  * Do NOT add cookie/JWT/crypto/network contracts—those are not transactional.
  */
-export type AuthTxDeps = Readonly<{
+export type AuthTxDepsContract = Readonly<{
   authUsers: AuthUserRepositoryContract;
 }>;

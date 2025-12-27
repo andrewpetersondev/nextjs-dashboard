@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
-import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import { ClearSessionUseCase } from "@/modules/auth/server/application/use-cases/session/clear-session.use-case";
 import { EstablishSessionUseCase } from "@/modules/auth/server/application/use-cases/session/establish-session.use-case";
 import { ReadSessionUseCase } from "@/modules/auth/server/application/use-cases/session/read-session.use-case";
@@ -57,8 +57,8 @@ export class SessionService {
    * Delegates to the EstablishSessionUseCase (single-capability verb).
    */
   async establish(
-    user: SessionPrincipal,
-  ): Promise<Result<SessionPrincipal, AppError>> {
+    user: SessionPrincipalDto,
+  ): Promise<Result<SessionPrincipalDto, AppError>> {
     const useCase = new EstablishSessionUseCase({
       cookie: this.cookie,
       jwt: this.jwt,

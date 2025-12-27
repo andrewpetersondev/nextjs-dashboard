@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/types/contracts/auth-user.repository.contract";
+import type { AuthUserOutputDto } from "@/modules/auth/server/application/types/dtos/auth-user.output.dto";
 import type { AuthLoginSchemaDto } from "@/modules/auth/shared/domain/user/auth-user.schema";
-import type { AuthUserTransport } from "@/modules/auth/shared/types/transport/auth-user.transport";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
@@ -34,7 +34,7 @@ export class LoginUseCase {
 
   async execute(
     input: Readonly<AuthLoginSchemaDto>,
-  ): Promise<Result<AuthUserTransport, AppError>> {
+  ): Promise<Result<AuthUserOutputDto, AppError>> {
     const _logger = this.logger.child({ email: input.email });
 
     try {

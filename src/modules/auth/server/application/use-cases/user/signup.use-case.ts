@@ -2,8 +2,8 @@ import "server-only";
 
 import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
 import type { UnitOfWorkContract } from "@/modules/auth/server/application/types/contracts/unit-of-work.contract";
+import type { AuthUserOutputDto } from "@/modules/auth/server/application/types/dtos/auth-user.output.dto";
 import type { AuthSignupSchemaDto } from "@/modules/auth/shared/domain/user/auth-user.schema";
-import type { AuthUserTransport } from "@/modules/auth/shared/types/transport/auth-user.transport";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
@@ -34,7 +34,7 @@ export class SignupUseCase {
    */
   async execute(
     input: Readonly<AuthSignupSchemaDto>,
-  ): Promise<Result<AuthUserTransport, AppError>> {
+  ): Promise<Result<AuthUserOutputDto, AppError>> {
     const _logger = this.logger.child({ email: input.email });
 
     try {
@@ -55,7 +55,7 @@ export class SignupUseCase {
 
         const created = createdResultTx.value;
 
-        return Ok<AuthUserTransport>({
+        return Ok<AuthUserOutputDto>({
           email: created.email,
           id: toUserId(created.id),
           role: parseUserRole(created.role),

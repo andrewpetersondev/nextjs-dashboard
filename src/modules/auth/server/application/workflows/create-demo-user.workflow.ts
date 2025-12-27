@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
-import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import type { CreateDemoUserUseCase } from "@/modules/auth/server/application/use-cases/user/create-demo-user.use-case";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -19,14 +19,14 @@ export async function createDemoUserWorkflow(
     createDemoUserUseCase: CreateDemoUserUseCase;
     sessionService: SessionService;
   }>,
-): Promise<Result<SessionPrincipal, AppError>> {
+): Promise<Result<SessionPrincipalDto, AppError>> {
   const demoResult = await deps.createDemoUserUseCase.execute(role);
 
   if (!demoResult.ok) {
     return Err(demoResult.error);
   }
 
-  const user: SessionPrincipal = {
+  const user: SessionPrincipalDto = {
     id: demoResult.value.id,
     role: demoResult.value.role,
   };

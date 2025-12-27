@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
-import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import { SESSION_DURATION_MS } from "@/modules/auth/shared/domain/session/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
@@ -40,8 +40,8 @@ export class EstablishSessionUseCase {
   }
 
   async execute(
-    user: SessionPrincipal,
-  ): Promise<Result<SessionPrincipal, AppError>> {
+    user: SessionPrincipalDto,
+  ): Promise<Result<SessionPrincipalDto, AppError>> {
     try {
       const now = Date.now();
       const expiresAtMs = now + SESSION_DURATION_MS;

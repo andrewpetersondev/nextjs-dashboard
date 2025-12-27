@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
-import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import type { SignupUseCase } from "@/modules/auth/server/application/use-cases/user/signup.use-case";
 import type { AuthSignupSchemaDto } from "@/modules/auth/shared/domain/user/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -19,14 +19,14 @@ export async function signupWorkflow(
     createUserUseCase: SignupUseCase;
     sessionService: SessionService;
   }>,
-): Promise<Result<SessionPrincipal, AppError>> {
+): Promise<Result<SessionPrincipalDto, AppError>> {
   const signupResult = await deps.createUserUseCase.execute(input);
 
   if (!signupResult.ok) {
     return Err(signupResult.error);
   }
 
-  const user: SessionPrincipal = {
+  const user: SessionPrincipalDto = {
     id: signupResult.value.id,
     role: signupResult.value.role,
   };

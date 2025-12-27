@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthTxDeps } from "@/modules/auth/server/application/types/auth-tx-deps.types";
+import type { AuthTxDepsContract } from "@/modules/auth/server/application/types/contracts/auth-tx-deps.contract";
 
 export interface UnitOfWorkContract {
   /**
@@ -9,5 +9,5 @@ export interface UnitOfWorkContract {
    * The callback receives transaction-scoped *contracts* (repositories) that MUST be
    * used for any DB work intended to be atomic.
    */
-  withTransaction<T>(fn: (tx: AuthTxDeps) => Promise<T>): Promise<T>;
+  withTransaction<T>(fn: (tx: AuthTxDepsContract) => Promise<T>): Promise<T>;
 }

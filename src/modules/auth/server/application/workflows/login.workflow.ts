@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
-import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import type { LoginUseCase } from "@/modules/auth/server/application/use-cases/user/login.use-case";
 import type { AuthLoginSchemaDto } from "@/modules/auth/shared/domain/user/auth-user.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -24,7 +24,7 @@ export async function loginWorkflow(
     loginUseCase: LoginUseCase;
     sessionService: SessionService;
   }>,
-): Promise<Result<SessionPrincipal, AppError>> {
+): Promise<Result<SessionPrincipalDto, AppError>> {
   const authResult = await deps.loginUseCase.execute(input);
 
   if (!authResult.ok) {
@@ -47,7 +47,7 @@ export async function loginWorkflow(
     return Err(error);
   }
 
-  const user: SessionPrincipal = {
+  const user: SessionPrincipalDto = {
     id: authResult.value.id,
     role: authResult.value.role,
   };
