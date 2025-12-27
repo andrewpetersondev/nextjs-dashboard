@@ -6,6 +6,6 @@ import "server-only";
  * Used by the AuthUserRepositoryPort and its implementations to
  * ensure a stable contract when fetching authentication candidates.
  */
-export interface AuthLoginRepoInput {
+export interface AuthLoginInputDto {
   readonly email: string;
 }

@@ -1,9 +1,7 @@
 import "server-only";
 
-import type {
-  SessionContract,
-  SessionTokenCodecPort,
-} from "@/modules/auth/server/application/contracts/session.contract";
+import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
+import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import { ClearSessionUseCase } from "@/modules/auth/server/application/use-cases/session/clear-session.use-case";
 import { EstablishSessionUseCase } from "@/modules/auth/server/application/use-cases/session/establish-session.use-case";
@@ -27,13 +25,13 @@ import type { Result } from "@/shared/results/result.types";
  * const result = await manager.establish({ id: userId, role: "admin" });
  */
 export class SessionService {
-  private readonly cookie: SessionContract;
-  private readonly jwt: SessionTokenCodecPort;
+  private readonly cookie: SessionStoreContract;
+  private readonly jwt: SessionTokenCodecContract;
   private readonly logger: LoggingClientPort;
 
   constructor(
-    cookie: SessionContract,
-    jwt: SessionTokenCodecPort,
+    cookie: SessionStoreContract,
+    jwt: SessionTokenCodecContract,
     logger: LoggingClientPort,
   ) {
     this.cookie = cookie;

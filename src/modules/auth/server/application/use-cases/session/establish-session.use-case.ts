@@ -1,9 +1,7 @@
 import "server-only";
 
-import type {
-  SessionContract,
-  SessionTokenCodecPort,
-} from "@/modules/auth/server/application/contracts/session.contract";
+import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
+import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import { SESSION_DURATION_MS } from "@/modules/auth/shared/domain/session/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -15,8 +13,8 @@ import type { Result } from "@/shared/results/result.types";
 const ONE_SECOND_MS = 1000 as const;
 
 export type EstablishSessionDeps = Readonly<{
-  cookie: SessionContract;
-  jwt: SessionTokenCodecPort;
+  cookie: SessionStoreContract;
+  jwt: SessionTokenCodecContract;
   logger: LoggingClientPort;
 }>;
 
@@ -28,8 +26,8 @@ export type EstablishSessionDeps = Readonly<{
  * - persist it (cookie set via port)
  */
 export class EstablishSessionUseCase {
-  private readonly cookie: SessionContract;
-  private readonly jwt: SessionTokenCodecPort;
+  private readonly cookie: SessionStoreContract;
+  private readonly jwt: SessionTokenCodecContract;
   private readonly logger: LoggingClientPort;
 
   constructor(deps: EstablishSessionDeps) {

@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { UnitOfWorkContract } from "@/modules/auth/server/application/contracts/unit-of-work.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
-import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
+import type { UnitOfWorkContract } from "@/modules/auth/server/application/types/contracts/unit-of-work.contract";
 import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
+import type { AuthUserTransport } from "@/modules/auth/shared/types/transport/auth-user.transport";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/contracts/auth-user-repository.contract";
+import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/types/contracts/auth-user.repository.contract";
 import { LoginUseCase } from "@/modules/auth/server/application/use-cases/user/login.use-case";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/db/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";

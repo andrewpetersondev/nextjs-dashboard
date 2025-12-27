@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { SessionTokenCodecPort } from "@/modules/auth/server/application/contracts/session.contract";
+import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
 async function decodeClaims(
   cookie: string | undefined,
-  jwt: SessionTokenCodecPort,
+  jwt: SessionTokenCodecContract,
 ): Promise<
   Readonly<
     | { claims: AuthEncryptPayload; reason: "ok" }
@@ -59,7 +59,7 @@ export async function authorizeRequestWorkflow(
     path: string;
   }>,
   deps: Readonly<{
-    jwt: SessionTokenCodecPort;
+    jwt: SessionTokenCodecContract;
     routes: Readonly<{
       dashboardRoot: `/${string}`;
       login: `/${string}`;

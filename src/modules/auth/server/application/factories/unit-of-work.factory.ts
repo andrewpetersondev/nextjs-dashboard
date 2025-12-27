@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UnitOfWorkContract } from "@/modules/auth/server/application/contracts/unit-of-work.contract";
+import type { UnitOfWorkContract } from "@/modules/auth/server/application/types/contracts/unit-of-work.contract";
 import { DbUnitOfWorkAdapter } from "@/modules/auth/server/infrastructure/db/adapters/unit-of-work.adapter";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";

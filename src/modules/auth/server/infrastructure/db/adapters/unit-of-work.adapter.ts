@@ -1,9 +1,9 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import type { UnitOfWorkContract } from "@/modules/auth/server/application/contracts/unit-of-work.contract";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
 import type { AuthTxDeps } from "@/modules/auth/server/application/types/auth-tx-deps.types";
+import type { UnitOfWorkContract } from "@/modules/auth/server/application/types/contracts/unit-of-work.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/db/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";

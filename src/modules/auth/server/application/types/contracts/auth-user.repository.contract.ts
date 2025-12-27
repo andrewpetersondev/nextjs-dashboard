@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthLoginRepoInput } from "@/modules/auth/server/application/contracts/auth-login-repo.dto";
-import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
+import type { AuthLoginInputDto } from "@/modules/auth/server/application/types/contracts/auth-login.input.dto";
+import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/contracts/auth-signup.input.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/contracts/auth-user.entity";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -31,7 +31,7 @@ export interface AuthUserRepositoryContract {
    * - Returns `Err(AppError)` for DAL/infra failures.
    */
   login(
-    input: Readonly<AuthLoginRepoInput>,
+    input: Readonly<AuthLoginInputDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>>;
 
   /**
@@ -41,6 +41,6 @@ export interface AuthUserRepositoryContract {
    * @returns Result with the created user entity, or AppError for expected failures.
    */
   signup(
-    input: Readonly<AuthSignupPayload>,
+    input: Readonly<AuthSignupInputDto>,
   ): Promise<Result<AuthUserEntity, AppError>>;
 }

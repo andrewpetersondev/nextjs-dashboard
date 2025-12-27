@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { AuthTxDeps } from "@/modules/auth/server/application/types/auth-tx-deps.types";
 
 export interface UnitOfWorkContract {

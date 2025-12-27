@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthLoginRepoInput } from "@/modules/auth/server/application/contracts/auth-login-repo.dto";
-import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
+import type { AuthLoginInputDto } from "@/modules/auth/server/application/types/contracts/auth-login.input.dto";
+import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/contracts/auth-signup.input.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/contracts/auth-user.entity";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/db/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/db/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/db/dal/insert-user.dal";
@@ -81,7 +81,7 @@ export class AuthUserRepository {
    * @param input - Lookup input (email).
    */
   async login(
-    input: Readonly<AuthLoginRepoInput>,
+    input: Readonly<AuthLoginInputDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     const rowResult = await getUserByEmailDal(
       this.db,
@@ -113,7 +113,7 @@ export class AuthUserRepository {
    * upper layers can map them consistently.
    */
   async signup(
-    input: Readonly<AuthSignupPayload>,
+    input: Readonly<AuthSignupInputDto>,
   ): Promise<Result<AuthUserEntity, AppError>> {
     const rowResult = await insertUserDal(this.db, input, this.logger);
 

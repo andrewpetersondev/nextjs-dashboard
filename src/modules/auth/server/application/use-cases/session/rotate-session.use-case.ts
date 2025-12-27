@@ -1,9 +1,7 @@
 import "server-only";
 
-import type {
-  SessionContract,
-  SessionTokenCodecPort,
-} from "@/modules/auth/server/application/contracts/session.contract";
+import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
+import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
@@ -22,8 +20,8 @@ const ONE_SECOND_MS = 1000 as const;
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 
 type RotateSessionDeps = Readonly<{
-  cookie: SessionContract;
-  jwt: SessionTokenCodecPort;
+  cookie: SessionStoreContract;
+  jwt: SessionTokenCodecContract;
   logger: LoggingClientPort;
 }>;
 
@@ -65,7 +63,7 @@ function shouldRefreshToken(decoded: { exp?: number; expiresAt?: number }): {
 }
 
 async function issueToken(
-  jwt: SessionTokenCodecPort,
+  jwt: SessionTokenCodecContract,
   input: Readonly<{
     role: UserRole;
     sessionStart: number;
@@ -100,8 +98,8 @@ async function issueToken(
  * - if needed, re-issue token and set cookie
  */
 export class RotateSessionUseCase {
-  private readonly cookie: SessionContract;
-  private readonly jwt: SessionTokenCodecPort;
+  private readonly cookie: SessionStoreContract;
+  private readonly jwt: SessionTokenCodecContract;
   private readonly logger: LoggingClientPort;
 
   constructor(deps: RotateSessionDeps) {

@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/contracts/auth-user-repository.contract";
-import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
+import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/types/contracts/auth-user.repository.contract";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
+import type { AuthUserTransport } from "@/modules/auth/shared/types/transport/auth-user.transport";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";

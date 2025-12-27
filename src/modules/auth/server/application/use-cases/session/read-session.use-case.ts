@@ -1,17 +1,15 @@
 import "server-only";
 
-import type {
-  SessionContract,
-  SessionTokenCodecPort,
-} from "@/modules/auth/server/application/contracts/session.contract";
+import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
+import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 export type ReadSessionDeps = Readonly<{
-  cookie: SessionContract;
-  jwt: SessionTokenCodecPort;
+  cookie: SessionStoreContract;
+  jwt: SessionTokenCodecContract;
   logger: LoggingClientPort;
 }>;
 
@@ -27,8 +25,8 @@ export type ReadSessionDeps = Readonly<{
  * Operational failures are logged and also return `undefined` (current behavior parity).
  */
 export class ReadSessionUseCase {
-  private readonly cookie: SessionContract;
-  private readonly jwt: SessionTokenCodecPort;
+  private readonly cookie: SessionStoreContract;
+  private readonly jwt: SessionTokenCodecContract;
   private readonly logger: LoggingClientPort;
 
   constructor(deps: ReadSessionDeps) {
