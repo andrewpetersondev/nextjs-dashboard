@@ -92,7 +92,7 @@ export const mapErrorUnion =
  * @param fn - A transformation function to map the error from `E1` to `E2`.
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E1 | E2>`, preserving the original `Err` object when unchanged.
  */
-export const mapErrorUnionPreserve =
+export const mapErrorPreserve =
   /* @__PURE__ */
     <T, E1 extends AppError, E2 extends AppError>(fn: (e: E1) => E2) =>
     /* @__PURE__ */
@@ -105,28 +105,9 @@ export const mapErrorUnionPreserve =
     };
 
 /**
- * Maps an error in a `Result` using a provided function, preserving the original error
- * if the mapping function returns the same instance.
- *
- * @typeParam T - The success value type.
- * @typeParam E1 - The initial error type.
- * @typeParam E2 - The transformed error type.
- * @param fn - A function that transforms one error type into another.
- * @returns A function that maps a `Result<T, E1>` to `Result<T, E1 | E2>`, preserving identity where possible.
- * @example
- * const result = mapErrorPreserve((e) => ({ ...e, code: 'MAPPED' }))(Err({ code: 'ORIG', message: 'Original' }));
+ * Alias for `mapErrorPreserve`.
  */
-export const mapErrorPreserve =
-  /* @__PURE__ */
-    <T, E1 extends AppError, E2 extends AppError>(fn: (e: E1) => E2) =>
-    /* @__PURE__ */
-    (r: Result<T, E1>): Result<T, E1 | E2> => {
-      if (r.ok) {
-        return r;
-      }
-      const mapped = fn(r.error);
-      return Object.is(mapped, r.error) ? r : Err(mapped);
-    };
+export const mapErrorUnionPreserve = mapErrorPreserve;
 
 /**
  * Transforms both success and error states of a `Result` type using the provided functions.

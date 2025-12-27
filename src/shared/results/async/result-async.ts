@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
-import type { AsyncThunk, Result } from "@/shared/results/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Executes an async function and wraps the result.
@@ -10,24 +10,6 @@ import type { AsyncThunk, Result } from "@/shared/results/result.types";
  * @param fn - Async function to execute.
  * @param mapError - Maps unknown errors to error type.
  * @returns Promise resolving to Result with value or error.
- */
-export async function tryCatchAsync<T, E extends AppError>(
-  fn: AsyncThunk<T>,
-  mapError: (e: unknown) => E,
-): Promise<Result<T, E>> {
-  try {
-    return Ok(await fn());
-  } catch (e) {
-    return Err(mapError(e));
-  }
-}
-
-/**
- * Executes a promise-returning function and maps errors.
- *
- * @param fn - Thunk returning promise resolving to value.
- * @param mapError - Maps thrown errors to custom type.
- * @returns Promise resolving to Ok or Err.
  */
 export async function fromPromiseThunk<T, E extends AppError>(
   fn: () => Promise<T>,
@@ -39,6 +21,17 @@ export async function fromPromiseThunk<T, E extends AppError>(
     return Err(mapError(e));
   }
 }
+
+/**
+ * Alias for `fromPromiseThunk`.
+ *
+ * @typeParam T - Success value type.
+ * @typeParam E - Error type extending AppError.
+ * @param fn - Async function to execute.
+ * @param mapError - Maps unknown errors to error type.
+ * @returns Promise resolving to Result with value or error.
+ */
+export const tryCatchAsync = fromPromiseThunk;
 
 export const fromAsyncThunk = /* @__PURE__ */ <T, E extends AppError>(
   fn: () => Promise<T>,

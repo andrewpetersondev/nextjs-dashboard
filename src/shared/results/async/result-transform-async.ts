@@ -19,7 +19,7 @@ export const flatMapAsync =
     ) =>
     /* @__PURE__ */
     async (r: Result<T, E>): Promise<Result<T2, E | E2>> =>
-      r.ok ? fn(r.value) : Err(r.error);
+      r.ok ? await fn(r.value) : r;
 
 /**
  * Transforms Result asynchronously, preserving original errors.
@@ -39,7 +39,7 @@ export const flatMapAsyncPreserveErr =
     /* @__PURE__ */
     return async (r: Result<T, E>): Promise<Result<T2, E | E2>> => {
       if (!r.ok) {
-        return Err(r.error);
+        return r;
       }
       return await fn(r.value);
     };
@@ -66,7 +66,7 @@ export const flatMapAsyncSafe =
     /* @__PURE__ */
     async (r: Result<T, E>): Promise<Result<T2, E | E2 | E3>> => {
       if (!r.ok) {
-        return Err(r.error);
+        return r;
       }
       try {
         return await fn(r.value);

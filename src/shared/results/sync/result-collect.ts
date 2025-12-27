@@ -21,7 +21,7 @@ export function* iterateOk<T, E extends AppError>(
 ): Generator<T, Result<void, E>, unknown> {
   for (const r of source) {
     if (!r.ok) {
-      return Err(r.error);
+      return r;
     }
     yield r.value;
   }
@@ -67,7 +67,7 @@ export const collectAllLazy = /* @__PURE__ */ <T, E extends AppError>(
   const acc: T[] = [];
   for (const r of source) {
     if (!r.ok) {
-      return Err(r.error);
+      return r;
     }
     acc.push(r.value);
   }

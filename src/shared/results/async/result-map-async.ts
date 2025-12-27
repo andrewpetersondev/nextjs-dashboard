@@ -41,8 +41,7 @@ export const mapOkAsyncSafe =
         return r;
       }
       try {
-        const next = await fn(r.value);
-        return Ok(next);
+        return Ok(await fn(r.value));
       } catch (e) {
         return Err(mapError(e));
       }
@@ -84,7 +83,7 @@ export const mapErrorAsyncSafe =
     /* @__PURE__ */
     async (r: Result<T, E>): Promise<Result<T, E2 | E3>> => {
       if (r.ok) {
-        return Ok(r.value);
+        return r;
       }
       try {
         const next = await fn(r.error);

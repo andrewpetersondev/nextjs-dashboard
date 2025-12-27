@@ -1,5 +1,4 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -26,4 +25,4 @@ export const flatMap =
     ) =>
     /* @__PURE__ */
     (r: Result<T, E>): Result<U, E | F> =>
-      r.ok ? fn(r.value) : Err(r.error);
+      r.ok ? fn(r.value) : r;
