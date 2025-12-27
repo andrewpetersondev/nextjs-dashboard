@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserEntity } from "@/modules/auth/server/application/types/contracts/auth-user.entity";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/models/auth-user.entity";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { UserRow } from "@/server/db/schema";
 import { toUserId } from "@/shared/branding/converters/id-converters";

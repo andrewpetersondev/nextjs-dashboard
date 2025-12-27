@@ -1,7 +1,7 @@
 import type {
   LoginField,
   SignupField,
-} from "@/modules/auth/shared/domain/user/auth.schema";
+} from "@/modules/auth/shared/domain/user/auth-user.schema";
 import type { FormAction } from "@/shared/forms/core/types/form-action.dto";
 
 /**

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/contracts/auth-signup.input.dto";
+import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/dtos/auth-signup.input.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, type UserRow, users } from "@/server/db/schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

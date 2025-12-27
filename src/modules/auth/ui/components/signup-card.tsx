@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { demoUserActionAdapter } from "@/modules/auth/server/actions/demo-user.action";
-import type { SignupField } from "@/modules/auth/shared/domain/user/auth.schema";
+import type { SignupField } from "@/modules/auth/shared/domain/user/auth-user.schema";
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/ui/auth.tokens";
 import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { SignupForm } from "@/modules/auth/ui/components/forms/signup-form";

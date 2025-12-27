@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthLoginInputDto } from "@/modules/auth/server/application/types/contracts/auth-login.input.dto";
-import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/contracts/auth-signup.input.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/application/types/contracts/auth-user.entity";
+import type { AuthLoginInputDto } from "@/modules/auth/server/application/types/dtos/auth-login.input.dto";
+import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/dtos/auth-signup.input.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/models/auth-user.entity";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/db/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/db/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/db/dal/insert-user.dal";

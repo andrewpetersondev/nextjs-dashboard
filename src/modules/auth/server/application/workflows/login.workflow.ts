@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { LoginUseCase } from "@/modules/auth/server/application/use-cases/user/login.use-case";
-import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
+import type { AuthLoginSchemaDto } from "@/modules/auth/shared/domain/user/auth-user.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -19,7 +19,7 @@ import type { Result } from "@/shared/results/result.types";
  * to protect against account enumeration.
  */
 export async function loginWorkflow(
-  input: Readonly<LoginData>,
+  input: Readonly<AuthLoginSchemaDto>,
   deps: Readonly<{
     loginUseCase: LoginUseCase;
     sessionService: SessionService;

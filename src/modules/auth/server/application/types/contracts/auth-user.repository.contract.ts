@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthLoginInputDto } from "@/modules/auth/server/application/types/contracts/auth-login.input.dto";
-import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/contracts/auth-signup.input.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/application/types/contracts/auth-user.entity";
+import type { AuthLoginInputDto } from "@/modules/auth/server/application/types/dtos/auth-login.input.dto";
+import type { AuthSignupInputDto } from "@/modules/auth/server/application/types/dtos/auth-signup.input.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/models/auth-user.entity";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";

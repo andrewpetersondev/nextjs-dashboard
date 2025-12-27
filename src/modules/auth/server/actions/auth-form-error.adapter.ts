@@ -5,7 +5,7 @@ import {
   type LoginField,
   SIGNUP_FIELDS_LIST,
   type SignupField,
-} from "@/modules/auth/shared/domain/user/auth.schema";
+} from "@/modules/auth/shared/domain/user/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";

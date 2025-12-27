@@ -7,11 +7,11 @@ import { createLoginUseCaseFactory } from "@/modules/auth/server/application/fac
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { loginWorkflow } from "@/modules/auth/server/application/workflows/login.workflow";
 import {
+  type AuthLoginSchemaDto,
   LOGIN_FIELDS_LIST,
-  type LoginData,
   type LoginField,
   LoginSchema,
-} from "@/modules/auth/shared/domain/user/auth.schema";
+} from "@/modules/auth/shared/domain/user/auth-user.schema";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
@@ -70,7 +70,7 @@ export async function loginAction(
     return validated;
   }
 
-  const input: LoginData = validated.value.data;
+  const input: AuthLoginSchemaDto = validated.value.data;
 
   logger.operation("info", "Login form validated", {
     duration: tracker.getLastDuration("validation"),

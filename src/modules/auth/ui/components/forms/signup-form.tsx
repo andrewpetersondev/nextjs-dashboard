@@ -9,7 +9,7 @@ import { type JSX, useActionState, useId } from "react";
 import {
   SIGNUP_FIELDS_LIST,
   type SignupField,
-} from "@/modules/auth/shared/domain/user/auth.schema";
+} from "@/modules/auth/shared/domain/user/auth-user.schema";
 import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { AuthActionsRow } from "@/modules/auth/ui/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/ui/components/shared/auth-form-feedback";

@@ -8,11 +8,11 @@ import { createSessionServiceFactory } from "@/modules/auth/server/application/f
 import { createUnitOfWorkFactory } from "@/modules/auth/server/application/factories/unit-of-work.factory";
 import { signupWorkflow } from "@/modules/auth/server/application/workflows/signup.workflow";
 import {
+  type AuthSignupSchemaDto,
   SIGNUP_FIELDS_LIST,
-  type SignupData,
   type SignupField,
   SignupSchema,
-} from "@/modules/auth/shared/domain/user/auth.schema";
+} from "@/modules/auth/shared/domain/user/auth-user.schema";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
@@ -80,7 +80,7 @@ export async function signupAction(
     return validated;
   }
 
-  const input = validated.value.data satisfies SignupData;
+  const input = validated.value.data satisfies AuthSignupSchemaDto;
 
   logger.operation("info", "Signup form validated", {
     duration: tracker.getLastDuration("validation"),
