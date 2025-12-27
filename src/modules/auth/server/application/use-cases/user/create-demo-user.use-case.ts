@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UnitOfWorkPort } from "@/modules/auth/server/application/ports/unit-of-work.port";
+import type { UnitOfWorkContract } from "@/modules/auth/server/application/contracts/unit-of-work.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
 import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
@@ -22,10 +22,10 @@ import type { Result } from "@/shared/results/result.types";
 export class CreateDemoUserUseCase {
   private readonly hasher: HashingService;
   private readonly logger: LoggingClientPort;
-  private readonly uow: UnitOfWorkPort;
+  private readonly uow: UnitOfWorkContract;
 
   constructor(
-    uow: UnitOfWorkPort,
+    uow: UnitOfWorkContract,
     hasher: HashingService,
     logger: LoggingClientPort,
   ) {

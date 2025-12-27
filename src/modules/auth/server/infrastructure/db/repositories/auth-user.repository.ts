@@ -1,16 +1,16 @@
 import "server-only";
 
-import type { AuthLoginRepoInput } from "@/modules/auth/server/contracts/auth-login-repo.dto";
-import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
+import type { AuthLoginRepoInput } from "@/modules/auth/server/application/contracts/auth-login-repo.dto";
+import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
 import { demoUserCounterDal } from "@/modules/auth/server/infrastructure/db/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/server/infrastructure/db/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/server/infrastructure/db/dal/insert-user.dal";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import {
-  toNewUserEntity,
-  toUserEntity,
-} from "@/modules/users/server/infrastructure/mappers/user.mapper";
+  toAuthUserEntity,
+  toNewAuthUserEntity,
+} from "@/modules/auth/server/infrastructure/db/mappers/auth-user.mapper";
+import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -99,7 +99,7 @@ export class AuthUserRepository {
       return Ok<AuthUserEntity | null>(null);
     }
 
-    return Ok<AuthUserEntity>(toUserEntity(row));
+    return Ok<AuthUserEntity>(toAuthUserEntity(row));
   }
 
   /**
@@ -121,7 +121,7 @@ export class AuthUserRepository {
       return Err(rowResult.error);
     }
 
-    const entity = toNewUserEntity(rowResult.value);
+    const entity = toNewAuthUserEntity(rowResult.value);
 
     return Ok(entity);
   }

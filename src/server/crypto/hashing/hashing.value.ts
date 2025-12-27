@@ -8,7 +8,7 @@ export const HASH_BRAND: unique symbol = Symbol("Hash");
 export type Hash = Brand<string, typeof HASH_BRAND>;
 
 /**
- * Factory to brand a hash string.
- * @param value - Result of a trusted hashing function.
+ * Pure mapping to brand a trusted hash string.
+ * Use this only for values already hashed by the system or retrieved from DB.
  */
-export const asHash = (value: string): Hash => value as unknown as Hash;
+export const toHash = (value: string): Hash => value as unknown as Hash;

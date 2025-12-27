@@ -1,6 +1,6 @@
 import "server-only";
 import type { HashingPort } from "@/server/crypto/hashing/hashing.port";
-import type { Hash } from "@/server/crypto/hashing/hashing.types";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 
 /**
  * Generic hashing service.

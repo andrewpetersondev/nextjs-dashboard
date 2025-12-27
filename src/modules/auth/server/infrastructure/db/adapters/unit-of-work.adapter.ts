@@ -1,15 +1,15 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
+import type { UnitOfWorkContract } from "@/modules/auth/server/application/contracts/unit-of-work.contract";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
-import type { UnitOfWorkPort } from "@/modules/auth/server/application/ports/unit-of-work.port";
 import type { AuthTxDeps } from "@/modules/auth/server/application/types/auth-tx-deps.types";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/server/infrastructure/db/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
-export class DbUnitOfWorkAdapter implements UnitOfWorkPort {
+export class DbUnitOfWorkAdapter implements UnitOfWorkContract {
   private readonly db: AppDatabase;
   private readonly logger: LoggingClientPort;
   private readonly requestId: string;

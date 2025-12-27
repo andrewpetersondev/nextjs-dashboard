@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
-import type { AuthLoginRepoInput } from "@/modules/auth/server/contracts/auth-login-repo.dto";
-import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
+import type { AuthLoginRepoInput } from "@/modules/auth/server/application/contracts/auth-login-repo.dto";
+import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
+import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/contracts/auth-user-repository.contract";
 import type { AuthUserRepository } from "@/modules/auth/server/infrastructure/db/repositories/auth-user.repository";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -11,10 +11,10 @@ import type { Result } from "@/shared/results/result.types";
 
 /**
  * Adapter that exposes an infrastructure {@link AuthUserRepository} through the
- * application-facing {@link AuthUserRepositoryPort}.
+ * application-facing {@link AuthUserRepositoryContract}.
  *
  * ## Why this exists
- * The application layer depends only on ports. The infrastructure layer provides
+ * The application layer depends only on contracts. The infrastructure layer provides
  * concrete repositories. This adapter bridges the two without leaking
  * infrastructure types into the application core.
  *
@@ -25,7 +25,7 @@ import type { Result } from "@/shared/results/result.types";
  * - No logging: logging is the repository implementation’s job
  * - No business rules: those belong in services/use-cases
  */
-export class AuthUserRepositoryAdapter implements AuthUserRepositoryPort {
+export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
   private readonly repo: AuthUserRepository;
 
   /**

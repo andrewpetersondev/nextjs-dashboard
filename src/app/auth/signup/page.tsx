@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { signupAction } from "@/modules/auth/server/actions/signup.action";
-import { SIGNUP_HEADING } from "@/modules/auth/shared/ui/auth.tokens";
+import { SIGNUP_HEADING } from "@/modules/auth/ui/auth.tokens";
 import { AuthPageWrapper } from "@/modules/auth/ui/components/shared/auth-page-wrapper";
 import { SignupCard } from "@/modules/auth/ui/components/signup-card";
 import { ROUTES } from "@/shared/routes/routes";

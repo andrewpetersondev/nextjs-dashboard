@@ -4,7 +4,7 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { Hash } from "@/server/crypto/hashing/hashing.types";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import type { invoices } from "@/server/db/schema/invoices";
 import type { Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";

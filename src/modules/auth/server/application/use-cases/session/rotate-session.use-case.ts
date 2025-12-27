@@ -1,14 +1,14 @@
 import "server-only";
 
 import type {
-  SessionPort,
+  SessionContract,
   SessionTokenCodecPort,
-} from "@/modules/auth/server/application/ports/session.port";
+} from "@/modules/auth/server/application/contracts/session.contract";
 import {
   SESSION_DURATION_MS,
   SESSION_REFRESH_THRESHOLD_MS,
-} from "@/modules/auth/server/contracts/session.policy.constants";
-import type { UpdateSessionOutcome } from "@/modules/auth/shared/domain/session/session.policy";
+  type UpdateSessionOutcome,
+} from "@/modules/auth/shared/domain/session/session.policy";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
@@ -22,7 +22,7 @@ const ONE_SECOND_MS = 1000 as const;
 const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
 
 type RotateSessionDeps = Readonly<{
-  cookie: SessionPort;
+  cookie: SessionContract;
   jwt: SessionTokenCodecPort;
   logger: LoggingClientPort;
 }>;
@@ -100,7 +100,7 @@ async function issueToken(
  * - if needed, re-issue token and set cookie
  */
 export class RotateSessionUseCase {
-  private readonly cookie: SessionPort;
+  private readonly cookie: SessionContract;
   private readonly jwt: SessionTokenCodecPort;
   private readonly logger: LoggingClientPort;
 

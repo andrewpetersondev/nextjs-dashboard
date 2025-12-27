@@ -18,9 +18,9 @@ Use `Result<Ok, Err>` from `@/shared/result` for all **expected failures**.
 
 ### Layer Responsibilities
 
-- **Infrastructure (Adapters)**: Return `Result`. **Never throw** for expected DB or Network failures.
-- **Application (Services/Use Cases)**: Compose, map, and wrap results. Map technical errors to domain errors.
-- **Actions (Boundaries)**: Unwrap the `Result` and translate it into a UI response (Redirect, Error message).
+- **Infrastructure**: Return `Result`. **Never throw** for expected DB or Network failures. Use `normalizePgError` (or similar) to convert technical errors into `AppError` values.
+- **Use Cases**: Compose, map, and wrap results. Orchestrate the flow and map technical infrastructure errors into domain-specific business errors.
+- **Interface Adapters (Actions)**: Unwrap the `Result` and translate it into a UI response (Redirect, Error message, or `AppErrorJsonDto`).
 
 ### Async Composition
 

@@ -1,6 +1,6 @@
 import "server-only";
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
-import type { Hash } from "@/server/crypto/hashing/hashing.types";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 
 /**
  * Small facade over shared crypto capabilities.

@@ -2,7 +2,7 @@ import {
   USER_ROLE,
   type UserRole,
 } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { Hash } from "@/server/crypto/hashing/hashing.types";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";

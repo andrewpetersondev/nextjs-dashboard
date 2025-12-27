@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
-import type { CreateUserUseCase } from "@/modules/auth/server/application/use-cases/user/create-user.use-case";
+import type { SignupUseCase } from "@/modules/auth/server/application/use-cases/user/signup.use-case";
 import type { SignupData } from "@/modules/auth/shared/domain/user/auth.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -16,7 +16,7 @@ import type { Result } from "@/shared/results/result.types";
 export async function signupWorkflow(
   input: Readonly<SignupData>,
   deps: Readonly<{
-    createUserUseCase: CreateUserUseCase;
+    createUserUseCase: SignupUseCase;
     sessionService: SessionService;
   }>,
 ): Promise<Result<SessionPrincipal, AppError>> {

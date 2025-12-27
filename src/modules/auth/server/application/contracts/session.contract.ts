@@ -4,7 +4,7 @@ import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/se
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
-export interface SessionPort {
+export interface SessionContract {
   delete(): Promise<void>;
   get(): Promise<string | undefined>;
   set(value: string, expiresAtMs: number): Promise<void>;

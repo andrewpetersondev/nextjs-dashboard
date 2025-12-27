@@ -1,5 +1,5 @@
 import "server-only";
-import type { Hash } from "@/server/crypto/hashing/hashing.types";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 
 export interface HashingPort {
   /**

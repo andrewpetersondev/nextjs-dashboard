@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs";
-import { asHash, type Hash } from "@/server/crypto/hashing/hashing.types";
+import { type Hash, toHash } from "@/server/crypto/hashing/hashing.value";
 import { SEED_CONFIG } from "./constants";
 
 /**
@@ -18,7 +18,7 @@ export function validatePeriod(period: string): void {
 export async function hashPassword(password: string): Promise<Hash> {
   const salt = await bcryptjs.genSalt(SEED_CONFIG.saltRounds);
   const hashed = bcryptjs.hash(password, salt);
-  const branded = asHash(await hashed);
+  const branded = toHash(await hashed);
   return branded;
 }
 

@@ -1,7 +1,7 @@
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { Hash } from "@/server/crypto/hashing/hashing.types";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
 
 export default defineConfig({

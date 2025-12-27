@@ -7,7 +7,7 @@ import {
 import {
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
-} from "@/modules/auth/shared/ui/auth.tokens";
+} from "@/modules/auth/ui/auth.tokens";
 import { DemoForm } from "@/modules/auth/ui/components/forms/demo-form";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 

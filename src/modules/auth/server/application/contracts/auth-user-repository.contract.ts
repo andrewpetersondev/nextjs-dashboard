@@ -1,30 +1,19 @@
 import "server-only";
 
-import type { AuthLoginRepoInput } from "@/modules/auth/server/contracts/auth-login-repo.dto";
-import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
-import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
+import type { AuthLoginRepoInput } from "@/modules/auth/server/application/contracts/auth-login-repo.dto";
+import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
+import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Application-layer repository port for user authentication persistence.
+ * Application-layer repository contract for user authentication persistence.
  *
  * ## Purpose
- * This interface defines the persistence capabilities required by the auth
- * application core (services/use-cases). It is intentionally technology-agnostic:
- * callers depend on this contract, while infrastructure provides concrete
- * implementations (often via an adapter).
- *
- * ## Usage
- * - Consumed by application services/use-cases
- * - Implemented by an adapter that delegates to an infrastructure repository
- *
- * ## Transactions
- * Transactions are owned by the application layer via {@link UnitOfWorkPort}.
- * Repository ports should remain transaction-agnostic.
+ * This interface defines the persistence capabilities required by the Use Cases.
  */
-export interface AuthUserRepositoryPort {
+export interface AuthUserRepositoryContract {
   /**
    * Increments the demo user counter for a specific role.
    *

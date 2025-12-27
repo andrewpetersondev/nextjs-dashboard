@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-signup.dto";
+import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { type NewUserRow, users } from "@/server/db/schema";
+import { type NewUserRow, type UserRow, users } from "@/server/db/schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -13,22 +13,23 @@ import type { Result } from "@/shared/results/result.types";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
+ * The database generates the ID.
  * Throws on invariant violations; never returns null.
  *
  * @param db - Database connection
  * @param input - Signup payload
  * @param logger - Logging client
- * @returns Inserted user row
+ * @returns Result of the inserted user row (full record including DB-generated ID)
  */
 export async function insertUserDal(
   db: AppDatabase,
   input: AuthSignupPayload,
   logger: LoggingClientPort,
-): Promise<Result<NewUserRow, AppError>> {
+): Promise<Result<UserRow, AppError>> {
   const { email, password, role, username } = input;
 
-  return await executeDalResult<NewUserRow>(
-    async (): Promise<NewUserRow> => {
+  return await executeDalResult<UserRow>(
+    async (): Promise<UserRow> => {
       const [userRow] = await db
         .insert(users)
         .values({ email, password, role, username } satisfies NewUserRow)

@@ -1,7 +1,8 @@
 import "server-only";
+
 import bcryptjs from "bcryptjs";
 import type { HashingPort } from "@/server/crypto/hashing/hashing.port";
-import { asHash, type Hash } from "@/server/crypto/hashing/hashing.types";
+import { type Hash, toHash } from "@/server/crypto/hashing/hashing.value";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 const SALT_ROUNDS = 10 as const;
@@ -17,7 +18,7 @@ export class BcryptHashingAdapter implements HashingPort {
     try {
       const salt = await genSalt(SALT_ROUNDS);
       const hashed = await bcryptjs.hash(raw, salt);
-      return asHash(hashed);
+      return toHash(hashed);
     } catch (err) {
       throw makeAppError("infrastructure", {
         cause: Error.isError(err) ? err : "fix this ",

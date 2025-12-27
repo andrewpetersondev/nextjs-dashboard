@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { demoUserActionAdapter } from "@/modules/auth/server/actions/demo-user.action";
 import type { LoginField } from "@/modules/auth/shared/domain/user/auth.schema";
-import { AUTH_DIVIDER_LABEL } from "@/modules/auth/shared/ui/auth.tokens";
+import { AUTH_DIVIDER_LABEL } from "@/modules/auth/ui/auth.tokens";
 import type { AuthActionProps } from "@/modules/auth/ui/components/auth-ui.dto";
 import { LoginForm } from "@/modules/auth/ui/components/forms/login-form";
 import { AuthFormDemoSection } from "@/modules/auth/ui/components/shared/auth-form-demo-section";

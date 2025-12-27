@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
+import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/contracts/auth-user-repository.contract";
 import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
 import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
@@ -13,66 +13,26 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Maps database/entity representation to transport-safe AuthUserTransport.
- * Validates and converts all fields to ensure type safety across boundaries.
+ * LoginUseCase
  *
- * TODO: CONSIDER EXTRACTING
- * TODO: CONSIDER USING A DIFFERENT TYPE
+ * Single business capability: Authenticate a user by email/password.
  */
-const toAuthUserTransport = (src: {
-  readonly email: string;
-  readonly id: string;
-  readonly role: string;
-  readonly username: string;
-}): AuthUserTransport => {
-  if (!(src.email && src.id && src.role && src.username)) {
-    throw new Error("Invalid user entity: missing required fields");
-  }
-  return {
-    email: src.email,
-    id: toUserId(src.id),
-    role: parseUserRole(src.role),
-    username: src.username,
-  };
-};
-
-/**
- * AuthUserService orchestrates authentication logic.
- *
- * @remarks
- * - Returns discriminated Result objects instead of throwing (for expected failures).
- * - Depends on small ports (AuthUserRepositoryPort, HashingService) for testability.
- *
- * NOTE: user creation (signup/demo user) is handled via use-cases that own transactions
- * through UnitOfWorkPort.
- */
-export class AuthUserService {
+export class LoginUseCase {
   private readonly hasher: HashingService;
   private readonly logger: LoggingClientPort;
-  private readonly repo: AuthUserRepositoryPort;
+  private readonly repo: AuthUserRepositoryContract;
 
   constructor(
-    repo: AuthUserRepositoryPort,
+    repo: AuthUserRepositoryContract,
     hasher: HashingService,
     logger: LoggingClientPort,
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    this.logger = logger.withContext("auth:service");
+    this.logger = logger.withContext("auth:use-case:login-user");
   }
 
-  /**
-   * Authenticate a user by email and password.
-   *
-   * @param input - Readonly LoginData with email and password.
-   * @returns A discriminated Result containing AuthUserTransport on success or AppError on failure.
-   *
-   * @remarks
-   * - Repository returns `AuthUserEntity | null` and does not encode auth semantics.
-   * - This method owns "invalid credentials" semantics and mapping to AppError.
-   * - Login is read-only; no transaction needed.
-   */
-  async login(
+  async execute(
     input: Readonly<LoginData>,
   ): Promise<Result<AuthUserTransport, AppError>> {
     const _logger = this.logger.child({ email: input.email });
@@ -96,7 +56,6 @@ export class AuthUserService {
         input.password,
         user.password,
       );
-
       if (!passwordOk) {
         return Err(
           normalizeUnknownToAppError(
@@ -106,7 +65,12 @@ export class AuthUserService {
         );
       }
 
-      return Ok<AuthUserTransport>(toAuthUserTransport(user));
+      return Ok({
+        email: user.email,
+        id: toUserId(user.id),
+        role: parseUserRole(user.role),
+        username: user.username,
+      });
     } catch (err: unknown) {
       return Err(normalizeUnknownToAppError(err, "unexpected"));
     }

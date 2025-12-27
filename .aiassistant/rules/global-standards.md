@@ -40,15 +40,36 @@ Avoid "drift" caused by silent fallbacks or implicit defaults.
 
 ## Project Structure
 
-Organize features using a Modular Hexagonal approach:
+Organize features using a **Modular Clean Architecture** approach:
 
 - **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design).
 - **Feature Modules**: `@/modules/{feature_name}`.
-  - `shared/`: Logic used by both UI and Server (schemas, constants).
-  - `server/`: Hexagonal core (Actions, Use Cases, Ports, Infrastructure).
-  - `ui/`: Feature-specific components.
+  - `shared/`: Logic used by both UI and Server (schemas, constants, types).
+  - `server/`: Backend logic split into Clean Architecture layers:
+    - `actions/`: **Interface Adapters**. Next.js entry points.
+    - `application/`: **Use Cases**. Business logic, orchestration, and contracts.
+    - `infrastructure/`: **Frameworks & Drivers**. DB repositories, external API clients.
+  - `ui/`: Feature-specific React components.
 - **Shared Logic**: `@/shared/` (cross-cutting concerns like error handling, forms, and results).
-- **Server-Only**: `@/server/` (global server utilities, e.g., database client, server config, cookies, crypto, db schema).
+- **Server-Only**: `@/server/` (global server utilities, e.g., database client, global config).
+
+## Server Action Responsibilities (Interface Adapters)
+
+Server Actions must remain **thin** and framework-focused. They are the bridge between the Web (HTTP/Forms) and your Application logic.
+
+- **Allowed Concerns**:
+  - Extracting data from `FormData`.
+  - Retrieving request metadata (IP, User Agent, Cookies).
+  - Initializing observability (Request IDs, Performance Trackers).
+  - Validating input schemas (via Zod/Form Helpers).
+  - Invoking a **single** Use Case or Workflow.
+  - Mapping Domain Results to UI-compatible `FormResult`.
+  - Triggering Next.js navigation (`redirect`, `revalidatePath`).
+- **Forbidden Concerns**:
+  - Direct Database queries (DAL/Drizzle).
+  - Business logic or complex branching (move to Use Cases).
+  - Manual password hashing or crypto logic.
+  - Instantiating complex Infrastructure classes directly (use Factories).
 
 ## Module Boundaries
 

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createAuthUserServiceFactory } from "@/modules/auth/server/application/factories/auth-user-service.factory";
+import { createLoginUseCaseFactory } from "@/modules/auth/server/application/factories/login-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { loginWorkflow } from "@/modules/auth/server/application/workflows/login.workflow";
 import {
@@ -11,7 +11,7 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/modules/auth/shared/domain/user/auth.schema";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -81,16 +81,12 @@ export async function loginAction(
     operationName: "login.validation.success",
   });
 
-  const authUserService = createAuthUserServiceFactory(
-    getAppDb(),
-    logger,
-    requestId,
-  );
+  const loginUseCase = createLoginUseCaseFactory(getAppDb(), logger, requestId);
 
   const sessionService = createSessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
-    loginWorkflow(input, { authUserService, sessionService }),
+    loginWorkflow(input, { loginUseCase, sessionService }),
   );
 
   if (!sessionResult.ok) {

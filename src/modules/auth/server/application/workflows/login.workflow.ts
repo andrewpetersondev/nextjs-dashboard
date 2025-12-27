@@ -1,10 +1,10 @@
 import "server-only";
 
-import type { AuthUserService } from "@/modules/auth/server/application/services/auth-user.service";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
+import type { LoginUseCase } from "@/modules/auth/server/application/use-cases/user/login.use-case";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/shared/ui/auth-error-messages";
+import { AUTH_ERROR_MESSAGES } from "@/modules/auth/ui/auth-error-messages";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -22,11 +22,11 @@ import type { Result } from "@/shared/results/result.types";
 export async function loginWorkflow(
   input: Readonly<LoginData>,
   deps: Readonly<{
-    authUserService: AuthUserService;
+    loginUseCase: LoginUseCase;
     sessionService: SessionService;
   }>,
 ): Promise<Result<SessionPrincipal, AppError>> {
-  const authResult = await deps.authUserService.login(input);
+  const authResult = await deps.loginUseCase.execute(input);
 
   if (!authResult.ok) {
     const error = authResult.error;

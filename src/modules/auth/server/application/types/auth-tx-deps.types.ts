@@ -1,11 +1,11 @@
-import type { AuthUserRepositoryPort } from "@/modules/auth/server/application/ports/auth-user-repository.port";
+import type { AuthUserRepositoryContract } from "@/modules/auth/server/application/contracts/auth-user-repository.contract";
 
 /**
  * Transaction-scoped dependencies (DB-only).
  *
- * Rule: only database-backed ports (repositories) belong here.
- * Do NOT add cookie/JWT/crypto/network ports—those are not transactional.
+ * Rule: only database-backed contracts (repositories) belong here.
+ * Do NOT add cookie/JWT/crypto/network contracts—those are not transactional.
  */
 export type AuthTxDeps = Readonly<{
-  authUsers: AuthUserRepositoryPort;
+  authUsers: AuthUserRepositoryContract;
 }>;
