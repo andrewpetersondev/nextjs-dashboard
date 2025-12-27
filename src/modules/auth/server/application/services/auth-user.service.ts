@@ -15,6 +15,9 @@ import type { Result } from "@/shared/results/result.types";
 /**
  * Maps database/entity representation to transport-safe AuthUserTransport.
  * Validates and converts all fields to ensure type safety across boundaries.
+ *
+ * TODO: CONSIDER EXTRACTING
+ * TODO: CONSIDER USING A DIFFERENT TYPE
  */
 const toAuthUserTransport = (src: {
   readonly email: string;

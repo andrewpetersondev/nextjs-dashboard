@@ -81,7 +81,7 @@ export async function signupAction(
     return validated;
   }
 
-  const input: SignupData = validated.value.data;
+  const input = validated.value.data satisfies SignupData;
 
   logger.operation("info", "Signup form validated", {
     duration: tracker.getLastDuration("validation"),
