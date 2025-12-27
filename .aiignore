@@ -38,7 +38,7 @@ src/modules/customers
 src/modules/revenues
 src/modules/invoices
 src/modules/users
-# *.tsx
+
 # ======================================================
 # BUILD / OUTPUT FILES
 # ======================================================
@@ -47,7 +47,6 @@ node_modules
 next-env.d.ts
 pnpm-lock.yaml
 tsconfig.tsbuildinfo
-
 
 # ======================================================
 # PATTERNS & EXTENSIONS
@@ -60,6 +59,7 @@ tsconfig.tsbuildinfo
 *.sh
 *.txt
 *.yaml
+# *.tsx
 
 # ======================================================
 # DOCKER
@@ -76,8 +76,6 @@ Dockerfile.*
 # *.cy.tsx
 # *.test.*
 # *.test.ts
-# *.tsx
-
 
 # ======================================================
 # OTHER STUFF
@@ -134,4 +132,3 @@ tmp
 temp
 .pnpm-store
 .yarn
-

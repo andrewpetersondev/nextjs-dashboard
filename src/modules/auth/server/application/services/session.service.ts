@@ -14,7 +14,7 @@ import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Manages session lifecycle including establishment, rotation, and cleanup.

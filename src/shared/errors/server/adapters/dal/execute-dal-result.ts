@@ -7,8 +7,8 @@ import type {
 } from "@/shared/errors/server/adapters/dal/dal-context.schema";
 import { normalizePgError } from "@/shared/errors/server/adapters/postgres/normalize-pg-error";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Executes a DAL thunk and returns `Result` for expected database failures.

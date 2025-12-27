@@ -5,8 +5,8 @@ import type { SessionPrincipal } from "@/modules/auth/server/application/types/s
 import type { CreateDemoUserUseCase } from "@/modules/auth/server/application/use-cases/user/create-demo-user.use-case";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Orchestrates the demo-user "story":

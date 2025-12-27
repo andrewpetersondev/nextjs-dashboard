@@ -10,7 +10,7 @@ import type {
   FormResult,
   FormSuccessPayload,
 } from "@/shared/forms/core/types/form-result.dto";
-import { Err, Ok } from "@/shared/result/result";
+import { Err, Ok } from "@/shared/results/result";
 
 /**
  * Parameters for creating a form error result.

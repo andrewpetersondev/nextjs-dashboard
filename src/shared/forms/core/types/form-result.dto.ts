@@ -4,7 +4,7 @@ import type {
   FormErrors,
   SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Represents a successful form submission payload.

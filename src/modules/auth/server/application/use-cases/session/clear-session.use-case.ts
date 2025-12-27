@@ -4,8 +4,8 @@ import type { SessionPort } from "@/modules/auth/server/application/ports/sessio
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 export type ClearSessionDeps = Readonly<{
   cookie: SessionPort;

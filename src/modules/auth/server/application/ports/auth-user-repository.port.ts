@@ -5,7 +5,7 @@ import type { AuthSignupPayload } from "@/modules/auth/server/contracts/auth-sig
 import type { AuthUserEntity } from "@/modules/auth/server/contracts/auth-user.entity";
 import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Application-layer repository port for user authentication persistence.

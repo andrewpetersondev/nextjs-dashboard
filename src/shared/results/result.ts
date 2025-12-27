@@ -1,5 +1,9 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { ErrResult, OkResult, Result } from "@/shared/result/result.types";
+import type {
+  ErrResult,
+  OkResult,
+  Result,
+} from "@/shared/results/result.types";
 
 /**
  * Freezes an object to prevent mutation (shallow).

@@ -29,7 +29,7 @@ import {
 } from "@/shared/branding/factories/id-factories";
 import { createPeriod } from "@/shared/branding/factories/period-factory";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Validate and convert an arbitrary value into a branded `CustomerId`.

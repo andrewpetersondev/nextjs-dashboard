@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/result/result";
-import type { AsyncThunk, Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { AsyncThunk, Result } from "@/shared/results/result.types";
 
 /**
  * Executes an async function and wraps the result.

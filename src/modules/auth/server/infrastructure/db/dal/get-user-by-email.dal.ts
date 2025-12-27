@@ -6,7 +6,7 @@ import { type UserRow, users } from "@/server/db/schema/users";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Finds a user by email for login.

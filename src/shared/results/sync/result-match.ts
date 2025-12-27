@@ -1,5 +1,5 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Extracts the value from a successful `Result` or throws the associated error if unsuccessful.

@@ -9,7 +9,7 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
 import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.

@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Applies a transformation function to the value of a successful `Result`,

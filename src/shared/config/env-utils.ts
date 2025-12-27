@@ -4,8 +4,8 @@
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Type-safe env accessor.

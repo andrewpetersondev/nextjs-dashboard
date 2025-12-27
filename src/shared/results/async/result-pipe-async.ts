@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <safe because of overloads> */
 
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Step function transforming Result<Ti, Ei> → Result<To, Eo>.

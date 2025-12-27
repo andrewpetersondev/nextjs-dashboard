@@ -10,8 +10,8 @@ import {
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 const MIN_HS256_KEY_LENGTH = 32 as const;
 const CLOCK_TOLERANCE_SEC = 5 as const;

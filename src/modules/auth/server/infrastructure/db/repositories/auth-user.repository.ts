@@ -14,8 +14,8 @@ import {
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import { Err, Ok } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.

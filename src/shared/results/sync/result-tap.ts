@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err } from "@/shared/result/result";
-import type { Result } from "@/shared/result/result.types";
+import { Err } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Executes a provided function if the `Result` is successful (`ok`), passing its value.

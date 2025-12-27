@@ -7,7 +7,7 @@ import {
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { Err } from "@/shared/result/result";
+import { Err } from "@/shared/results/result";
 
 /**
  * Creates the initial form state with empty field errors.

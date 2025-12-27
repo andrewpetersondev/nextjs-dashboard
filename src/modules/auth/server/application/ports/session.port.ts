@@ -2,7 +2,7 @@ import "server-only";
 
 import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/result/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 export interface SessionPort {
   delete(): Promise<void>;
