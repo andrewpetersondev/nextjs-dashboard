@@ -10,8 +10,8 @@ import { EstablishSessionUseCase } from "@/modules/auth/server/application/use-c
 import { ReadSessionUseCase } from "@/modules/auth/server/application/use-cases/session/read-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/server/application/use-cases/session/rotate-session.use-case";
 import type { UpdateSessionOutcome } from "@/modules/auth/shared/domain/session/session.policy";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import type { Result } from "@/shared/results/result.types";

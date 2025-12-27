@@ -1,11 +1,6 @@
-import type { Brand } from "@/shared/branding/brand";
+import "server-only";
 
-export const HASH_BRAND: unique symbol = Symbol("Hash");
-
-/**
- * Branded hash string (e.g., for passwords or tokens).
- */
-export type Hash = Brand<string, typeof HASH_BRAND>;
+import type { Hash } from "@/shared/branding/brands";
 
 /**
  * Pure mapping to brand a trusted hash string.

@@ -1,17 +1,17 @@
 import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/modules/auth/server/actions/verify-session-optimistic.action";
+import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
+import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
+import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";
+import { readLatestInvoicesAction } from "@/modules/invoices/server/application/actions/read-latest-invoices.action";
+import { getAppDb } from "@/server/db/db.connection";
+import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/modules/auth/shared/domain/user/auth.roles";
-import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
-import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
-import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";
-import { readLatestInvoicesAction } from "@/modules/invoices/server/application/actions/read-latest-invoices.action";
-import { normalizeUserRole } from "@/modules/users/domain/role/user.role.parser";
-import { getAppDb } from "@/server/db/db.connection";
+} from "@/shared/domain/user/user-role.types";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";

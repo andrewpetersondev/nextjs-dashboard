@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { CreateDemoUserUseCase } from "@/modules/auth/server/application/use-cases/user/create-demo-user.use-case";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";

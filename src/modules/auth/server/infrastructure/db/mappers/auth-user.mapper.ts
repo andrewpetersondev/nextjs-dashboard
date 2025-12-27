@@ -1,10 +1,10 @@
 import "server-only";
 
 import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
-import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { UserRow } from "@/server/db/schema";
 import { toUserId } from "@/shared/branding/converters/id-converters";
+import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 
 /**
  * Maps a raw database user row to the AuthUserEntity.

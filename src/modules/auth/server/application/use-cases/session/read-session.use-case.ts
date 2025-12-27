@@ -5,8 +5,8 @@ import type {
   SessionTokenCodecPort,
 } from "@/modules/auth/server/application/contracts/session.contract";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 export type ReadSessionDeps = Readonly<{

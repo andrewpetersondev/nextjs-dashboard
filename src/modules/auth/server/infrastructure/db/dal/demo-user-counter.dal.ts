@@ -1,8 +1,8 @@
 import "server-only";
 
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { executeDalThrow } from "@/shared/errors/server/adapters/dal/execute-dal-throw";

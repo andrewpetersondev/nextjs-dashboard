@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionTokenCodecPort } from "@/modules/auth/server/application/contracts/session.contract";
 import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
-import { ADMIN_ROLE } from "@/modules/auth/shared/domain/user/auth.roles";
+import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
 async function decodeClaims(
   cookie: string | undefined,

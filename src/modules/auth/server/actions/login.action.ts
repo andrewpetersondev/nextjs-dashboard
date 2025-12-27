@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { mapLoginErrorToFormResult } from "@/modules/auth/server/actions/auth-form-error.adapter";
 import { createLoginUseCaseFactory } from "@/modules/auth/server/application/factories/login-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { loginWorkflow } from "@/modules/auth/server/application/workflows/login.workflow";
@@ -11,11 +12,8 @@ import {
   type LoginField,
   LoginSchema,
 } from "@/modules/auth/shared/domain/user/auth.schema";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
-import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
@@ -26,12 +24,12 @@ import { ROUTES } from "@/shared/routes/routes";
 const fields = LOGIN_FIELDS_LIST;
 
 /**
- * Next.js Server Action boundary:
- * - validate form
- * - call workflow
- * - unwrap Result into FormResult/redirect
+ * Next.js Server Action boundary for user authentication.
+ *
+ * Orchestrates form validation, authentication workflow execution,
+ * and result mapping to UI-compatible FormResult or Next.js redirect.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login boundary is inherently multi-step (validation + orchestration + mapping)
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary requires validation, orchestration, logging, and result mapping
 export async function loginAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
@@ -99,32 +97,7 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
-    const payload = toFormErrorPayload<LoginField>(error, fields);
-
-    // Unified security response for credential failures
-    if (error.key === "invalid_credentials") {
-      const credentialsErrorMessage = AUTH_ERROR_MESSAGES.LOGIN_FAILED;
-
-      return makeFormError<LoginField>({
-        ...payload,
-        fieldErrors: {
-          email: [credentialsErrorMessage],
-          password: [credentialsErrorMessage],
-        },
-        formData: input,
-        formErrors: [credentialsErrorMessage],
-        key: error.key,
-        message: credentialsErrorMessage,
-      });
-    }
-
-    return makeFormError<LoginField>({
-      ...payload,
-      formData: input,
-      formErrors:
-        payload.formErrors.length > 0 ? payload.formErrors : [payload.message],
-      key: error.key,
-    });
+    return mapLoginErrorToFormResult(error, input);
   }
 
   const { id: userId, role } = sessionResult.value;

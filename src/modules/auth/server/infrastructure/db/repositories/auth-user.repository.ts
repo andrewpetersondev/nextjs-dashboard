@@ -10,8 +10,8 @@ import {
   toAuthUserEntity,
   toNewAuthUserEntity,
 } from "@/modules/auth/server/infrastructure/db/mappers/auth-user.mapper";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { AppDatabase } from "@/server/db/db.connection";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/results/result";

@@ -5,7 +5,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/shared/domain/user/auth.roles";
+} from "@/shared/domain/user/user-role.types";
 import { H6 } from "@/ui/atoms/headings";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;

@@ -1,6 +1,5 @@
 "use server";
 
-import { normalizeUserRole } from "@/modules/users/domain/role/user.role.parser";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
@@ -11,6 +10,7 @@ import {
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/server/application/services/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
+import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {

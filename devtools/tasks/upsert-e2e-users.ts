@@ -1,10 +1,7 @@
 import { eq } from "drizzle-orm";
-import {
-  USER_ROLE,
-  type UserRole,
-} from "@/modules/auth/shared/domain/user/auth.roles";
 import { sessions } from "@/server/db/schema/sessions";
 import { users } from "@/server/db/schema/users";
+import { USER_ROLE, type UserRole } from "@/shared/domain/user/user-role.types";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 

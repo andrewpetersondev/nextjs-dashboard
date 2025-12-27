@@ -9,13 +9,12 @@
 
 import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import type { Hash, UserId } from "@/shared/branding/brands";
 import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/modules/auth/shared/domain/user/auth.roles";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
-import type { UserId } from "@/shared/branding/brands";
+} from "@/shared/domain/user/user-role.types";
 import { sessions } from "./sessions";
 
 export const roleEnum = pgEnum("role", USER_ROLES);

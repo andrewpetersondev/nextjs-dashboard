@@ -5,7 +5,7 @@
 import {
   USER_ROLE,
   type UserRole,
-} from "../../../src/modules/auth/shared/domain/user/auth.roles";
+} from "../../../src/shared/domain/user/user-role.types";
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
 /**

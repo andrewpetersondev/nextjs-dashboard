@@ -3,11 +3,11 @@ import "server-only";
 import type { UnitOfWorkContract } from "@/modules/auth/server/application/contracts/unit-of-work.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/server/application/services/auth-error-mapper.service";
 import type { AuthUserTransport } from "@/modules/auth/shared/contracts/auth-user.transport";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import { parseUserRole } from "@/modules/users/domain/role/user.role.parser";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
+import { parseUserRole } from "@/shared/domain/user/user-role.parser";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import {

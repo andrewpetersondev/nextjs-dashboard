@@ -59,3 +59,10 @@ export type SessionId = Brand<string, typeof SESSION_ID_BRAND>;
  * Branded user identifier (UUID string).
  */
 export type UserId = Brand<string, typeof USER_ID_BRAND>;
+
+export const HASH_BRAND: unique symbol = Symbol("Hash");
+
+/**
+ * Branded hash string (e.g., for passwords or tokens).
+ */
+export type Hash = Brand<string, typeof HASH_BRAND>;

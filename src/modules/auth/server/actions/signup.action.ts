@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { mapSignupErrorToFormResult } from "@/modules/auth/server/actions/auth-form-error.adapter";
 import { createCreateUserUseCaseFactory } from "@/modules/auth/server/application/factories/create-user-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { createUnitOfWorkFactory } from "@/modules/auth/server/application/factories/unit-of-work.factory";
@@ -13,9 +14,7 @@ import {
   SignupSchema,
 } from "@/modules/auth/shared/domain/user/auth.schema";
 import { getAppDb } from "@/server/db/db.connection";
-import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
@@ -113,16 +112,9 @@ export async function signupAction(
       operationName: "signup.authentication.failed",
     });
 
-    const payload = toFormErrorPayload<SignupField>(error, fields);
-
-    return makeFormError<SignupField>({
-      ...payload,
-      formData: input,
-      formErrors:
-        payload.formErrors.length > 0 ? payload.formErrors : [payload.message],
-      key: error.key,
-    });
+    return mapSignupErrorToFormResult(error, input);
   }
+
   const { id: userId, role } = sessionResult.value;
 
   logger.operation("info", "Signup action completed successfully", {

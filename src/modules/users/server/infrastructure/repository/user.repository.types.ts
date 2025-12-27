@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
+import type { Hash } from "@/shared/branding/brands";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 export type UserPersistencePatch = {
   email?: string;

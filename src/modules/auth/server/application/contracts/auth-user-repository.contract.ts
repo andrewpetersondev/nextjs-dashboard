@@ -3,7 +3,7 @@ import "server-only";
 import type { AuthLoginRepoInput } from "@/modules/auth/server/application/contracts/auth-login-repo.dto";
 import type { AuthSignupPayload } from "@/modules/auth/server/application/contracts/auth-signup.dto";
 import type { AuthUserEntity } from "@/modules/auth/server/application/contracts/auth-user.entity";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

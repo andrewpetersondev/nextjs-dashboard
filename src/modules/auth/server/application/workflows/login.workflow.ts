@@ -4,7 +4,6 @@ import type { SessionService } from "@/modules/auth/server/application/services/
 import type { SessionPrincipal } from "@/modules/auth/server/application/types/session-principal.types";
 import type { LoginUseCase } from "@/modules/auth/server/application/use-cases/user/login.use-case";
 import type { LoginData } from "@/modules/auth/shared/domain/user/auth.schema";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/ui/auth-error-messages";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -37,7 +36,7 @@ export async function loginWorkflow(
       return Err(
         makeAppError(APP_ERROR_KEYS.invalid_credentials, {
           cause: "Authentication failed due to invalid email or password.",
-          message: AUTH_ERROR_MESSAGES.LOGIN_FAILED,
+          message: "Login workflow failed for some reason.",
           metadata: {
             code: "invalidCredentials",
           },

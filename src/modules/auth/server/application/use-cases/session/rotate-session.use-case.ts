@@ -10,8 +10,8 @@ import {
   type UpdateSessionOutcome,
 } from "@/modules/auth/shared/domain/session/session.policy";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
 import type { UserId } from "@/shared/branding/brands";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";

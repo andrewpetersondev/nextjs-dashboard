@@ -1,4 +1,4 @@
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
  * API/UI

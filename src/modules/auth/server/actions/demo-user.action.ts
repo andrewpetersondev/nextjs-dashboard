@@ -5,9 +5,8 @@ import { createCreateDemoUserUseCaseFactory } from "@/modules/auth/server/applic
 import { createSessionServiceFactory } from "@/modules/auth/server/application/factories/session-service.factory";
 import { createUnitOfWorkFactory } from "@/modules/auth/server/application/factories/unit-of-work.factory";
 import { createDemoUserWorkflow } from "@/modules/auth/server/application/workflows/create-demo-user.workflow";
-import type { UserRole } from "@/modules/auth/shared/domain/user/auth.roles";
-import { AUTH_ERROR_MESSAGES } from "@/modules/auth/ui/auth-error-messages";
 import { getAppDb } from "@/server/db/db.connection";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
@@ -61,9 +60,9 @@ async function createDemoUserInternal(
     return makeFormError({
       fieldErrors: {} as DenseFieldErrorMap<string, string>,
       formData: {},
-      formErrors: [error.message || AUTH_ERROR_MESSAGES.DEMO_USER_FAILED],
+      formErrors: [error.message || "demo user creation failed"],
       key: error.key,
-      message: error.message || AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
+      message: error.message || "demo user creation failed.",
     });
   }
 
@@ -97,9 +96,9 @@ export async function demoUserActionAdapter(
     return makeFormError({
       fieldErrors: {} as DenseFieldErrorMap<string, string>,
       formData: {},
-      formErrors: [AUTH_ERROR_MESSAGES.DEMO_USER_FAILED],
+      formErrors: ["demo user creation failed: invalid role."],
       key: "validation",
-      message: AUTH_ERROR_MESSAGES.DEMO_USER_FAILED,
+      message: "demo user creation failed: invalid role.",
     });
   }
 
