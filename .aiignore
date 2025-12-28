@@ -37,7 +37,7 @@ public
 src/modules/customers
 src/modules/revenues
 src/modules/invoices
-# src/modules/users
+src/modules/users
 
 # ======================================================
 # BUILD / OUTPUT FILES
