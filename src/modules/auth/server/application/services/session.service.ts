@@ -11,6 +11,10 @@ import {
   TerminateSessionUseCase,
 } from "@/modules/auth/server/application/use-cases/session/lifecycle/terminate-session.use-case";
 import { ReadSessionUseCase } from "@/modules/auth/server/application/use-cases/session/queries/read-session.use-case";
+import {
+  type VerifySessionResult,
+  VerifySessionUseCase,
+} from "@/modules/auth/server/application/use-cases/session/queries/verify-session.use-case";
 import type { UpdateSessionOutcome } from "@/modules/auth/shared/domain/session/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -82,5 +86,16 @@ export class SessionService {
       logger: this.logger,
       store: this.store,
     }).execute(reason);
+  }
+
+  /**
+   * Verifies the current session without side effects.
+   */
+  verify(): Promise<VerifySessionResult> {
+    return new VerifySessionUseCase({
+      logger: this.logger,
+      store: this.store,
+      tokenService: this.tokenService,
+    }).execute();
   }
 }
