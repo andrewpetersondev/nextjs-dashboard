@@ -31,5 +31,5 @@ export default defineConfig({
   dbCredentials: { url },
   dialect: "postgresql",
   out: `./drizzle/migrations/${scope}/`,
-  schema: "./src/server-core/db/schema",
+  schema: "./src/server/db/schema",
 });

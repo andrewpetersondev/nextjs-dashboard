@@ -22,6 +22,13 @@
       "when": 1758354749053,
       "tag": "0002_nebulous_phil_sheldon",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1767009740038,
+      "tag": "0003_clumsy_thaddeus_ross",
+      "breakpoints": true
     }
   ]
 }
