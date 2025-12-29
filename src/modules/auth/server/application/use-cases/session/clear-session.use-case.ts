@@ -36,6 +36,10 @@ export class ClearSessionUseCase {
 
       return Ok<void>(undefined);
     } catch (err: unknown) {
+      this.logger.errorWithDetails("Failed to clear session", err, {
+        operation: "clearSession",
+      });
+
       return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
   }
