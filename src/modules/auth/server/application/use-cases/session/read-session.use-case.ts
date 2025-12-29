@@ -53,12 +53,21 @@ export class ReadSessionUseCase {
       const decodedResult = await this.jwt.decode(token);
 
       if (!decodedResult.ok) {
-        // Cookie hygiene: remove invalid token to prevent repeated failures
+        // Here we can decide: is an invalid JWT an Error or just "no session"?
+        // Usually, for security hygiene, we clear it and return undefined (no session),
+        // but we might want to keep the Err if it's a structural failure (e.g. missing secret).
         try {
           await this.cookie.delete();
         } catch (_) {
-          // best-effort cleanup; ignore delete failures
+          // ignore cleanup failure
         }
+
+        // If the error is technical (like missing secret), propagate it.
+        // If it's just an expired/invalid token, treat as "no session".
+        if (decodedResult.error.key === "unexpected") {
+          return Err(decodedResult.error);
+        }
+
         return Ok(undefined);
       }
 

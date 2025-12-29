@@ -30,21 +30,20 @@ export async function verifySessionOptimisticWorkflow(
 ): Promise<VerifySessionOptimisticResult> {
   const result = await deps.sessionService.read();
 
-  // 1. Handle technical/operational failures (e.g. JWT secret missing, logger down)
+  // 1. Handle technical failures (e.g. JWT secret misconfigured)
   if (!result.ok) {
-    // We treat technical errors during optimistic checks as "no session"
-    // to avoid crashing the UI for unauthenticated users.
+    // We can still choose to fail-softly for the UI, but now we know it was a REAL error
     return { error: { reason: "no_session" }, ok: false };
   }
 
   const session = result.value;
 
-  // 2. Handle the "No Session" value (Ok(undefined))
+  // 2. Handle the "Expected Absence" (User simply isn't logged in)
   if (!session) {
     return { error: { reason: "no_session" }, ok: false };
   }
 
-  // 3. We have a valid principal
+  // 3. Success
   return Ok({
     isAuthorized: true,
     role: session.role,
