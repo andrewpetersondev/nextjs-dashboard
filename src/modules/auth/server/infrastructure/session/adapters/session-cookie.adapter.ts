@@ -1,5 +1,7 @@
 import "server-only";
+
 import {
+  ONE_SECOND_MS,
   SESSION_COOKIE_NAME,
   SESSION_DURATION_MS,
 } from "@/modules/auth/shared/domain/session/session.policy";
@@ -7,12 +9,9 @@ import { createCookieService } from "@/server/cookies/cookie.factory";
 import { isProd } from "@/shared/config/env-shared";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
-const ONE_SECOND_MS = 1000 as const;
-
 const SESSION_COOKIE_HTTPONLY = true as const;
 const SESSION_COOKIE_PATH = "/" as const;
-const SESSION_COOKIE_SAMESITE = "lax" as const;
-
+const SESSION_COOKIE_SAMESITE = "strict" as const;
 const FIXED_MAX_AGE_S = Math.floor(SESSION_DURATION_MS / ONE_SECOND_MS);
 
 export class SessionCookieAdapter {

@@ -31,7 +31,14 @@ export const userIdSchema = z
   .transform<UserId>((val) => (typeof val === "string" ? toUserId(val) : val));
 
 export const expiresAtSchema = z.number().int().positive();
-export const sessionStartSchema = z.number().int().nonnegative();
+
+export const sessionStartSchema = z
+  .number()
+  .int()
+  .nonnegative()
+  .refine((val) => val <= Date.now(), {
+    message: "sessionStart must not be in the future",
+  });
 
 export const EncryptPayloadSchema = z
   .object({

@@ -3,14 +3,15 @@ import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
-import { SESSION_DURATION_MS } from "@/modules/auth/shared/domain/session/session.policy";
+import {
+  ONE_SECOND_MS,
+  SESSION_DURATION_MS,
+} from "@/modules/auth/shared/domain/session/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-const ONE_SECOND_MS = 1000 as const;
 
 export type EstablishSessionDeps = Readonly<{
   cookie: SessionStoreContract;
@@ -62,6 +63,17 @@ export class EstablishSessionUseCase {
       }
 
       await this.cookie.set(encodedResult.value, expiresAtMs);
+
+      this.logger.operation("info", "Session established", {
+        operationContext: "session",
+        operationIdentifiers: {
+          expiresAt: expiresAtMs,
+          role: user.role,
+          sessionStart: now,
+          userId: user.id,
+        },
+        operationName: "session.establish.success",
+      });
 
       return Ok(user);
     } catch (err: unknown) {

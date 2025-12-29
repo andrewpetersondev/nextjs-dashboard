@@ -13,7 +13,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 const REFRESH_INTERVAL_MS = 60_000;
 const KICKOFF_TIMEOUT_MS = 1500;
-const REFRESH_JITTER_MS = 1000;
+const REFRESH_JITTER_MS = 5000;
 
 /**
  * Checks if the session needs a refresh and performs the request.
@@ -46,6 +46,16 @@ async function performSessionPing(): Promise<void> {
     const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
     if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
       const outcome = (await res.json()) as UpdateSessionOutcome;
+
+      // Handle absolute lifetime exceeded - redirect to force re-authentication
+      if (
+        !outcome.refreshed &&
+        outcome.reason === "absolute_lifetime_exceeded"
+      ) {
+        window.location.href = "/";
+        return;
+      }
+
       // Log based on environment
       const env = getPublicNodeEnv();
       if (env === "development") {

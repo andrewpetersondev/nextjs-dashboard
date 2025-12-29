@@ -8,9 +8,9 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
 export type AuthEncryptPayload = FlatEncryptPayload<UserRole>;
 
 export type FlatEncryptPayload<R = string> = {
-  exp?: number;
+  exp: number;
   expiresAt: number;
-  iat?: number;
+  iat: number;
   role: R;
   sessionStart: number;
   userId: string;

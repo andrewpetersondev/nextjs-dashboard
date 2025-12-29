@@ -3,8 +3,11 @@ import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import {
+  absoluteLifetime,
+  MAX_ABSOLUTE_SESSION_MS,
+  ONE_SECOND_MS,
   SESSION_DURATION_MS,
-  SESSION_REFRESH_THRESHOLD_MS,
+  shouldRefreshToken,
   type UpdateSessionOutcome,
 } from "@/modules/auth/shared/domain/session/session.policy";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
@@ -16,51 +19,11 @@ import type { LoggingClientPort } from "@/shared/logging/core/logging-client.por
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-const ONE_SECOND_MS = 1000 as const;
-const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const;
-
 type RotateSessionDeps = Readonly<{
   cookie: SessionStoreContract;
   jwt: SessionTokenCodecContract;
   logger: LoggingClientPort;
 }>;
-
-/** Compute absolute lifetime status from immutable sessionStart. */
-function absoluteLifetime(user?: { sessionStart?: number; userId?: string }): {
-  age: number;
-  exceeded: boolean;
-} {
-  const start = user?.sessionStart ?? 0;
-  const age = Date.now() - start;
-  return { age, exceeded: !start || age > MAX_ABSOLUTE_SESSION_MS };
-}
-
-/**
- * Milliseconds remaining until token expiry (negative if expired).
- *
- * Prefers `expiresAt` (ms) when present; falls back to `exp` (seconds).
- */
-function timeLeftMs(payload?: { exp?: number; expiresAt?: number }): number {
-  if (payload?.expiresAt && Number.isFinite(payload.expiresAt)) {
-    return payload.expiresAt - Date.now();
-  }
-  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
-  return expMs - Date.now();
-}
-
-function shouldRefreshToken(decoded: { exp?: number; expiresAt?: number }): {
-  refresh: boolean;
-  timeLeftMs: number;
-} {
-  const remaining = timeLeftMs({
-    exp: decoded.exp,
-    expiresAt: decoded.expiresAt,
-  });
-  return {
-    refresh: remaining <= SESSION_REFRESH_THRESHOLD_MS,
-    timeLeftMs: remaining,
-  };
-}
 
 async function issueToken(
   jwt: SessionTokenCodecContract,
@@ -117,12 +80,22 @@ export class RotateSessionUseCase {
       const current = await this.cookie.get();
 
       if (!current) {
+        this.logger.operation("debug", "Session rotation skipped: no cookie", {
+          operationContext: "session",
+          operationIdentifiers: { reason: "no_cookie" },
+          operationName: "session.rotate.no_cookie",
+        });
         return Ok({ reason: "no_cookie", refreshed: false });
       }
 
       const decodedResult = await this.jwt.decode(current);
 
       if (!decodedResult.ok) {
+        this.logger.operation("warn", "Session rotation failed: decode error", {
+          operationContext: "session",
+          operationIdentifiers: { reason: "decode_failed" },
+          operationName: "session.rotate.decode_failed",
+        });
         // hygiene: remove bad token
         try {
           await this.cookie.delete();
@@ -135,6 +108,15 @@ export class RotateSessionUseCase {
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
+        this.logger.operation(
+          "warn",
+          "Session rotation failed: missing userId",
+          {
+            operationContext: "session",
+            operationIdentifiers: { reason: "missing_user_id" },
+            operationName: "session.rotate.missing_user",
+          },
+        );
         try {
           await this.cookie.delete();
         } catch (_) {
@@ -152,6 +134,21 @@ export class RotateSessionUseCase {
       const { age, exceeded } = absoluteLifetime(user);
 
       if (exceeded) {
+        this.logger.operation(
+          "info",
+          "Session rotation denied: absolute lifetime exceeded",
+          {
+            operationContext: "session",
+            operationIdentifiers: {
+              ageMs: age,
+              maxMs: MAX_ABSOLUTE_SESSION_MS,
+              reason: "absolute_lifetime_exceeded",
+              role: user.role,
+              userId: user.userId,
+            },
+            operationName: "session.rotate.absolute_lifetime_exceeded",
+          },
+        );
         await this.cookie.delete();
 
         return Ok({
@@ -165,6 +162,15 @@ export class RotateSessionUseCase {
       const { refresh, timeLeftMs: remaining } = shouldRefreshToken(decoded);
 
       if (!refresh) {
+        this.logger.operation("debug", "Session rotation not needed", {
+          operationContext: "session",
+          operationIdentifiers: {
+            reason: "not_needed",
+            timeLeftMs: remaining,
+            userId: user.userId,
+          },
+          operationName: "session.rotate.not_needed",
+        });
         return Ok({
           reason: "not_needed",
           refreshed: false,
@@ -181,6 +187,17 @@ export class RotateSessionUseCase {
       const { expiresAtMs, token } = issuedResult.value;
 
       await this.cookie.set(token, expiresAtMs);
+
+      this.logger.operation("info", "Session rotated successfully", {
+        operationContext: "session",
+        operationIdentifiers: {
+          expiresAt: expiresAtMs,
+          reason: "rotated",
+          role: user.role,
+          userId: user.userId,
+        },
+        operationName: "session.rotate.success",
+      });
 
       return Ok({
         expiresAt: expiresAtMs,

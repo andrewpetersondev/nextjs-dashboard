@@ -3,6 +3,12 @@ import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
 import {
+  CLOCK_TOLERANCE_SEC,
+  JWT_ALG_HS256,
+  JWT_TYP_JWT,
+  MIN_HS256_KEY_LENGTH,
+} from "@/modules/auth/shared/domain/session/session.policy";
+import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
   SESSION_SECRET,
@@ -12,11 +18,6 @@ import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-const MIN_HS256_KEY_LENGTH = 32 as const;
-const CLOCK_TOLERANCE_SEC = 5 as const;
-const JWT_ALG_HS256 = "HS256" as const;
-const JWT_TYP_JWT = "JWT" as const;
 
 const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
   new TextEncoder();
