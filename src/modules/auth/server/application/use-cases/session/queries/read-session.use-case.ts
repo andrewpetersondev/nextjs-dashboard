@@ -1,4 +1,5 @@
 import "server-only";
+import { cleanupInvalidToken } from "@/modules/auth/server/application/helpers/session-cleanup.helper";
 
 import type { SessionTokenService } from "@/modules/auth/server/application/services/session-token.service";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
@@ -49,7 +50,7 @@ export class ReadSessionUseCase {
       const decodedResult = await this.tokenService.decode(token);
 
       if (!decodedResult.ok) {
-        await this.cleanupInvalidToken();
+        await cleanupInvalidToken(this.store);
 
         if (decodedResult.error.key === "unexpected") {
           return Err(decodedResult.error);
@@ -61,7 +62,7 @@ export class ReadSessionUseCase {
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
-        await this.cleanupInvalidToken();
+        await cleanupInvalidToken(this.store);
         return Ok(undefined);
       }
 
@@ -71,14 +72,6 @@ export class ReadSessionUseCase {
       });
     } catch (err: unknown) {
       return Err(normalizeUnknownToAppError(err, "unexpected"));
-    }
-  }
-
-  private async cleanupInvalidToken(): Promise<void> {
-    try {
-      await this.store.delete();
-    } catch (_) {
-      // ignore cleanup failure
     }
   }
 }

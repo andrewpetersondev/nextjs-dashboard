@@ -1,4 +1,5 @@
 import "server-only";
+import { cleanupInvalidToken } from "@/modules/auth/server/application/helpers/session-cleanup.helper";
 
 import type { SessionTokenService } from "@/modules/auth/server/application/services/session-token.service";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
@@ -64,7 +65,7 @@ export class RotateSessionUseCase {
           operationIdentifiers: { reason: "decode_failed" },
           operationName: "session.rotate.decode_failed",
         });
-        await this.cleanupInvalidToken();
+        await cleanupInvalidToken(this.store);
         return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 
@@ -96,14 +97,6 @@ export class RotateSessionUseCase {
       });
     } catch (err: unknown) {
       return Err(normalizeUnknownToAppError(err, "unexpected"));
-    }
-  }
-
-  private async cleanupInvalidToken(): Promise<void> {
-    try {
-      await this.store.delete();
-    } catch (_) {
-      // ignore cleanup failure
     }
   }
 
