@@ -123,12 +123,23 @@ export class RotateSessionUseCase {
       const decodedResult = await this.jwt.decode(current);
 
       if (!decodedResult.ok) {
+        // hygiene: remove bad token
+        try {
+          await this.cookie.delete();
+        } catch (_) {
+          // ignore cleanup failure
+        }
         return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
+        try {
+          await this.cookie.delete();
+        } catch (_) {
+          // ignore
+        }
         return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 

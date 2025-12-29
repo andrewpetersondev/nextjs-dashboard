@@ -44,8 +44,8 @@ export class SessionService {
    *
    * @returns Result with void on success, or AppError on failure
    */
-  async clear(): Promise<Result<void, AppError>> {
-    return await new ClearSessionUseCase({
+  clear(): Promise<Result<void, AppError>> {
+    return new ClearSessionUseCase({
       cookie: this.cookie,
       logger: this.logger,
     }).execute();
@@ -56,7 +56,7 @@ export class SessionService {
    *
    * Delegates to the EstablishSessionUseCase (single-capability verb).
    */
-  async establish(
+  establish(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>> {
     const useCase = new EstablishSessionUseCase({
@@ -65,19 +65,21 @@ export class SessionService {
       logger: this.logger,
     });
 
-    return await useCase.execute(user);
+    return useCase.execute(user);
   }
 
   /**
    * Reads the current session from the cookie.
    *
    * Decodes the JWT token and extracts user role and id.
-   * Returns undefined if no valid session exists.
+   * Returns `Ok(undefined)` if no valid session exists, or `Err(AppError)` on operational failure.
    *
-   * @returns Object with role and userId, or undefined if no session
+   * @returns Result with `{ role, userId } | undefined`
    */
-  async read(): Promise<{ role: UserRole; userId: UserId } | undefined> {
-    return await new ReadSessionUseCase({
+  read(): Promise<
+    Result<{ role: UserRole; userId: UserId } | undefined, AppError>
+  > {
+    return new ReadSessionUseCase({
       cookie: this.cookie,
       jwt: this.jwt,
       logger: this.logger,
@@ -90,8 +92,8 @@ export class SessionService {
    * - Returns `Ok(outcome)` for expected policy outcomes (including "not rotated").
    * - Returns `Err(AppError)` for operational failures (token issue/cookie write/unexpected).
    */
-  async rotate(): Promise<Result<UpdateSessionOutcome, AppError>> {
-    return await new RotateSessionUseCase({
+  rotate(): Promise<Result<UpdateSessionOutcome, AppError>> {
+    return new RotateSessionUseCase({
       cookie: this.cookie,
       jwt: this.jwt,
       logger: this.logger,

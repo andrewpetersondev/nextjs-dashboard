@@ -2,7 +2,13 @@ import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
 import type { SessionTransport } from "@/modules/auth/shared/types/transport/session.transport";
+import { Ok } from "@/shared/results/result";
 
+// todo: Result pattern uses AppError, but AppError may be overkill for this situation. Maybe AppError should be
+//  used but I should refactor how NotFound is handled??
+// Currently, you have a "split" in your architecture: the Result utility is strictly coupled to the AppError class, but
+// your Workflows often need to return lightweight, specific failure reasons (like "no_session") that don't warrant
+// the overhead of a full system error.
 export type VerifySessionOptimisticFailure = Readonly<{
   reason: "no_session";
 }>;
@@ -22,18 +28,26 @@ export async function verifySessionOptimisticWorkflow(
     sessionService: SessionService;
   }>,
 ): Promise<VerifySessionOptimisticResult> {
-  const session = await deps.sessionService.read();
+  const result = await deps.sessionService.read();
 
-  if (!session?.userId) {
+  // 1. Handle technical/operational failures (e.g. JWT secret missing, logger down)
+  if (!result.ok) {
+    // We treat technical errors during optimistic checks as "no session"
+    // to avoid crashing the UI for unauthenticated users.
     return { error: { reason: "no_session" }, ok: false };
   }
 
-  return {
-    ok: true,
-    value: {
-      isAuthorized: true,
-      role: session.role,
-      userId: session.userId,
-    },
-  };
+  const session = result.value;
+
+  // 2. Handle the "No Session" value (Ok(undefined))
+  if (!session) {
+    return { error: { reason: "no_session" }, ok: false };
+  }
+
+  // 3. We have a valid principal
+  return Ok({
+    isAuthorized: true,
+    role: session.role,
+    userId: session.userId,
+  });
 }

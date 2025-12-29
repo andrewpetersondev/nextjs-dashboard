@@ -5,7 +5,11 @@ import type { SessionTokenCodecContract } from "@/modules/auth/server/applicatio
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 export type ReadSessionDeps = Readonly<{
   cookie: SessionStoreContract;
@@ -38,30 +42,48 @@ export class ReadSessionUseCase {
     });
   }
 
-  // todo: why does this return type allow undefined? can i use type SessionPrincipal | undefined instead?
-  async execute(): Promise<{ role: UserRole; userId: UserId } | undefined> {
+  // Returns Result with principal or undefined. Undefined indicates "no valid session"; Err indicates operational failure.
+  async execute(): Promise<
+    Result<{ role: UserRole; userId: UserId } | undefined, AppError>
+  > {
     try {
       const token = await this.cookie.get();
 
       if (!token) {
-        return;
+        return Ok(undefined);
       }
 
       const decodedResult = await this.jwt.decode(token);
 
       if (!decodedResult.ok) {
-        return;
+        // Cookie hygiene: remove invalid token to prevent repeated failures
+        try {
+          await this.cookie.delete();
+        } catch (_) {
+          // best-effort cleanup; ignore delete failures
+        }
+        return Ok(undefined);
       }
 
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
-        return;
+        // Cookie hygiene: remove unusable token
+        try {
+          await this.cookie.delete();
+        } catch (_) {
+          // ignore cleanup failure
+        }
+        return Ok(undefined);
       }
 
-      return { role: decoded.role, userId: userIdCodec.decode(decoded.userId) };
-    } catch (_err: unknown) {
-      return;
+      const result = {
+        role: decoded.role as UserRole,
+        userId: userIdCodec.decode(decoded.userId),
+      };
+      return Ok(result);
+    } catch (err: unknown) {
+      return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
   }
 }
