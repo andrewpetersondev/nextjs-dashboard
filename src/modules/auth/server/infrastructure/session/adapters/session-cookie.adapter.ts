@@ -3,7 +3,6 @@ import "server-only";
 import {
   ONE_SECOND_MS,
   SESSION_COOKIE_NAME,
-  SESSION_DURATION_MS,
 } from "@/modules/auth/shared/domain/session/session.policy";
 import { createCookieService } from "@/server/cookies/cookie.factory";
 import { isProd } from "@/shared/config/env-shared";
@@ -12,7 +11,6 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
 const SESSION_COOKIE_HTTPONLY = true as const;
 const SESSION_COOKIE_PATH = "/" as const;
 const SESSION_COOKIE_SAMESITE = "strict" as const;
-const FIXED_MAX_AGE_S = Math.floor(SESSION_DURATION_MS / ONE_SECOND_MS);
 
 export class SessionCookieAdapter {
   private readonly cookies = createCookieService();
@@ -41,17 +39,21 @@ export class SessionCookieAdapter {
    * @param expiresAtMs - The expiration time in milliseconds since epoch
    */
   async set(value: string, expiresAtMs: number): Promise<void> {
+    const maxAge = Math.max(
+      0,
+      Math.floor((expiresAtMs - Date.now()) / ONE_SECOND_MS),
+    );
+
     await this.cookies.set(SESSION_COOKIE_NAME, value, {
-      expires: new Date(expiresAtMs),
       httpOnly: SESSION_COOKIE_HTTPONLY,
-      maxAge: FIXED_MAX_AGE_S,
+      maxAge,
       path: SESSION_COOKIE_PATH,
       sameSite: SESSION_COOKIE_SAMESITE,
       secure: isProd(),
     });
 
     logger.debug("Session cookie set", {
-      logging: { context: "SessionCookieAdapter.set" },
+      logging: { context: "SessionCookieAdapter.set", expiresAtMs, maxAge },
     });
   }
 }

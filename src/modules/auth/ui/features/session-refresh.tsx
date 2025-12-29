@@ -10,15 +10,19 @@ import {
   HTTP_STATUS_NO_CONTENT,
 } from "@/shared/http/http-headers";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { ROUTES } from "@/shared/routes/routes";
 
 const REFRESH_INTERVAL_MS = 60_000;
 const KICKOFF_TIMEOUT_MS = 1500;
 const REFRESH_JITTER_MS = 5000;
+const REFRESH_LOCK_KEY = "auth:session-refresh:last-at";
+const REFRESH_LOCK_THRESHOLD_MS = 10_000;
 
 /**
  * Checks if the session needs a refresh and performs the request.
  * @returns Promise that resolves when the check is complete.
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: ignore for now
 async function performSessionPing(): Promise<void> {
   if (document.hidden) {
     return;
@@ -30,6 +34,14 @@ async function performSessionPing(): Promise<void> {
   ) {
     return;
   }
+
+  // Simple multi-tab lock to avoid race conditions during rotation
+  const now = Date.now();
+  const lastRefresh = Number(localStorage.getItem(REFRESH_LOCK_KEY) || 0);
+  if (now - lastRefresh < REFRESH_LOCK_THRESHOLD_MS) {
+    return;
+  }
+  localStorage.setItem(REFRESH_LOCK_KEY, String(now));
 
   try {
     const res = await fetch(AUTH_REFRESH_ENDPOINT, {
@@ -52,7 +64,7 @@ async function performSessionPing(): Promise<void> {
         !outcome.refreshed &&
         outcome.reason === "absolute_lifetime_exceeded"
       ) {
-        window.location.href = "/";
+        window.location.href = ROUTES.auth.login;
         return;
       }
 
@@ -60,8 +72,9 @@ async function performSessionPing(): Promise<void> {
       const env = getPublicNodeEnv();
       if (env === "development") {
         logger.debug("[session-refresh] outcome:", outcome);
-      } else {
-        logger.error("[session-refresh] outcome:", outcome);
+      } else if (!outcome.refreshed && outcome.reason !== "not_needed") {
+        // Only log at info level for interesting non-refresh outcomes (e.g. lifetime exceeded)
+        logger.info("[session-refresh] info:", outcome);
       }
     }
   } catch {

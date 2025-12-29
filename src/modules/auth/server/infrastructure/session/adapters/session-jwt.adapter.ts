@@ -8,6 +8,7 @@ import {
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/shared/domain/session/session.policy";
+import { DecryptPayloadSchema } from "@/modules/auth/shared/domain/session/session.schemas";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -113,7 +114,23 @@ export class SessionJwtAdapter {
         this.encodedKey,
         this.verifyOptions,
       );
-      return Ok(payload);
+
+      const parsed = DecryptPayloadSchema.safeParse(payload);
+
+      if (!parsed.success) {
+        logger.warn("JWT payload validation failed", {
+          errors: parsed.error.flatten().fieldErrors,
+        });
+
+        return Err(
+          makeUnexpectedError(parsed.error, {
+            message: "jwt.validation.failed",
+            metadata: { token: token.slice(0, 10) },
+          }),
+        );
+      }
+
+      return Ok(parsed.data);
     } catch (error: unknown) {
       logger.warn("JWT verification failed", {
         error: String(error),

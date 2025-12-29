@@ -1,12 +1,9 @@
 import "server-only";
 
+import { issueSessionToken } from "@/modules/auth/server/application/services/session-token-factory.service";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
-import {
-  ONE_SECOND_MS,
-  SESSION_DURATION_MS,
-} from "@/modules/auth/shared/domain/session/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -45,24 +42,20 @@ export class EstablishSessionUseCase {
   ): Promise<Result<SessionPrincipalDto, AppError>> {
     try {
       const now = Date.now();
-      const expiresAtMs = now + SESSION_DURATION_MS;
 
-      const claims = {
-        exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
-        expiresAt: expiresAtMs,
-        iat: Math.floor(now / ONE_SECOND_MS),
+      const issuedResult = await issueSessionToken(this.jwt, {
         role: user.role,
         sessionStart: now,
-        userId: String(user.id),
-      };
+        userId: user.id,
+      });
 
-      const encodedResult = await this.jwt.encode(claims, expiresAtMs);
-
-      if (!encodedResult.ok) {
-        return Err(encodedResult.error);
+      if (!issuedResult.ok) {
+        return Err(issuedResult.error);
       }
 
-      await this.cookie.set(encodedResult.value, expiresAtMs);
+      const { expiresAtMs, token } = issuedResult.value;
+
+      await this.cookie.set(token, expiresAtMs);
 
       this.logger.operation("info", "Session established", {
         operationContext: "session",

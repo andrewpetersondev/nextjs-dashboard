@@ -1,18 +1,15 @@
 import "server-only";
 
+import { issueSessionToken } from "@/modules/auth/server/application/services/session-token-factory.service";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import {
   absoluteLifetime,
   MAX_ABSOLUTE_SESSION_MS,
-  ONE_SECOND_MS,
-  SESSION_DURATION_MS,
   shouldRefreshToken,
   type UpdateSessionOutcome,
 } from "@/modules/auth/shared/domain/session/session.policy";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
-import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -24,34 +21,6 @@ type RotateSessionDeps = Readonly<{
   jwt: SessionTokenCodecContract;
   logger: LoggingClientPort;
 }>;
-
-async function issueToken(
-  jwt: SessionTokenCodecContract,
-  input: Readonly<{
-    role: UserRole;
-    sessionStart: number;
-    userId: UserId;
-  }>,
-): Promise<Result<{ expiresAtMs: number; token: string }, AppError>> {
-  const now = Date.now();
-  const expiresAtMs = now + SESSION_DURATION_MS;
-
-  const claims = {
-    exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
-    expiresAt: expiresAtMs,
-    iat: Math.floor(now / ONE_SECOND_MS),
-    role: input.role,
-    sessionStart: input.sessionStart,
-    userId: input.userId,
-  };
-
-  const encodedResult = await jwt.encode(claims, expiresAtMs);
-  if (!encodedResult.ok) {
-    return Err(encodedResult.error);
-  }
-
-  return Ok({ expiresAtMs, token: encodedResult.value });
-}
 
 /**
  * RotateSessionUseCase
@@ -107,24 +76,6 @@ export class RotateSessionUseCase {
 
       const decoded = decodedResult.value;
 
-      if (!decoded.userId) {
-        this.logger.operation(
-          "warn",
-          "Session rotation failed: missing userId",
-          {
-            operationContext: "session",
-            operationIdentifiers: { reason: "missing_user_id" },
-            operationName: "session.rotate.missing_user",
-          },
-        );
-        try {
-          await this.cookie.delete();
-        } catch (_) {
-          // ignore
-        }
-        return Ok({ reason: "invalid_or_missing_user", refreshed: false });
-      }
-
       const user = {
         role: decoded.role,
         sessionStart: decoded.sessionStart,
@@ -178,7 +129,7 @@ export class RotateSessionUseCase {
         });
       }
 
-      const issuedResult = await issueToken(this.jwt, user);
+      const issuedResult = await issueSessionToken(this.jwt, user);
 
       if (!issuedResult.ok) {
         return Err(issuedResult.error);

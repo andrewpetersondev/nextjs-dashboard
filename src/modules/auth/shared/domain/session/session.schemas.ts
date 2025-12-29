@@ -40,19 +40,20 @@ export const sessionStartSchema = z
     message: "sessionStart must not be in the future",
   });
 
-export const EncryptPayloadSchema = z
-  .object({
-    user: z.object({
-      expiresAt: expiresAtSchema,
-      role: userRoleSchema,
-      sessionStart: sessionStartSchema,
-      userId: userIdSchema, // => UserId post-parse
-    }),
-  })
-  .refine((val) => val.user.sessionStart <= val.user.expiresAt, {
+export const EncryptPayloadBase = z.object({
+  expiresAt: expiresAtSchema,
+  role: userRoleSchema,
+  sessionStart: sessionStartSchema,
+  userId: userIdSchema,
+});
+
+export const EncryptPayloadSchema = EncryptPayloadBase.refine(
+  (val) => val.sessionStart <= val.expiresAt,
+  {
     message: "sessionStart must be less than or equal to expiresAt",
-    path: ["user", "sessionStart"],
-  });
+    path: ["sessionStart"],
+  },
+);
 
 /**
  * DecryptPayloadSchema
@@ -63,7 +64,13 @@ export const EncryptPayloadSchema = z
  *
  * Use this schema to validate payloads after decryption, ensuring temporal claims are present and well-typed.
  */
-export const DecryptPayloadSchema = EncryptPayloadSchema.safeExtend({
+export const DecryptPayloadSchema = EncryptPayloadBase.extend({
   exp: expSchema,
-  iat: iatSchema,
+  // biome-ignore lint/style/noMagicNumbers: <ignore>
+  iat: iatSchema.refine((val) => val * 1000 <= Date.now() + 5000, {
+    message: "iat must not be in the future (allowing small clock skew)",
+  }),
+}).refine((val) => val.sessionStart <= val.expiresAt, {
+  message: "sessionStart must be less than or equal to expiresAt",
+  path: ["sessionStart"],
 });

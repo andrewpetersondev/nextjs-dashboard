@@ -51,18 +51,3 @@ export async function POST(): Promise<NextResponse> {
   const res = await rotateSession();
   return applyNoStoreHeaders(toRefreshResponse(res));
 }
-
-export async function GET(): Promise<NextResponse> {
-  const res = await rotateSession();
-  return applyNoStoreHeaders(toRefreshResponse(res));
-}
-
-export async function HEAD(): Promise<NextResponse> {
-  const res = await rotateSession();
-  if (!res.ok) {
-    return applyNoStoreHeaders(new NextResponse(null, { status: 500 }));
-  }
-  return applyNoStoreHeaders(
-    new NextResponse(null, { status: HTTP_STATUS_NO_CONTENT }),
-  );
-}
