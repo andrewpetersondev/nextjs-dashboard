@@ -6,10 +6,7 @@ import { createSessionJwtAdapter } from "@/modules/auth/server/infrastructure/se
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
 
 /**
- * Lightweight factory to compose a SessionManager with default adapters.
- *
- * @param logger - required logger to use.
- * @param requestId - request id for tracing/log correlation across layers.
+ * Lightweight factory to compose a SessionService with default adapters.
  */
 export function createSessionServiceFactory(
   logger: LoggingClientPort,

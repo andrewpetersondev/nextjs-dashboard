@@ -1,8 +1,33 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
+import {
+  determineRouteType,
+  evaluateRouteAccess,
+} from "@/modules/auth/server/application/workflows/authorization/route-access-policy";
 import type { AuthEncryptPayload } from "@/modules/auth/shared/domain/session/session.codec";
-import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
+
+function mapDecisionToReason(
+  routeType: ReturnType<typeof determineRouteType>,
+  policyReason: "not_authenticated" | "not_authorized",
+  decodeReason: "ok" | "no_cookie" | "decode_failed",
+): AuthorizeRequestReason {
+  if (decodeReason !== "ok" && policyReason === "not_authenticated") {
+    return decodeReason;
+  }
+
+  if (routeType === "admin") {
+    return policyReason === "not_authenticated"
+      ? "admin.not_authenticated"
+      : "admin.not_authorized";
+  }
+
+  if (routeType === "protected") {
+    return "protected.not_authenticated";
+  }
+
+  return "public.bounce_authenticated";
+}
 
 async function decodeClaims(
   cookie: string | undefined,
@@ -10,16 +35,7 @@ async function decodeClaims(
 ): Promise<
   Readonly<
     | { claims: AuthEncryptPayload; reason: "ok" }
-    | {
-        claims: undefined;
-        reason: Exclude<
-          AuthorizeRequestReason,
-          | "admin.not_authorized"
-          | "admin.not_authenticated"
-          | "protected.not_authenticated"
-          | "public.bounce_authenticated"
-        >;
-      }
+    | { claims: undefined; reason: "no_cookie" | "decode_failed" }
   >
 > {
   if (!cookie) {
@@ -68,46 +84,28 @@ export async function authorizeRequestWorkflow(
 ): Promise<AuthorizeRequestOutcome> {
   const decoded = await decodeClaims(input.cookie, deps.jwt);
 
-  if (input.isAdminRoute) {
-    if (!decoded.claims?.userId) {
-      return {
-        kind: "redirect",
-        reason:
-          decoded.reason === "ok" ? "admin.not_authenticated" : decoded.reason,
-        to: deps.routes.login,
-      };
-    }
-    if (decoded.claims.role !== ADMIN_ROLE) {
-      return {
-        kind: "redirect",
-        reason: "admin.not_authorized",
-        to: deps.routes.dashboardRoot,
-      };
-    }
+  const routeType = determineRouteType({
+    isAdminRoute: input.isAdminRoute,
+    isProtectedRoute: input.isProtectedRoute,
+    isPublicRoute: input.isPublicRoute,
+  });
+
+  const decision = evaluateRouteAccess(routeType, decoded.claims);
+
+  if (decision.allowed) {
+    return { kind: "next", reason: "ok" };
   }
 
-  if (input.isProtectedRoute && !decoded.claims?.userId) {
-    return {
-      kind: "redirect",
-      reason:
-        decoded.reason === "ok"
-          ? "protected.not_authenticated"
-          : decoded.reason,
-      to: deps.routes.login,
-    };
-  }
+  const redirectTo =
+    decision.redirectTo === "login"
+      ? deps.routes.login
+      : deps.routes.dashboardRoot;
 
-  if (
-    input.isPublicRoute &&
-    decoded.claims?.userId &&
-    !input.isProtectedRoute
-  ) {
-    return {
-      kind: "redirect",
-      reason: "public.bounce_authenticated",
-      to: deps.routes.dashboardRoot,
-    };
-  }
+  const reason = mapDecisionToReason(
+    routeType,
+    decision.reason,
+    decoded.reason,
+  );
 
-  return { kind: "next", reason: "ok" };
+  return { kind: "redirect", reason, to: redirectTo };
 }

@@ -1,8 +1,7 @@
 import "server-only";
 
-import { issueSessionToken } from "@/modules/auth/server/application/services/session-token-factory.service";
+import type { SessionTokenService } from "@/modules/auth/server/application/services/session-token.service";
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
-import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
@@ -11,30 +10,30 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 export type EstablishSessionDeps = Readonly<{
-  cookie: SessionStoreContract;
-  jwt: SessionTokenCodecContract;
   logger: LoggingClientPort;
+  store: SessionStoreContract;
+  tokenService: SessionTokenService;
 }>;
 
 /**
  * EstablishSessionUseCase
  *
  * Single-capability application use-case:
- * - issue a new session token (JWT encode via port)
- * - persist it (cookie set via port)
+ * - Issue a new session token via SessionTokenService
+ * - Persist it via SessionStoreContract
  */
 export class EstablishSessionUseCase {
-  private readonly cookie: SessionStoreContract;
-  private readonly jwt: SessionTokenCodecContract;
   private readonly logger: LoggingClientPort;
+  private readonly store: SessionStoreContract;
+  private readonly tokenService: SessionTokenService;
 
   constructor(deps: EstablishSessionDeps) {
-    this.cookie = deps.cookie;
-    this.jwt = deps.jwt;
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "establishSession",
     });
+    this.store = deps.store;
+    this.tokenService = deps.tokenService;
   }
 
   async execute(
@@ -43,7 +42,7 @@ export class EstablishSessionUseCase {
     try {
       const now = Date.now();
 
-      const issuedResult = await issueSessionToken(this.jwt, {
+      const issuedResult = await this.tokenService.issue({
         role: user.role,
         sessionStart: now,
         userId: user.id,
@@ -55,7 +54,7 @@ export class EstablishSessionUseCase {
 
       const { expiresAtMs, token } = issuedResult.value;
 
-      await this.cookie.set(token, expiresAtMs);
+      await this.store.set(token, expiresAtMs);
 
       this.logger.operation("info", "Session established", {
         operationContext: "session",

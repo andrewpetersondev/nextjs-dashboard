@@ -7,5 +7,5 @@ import type { Result } from "@/shared/results/result.types";
 export async function logoutWorkflow(
   deps: Readonly<{ sessionService: SessionService }>,
 ): Promise<Result<void, AppError>> {
-  return await deps.sessionService.clear();
+  return await deps.sessionService.terminate();
 }
