@@ -2,9 +2,8 @@ import "server-only";
 
 import type { SessionStoreContract } from "@/modules/auth/server/application/types/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/server/application/types/contracts/session-token-codec.contract";
+import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import { userIdCodec } from "@/modules/auth/shared/domain/session/session.schemas";
-import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
@@ -43,9 +42,7 @@ export class ReadSessionUseCase {
   }
 
   // Returns Result with principal or undefined. Undefined indicates "no valid session"; Err indicates operational failure.
-  async execute(): Promise<
-    Result<{ role: UserRole; userId: UserId } | undefined, AppError>
-  > {
+  async execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
     try {
       const token = await this.cookie.get();
 
@@ -78,8 +75,8 @@ export class ReadSessionUseCase {
       }
 
       const result = {
-        role: decoded.role as UserRole,
-        userId: userIdCodec.decode(decoded.userId),
+        id: userIdCodec.decode(decoded.userId),
+        role: decoded.role,
       };
       return Ok(result);
     } catch (err: unknown) {

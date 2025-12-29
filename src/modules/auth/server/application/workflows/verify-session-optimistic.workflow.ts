@@ -48,6 +48,6 @@ export async function verifySessionOptimisticWorkflow(
   return Ok({
     isAuthorized: true,
     role: session.role,
-    userId: session.userId,
+    userId: session.id,
   });
 }
