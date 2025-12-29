@@ -112,7 +112,7 @@ function buildPatch(
 /**
  * Updates an existing user (admin only).
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
 export async function updateUserAction(
   id: string,
   _prevState: FormResult<unknown>,
