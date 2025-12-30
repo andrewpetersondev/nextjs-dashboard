@@ -359,3 +359,164 @@ sequenceDiagram
 
   deactivate WF
 ```
+
+## Use Case Class: EstablishSessionUseCase
+
+### execute(user: SessionPrincipalDto): Promise<Result<SessionPrincipalDto, AppError>>
+
+#### Flowchart
+
+```mermaid
+flowchart TD
+%% Inputs
+  A["Input<br/>SessionPrincipalDto<br/>(id, role)"] --> B[EstablishSessionUseCase.execute]
+
+%% Token Generation
+  B --> C["tokenService.issue({ role, sessionStart, userId })"]
+
+%% Issue Result Decision
+  C --> D{"issueResult.ok?"}
+
+%% Token Error path
+  D -->|No| E["Propagate Err(AppError)"]
+  E --> Z["Return Result.Err(AppError)"]
+
+%% Success path: Persistence
+  D -->|Yes| F["Extract token & expiresAtMs"]
+  F --> G["store.set(token, expiresAtMs)"]
+
+%% Completion
+  G --> H["Log: Session established"]
+  H --> I["Ok(user)"]
+  I --> Z1["Return Result.Ok(SessionPrincipalDto)"]
+
+%% Catch block
+  B -. catch .-> J["Normalize to 'unexpected'"]
+  J --> Z
+```
+
+#### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  autonumber
+
+  participant WF as Workflow / Caller
+  participant UC as EstablishSessionUseCase
+  participant TS as SessionTokenService
+  participant ST as SessionStoreContract
+
+  WF->>UC: execute(user)
+  activate UC
+
+  UC->>UC: try
+
+  UC->>TS: issue({ role, sessionStart, userId })
+  TS-->>UC: Result<{ token, expiresAtMs }, AppError>
+
+  alt Token Issue Failure
+    UC-->>WF: Result.Err(AppError)
+  else Token Issue Success
+    UC->>ST: set(token, expiresAtMs)
+    ST-->>UC: void
+    UC->>UC: log "Session established"
+    UC-->>WF: Result.Ok(user)
+  end
+
+  deactivate UC
+
+  alt catch (unexpected error)
+    UC->>UC: normalizeUnknownToAppError
+    UC-->>WF: Result.Err(AppError)
+  end
+```
+
+## Action Layer: loginAction
+
+### loginAction(\_prevState: FormResult, formData: FormData): Promise<FormResult>
+
+#### Flowchart
+
+```mermaid
+flowchart TD
+%% Inputs
+  A["Input<br/>(formData)"] --> B[loginAction]
+
+%% Preparation
+  B --> C["Generate requestId"]
+  B --> D["Get Request Metadata<br/>(IP, User Agent)"]
+
+%% Validation
+  D --> E["validateForm(formData, LoginSchema)"]
+
+%% Validation Decision
+  E --> F{"validated.ok?"}
+
+%% Validation Error Path
+  F -->|No| G["Extract Field Errors"]
+  G --> H["Return validated (Err Result)"]
+
+%% Workflow Execution
+  F -->|Yes| I["Create UseCase & SessionService Factories"]
+  I --> J["loginWorkflow(input, deps)"]
+
+%% Workflow Result Decision
+  J --> K{"sessionResult.ok?"}
+
+%% Workflow Failure Path
+  K -->|No| L["mapLoginErrorToFormResult(error, input)"]
+  L --> M["Return FormResult"]
+
+%% Workflow Success Path
+  K -->|Yes| N["Log Success & Revalidate Path"]
+  N --> O["redirect('/dashboard')"]
+
+%% Outputs
+  H --> Z["Action Result"]
+  M --> Z
+  O --> Z
+```
+
+#### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  autonumber
+
+  participant UI as UI / Client
+  participant ACT as loginAction
+  participant VAL as validateForm
+  participant WF as loginWorkflow
+  participant MAP as mapLoginErrorToFormResult
+  participant NX as Next.js
+
+  UI->>ACT: loginAction(prevState, formData)
+  activate ACT
+
+  ACT->>ACT: Generate requestId
+  ACT->>ACT: Get request metadata
+
+  ACT->>VAL: validateForm(formData, LoginSchema)
+  VAL-->>ACT: Result
+
+  alt validation failure
+    ACT-->>UI: return validation result
+  else validation success
+    ACT->>WF: loginWorkflow(input, deps)
+    activate WF
+    WF-->>ACT: Result
+    deactivate WF
+
+    alt workflow failure
+      ACT->>MAP: mapLoginErrorToFormResult(error, input)
+      MAP-->>ACT: FormResult
+      ACT-->>UI: return FormResult
+    else workflow success
+      ACT->>NX: revalidatePath("/dashboard")
+      ACT->>NX: redirect("/dashboard")
+      note over ACT, NX: Redirect throws a Next.js error to stop execution
+    end
+  end
+
+  deactivate ACT
+```
