@@ -3,61 +3,70 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 /**
  * Represents a failed Result.
  *
- * @typeParam E - The error type, must extend `AppError`.
+ * @typeParam TError - The error type, must extend `AppError`.
  * @example
  * const error: AppError = { code: "ERR", message: "Something went wrong" };
  * const result: ErrResult<typeof error> = { error, ok: false };
  */
-export type ErrResult<E extends AppError> = {
-  readonly error: E;
+export type ErrResult<TError extends AppError> = {
+  readonly error: TError;
   readonly ok: false;
 };
 
 /**
  * Extracts the error type from a `Result` type.
  *
- * @typeParam R - The `Result` type to inspect.
+ * @typeParam TResult - The `Result` type to inspect.
  * @example
  * type MyError = ErrType<Result<number, AppError>>;
  */
-export type ErrType<R> = R extends { ok: false; error: infer F } ? F : never;
+export type ErrType<TResult> = TResult extends {
+  ok: false;
+  error: infer TError;
+}
+  ? TError
+  : never;
 
 /**
  * Represents a successful Result.
  *
- * @typeParam T - The success value type.
+ * @typeParam TValue - The success value type.
  * @example
  * const result: OkResult<number> = { ok: true, value: 42 };
  */
-export type OkResult<T> = { readonly ok: true; readonly value: T };
+export type OkResult<TValue> = { readonly ok: true; readonly value: TValue };
 
 /**
  * Extracts the success type from a `Result` type.
  *
- * @typeParam R - The `Result` type to inspect.
+ * @typeParam TResult - The `Result` type to inspect.
  * @example
  * type MyValue = OkType<Result<string, AppError>>;
  */
-export type OkType<R> = R extends { ok: true; value: infer U } ? U : never;
+export type OkType<TResult> = TResult extends { ok: true; value: infer TValue }
+  ? TValue
+  : never;
 
 /**
  * Discriminated union for operation results.
  *
- * @typeParam T - The success value type.
- * @typeParam E - The error type, must extend `AppError`.
+ * @typeParam TValue - The success value type.
+ * @typeParam TError - The error type, must extend `AppError`.
  * @example
  * const ok: Result<number, AppError> = { ok: true, value: 1 };
  * const err: Result<number, AppError> = { ok: false, error: { code: "ERR", message: "fail" } };
  */
-export type Result<T, E extends AppError> = OkResult<T> | ErrResult<E>;
+export type Result<TValue, TError extends AppError> =
+  | OkResult<TValue>
+  | ErrResult<TError>;
 
 /**
  * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
  *
  * This type is independent of the Result pattern and can be used with any async operation.
  *
- * @typeParam T - The type of the value the promise resolves to.
+ * @typeParam TValue - The type of the value the promise resolves to.
  * @example
  * const fetchData: AsyncThunk<string> = async () => "Hello, World!";
  */
-export type AsyncThunk<T> = () => Promise<T>;
+export type AsyncThunk<TValue> = () => Promise<TValue>;
