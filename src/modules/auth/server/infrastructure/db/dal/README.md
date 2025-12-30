@@ -93,3 +93,91 @@ sequenceDiagram
         DAL-->>S: Result.Err(AppError)
     end
 ```
+
+## Repository Class
+
+### (input: Readonly<AuthLoginInputDto>): Promise<Result<AuthUserEntity | null, AppError>>
+
+### Flowchart
+
+```mermaid
+flowchart TD
+%% Inputs
+  A["Input<br/>AuthLoginInputDto<br/>(email)"] --> B[AuthUserRepository.login]
+
+%% DAL call
+B -->|call| C["getUserByEmailDal<br/>(db, email, logger)"]
+
+%% DAL result decision
+C --> D{Result.ok?}
+
+%% Error propagation
+D -->|No| E["Propagate Err(AppError)"]
+E --> Z["Return Result.Err(AppError)"]
+
+%% Success path
+D -->|Yes| F["Extract UserRow | null"]
+
+%% User existence decision
+F --> G{Row exists?}
+
+%% Mapping path
+G -->|Yes| H["Map UserRow → AuthUserEntity<br/>(toAuthUserEntity)"]
+H --> I["Wrap in Ok(AuthUserEntity)"]
+
+%% Null passthrough
+G -->|No| J["Return Ok(null)"]
+
+%% Outputs
+I --> K["Output<br/>Result.Ok(AuthUserEntity)"]
+J --> K
+
+```
+
+### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  autonumber
+
+  participant UC as Use Case / Service
+  participant PORT as AuthUserRepositoryContract
+  participant AD as AuthUserRepositoryAdapter
+  participant REPO as AuthUserRepository (infra)
+  participant DAL as getUserByEmailDal
+  participant DB as Database
+
+  UC->>PORT: login(AuthLoginInputDto)
+
+  PORT->>AD: login(input)
+  AD->>REPO: login(input)
+
+  activate REPO
+
+  REPO->>DAL: getUserByEmailDal(db, email, logger)
+
+  DAL->>DB: SELECT user WHERE email = ?
+  DB-->>DAL: UserRow | null
+
+  alt DAL failure
+    DAL-->>REPO: Err(AppError)
+    REPO-->>AD: Err(AppError)
+    AD-->>PORT: Err(AppError)
+    PORT-->>UC: Err(AppError)
+  else DAL success
+    DAL-->>REPO: Ok(UserRow | null)
+
+    alt Row exists
+      REPO->>REPO: toAuthUserEntity(UserRow)
+      REPO-->>AD: Ok(AuthUserEntity)
+    else Row is null
+      REPO-->>AD: Ok(null)
+    end
+
+    AD-->>PORT: Result<AuthUserEntity | null, AppError>
+    PORT-->>UC: Result<AuthUserEntity | null, AppError>
+  end
+
+  deactivate REPO
+
+```
