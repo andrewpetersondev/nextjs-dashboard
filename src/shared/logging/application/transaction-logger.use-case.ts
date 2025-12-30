@@ -1,7 +1,7 @@
 import "server-only";
 
+import type { TransactionLoggingContext } from "@/shared/logging/application/transaction-logging-context.tokens";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import type { TransactionLoggingContext } from "@/shared/logging/transaction-logging-context.tokens";
 
 /**
  * Configuration for the transaction lifecycle logger.

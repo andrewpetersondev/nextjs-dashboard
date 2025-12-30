@@ -1,8 +1,8 @@
 import "server-only";
 
+import { TransactionLogger as SharedTransactionLogger } from "@/shared/logging/application/transaction-logger.use-case";
+import { TRANSACTION_LOGGING_CONTEXT } from "@/shared/logging/application/transaction-logging-context.tokens";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import { TransactionLogger as SharedTransactionLogger } from "@/shared/logging/transaction-logger.use-case";
-import { TRANSACTION_LOGGING_CONTEXT } from "@/shared/logging/transaction-logging-context.tokens";
 
 /**
  * Auth-flavored transaction logger.

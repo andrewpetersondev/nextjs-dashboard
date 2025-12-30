@@ -1,5 +1,6 @@
 import "server-only";
 
+// biome-ignore lint/correctness/noNodejsModules: <server-only file>
 import { randomUUID } from "node:crypto";
 import { TransactionLogger } from "@/modules/auth/server/application/observability/transaction-logger";
 import type { AuthTxDepsContract } from "@/modules/auth/server/application/types/contracts/auth-tx-deps.contract";
