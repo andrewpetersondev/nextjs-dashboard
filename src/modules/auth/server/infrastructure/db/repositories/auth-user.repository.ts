@@ -11,7 +11,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
-import { Err, Ok } from "@/shared/results/result";
+import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -87,16 +87,12 @@ export class AuthUserRepository {
     );
 
     if (!rowResult.ok) {
-      return Err(rowResult.error);
+      return rowResult;
     }
 
     const row = rowResult.value;
 
-    if (!row) {
-      return Ok<AuthUserEntity | null>(null);
-    }
-
-    return Ok<AuthUserEntity>(toAuthUserEntity(row));
+    return Ok(row ? toAuthUserEntity(row) : null);
   }
 
   /**
@@ -115,7 +111,7 @@ export class AuthUserRepository {
     const rowResult = await insertUserDal(this.db, input, this.logger);
 
     if (!rowResult.ok) {
-      return Err(rowResult.error);
+      return rowResult;
     }
 
     const entity = toAuthUserEntity(rowResult.value);
