@@ -50,7 +50,7 @@ export class LoginUseCase {
           makeAppError("not_found", {
             cause: "user_not_found",
             message: "user_not_found",
-            metadata: {},
+            metadata: { email: input.email },
           }),
         );
       }
@@ -64,7 +64,7 @@ export class LoginUseCase {
           makeAppError("invalid_credentials", {
             cause: "invalid_password",
             message: "invalid_password",
-            metadata: {},
+            metadata: { userId: user.id },
           }),
         );
       }
