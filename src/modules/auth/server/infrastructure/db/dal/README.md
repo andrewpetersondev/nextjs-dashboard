@@ -181,3 +181,102 @@ sequenceDiagram
   deactivate REPO
 
 ```
+
+## Use Case Class: LoginUseCase
+
+### execute(input: Readonly<AuthLoginSchemaDto>): Promise<Result<AuthUserOutputDto, AppError>>
+
+#### Flowchart
+
+```mermaid
+flowchart TD
+%% Inputs
+  A["Input<br/>AuthLoginSchemaDto<br/>(email, password)"] --> B[LoginUseCase.execute]
+
+%% Repository Call
+  B --> C["repo.login({ email })"]
+
+%% Repo Result Decision
+  C --> D{Result.ok?}
+
+%% Repo Error Propagation
+  D -->|No| E["Propagate Err(AppError)"]
+  E --> Z["Return Result.Err(AppError)"]
+
+%% Repo Success path
+  D -->|Yes| F["Extract AuthUserEntity | null"]
+
+%% User existence decision
+  F --> G{User exists?}
+
+%% Not Found Path
+  G -->|No| H["makeAppError('not_found')"]
+  H --> Z
+
+%% Password Verification
+  G -->|Yes| I["hasher.compare(password, hash)"]
+
+%% Password Decision
+  I --> J{Password OK?}
+
+%% Invalid Credentials Path
+  J -->|No| K["makeAppError('invalid_credentials')"]
+  K --> Z
+
+%% Success Path
+  J -->|Yes| L["Map to AuthUserOutputDto"]
+  L --> M["Ok(AuthUserOutputDto)"]
+
+%% Outputs
+  M --> Z1["Return Result.Ok(...)"]
+
+%% Catch block
+  B -. catch .-> N["Log error & normalize to 'unexpected'"]
+  N --> Z
+```
+
+#### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  autonumber
+
+  participant WF as Workflow / Caller
+  participant UC as LoginUseCase
+  participant REPO as AuthUserRepositoryContract
+  participant HASH as HashingService
+  participant LOG as LoggingClientPort
+
+  WF->>UC: execute(input)
+  activate UC
+
+  UC->>UC: try
+
+  UC->>REPO: login({ email: input.email })
+  REPO-->>UC: Result<AuthUserEntity | null, AppError>
+
+  alt Repository Failure
+    UC-->>WF: Result.Err(AppError)
+  else User Not Found
+    UC->>UC: makeAppError("not_found")
+    UC-->>WF: Result.Err(AppError)
+  else User Found
+    UC->>HASH: compare(input.password, user.password)
+    HASH-->>UC: boolean
+
+    alt Invalid Password
+      UC->>UC: makeAppError("invalid_credentials")
+      UC-->>WF: Result.Err(AppError)
+    else Password Valid
+      UC-->>WF: Result.Ok(AuthUserOutputDto)
+    end
+  end
+
+  deactivate UC
+
+  alt catch (unexpected error)
+    UC->>LOG: error("login.use-case.execute failed...")
+    UC->>UC: normalizeUnknownToAppError
+    UC-->>WF: Result.Err(AppError)
+  end
+```
