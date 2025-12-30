@@ -280,3 +280,82 @@ sequenceDiagram
     UC-->>WF: Result.Err(AppError)
   end
 ```
+
+## Workflow Class: AuthLoginWorkflow
+
+### Flowchart
+
+```mermaid
+flowchart TD
+%% Inputs
+  A["Input<br/>AuthLoginSchemaDto<br/>(email, password)"] --> B[loginWorkflow]
+
+%% Use Case Call
+  B --> C["loginUseCase.execute(input)"]
+
+%% Auth Result Decision
+  C --> D{authResult.ok?}
+
+%% Error Handling Branch
+  D -->|No| E["isCredentialFailure?<br/>(invalid_credentials OR not_found)"]
+
+%% Anti-Enumeration mapping
+E -->|Yes| F["makeAppError('invalid_credentials')<br/>(Unified Error)"]
+E -->|No| G["Propagate Original Error"]
+
+F --> Z["Return Result.Err(AppError)"]
+G --> Z
+
+%% Success Branch
+D -->|Yes| H["Map to SessionPrincipalDto"]
+H --> I["sessionService.establish(user)"]
+
+%% Session Result Decision
+I --> J{sessionResult.ok?}
+
+J -->|No| K["Propagate Session Error"]
+J -->|Yes| L["Return Result.Ok(SessionPrincipalDto)"]
+
+K --> Z
+L --> Z1["Return Result.Ok(...)"]
+```
+
+### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  autonumber
+
+  participant AC as Action / Caller
+  participant WF as loginWorkflow
+  participant UC as LoginUseCase
+  participant SS as SessionService
+
+  AC->>WF: loginWorkflow(input, deps)
+  activate WF
+
+  WF->>UC: execute(input)
+  UC-->>WF: Result<AuthUserOutputDto, AppError>
+
+  alt authResult failure
+    alt isCredentialFailure (not_found | invalid_credentials)
+      note over WF: Anti-enumeration logic
+      WF->>WF: makeAppError("invalid_credentials")
+      WF-->>AC: Result.Err(AppError)
+    else other error
+      WF-->>AC: Result.Err(AppError)
+    end
+  else authResult success
+    WF->>WF: Map AuthUserOutputDto to SessionPrincipalDto
+    WF->>SS: establish(principal)
+    SS-->>WF: Result<SessionPrincipalDto, AppError>
+
+    alt sessionResult failure
+      WF-->>AC: Result.Err(AppError)
+    else sessionResult success
+      WF-->>AC: Result.Ok(SessionPrincipalDto)
+    end
+  end
+
+  deactivate WF
+```
