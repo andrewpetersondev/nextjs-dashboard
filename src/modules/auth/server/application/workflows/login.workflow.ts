@@ -11,6 +11,22 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
+ * Maps an authenticated user payload to a session principal DTO.
+ *
+ * @param value - Authenticated user payload containing identity and role.
+ * @returns Session principal DTO.
+ */
+const mapToSessionPrincipal = (
+  value: Readonly<{
+    id: SessionPrincipalDto["id"];
+    role: SessionPrincipalDto["role"];
+  }>,
+): SessionPrincipalDto => ({
+  id: value.id,
+  role: value.role,
+});
+
+/**
  * Orchestrates the login "story":
  * - authenticate user credentials
  * - establish a session for the authenticated user
@@ -47,10 +63,7 @@ export async function loginWorkflow(
     return Err(error);
   }
 
-  const user: SessionPrincipalDto = {
-    id: authResult.value.id,
-    role: authResult.value.role,
-  };
+  const user = mapToSessionPrincipal(authResult.value);
 
   const sessionResult = await deps.sessionService.establish(user);
 

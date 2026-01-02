@@ -39,7 +39,7 @@ flowchart TD
 
 %% Workflow Success Path
   K -->|Yes| N["Log Success & Revalidate Path"]
-  N --> O["redirect(ROUTES.dashboard.root)"]
+  N --> O["redirect(ROUTES.dashboard.root)<br/>(no payload)"]
 
 %% Outputs
   H --> Z["Action Result"]
@@ -73,14 +73,14 @@ F --> Z["Return Result.Err(AppError)"]
 G --> Z
 
 %% Success Branch
-D -->|Yes| H["Map AuthUserOutputDto to SessionPrincipalDto<br/>(id, role)"]
+D -->|Yes| H["Map AuthUserOutputDto<br/>(id, email, username, role)<br/>to SessionPrincipalDto (id, role)"]
 H --> I["sessionService.establish(principal)"]
 
 %% Session Result Decision
 I --> J{sessionResult.ok?}
 
 J -->|No| K["Propagate Session Error"]
-J -->|Yes| L["Return Result.Ok(SessionPrincipalDto)"]
+J -->|Yes| L["Return Result.Ok<SessionPrincipalDto (id, role)>"]
 
 K --> Z
 L --> Z1["Return Result.Ok(...)"]
@@ -128,8 +128,8 @@ flowchart TD
   K --> Z
 
 %% Success Path
-  J -->|Yes| L["Map to AuthUserOutputDto"]
-  L --> M["Ok(AuthUserOutputDto)"]
+  J -->|Yes| L["Map to AuthUserOutputDto<br/>(id, email, username, role)"]
+  L --> M["Ok(AuthUserOutputDto: id, email, username, role)"]
 
 %% Outputs
   M --> Z1["Return Result.Ok(...)"]
@@ -164,8 +164,8 @@ flowchart TD
 
 %% Completion
   G --> H["Log info: Session established"]
-  H --> I["Ok(user)"]
-  I --> Z1["Return Result.Ok(SessionPrincipalDto)"]
+  H --> I["Ok(SessionPrincipalDto: id, role)"]
+  I --> Z1["Return Result.Ok<SessionPrincipalDto (id, role)>"]
 
 %% Catch block
   B -. catch .-> J["Normalize to 'unexpected'"]
@@ -207,7 +207,7 @@ H --> I["Wrap in Ok(AuthUserEntity)"]
 G -->|No| J["Return Ok(null)"]
 
 %% Outputs
-I --> K["Output<br/>Result.Ok(AuthUserEntity)"]
+I --> K["Output<br/>Result.Ok<AuthUserEntity | null>"]
 J --> K
 ```
 
