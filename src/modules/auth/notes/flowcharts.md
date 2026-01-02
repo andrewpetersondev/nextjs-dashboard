@@ -1,87 +1,96 @@
-## DAL Function: getUserByEmailDal
+# Auth Login Flowcharts
 
-```mermaid
-flowchart TD
-    %% Caller Layer
-    A[Caller / Service Layer] -->|calls| B[getUserByEmailDal]
+This document details the logic flow for the user authentication process, organized from the entry point (Action) down to the data access layer (DAL).
 
-    %% DAL Function
-    B -->|wraps execution| C[executeDalResult]
+## 1. Action Layer: `loginAction`
 
-    %% DAL Core Logic
-    C -->|try| D["DAL Core Logic<br/>async () => {...}"]
-
-    %% Database Interaction
-    D -->|query| E[(Database)]
-    E --> D
-
-    %% Decision: user found?
-    D --> F{User found?}
-
-    %% Success path
-    F -->|Yes| G["Log success: User row fetched"]
-    G --> H[return UserRow]
-
-    %% Not found path
-    F -->|No| I["Log info: User not found"]
-    I --> J[return null]
-
-    %% Successful result
-    H --> K["Ok(UserRow)"]
-    J --> L["Ok(null)"]
-
-    %% Error path
-    D -. throws .-> M[Database / Drizzle Error]
-    M --> N["executeDalResult: normalizePgError + log"]
-    N --> O["Err(AppError)"]
-
-    %% Return to caller
-    K --> P[Caller receives Result]
-    L --> P
-    O --> P
-```
-
-## Repository Class
-
-### (input: Readonly<AuthLoginInputDto>): Promise<Result<AuthUserEntity | null, AppError>>
+**Responsibility:** Next.js Server Action boundary. Handles form validation, performance tracking, and mapping results to UI feedback or redirects.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>AuthLoginInputDto<br/>(email)"] --> B[AuthUserRepository.login]
+  A["Input<br/>(formData)"] --> B[loginAction]
 
-%% DAL call
-B -->|call| C["getUserByEmailDal<br/>(db, email, logger)"]
+%% Preparation
+  B --> C["Generate requestId"]
+  B --> D["Get Request Metadata<br/>(IP, User Agent)"]
+  D --> TRACK["Initialize PerformanceTracker"]
 
-%% DAL result decision
-C --> D{Result.ok?}
+%% Validation
+  TRACK --> E["validateForm(formData, LoginSchema)"]
 
-%% Error propagation
-D -->|No| E["Propagate Err(AppError)"]
-E --> Z["Return Result.Err(AppError)"]
+%% Validation Decision
+  E --> F{"validated.ok?"}
 
-%% Success path
-D -->|Yes| F["Extract UserRow | null"]
+%% Validation Error Path
+  F -->|No| G["Extract Field Errors"]
+  G --> H["Return validated (Err Result)"]
 
-%% User existence decision
-F --> G{Row exists?}
+%% Workflow Execution
+  F -->|Yes| I["Create UseCase & SessionService Factories"]
+  I --> J["loginWorkflow(input, deps)"]
 
-%% Mapping path
-G -->|Yes| H["Map UserRow → AuthUserEntity<br/>(toAuthUserEntity)"]
-H --> I["Wrap in Ok(AuthUserEntity)"]
+%% Workflow Result Decision
+  J --> K{"sessionResult.ok?"}
 
-%% Null passthrough
-G -->|No| J["Return Ok(null)"]
+%% Workflow Failure Path
+  K -->|No| L["mapLoginErrorToFormResult(error, input)"]
+  L --> M["Return FormResult"]
+
+%% Workflow Success Path
+  K -->|Yes| N["Log Success & Revalidate Path"]
+  N --> O["redirect(ROUTES.dashboard.root)"]
 
 %% Outputs
-I --> K["Output<br/>Result.Ok(AuthUserEntity)"]
-J --> K
-
+  H --> Z["Action Result"]
+  M --> Z
+  O --> Z
 ```
 
-## Use Case Class: LoginUseCase
+## 2. Workflow Layer: `loginWorkflow`
 
-### execute(input: Readonly<AuthLoginSchemaDto>): Promise<Result<AuthUserOutputDto, AppError>>
+**Responsibility:** Orchestrates the login "story". It coordinates authentication and session establishment while providing anti-enumeration security by unifying error responses.
+
+```mermaid
+flowchart TD
+%% Inputs
+  A["Input<br/>AuthLoginSchemaDto<br/>(email, password)"] --> B[loginWorkflow]
+
+%% Use Case Call
+  B --> C["loginUseCase.execute(input)"]
+
+%% Auth Result Decision
+  C --> D{authResult.ok?}
+
+%% Error Handling Branch
+  D -->|No| E["isCredentialFailure?<br/>(invalid_credentials OR not_found)"]
+
+%% Anti-Enumeration mapping
+  E -->|Yes| F["makeAppError('invalid_credentials')<br/>(Unified Error)"]
+  E -->|No| G["Propagate Original Error"]
+
+F --> Z["Return Result.Err(AppError)"]
+G --> Z
+
+%% Success Branch
+D -->|Yes| H["Map AuthUserOutputDto to SessionPrincipalDto<br/>(id, role)"]
+H --> I["sessionService.establish(principal)"]
+
+%% Session Result Decision
+I --> J{sessionResult.ok?}
+
+J -->|No| K["Propagate Session Error"]
+J -->|Yes| L["Return Result.Ok(SessionPrincipalDto)"]
+
+K --> Z
+L --> Z1["Return Result.Ok(...)"]
+```
+
+## 3. Application Use Cases
+
+### 3.1. `LoginUseCase`
+
+**Responsibility:** Executes core authentication logic by finding the user and verifying their credentials using a hashing service.
 
 ```mermaid
 flowchart TD
@@ -130,46 +139,9 @@ flowchart TD
   N --> Z
 ```
 
-## Workflow Class: AuthLoginWorkflow
+### 3.2. `EstablishSessionUseCase`
 
-```mermaid
-flowchart TD
-%% Inputs
-  A["Input<br/>AuthLoginSchemaDto<br/>(email, password)"] --> B[loginWorkflow]
-
-%% Use Case Call
-  B --> C["loginUseCase.execute(input)"]
-
-%% Auth Result Decision
-  C --> D{authResult.ok?}
-
-%% Error Handling Branch
-  D -->|No| E["isCredentialFailure?<br/>(invalid_credentials OR not_found)"]
-
-%% Anti-Enumeration mapping
-E -->|Yes| F["makeAppError('invalid_credentials')<br/>(Unified Error)"]
-E -->|No| G["Propagate Original Error"]
-
-F --> Z["Return Result.Err(AppError)"]
-G --> Z
-
-%% Success Branch
-D -->|Yes| H["Map AuthUserOutputDto to SessionPrincipalDto<br/>(id, role)"]
-H --> I["sessionService.establish(principal)"]
-
-%% Session Result Decision
-I --> J{sessionResult.ok?}
-
-J -->|No| K["Propagate Session Error"]
-J -->|Yes| L["Return Result.Ok(SessionPrincipalDto)"]
-
-K --> Z
-L --> Z1["Return Result.Ok(...)"]
-```
-
-## Use Case Class: EstablishSessionUseCase
-
-### execute(user: SessionPrincipalDto): Promise<Result<SessionPrincipalDto, AppError>>
+**Responsibility:** Handles session lifecycle by issuing a new token and persisting it to the session store.
 
 ```mermaid
 flowchart TD
@@ -200,47 +172,86 @@ flowchart TD
   J --> Z
 ```
 
-## Action Layer: loginAction
+## 4. Infrastructure Layer
 
-### loginAction(\_prevState: FormResult, formData: FormData): Promise<FormResult>
+### 4.1. Repository: `AuthUserRepository`
+
+**Responsibility:** Provides a clean interface for auth-related data persistence, mapping raw database rows to domain entities.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>(formData)"] --> B[loginAction]
+  A["Input<br/>AuthLoginInputDto<br/>(email)"] --> B[AuthUserRepository.login]
 
-%% Preparation
-  B --> C["Generate requestId"]
-  B --> D["Get Request Metadata<br/>(IP, User Agent)"]
-  D --> TRACK["Initialize PerformanceTracker"]
+%% DAL call
+B -->|call| C["getUserByEmailDal<br/>(db, email, logger)"]
 
-%% Validation
-  TRACK --> E["validateForm(formData, LoginSchema)"]
+%% DAL result decision
+C --> D{Result.ok?}
 
-%% Validation Decision
-  E --> F{"validated.ok?"}
+%% Error propagation
+D -->|No| E["Propagate Err(AppError)"]
+E --> Z["Return Result.Err(AppError)"]
 
-%% Validation Error Path
-  F -->|No| G["Extract Field Errors"]
-  G --> H["Return validated (Err Result)"]
+%% Success path
+D -->|Yes| F["Extract UserRow | null"]
 
-%% Workflow Execution
-  F -->|Yes| I["Create UseCase & SessionService Factories"]
-  I --> J["loginWorkflow(input, deps)"]
+%% User existence decision
+F --> G{Row exists?}
 
-%% Workflow Result Decision
-  J --> K{"sessionResult.ok?"}
+%% Mapping path
+G -->|Yes| H["Map UserRow → AuthUserEntity<br/>(toAuthUserEntity)"]
+H --> I["Wrap in Ok(AuthUserEntity)"]
 
-%% Workflow Failure Path
-  K -->|No| L["mapLoginErrorToFormResult(error, input)"]
-  L --> M["Return FormResult"]
-
-%% Workflow Success Path
-  K -->|Yes| N["Log Success & Revalidate Path"]
-  N --> O["redirect(ROUTES.dashboard.root)"]
+%% Null passthrough
+G -->|No| J["Return Ok(null)"]
 
 %% Outputs
-  H --> Z["Action Result"]
-  M --> Z
-  O --> Z
+I --> K["Output<br/>Result.Ok(AuthUserEntity)"]
+J --> K
+```
+
+### 4.2. DAL: `getUserByEmailDal`
+
+**Responsibility:** Executes the raw database query to find a user by their email address.
+
+```mermaid
+flowchart TD
+    %% Caller Layer
+    A[Caller / Service Layer] -->|calls| B[getUserByEmailDal]
+
+    %% DAL Function
+    B -->|wraps execution| C[executeDalResult]
+
+    %% DAL Core Logic
+    C -->|try| D["DAL Core Logic<br/>async () => {...}"]
+
+    %% Database Interaction
+    D -->|query| E[(Database)]
+    E --> D
+
+    %% Decision: user found?
+    D --> F{User found?}
+
+    %% Success path
+    F -->|Yes| G["Log success: User row fetched"]
+    G --> H[return UserRow]
+
+    %% Not found path
+    F -->|No| I["Log info: User not found"]
+    I --> J[return null]
+
+    %% Successful result
+    H --> K["Ok(UserRow)"]
+    J --> L["Ok(null)"]
+
+    %% Error path
+    D -. throws .-> M[Database / Drizzle Error]
+    M --> N["executeDalResult: normalizePgError + log"]
+    N --> O["Err(AppError)"]
+
+    %% Return to caller
+    K --> P[Caller receives Result]
+    L --> P
+    O --> P
 ```
