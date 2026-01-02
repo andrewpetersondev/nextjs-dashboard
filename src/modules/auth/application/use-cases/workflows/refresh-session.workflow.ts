@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionService } from "@/modules/auth/application/workflows/session.service";
+import type { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";

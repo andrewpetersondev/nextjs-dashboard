@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user.repository.contract";
+import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user.repository.contract";
 
 /**
  * Transaction-scoped dependencies (DB-only).

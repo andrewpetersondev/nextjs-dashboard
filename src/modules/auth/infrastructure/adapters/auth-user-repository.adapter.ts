@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user.repository.contract";
 import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthSignupInputDto } from "@/modules/auth/application/dtos/auth-signup.input.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
+import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user.repository.contract";
 import type { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

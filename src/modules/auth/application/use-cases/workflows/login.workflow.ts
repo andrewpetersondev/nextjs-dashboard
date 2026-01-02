@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { LoginCommand } from "@/modules/auth/application/commands/login.command";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { SessionService } from "@/modules/auth/application/workflows/session.service";
+import type { LoginCommand } from "@/modules/auth/application/use-cases/commands/login.command";
+import type { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

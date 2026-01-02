@@ -1,6 +1,6 @@
 import "server-only";
 
-import { SessionService } from "@/modules/auth/application/workflows/session.service";
+import { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-cookie.adapter";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-jwt.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

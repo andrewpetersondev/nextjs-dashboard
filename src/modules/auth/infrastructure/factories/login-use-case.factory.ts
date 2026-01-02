@@ -1,7 +1,7 @@
 import "server-only";
 
-import { LoginCommand } from "@/modules/auth/application/commands/login.command";
-import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user.repository.contract";
+import { LoginCommand } from "@/modules/auth/application/use-cases/commands/login.command";
+import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user.repository.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/cryptography/bcrypt-hasher.adapter";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";

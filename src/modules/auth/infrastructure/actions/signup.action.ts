@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { SignupField } from "@/modules/auth/application/dtos/auth-ui.dto";
-import { signupWorkflow } from "@/modules/auth/application/workflows/signup.workflow";
+import { signupWorkflow } from "@/modules/auth/application/use-cases/workflows/signup.workflow";
 import {
   type AuthSignupSchemaDto,
   SIGNUP_FIELDS_LIST,

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionService } from "@/modules/auth/application/workflows/session.service";
+import type { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 
 export type VerifySessionOptimisticFailure = Readonly<{

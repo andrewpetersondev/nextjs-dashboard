@@ -1,10 +1,10 @@
 import "server-only";
 
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
-import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
-import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/adapters/auth-error-mapper.service";
+import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

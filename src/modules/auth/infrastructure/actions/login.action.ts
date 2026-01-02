@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { LoginField } from "@/modules/auth/application/dtos/auth-ui.dto";
-import { loginWorkflow } from "@/modules/auth/application/workflows/login.workflow";
+import { loginWorkflow } from "@/modules/auth/application/use-cases/workflows/login.workflow";
 import {
   type AuthLoginSchemaDto,
   LOGIN_FIELDS_LIST,

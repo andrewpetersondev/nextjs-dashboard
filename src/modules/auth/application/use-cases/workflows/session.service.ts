@@ -1,19 +1,19 @@
 import "server-only";
 
-import { EstablishSessionCommand } from "@/modules/auth/application/commands/establish-session.command";
-import { RotateSessionCommand } from "@/modules/auth/application/commands/rotate-session.command";
-import {
-  TerminateSessionCommand,
-  type TerminateSessionReason,
-} from "@/modules/auth/application/commands/terminate-session.command";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { GetSessionQuery } from "@/modules/auth/application/queries/get-session.query";
+import { EstablishSessionCommand } from "@/modules/auth/application/use-cases/commands/establish-session.command";
+import { RotateSessionCommand } from "@/modules/auth/application/use-cases/commands/rotate-session.command";
+import {
+  TerminateSessionCommand,
+  type TerminateSessionReason,
+} from "@/modules/auth/application/use-cases/commands/terminate-session.command";
+import { GetSessionQuery } from "@/modules/auth/application/use-cases/queries/get-session.query";
 import {
   VerifySessionQuery,
   type VerifySessionResult,
-} from "@/modules/auth/application/queries/verify-session.query";
+} from "@/modules/auth/application/use-cases/queries/verify-session.query";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
