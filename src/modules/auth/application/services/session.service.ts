@@ -1,23 +1,23 @@
 import "server-only";
 
-import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { SessionTokenService } from "@/modules/auth/application/services/session-token.service";
-import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/session/lifecycle/establish-session.use-case";
-import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/session/lifecycle/rotate-session.use-case";
+import { EstablishSessionUseCase } from "@/modules/auth/application/commands/establish-session.use-case";
+import { RotateSessionUseCase } from "@/modules/auth/application/commands/rotate-session.use-case";
 import {
   type TerminateSessionReason,
   TerminateSessionUseCase,
-} from "@/modules/auth/application/use-cases/session/lifecycle/terminate-session.use-case";
-import { ReadSessionUseCase } from "@/modules/auth/application/use-cases/session/queries/read-session.use-case";
+} from "@/modules/auth/application/commands/terminate-session.use-case";
+import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
+import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
+import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import { GetSessionQuery } from "@/modules/auth/application/queries/get-session.query";
 import {
+  VerifySessionQuery,
   type VerifySessionResult,
-  VerifySessionUseCase,
-} from "@/modules/auth/application/use-cases/session/queries/verify-session.use-case";
+} from "@/modules/auth/application/queries/verify-session.query";
+import { SessionTokenService } from "@/modules/auth/application/services/session-token.service";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -27,14 +27,14 @@ import type { Result } from "@/shared/results/result.types";
  * Uses SessionTokenService for token concerns.
  */
 export class SessionService {
-  private readonly logger: LoggingClientPort;
+  private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
   private readonly tokenService: SessionTokenService;
 
   constructor(
     store: SessionStoreContract,
     codec: SessionTokenCodecContract,
-    logger: LoggingClientPort,
+    logger: LoggingClientContract,
   ) {
     this.logger = logger.child({ scope: "service" });
     this.store = store;
@@ -58,7 +58,7 @@ export class SessionService {
    * Reads the current session from the cookie.
    */
   read(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
-    return new ReadSessionUseCase({
+    return new GetSessionQuery({
       logger: this.logger,
       store: this.store,
       tokenService: this.tokenService,
@@ -92,7 +92,7 @@ export class SessionService {
    * Verifies the current session without side effects.
    */
   verify(): Promise<VerifySessionResult> {
-    return new VerifySessionUseCase({
+    return new VerifySessionQuery({
       logger: this.logger,
       store: this.store,
       tokenService: this.tokenService,

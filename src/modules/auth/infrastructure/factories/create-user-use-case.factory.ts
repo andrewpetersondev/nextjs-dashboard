@@ -1,13 +1,13 @@
 import "server-only";
 
+import { SignupCommand } from "@/modules/auth/application/commands/signup.command";
 import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
-import { SignupUseCase } from "@/modules/auth/application/use-cases/user/signup.use-case";
-import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/crypto/bcrypt-hasher.adapter";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/cryptography/bcrypt-hasher.adapter";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 export function createCreateUserUseCaseFactory(
   uow: UnitOfWorkContract,
-  logger: LoggingClientPort,
-): SignupUseCase {
-  return new SignupUseCase(uow, new BcryptHasherAdapter(), logger);
+  logger: LoggingClientContract,
+): SignupCommand {
+  return new SignupCommand(uow, new BcryptHasherAdapter(), logger);
 }

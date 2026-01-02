@@ -6,7 +6,7 @@ import type {
   ExecuteDalCoreOptions,
 } from "@/shared/errors/server/adapters/dal/dal-context.schema";
 import { normalizePgError } from "@/shared/errors/server/adapters/postgres/normalize-pg-error";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -16,7 +16,7 @@ import type { Result } from "@/shared/results/result.types";
 export async function executeDalResult<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
-  logger: LoggingClientPort,
+  logger: LoggingClientContract,
   options: ExecuteDalCoreOptions,
 ): Promise<Result<T, AppError>> {
   try {

@@ -13,19 +13,19 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 export class UserService {
   private readonly hasher: HashingService;
-  private readonly logger: LoggingClientPort;
+  private readonly logger: LoggingClientContract;
   private readonly repo: UserRepositoryPort;
 
   constructor(
     repo: UserRepositoryPort,
     hasher: HashingService,
-    logger: LoggingClientPort,
+    logger: LoggingClientContract,
   ) {
     this.repo = repo;
     this.hasher = hasher;

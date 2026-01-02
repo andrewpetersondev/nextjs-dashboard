@@ -5,7 +5,7 @@ import type {
   DalContextLite,
   ExecuteDalCoreOptions,
 } from "@/shared/errors/server/adapters/dal/dal-context.schema";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
  * Executes a DAL thunk and throws for unexpected failures (invariants).
@@ -20,7 +20,7 @@ import type { LoggingClientPort } from "@/shared/logging/core/logging-client.por
 export async function executeDalThrow<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
-  logger: LoggingClientPort,
+  logger: LoggingClientContract,
   options: ExecuteDalCoreOptions,
 ): Promise<T> {
   try {

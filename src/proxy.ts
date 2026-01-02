@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { authorizeRequestWorkflow } from "@/modules/auth/application/services/orchestrators/authorization/authorize-request.workflow";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/adapters/session-cookie-adapter.constants";
-import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/session/adapters/session-jwt.adapter";
+import { authorizeRequestWorkflow } from "@/modules/auth/application/workflows/authorization/authorize-request.workflow";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session-store/adapters/session-cookie-adapter.constants";
+import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-jwt.adapter";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,

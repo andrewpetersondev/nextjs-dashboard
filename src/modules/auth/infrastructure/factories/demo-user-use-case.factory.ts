@@ -1,13 +1,13 @@
 import "server-only";
 
+import { CreateDemoUserCommand } from "@/modules/auth/application/commands/create-demo-user.command";
 import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
-import { CreateDemoUserUseCase } from "@/modules/auth/application/use-cases/user/create-demo-user.use-case";
-import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/crypto/bcrypt-hasher.adapter";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/cryptography/bcrypt-hasher.adapter";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 export function createCreateDemoUserUseCaseFactory(
   uow: UnitOfWorkContract,
-  logger: LoggingClientPort,
-): CreateDemoUserUseCase {
-  return new CreateDemoUserUseCase(uow, new BcryptHasherAdapter(), logger);
+  logger: LoggingClientContract,
+): CreateDemoUserCommand {
+  return new CreateDemoUserCommand(uow, new BcryptHasherAdapter(), logger);
 }

@@ -2,7 +2,7 @@ import { isPublicProd } from "@/shared/config/env-public";
 import type { LogLevel } from "@/shared/config/env-schemas";
 import { getProcessId } from "@/shared/config/env-utils";
 import type { LogEntry } from "@/shared/logging/core/logger.types";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import {
   consoleMethod,
   currentLogLevelPriority,
@@ -61,11 +61,11 @@ export abstract class AbstractLogger {
     processMetadata = { ...processMetadata, ...context };
   }
 
-  abstract withContext(context: string): LoggingClientPort;
+  abstract withContext(context: string): LoggingClientContract;
 
-  abstract withRequest(requestId: string): LoggingClientPort;
+  abstract withRequest(requestId: string): LoggingClientContract;
 
-  abstract child(bindings: Record<string, unknown>): LoggingClientPort;
+  abstract child(bindings: Record<string, unknown>): LoggingClientContract;
 
   debug<T>(message: string, data?: T): void {
     this.logAt("debug", message, data);

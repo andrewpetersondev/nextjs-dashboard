@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { TransactionLoggingContext } from "@/shared/logging/application/transaction-logging-context.tokens";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
  * Configuration for the transaction lifecycle logger.
@@ -15,11 +15,11 @@ export type TransactionLoggerConfig = Readonly<{
  * Standardized logger for database or multi-step unit-of-work transactions.
  */
 export class TransactionLogger {
-  private readonly logger: LoggingClientPort;
+  private readonly logger: LoggingClientContract;
   private readonly operationContext: TransactionLoggingContext;
   private readonly operationNamePrefix: string;
 
-  constructor(config: TransactionLoggerConfig, logger: LoggingClientPort) {
+  constructor(config: TransactionLoggerConfig, logger: LoggingClientContract) {
     this.logger = logger;
     this.operationContext = config.operationContext;
     this.operationNamePrefix = config.operationNamePrefix;

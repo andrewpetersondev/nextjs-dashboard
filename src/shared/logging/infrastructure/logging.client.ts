@@ -8,7 +8,7 @@ import type {
   LogOperationData,
   SerializedError,
 } from "@/shared/logging/core/logger.types";
-import type { LoggingClientPort } from "@/shared/logging/core/logging-client.port";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { AbstractLogger } from "@/shared/logging/infrastructure/abstract-logger";
 import { toSafeErrorShape } from "@/shared/logging/infrastructure/logging.mappers";
 
@@ -16,7 +16,10 @@ import { toSafeErrorShape } from "@/shared/logging/infrastructure/logging.mapper
  * Sensitivity-aware structured logger implementation.
  * Handles AppError serialization and operational metadata injection.
  */
-export class LoggingClient extends AbstractLogger implements LoggingClientPort {
+export class LoggingClient
+  extends AbstractLogger
+  implements LoggingClientContract
+{
   /**
    * @inheritdoc
    */
