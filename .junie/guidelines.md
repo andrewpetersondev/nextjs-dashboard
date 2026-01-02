@@ -1,0 +1,2 @@
+- Use pnpm.
+- sort file trees and lists alphabetically.

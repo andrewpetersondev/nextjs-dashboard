@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { AuthPageWrapper } from "@/modules/auth/ui/components/shared/auth-page-wrapper";
+import { AuthPageWrapper } from "@/modules/auth/presentation/components/shared/auth-page-wrapper";
 
 export default function ForgotPasswordPage(): JSX.Element {
   return (

@@ -1,5 +1,5 @@
 import "server-only";
-import type { HashingPort } from "@/server/crypto/hashing/hashing.port";
+import type { HashingContract } from "@/server/crypto/hashing/hashing.contract";
 
 import type { Hash } from "@/shared/branding/brands";
 
@@ -8,9 +8,9 @@ import type { Hash } from "@/shared/branding/brands";
  * Delegates to a port for the actual algorithm.
  */
 export class HashingService {
-  private readonly hasher: HashingPort;
+  private readonly hasher: HashingContract;
 
-  constructor(hasher: HashingPort) {
+  constructor(hasher: HashingContract) {
     this.hasher = hasher;
   }
 

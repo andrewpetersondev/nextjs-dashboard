@@ -1,12 +1,12 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
-import type { CookiePort } from "@/server/cookies/cookie.port";
+import type { CookieContract } from "@/server/cookies/cookie.contract";
 
 /**
  * Adapter for Next.js cookies.
  */
-export class NextCookieAdapter implements CookiePort {
+export class NextCookieAdapter implements CookieContract {
   async delete(name: string): Promise<void> {
     const cookieStore = await cookies();
     cookieStore.delete(name);

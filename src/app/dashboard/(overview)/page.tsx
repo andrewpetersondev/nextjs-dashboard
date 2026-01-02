@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { verifySessionOptimistic } from "@/modules/auth/server/actions/verify-session-optimistic.action";
+import { verifySessionOptimistic } from "@/modules/auth/infrastructure/actions/verify-session-optimistic.action";
 import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
 import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";

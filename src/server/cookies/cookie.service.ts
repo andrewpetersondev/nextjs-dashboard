@@ -1,6 +1,6 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import type { CookiePort } from "@/server/cookies/cookie.port";
+import type { CookieContract } from "@/server/cookies/cookie.contract";
 
 /**
  * Generic cookie service.
@@ -10,9 +10,9 @@ import type { CookiePort } from "@/server/cookies/cookie.port";
  * secure, path, expires, maxAge) are owned by feature adapters.
  */
 export class CookieService {
-  private readonly adapter: CookiePort;
+  private readonly adapter: CookieContract;
 
-  constructor(adapter: CookiePort) {
+  constructor(adapter: CookieContract) {
     this.adapter = adapter;
   }
 

@@ -1,7 +1,7 @@
 import "server-only";
 
 import bcryptjs from "bcryptjs";
-import type { HashingPort } from "@/server/crypto/hashing/hashing.port";
+import type { HashingContract } from "@/server/crypto/hashing/hashing.contract";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { Hash } from "@/shared/branding/brands";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -14,7 +14,7 @@ const genSalt = async (rounds: number): Promise<string> =>
 /**
  * Bcrypt-based hashing adapter.
  */
-export class BcryptHashingAdapter implements HashingPort {
+export class BcryptHashingAdapter implements HashingContract {
   async hash(raw: string): Promise<Hash> {
     try {
       const salt = await genSalt(SALT_ROUNDS);
