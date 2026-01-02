@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { EstablishSessionCommand } from "@/modules/auth/application/use-cases/commands/establish-session.command";
@@ -15,6 +14,7 @@ import {
   type VerifySessionResult,
 } from "@/modules/auth/application/use-cases/queries/verify-session.query";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
+import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

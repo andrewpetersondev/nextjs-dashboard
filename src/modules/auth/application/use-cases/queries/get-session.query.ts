@@ -1,9 +1,9 @@
 import "server-only";
 
-import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/commands/rotate-session.command";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
+import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";

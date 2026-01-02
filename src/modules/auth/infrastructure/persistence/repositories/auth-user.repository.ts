@@ -6,12 +6,13 @@ import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.en
 import { demoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
+import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/mappers/auth-user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Ok } from "@/shared/results/result";
+import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -115,7 +116,8 @@ export class AuthUserRepository {
     const rowResult = await insertUserDal(this.db, input, this.logger);
 
     if (!rowResult.ok) {
-      return rowResult;
+      const mapped = toSignupUniquenessConflict(rowResult.error);
+      return Err(mapped ?? rowResult.error);
     }
 
     const entity = toAuthUserEntity(rowResult.value);

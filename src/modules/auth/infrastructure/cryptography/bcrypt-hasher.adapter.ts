@@ -1,7 +1,7 @@
 import "server-only";
 
 import bcryptjs from "bcryptjs";
-import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
+import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { Hash } from "@/shared/branding/brands";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

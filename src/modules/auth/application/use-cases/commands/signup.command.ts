@@ -1,10 +1,9 @@
 import "server-only";
 
-import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
-import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
+import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -49,8 +48,8 @@ export class SignupCommand {
         });
 
         if (!createdResultTx.ok) {
-          const mapped = toSignupUniquenessConflict(createdResultTx.error);
-          return Err(mapped ?? createdResultTx.error);
+          // No infrastructure mapping here!
+          return createdResultTx;
         }
 
         const created = createdResultTx.value;
