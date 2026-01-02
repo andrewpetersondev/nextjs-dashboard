@@ -38,16 +38,24 @@ Avoid "drift" caused by silent fallbacks or implicit defaults.
 
 Organize features using a **Modular Clean Architecture** approach:
 
-- **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design).
-- **Feature Modules**: `@/modules/{feature_name}`.
-  - `shared/`: Logic used by both UI and Server (schemas, constants, types).
-  - `server/`: Backend logic split into Clean Architecture layers:
-    - `actions/`: **Interface Adapters**. Next.js entry points.
-    - `application/`: **Use Cases**. Business logic, orchestration, and contracts.
-    - `infrastructure/`: **Frameworks & Drivers**. DB repositories, external API clients.
-  - `ui/`: Feature-specific React components.
-- **Shared Logic**: `@/shared/` (cross-cutting concerns like error handling, forms, and results).
-- **Server-Only**: `@/server/` (global server utilities, e.g., database client, global config).
+- **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design). Shared, stateless components.
+- **Feature Modules**: `@/modules/{feature_name}` (Bounded Contexts).
+  - `domain/`: Pure logic, no dependencies.
+  - `application/`: Use cases, contracts, and DTOs.
+  - `infrastructure/`: Implementations of contracts (repositories, adapters) and Server Actions.
+  - `presentation/`: Feature-specific React components.
+- **Shared**: `@/shared/` (cross-cutting concerns: error handling, functional `Result` types, Zod schemas).
+- **Server**: `@/server/` (Global singletons: DB client, logger configuration).
+- **Shell**: `@/shell/` (App-wide layout, providers, and global navigation).
+
+## Module Boundaries & Communication
+
+- **Isolation**: Modules should be self-contained. Avoid "feature-bleeding".
+- **Cross-Module Imports**:
+  - A module may import from another module's `domain` or `application/dtos`.
+  - NEVER import from another module's `infrastructure` or `presentation` (except shared UI).
+  - Use the `shared` directory for logic used by 3+ modules.
+- **Communication**: Prefer asynchronous events (Domain Events) or simple service calls via contracts for cross-module interaction to maintain loose coupling.
 
 ## Server Action Responsibilities (Interface Adapters)
 
@@ -59,7 +67,7 @@ Server Actions must remain **thin** and framework-focused. They are the bridge b
   - Initializing observability (Request IDs, Performance Trackers).
   - Validating input schemas (via Zod/Form Helpers).
   - Invoking a **single** Use Case or Workflow.
-  - Mapping Domain Results to UI-compatible `FormResult`.
+  - Mapping Domain/Application Results to UI-compatible `FormResult`.
   - Triggering Next.js navigation (`redirect`, `revalidatePath`).
 - **Forbidden Concerns**:
   - Direct Database queries (DAL/Drizzle).
