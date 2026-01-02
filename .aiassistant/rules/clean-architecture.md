@@ -1,5 +1,5 @@
 ---
-apply: by file patterns
+apply: off
 patterns: src/modules/**/*.ts
 ---
 

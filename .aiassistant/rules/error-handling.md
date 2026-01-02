@@ -1,5 +1,5 @@
 ---
-apply: by file patterns
+apply: off
 patterns: src/shared/errors/**/*.ts, src/modules/**/*.ts, src/modules/**/*.tsx
 ---
 
