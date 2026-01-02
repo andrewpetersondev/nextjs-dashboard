@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SessionService } from "@/modules/auth/server/application/services/session.service";
+import type { AuthUserOutputDto } from "@/modules/auth/server/application/types/dtos/auth-user.output.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/server/application/types/dtos/session-principal.dto";
 import type { LoginUseCase } from "@/modules/auth/server/application/use-cases/user/login.use-case";
 import type { AuthLoginSchemaDto } from "@/modules/auth/shared/domain/user/auth-user.schema";
@@ -17,10 +18,7 @@ import type { Result } from "@/shared/results/result.types";
  * @returns Session principal DTO.
  */
 const mapToSessionPrincipal = (
-  value: Readonly<{
-    id: SessionPrincipalDto["id"];
-    role: SessionPrincipalDto["role"];
-  }>,
+  value: AuthUserOutputDto,
 ): SessionPrincipalDto => ({
   id: value.id,
   role: value.role,

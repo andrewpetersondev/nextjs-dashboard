@@ -1,15 +1,9 @@
 import "server-only";
 
-import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/models/auth-user.entity";
 
 /**
  * Data payload returned by Auth Use Cases.
- * Uses branded types for internal application safety.
+ * Derived from AuthUserEntity, omitting sensitive password hash.
  */
-export interface AuthUserOutputDto {
-  readonly email: string;
-  readonly id: UserId;
-  readonly role: UserRole;
-  readonly username: string;
-}
+export type AuthUserOutputDto = Readonly<Omit<AuthUserEntity, "password">>;

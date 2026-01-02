@@ -1,14 +1,9 @@
 import "server-only";
 
-import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/models/auth-user.entity";
 
 /**
  * Minimal identity used by the application layer to establish/refresh sessions.
- *
- * This is a DTO used at the workflow and service boundaries.
+ * Derived from AuthUserEntity to ensure identity and role consistency.
  */
-export interface SessionPrincipalDto {
-  readonly id: UserId;
-  readonly role: UserRole;
-}
+export type SessionPrincipalDto = Readonly<Pick<AuthUserEntity, "id" | "role">>;

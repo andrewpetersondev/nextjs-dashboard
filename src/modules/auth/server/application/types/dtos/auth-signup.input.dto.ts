@@ -1,15 +1,9 @@
 import "server-only";
 
-import type { Hash } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { AuthUserEntity } from "@/modules/auth/server/application/types/models/auth-user.entity";
 
 /**
  * Unified signup payload used across Use-Case → Repo → DAL boundaries.
- * Keeps strong types (Hash, UserRole).
+ * Derived from AuthUserEntity to ensure type consistency for identity and credentials.
  */
-export interface AuthSignupInputDto {
-  readonly email: string;
-  readonly password: Hash;
-  readonly role: UserRole;
-  readonly username: string;
-}
+export type AuthSignupInputDto = Readonly<Omit<AuthUserEntity, "id">>;
