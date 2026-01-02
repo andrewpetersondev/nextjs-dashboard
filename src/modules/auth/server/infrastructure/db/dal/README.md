@@ -10,7 +10,7 @@ flowchart TD
     %% DAL Function
     B -->|wraps execution| C[executeDalResult]
 
-    %% Execution Wrapper
+    %% DAL Core Logic
     C -->|try| D["DAL Core Logic<br/>async () => {...}"]
 
     %% Database Interaction
@@ -21,11 +21,11 @@ flowchart TD
     D --> F{User found?}
 
     %% Success path
-    F -->|Yes| G[Log: User row fetched]
+    F -->|Yes| G["Log success: User row fetched"]
     G --> H[return UserRow]
 
     %% Not found path
-    F -->|No| I[Log: User not found]
+    F -->|No| I["Log info: User not found"]
     I --> J[return null]
 
     %% Successful result
@@ -34,7 +34,7 @@ flowchart TD
 
     %% Error path
     D -. throws .-> M[Database / Drizzle Error]
-    M --> N[normalizePgError + log]
+    M --> N["executeDalResult: normalizePgError + log"]
     N --> O["Err(AppError)"]
 
     %% Return to caller
@@ -56,7 +56,7 @@ sequenceDiagram
 
     S->>DAL: getUserByEmailDal(db, email, logger)
 
-    DAL->>WRAP: executeDalResult(dalCoreLogic, metadata, logger)
+    DAL->>WRAP: executeDalResult(dalCoreLogic, metadata, logger, context)
 
     activate WRAP
 
@@ -69,10 +69,10 @@ sequenceDiagram
     DB-->>DAL: UserRow | null
 
     alt User found
-        DAL->>DAL: log "User row fetched"
+        DAL->>DAL: log.operation "User row fetched"
         DAL-->>WRAP: return UserRow
     else User not found
-        DAL->>DAL: log "User not found"
+        DAL->>DAL: log.operation "User not found"
         DAL-->>WRAP: return null
     end
 
@@ -179,7 +179,6 @@ sequenceDiagram
   end
 
   deactivate REPO
-
 ```
 
 ## Use Case Class: LoginUseCase
@@ -210,17 +209,17 @@ flowchart TD
   F --> G{User exists?}
 
 %% Not Found Path
-  G -->|No| H["makeAppError('not_found')"]
+  G -->|No| H["makeAppError('not_found', { cause: 'user_not_found' })"]
   H --> Z
 
 %% Password Verification
-  G -->|Yes| I["hasher.compare(password, hash)"]
+  G -->|Yes| I["hasher.compare(password, user.password)"]
 
 %% Password Decision
   I --> J{Password OK?}
 
 %% Invalid Credentials Path
-  J -->|No| K["makeAppError('invalid_credentials')"]
+  J -->|No| K["makeAppError('invalid_credentials', { cause: 'invalid_password' })"]
   K --> Z
 
 %% Success Path
@@ -258,14 +257,14 @@ sequenceDiagram
   alt Repository Failure
     UC-->>WF: Result.Err(AppError)
   else User Not Found
-    UC->>UC: makeAppError("not_found")
+    UC->>UC: makeAppError("not_found", { cause: "user_not_found" })
     UC-->>WF: Result.Err(AppError)
   else User Found
     UC->>HASH: compare(input.password, user.password)
     HASH-->>UC: boolean
 
     alt Invalid Password
-      UC->>UC: makeAppError("invalid_credentials")
+      UC->>UC: makeAppError("invalid_credentials", { cause: "invalid_password" })
       UC-->>WF: Result.Err(AppError)
     else Password Valid
       UC-->>WF: Result.Ok(AuthUserOutputDto)
@@ -276,7 +275,7 @@ sequenceDiagram
 
   alt catch (unexpected error)
     UC->>LOG: error("login.use-case.execute failed...")
-    UC->>UC: normalizeUnknownToAppError
+    UC->>UC: normalizeUnknownToAppError(err, "unexpected")
     UC-->>WF: Result.Err(AppError)
   end
 ```
@@ -307,8 +306,8 @@ F --> Z["Return Result.Err(AppError)"]
 G --> Z
 
 %% Success Branch
-D -->|Yes| H["Map to SessionPrincipalDto"]
-H --> I["sessionService.establish(user)"]
+D -->|Yes| H["Map AuthUserOutputDto to SessionPrincipalDto<br/>(id, role)"]
+H --> I["sessionService.establish(principal)"]
 
 %% Session Result Decision
 I --> J{sessionResult.ok?}
@@ -340,13 +339,13 @@ sequenceDiagram
   alt authResult failure
     alt isCredentialFailure (not_found | invalid_credentials)
       note over WF: Anti-enumeration logic
-      WF->>WF: makeAppError("invalid_credentials")
+      WF->>WF: makeAppError(APP_ERROR_KEYS.invalid_credentials, { cause, message, metadata })
       WF-->>AC: Result.Err(AppError)
     else other error
       WF-->>AC: Result.Err(AppError)
     end
   else authResult success
-    WF->>WF: Map AuthUserOutputDto to SessionPrincipalDto
+    WF->>WF: Extract id, role from AuthUserOutputDto
     WF->>SS: establish(principal)
     SS-->>WF: Result<SessionPrincipalDto, AppError>
 
@@ -386,7 +385,7 @@ flowchart TD
   F --> G["store.set(token, expiresAtMs)"]
 
 %% Completion
-  G --> H["Log: Session established"]
+  G --> H["Log info: Session established"]
   H --> I["Ok(user)"]
   I --> Z1["Return Result.Ok(SessionPrincipalDto)"]
 
@@ -411,22 +410,22 @@ sequenceDiagram
 
   UC->>UC: try
 
-  UC->>TS: issue({ role, sessionStart, userId })
+  UC->>TS: issue({ role, sessionStart: now, userId })
   TS-->>UC: Result<{ token, expiresAtMs }, AppError>
 
   alt Token Issue Failure
     UC-->>WF: Result.Err(AppError)
   else Token Issue Success
     UC->>ST: set(token, expiresAtMs)
-    ST-->>UC: void
-    UC->>UC: log "Session established"
+    ST-->>UC: await completion
+    UC->>UC: log.operation "Session established"
     UC-->>WF: Result.Ok(user)
   end
 
   deactivate UC
 
   alt catch (unexpected error)
-    UC->>UC: normalizeUnknownToAppError
+    UC->>UC: normalizeUnknownToAppError(err, "unexpected")
     UC-->>WF: Result.Err(AppError)
   end
 ```
@@ -445,9 +444,10 @@ flowchart TD
 %% Preparation
   B --> C["Generate requestId"]
   B --> D["Get Request Metadata<br/>(IP, User Agent)"]
+  D --> TRACK["Initialize PerformanceTracker"]
 
 %% Validation
-  D --> E["validateForm(formData, LoginSchema)"]
+  TRACK --> E["validateForm(formData, LoginSchema)"]
 
 %% Validation Decision
   E --> F{"validated.ok?"}
@@ -469,7 +469,7 @@ flowchart TD
 
 %% Workflow Success Path
   K -->|Yes| N["Log Success & Revalidate Path"]
-  N --> O["redirect('/dashboard')"]
+  N --> O["redirect(ROUTES.dashboard.root)"]
 
 %% Outputs
   H --> Z["Action Result"]
@@ -495,14 +495,15 @@ sequenceDiagram
 
   ACT->>ACT: Generate requestId
   ACT->>ACT: Get request metadata
+  ACT->>ACT: Initialize PerformanceTracker
 
-  ACT->>VAL: validateForm(formData, LoginSchema)
+  ACT->>VAL: tracker.measure: validateForm(formData, LoginSchema)
   VAL-->>ACT: Result
 
   alt validation failure
     ACT-->>UI: return validation result
   else validation success
-    ACT->>WF: loginWorkflow(input, deps)
+    ACT->>WF: tracker.measure: loginWorkflow(input, deps)
     activate WF
     WF-->>ACT: Result
     deactivate WF
@@ -512,8 +513,8 @@ sequenceDiagram
       MAP-->>ACT: FormResult
       ACT-->>UI: return FormResult
     else workflow success
-      ACT->>NX: revalidatePath("/dashboard")
-      ACT->>NX: redirect("/dashboard")
+      ACT->>NX: revalidatePath(ROUTES.dashboard.root)
+      ACT->>NX: redirect(ROUTES.dashboard.root)
       note over ACT, NX: Redirect throws a Next.js error to stop execution
     end
   end
