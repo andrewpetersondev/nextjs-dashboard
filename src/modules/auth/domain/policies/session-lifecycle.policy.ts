@@ -1,4 +1,4 @@
-import type { AuthEncryptPayload } from "@/modules/auth/domain/types/session.codec";
+import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 import {
   absoluteLifetime,
   MAX_ABSOLUTE_SESSION_MS,

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthEncryptPayload } from "@/modules/auth/domain/types/session.codec";
+import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

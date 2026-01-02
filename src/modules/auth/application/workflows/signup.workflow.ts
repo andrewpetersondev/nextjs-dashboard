@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SignupCommand } from "@/modules/auth/application/commands/signup.command";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { SessionService } from "@/modules/auth/application/services/session.service";
+import type { SessionService } from "@/modules/auth/application/workflows/session.service";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";

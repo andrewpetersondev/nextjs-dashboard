@@ -2,7 +2,7 @@ import "server-only";
 
 import type { CreateDemoUserCommand } from "@/modules/auth/application/commands/create-demo-user.command";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { SessionService } from "@/modules/auth/application/services/session.service";
+import type { SessionService } from "@/modules/auth/application/workflows/session.service";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";

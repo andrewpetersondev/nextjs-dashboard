@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { SessionTokenService } from "@/modules/auth/application/services/session-token.service";
+import type { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

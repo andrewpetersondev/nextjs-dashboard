@@ -4,8 +4,8 @@ import type { SessionTokenCodecContract } from "@/modules/auth/application/contr
 import {
   determineRouteType,
   evaluateRouteAccess,
-} from "@/modules/auth/application/workflows/authorization/route-access-policy";
-import type { AuthEncryptPayload } from "@/modules/auth/domain/types/session.codec";
+} from "@/modules/auth/application/guards/route-access-policy";
+import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 
 function mapDecisionToReason(
   routeType: ReturnType<typeof determineRouteType>,
@@ -66,7 +66,7 @@ export type AuthorizeRequestOutcome =
       to: `/${string}`;
     }>;
 
-export async function authorizeRequestWorkflow(
+export async function authorizeRequest(
   input: Readonly<{
     cookie: string | undefined;
     isAdminRoute: boolean;

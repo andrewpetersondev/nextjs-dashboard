@@ -3,7 +3,7 @@ import "server-only";
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import { toSignupUniquenessConflict } from "@/modules/auth/application/services/auth-error-mapper.service";
+import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/adapters/auth-error-mapper.service";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { createRandomPassword } from "@/shared/crypto/password-generator";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";

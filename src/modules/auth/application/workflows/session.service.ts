@@ -14,8 +14,8 @@ import {
   VerifySessionQuery,
   type VerifySessionResult,
 } from "@/modules/auth/application/queries/verify-session.query";
-import { SessionTokenService } from "@/modules/auth/application/services/session-token.service";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
+import { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import type { Result } from "@/shared/results/result.types";

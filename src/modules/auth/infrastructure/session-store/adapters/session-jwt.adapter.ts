@@ -2,7 +2,7 @@ import "server-only";
 
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/session.schemas";
-import type { AuthEncryptPayload } from "@/modules/auth/domain/types/session.codec";
+import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 import {
   CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,

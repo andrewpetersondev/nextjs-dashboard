@@ -6,7 +6,7 @@ import {
   SESSION_DURATION_MS,
 } from "@/modules/auth/domain/policies/session.policy";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/session.schemas";
-import type { AuthEncryptPayload } from "@/modules/auth/domain/types/session.codec";
+import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

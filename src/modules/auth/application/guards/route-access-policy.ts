@@ -1,4 +1,4 @@
-import type { AuthEncryptPayload } from "@/modules/auth/domain/types/session.codec";
+import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
 export type RouteType = "admin" | "protected" | "public";
