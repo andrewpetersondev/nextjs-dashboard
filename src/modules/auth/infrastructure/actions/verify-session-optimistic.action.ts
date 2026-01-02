@@ -3,8 +3,8 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionTransport } from "@/modules/auth/application/dtos/session.transport";
-import { createSessionServiceFactory } from "@/modules/auth/application/factories/session-service.factory";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/application/services/orchestrators/verify-session-optimistic.workflow";
+import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

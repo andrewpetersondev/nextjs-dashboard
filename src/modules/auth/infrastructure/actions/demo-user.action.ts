@@ -1,10 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createCreateDemoUserUseCaseFactory } from "@/modules/auth/application/factories/demo-user-use-case.factory";
-import { createSessionServiceFactory } from "@/modules/auth/application/factories/session-service.factory";
-import { createUnitOfWorkFactory } from "@/modules/auth/application/factories/unit-of-work.factory";
 import { createDemoUserWorkflow } from "@/modules/auth/application/services/orchestrators/create-demo-user.workflow";
+import { createCreateDemoUserUseCaseFactory } from "@/modules/auth/infrastructure/factories/demo-user-use-case.factory";
+import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import { createUnitOfWorkFactory } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";

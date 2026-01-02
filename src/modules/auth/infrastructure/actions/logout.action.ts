@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createSessionServiceFactory } from "@/modules/auth/application/factories/session-service.factory";
 import { logoutWorkflow } from "@/modules/auth/application/services/orchestrators/logout.workflow";
+import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 

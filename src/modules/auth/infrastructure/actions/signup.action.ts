@@ -3,9 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { SignupField } from "@/modules/auth/application/dtos/auth-ui.dto";
-import { createCreateUserUseCaseFactory } from "@/modules/auth/application/factories/create-user-use-case.factory";
-import { createSessionServiceFactory } from "@/modules/auth/application/factories/session-service.factory";
-import { createUnitOfWorkFactory } from "@/modules/auth/application/factories/unit-of-work.factory";
 import { signupWorkflow } from "@/modules/auth/application/services/orchestrators/signup.workflow";
 import {
   type AuthSignupSchemaDto,
@@ -13,6 +10,9 @@ import {
   SignupSchema,
 } from "@/modules/auth/domain/schemas/auth-user.schema";
 import { mapSignupErrorToFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
+import { createCreateUserUseCaseFactory } from "@/modules/auth/infrastructure/factories/create-user-use-case.factory";
+import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import { createUnitOfWorkFactory } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

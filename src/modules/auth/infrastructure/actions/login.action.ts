@@ -3,8 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { LoginField } from "@/modules/auth/application/dtos/auth-ui.dto";
-import { createLoginUseCaseFactory } from "@/modules/auth/application/factories/login-use-case.factory";
-import { createSessionServiceFactory } from "@/modules/auth/application/factories/session-service.factory";
 import { loginWorkflow } from "@/modules/auth/application/services/orchestrators/login.workflow";
 import {
   type AuthLoginSchemaDto,
@@ -12,6 +10,8 @@ import {
   LoginSchema,
 } from "@/modules/auth/domain/schemas/auth-user.schema";
 import { mapLoginErrorToFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
+import { createLoginUseCaseFactory } from "@/modules/auth/infrastructure/factories/login-use-case.factory";
+import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
