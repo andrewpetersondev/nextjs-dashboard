@@ -1,6 +1,6 @@
 import "server-only";
+
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import type { SessionTokenService } from "@/modules/auth/application/services/session-token.service";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
@@ -20,6 +20,21 @@ export type RotateSessionDeps = Readonly<{
   store: SessionStoreContract;
   tokenService: SessionTokenService;
 }>;
+
+/**
+ * Silently cleans up an invalid session token.
+ *
+ * Swallows errors since cleanup is best-effort.
+ */
+export async function cleanupInvalidToken(
+  store: SessionStoreContract,
+): Promise<void> {
+  try {
+    await store.delete();
+  } catch {
+    // ignore cleanup failure - best effort
+  }
+}
 
 /**
  * RotateSessionUseCase

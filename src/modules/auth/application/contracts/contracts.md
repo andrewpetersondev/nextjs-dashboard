@@ -2,7 +2,7 @@
 
 ## What are Contracts?
 
-- Reference: (Typical location: `src/modules/auth/server/application/contracts/unit-of-work.contract.ts` or similar)
+- Reference: (Typical location: `src/modules/auth/application/contracts/unit-of-work.contract.ts` or similar)
 - Contracts are TypeScript interfaces that define the required methods and signatures for a dependency (e.g., a repository, service, or unit of work).
 - Example: `UnitOfWorkContract` might specify methods like `commit(): Promise<void>` and `rollback(): Promise<void>`, but not the data itself.
 - Contracts define what a class or service must implement, enabling dependency inversion and testability.
