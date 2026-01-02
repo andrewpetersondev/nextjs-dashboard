@@ -44,10 +44,10 @@ Organize features using a **Modular Clean Architecture** approach:
 
 - **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design). Shared, stateless components.
 - **Feature Modules**: `@/modules/{feature_name}` (Bounded Contexts).
-  - `domain/`: Pure logic, no dependencies.
-  - `application/`: Use cases, contracts, and DTOs.
-  - `infrastructure/`: Implementations of contracts (repositories, adapters) and Server Actions.
-  - `presentation/`: Feature-specific React components.
+  - `domain/`
+  - `application/`
+  - `infrastructure/`
+  - `presentation/`
 - **Shared**: `@/shared/` (cross-cutting concerns: error handling, functional `Result` types, Zod schemas).
 - **Server**: `@/server/` (Global singletons: DB client, logger configuration).
 - **Shell**: `@/shell/` (App-wide layout, providers, and global navigation).

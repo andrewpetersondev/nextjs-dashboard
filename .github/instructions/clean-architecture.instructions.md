@@ -10,22 +10,20 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 ## Layer Mapping
 
-| Folder                   | Clean Layer        | Responsibility                                                                 |
-| :----------------------- | :----------------- | :----------------------------------------------------------------------------- |
-| `domain`                 | Domain             | Enterprise Business Rules: Entities, Value Objects, Domain Events.             |
-| `application/use-cases`  | Use Cases          | Application Business Rules: Orchestration of domain objects to achieve a task. |
-| `application/contracts`  | Interfaces         | Port definitions (e.g., `IRepository`, `IMailer`) used by Use Cases.           |
-| `application/dtos`       | Data Transfer      | Plain objects for input/output boundaries of the application layer.            |
-| `infrastructure`         | Infrastructure     | Framework/Tool implementations (Drizzle, Stripe, Redis).                       |
-| `infrastructure/actions` | Interface Adapters | Server Actions: Bridge between Web/HTTP and Application layer.                 |
-| `presentation`           | Presentation       | React Components (UI) and client-side logic.                                   |
+| Folder           |
+| :--------------- |
+| `domain`         |
+| `application`    |
+| `infrastructure` |
+| `presentation`   |
 
 ## Dependency Constraints
 
 - **Inner Core Isolation**: `domain/` and `application/` must never import from `infrastructure/`, `next/*`, `react`, or any DB-specific libraries.
 - **Dependency Inversion**: High-level modules (Application) must not depend on low-level modules (Infrastructure). Both must depend on abstractions (Contracts).
-- **Use Case Driven**: One file per Use Case. Use cases should be the "screaming architecture" of what the module does.
-- **Contract First**: Infrastructure must implement interfaces defined in `application/contracts`. Use cases only ever interact with these contracts.
+- **Use Case and Service Driven**: One file per Use Case or Service. Files should be the "screaming architecture" of what the module does.
+- **Contract First**: Infrastructure must implement interfaces defined in `domain`. Use cases only ever interact with
+  these contracts.
 - **Boundary Crossing**: Data crossing the boundary from Infrastructure to Application should be mapped to Domain Entities or DTOs. Never leak DB rows or raw API responses into Use Cases.
 
 ## Transaction & Persistence Rules
