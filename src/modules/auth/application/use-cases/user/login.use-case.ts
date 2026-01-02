@@ -1,9 +1,9 @@
 import "server-only";
 
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user.repository.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
-import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import {
   makeAppError,
@@ -19,13 +19,13 @@ import type { Result } from "@/shared/results/result.types";
  * Single business capability: Authenticate a user by email/password.
  */
 export class LoginUseCase {
-  private readonly hasher: HashingService;
+  private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientPort;
   private readonly repo: AuthUserRepositoryContract;
 
   constructor(
     repo: AuthUserRepositoryContract,
-    hasher: HashingService,
+    hasher: PasswordHasherContract,
     logger: LoggingClientPort,
   ) {
     this.repo = repo;
