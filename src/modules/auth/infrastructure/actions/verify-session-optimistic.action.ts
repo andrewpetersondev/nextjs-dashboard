@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import type { SessionTransport } from "@/modules/auth/application/dtos/session.transport";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/application/workflows/verify-session-optimistic.workflow";
 import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

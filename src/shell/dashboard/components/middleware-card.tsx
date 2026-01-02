@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import type { SessionTransport } from "@/modules/auth/application/dtos/session.transport";
 import { verifySessionOptimistic } from "@/modules/auth/infrastructure/actions/verify-session-optimistic.action";
+import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import {
   GUEST_ROLE,
   USER_ROLES,

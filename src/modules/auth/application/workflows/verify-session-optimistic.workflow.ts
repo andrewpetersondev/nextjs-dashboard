@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { SessionTransport } from "@/modules/auth/application/dtos/session.transport";
 import type { SessionService } from "@/modules/auth/application/services/session.service";
+import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 
 export type VerifySessionOptimisticFailure = Readonly<{
   reason: "decode_failed" | "invalid_claims" | "no_session";

@@ -44,7 +44,7 @@ export async function cleanupInvalidToken(
  * - If rotation needed, re-issues token and sets cookie
  * - If termination needed, deletes cookie
  */
-export class RotateSessionUseCase {
+export class RotateSessionCommand {
   private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
   private readonly tokenService: SessionTokenService;

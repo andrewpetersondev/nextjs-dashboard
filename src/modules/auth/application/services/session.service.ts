@@ -1,11 +1,11 @@
 import "server-only";
 
-import { EstablishSessionUseCase } from "@/modules/auth/application/commands/establish-session.use-case";
-import { RotateSessionUseCase } from "@/modules/auth/application/commands/rotate-session.use-case";
+import { EstablishSessionCommand } from "@/modules/auth/application/commands/establish-session.command";
+import { RotateSessionCommand } from "@/modules/auth/application/commands/rotate-session.command";
 import {
+  TerminateSessionCommand,
   type TerminateSessionReason,
-  TerminateSessionUseCase,
-} from "@/modules/auth/application/commands/terminate-session.use-case";
+} from "@/modules/auth/application/commands/terminate-session.command";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
@@ -47,7 +47,7 @@ export class SessionService {
   establish(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>> {
-    return new EstablishSessionUseCase({
+    return new EstablishSessionCommand({
       logger: this.logger,
       store: this.store,
       tokenService: this.tokenService,
@@ -69,7 +69,7 @@ export class SessionService {
    * Rotates the session token if necessary based on refresh threshold.
    */
   rotate(): Promise<Result<UpdateSessionOutcome, AppError>> {
-    return new RotateSessionUseCase({
+    return new RotateSessionCommand({
       logger: this.logger,
       store: this.store,
       tokenService: this.tokenService,
@@ -82,7 +82,7 @@ export class SessionService {
   terminate(
     reason: TerminateSessionReason = "user_logout",
   ): Promise<Result<void, AppError>> {
-    return new TerminateSessionUseCase({
+    return new TerminateSessionCommand({
       logger: this.logger,
       store: this.store,
     }).execute(reason);

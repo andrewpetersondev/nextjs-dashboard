@@ -1,9 +1,9 @@
 import "server-only";
 
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import type { SessionTransport } from "@/modules/auth/application/dtos/session.transport";
 import type { SessionTokenService } from "@/modules/auth/application/services/session-token.service";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
+import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 export type VerifySessionReason =

@@ -22,7 +22,7 @@ export type EstablishSessionDeps = Readonly<{
  * - Issue a new session token via SessionTokenService
  * - Persist it via SessionStoreContract
  */
-export class EstablishSessionUseCase {
+export class EstablishSessionCommand {
   private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
   private readonly tokenService: SessionTokenService;

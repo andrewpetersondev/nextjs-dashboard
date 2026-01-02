@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cleanupInvalidToken } from "@/modules/auth/application/commands/rotate-session.use-case";
+import { cleanupInvalidToken } from "@/modules/auth/application/commands/rotate-session.command";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionTokenService } from "@/modules/auth/application/services/session-token.service";

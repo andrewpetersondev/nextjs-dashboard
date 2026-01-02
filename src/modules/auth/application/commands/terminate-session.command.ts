@@ -22,7 +22,7 @@ export type TerminateSessionDeps = Readonly<{
  * Terminates a session by deleting the cookie.
  * Logs the termination reason for auditing.
  */
-export class TerminateSessionUseCase {
+export class TerminateSessionCommand {
   private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
 
