@@ -4,17 +4,18 @@ import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/sessio
 import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/commands/rotate-session.command";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
+import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
+// TODO: this type should be extracted to a shared location
 export type GetSessionDeps = Readonly<{
   logger: LoggingClientContract;
   store: SessionStoreContract;
-  tokenService: SessionTokenService;
+  tokenService: SessionTokenAdapter;
 }>;
 
 /**
@@ -28,7 +29,7 @@ export type GetSessionDeps = Readonly<{
 export class GetSessionQuery {
   private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenService;
+  private readonly tokenService: SessionTokenAdapter;
 
   constructor(deps: GetSessionDeps) {
     this.logger = deps.logger.child({

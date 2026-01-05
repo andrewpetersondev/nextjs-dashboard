@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
+import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -12,7 +12,7 @@ import type { Result } from "@/shared/results/result.types";
  * Operational failures are returned as `Err(AppError)`.
  */
 export async function refreshSessionWorkflow(
-  deps: Readonly<{ sessionService: SessionService }>,
+  deps: Readonly<{ sessionService: SessionAdapterContract }>,
 ): Promise<Result<UpdateSessionOutcome, AppError>> {
   return await deps.sessionService.rotate();
 }

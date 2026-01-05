@@ -31,7 +31,7 @@ export const verifySessionOptimistic = cache(
     if (!res.ok) {
       logger.operation("warn", "No valid session found", {
         operationContext: "authentication",
-        operationIdentifiers: { reason: res.error.reason },
+        operationIdentifiers: { reason: res.error.description },
         operationName: "session.verifyOptimistic.noSession",
       });
 

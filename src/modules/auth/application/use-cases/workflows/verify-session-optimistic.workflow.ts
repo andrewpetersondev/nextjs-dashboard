@@ -1,15 +1,9 @@
 import "server-only";
 
-import type { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
+import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
-
-export type VerifySessionOptimisticFailure = Readonly<{
-  reason: "decode_failed" | "invalid_claims" | "no_session";
-}>;
-
-export type VerifySessionOptimisticResult =
-  | Readonly<{ ok: false; error: VerifySessionOptimisticFailure }>
-  | Readonly<{ ok: true; value: SessionTransport }>;
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Optimistically verifies the current session (cookie/JWT based).
@@ -18,19 +12,8 @@ export type VerifySessionOptimisticResult =
  */
 export async function verifySessionOptimisticWorkflow(
   deps: Readonly<{
-    sessionService: SessionService;
+    sessionService: SessionAdapterContract;
   }>,
-): Promise<VerifySessionOptimisticResult> {
-  const result = await deps.sessionService.verify();
-
-  if (!result.ok) {
-    return {
-      error: {
-        reason: result.reason === "no_token" ? "no_session" : result.reason,
-      },
-      ok: false,
-    };
-  }
-
-  return { ok: true, value: result.value };
+): Promise<Result<SessionTransport, AppError>> {
+  return await deps.sessionService.verify();
 }

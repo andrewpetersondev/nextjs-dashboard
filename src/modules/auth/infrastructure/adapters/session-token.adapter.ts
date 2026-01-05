@@ -7,6 +7,7 @@ import {
 } from "@/modules/auth/domain/policies/session.policy";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/session.schemas";
 import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
+import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-jwt.adapter";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -30,7 +31,7 @@ export type IssuedToken = Readonly<{
  * Handles token-specific operations (encode, decode, validate).
  * Separates crypto/JWT concerns from session lifecycle.
  */
-export class SessionTokenService {
+export class SessionTokenAdapter {
   private readonly codec: SessionTokenCodecContract;
 
   constructor(codec: SessionTokenCodecContract) {
@@ -87,4 +88,11 @@ export class SessionTokenService {
 
     return Ok(parsed.data);
   }
+}
+
+/**
+ * Factory function for creating SessionTokenAdapter instances.
+ */
+export function createSessionTokenAdapter(): SessionTokenAdapter {
+  return new SessionTokenAdapter(createSessionJwtAdapter());
 }

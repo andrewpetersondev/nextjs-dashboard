@@ -8,7 +8,7 @@ import {
 } from "@/modules/auth/domain/policies/session-lifecycle.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
+import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -18,7 +18,7 @@ import type { Result } from "@/shared/results/result.types";
 export type RotateSessionDeps = Readonly<{
   logger: LoggingClientContract;
   store: SessionStoreContract;
-  tokenService: SessionTokenService;
+  tokenService: SessionTokenAdapter;
 }>;
 
 /**
@@ -47,7 +47,7 @@ export async function cleanupInvalidToken(
 export class RotateSessionCommand {
   private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenService;
+  private readonly tokenService: SessionTokenAdapter;
 
   constructor(deps: RotateSessionDeps) {
     this.logger = deps.logger.child({
@@ -151,7 +151,7 @@ export class RotateSessionCommand {
   }
 
   private async handleRotation(decoded: {
-    role: Parameters<SessionTokenService["issue"]>[0]["role"];
+    role: Parameters<SessionTokenAdapter["issue"]>[0]["role"];
     sessionStart: number;
     userId: string;
   }): Promise<Result<UpdateSessionOutcome, AppError>> {

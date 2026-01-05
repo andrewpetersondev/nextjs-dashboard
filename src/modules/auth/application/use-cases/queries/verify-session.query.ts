@@ -2,23 +2,19 @@ import "server-only";
 
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionTokenService } from "@/modules/auth/infrastructure/cryptography/session-token.service";
+import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-
-export type VerifySessionReason =
-  | "decode_failed"
-  | "invalid_claims"
-  | "no_token";
-
-export type VerifySessionResult =
-  | Readonly<{ ok: false; reason: VerifySessionReason }>
-  | Readonly<{ ok: true; value: SessionTransport }>;
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 export type VerifySessionDeps = Readonly<{
   logger: LoggingClientContract;
   store: SessionStoreContract;
-  tokenService: SessionTokenService;
+  tokenService: SessionTokenAdapter;
 }>;
 
 /**
@@ -34,7 +30,7 @@ export type VerifySessionDeps = Readonly<{
 export class VerifySessionQuery {
   private readonly logger: LoggingClientContract;
   private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenService;
+  private readonly tokenService: SessionTokenAdapter;
 
   constructor(deps: VerifySessionDeps) {
     this.logger = deps.logger.child({
@@ -45,7 +41,7 @@ export class VerifySessionQuery {
     this.tokenService = deps.tokenService;
   }
 
-  async execute(): Promise<VerifySessionResult> {
+  async execute(): Promise<Result<SessionTransport, AppError>> {
     const token = await this.store.get();
 
     if (!token) {
@@ -54,7 +50,13 @@ export class VerifySessionQuery {
         operationIdentifiers: { reason: "no_token" },
         operationName: "session.verify.no_token",
       });
-      return { ok: false, reason: "no_token" };
+      return Err(
+        makeAppError(APP_ERROR_KEYS.unauthorized, {
+          cause: "xxxxxx",
+          message: "session.verify.no_token",
+          metadata: {},
+        }),
+      );
     }
 
     const decodedResult = await this.tokenService.decode(token);
@@ -65,7 +67,7 @@ export class VerifySessionQuery {
         operationIdentifiers: { reason: "decode_failed" },
         operationName: "session.verify.decode_failed",
       });
-      return { ok: false, reason: "decode_failed" };
+      return Err(decodedResult.error);
     }
 
     const decoded = decodedResult.value;
@@ -76,16 +78,19 @@ export class VerifySessionQuery {
         operationIdentifiers: { reason: "invalid_claims" },
         operationName: "session.verify.invalid_claims",
       });
-      return { ok: false, reason: "invalid_claims" };
+      return Err(
+        makeAppError(APP_ERROR_KEYS.validation, {
+          cause: "xxxxxx",
+          message: "session.verify.invalid_claims",
+          metadata: {},
+        }),
+      );
     }
 
-    return {
-      ok: true,
-      value: {
-        isAuthorized: true,
-        role: decoded.role,
-        userId: userIdCodec.decode(decoded.userId),
-      },
-    };
+    return Ok({
+      isAuthorized: true,
+      role: decoded.role,
+      userId: userIdCodec.decode(decoded.userId),
+    });
   }
 }

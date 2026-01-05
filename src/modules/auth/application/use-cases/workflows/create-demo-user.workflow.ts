@@ -1,8 +1,8 @@
 import "server-only";
 
+import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { CreateDemoUserCommand } from "@/modules/auth/application/use-cases/commands/create-demo-user.command";
-import type { SessionService } from "@/modules/auth/application/use-cases/workflows/session.service";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -17,7 +17,7 @@ export async function createDemoUserWorkflow(
   role: UserRole,
   deps: Readonly<{
     createDemoUserUseCase: CreateDemoUserCommand;
-    sessionService: SessionService;
+    sessionService: SessionAdapterContract;
   }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
   const demoResult = await deps.createDemoUserUseCase.execute(role);
