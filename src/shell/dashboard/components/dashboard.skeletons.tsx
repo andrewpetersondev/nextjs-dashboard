@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { LatestInvoicesSkeleton } from "@/modules/invoices/presentation/components/invoices.skeletons";
-import { RevenueChartSkeleton } from "@/modules/revenues/ui/components/revenue-chart.skeleton";
+import { RevenueChartSkeleton } from "@/modules/revenues/presentation/components/revenue-chart.skeleton";
 import { CardSkeleton } from "@/ui/skeletons/skeletons";
 import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
