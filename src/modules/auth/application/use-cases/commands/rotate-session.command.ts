@@ -17,8 +17,8 @@ import type { Result } from "@/shared/results/result.types";
 
 export type RotateSessionDeps = Readonly<{
   logger: LoggingClientContract;
-  store: SessionStoreContract;
-  tokenService: SessionTokenAdapter;
+  sessionCookieAdapter: SessionStoreContract;
+  sessionTokenAdapter: SessionTokenAdapter;
 }>;
 
 /**
@@ -27,10 +27,10 @@ export type RotateSessionDeps = Readonly<{
  * Swallows errors since cleanup is best-effort.
  */
 export async function cleanupInvalidToken(
-  store: SessionStoreContract,
+  sessionCookieAdapter: SessionStoreContract,
 ): Promise<void> {
   try {
-    await store.delete();
+    await sessionCookieAdapter.delete();
   } catch {
     // ignore cleanup failure - best effort
   }
@@ -46,21 +46,21 @@ export async function cleanupInvalidToken(
  */
 export class RotateSessionCommand {
   private readonly logger: LoggingClientContract;
-  private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenAdapter;
+  private readonly sessionCookieAdapter: SessionStoreContract;
+  private readonly sessionTokenAdapter: SessionTokenAdapter;
 
   constructor(deps: RotateSessionDeps) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "rotateSession",
     });
-    this.store = deps.store;
-    this.tokenService = deps.tokenService;
+    this.sessionCookieAdapter = deps.sessionCookieAdapter;
+    this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(): Promise<Result<UpdateSessionOutcome, AppError>> {
     try {
-      const current = await this.store.get();
+      const current = await this.sessionCookieAdapter.get();
 
       if (!current) {
         this.logger.operation("debug", "Session rotation skipped: no cookie", {
@@ -71,7 +71,7 @@ export class RotateSessionCommand {
         return Ok({ reason: "no_cookie", refreshed: false });
       }
 
-      const decodedResult = await this.tokenService.decode(current);
+      const decodedResult = await this.sessionTokenAdapter.decode(current);
 
       if (!decodedResult.ok) {
         this.logger.operation("warn", "Session rotation failed: decode error", {
@@ -79,7 +79,7 @@ export class RotateSessionCommand {
           operationIdentifiers: { reason: "decode_failed" },
           operationName: "session.rotate.decode_failed",
         });
-        await cleanupInvalidToken(this.store);
+        await cleanupInvalidToken(this.sessionCookieAdapter);
         return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 
@@ -133,7 +133,7 @@ export class RotateSessionCommand {
       operationName: `session.rotate.${decision.reason}`,
     });
 
-    await this.store.delete();
+    await this.sessionCookieAdapter.delete();
 
     if (decision.reason === "absolute_limit_exceeded") {
       return Ok({
@@ -161,7 +161,7 @@ export class RotateSessionCommand {
       userId: userIdCodec.decode(decoded.userId),
     };
 
-    const issuedResult = await this.tokenService.issue(user);
+    const issuedResult = await this.sessionTokenAdapter.issue(user);
 
     if (!issuedResult.ok) {
       return Err(issuedResult.error);
@@ -169,7 +169,7 @@ export class RotateSessionCommand {
 
     const { expiresAtMs, token } = issuedResult.value;
 
-    await this.store.set(token, expiresAtMs);
+    await this.sessionCookieAdapter.set(token, expiresAtMs);
 
     this.logger.operation("info", "Session rotated successfully", {
       operationContext: "session",

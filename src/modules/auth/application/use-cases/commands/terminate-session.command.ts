@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { SessionUseCaseDeps } from "@/modules/auth/application/contracts/session-use-case.contract";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
@@ -13,32 +14,27 @@ export type TerminateSessionReason =
   | "invalid_token"
   | "user_logout";
 
-export type TerminateSessionDeps = Readonly<{
-  logger: LoggingClientContract;
-  store: SessionStoreContract;
-}>;
-
 /**
  * Terminates a session by deleting the cookie.
  * Logs the termination reason for auditing.
  */
 export class TerminateSessionCommand {
   private readonly logger: LoggingClientContract;
-  private readonly store: SessionStoreContract;
+  private readonly sessionCookieAdapter: SessionStoreContract;
 
-  constructor(deps: TerminateSessionDeps) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "terminateSession",
     });
-    this.store = deps.store;
+    this.sessionCookieAdapter = deps.sessionCookieAdapter;
   }
 
   async execute(
     reason: TerminateSessionReason,
   ): Promise<Result<void, AppError>> {
     try {
-      await this.store.delete();
+      await this.sessionCookieAdapter.delete();
 
       this.logger.operation("info", "Session terminated", {
         operationContext: "session",

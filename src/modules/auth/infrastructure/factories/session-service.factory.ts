@@ -21,12 +21,14 @@ export function createSessionServiceFactory(
   requestId: string,
 ) {
   const scopedLogger = logger.withContext("auth").withRequest(requestId);
-  // todo: rename store
-  const store = createSessionCookieAdapter();
-  // todo: rename tokenService
-  const tokenService = createSessionTokenAdapter();
+  const sessionCookieAdapter = createSessionCookieAdapter();
+  const sessionTokenAdapter = createSessionTokenAdapter();
 
-  const deps = { logger: scopedLogger, store, tokenService };
+  const deps = {
+    logger: scopedLogger,
+    sessionCookieAdapter,
+    sessionTokenAdapter,
+  };
 
   return {
     establish: (user: Parameters<EstablishSessionCommand["execute"]>[0]) =>

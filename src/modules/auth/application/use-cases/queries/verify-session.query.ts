@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { SessionUseCaseDeps } from "@/modules/auth/application/contracts/session-use-case.contract";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
@@ -11,17 +12,11 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-export type VerifySessionDeps = Readonly<{
-  logger: LoggingClientContract;
-  store: SessionStoreContract;
-  tokenService: SessionTokenAdapter;
-}>;
-
 /**
  * VerifySessionUseCase
  *
  * Single-capability query:
- * - Reads token from store
+ * - Reads token from sessionCookieAdapter
  * - Decodes and validates claims
  * - Returns session transport or failure reason
  *
@@ -29,20 +24,20 @@ export type VerifySessionDeps = Readonly<{
  */
 export class VerifySessionQuery {
   private readonly logger: LoggingClientContract;
-  private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenAdapter;
+  private readonly sessionCookieAdapter: SessionStoreContract;
+  private readonly sessionTokenAdapter: SessionTokenAdapter;
 
-  constructor(deps: VerifySessionDeps) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "verifySession",
     });
-    this.store = deps.store;
-    this.tokenService = deps.tokenService;
+    this.sessionCookieAdapter = deps.sessionCookieAdapter;
+    this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(): Promise<Result<SessionTransport, AppError>> {
-    const token = await this.store.get();
+    const token = await this.sessionCookieAdapter.get();
 
     if (!token) {
       this.logger.operation("debug", "No session token found", {
@@ -59,7 +54,7 @@ export class VerifySessionQuery {
       );
     }
 
-    const decodedResult = await this.tokenService.decode(token);
+    const decodedResult = await this.sessionTokenAdapter.decode(token);
 
     if (!decodedResult.ok) {
       this.logger.operation("warn", "Session token decode failed", {

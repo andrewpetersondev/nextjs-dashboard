@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { SessionUseCaseDeps } from "@/modules/auth/application/contracts/session-use-case.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/commands/rotate-session.command";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
@@ -11,13 +12,6 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-// TODO: this type should be extracted to a shared location
-export type GetSessionDeps = Readonly<{
-  logger: LoggingClientContract;
-  store: SessionStoreContract;
-  tokenService: SessionTokenAdapter;
-}>;
-
 /**
  * ReadSessionUseCase
  *
@@ -28,30 +22,30 @@ export type GetSessionDeps = Readonly<{
  */
 export class GetSessionQuery {
   private readonly logger: LoggingClientContract;
-  private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenAdapter;
+  private readonly sessionCookieAdapter: SessionStoreContract;
+  private readonly sessionTokenAdapter: SessionTokenAdapter;
 
-  constructor(deps: GetSessionDeps) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "readSession",
     });
-    this.store = deps.store;
-    this.tokenService = deps.tokenService;
+    this.sessionCookieAdapter = deps.sessionCookieAdapter;
+    this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
     try {
-      const token = await this.store.get();
+      const token = await this.sessionCookieAdapter.get();
 
       if (!token) {
         return Ok(undefined);
       }
 
-      const decodedResult = await this.tokenService.decode(token);
+      const decodedResult = await this.sessionTokenAdapter.decode(token);
 
       if (!decodedResult.ok) {
-        await cleanupInvalidToken(this.store);
+        await cleanupInvalidToken(this.sessionCookieAdapter);
 
         if (decodedResult.error.key === "unexpected") {
           return Err(decodedResult.error);
@@ -63,7 +57,7 @@ export class GetSessionQuery {
       const decoded = decodedResult.value;
 
       if (!decoded.userId) {
-        await cleanupInvalidToken(this.store);
+        await cleanupInvalidToken(this.sessionCookieAdapter);
         return Ok(undefined);
       }
 

@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { SessionUseCaseDeps } from "@/modules/auth/application/contracts/session-use-case.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
@@ -8,12 +9,6 @@ import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-export type EstablishSessionDeps = Readonly<{
-  logger: LoggingClientContract;
-  store: SessionStoreContract;
-  tokenService: SessionTokenAdapter;
-}>;
 
 /**
  * EstablishSessionUseCase
@@ -24,16 +19,16 @@ export type EstablishSessionDeps = Readonly<{
  */
 export class EstablishSessionCommand {
   private readonly logger: LoggingClientContract;
-  private readonly store: SessionStoreContract;
-  private readonly tokenService: SessionTokenAdapter;
+  private readonly sessionCookieAdapter: SessionStoreContract;
+  private readonly sessionTokenAdapter: SessionTokenAdapter;
 
-  constructor(deps: EstablishSessionDeps) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "establishSession",
     });
-    this.store = deps.store;
-    this.tokenService = deps.tokenService;
+    this.sessionCookieAdapter = deps.sessionCookieAdapter;
+    this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(
@@ -42,7 +37,7 @@ export class EstablishSessionCommand {
     try {
       const now = Date.now();
 
-      const issuedResult = await this.tokenService.issue({
+      const issuedResult = await this.sessionTokenAdapter.issue({
         role: user.role,
         sessionStart: now,
         userId: user.id,
@@ -54,7 +49,7 @@ export class EstablishSessionCommand {
 
       const { expiresAtMs, token } = issuedResult.value;
 
-      await this.store.set(token, expiresAtMs);
+      await this.sessionCookieAdapter.set(token, expiresAtMs);
 
       this.logger.operation("info", "Session established", {
         operationContext: "session",
