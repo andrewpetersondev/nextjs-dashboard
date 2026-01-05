@@ -1,13 +1,11 @@
 import "server-only";
 
-import type {
-  LoginField,
-  SignupField,
-} from "@/modules/auth/application/dtos/auth-ui.dto";
 import {
   LOGIN_FIELDS_LIST,
   SIGNUP_FIELDS_LIST,
 } from "@/modules/auth/domain/schemas/auth-user.schema";
+import type { LoginField } from "@/modules/auth/presentation/login.transport";
+import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";

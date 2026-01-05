@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { LoginField } from "@/modules/auth/application/dtos/auth-ui.dto";
-import { loginWorkflow } from "@/modules/auth/application/use-cases/workflows/login.workflow";
+import { loginWorkflow } from "@/modules/auth/application/use-cases/login.workflow";
 import {
   type AuthLoginSchemaDto,
   LOGIN_FIELDS_LIST,
@@ -12,6 +11,7 @@ import {
 import { mapLoginErrorToFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
 import { createLoginUseCaseFactory } from "@/modules/auth/infrastructure/factories/login-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import type { LoginField } from "@/modules/auth/presentation/login.transport";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

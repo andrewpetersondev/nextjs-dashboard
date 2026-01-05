@@ -2,12 +2,12 @@
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import type { LoginField } from "@/modules/auth/application/dtos/auth-ui.dto";
 import { LOGIN_FIELDS_LIST } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AuthActionProps } from "@/modules/auth/presentation/auth.transport";
 import { AuthActionsRow } from "@/modules/auth/presentation/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/presentation/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/presentation/components/shared/form-row.wrapper";
+import type { LoginField } from "@/modules/auth/presentation/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import {

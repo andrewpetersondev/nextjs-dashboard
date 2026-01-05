@@ -1,4 +1,4 @@
-import type { AuthRouteType } from "@/modules/auth/application/guards/evaluate-route-access-policy";
+import type { AuthRouteType } from "@/modules/auth/application/guards/evaluate-route-access.policy";
 
 /**
  * Determines the route type based on flags.

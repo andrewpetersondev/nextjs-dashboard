@@ -1,11 +1,11 @@
 import type { JSX } from "react";
-import type { SignupField } from "@/modules/auth/application/dtos/auth-ui.dto";
 import { demoUserActionAdapter } from "@/modules/auth/infrastructure/actions/demo-user.action";
 import type { AuthActionProps } from "@/modules/auth/presentation/auth.transport";
 import { SignupForm } from "@/modules/auth/presentation/components/forms/signup-form";
 import { AuthFormDemoSection } from "@/modules/auth/presentation/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/presentation/components/shared/auth-form-social-section";
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/presentation/constants/auth.tokens";
+import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
 export function SignupCard({

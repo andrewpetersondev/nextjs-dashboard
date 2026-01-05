@@ -1,13 +1,13 @@
 import "server-only";
 
-import { EstablishSessionCommand } from "@/modules/auth/application/use-cases/commands/establish-session.command";
-import { RotateSessionCommand } from "@/modules/auth/application/use-cases/commands/rotate-session.command";
+import { EstablishSessionCommand } from "@/modules/auth/application/use-cases/establish-session.command";
+import { GetSessionUseCase } from "@/modules/auth/application/use-cases/get-session.use-case";
+import { RotateSessionCommand } from "@/modules/auth/application/use-cases/rotate-session.command";
 import {
   TerminateSessionCommand,
   type TerminateSessionReason,
-} from "@/modules/auth/application/use-cases/commands/terminate-session.command";
-import { GetSessionQuery } from "@/modules/auth/application/use-cases/queries/get-session.query";
-import { VerifySessionQuery } from "@/modules/auth/application/use-cases/queries/verify-session.query";
+} from "@/modules/auth/application/use-cases/terminate-session.command";
+import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-cookie.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -33,10 +33,10 @@ export function createSessionServiceFactory(
   return {
     establish: (user: Parameters<EstablishSessionCommand["execute"]>[0]) =>
       new EstablishSessionCommand(deps).execute(user),
-    read: () => new GetSessionQuery(deps).execute(),
+    read: () => new GetSessionUseCase(deps).execute(),
     rotate: () => new RotateSessionCommand(deps).execute(),
     terminate: (reason: TerminateSessionReason) =>
       new TerminateSessionCommand(deps).execute(reason),
-    verify: () => new VerifySessionQuery(deps).execute(),
+    verify: () => new VerifySessionUseCase(deps).execute(),
   };
 }

@@ -6,12 +6,12 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import type { SignupField } from "@/modules/auth/application/dtos/auth-ui.dto";
 import { SIGNUP_FIELDS_LIST } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AuthActionProps } from "@/modules/auth/presentation/auth.transport";
 import { AuthActionsRow } from "@/modules/auth/presentation/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/presentation/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/presentation/components/shared/form-row.wrapper";
+import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import {

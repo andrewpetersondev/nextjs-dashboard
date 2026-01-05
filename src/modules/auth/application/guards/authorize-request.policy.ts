@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import { evaluateRouteAccess } from "@/modules/auth/application/guards/evaluate-route-access-policy";
+import { evaluateRouteAccess } from "@/modules/auth/application/guards/evaluate-route-access.policy";
 import { getRouteType } from "@/modules/auth/application/guards/get-route-type.policy";
 import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 

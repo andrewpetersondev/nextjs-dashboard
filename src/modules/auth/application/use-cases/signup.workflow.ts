@@ -2,33 +2,33 @@ import "server-only";
 
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { CreateDemoUserCommand } from "@/modules/auth/application/use-cases/commands/create-demo-user.command";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { SignupCommand } from "@/modules/auth/application/use-cases/signup.command";
+import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Orchestrates the demo-user "story":
- * - create demo user (DB transaction)
+ * Orchestrates the signup "story":
+ * - create user (DB transaction)
  * - establish session (cookie/JWT, non-transactional)
  */
-export async function createDemoUserWorkflow(
-  role: UserRole,
+export async function signupWorkflow(
+  input: Readonly<AuthSignupSchemaDto>,
   deps: Readonly<{
-    createDemoUserUseCase: CreateDemoUserCommand;
+    createUserUseCase: SignupCommand;
     sessionService: SessionAdapterContract;
   }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  const demoResult = await deps.createDemoUserUseCase.execute(role);
+  const signupResult = await deps.createUserUseCase.execute(input);
 
-  if (!demoResult.ok) {
-    return Err(demoResult.error);
+  if (!signupResult.ok) {
+    return Err(signupResult.error);
   }
 
   const user: SessionPrincipalDto = {
-    id: demoResult.value.id,
-    role: demoResult.value.role,
+    id: signupResult.value.id,
+    role: signupResult.value.role,
   };
 
   const sessionResult = await deps.sessionService.establish(user);

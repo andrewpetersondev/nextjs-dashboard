@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-deps.contract";
+import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
@@ -22,7 +22,7 @@ import type { Result } from "@/shared/results/result.types";
  *
  * No side effects on failure (does not delete invalid tokens).
  */
-export class VerifySessionQuery {
+export class VerifySessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionCookieAdapter: SessionStoreContract;
   private readonly sessionTokenAdapter: SessionTokenAdapter;
