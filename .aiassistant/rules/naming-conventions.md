@@ -1,5 +1,5 @@
 ---
-apply: off
+apply: always
 ---
 
 # Naming Conventions
