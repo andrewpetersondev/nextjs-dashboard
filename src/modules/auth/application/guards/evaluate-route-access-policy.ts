@@ -1,9 +1,9 @@
 import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
-export type RouteType = "admin" | "protected" | "public";
+export type AuthRouteType = "admin" | "protected" | "public";
 
-export type RouteAccessDecision =
+export type AuthRouteAccessDecision =
   | Readonly<{ allowed: true }>
   | Readonly<{
       allowed: false;
@@ -16,9 +16,9 @@ export type RouteAccessDecision =
  * No side effects - just policy logic.
  */
 export function evaluateRouteAccess(
-  routeType: RouteType,
+  routeType: AuthRouteType,
   claims: AuthEncryptPayload | undefined,
-): RouteAccessDecision {
+): AuthRouteAccessDecision {
   const isAuthenticated = Boolean(claims?.userId);
 
   if (routeType === "admin") {
@@ -60,21 +60,4 @@ export function evaluateRouteAccess(
   }
 
   return { allowed: true };
-}
-
-/**
- * Determines the route type based on flags.
- */
-export function determineRouteType(flags: {
-  isAdminRoute: boolean;
-  isProtectedRoute: boolean;
-  isPublicRoute: boolean;
-}): RouteType {
-  if (flags.isAdminRoute) {
-    return "admin";
-  }
-  if (flags.isProtectedRoute) {
-    return "protected";
-  }
-  return "public";
 }

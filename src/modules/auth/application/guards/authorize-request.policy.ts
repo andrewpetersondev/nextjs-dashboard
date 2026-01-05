@@ -1,17 +1,15 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import {
-  determineRouteType,
-  evaluateRouteAccess,
-} from "@/modules/auth/application/guards/route-access-policy";
+import { evaluateRouteAccess } from "@/modules/auth/application/guards/evaluate-route-access-policy";
+import { getRouteType } from "@/modules/auth/application/guards/get-route-type.policy";
 import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
 
-function mapDecisionToReason(
-  routeType: ReturnType<typeof determineRouteType>,
+function toAuthorizationReason(
+  routeType: ReturnType<typeof getRouteType>,
   policyReason: "not_authenticated" | "not_authorized",
   decodeReason: "ok" | "no_cookie" | "decode_failed",
-): AuthorizeRequestReason {
+): AuthRequestAuthorizationReason {
   if (decodeReason !== "ok" && policyReason === "not_authenticated") {
     return decodeReason;
   }
@@ -29,7 +27,7 @@ function mapDecisionToReason(
   return "public.bounce_authenticated";
 }
 
-async function decodeClaims(
+async function extractSessionClaims(
   cookie: string | undefined,
   jwt: SessionTokenCodecContract,
 ): Promise<
@@ -50,7 +48,7 @@ async function decodeClaims(
   return { claims: decodedResult.value, reason: "ok" };
 }
 
-export type AuthorizeRequestReason =
+export type AuthRequestAuthorizationReason =
   | "admin.not_authenticated"
   | "admin.not_authorized"
   | "decode_failed"
@@ -58,15 +56,15 @@ export type AuthorizeRequestReason =
   | "protected.not_authenticated"
   | "public.bounce_authenticated";
 
-export type AuthorizeRequestOutcome =
+export type AuthRequestAuthorizationOutcome =
   | Readonly<{ kind: "next"; reason: "ok" }>
   | Readonly<{
       kind: "redirect";
-      reason: AuthorizeRequestReason;
+      reason: AuthRequestAuthorizationReason;
       to: `/${string}`;
     }>;
 
-export async function authorizeRequest(
+export async function authorizeRequestPolicy(
   input: Readonly<{
     cookie: string | undefined;
     isAdminRoute: boolean;
@@ -81,10 +79,10 @@ export async function authorizeRequest(
       login: `/${string}`;
     }>;
   }>,
-): Promise<AuthorizeRequestOutcome> {
-  const decoded = await decodeClaims(input.cookie, deps.jwt);
+): Promise<AuthRequestAuthorizationOutcome> {
+  const decoded = await extractSessionClaims(input.cookie, deps.jwt);
 
-  const routeType = determineRouteType({
+  const routeType = getRouteType({
     isAdminRoute: input.isAdminRoute,
     isProtectedRoute: input.isProtectedRoute,
     isPublicRoute: input.isPublicRoute,
@@ -101,7 +99,7 @@ export async function authorizeRequest(
       ? deps.routes.login
       : deps.routes.dashboardRoot;
 
-  const reason = mapDecisionToReason(
+  const reason = toAuthorizationReason(
     routeType,
     decision.reason,
     decoded.reason,

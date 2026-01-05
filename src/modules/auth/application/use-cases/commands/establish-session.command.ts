@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionUseCaseDeps } from "@/modules/auth/application/contracts/session-use-case.contract";
+import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-deps.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
@@ -22,7 +22,7 @@ export class EstablishSessionCommand {
   private readonly sessionCookieAdapter: SessionStoreContract;
   private readonly sessionTokenAdapter: SessionTokenAdapter;
 
-  constructor(deps: SessionUseCaseDeps) {
+  constructor(deps: SessionUseCaseDependencies) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "establishSession",

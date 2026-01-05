@@ -1,9 +1,7 @@
 import type { JSX } from "react";
-import type {
-  AuthActionProps,
-  LoginField,
-} from "@/modules/auth/application/dtos/auth-ui.dto";
+import type { LoginField } from "@/modules/auth/application/dtos/auth-ui.dto";
 import { demoUserActionAdapter } from "@/modules/auth/infrastructure/actions/demo-user.action";
+import type { AuthActionProps } from "@/modules/auth/presentation/auth.transport";
 import { LoginForm } from "@/modules/auth/presentation/components/forms/login-form";
 import { AuthFormDemoSection } from "@/modules/auth/presentation/components/shared/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/presentation/components/shared/auth-form-social-section";

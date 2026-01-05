@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionUseCaseDeps } from "@/modules/auth/application/contracts/session-use-case.contract";
+import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-deps.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/commands/rotate-session.command";
 import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
@@ -25,7 +25,7 @@ export class GetSessionQuery {
   private readonly sessionCookieAdapter: SessionStoreContract;
   private readonly sessionTokenAdapter: SessionTokenAdapter;
 
-  constructor(deps: SessionUseCaseDeps) {
+  constructor(deps: SessionUseCaseDependencies) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "readSession",
