@@ -18,7 +18,7 @@ import type { Result } from "@/shared/results/result.types";
  *
  * Single business capability: Authenticate a user by email/password.
  */
-export class LoginCommand {
+export class LoginUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
   private readonly repo: AuthUserRepositoryContract;

@@ -12,7 +12,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-export class SignupCommand {
+export class SignupUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
   private readonly uow: UnitOfWorkContract;

@@ -8,7 +8,7 @@ import {
   LOGIN_FIELDS_LIST,
   LoginSchema,
 } from "@/modules/auth/domain/schemas/auth-user.schema";
-import { mapLoginErrorToFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
+import { toLoginFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
 import { createLoginUseCaseFactory } from "@/modules/auth/infrastructure/factories/login-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import type { LoginField } from "@/modules/auth/presentation/login.transport";
@@ -97,7 +97,7 @@ export async function loginAction(
       operationName: "login.authentication.failed",
     });
 
-    return mapLoginErrorToFormResult(error, input);
+    return toLoginFormResult(error, input);
   }
 
   const { id: userId, role } = sessionResult.value;

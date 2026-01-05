@@ -73,7 +73,7 @@ function mapGenericAuthError<TField extends string>(
  * Returns `FormResult<never>` because this function only returns errors (never success).
  * The type casting is safe since error results are covariant in their success type parameter.
  */
-export function mapLoginErrorToFormResult(
+export function toLoginFormResult(
   error: AppError,
   formData: LoginFormData,
 ): FormResult<never> {

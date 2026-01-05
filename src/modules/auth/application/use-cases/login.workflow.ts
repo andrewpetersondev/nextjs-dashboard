@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { LoginCommand } from "@/modules/auth/application/use-cases/login.command";
+import type { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -17,9 +17,7 @@ import type { Result } from "@/shared/results/result.types";
  * @param value - Authenticated user payload containing identity and role.
  * @returns Session principal DTO.
  */
-const mapToSessionPrincipal = (
-  value: AuthUserOutputDto,
-): SessionPrincipalDto => ({
+const toSessionPrincipal = (value: AuthUserOutputDto): SessionPrincipalDto => ({
   id: value.id,
   role: value.role,
 });
@@ -35,7 +33,7 @@ const mapToSessionPrincipal = (
 export async function loginWorkflow(
   input: Readonly<AuthLoginSchemaDto>,
   deps: Readonly<{
-    loginUseCase: LoginCommand;
+    loginUseCase: LoginUseCase;
     sessionService: SessionAdapterContract;
   }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
@@ -61,7 +59,7 @@ export async function loginWorkflow(
     return Err(error);
   }
 
-  const user = mapToSessionPrincipal(authResult.value);
+  const user = toSessionPrincipal(authResult.value);
 
   const sessionResult = await deps.sessionService.establish(user);
 

@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { SignupCommand } from "@/modules/auth/application/use-cases/signup.command";
+import type { SignupUseCase } from "@/modules/auth/application/use-cases/signup.use-case";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -16,7 +16,7 @@ import type { Result } from "@/shared/results/result.types";
 export async function signupWorkflow(
   input: Readonly<AuthSignupSchemaDto>,
   deps: Readonly<{
-    createUserUseCase: SignupCommand;
+    createUserUseCase: SignupUseCase;
     sessionService: SessionAdapterContract;
   }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
