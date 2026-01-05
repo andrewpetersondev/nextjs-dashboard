@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
-import { readInvoicesPagesAction } from "@/modules/invoices/server/application/actions/read-invoices-pages.action";
-import { CreateInvoiceLink } from "@/modules/invoices/ui/components/invoice-links";
+import { readInvoicesPagesAction } from "@/modules/invoices/infrastructure/actions/read-invoices-pages.action";
+import { CreateInvoiceLink } from "@/modules/invoices/presentation/components/invoice-links";
 import {
   InvoicesSearchSkeleton,
   InvoicesTableSkeleton,
-} from "@/modules/invoices/ui/components/invoices.skeletons";
-import { InvoicesTable } from "@/modules/invoices/ui/components/tables/table";
+} from "@/modules/invoices/presentation/components/invoices.skeletons";
+import { InvoicesTable } from "@/modules/invoices/presentation/components/tables/table";
 import { H1 } from "@/ui/atoms/headings";
 import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";

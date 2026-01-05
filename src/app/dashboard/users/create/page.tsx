@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
-import { CreateUserForm } from "@/modules/users/ui/forms/create-user-form";
+import { CreateUserForm } from "@/modules/users/presentation/forms/create-user-form";
 import { ROUTES } from "@/shared/routes/routes";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 

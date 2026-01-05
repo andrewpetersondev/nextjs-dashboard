@@ -2,8 +2,8 @@ import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/modules/auth/infrastructure/actions/verify-session-optimistic.action";
 import { readTotalCustomersCountAction } from "@/modules/customers/server/application/actions/read-total-customers-count.action";
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
-import { readInvoicesSummaryAction } from "@/modules/invoices/server/application/actions/read-invoices-summary.action";
-import { readLatestInvoicesAction } from "@/modules/invoices/server/application/actions/read-latest-invoices.action";
+import { readInvoicesSummaryAction } from "@/modules/invoices/infrastructure/actions/read-invoices-summary.action";
+import { readLatestInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-latest-invoices.action";
 import { getAppDb } from "@/server/db/db.connection";
 import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
 import {

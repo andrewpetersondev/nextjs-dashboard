@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
-import { readUserAction } from "@/modules/users/server/application/actions/read-user.action";
-import { EditUserForm } from "@/modules/users/ui/forms/edit-user-form";
+import { readUserAction } from "@/modules/users/infrastructure/actions/read-user.action";
+import { EditUserForm } from "@/modules/users/presentation/forms/edit-user-form";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditUserPageParams {
