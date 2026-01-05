@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { JSX } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
-import { readCustomersAction } from "@/modules/customers/server/application/actions/read-customers.action";
+import { readCustomersAction } from "@/modules/customers/infrastructure/actions/read-customers.action";
 import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { readInvoiceByIdAction } from "@/modules/invoices/infrastructure/actions/read-invoice-by-id.action";
 import { EditInvoiceForm } from "@/modules/invoices/presentation/components/forms/edit-invoice-form";

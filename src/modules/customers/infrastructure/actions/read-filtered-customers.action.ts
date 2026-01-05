@@ -2,7 +2,7 @@
 
 import { toFormattedCustomersTableRow } from "@/modules/customers/domain/mappers";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
-import { createCustomersRepository } from "@/modules/customers/server/infrastructure/repository/customer.repository";
+import { createCustomersRepository } from "@/modules/customers/infrastructure/repository/customer.repository";
 import { getAppDb } from "@/server/db/db.connection";
 
 /**

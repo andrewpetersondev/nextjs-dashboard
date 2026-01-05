@@ -1,5 +1,5 @@
 import "server-only";
-import { createBannerCookieAdapter } from "@/modules/banner/server/banner-cookie.adapter";
+import { createBannerCookieAdapter } from "@/modules/banner/infrastructure/banner-cookie.adapter";
 
 export async function isBannerDismissed(): Promise<boolean> {
   const adapter = createBannerCookieAdapter();

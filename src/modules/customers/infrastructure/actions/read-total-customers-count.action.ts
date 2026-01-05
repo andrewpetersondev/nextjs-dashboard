@@ -1,6 +1,6 @@
 "use server";
 
-import { createCustomersRepository } from "@/modules/customers/server/infrastructure/repository/customer.repository";
+import { createCustomersRepository } from "@/modules/customers/infrastructure/repository/customer.repository";
 import { getAppDb } from "@/server/db/db.connection";
 
 export async function readTotalCustomersCountAction(): Promise<number> {

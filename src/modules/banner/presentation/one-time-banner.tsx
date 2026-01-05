@@ -1,7 +1,7 @@
 "use client";
 
 import { type JSX, useState, useTransition } from "react";
-import { dismissBannerAction } from "@/modules/banner/server/actions/dismiss-banner.action";
+import { dismissBannerAction } from "@/modules/banner/infrastructure/actions/dismiss-banner.action";
 
 export function OneTimeBanner(): JSX.Element | null {
   const [open, setOpen] = useState(true);

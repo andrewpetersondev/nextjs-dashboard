@@ -7,10 +7,10 @@ import type {
 import {
   mapCustomerAggregatesRawToDto,
   mapCustomerSelectRawToDto,
-} from "@/modules/customers/server/infrastructure/adapters/customer.mapper";
-import { fetchCustomersSelectDal } from "@/modules/customers/server/infrastructure/repository/dal/fetch-customers-select";
-import { fetchFilteredCustomersDal } from "@/modules/customers/server/infrastructure/repository/dal/fetch-filtered-customers";
-import { fetchTotalCustomersCountDal } from "@/modules/customers/server/infrastructure/repository/dal/fetch-total-count";
+} from "@/modules/customers/infrastructure/adapters/customer.mapper";
+import { fetchCustomersSelectDal } from "@/modules/customers/infrastructure/repository/dal/fetch-customers-select";
+import { fetchFilteredCustomersDal } from "@/modules/customers/infrastructure/repository/dal/fetch-filtered-customers";
+import { fetchTotalCustomersCountDal } from "@/modules/customers/infrastructure/repository/dal/fetch-total-count";
 import type { AppDatabase } from "@/server/db/db.connection";
 
 /**

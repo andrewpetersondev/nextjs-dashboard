@@ -1,8 +1,8 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
-import { isBannerDismissed } from "@/modules/banner/server/banner-cookie";
-import { OneTimeBanner } from "@/modules/banner/ui/one-time-banner";
+import { isBannerDismissed } from "@/modules/banner/infrastructure/banner-cookie";
+import { OneTimeBanner } from "@/modules/banner/presentation/one-time-banner";
 import { notoSans } from "@/ui/styles/fonts";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
