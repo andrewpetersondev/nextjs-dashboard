@@ -35,14 +35,25 @@ To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the typ
 | `.transport.ts` | Wire/HTTP/Cookie-only shape            | Interface Adapters |
 | `.view.ts`      | Server → Client UI shape               | UI Boundary        |
 | `.contract.ts`  | Dependency boundary interface          | Use Cases          |
+| `.adapter.ts`   | Port implementation / Implementation   | Infrastructure     |
+| `.dal.ts`       | Raw Data Access Logic (DB/API)         | Infrastructure     |
+| `.mapper.ts`    | Data translation between layers        | Infrastructure/App |
+| `.factory.ts`   | Dependency injection / Wiring          | Infrastructure     |
 | `.record.ts`    | Persistence/Database row shape         | Infrastructure     |
-| `.command.ts`   | Input for a use case/workflow          | Use Cases          |
 | `.output.ts`    | Data payload of a use case/workflow    | Use Cases          |
 | `.event.ts`     | Domain or System event fact            | Entities / App     |
 | `.tokens.ts`    | Dependency injection tokens/constants  | Module Root        |
 | `.use-case.ts`  | Single business capability             | Use Cases          |
 | `.action.ts`    | Next.js Server Action                  | Interface Adapters |
 | `.workflow.ts`  | Multi-step orchestration               | Use Cases          |
+
+## Implementation vs. Contract Naming
+
+To ensure Dependency Inversion is obvious:
+
+- **Contracts (Interfaces)**: Must use the `.contract.ts` suffix and `Contract` PascalCase suffix (e.g., `UserRepositoryContract`).
+- **Adapters (Classes)**: Must use the `.adapter.ts` suffix. The class name should reflect the technology or implementation detail (e.g., `PgUserRepositoryAdapter` or `BcryptHasherAdapter`).
+- **Dependency Injection**: Use the name of the contract (minus the suffix) for member variables (e.g., `private readonly userRepo: UserRepositoryContract`).
 
 ## Function Naming: Verb Vocabulary
 
@@ -51,12 +62,16 @@ To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the typ
 | `toX`        | Pure mapping/transformation (no side effects)                    | `toHttpPayload`    |
 | `normalizeX` | Converting foreign/unsafe input to canonical shape               | `normalizePgError` |
 | `extractX`   | Pulling info out of unknown values (returns `undefined` if fail) | `extractMetadata`  |
-| `makeX`      | Factories constructing canonical objects                         | `makeAppError`     |
+| `makeX`      | Simple factory/constructor for objects                           | `makeAppError`     |
 | `isX`        | Type guards (returns boolean)                                    | `isAppError`       |
 | `hasX`       | Metadata/capability checks                                       | `hasMetadata`      |
 | `getX`       | Safe, side-effect-free access                                    | `getFieldErrors`   |
 
-- **Avoid**: `mapX` (unless between equal representations), `convertX`.
+- **Avoid**: `mapX` (unless between equal representations), `convertX`, `createXFactory` (redundant).
+
+## File Organization
+
+- **Prefixing**: Boundary files (DTOs, Schemas, Transports) should be named after the **action** or **concept**, not just the module (e.g., `login-credentials.schema.ts` instead of `auth-user.schema.ts`).
 
 ## Type Naming
 
