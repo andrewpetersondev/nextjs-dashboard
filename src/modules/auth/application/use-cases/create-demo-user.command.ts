@@ -5,7 +5,7 @@ import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { createRandomPassword } from "@/shared/crypto/password-generator";
+import { makeRandomPassword } from "@/shared/crypto/password-generator";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -42,7 +42,7 @@ export class CreateDemoUserCommand {
     const logger = this.logger.child({ role });
 
     try {
-      const demoPassword = createRandomPassword();
+      const demoPassword = makeRandomPassword();
       const passwordHash = await this.hasher.hash(demoPassword);
 
       const txResult = await this.uow.withTransaction(async (tx) => {

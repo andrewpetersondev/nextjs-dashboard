@@ -1,4 +1,4 @@
-import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
+import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
 export type AuthRouteType = "admin" | "protected" | "public";
@@ -17,7 +17,7 @@ export type AuthRouteAccessDecision =
  */
 export function evaluateRouteAccess(
   routeType: AuthRouteType,
-  claims: AuthEncryptPayload | undefined,
+  claims: AuthJwtTransport | undefined,
 ): AuthRouteAccessDecision {
   const isAuthenticated = Boolean(claims?.userId);
 

@@ -15,7 +15,7 @@ export type Session = Readonly<{
 /**
  * Creates a Session value object from decoded JWT claims.
  */
-export function createSession(input: {
+export function makeSession(input: {
   expiresAt: number;
   role: UserRole;
   sessionStart: number;

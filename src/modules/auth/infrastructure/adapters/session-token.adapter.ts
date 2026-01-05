@@ -5,8 +5,8 @@ import {
   ONE_SECOND_MS,
   SESSION_DURATION_MS,
 } from "@/modules/auth/domain/policies/session.policy";
-import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/session.schemas";
-import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
+import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
+import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-jwt.adapter";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
@@ -45,7 +45,7 @@ export class SessionTokenAdapter {
     const now = Date.now();
     const expiresAtMs = now + SESSION_DURATION_MS;
 
-    const claims: AuthEncryptPayload = {
+    const claims: AuthJwtTransport = {
       exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
       expiresAt: expiresAtMs,
       iat: Math.floor(now / ONE_SECOND_MS),
@@ -66,14 +66,14 @@ export class SessionTokenAdapter {
   /**
    * Decodes a token and returns the raw payload.
    */
-  decode(token: string): Promise<Result<AuthEncryptPayload, AppError>> {
+  decode(token: string): Promise<Result<AuthJwtTransport, AppError>> {
     return this.codec.decode(token);
   }
 
   /**
    * Validates decoded claims against the schema.
    */
-  validate(claims: unknown): Result<AuthEncryptPayload, AppError> {
+  validate(claims: unknown): Result<AuthJwtTransport, AppError> {
     const parsed = DecryptPayloadSchema.safeParse(claims);
 
     if (!parsed.success) {

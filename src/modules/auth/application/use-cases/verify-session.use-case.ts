@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
+import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";

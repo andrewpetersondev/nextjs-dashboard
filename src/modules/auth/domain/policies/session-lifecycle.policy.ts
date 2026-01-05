@@ -1,4 +1,4 @@
-import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
+import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
 import {
   absoluteLifetime,
   MAX_ABSOLUTE_SESSION_MS,
@@ -34,7 +34,7 @@ export type SessionLifecycleDecision =
  * @returns A decision indicating whether to continue, rotate, or terminate the session
  */
 export function evaluateSessionLifecycle(
-  decoded: AuthEncryptPayload,
+  decoded: AuthJwtTransport,
   sessionStart: number,
 ): SessionLifecycleDecision {
   const { age, exceeded } = absoluteLifetime({ sessionStart });

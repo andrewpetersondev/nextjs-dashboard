@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import { evaluateRouteAccess } from "@/modules/auth/application/guards/evaluate-route-access.policy";
 import { getRouteType } from "@/modules/auth/application/guards/get-route-type.policy";
-import type { AuthEncryptPayload } from "@/modules/auth/infrastructure/serialization/session.codec";
+import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
 
 function toAuthorizationReason(
   routeType: ReturnType<typeof getRouteType>,
@@ -32,7 +32,7 @@ async function extractSessionClaims(
   jwt: SessionTokenCodecContract,
 ): Promise<
   Readonly<
-    | { claims: AuthEncryptPayload; reason: "ok" }
+    | { claims: AuthJwtTransport; reason: "ok" }
     | { claims: undefined; reason: "no_cookie" | "decode_failed" }
   >
 > {

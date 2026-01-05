@@ -4,7 +4,7 @@
  * @param length - Desired length of the password (default: 10).
  * @returns {string} - The generated password.
  */
-export const createRandomPassword = (length = 10): string => {
+export const makeRandomPassword = (length = 10): string => {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
   let result = "";

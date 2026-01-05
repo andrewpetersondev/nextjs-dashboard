@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
 import { SIGNUP_FIELDS_LIST } from "@/modules/auth/domain/schemas/auth-user.schema";
-import type { AuthActionProps } from "@/modules/auth/presentation/auth.transport";
+import type { AuthActionProps } from "@/modules/auth/presentation/auth-action-props.transport";
 import { AuthActionsRow } from "@/modules/auth/presentation/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/presentation/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/presentation/components/shared/form-row.wrapper";

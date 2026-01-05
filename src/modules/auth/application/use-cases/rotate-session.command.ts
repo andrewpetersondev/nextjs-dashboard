@@ -6,7 +6,7 @@ import {
   requiresRotation,
   requiresTermination,
 } from "@/modules/auth/domain/policies/session-lifecycle.policy";
-import { userIdCodec } from "@/modules/auth/domain/schemas/session.schemas";
+import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
