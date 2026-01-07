@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthSignupInputDto } from "@/modules/auth/application/dtos/auth-signup.input.dto";
+import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
 import { demoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
@@ -72,22 +72,12 @@ export class AuthUserRepository {
     return await demoUserCounterDal(this.db, role, this.logger);
   }
 
-  /**
-   * Fetches a login candidate user by email.
-   *
-   * @remarks
-   * - Returns `Ok(null)` when the user does not exist.
-   * - Returns `Ok(candidate)` even if password is missing (service owns semantics).
-   * - Returns `Err(AppError)` for DAL/infra failures.
-   *
-   * @param input - Lookup input (email).
-   */
-  async login(
-    input: Readonly<AuthLoginInputDto>,
+  async findByEmail(
+    query: Readonly<AuthUserLookupQueryDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     const rowResult = await getUserByEmailDal(
       this.db,
-      input.email,
+      query.email,
       this.logger,
     );
 

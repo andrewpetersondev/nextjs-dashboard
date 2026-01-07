@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthSignupInputDto } from "@/modules/auth/application/dtos/auth-signup.input.dto";
+import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -23,15 +23,12 @@ export interface AuthUserRepositoryContract {
   incrementDemoUserCounter(role: UserRole): Promise<number>;
 
   /**
-   * Fetches a user suitable for password-based login.
+   * Fetches a user candidate by their unique email.
    *
-   * @remarks
-   * - Returns `Ok(null)` when user does not exist.
-   * - Returns `Ok(AuthUserEntity)` when user exists (password hash is required by schema).
-   * - Returns `Err(AppError)` for DAL/infra failures.
+   * @param query - The lookup criteria.
    */
-  login(
-    input: Readonly<AuthLoginInputDto>,
+  findByEmail(
+    query: Readonly<AuthUserLookupQueryDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>>;
 
   /**

@@ -1,11 +1,10 @@
 import "server-only";
 
 /**
- * Data Transfer Object for repository-level login lookups.
- *
- * Used by the AuthUserRepositoryPort and its implementations to
- * ensure a stable contract when fetching authentication candidates.
+ * Input DTO for the Login Use Case.
+ * Represents the full set of credentials provided by the user.
  */
 export interface AuthLoginInputDto {
   readonly email: string;
+  readonly password: string;
 }
