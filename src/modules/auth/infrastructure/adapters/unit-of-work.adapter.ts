@@ -6,7 +6,7 @@ import type { AuthTxDepsContract } from "@/modules/auth/domain/repositories/auth
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { TransactionLogger } from "@/modules/auth/infrastructure/observability/transaction-logger";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 

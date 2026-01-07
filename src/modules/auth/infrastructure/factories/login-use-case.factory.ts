@@ -4,7 +4,7 @@ import { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-cas
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-hasher.adapter";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
