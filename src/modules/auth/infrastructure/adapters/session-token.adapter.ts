@@ -1,6 +1,10 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
+import type {
+  IssuedToken,
+  IssueTokenInput,
+} from "@/modules/auth/application/dtos/issue-token.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
   ONE_SECOND_MS,
@@ -8,24 +12,11 @@ import {
 } from "@/modules/auth/domain/policies/session.policy";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
-import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-export type IssueTokenInput = Readonly<{
-  role: UserRole;
-  sessionStart: number;
-  userId: UserId;
-}>;
-
-export type IssuedToken = Readonly<{
-  expiresAtMs: number;
-  token: string;
-}>;
 
 /**
  * Handles token-specific operations (encode, decode, validate).
