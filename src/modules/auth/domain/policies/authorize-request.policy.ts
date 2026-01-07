@@ -2,8 +2,8 @@ import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
-import { evaluateRouteAccess } from "@/modules/auth/application/guards/evaluate-route-access.policy";
-import { getRouteType } from "@/modules/auth/application/guards/get-route-type.policy";
+import { evaluateRouteAccess } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
+import { getRouteType } from "@/modules/auth/domain/policies/get-route-type.policy";
 
 function toAuthorizationReason(
   routeType: ReturnType<typeof getRouteType>,

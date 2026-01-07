@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { authorizeRequestPolicy } from "@/modules/auth/application/guards/authorize-request.policy";
+import { authorizeRequestPolicy } from "@/modules/auth/domain/policies/authorize-request.policy";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/adapters/session-cookie-adapter.constants";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
