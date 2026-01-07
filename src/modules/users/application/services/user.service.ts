@@ -1,8 +1,8 @@
 import "server-only";
 import type { UserRepositoryContract } from "@/modules/users/application/contract/user-repository.contract";
-import type { UserDto } from "@/modules/users/domain/dto/user.dto";
+import type { UserDto } from "@/modules/users/application/dto/user.dto";
+import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.constants";
 import type { CreateUserProps } from "@/modules/users/domain/user.entity";
-import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
 import type {
   CreateUserData,
   EditUserData,

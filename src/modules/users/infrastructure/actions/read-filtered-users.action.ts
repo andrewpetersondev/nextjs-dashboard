@@ -1,6 +1,6 @@
 "use server";
-import { createUserService } from "@/modules/users/application/services/factories/user-service.factory";
-import type { UserDto } from "@/modules/users/domain/dto/user.dto";
+import type { UserDto } from "@/modules/users/application/dto/user.dto";
+import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 
 /**

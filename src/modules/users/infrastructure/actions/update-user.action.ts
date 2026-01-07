@@ -1,17 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createUserService } from "@/modules/users/application/services/factories/user-service.factory";
-import type { UserDto } from "@/modules/users/domain/dto/user.dto";
+import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
-} from "@/modules/users/domain/user.messages";
+} from "@/modules/users/domain/user.constants";
 import {
   type EditUserData,
   type EditUserFormFieldNames,
   EditUserFormSchema,
 } from "@/modules/users/domain/user.schema";
+import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

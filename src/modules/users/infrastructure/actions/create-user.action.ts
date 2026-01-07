@@ -1,14 +1,14 @@
 "use server";
 
-import { createUserService } from "@/modules/users/application/services/factories/user-service.factory";
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
-} from "@/modules/users/domain/user.messages";
+} from "@/modules/users/domain/user.constants";
 import {
   type CreateUserFormInput,
   CreateUserFormSchema,
 } from "@/modules/users/domain/user.schema";
+import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

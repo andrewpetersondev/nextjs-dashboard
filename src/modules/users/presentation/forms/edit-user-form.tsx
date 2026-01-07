@@ -13,7 +13,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { UserDto } from "@/modules/users/domain/dto/user.dto";
+import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
 import { updateUserAction } from "@/modules/users/infrastructure/actions/update-user.action";
 import { UserInfoPanel } from "@/modules/users/presentation/components/user-info-panel";

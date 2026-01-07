@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UserDto } from "@/modules/users/domain/dto/user.dto";
+import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
 import type { UserRow } from "@/server/db/schema/users";
 import { toUserId } from "@/shared/branding/converters/id-converters";

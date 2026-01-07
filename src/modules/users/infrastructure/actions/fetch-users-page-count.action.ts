@@ -1,5 +1,5 @@
 "use server";
-import { createUserService } from "@/modules/users/application/services/factories/user-service.factory";
+import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 
 /**
