@@ -1,3 +1,8 @@
+import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { IssueTokenInput } from "@/modules/auth/application/dtos/issue-token.dto";
+import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
@@ -95,5 +100,43 @@ export function shouldRefreshToken(decoded: {
   return {
     refresh: remaining <= SESSION_REFRESH_THRESHOLD_MS,
     timeLeftMs: remaining,
+  };
+}
+
+export function makeSessionClaims(
+  input: IssueTokenInput & { expiresAtMs: number; iatMs: number },
+) {
+  return {
+    exp: Math.floor(input.expiresAtMs / ONE_SECOND_MS),
+    expiresAt: input.expiresAtMs,
+    iat: Math.floor(input.iatMs / ONE_SECOND_MS),
+    role: input.role,
+    sessionStart: input.sessionStart,
+    userId: input.userId,
+  };
+}
+
+/**
+ * Domain Policy: Maps various authentication outputs to a SessionPrincipalDto.
+ *
+ * This centralizes the reconstruction of the identity principal from:
+ * 1. Decoded session claims (requires decoding the userId string)
+ * 2. Use case output DTOs (simple mapping)
+ */
+export function toSessionPrincipal(
+  source: SessionTokenClaims | AuthUserOutputDto,
+): SessionPrincipalDto {
+  if ("email" in source) {
+    // Mapping from AuthUserOutputDto
+    return {
+      id: source.id,
+      role: source.role,
+    };
+  }
+
+  // Mapping from SessionTokenClaims
+  return {
+    id: userIdCodec.decode(source.userId),
+    role: source.role,
   };
 }

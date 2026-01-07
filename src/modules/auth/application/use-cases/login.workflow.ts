@@ -1,24 +1,13 @@
 import "server-only";
 
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
+import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-/**
- * Maps an authenticated user payload to a session principal DTO.
- *
- * @param value - Authenticated user payload containing identity and role.
- * @returns Session principal DTO.
- */
-const toSessionPrincipal = (value: AuthUserOutputDto): SessionPrincipalDto => ({
-  id: value.id,
-  role: value.role,
-});
 
 /**
  * Orchestrates the login "story":

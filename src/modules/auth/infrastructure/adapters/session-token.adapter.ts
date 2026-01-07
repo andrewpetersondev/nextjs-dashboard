@@ -8,7 +8,7 @@ import type {
 } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
-  ONE_SECOND_MS,
+  makeSessionClaims,
   SESSION_DURATION_MS,
 } from "@/modules/auth/domain/policies/session.policy";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
@@ -37,14 +37,13 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
     const now = Date.now();
     const expiresAtMs = now + SESSION_DURATION_MS;
 
-    const claims: SessionTokenClaims = {
-      exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
-      expiresAt: expiresAtMs,
-      iat: Math.floor(now / ONE_SECOND_MS),
+    const claims = makeSessionClaims({
+      expiresAtMs,
+      iatMs: now,
       role: input.role,
       sessionStart: input.sessionStart,
       userId: input.userId,
-    };
+    });
 
     const encodedResult = await this.codec.encode(claims, expiresAtMs);
 

@@ -4,7 +4,7 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/rotate-session.use-case";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
+import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
@@ -61,10 +61,7 @@ export class GetSessionUseCase {
         return Ok(undefined);
       }
 
-      return Ok({
-        id: userIdCodec.decode(decoded.userId),
-        role: decoded.role,
-      });
+      return Ok(toSessionPrincipal(decoded));
     } catch (err: unknown) {
       return Err(normalizeUnknownToAppError(err, "unexpected"));
     }
