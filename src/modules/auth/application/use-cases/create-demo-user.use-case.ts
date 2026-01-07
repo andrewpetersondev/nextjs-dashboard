@@ -1,7 +1,11 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import { generateDemoUserIdentity } from "@/modules/auth/domain/policies/registration.policy";
+import {
+  generateDemoUserIdentity,
+  makeInvalidDemoCounterError,
+  validateDemoUserCounter,
+} from "@/modules/auth/domain/policies/registration.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
@@ -9,13 +13,8 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
 import { makeRandomPassword } from "@/shared/crypto/password-generator";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import {
-  makeAppError,
-  makeUnexpectedError,
-} from "@/shared/errors/factories/app-error.factory";
-import { isPositiveNumber } from "@/shared/guards/number.guards";
+import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
@@ -38,7 +37,7 @@ export class CreateDemoUserUseCase {
     this.uow = uow;
   }
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <extract policy logic>
   async execute(role: UserRole): Promise<Result<AuthUserOutputDto, AppError>> {
     const logger = this.logger.child({ role });
 
@@ -49,14 +48,8 @@ export class CreateDemoUserUseCase {
       const txResult = await this.uow.withTransaction(async (tx) => {
         const counter = await tx.authUsers.incrementDemoUserCounter(role);
 
-        if (!isPositiveNumber(counter)) {
-          return Err(
-            makeAppError(APP_ERROR_KEYS.validation, {
-              cause: "invalid_demo_user_counter",
-              message: "Demo user counter returned invalid value",
-              metadata: {},
-            }),
-          );
+        if (!validateDemoUserCounter(counter)) {
+          return Err(makeInvalidDemoCounterError(counter));
         }
 
         const { email, username } = generateDemoUserIdentity(role, counter);

@@ -8,8 +8,9 @@ import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";
 
 export type ValidationErrorMetadata = Readonly<{
   readonly fieldErrors?: Record<string, readonly string[]>;
-  readonly formErrors?: readonly string[];
   readonly formData?: Record<string, string>;
+  readonly formErrors?: readonly string[];
+  readonly policy?: string;
 }>;
 
 export const ValidationErrorMetadataSchema = z
@@ -17,16 +18,19 @@ export const ValidationErrorMetadataSchema = z
     fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
     formData: z.record(z.string(), z.string()).optional(),
     formErrors: z.array(z.string()).optional(),
+    policy: z.string().optional(),
   })
   .passthrough() as z.ZodType<ValidationErrorMetadata>;
 
 export type InfrastructureErrorMetadata = Readonly<{
   readonly diagnosticId?: string;
+  readonly policy?: string;
 }>;
 
 export const InfrastructureErrorMetadataSchema = z
   .object({
     diagnosticId: z.string().optional(),
+    policy: z.string().optional(),
   })
   .passthrough() as z.ZodType<InfrastructureErrorMetadata>;
 

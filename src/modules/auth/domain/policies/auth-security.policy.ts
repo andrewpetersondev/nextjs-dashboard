@@ -22,6 +22,7 @@ export function applyAntiEnumerationPolicy(originalError: AppError): AppError {
     message: "Authentication failed due to invalid email or password.",
     metadata: {
       code: "invalidCredentials",
+      policy: "anti-enumeration",
     },
   });
 }
