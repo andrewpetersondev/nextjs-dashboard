@@ -1,8 +1,8 @@
-import { MONTH_ORDER } from "@/modules/revenues/domain/constants";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
 import { createRevenueDisplayEntity } from "@/modules/revenues/domain/factories/revenue-display.factory";
-import type { RollingMonthData } from "@/modules/revenues/domain/types";
+import { MONTH_ORDER } from "@/modules/revenues/domain/revenue.constants";
+import type { RollingMonthData } from "@/modules/revenues/domain/revenue.types";
 import type { Period } from "@/shared/branding/brands";
 import {
   toPeriod,

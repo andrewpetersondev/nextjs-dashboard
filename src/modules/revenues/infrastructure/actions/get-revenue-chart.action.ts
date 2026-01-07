@@ -1,10 +1,10 @@
 "use server";
+import { RevenueStatisticsService } from "@/modules/revenues/application/services/revenue-statistics.service";
+import type { RevenueChartDto } from "@/modules/revenues/domain/revenue.types";
 import {
   mapEntityToSimpleRevenueDto,
   mapToStatisticsDto,
-} from "@/modules/revenues/application/mappers/revenue-dto.mapper";
-import { RevenueStatisticsService } from "@/modules/revenues/application/services/revenue-statistics.service";
-import type { RevenueChartDto } from "@/modules/revenues/domain/types";
+} from "@/modules/revenues/infrastructure/mappers/revenue-dto.mapper";
 import { RevenueRepository } from "@/modules/revenues/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";

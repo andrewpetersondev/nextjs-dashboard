@@ -1,12 +1,12 @@
+import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
+import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
 import {
   MAX_REVENUE_MONTHS,
   MAX_REVENUE_YEAR,
   MIN_REVENUE_MONTHS,
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
-} from "@/modules/revenues/domain/constants";
-import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
+} from "@/modules/revenues/domain/revenue.constants";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 

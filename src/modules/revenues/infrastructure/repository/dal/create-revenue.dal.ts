@@ -7,7 +7,7 @@ import type {
 import type { AppDatabase } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { upsertRevenue } from "./upsert.revenue.dal";
+import { upsertRevenueDal } from "./upsert-revenue.dal";
 
 /**
  * Creates a new revenue record in the database.
@@ -16,7 +16,7 @@ import { upsertRevenue } from "./upsert.revenue.dal";
  * @returns The created revenue entity.
  * @throws Error if revenue data is invalid.
  */
-export async function createRevenue(
+export async function createRevenueDal(
   db: AppDatabase,
   revenue: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
@@ -27,5 +27,5 @@ export async function createRevenue(
       metadata: {},
     });
   }
-  return await upsertRevenue(db, revenue);
+  return await upsertRevenueDal(db, revenue);
 }

@@ -19,7 +19,7 @@ import {
  * @returns The revenue entity or null if not found.
  * @throws Error if period is invalid or mapping fails.
  */
-export async function findRevenueByPeriod(
+export async function findRevenueByPeriodDal(
   db: AppDatabase,
   period: Period,
 ): Promise<RevenueEntity | null> {

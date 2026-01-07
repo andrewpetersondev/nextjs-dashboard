@@ -15,7 +15,7 @@ import type { Period, RevenueId } from "@/shared/branding/brands";
  * Business service for revenue processing and management.
  * Handles the coordination between invoice and revenue data.
  */
-export class RevenueService {
+export class RevenueApplicationService {
   /**
    * Constructor using a dependency injection pattern.
    *

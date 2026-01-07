@@ -5,7 +5,7 @@ import {
   MIN_MONTH_NUMBER,
   MONTH_ORDER,
   type MonthName,
-} from "@/modules/revenues/domain/constants";
+} from "@/modules/revenues/domain/revenue.constants";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 

@@ -1,9 +1,9 @@
-import type { IntervalDuration } from "@/modules/revenues/domain/constants";
+import type { IntervalDuration } from "@/modules/revenues/domain/revenue.constants";
+import type { RollingMonthData } from "@/modules/revenues/domain/revenue.types";
 import {
   createMonthTemplateFromIndex,
   getIntervalCount,
 } from "@/modules/revenues/domain/time/range";
-import type { RollingMonthData } from "@/modules/revenues/domain/types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 

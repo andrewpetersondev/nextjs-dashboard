@@ -3,7 +3,7 @@ import { GetRevenueStatisticsUseCase } from "@/modules/revenues/application/use-
 import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/application/use-cases/get-rolling-year-revenues.use-case";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
-import type { RevenueStatistics } from "@/modules/revenues/domain/types";
+import type { RevenueStatistics } from "@/modules/revenues/domain/revenue.types";
 
 /**
  * Service for calculating revenue statistics.

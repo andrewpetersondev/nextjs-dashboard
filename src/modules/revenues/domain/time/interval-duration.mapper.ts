@@ -1,4 +1,4 @@
-import { INTERVAL_DURATIONS } from "@/modules/revenues/domain/constants";
+import { INTERVAL_DURATIONS } from "@/modules/revenues/domain/revenue.constants";
 import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
 
 /**

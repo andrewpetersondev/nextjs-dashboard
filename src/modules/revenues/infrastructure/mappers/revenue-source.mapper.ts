@@ -1,4 +1,4 @@
-import { REVENUE_SOURCES } from "@/modules/revenues/domain/types";
+import { REVENUE_SOURCES } from "@/modules/revenues/domain/revenue.types";
 import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
 
 /**

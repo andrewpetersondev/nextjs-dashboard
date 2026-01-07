@@ -1,14 +1,14 @@
 import "server-only";
 
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
+import type {
+  RollingMonthData,
+  TemplateAndPeriods,
+} from "@/modules/revenues/domain/revenue.types";
 import { createDefaultRevenueData } from "@/modules/revenues/domain/templates/factory";
 import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/generator";
 import { toIntervalDuration } from "@/modules/revenues/domain/time/interval-duration.mapper";
 import { calculateDateRange } from "@/modules/revenues/domain/time/range";
-import type {
-  RollingMonthData,
-  TemplateAndPeriods,
-} from "@/modules/revenues/domain/types";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

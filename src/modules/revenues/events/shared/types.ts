@@ -1,6 +1,6 @@
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { Period } from "@/shared/branding/brands";
 
 /**
@@ -11,7 +11,7 @@ export type CreateRevenueArgs = Readonly<{
   invoiceCount: number;
   metadata: LogMetadata;
   period: Period;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
   totalAmount: number;
   totalPaidAmount: number;
   totalPendingAmount: number;
@@ -47,7 +47,7 @@ export type UpdateExistingRevenueArgs = Readonly<{
   isUpdate: boolean;
   metadata: LogMetadata;
   previousAmount?: number;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -73,5 +73,5 @@ export type UpsertRevenueArgs = Readonly<{
   metadata: LogMetadata;
   period: Period;
   previousAmount?: number;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;

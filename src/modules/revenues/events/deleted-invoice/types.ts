@@ -1,6 +1,6 @@
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { Period } from "@/shared/branding/brands";
 
 /**
@@ -11,5 +11,5 @@ export type ApplyDeletionEffectsArgs = Readonly<{
   invoice: InvoiceDto;
   metadata: LogMetadata;
   period: Period;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;

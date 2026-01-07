@@ -1,7 +1,7 @@
 import "server-only";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
+import type { RevenueStatistics } from "@/modules/revenues/domain/revenue.types";
 import { createEmptyStatistics } from "@/modules/revenues/domain/statistics/factory";
-import type { RevenueStatistics } from "@/modules/revenues/domain/types";
 
 function nonZeroAmounts(
   revenueData: readonly RevenueDisplayEntity[],

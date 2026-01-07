@@ -1,7 +1,7 @@
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { ExistingRevenueData } from "@/modules/revenues/events/shared/types";
 import type { Period } from "@/shared/branding/brands";
 
@@ -46,7 +46,7 @@ export type CoreArgs = Readonly<{
   context: string;
   currentInvoice: InvoiceDto;
   previousInvoice: InvoiceDto;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -57,7 +57,7 @@ export type HandleStatusChangeParams = Readonly<{
   currentInvoice: InvoiceDto;
   eventId: string;
   previousInvoice: InvoiceDto;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -68,7 +68,7 @@ export type HandleAmountChangeParams = Readonly<{
   invoice: InvoiceDto;
   period: Period;
   previousAmount: number;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -80,7 +80,7 @@ export type DispatchChangeArgs = Readonly<{
   meta: MetadataWithPeriod;
   period: Period;
   previousInvoice: InvoiceDto;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -97,7 +97,7 @@ export type HandleEligibleAmountChangeArgs = Readonly<{
   meta: MetadataWithPeriod;
   previousAmount: number;
   revenueId: string;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -115,7 +115,7 @@ export type HandleEligibleStatusChangeArgs = Readonly<{
   previousAmount: number;
   previousStatus: InvoiceStatus;
   revenueId: string;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -132,7 +132,7 @@ export type HandleEligibleToIneligibleArgs = Readonly<{
   previousAmount: number;
   previousStatus: InvoiceStatus;
   revenueId: string;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -148,7 +148,7 @@ export type HandleIneligibleToEligibleArgs = Readonly<{
   currentTotal: number;
   meta: MetadataWithPeriod;
   revenueId: string;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;
 
 /**
@@ -159,5 +159,5 @@ export type HandleNoExistingRevenueArgs = Readonly<{
   currentInvoice: InvoiceDto;
   meta: MetadataWithPeriod;
   period: Period;
-  revenueService: RevenueService;
+  revenueService: RevenueApplicationService;
 }>;

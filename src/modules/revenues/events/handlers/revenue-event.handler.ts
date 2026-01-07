@@ -1,5 +1,5 @@
 import "server-only";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { adjustRevenueForDeletedInvoice } from "@/modules/revenues/events/deleted-invoice/adjust-revenue-for-deleted-invoice";
 import { processInvoiceEvent } from "@/modules/revenues/events/handlers/orchestrator";
 import { processInvoiceUpsert } from "@/modules/revenues/events/shared/process-invoice-upsert";
@@ -28,9 +28,9 @@ export class RevenueEventHandler {
    *
    * @param revenueService - The service for managing revenue records
    */
-  private readonly revenueService: RevenueService;
+  private readonly revenueService: RevenueApplicationService;
 
-  constructor(revenueService: RevenueService) {
+  constructor(revenueService: RevenueApplicationService) {
     this.revenueService = revenueService;
 
     logger.debug("Initializing revenue event handler", {

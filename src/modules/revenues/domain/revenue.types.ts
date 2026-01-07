@@ -1,4 +1,4 @@
-import type { MonthName } from "@/modules/revenues/domain/constants";
+import type { MonthName } from "@/modules/revenues/domain/revenue.constants";
 import type { Period } from "@/shared/branding/brands";
 import type { Cents, Dollars } from "@/shared/utilities/money/types";
 

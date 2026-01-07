@@ -1,5 +1,5 @@
 import "server-only";
-import { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { RevenueEventHandler } from "@/modules/revenues/events/handlers/revenue-event.handler";
 import { RevenueRepository } from "@/modules/revenues/infrastructure/repository/revenue.repository";
@@ -21,7 +21,7 @@ if (!globalForRevenueHandler.__revenueEventHandler) {
     const repository: RevenueRepositoryInterface = new RevenueRepository(
       getAppDb(),
     );
-    const service = new RevenueService(repository);
+    const service = new RevenueApplicationService(repository);
     globalForRevenueHandler.__revenueEventHandler = new RevenueEventHandler(
       service,
     );

@@ -6,7 +6,7 @@ import {
   logNoRelevantChange,
 } from "@/modules/revenues/application/cross-cutting/logging";
 import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/application/cross-cutting/period-extraction";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { periodKey } from "@/modules/revenues/domain/time/period";
 import { processInvoiceUpsert } from "@/modules/revenues/events/shared/process-invoice-upsert";
 import { detectChange } from "@/modules/revenues/events/updated-invoice/change-detector";
@@ -118,7 +118,7 @@ async function handleAmountChange({
 }
 
 async function adjustRevenueForStatusChange(
-  revenueService: RevenueService,
+  revenueService: RevenueApplicationService,
   previousInvoice: InvoiceDto,
   currentInvoice: InvoiceDto,
 ): Promise<void> {
@@ -149,7 +149,7 @@ export async function processInvoiceUpdated(
   event: BaseInvoiceEvent,
   invoice: InvoiceDto,
   period: Period,
-  revenueService: RevenueService,
+  revenueService: RevenueApplicationService,
 ): Promise<void> {
   const context = "RevenueEventHandler.handleInvoiceUpdated";
   const previousInvoice = event.previousInvoice;

@@ -1,6 +1,6 @@
 import "server-only";
 import { logInfo } from "@/modules/revenues/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { UpdateRevenueRecordArgs } from "@/modules/revenues/events/shared/types";
 import { toRevenueId } from "@/shared/branding/converters/id-converters";
 
@@ -8,7 +8,7 @@ import { toRevenueId } from "@/shared/branding/converters/id-converters";
  * Updates a revenue record with new values.
  */
 export async function updateRevenueRecord(
-  revenueService: RevenueService,
+  revenueService: RevenueApplicationService,
   args: UpdateRevenueRecordArgs,
 ): Promise<void> {
   const {

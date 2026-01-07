@@ -1,6 +1,6 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { applyDeltaToBucket } from "@/modules/revenues/domain/calculations/bucket-totals";
 import { computeAggregateAfterRemoval } from "@/modules/revenues/domain/calculations/revenue-aggregate";
 import { checkDeletionEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
@@ -54,7 +54,7 @@ async function applyDeletionEffects(
  * Adjusts revenue for a deleted invoice.
  */
 export async function adjustRevenueForDeletedInvoice(
-  revenueService: RevenueService,
+  revenueService: RevenueApplicationService,
   invoice: InvoiceDto,
   period: Period,
 ): Promise<void> {

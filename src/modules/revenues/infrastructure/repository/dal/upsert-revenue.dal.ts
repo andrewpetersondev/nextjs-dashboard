@@ -20,7 +20,7 @@ import {
  * @returns The upserted revenue entity.
  * @throws Error if inputs are invalid or upsert fails.
  */
-export async function upsertRevenue(
+export async function upsertRevenueDal(
   db: AppDatabase,
   revenueData: RevenueCreateEntity,
 ): Promise<RevenueEntity> {

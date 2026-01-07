@@ -16,7 +16,7 @@ import {
  * @param id - The revenue ID to delete.
  * @throws Error if the ID is invalid or deletion fails.
  */
-export async function deleteRevenue(
+export async function deleteRevenueDal(
   db: AppDatabase,
   id: RevenueId,
 ): Promise<void> {

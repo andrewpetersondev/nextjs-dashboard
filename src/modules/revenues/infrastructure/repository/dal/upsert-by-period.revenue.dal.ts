@@ -10,7 +10,7 @@ import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { upsertRevenue } from "./upsert.revenue.dal";
+import { upsertRevenueDal } from "./upsert-revenue.dal";
 
 /**
  * Upserts a revenue record by period.
@@ -52,5 +52,5 @@ export async function upsertRevenueByPeriod(
     updatedAt: now,
   };
 
-  return await upsertRevenue(db, payload);
+  return await upsertRevenueDal(db, payload);
 }

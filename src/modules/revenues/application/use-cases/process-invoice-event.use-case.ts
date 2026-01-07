@@ -6,7 +6,7 @@ import {
   logInfo,
 } from "@/modules/revenues/application/cross-cutting/logging";
 import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/application/cross-cutting/period-extraction";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { checkInvoiceEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import type { Period } from "@/shared/branding/brands";
@@ -20,7 +20,7 @@ import type { Period } from "@/shared/branding/brands";
 export class ProcessInvoiceEventUseCase {
   async execute(
     event: BaseInvoiceEvent,
-    _revenueService: RevenueService, // kept for API symmetry/future evolution
+    _revenueService: RevenueApplicationService, // kept for API symmetry/future evolution
     contextMethod: string,
     processor: (invoice: InvoiceDto, period: Period) => Promise<void>,
   ): Promise<void> {

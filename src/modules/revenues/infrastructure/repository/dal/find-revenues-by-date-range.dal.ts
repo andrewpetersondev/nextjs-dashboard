@@ -21,7 +21,7 @@ import {
  * @returns Array of revenue entities.
  * @throws Error if periods are invalid or retrieval fails.
  */
-export async function findRevenuesByDateRange(
+export async function findRevenuesByDateRangeDal(
   db: AppDatabase,
   startPeriod: Period,
   endPeriod: Period,

@@ -1,7 +1,7 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
-import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
+import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { periodKey } from "@/modules/revenues/domain/time/period";
 import type { ProcessInvoiceOptions } from "@/modules/revenues/events/shared/types";
 import { upsertRevenue } from "@/modules/revenues/events/shared/upsert-revenue";
@@ -12,7 +12,7 @@ import type { Period } from "@/shared/branding/brands";
  * Processes an invoice for revenue calculation.
  */
 export async function processInvoiceUpsert(
-  revenueService: RevenueService,
+  revenueService: RevenueApplicationService,
   invoice: InvoiceDto,
   period: Period,
   options?: ProcessInvoiceOptions,

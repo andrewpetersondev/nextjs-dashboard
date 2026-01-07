@@ -6,14 +6,14 @@ import type {
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
-import { createRevenue } from "@/modules/revenues/infrastructure/repository/dal/create.revenue.dal";
-import { deleteRevenue } from "@/modules/revenues/infrastructure/repository/dal/delete.revenue.dal";
-import { findRevenuesByDateRange } from "@/modules/revenues/infrastructure/repository/dal/find-by-date-range.revenue.dal";
-import { findRevenueByPeriod } from "@/modules/revenues/infrastructure/repository/dal/find-by-period.revenue.dal";
-import { readRevenue } from "@/modules/revenues/infrastructure/repository/dal/read.revenue.dal";
-import { updateRevenue } from "@/modules/revenues/infrastructure/repository/dal/update.revenue.dal";
-import { upsertRevenue } from "@/modules/revenues/infrastructure/repository/dal/upsert.revenue.dal";
+import { createRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/create-revenue.dal";
+import { deleteRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/delete.revenue.dal";
+import { findRevenueByPeriodDal } from "@/modules/revenues/infrastructure/repository/dal/find-revenue-by-period.dal";
+import { findRevenuesByDateRangeDal } from "@/modules/revenues/infrastructure/repository/dal/find-revenues-by-date-range.dal";
+import { readRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/read-revenue.dal";
+import { updateRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/update-revenue.dal";
 import { upsertRevenueByPeriod } from "@/modules/revenues/infrastructure/repository/dal/upsert-by-period.revenue.dal";
+import { upsertRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/upsert-revenue.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
@@ -34,7 +34,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @returns The created revenue entity.
    */
   async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
-    return await createRevenue(this.db, revenue);
+    return await createRevenueDal(this.db, revenue);
   }
 
   /**
@@ -43,7 +43,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @returns The revenue entity.
    */
   async read(id: RevenueId): Promise<RevenueEntity> {
-    return await readRevenue(this.db, id);
+    return await readRevenueDal(this.db, id);
   }
 
   /**
@@ -56,7 +56,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     id: RevenueId,
     revenue: RevenueUpdatable,
   ): Promise<RevenueEntity> {
-    return await updateRevenue(this.db, id, revenue);
+    return await updateRevenueDal(this.db, id, revenue);
   }
 
   /**
@@ -64,7 +64,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @param id - The revenue ID.
    */
   async delete(id: RevenueId): Promise<void> {
-    await deleteRevenue(this.db, id);
+    await deleteRevenueDal(this.db, id);
   }
 
   /**
@@ -77,7 +77,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
     startPeriod: Period,
     endPeriod: Period,
   ): Promise<RevenueEntity[]> {
-    return await findRevenuesByDateRange(this.db, startPeriod, endPeriod);
+    return await findRevenuesByDateRangeDal(this.db, startPeriod, endPeriod);
   }
 
   /**
@@ -86,7 +86,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @returns The revenue entity or null.
    */
   async findByPeriod(period: Period): Promise<RevenueEntity | null> {
-    return await findRevenueByPeriod(this.db, period);
+    return await findRevenueByPeriodDal(this.db, period);
   }
 
   /**
@@ -95,7 +95,7 @@ export class RevenueRepository implements RevenueRepositoryInterface {
    * @returns The upserted revenue entity.
    */
   async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
-    return await upsertRevenue(this.db, revenueData);
+    return await upsertRevenueDal(this.db, revenueData);
   }
 
   /**

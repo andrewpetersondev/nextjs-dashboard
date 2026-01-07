@@ -1,5 +1,5 @@
-import type { MonthName } from "@/modules/revenues/domain/constants";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
+import type { MonthName } from "@/modules/revenues/domain/revenue.constants";
 
 /**
  * Display-oriented entity extending RevenueEntity with UI-specific fields.

@@ -1,7 +1,10 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
+import type {
+  RevenueEntity,
+  RevenueUpdatable,
+} from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
@@ -13,34 +16,44 @@ import {
 } from "@/shared/errors/factories/app-error.factory";
 
 /**
- * Reads a revenue record by ID.
+ * Updates a revenue record.
  * @param db - The database connection.
  * @param id - The revenue ID.
- * @returns The revenue entity.
- * @throws Error if ID is invalid or record not found.
+ * @param revenue - The updatable fields.
+ * @returns The updated revenue entity.
+ * @throws Error if inputs are invalid or update fails.
  */
-export async function readRevenue(
+export async function updateRevenueDal(
   db: AppDatabase,
   id: RevenueId,
+  revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
-  if (!id) {
+  if (!(id && revenue)) {
     throw makeAppError(APP_ERROR_KEYS.validation, {
       cause: "",
-      message: "Revenue ID is required",
+      message: "Revenue ID and data are required",
       metadata: {},
     });
   }
 
-  const data: RevenueRow | undefined = await db
-    .select()
-    .from(revenues)
+  const now = new Date();
+
+  const [data] = (await db
+    .update(revenues)
+    .set({
+      calculationSource: revenue.calculationSource,
+      invoiceCount: revenue.invoiceCount,
+      totalAmount: revenue.totalAmount,
+      totalPaidAmount: revenue.totalPaidAmount,
+      totalPendingAmount: revenue.totalPendingAmount,
+      updatedAt: now,
+    })
     .where(eq(revenues.id, id))
-    .limit(1)
-    .then((rows) => rows[0]);
+    .returning()) as RevenueRow[];
 
   if (!data) {
     throw makeUnexpectedError("", {
-      message: "Revenue record not found",
+      message: "Failed to update revenue record",
       metadata: {},
     });
   }
@@ -48,7 +61,7 @@ export async function readRevenue(
   const result: RevenueEntity = mapRevenueRowToEntity(data);
   if (!result) {
     throw makeUnexpectedError("", {
-      message: "Failed to convert revenue record",
+      message: "Failed to convert updated revenue record",
       metadata: { table: "revenues" },
     });
   }

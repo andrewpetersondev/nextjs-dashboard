@@ -1,8 +1,8 @@
 import { CalendarIcon } from "@heroicons/react/16/solid";
 import type { JSX } from "react";
-import { getRevenueChartAction } from "@/modules/revenues/application/actions/get-revenue-chart.action";
-import type { SimpleRevenueDto } from "@/modules/revenues/domain/types";
-import { generateYaxis } from "@/modules/revenues/presentation/logic/generate-y-axis";
+import type { SimpleRevenueDto } from "@/modules/revenues/domain/revenue.types";
+import { getRevenueChartAction } from "@/modules/revenues/infrastructure/actions/get-revenue-chart.action";
+import { generateYaxis } from "@/modules/revenues/presentation/utils/generate-y-axis";
 import { H2, H3 } from "@/ui/atoms/headings";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <not to long>
