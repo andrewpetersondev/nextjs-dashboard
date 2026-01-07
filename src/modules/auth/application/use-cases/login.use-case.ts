@@ -2,6 +2,7 @@ import "server-only";
 
 import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import { applyAntiEnumerationPolicy } from "@/modules/auth/domain/policies/auth-security.policy";
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -47,11 +48,13 @@ export class LoginUseCase {
 
       if (!user) {
         return Err(
-          makeAppError("invalid_credentials", {
-            cause: "user_not_found",
-            message: "Authentication failed due to invalid email or password.",
-            metadata: { email: input.email },
-          }),
+          applyAntiEnumerationPolicy(
+            makeAppError("not_found", {
+              cause: "user_not_found",
+              message: "User does not exist.",
+              metadata: { email: input.email },
+            }),
+          ),
         );
       }
 
@@ -61,11 +64,13 @@ export class LoginUseCase {
       );
       if (!passwordOk) {
         return Err(
-          makeAppError("invalid_credentials", {
-            cause: "invalid_password",
-            message: "Authentication failed due to invalid email or password.",
-            metadata: { userId: user.id },
-          }),
+          applyAntiEnumerationPolicy(
+            makeAppError("invalid_credentials", {
+              cause: "invalid_password",
+              message: "Password does not match.",
+              metadata: { userId: user.id },
+            }),
+          ),
         );
       }
 
