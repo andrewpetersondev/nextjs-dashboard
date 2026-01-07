@@ -1,3 +1,0 @@
-export const MAX_INVOICE_AMOUNT_USD = 10_000; // $10,000
-export const MIN_SENSITIVE_DATA_LENGTH = 2;
-export const MAX_SENSITIVE_DATA_LENGTH = 100;

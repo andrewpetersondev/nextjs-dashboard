@@ -1,5 +1,5 @@
 "use server";
-import type { InvoicesSummary } from "@/modules/invoices/domain/invoice.dto";
+import type { InvoicesSummary } from "@/modules/invoices/application/dto/invoice.dto";
 import { fetchTotalInvoicesCountDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-invoices-count.dal";
 import { fetchTotalPaidInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-paid-invoices.dal";
 import { fetchTotalPendingInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-pending-invoices.dal";

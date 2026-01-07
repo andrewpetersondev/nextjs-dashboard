@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";
 import { periodKey } from "@/modules/revenues/domain/time/period";

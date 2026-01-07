@@ -1,8 +1,8 @@
 "use server";
 
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

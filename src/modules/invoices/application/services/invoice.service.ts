@@ -1,10 +1,10 @@
 import "server-only";
 
-import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type {
   InvoiceDto,
   InvoiceFormDto,
-} from "@/modules/invoices/domain/invoice.dto";
+} from "@/modules/invoices/application/dto/invoice.dto";
+import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import {
   dtoToCreateInvoiceEntity,
   partialDtoToCreateInvoiceEntity,

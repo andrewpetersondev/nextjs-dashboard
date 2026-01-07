@@ -1,17 +1,17 @@
 import "server-only";
-import {
-  encodeInvoiceDateToIso,
-  encodePeriodToFirstDay,
-} from "@/modules/invoices/domain/invoice.codecs";
 import type {
   InvoiceDto,
   InvoiceFormDto,
   IsoDateString,
-} from "@/modules/invoices/domain/invoice.dto";
+} from "@/modules/invoices/application/dto/invoice.dto";
 import type {
   InvoiceEntity,
   InvoiceFormEntity,
-} from "@/modules/invoices/domain/invoice.entity";
+} from "@/modules/invoices/domain/entities/invoice.entity";
+import {
+  encodeInvoiceDateToIso,
+  encodePeriodToFirstDay,
+} from "@/modules/invoices/domain/invoice.codecs";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";

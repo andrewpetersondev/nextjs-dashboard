@@ -14,7 +14,7 @@ sequenceDiagram
   participant ACT as loginAction
   participant VAL as validateForm
   participant WF as loginWorkflow
-  participant MAP as mapLoginErrorToFormResult
+  participant MAP as toLoginFormResult
   participant NX as Next.js
 
   UI->>ACT: loginAction(prevState, formData)
@@ -24,7 +24,7 @@ sequenceDiagram
   ACT->>ACT: Get request metadata
   ACT->>ACT: Initialize PerformanceTracker
 
-  ACT->>VAL: tracker.measure: validateForm(formData, LoginSchema)
+  ACT->>VAL: tracker.measure: validateForm(formData, LoginSchema, fields)
   VAL-->>ACT: Result
 
   alt validation failure
@@ -36,7 +36,7 @@ sequenceDiagram
     deactivate WF
 
     alt workflow failure
-      ACT->>MAP: mapLoginErrorToFormResult(error, input)
+      ACT->>MAP: toLoginFormResult(error, input)
       MAP-->>ACT: FormResult
       ACT-->>UI: return FormResult
     else workflow success
@@ -141,7 +141,7 @@ sequenceDiagram
   end
 ```
 
-### 3.2. `EstablishSessionUseCase`
+### 3.2. `EstablishSessionCommand`
 
 **Interaction:** Issues a new session token and persists it via the session store.
 
@@ -150,9 +150,9 @@ sequenceDiagram
   autonumber
 
   participant WF as Workflow / Caller
-  participant UC as EstablishSessionUseCase
-  participant TS as SessionTokenService
-  participant ST as SessionStoreContract
+  participant UC as EstablishSessionCommand
+  participant TS as sessionTokenAdapter
+  participant ST as sessionCookieAdapter
 
   WF->>UC: execute(user)
   activate UC

@@ -1,10 +1,9 @@
 import { z } from "zod";
-import {
-  MAX_INVOICE_AMOUNT_USD,
-  MAX_SENSITIVE_DATA_LENGTH,
-  MIN_SENSITIVE_DATA_LENGTH,
-} from "@/modules/invoices/domain/schema/invoice-schema.constants";
 import { INVOICE_STATUSES } from "@/modules/invoices/domain/statuses/invoice.statuses";
+
+const MAX_INVOICE_AMOUNT_USD = 10_000; // $10,000
+const MIN_SENSITIVE_DATA_LENGTH = 2;
+const MAX_SENSITIVE_DATA_LENGTH = 100;
 
 const amountCodec = z.codec(
   z.string(),

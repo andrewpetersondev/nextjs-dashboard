@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { checkStatusEligibleForRevenue } from "@/modules/revenues/domain/guards/revenue-eligibility.guard";
 import type { ChangeType } from "@/modules/revenues/events/updated-invoice/types";
 

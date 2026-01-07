@@ -1,4 +1,4 @@
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
 import type { RevenueService } from "@/modules/revenues/application/services/revenue.service";

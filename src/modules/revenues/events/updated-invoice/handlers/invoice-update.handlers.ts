@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import {
   logInfo,
   logMissingPrevious,

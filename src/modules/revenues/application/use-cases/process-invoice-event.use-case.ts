@@ -1,5 +1,5 @@
 import "server-only";
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { withIdempotency } from "@/modules/revenues/application/cross-cutting/idempotency";
 import {
   handleEventError,

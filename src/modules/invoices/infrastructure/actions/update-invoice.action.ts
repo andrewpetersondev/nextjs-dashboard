@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
-import type { InvoiceDto } from "@/modules/invoices/domain/invoice.dto";
 import {
   type UpdateInvoiceFieldNames,
   type UpdateInvoicePayload,

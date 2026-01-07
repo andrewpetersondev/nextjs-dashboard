@@ -5,7 +5,7 @@ import type {
   InvoiceEntity,
   InvoiceFormEntity,
   InvoiceServiceEntity,
-} from "@/modules/invoices/domain/invoice.entity";
+} from "@/modules/invoices/domain/entities/invoice.entity";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceRow } from "@/server/db/schema/invoices";
 import {

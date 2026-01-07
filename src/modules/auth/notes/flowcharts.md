@@ -17,7 +17,7 @@ flowchart TD
   D --> TRACK["Initialize PerformanceTracker"]
 
 %% Validation
-  TRACK --> E["validateForm(formData, LoginSchema)"]
+  TRACK --> E["validateForm(formData, LoginSchema, fields)"]
 
 %% Validation Decision
   E --> F{"validated.ok?"}
@@ -34,7 +34,7 @@ flowchart TD
   J --> K{"sessionResult.ok?"}
 
 %% Workflow Failure Path
-  K -->|No| L["mapLoginErrorToFormResult(error, input)"]
+  K -->|No| L["toLoginFormResult(error, input)"]
   L --> M["Return FormResult"]
 
 %% Workflow Success Path
@@ -66,7 +66,7 @@ flowchart TD
   D -->|No| E["isCredentialFailure?<br/>(invalid_credentials OR not_found)"]
 
 %% Anti-Enumeration mapping
-  E -->|Yes| F["makeAppError('invalid_credentials')<br/>(Unified Error)"]
+  E -->|Yes| F["makeAppError(APP_ERROR_KEYS.invalid_credentials)<br/>(Unified Error)"]
   E -->|No| G["Propagate Original Error"]
 
 F --> Z["Return Result.Err(AppError)"]
@@ -139,17 +139,17 @@ flowchart TD
   N --> Z
 ```
 
-### 3.2. `EstablishSessionUseCase`
+### 3.2. `EstablishSessionCommand`
 
 **Responsibility:** Handles session lifecycle by issuing a new token and persisting it to the session store.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>SessionPrincipalDto<br/>(id, role)"] --> B[EstablishSessionUseCase.execute]
+  A["Input<br/>SessionPrincipalDto<br/>(id, role)"] --> B[EstablishSessionCommand.execute]
 
 %% Token Generation
-  B --> C["tokenService.issue({ role, sessionStart, userId })"]
+  B --> C["sessionTokenAdapter.issue({ role, sessionStart, userId })"]
 
 %% Issue Result Decision
   C --> D{"issueResult.ok?"}
@@ -160,7 +160,7 @@ flowchart TD
 
 %% Success path: Persistence
   D -->|Yes| F["Extract token & expiresAtMs"]
-  F --> G["store.set(token, expiresAtMs)"]
+  F --> G["sessionCookieAdapter.set(token, expiresAtMs)"]
 
 %% Completion
   G --> H["Log info: Session established"]
