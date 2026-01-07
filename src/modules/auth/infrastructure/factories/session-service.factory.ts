@@ -1,15 +1,15 @@
 import "server-only";
 
-import { EstablishSessionCommand } from "@/modules/auth/application/use-cases/establish-session.command";
+import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/establish-session.use-case";
 import { GetSessionUseCase } from "@/modules/auth/application/use-cases/get-session.use-case";
-import { RotateSessionCommand } from "@/modules/auth/application/use-cases/rotate-session.command";
+import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotate-session.use-case";
 import {
-  TerminateSessionCommand,
   type TerminateSessionReason,
-} from "@/modules/auth/application/use-cases/terminate-session.command";
+  TerminateSessionUseCase,
+} from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
+import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
 import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
-import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-cookie.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -31,12 +31,12 @@ export function createSessionServiceFactory(
   };
 
   return {
-    establish: (user: Parameters<EstablishSessionCommand["execute"]>[0]) =>
-      new EstablishSessionCommand(deps).execute(user),
+    establish: (user: Parameters<EstablishSessionUseCase["execute"]>[0]) =>
+      new EstablishSessionUseCase(deps).execute(user),
     read: () => new GetSessionUseCase(deps).execute(),
-    rotate: () => new RotateSessionCommand(deps).execute(),
+    rotate: () => new RotateSessionUseCase(deps).execute(),
     terminate: (reason: TerminateSessionReason) =>
-      new TerminateSessionCommand(deps).execute(reason),
+      new TerminateSessionUseCase(deps).execute(reason),
     verify: () => new VerifySessionUseCase(deps).execute(),
   };
 }

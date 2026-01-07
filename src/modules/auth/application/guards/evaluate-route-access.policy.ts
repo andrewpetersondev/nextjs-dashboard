@@ -1,4 +1,4 @@
-import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
+import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
 export type AuthRouteType = "admin" | "protected" | "public";
@@ -17,7 +17,7 @@ export type AuthRouteAccessDecision =
  */
 export function evaluateRouteAccess(
   routeType: AuthRouteType,
-  claims: AuthJwtTransport | undefined,
+  claims: SessionTokenClaims | undefined,
 ): AuthRouteAccessDecision {
   const isAuthenticated = Boolean(claims?.userId);
 

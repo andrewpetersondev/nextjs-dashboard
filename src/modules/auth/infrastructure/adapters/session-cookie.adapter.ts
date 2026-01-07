@@ -1,7 +1,7 @@
 import "server-only";
 
 import { ONE_SECOND_MS } from "@/modules/auth/domain/policies/session.policy";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session-store/adapters/session-cookie-adapter.constants";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/adapters/session-cookie-adapter.constants";
 import { createCookieService } from "@/server/cookies/cookie.factory";
 import { isProd } from "@/shared/config/env-shared";
 import { logger } from "@/shared/logging/infrastructure/logging.client";

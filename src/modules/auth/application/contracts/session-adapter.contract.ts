@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type { TerminateSessionReason } from "@/modules/auth/application/use-cases/terminate-session.command";
+import type { TerminateSessionReason } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

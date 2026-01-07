@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
+import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
   ONE_SECOND_MS,
   SESSION_DURATION_MS,
 } from "@/modules/auth/domain/policies/session.policy";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
-import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
-import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/session-store/adapters/session-jwt.adapter";
+import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -45,7 +45,7 @@ export class SessionTokenAdapter {
     const now = Date.now();
     const expiresAtMs = now + SESSION_DURATION_MS;
 
-    const claims: AuthJwtTransport = {
+    const claims: SessionTokenClaims = {
       exp: Math.floor(expiresAtMs / ONE_SECOND_MS),
       expiresAt: expiresAtMs,
       iat: Math.floor(now / ONE_SECOND_MS),
@@ -66,14 +66,14 @@ export class SessionTokenAdapter {
   /**
    * Decodes a token and returns the raw payload.
    */
-  decode(token: string): Promise<Result<AuthJwtTransport, AppError>> {
+  decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
     return this.codec.decode(token);
   }
 
   /**
    * Validates decoded claims against the schema.
    */
-  validate(claims: unknown): Result<AuthJwtTransport, AppError> {
+  validate(claims: unknown): Result<SessionTokenClaims, AppError> {
     const parsed = DecryptPayloadSchema.safeParse(claims);
 
     if (!parsed.success) {

@@ -10,5 +10,6 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 export type SessionUseCaseDependencies = Readonly<{
   logger: LoggingClientContract;
   sessionCookieAdapter: SessionStoreContract;
+  // todo: why am i importing an adapter from the infrastructure layer instead of a contract?
   sessionTokenAdapter: SessionTokenAdapter;
 }>;

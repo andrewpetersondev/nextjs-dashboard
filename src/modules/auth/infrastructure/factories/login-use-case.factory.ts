@@ -19,6 +19,7 @@ export function createLoginUseCaseFactory(
   const scopedLogger = logger.withContext("auth").withRequest(requestId);
 
   // Implementation (Infrastructure)
+  // todo: this seems wrong. why am i using AuthUserRepository? it is not used for the signup
   const repo = new AuthUserRepository(db, scopedLogger, requestId);
 
   // Adapter (Bridge Infrastructure to Contract)

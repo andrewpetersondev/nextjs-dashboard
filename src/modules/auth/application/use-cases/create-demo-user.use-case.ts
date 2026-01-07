@@ -19,7 +19,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-export class CreateDemoUserCommand {
+export class CreateDemoUserUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
   private readonly uow: UnitOfWorkContract;

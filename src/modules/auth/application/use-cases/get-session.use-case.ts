@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/rotate-session.command";
+import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/rotate-session.use-case";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";

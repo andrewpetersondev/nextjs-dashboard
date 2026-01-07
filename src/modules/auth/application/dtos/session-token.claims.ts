@@ -1,4 +1,4 @@
-import type { AuthJwtDto } from "@/modules/auth/infrastructure/serialization/auth-jwt.dto";
+import type { SessionClaimsSchema } from "@/modules/auth/domain/schemas/session-claims.schema";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
@@ -6,4 +6,4 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
  *
  * Codec boundary: these types exist because we encode/decode a token.
  */
-export type AuthJwtTransport = AuthJwtDto<UserRole>;
+export type SessionTokenClaims = SessionClaimsSchema<UserRole>;

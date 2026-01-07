@@ -17,7 +17,7 @@ import type { Result } from "@/shared/results/result.types";
  * - Issue a new session token via SessionTokenService
  * - Persist it via SessionStoreContract
  */
-export class EstablishSessionCommand {
+export class EstablishSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionCookieAdapter: SessionStoreContract;
   private readonly sessionTokenAdapter: SessionTokenAdapter;

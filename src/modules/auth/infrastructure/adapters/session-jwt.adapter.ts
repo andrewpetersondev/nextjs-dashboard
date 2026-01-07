@@ -1,14 +1,14 @@
 import "server-only";
 
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
+import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
-import type { AuthJwtTransport } from "@/modules/auth/infrastructure/serialization/auth-jwt.transport";
 import {
   CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/modules/auth/infrastructure/session-store/adapters/session-jwt-adapter.constants";
+} from "@/modules/auth/infrastructure/adapters/session-jwt-adapter.constants";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -70,7 +70,7 @@ export class SessionJwtAdapter {
    * @throws Error if signing fails (e.g., invalid claims, crypto errors)
    */
   async encode(
-    claims: AuthJwtTransport,
+    claims: SessionTokenClaims,
     expiresAtMs: number,
   ): Promise<Result<string, AppError>> {
     try {
@@ -107,9 +107,9 @@ export class SessionJwtAdapter {
    * @param token - The JWT token string to decode
    * @returns `Ok(payload)` if verification succeeds, `Err(appError)` otherwise
    */
-  async decode(token: string): Promise<Result<AuthJwtTransport, AppError>> {
+  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
     try {
-      const { payload } = await jwtVerify<AuthJwtTransport>(
+      const { payload } = await jwtVerify<SessionTokenClaims>(
         token,
         this.encodedKey,
         this.verifyOptions,

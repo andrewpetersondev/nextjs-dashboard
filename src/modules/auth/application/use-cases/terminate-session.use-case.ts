@@ -18,7 +18,7 @@ export type TerminateSessionReason =
  * Terminates a session by deleting the cookie.
  * Logs the termination reason for auditing.
  */
-export class TerminateSessionCommand {
+export class TerminateSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionCookieAdapter: SessionStoreContract;
 

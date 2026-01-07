@@ -1,4 +1,4 @@
-export type AuthJwtDto<R = string> = {
+export type SessionClaimsSchema<R = string> = {
   exp: number;
   expiresAt: number;
   iat: number;
