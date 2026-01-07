@@ -11,6 +11,7 @@ export type ValidationErrorMetadata = Readonly<{
   readonly formData?: Record<string, string>;
   readonly formErrors?: readonly string[];
   readonly policy?: string;
+  readonly reason?: string;
 }>;
 
 export const ValidationErrorMetadataSchema = z
@@ -19,18 +20,21 @@ export const ValidationErrorMetadataSchema = z
     formData: z.record(z.string(), z.string()).optional(),
     formErrors: z.array(z.string()).optional(),
     policy: z.string().optional(),
+    reason: z.string().optional(),
   })
   .passthrough() as z.ZodType<ValidationErrorMetadata>;
 
 export type InfrastructureErrorMetadata = Readonly<{
   readonly diagnosticId?: string;
   readonly policy?: string;
+  readonly reason?: string;
 }>;
 
 export const InfrastructureErrorMetadataSchema = z
   .object({
     diagnosticId: z.string().optional(),
     policy: z.string().optional(),
+    reason: z.string().optional(),
   })
   .passthrough() as z.ZodType<InfrastructureErrorMetadata>;
 
@@ -60,10 +64,18 @@ export type IntegrityErrorMetadata = Readonly<PgErrorMetadata>;
 export const IntegrityErrorMetadataSchema =
   PgErrorMetadataSchema as z.ZodType<IntegrityErrorMetadata>;
 
-export type UnknownErrorMetadata = Readonly<Record<string, unknown>>;
+export type UnknownErrorMetadata = Readonly<
+  Record<string, unknown> & {
+    readonly policy?: string;
+    readonly reason?: string;
+  }
+>;
 
 export const UnknownErrorMetadataSchema = z
-  .object({})
+  .object({
+    policy: z.string().optional(),
+    reason: z.string().optional(),
+  })
   .passthrough() as z.ZodType<UnknownErrorMetadata>;
 
 export type UnexpectedErrorMetadata = Readonly<Record<string, unknown>>;

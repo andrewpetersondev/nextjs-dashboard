@@ -3,11 +3,9 @@ import "server-only";
 import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/establish-session.use-case";
 import { GetSessionUseCase } from "@/modules/auth/application/use-cases/get-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotate-session.use-case";
-import {
-  type TerminateSessionReason,
-  TerminateSessionUseCase,
-} from "@/modules/auth/application/use-cases/terminate-session.use-case";
+import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
+import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
 import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

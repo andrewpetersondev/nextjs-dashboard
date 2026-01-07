@@ -2,12 +2,14 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import {
+  makeInvalidSessionClaimsError,
+  makeMissingSessionError,
+} from "@/modules/auth/domain/policies/auth-security.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
@@ -45,13 +47,7 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "no_token" },
         operationName: "session.verify.no_token",
       });
-      return Err(
-        makeAppError(APP_ERROR_KEYS.unauthorized, {
-          cause: "xxxxxx",
-          message: "session.verify.no_token",
-          metadata: {},
-        }),
-      );
+      return Err(makeMissingSessionError());
     }
 
     const decodedResult = await this.sessionTokenAdapter.decode(token);
@@ -73,13 +69,7 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "invalid_claims" },
         operationName: "session.verify.invalid_claims",
       });
-      return Err(
-        makeAppError(APP_ERROR_KEYS.validation, {
-          cause: "xxxxxx",
-          message: "session.verify.invalid_claims",
-          metadata: {},
-        }),
-      );
+      return Err(makeInvalidSessionClaimsError("Missing userId in claims"));
     }
 
     return Ok({

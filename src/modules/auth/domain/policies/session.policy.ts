@@ -7,6 +7,15 @@ export const MAX_ABSOLUTE_SESSION_MS = 2_592_000_000 as const; // 30 days
 export const ONE_SECOND_MS = 1000 as const;
 
 /**
+ * Domain Policy: Recognized reasons for terminating a session.
+ */
+export type TerminateSessionReason =
+  | "absolute_limit_exceeded"
+  | "expired"
+  | "invalid_token"
+  | "user_logout";
+
+/**
  * Session policy outcome types.
  *
  * Policy boundary: these represent expected decisions/outcomes, not errors.
