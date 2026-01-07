@@ -35,11 +35,11 @@ export class EstablishSessionUseCase {
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>> {
     try {
-      const now = Date.now();
+      const sessionStart = Date.now();
 
       const issuedResult = await this.sessionTokenAdapter.issue({
         role: user.role,
-        sessionStart: now,
+        sessionStart,
         userId: user.id,
       });
 
@@ -56,7 +56,7 @@ export class EstablishSessionUseCase {
         operationIdentifiers: {
           expiresAt: expiresAtMs,
           role: user.role,
-          sessionStart: now,
+          sessionStart,
           userId: user.id,
         },
         operationName: "session.establish.success",

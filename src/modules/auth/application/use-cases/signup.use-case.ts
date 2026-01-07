@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
@@ -43,7 +44,7 @@ export class SignupUseCase {
         const createdResultTx = await tx.authUsers.signup({
           email: input.email,
           password: passwordHash,
-          role: parseUserRole("USER"),
+          role: getDefaultRegistrationRole(),
           username: input.username,
         });
 

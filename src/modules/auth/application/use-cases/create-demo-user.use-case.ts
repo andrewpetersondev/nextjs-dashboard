@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import { generateDemoUserIdentity } from "@/modules/auth/domain/policies/registration.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
@@ -58,14 +59,13 @@ export class CreateDemoUserUseCase {
           );
         }
 
-        const uniqueEmail = `demo+${role}${counter}@demo.com`;
-        const uniqueUsername = `Demo_${role.toUpperCase()}_${counter}`;
+        const { email, username } = generateDemoUserIdentity(role, counter);
 
         const createdResult = await tx.authUsers.signup({
-          email: uniqueEmail,
+          email,
           password: passwordHash,
           role,
-          username: uniqueUsername,
+          username,
         });
 
         if (!createdResult.ok) {
