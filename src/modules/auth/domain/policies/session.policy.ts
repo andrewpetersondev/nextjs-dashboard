@@ -124,7 +124,7 @@ export function makeSessionClaims(
  * 2. Use case output DTOs (simple mapping)
  */
 export function toSessionPrincipal(
-  source: SessionTokenClaims | AuthUserOutputDto,
+  source: SessionTokenClaims | AuthUserOutputDto | UpdateSessionSuccess,
 ): SessionPrincipalDto {
   if ("email" in source) {
     // Mapping from AuthUserOutputDto
@@ -134,9 +134,12 @@ export function toSessionPrincipal(
     };
   }
 
-  // Mapping from SessionTokenClaims
+  // Handles both SessionTokenClaims and UpdateSessionSuccess
   return {
-    id: userIdCodec.decode(source.userId),
+    id:
+      typeof source.userId === "string"
+        ? userIdCodec.decode(source.userId)
+        : source.userId,
     role: source.role,
   };
 }

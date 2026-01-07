@@ -3,6 +3,7 @@ import "server-only";
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { CreateDemoUserUseCase } from "@/modules/auth/application/use-cases/create-demo-user.use-case";
+import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -26,10 +27,7 @@ export async function createDemoUserWorkflow(
     return Err(demoResult.error);
   }
 
-  const user: SessionPrincipalDto = {
-    id: demoResult.value.id,
-    role: demoResult.value.role,
-  };
+  const user = toSessionPrincipal(demoResult.value);
 
   const sessionResult = await deps.sessionService.establish(user);
 

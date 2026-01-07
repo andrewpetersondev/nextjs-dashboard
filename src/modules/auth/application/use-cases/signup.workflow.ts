@@ -3,6 +3,7 @@ import "server-only";
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SignupUseCase } from "@/modules/auth/application/use-cases/signup.use-case";
+import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -26,10 +27,7 @@ export async function signupWorkflow(
     return Err(signupResult.error);
   }
 
-  const user: SessionPrincipalDto = {
-    id: signupResult.value.id,
-    role: signupResult.value.role,
-  };
+  const user = toSessionPrincipal(signupResult.value);
 
   const sessionResult = await deps.sessionService.establish(user);
 
