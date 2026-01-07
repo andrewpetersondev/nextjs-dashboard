@@ -6,9 +6,9 @@ import type {
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
 
-export interface UserRepositoryPort<Trepo = unknown> {
+export interface UserRepositoryContract<Trepo = unknown> {
   withTransaction<Tresult>(
-    fn: (txRepo: UserRepositoryPort<Trepo>) => Promise<Tresult>,
+    fn: (txRepo: UserRepositoryContract<Trepo>) => Promise<Tresult>,
   ): Promise<Tresult>;
 
   create(input: CreateUserProps): Promise<UserEntity | null>;

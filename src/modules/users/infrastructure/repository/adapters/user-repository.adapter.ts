@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRepositoryPort } from "@/modules/users/application/ports/user-repository.port";
+import type { UserRepositoryContract } from "@/modules/users/application/contract/user-repository.contract";
 import type {
   CreateUserProps,
   UserEntity,
@@ -9,7 +9,7 @@ import type { UserPersistencePatch } from "@/modules/users/infrastructure/reposi
 import type { UserId } from "@/shared/branding/brands";
 
 export class UserRepositoryAdapter
-  implements UserRepositoryPort<UserRepositoryImpl>
+  implements UserRepositoryContract<UserRepositoryImpl>
 {
   private readonly repo: UserRepositoryImpl;
 
@@ -18,7 +18,7 @@ export class UserRepositoryAdapter
   }
 
   withTransaction<T>(
-    fn: (txRepo: UserRepositoryPort<UserRepositoryImpl>) => Promise<T>,
+    fn: (txRepo: UserRepositoryContract<UserRepositoryImpl>) => Promise<T>,
   ): Promise<T> {
     return this.repo.withTransaction(async (txRepo) => {
       const txAdapter = new UserRepositoryAdapter(txRepo);

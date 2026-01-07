@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRepositoryPort } from "@/modules/users/application/ports/user-repository.port";
+import type { UserRepositoryContract } from "@/modules/users/application/contract/user-repository.contract";
 import type { UserDto } from "@/modules/users/domain/dto/user.dto";
 import type { CreateUserProps } from "@/modules/users/domain/user.entity";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.messages";
@@ -20,10 +20,10 @@ import type { Result } from "@/shared/results/result.types";
 export class UserService {
   private readonly hasher: HashingService;
   private readonly logger: LoggingClientContract;
-  private readonly repo: UserRepositoryPort;
+  private readonly repo: UserRepositoryContract;
 
   constructor(
-    repo: UserRepositoryPort,
+    repo: UserRepositoryContract,
     hasher: HashingService,
     logger: LoggingClientContract,
   ) {
