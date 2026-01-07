@@ -1,8 +1,8 @@
 import "server-only";
 
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import {
   buildDefaultsFromFreshTemplate,
   buildTemplateAndPeriods,
@@ -13,9 +13,9 @@ import type { Period } from "@/shared/branding/brands";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 
 export class GetRollingYearRevenuesUseCase {
-  private readonly repository: RevenueRepositoryInterface;
+  private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryInterface) {
+  constructor(repository: RevenueRepositoryContract) {
     this.repository = repository;
   }
 

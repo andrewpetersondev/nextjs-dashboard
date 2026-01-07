@@ -1,14 +1,14 @@
 import "server-only";
 
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type { RevenueId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 export class DeleteRevenueUseCase {
-  private readonly repository: RevenueRepositoryInterface;
+  private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryInterface) {
+  constructor(repository: RevenueRepositoryContract) {
     this.repository = repository;
   }
 

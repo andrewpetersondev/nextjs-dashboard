@@ -14,7 +14,7 @@ import type { Period, RevenueId } from "@/shared/branding/brands";
  * - Timestamps: createdAt is set on insert; updatedAt is refreshed on every write.
  * - Inputs are validated and failures surface as domain-centric errors.
  */
-export interface RevenueRepositoryInterface {
+export interface RevenueRepositoryContract {
   /**
    * Create a new revenue record.
    */

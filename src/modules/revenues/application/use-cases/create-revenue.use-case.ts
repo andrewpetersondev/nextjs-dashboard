@@ -1,10 +1,10 @@
 import "server-only";
 
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import {
   makeAppError,
@@ -12,9 +12,9 @@ import {
 } from "@/shared/errors/factories/app-error.factory";
 
 export class CreateRevenueUseCase {
-  private readonly repository: RevenueRepositoryInterface;
+  private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryInterface) {
+  constructor(repository: RevenueRepositoryContract) {
     this.repository = repository;
   }
 

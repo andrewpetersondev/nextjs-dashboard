@@ -1,4 +1,5 @@
 import "server-only";
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import { CreateRevenueUseCase } from "@/modules/revenues/application/use-cases/create-revenue.use-case";
 import { DeleteRevenueUseCase } from "@/modules/revenues/application/use-cases/delete-revenue.use-case";
 import { FindRevenueByPeriodUseCase } from "@/modules/revenues/application/use-cases/find-revenue-by-period.use-case";
@@ -8,7 +9,6 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
 /**
@@ -28,9 +28,9 @@ export class RevenueApplicationService {
    *
    * @param repository - Repository interface for revenue data access
    */
-  private readonly repository: RevenueRepositoryInterface;
+  private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryInterface) {
+  constructor(repository: RevenueRepositoryContract) {
     this.repository = repository;
   }
 

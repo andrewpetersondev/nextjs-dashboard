@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type {
   RevenueCreateEntity,
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { createRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/create-revenue.dal";
 import { deleteRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/delete.revenue.dal";
 import { findRevenueByPeriodDal } from "@/modules/revenues/infrastructure/repository/dal/find-revenue-by-period.dal";
@@ -17,7 +17,7 @@ import { upsertRevenueDal } from "@/modules/revenues/infrastructure/repository/d
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
-export class RevenueRepository implements RevenueRepositoryInterface {
+export class RevenueRepository implements RevenueRepositoryContract {
   /**
    * Constructs the repository with a database connection.
    * @param db - The database connection.

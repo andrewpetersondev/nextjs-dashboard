@@ -1,8 +1,8 @@
 import "server-only";
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import { GetRevenueStatisticsUseCase } from "@/modules/revenues/application/use-cases/get-revenue-statistics.use-case";
 import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/application/use-cases/get-rolling-year-revenues.use-case";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import type { RevenueStatistics } from "@/modules/revenues/domain/revenue.types";
 
 /**
@@ -20,9 +20,9 @@ export class RevenueStatisticsService {
    *
    * @param repository - The repository for accessing revenue data
    */
-  private readonly repository: RevenueRepositoryInterface;
+  private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryInterface) {
+  constructor(repository: RevenueRepositoryContract) {
     this.repository = repository;
   }
 

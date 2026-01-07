@@ -1,6 +1,6 @@
 import "server-only";
+import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
-import type { RevenueRepositoryInterface } from "@/modules/revenues/domain/repositories/revenue.repository.interface";
 import { RevenueEventHandler } from "@/modules/revenues/events/handlers/revenue-event.handler";
 import { RevenueRepository } from "@/modules/revenues/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server/db/db.connection";
@@ -18,7 +18,7 @@ const globalForRevenueHandler = globalThis as typeof globalThis & {
 
 if (!globalForRevenueHandler.__revenueEventHandler) {
   try {
-    const repository: RevenueRepositoryInterface = new RevenueRepository(
+    const repository: RevenueRepositoryContract = new RevenueRepository(
       getAppDb(),
     );
     const service = new RevenueApplicationService(repository);
