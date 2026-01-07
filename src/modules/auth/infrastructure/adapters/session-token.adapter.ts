@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
+import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type {
   IssuedToken,
   IssueTokenInput,
@@ -22,7 +23,7 @@ import type { Result } from "@/shared/results/result.types";
  * Handles token-specific operations (encode, decode, validate).
  * Separates crypto/JWT concerns from session lifecycle.
  */
-export class SessionTokenAdapter {
+export class SessionTokenAdapter implements SessionTokenServiceContract {
   private readonly codec: SessionTokenCodecContract;
 
   constructor(codec: SessionTokenCodecContract) {
@@ -84,6 +85,6 @@ export class SessionTokenAdapter {
 /**
  * Factory function for creating SessionTokenAdapter instances.
  */
-export function createSessionTokenAdapter(): SessionTokenAdapter {
+export function createSessionTokenAdapter(): SessionTokenServiceContract {
   return new SessionTokenAdapter(createSessionJwtAdapter());
 }

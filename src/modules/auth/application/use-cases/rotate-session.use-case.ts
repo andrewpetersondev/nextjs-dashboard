@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
+import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
   evaluateSessionLifecycle,
@@ -8,18 +10,11 @@ import {
 } from "@/modules/auth/domain/policies/session-lifecycle.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-export type RotateSessionDeps = Readonly<{
-  logger: LoggingClientContract;
-  sessionCookieAdapter: SessionStoreContract;
-  sessionTokenAdapter: SessionTokenAdapter;
-}>;
 
 /**
  * Silently cleans up an invalid session token.
@@ -47,9 +42,9 @@ export async function cleanupInvalidToken(
 export class RotateSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionCookieAdapter: SessionStoreContract;
-  private readonly sessionTokenAdapter: SessionTokenAdapter;
+  private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
-  constructor(deps: RotateSessionDeps) {
+  constructor(deps: SessionUseCaseDependencies) {
     this.logger = deps.logger.child({
       scope: "use-case",
       useCase: "rotateSession",
@@ -151,7 +146,7 @@ export class RotateSessionUseCase {
   }
 
   private async handleRotation(decoded: {
-    role: Parameters<SessionTokenAdapter["issue"]>[0]["role"];
+    role: Parameters<SessionTokenServiceContract["issue"]>[0]["role"];
     sessionStart: number;
     userId: string;
   }): Promise<Result<UpdateSessionOutcome, AppError>> {

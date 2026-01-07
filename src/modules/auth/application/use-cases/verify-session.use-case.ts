@@ -1,9 +1,9 @@
 import "server-only";
 
+import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -25,7 +25,7 @@ import type { Result } from "@/shared/results/result.types";
 export class VerifySessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionCookieAdapter: SessionStoreContract;
-  private readonly sessionTokenAdapter: SessionTokenAdapter;
+  private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = deps.logger.child({

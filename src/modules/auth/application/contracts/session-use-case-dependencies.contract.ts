@@ -1,7 +1,7 @@
 import "server-only";
 
+import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -10,6 +10,5 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 export type SessionUseCaseDependencies = Readonly<{
   logger: LoggingClientContract;
   sessionCookieAdapter: SessionStoreContract;
-  // todo: why am i importing an adapter from the infrastructure layer instead of a contract?
-  sessionTokenAdapter: SessionTokenAdapter;
+  sessionTokenAdapter: SessionTokenServiceContract;
 }>;
