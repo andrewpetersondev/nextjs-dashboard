@@ -5,9 +5,7 @@ import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-use
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -40,23 +38,7 @@ export async function loginWorkflow(
   const authResult = await deps.loginUseCase.execute(input);
 
   if (!authResult.ok) {
-    const error = authResult.error;
-    const isCredentialFailure =
-      error.key === "invalid_credentials" || error.key === "not_found";
-
-    if (isCredentialFailure) {
-      return Err(
-        makeAppError(APP_ERROR_KEYS.invalid_credentials, {
-          cause: "Authentication failed due to invalid email or password.",
-          message: "Login workflow failed for some reason.",
-          metadata: {
-            code: "invalidCredentials",
-          },
-        }),
-      );
-    }
-
-    return Err(error);
+    return Err(authResult.error);
   }
 
   const user = toSessionPrincipal(authResult.value);

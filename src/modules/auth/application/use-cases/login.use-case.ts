@@ -1,6 +1,6 @@
 import "server-only";
-import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 
+import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
@@ -47,9 +47,9 @@ export class LoginUseCase {
 
       if (!user) {
         return Err(
-          makeAppError("not_found", {
+          makeAppError("invalid_credentials", {
             cause: "user_not_found",
-            message: "user_not_found",
+            message: "Authentication failed due to invalid email or password.",
             metadata: { email: input.email },
           }),
         );
@@ -63,7 +63,7 @@ export class LoginUseCase {
         return Err(
           makeAppError("invalid_credentials", {
             cause: "invalid_password",
-            message: "invalid_password",
+            message: "Authentication failed due to invalid email or password.",
             metadata: { userId: user.id },
           }),
         );
