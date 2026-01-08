@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { cleanupInvalidToken } from "@/modules/auth/application/use-cases/rotate-session.use-case";
+import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
   evaluateSessionLifecycle,
@@ -15,21 +16,6 @@ import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-/**
- * Silently cleans up an invalid session token.
- *
- * Swallows errors since cleanup is best-effort.
- */
-export async function cleanupInvalidToken(
-  sessionCookieAdapter: SessionStoreContract,
-): Promise<void> {
-  try {
-    await sessionCookieAdapter.delete();
-  } catch {
-    // ignore cleanup failure - best effort
-  }
-}
 
 /**
  * RotateSessionUseCase
