@@ -1,13 +1,13 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import { makeRandomPassword } from "@/modules/auth/domain/policies/password.policy";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterError,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/registration.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
+import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import { toUserId } from "@/shared/branding/converters/id-converters";
@@ -22,11 +22,13 @@ import type { Result } from "@/shared/results/result.types";
 export class CreateDemoUserUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
+  private readonly passwordGenerator: PasswordGeneratorContract;
   private readonly uow: UnitOfWorkContract;
 
   constructor(
     uow: UnitOfWorkContract,
     hasher: PasswordHasherContract,
+    passwordGenerator: PasswordGeneratorContract,
     logger: LoggingClientContract,
   ) {
     this.logger = logger.child({
@@ -34,6 +36,7 @@ export class CreateDemoUserUseCase {
       useCase: "createDemoUser",
     });
     this.hasher = hasher;
+    this.passwordGenerator = passwordGenerator;
     this.uow = uow;
   }
 
@@ -42,7 +45,7 @@ export class CreateDemoUserUseCase {
     const logger = this.logger.child({ role });
 
     try {
-      const demoPassword = makeRandomPassword();
+      const demoPassword = this.passwordGenerator.generate(10);
       const passwordHash = await this.hasher.hash(demoPassword);
 
       const txResult = await this.uow.withTransaction(async (tx) => {
