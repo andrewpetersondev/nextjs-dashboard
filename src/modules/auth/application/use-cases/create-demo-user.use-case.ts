@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import { makeRandomPassword } from "@/modules/auth/domain/policies/password.policy";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterError,
@@ -10,7 +11,6 @@ import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { makeRandomPassword } from "@/shared/crypto/password-generator";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
