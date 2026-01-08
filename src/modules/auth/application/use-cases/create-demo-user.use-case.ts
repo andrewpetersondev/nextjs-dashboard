@@ -6,12 +6,11 @@ import {
   makeInvalidDemoCounterError,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/registration.policy";
+import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
-import { toUserId } from "@/shared/branding/converters/id-converters";
-import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
@@ -71,12 +70,7 @@ export class CreateDemoUserUseCase {
 
         const created = createdResult.value;
 
-        return Ok<AuthUserOutputDto>({
-          email: created.email,
-          id: toUserId(created.id),
-          role: parseUserRole(created.role),
-          username: created.username,
-        });
+        return Ok<AuthUserOutputDto>(toAuthUserOutputDto(created));
       });
 
       if (!txResult.ok) {

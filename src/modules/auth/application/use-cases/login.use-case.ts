@@ -3,6 +3,7 @@ import "server-only";
 import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import { applyAntiEnumerationPolicy } from "@/modules/auth/domain/policies/auth-security.policy";
+import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -74,12 +75,7 @@ export class LoginUseCase {
         );
       }
 
-      return Ok({
-        email: user.email,
-        id: user.id,
-        role: user.role,
-        username: user.username,
-      });
+      return Ok(toAuthUserOutputDto(user));
     } catch (err: unknown) {
       this.logger.error("login.use-case.execute failed. error catch block");
       return Err(normalizeUnknownToAppError(err, "unexpected"));
