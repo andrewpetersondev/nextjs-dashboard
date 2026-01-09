@@ -20,7 +20,7 @@ import type { Result } from "@/shared/results/result.types";
  * VerifySessionUseCase
  *
  * Single-capability query:
- * - Reads token from sessionCookieAdapter
+ * - Reads token from sessionStore
  * - Decodes and validates claims
  * - Returns session transport or failure reason
  *
@@ -28,20 +28,20 @@ import type { Result } from "@/shared/results/result.types";
  */
 export class VerifySessionUseCase {
   private readonly logger: LoggingClientContract;
-  private readonly sessionCookieAdapter: SessionStoreContract;
-  private readonly sessionTokenAdapter: SessionTokenServiceContract;
+  private readonly sessionStore: SessionStoreContract;
+  private readonly sessionTokenService: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "verifySession");
-    this.sessionCookieAdapter = deps.sessionCookieAdapter;
-    this.sessionTokenAdapter = deps.sessionTokenAdapter;
+    this.sessionStore = deps.sessionStore;
+    this.sessionTokenService = deps.sessionTokenService;
   }
 
   async execute(): Promise<Result<SessionTransport, AppError>> {
     const readResult = await readSessionTokenHelper(
       {
-        sessionCookieAdapter: this.sessionCookieAdapter,
-        sessionTokenAdapter: this.sessionTokenAdapter,
+        sessionCookieAdapter: this.sessionStore,
+        sessionTokenAdapter: this.sessionTokenService,
       },
       { cleanupOnInvalidToken: false },
     );

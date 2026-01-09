@@ -14,7 +14,7 @@ import type { Result } from "@/shared/results/result.types";
  * This abstraction allows workflows to remain independent of the specific
  * infrastructure implementation (JWT, Cookies, etc.).
  */
-export interface SessionAdapterContract {
+export interface SessionServiceContract {
   establish(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>>;

@@ -22,13 +22,13 @@ import { safeExecute } from "@/shared/results/safe-execute";
  */
 export class RotateSessionUseCase {
   private readonly logger: LoggingClientContract;
-  private readonly sessionCookieAdapter: SessionStoreContract;
-  private readonly sessionTokenAdapter: SessionTokenServiceContract;
+  private readonly sessionStore: SessionStoreContract;
+  private readonly sessionTokenService: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "rotateSession");
-    this.sessionCookieAdapter = deps.sessionCookieAdapter;
-    this.sessionTokenAdapter = deps.sessionTokenAdapter;
+    this.sessionStore = deps.sessionStore;
+    this.sessionTokenService = deps.sessionTokenService;
   }
 
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
@@ -37,8 +37,8 @@ export class RotateSessionUseCase {
       async () => {
         const readResult = await readSessionTokenHelper(
           {
-            sessionCookieAdapter: this.sessionCookieAdapter,
-            sessionTokenAdapter: this.sessionTokenAdapter,
+            sessionCookieAdapter: this.sessionStore,
+            sessionTokenAdapter: this.sessionTokenService,
           },
           { cleanupOnInvalidToken: true },
         );
@@ -65,7 +65,7 @@ export class RotateSessionUseCase {
           userId: userIdCodec.decode(userId),
         };
 
-        const issuedResult = await this.sessionTokenAdapter.issue(user);
+        const issuedResult = await this.sessionTokenService.issue(user);
 
         if (!issuedResult.ok) {
           return Err(issuedResult.error);
@@ -76,7 +76,7 @@ export class RotateSessionUseCase {
         await setSessionCookieAndLogHelper(
           {
             logger: this.logger,
-            sessionCookieAdapter: this.sessionCookieAdapter,
+            sessionCookieAdapter: this.sessionStore,
           },
           {
             expiresAtMs,

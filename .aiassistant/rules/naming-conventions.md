@@ -13,6 +13,18 @@ Standardized naming to ensure predictability, discoverability, and easy refactor
 
 ---
 
+## Core Naming Principles
+
+1. **Consumer-Centric Naming**: Use Cases and Workflows should depend on "Services" or "Repositories." Avoid implementation-leaky words like "Adapter" or "Cookie" in Application layer contracts or dependency names.
+2. **Consistency Over Strict Suffixes**: If an object is treated as a "Service" by its consumers, its contract and dependency name should reflect that (e.g., `SessionServiceContract`), even if it is implemented by an adapter.
+3. **Domain-Aligned Verbs**: Method names in contracts should match the business language (e.g., `terminate` instead of `deleteCookie`).
+4. **Logic vs. Capability**:
+   - **Policies (`.policy.ts`)** represent the logic/rules (The "Brain").
+   - **Contracts (`.contract.ts`)** represent the interface for side-effects or external capabilities (The "Hands").
+5. **Reduce Synonym Drift**: Stick to the standard verb vocabulary to keep the codebase predictable.
+
+---
+
 ## File and Folder Naming
 
 - **Files**: Use **kebab-case**. Filename must match the **primary export** (e.g., `to-pg-error.ts` exports `toPgError`).
@@ -53,11 +65,11 @@ To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the typ
 
 ## Implementation vs. Contract Naming
 
-To ensure Dependency Inversion is obvious:
+To ensure Dependency Inversion is obvious and clean:
 
-- **Contracts (Interfaces)**: Must use the `.contract.ts` suffix and `Contract` PascalCase suffix (e.g., `UserRepositoryContract`).
-- **Adapters (Classes)**: Must use the `.adapter.ts` suffix. The class name should reflect the technology or implementation detail (e.g., `PgUserRepositoryAdapter` or `BcryptHasherAdapter`).
-- **Dependency Injection**: Use the name of the contract (minus the suffix) for member variables (e.g., `private readonly userRepo: UserRepositoryContract`).
+- **Contracts (Interfaces)**: Must use the `.contract.ts` suffix and `Contract` PascalCase suffix. Use consumer-centric names (e.g., `SessionServiceContract` instead of `SessionAdapterContract`).
+- **Adapters (Classes)**: Must use the `.adapter.ts` suffix. The class name should reflect the technology or implementation detail (e.g., `CookieSessionAdapter` or `PgUserRepositoryAdapter`).
+- **Dependency Injection**: Use the name of the contract (minus the suffix) for member variables (e.g., `private readonly sessionService: SessionServiceContract`). Avoid using `adapter` in variable names within the Application layer.
 
 ## Function Naming: Verb Vocabulary
 
@@ -81,3 +93,9 @@ To ensure Dependency Inversion is obvious:
 
 - Use **PascalCase**.
 - **Integration Scoping**: Mention the integration if the type is not generic (e.g., `PgErrorMetadata` vs `ErrorMetadataValue`).
+
+## Revised Naming Principles
+
+1. Consistency Over Strict Suffixes: If an object is treated as a "Service" by its consumers (Use Cases/Workflows), its contract and dependency name should reflect that, even if it eventually adapts to an external system.
+2. Consumer-Centric Naming: Use Cases should depend on "Services" or "Repositories." "Adapter" is an implementation detail belonging to the Infrastructure layer.
+3. Domain-Aligned Verbs: Ensure method names in contracts match the language used in the business logic (e.g., terminate vs logout).

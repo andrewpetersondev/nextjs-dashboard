@@ -1,5 +1,8 @@
 import "server-only";
 
+import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
+import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/establish-session.use-case";
 import { GetSessionUseCase } from "@/modules/auth/application/use-cases/get-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotate-session.use-case";
@@ -12,24 +15,22 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 
 /**
  * Composition Root for Session operations.
- * Returns an object containing pre-wired session capabilities.
+ * Returns a wired implementation of the SessionServiceContract.
  */
 export function createSessionServiceFactory(
   logger: LoggingClientContract,
   requestId: string,
-) {
+): SessionServiceContract {
   const scopedLogger = logger.withContext("auth").withRequest(requestId);
-  const sessionCookieAdapter = createSessionCookieAdapter();
-  const sessionTokenAdapter = createSessionTokenAdapter();
 
-  const deps = {
+  const deps: SessionUseCaseDependencies = {
     logger: scopedLogger,
-    sessionCookieAdapter,
-    sessionTokenAdapter,
+    sessionStore: createSessionCookieAdapter(),
+    sessionTokenService: createSessionTokenAdapter(),
   };
 
   return {
-    establish: (user: Parameters<EstablishSessionUseCase["execute"]>[0]) =>
+    establish: (user: SessionPrincipalDto) =>
       new EstablishSessionUseCase(deps).execute(user),
     read: () => new GetSessionUseCase(deps).execute(),
     rotate: () => new RotateSessionUseCase(deps).execute(),

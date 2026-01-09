@@ -17,17 +17,17 @@ import { safeExecute } from "@/shared/results/safe-execute";
  *
  * Single-capability application use-case:
  * - Issue a new session token via SessionTokenService
- * - Persist it via SessionStoreContract
+ * - Persist it via SessionStore
  */
 export class EstablishSessionUseCase {
   private readonly logger: LoggingClientContract;
-  private readonly sessionCookieAdapter: SessionStoreContract;
-  private readonly sessionTokenAdapter: SessionTokenServiceContract;
+  private readonly sessionStore: SessionStoreContract;
+  private readonly sessionTokenService: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "establishSession");
-    this.sessionCookieAdapter = deps.sessionCookieAdapter;
-    this.sessionTokenAdapter = deps.sessionTokenAdapter;
+    this.sessionStore = deps.sessionStore;
+    this.sessionTokenService = deps.sessionTokenService;
   }
 
   execute(
@@ -37,7 +37,7 @@ export class EstablishSessionUseCase {
       async () => {
         const sessionStart = Date.now();
 
-        const issuedResult = await this.sessionTokenAdapter.issue({
+        const issuedResult = await this.sessionTokenService.issue({
           role: user.role,
           sessionStart,
           userId: user.id,
@@ -52,7 +52,7 @@ export class EstablishSessionUseCase {
         await setSessionCookieAndLogHelper(
           {
             logger: this.logger,
-            sessionCookieAdapter: this.sessionCookieAdapter,
+            sessionCookieAdapter: this.sessionStore,
           },
           {
             expiresAtMs,

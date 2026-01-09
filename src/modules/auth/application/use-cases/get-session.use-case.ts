@@ -24,13 +24,13 @@ import { safeExecute } from "@/shared/results/safe-execute";
  */
 export class GetSessionUseCase {
   private readonly logger: LoggingClientContract;
-  private readonly sessionCookieAdapter: SessionStoreContract;
-  private readonly sessionTokenAdapter: SessionTokenServiceContract;
+  private readonly sessionStore: SessionStoreContract;
+  private readonly sessionTokenService: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "getSession");
-    this.sessionCookieAdapter = deps.sessionCookieAdapter;
-    this.sessionTokenAdapter = deps.sessionTokenAdapter;
+    this.sessionStore = deps.sessionStore;
+    this.sessionTokenService = deps.sessionTokenService;
   }
 
   execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
@@ -38,8 +38,8 @@ export class GetSessionUseCase {
       async () => {
         const readResult = await readSessionTokenHelper(
           {
-            sessionCookieAdapter: this.sessionCookieAdapter,
-            sessionTokenAdapter: this.sessionTokenAdapter,
+            sessionCookieAdapter: this.sessionStore,
+            sessionTokenAdapter: this.sessionTokenService,
           },
           { cleanupOnInvalidToken: true },
         );
@@ -58,7 +58,7 @@ export class GetSessionUseCase {
 
         // Ensure we have a valid identity before converting to principal
         if (!decoded.userId) {
-          await cleanupInvalidTokenHelper(this.sessionCookieAdapter);
+          await cleanupInvalidTokenHelper(this.sessionStore);
           this.logger.operation("warn", "Session missing userId", {
             operationContext: "session",
             operationIdentifiers: { reason: "invalid_claims" },

@@ -13,14 +13,14 @@ import type { Result } from "@/shared/results/result.types";
  */
 export interface SessionTokenServiceContract {
   /**
-   * Issues a new session token with the provided claims.
-   */
-  issue(input: IssueTokenInput): Promise<Result<IssuedToken, AppError>>;
-
-  /**
    * Decodes a token and returns the raw payload.
    */
   decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
+
+  /**
+   * Issues a new session token with the provided claims.
+   */
+  issue(input: IssueTokenInput): Promise<Result<IssuedToken, AppError>>;
 
   /**
    * Validates decoded claims against the schema.

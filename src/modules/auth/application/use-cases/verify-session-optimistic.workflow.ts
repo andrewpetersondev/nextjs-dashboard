@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
+import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -12,7 +12,7 @@ import type { Result } from "@/shared/results/result.types";
  */
 export async function verifySessionOptimisticWorkflow(
   deps: Readonly<{
-    sessionService: SessionAdapterContract;
+    sessionService: SessionServiceContract;
   }>,
 ): Promise<Result<SessionTransport, AppError>> {
   return await deps.sessionService.verify();

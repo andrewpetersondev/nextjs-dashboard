@@ -17,11 +17,11 @@ import { safeExecute } from "@/shared/results/safe-execute";
  */
 export class TerminateSessionUseCase {
   private readonly logger: LoggingClientContract;
-  private readonly sessionCookieAdapter: SessionStoreContract;
+  private readonly sessionStore: SessionStoreContract;
 
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "terminateSession");
-    this.sessionCookieAdapter = deps.sessionCookieAdapter;
+    this.sessionStore = deps.sessionStore;
   }
 
   execute(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
@@ -30,7 +30,7 @@ export class TerminateSessionUseCase {
         await deleteSessionCookieAndLogHelper(
           {
             logger: this.logger,
-            sessionCookieAdapter: this.sessionCookieAdapter,
+            sessionCookieAdapter: this.sessionStore,
           },
           {
             identifiers: { reason },

@@ -9,6 +9,6 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  */
 export type SessionUseCaseDependencies = Readonly<{
   logger: LoggingClientContract;
-  sessionCookieAdapter: SessionStoreContract;
-  sessionTokenAdapter: SessionTokenServiceContract;
+  sessionStore: SessionStoreContract;
+  sessionTokenService: SessionTokenServiceContract;
 }>;
