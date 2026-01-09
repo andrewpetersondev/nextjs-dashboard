@@ -3,6 +3,8 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
@@ -26,38 +28,41 @@ export class GetSessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = deps.logger.child({
-      scope: "use-case",
-      useCase: "readSession",
-    });
+    this.logger = makeAuthUseCaseLogger(deps.logger, "getSession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
     try {
-      const token = await this.sessionCookieAdapter.get();
+      const readResult = await readSessionToken(
+        {
+          sessionCookieAdapter: this.sessionCookieAdapter,
+          sessionTokenAdapter: this.sessionTokenAdapter,
+        },
+        { cleanupOnInvalidToken: true },
+      );
 
-      if (!token) {
+      if (!readResult.ok) {
+        return Err(readResult.error);
+      }
+
+      const outcome = readResult.value;
+
+      if (outcome.kind !== "decoded") {
         return Ok(undefined);
       }
 
-      const decodedResult = await this.sessionTokenAdapter.decode(token);
+      const decoded = outcome.decoded;
 
-      if (!decodedResult.ok) {
-        await cleanupInvalidToken(this.sessionCookieAdapter);
-
-        if (decodedResult.error.key === "unexpected") {
-          return Err(decodedResult.error);
-        }
-
-        return Ok(undefined);
-      }
-
-      const decoded = decodedResult.value;
-
+      // Ensure we have a valid identity before converting to principal
       if (!decoded.userId) {
         await cleanupInvalidToken(this.sessionCookieAdapter);
+        this.logger.operation("warn", "Session missing userId", {
+          operationContext: "session",
+          operationIdentifiers: { reason: "invalid_claims" },
+          operationName: "session.read.invalid_claims",
+        });
         return Ok(undefined);
       }
 
