@@ -2,11 +2,13 @@ import "server-only";
 
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
+import { makeSession } from "@/modules/auth/domain/entities/session.entity";
 import {
   evaluateSessionLifecyclePolicy,
   requiresRotation,
   requiresTermination,
 } from "@/modules/auth/domain/policies/session-lifecycle.policy";
+import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
 import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
@@ -18,7 +20,9 @@ import type { Result } from "@/shared/results/result.types";
  * Orchestrates the session rotation lifecycle.
  * Uses helpers and use-cases to decide whether to rotate, terminate, or skip.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <why is this function not used?>
 export async function rotateSessionWorkflow(deps: {
+  // todo: do i want to use `ReturnType<...>` ? probably not
   sessionService: ReturnType<typeof createSessionServiceFactory>;
 }): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
   const { sessionService } = deps;
@@ -53,11 +57,17 @@ export async function rotateSessionWorkflow(deps: {
     return Ok({ reason: "invalid_or_missing_user", refreshed: false });
   }
 
-  // 2. Evaluate lifecycle policy using the raw claims
-  const decision = evaluateSessionLifecyclePolicy(
-    decoded,
-    decoded.sessionStart,
-  );
+  // 1. Map raw claims to Domain Entity
+  const session = makeSession({
+    expiresAt: decoded.expiresAt,
+    issuedAt: decoded.iat * 1000,
+    role: decoded.role,
+    sessionStart: decoded.sessionStart,
+    userId: userIdCodec.decode(decoded.userId),
+  });
+
+  // 2. Evaluate lifecycle policy using the Domain Entity
+  const decision = evaluateSessionLifecyclePolicy(session);
 
   // 3. Branch based on policy decision
   if (requiresTermination(decision)) {

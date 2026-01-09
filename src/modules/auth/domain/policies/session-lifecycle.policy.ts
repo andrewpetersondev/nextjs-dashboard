@@ -1,8 +1,14 @@
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
-  absoluteLifetimePolicy,
+  getSessionTimeLeftMs,
+  isSessionAbsoluteLifetimeExceeded,
+  isSessionApproachingExpiry,
+  isSessionExpired,
+  type SessionEntity,
+} from "@/modules/auth/domain/entities/session.entity";
+import {
   MAX_ABSOLUTE_SESSION_MS,
-  shouldRefreshTokenPolicy,
+  SESSION_REFRESH_THRESHOLD_MS,
+  type SessionLifecycleReason,
 } from "@/modules/auth/domain/policies/session.policy";
 
 export type SessionLifecycleAction = "continue" | "rotate" | "terminate";
@@ -20,56 +26,47 @@ export type SessionLifecycleDecision =
     }>
   | Readonly<{
       action: "terminate";
-      reason: "expired" | "absolute_limit_exceeded";
+      reason: Extract<
+        SessionLifecycleReason,
+        "expired" | "absolute_limit_exceeded"
+      >;
       ageMs?: number;
       maxMs?: number;
     }>;
 
 /**
- * Evaluates session lifecycle state and returns a pure decision.
- * No side effects - just determines what action should be taken.
- *
- * @param decoded - The decoded JWT payload containing session claims
- * @param sessionStart - The session start timestamp in milliseconds
- * @returns A decision indicating whether to continue, rotate, or terminate the session
+ * Pure function that evaluates the state of a session and decides on the next architectural action.
  */
 export function evaluateSessionLifecyclePolicy(
-  decoded: SessionTokenClaims,
-  sessionStart: number,
+  session: SessionEntity,
+  now: number = Date.now(),
 ): SessionLifecycleDecision {
-  const { age, exceeded } = absoluteLifetimePolicy({ sessionStart });
+  const { ageMs, exceeded } = isSessionAbsoluteLifetimeExceeded(
+    session,
+    MAX_ABSOLUTE_SESSION_MS,
+    now,
+  );
 
   if (exceeded) {
     return {
       action: "terminate",
-      ageMs: age,
+      ageMs,
       maxMs: MAX_ABSOLUTE_SESSION_MS,
       reason: "absolute_limit_exceeded",
     };
   }
 
-  const { refresh, timeLeftMs } = shouldRefreshTokenPolicy(decoded);
-
-  if (timeLeftMs <= 0) {
-    return {
-      action: "terminate",
-      reason: "expired",
-    };
+  if (isSessionExpired(session, now)) {
+    return { action: "terminate", reason: "expired" };
   }
 
-  if (refresh) {
-    return {
-      action: "rotate",
-      reason: "approaching_expiry",
-      timeLeftMs,
-    };
+  const timeLeftMs = getSessionTimeLeftMs(session, now);
+
+  if (isSessionApproachingExpiry(session, SESSION_REFRESH_THRESHOLD_MS, now)) {
+    return { action: "rotate", reason: "approaching_expiry", timeLeftMs };
   }
 
-  return {
-    action: "continue",
-    reason: "valid",
-    timeLeftMs,
-  };
+  return { action: "continue", reason: "valid", timeLeftMs };
 }
 
 /**

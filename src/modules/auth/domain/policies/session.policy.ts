@@ -2,7 +2,7 @@ import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authe
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
-import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/update-session-success.dto";
+import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 
 export const SESSION_DURATION_MS = 900_000 as const; // 15 minutes
@@ -20,61 +20,12 @@ export type TerminateSessionReason =
   | "user_logout";
 
 /**
- * Session policy outcome types.
- *
- * Policy boundary: these represent expected decisions/outcomes, not errors.
+ * Domain Policy: Reasons for session lifecycle decisions.
  */
-export type UpdateSessionFailureReason =
-  | "absolute_lifetime_exceeded"
-  | "invalid_or_missing_user"
-  | "no_cookie"
-  | "not_needed";
-
-/** Compute absolute lifetime status from immutable sessionStart. */
-export function absoluteLifetimePolicy(user?: {
-  sessionStart?: number;
-  userId?: string;
-}): {
-  age: number;
-  exceeded: boolean;
-} {
-  const start = user?.sessionStart ?? 0;
-  const age = Date.now() - start;
-  return { age, exceeded: !start || age > MAX_ABSOLUTE_SESSION_MS };
-}
-
-/**
- * Milliseconds remaining until token expiry (negative if expired).
- *
- * Prefers `expiresAt` (ms) when present; falls back to `exp` (seconds).
- */
-export function timeLeftMsPolicy(payload?: {
-  exp?: number;
-  expiresAt?: number;
-}): number {
-  if (payload?.expiresAt && Number.isFinite(payload.expiresAt)) {
-    return payload.expiresAt - Date.now();
-  }
-  const expMs = (payload?.exp ?? 0) * ONE_SECOND_MS;
-  return expMs - Date.now();
-}
-
-export function shouldRefreshTokenPolicy(decoded: {
-  exp?: number;
-  expiresAt?: number;
-}): {
-  refresh: boolean;
-  timeLeftMs: number;
-} {
-  const remaining = timeLeftMsPolicy({
-    exp: decoded.exp,
-    expiresAt: decoded.expiresAt,
-  });
-  return {
-    refresh: remaining <= SESSION_REFRESH_THRESHOLD_MS,
-    timeLeftMs: remaining,
-  };
-}
+export type SessionLifecycleReason =
+  | TerminateSessionReason
+  | "approaching_expiry"
+  | "valid";
 
 export function makeSessionClaimsPolicy(
   input: IssueTokenRequestDto & { expiresAtMs: number; iatMs: number },
