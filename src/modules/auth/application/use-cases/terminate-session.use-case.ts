@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { deleteSessionCookieAndLog } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { deleteSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -20,14 +20,14 @@ export class TerminateSessionUseCase {
   private readonly sessionCookieAdapter: SessionStoreContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLogger(deps.logger, "terminateSession");
+    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "terminateSession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
   }
 
   execute(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
     return safeExecute(
       async () => {
-        await deleteSessionCookieAndLog(
+        await deleteSessionCookieAndLogHelper(
           {
             logger: this.logger,
             sessionCookieAdapter: this.sessionCookieAdapter,

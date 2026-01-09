@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
@@ -29,7 +29,7 @@ export class SignupUseCase {
     logger: LoggingClientContract,
   ) {
     this.hasher = hasher;
-    this.logger = makeAuthUseCaseLogger(logger, "signupUser");
+    this.logger = makeAuthUseCaseLoggerHelper(logger, "signupUser");
     this.uow = uow;
   }
 

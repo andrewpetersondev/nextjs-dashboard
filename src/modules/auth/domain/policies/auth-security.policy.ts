@@ -7,7 +7,7 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
  *
  * Standardizes how the system responds to missing or malformed sessions.
  */
-export function makeMissingSessionError(): AppError {
+export function makeMissingSessionErrorPolicy(): AppError {
   return makeAppError(APP_ERROR_KEYS.unauthorized, {
     cause:
       "TODO: I DONT WANT TO MAKE CAUSE OPTIONAL AT THIS TIME, BUT I MIGHT IN THE FUTURE. SHOULD I RETHINK MY" +
@@ -20,7 +20,7 @@ export function makeMissingSessionError(): AppError {
   });
 }
 
-export function makeInvalidSessionClaimsError(cause?: unknown): AppError {
+export function makeInvalidSessionClaimsErrorPolicy(cause?: unknown): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, {
     cause: cause instanceof Error ? cause : String(cause ?? "unknown_reason"),
     message: "Session contains invalid or missing identity claims.",

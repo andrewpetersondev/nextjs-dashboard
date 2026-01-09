@@ -1,8 +1,8 @@
 import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import { createDemoUserTx } from "@/modules/auth/application/helpers/create-demo-user.tx.helper";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { createDemoUserTxHelper } from "@/modules/auth/application/helpers/create-demo-user.tx.helper";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
@@ -24,7 +24,7 @@ export class CreateDemoUserUseCase {
     passwordGenerator: PasswordGeneratorContract,
     logger: LoggingClientContract,
   ) {
-    this.logger = makeAuthUseCaseLogger(logger, "createDemoUser");
+    this.logger = makeAuthUseCaseLoggerHelper(logger, "createDemoUser");
     this.hasher = hasher;
     this.passwordGenerator = passwordGenerator;
     this.uow = uow;
@@ -33,7 +33,7 @@ export class CreateDemoUserUseCase {
   execute(role: UserRole): Promise<Result<AuthUserOutputDto, AppError>> {
     return safeExecute<AuthUserOutputDto>(
       async () => {
-        const result = await createDemoUserTx(
+        const result = await createDemoUserTxHelper(
           {
             hasher: this.hasher,
             passwordGenerator: this.passwordGenerator,

@@ -2,11 +2,11 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import {
-  makeInvalidSessionClaimsError,
-  makeMissingSessionError,
+  makeInvalidSessionClaimsErrorPolicy,
+  makeMissingSessionErrorPolicy,
 } from "@/modules/auth/domain/policies/auth-security.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
@@ -32,13 +32,13 @@ export class VerifySessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLogger(deps.logger, "verifySession");
+    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "verifySession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(): Promise<Result<SessionTransport, AppError>> {
-    const readResult = await readSessionToken(
+    const readResult = await readSessionTokenHelper(
       {
         sessionCookieAdapter: this.sessionCookieAdapter,
         sessionTokenAdapter: this.sessionTokenAdapter,
@@ -63,7 +63,7 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "no_token" },
         operationName: "session.verify.no_token",
       });
-      return Err(makeMissingSessionError());
+      return Err(makeMissingSessionErrorPolicy());
     }
 
     if (outcome.kind === "invalid_token") {
@@ -72,7 +72,7 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "decode_failed" },
         operationName: "session.verify.decode_failed",
       });
-      return Err(makeMissingSessionError()); // Consistent with "no valid session"
+      return Err(makeMissingSessionErrorPolicy()); // Consistent with "no valid session"
     }
 
     const decoded = outcome.decoded;
@@ -83,7 +83,9 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "invalid_claims" },
         operationName: "session.verify.invalid_claims",
       });
-      return Err(makeInvalidSessionClaimsError("Missing userId in claims"));
+      return Err(
+        makeInvalidSessionClaimsErrorPolicy("Missing userId in claims"),
+      );
     }
 
     return Ok({

@@ -1,8 +1,8 @@
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
-  absoluteLifetime,
+  absoluteLifetimePolicy,
   MAX_ABSOLUTE_SESSION_MS,
-  shouldRefreshToken,
+  shouldRefreshTokenPolicy,
 } from "./session.policy";
 
 export type SessionLifecycleAction = "continue" | "rotate" | "terminate";
@@ -37,7 +37,7 @@ export function evaluateSessionLifecycle(
   decoded: SessionTokenClaims,
   sessionStart: number,
 ): SessionLifecycleDecision {
-  const { age, exceeded } = absoluteLifetime({ sessionStart });
+  const { age, exceeded } = absoluteLifetimePolicy({ sessionStart });
 
   if (exceeded) {
     return {
@@ -48,7 +48,7 @@ export function evaluateSessionLifecycle(
     };
   }
 
-  const { refresh, timeLeftMs } = shouldRefreshToken(decoded);
+  const { refresh, timeLeftMs } = shouldRefreshTokenPolicy(decoded);
 
   if (timeLeftMs <= 0) {
     return {

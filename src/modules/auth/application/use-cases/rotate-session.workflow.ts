@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
+import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
   evaluateSessionLifecycle,
@@ -26,7 +26,7 @@ export async function rotateSessionWorkflow(deps: {
   // 1. Read and decode the raw token claims for policy evaluation.
   // We use the helper directly because we need internal claims (exp, sessionStart)
   // that are stripped by the high-level 'verify'/'read' use cases.
-  const readResult = await readSessionToken(
+  const readResult = await readSessionTokenHelper(
     {
       sessionCookieAdapter: createSessionCookieAdapter(),
       sessionTokenAdapter: createSessionTokenAdapter(),

@@ -3,8 +3,8 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { setSessionCookieAndLog } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -25,7 +25,7 @@ export class EstablishSessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLogger(deps.logger, "establishSession");
+    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "establishSession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
@@ -49,7 +49,7 @@ export class EstablishSessionUseCase {
 
         const { expiresAtMs, token } = issuedResult.value;
 
-        await setSessionCookieAndLog(
+        await setSessionCookieAndLogHelper(
           {
             logger: this.logger,
             sessionCookieAdapter: this.sessionCookieAdapter,

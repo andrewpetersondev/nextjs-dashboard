@@ -2,9 +2,9 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
-import { setSessionCookieAndLog } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
+import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
@@ -26,7 +26,7 @@ export class RotateSessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLogger(deps.logger, "rotateSession");
+    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "rotateSession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
@@ -35,7 +35,7 @@ export class RotateSessionUseCase {
   execute(): Promise<Result<UpdateSessionOutcome, AppError>> {
     return safeExecute<UpdateSessionOutcome>(
       async () => {
-        const readResult = await readSessionToken(
+        const readResult = await readSessionTokenHelper(
           {
             sessionCookieAdapter: this.sessionCookieAdapter,
             sessionTokenAdapter: this.sessionTokenAdapter,
@@ -73,7 +73,7 @@ export class RotateSessionUseCase {
 
         const { expiresAtMs, token } = issuedResult.value;
 
-        await setSessionCookieAndLog(
+        await setSessionCookieAndLogHelper(
           {
             logger: this.logger,
             sessionCookieAdapter: this.sessionCookieAdapter,

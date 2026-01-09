@@ -8,7 +8,7 @@ import type { SessionStoreContract } from "@/modules/auth/domain/services/sessio
  *
  * Swallows errors since cleanup is best-effort.
  */
-export async function cleanupInvalidToken(
+export async function cleanupInvalidTokenHelper(
   sessionStore: SessionStoreContract,
 ): Promise<void> {
   try {

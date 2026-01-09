@@ -8,7 +8,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  * @param logger - The base logger from dependencies.
  * @param useCase - The camelCase name of the use case (e.g., "getSession").
  */
-export function makeAuthUseCaseLogger(
+export function makeAuthUseCaseLoggerHelper(
   logger: LoggingClientContract,
   useCase: string,
 ): LoggingClientContract {

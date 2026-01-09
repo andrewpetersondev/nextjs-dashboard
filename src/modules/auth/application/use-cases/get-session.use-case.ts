@@ -3,10 +3,10 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
-import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
-import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
+import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
+import { toSessionPrincipalPolicy } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -28,7 +28,7 @@ export class GetSessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLogger(deps.logger, "getSession");
+    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "getSession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
@@ -36,7 +36,7 @@ export class GetSessionUseCase {
   execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
     return safeExecute(
       async () => {
-        const readResult = await readSessionToken(
+        const readResult = await readSessionTokenHelper(
           {
             sessionCookieAdapter: this.sessionCookieAdapter,
             sessionTokenAdapter: this.sessionTokenAdapter,
@@ -58,7 +58,7 @@ export class GetSessionUseCase {
 
         // Ensure we have a valid identity before converting to principal
         if (!decoded.userId) {
-          await cleanupInvalidToken(this.sessionCookieAdapter);
+          await cleanupInvalidTokenHelper(this.sessionCookieAdapter);
           this.logger.operation("warn", "Session missing userId", {
             operationContext: "session",
             operationIdentifiers: { reason: "invalid_claims" },
@@ -67,7 +67,7 @@ export class GetSessionUseCase {
           return Ok(undefined);
         }
 
-        return Ok(toSessionPrincipal(decoded));
+        return Ok(toSessionPrincipalPolicy(decoded));
       },
       {
         logger: this.logger,

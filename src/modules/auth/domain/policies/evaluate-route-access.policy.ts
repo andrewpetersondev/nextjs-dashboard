@@ -15,7 +15,7 @@ export type AuthRouteAccessDecision =
  * Pure function that determines route access based on claims and route type.
  * No side effects - just policy logic.
  */
-export function evaluateRouteAccess(
+export function evaluateRouteAccessPolicy(
   routeType: AuthRouteType,
   claims: SessionTokenClaims | undefined,
 ): AuthRouteAccessDecision {

@@ -58,7 +58,7 @@ export type UpdateSessionOutcome =
   | UpdateSessionSuccess;
 
 /** Compute absolute lifetime status from immutable sessionStart. */
-export function absoluteLifetime(user?: {
+export function absoluteLifetimePolicy(user?: {
   sessionStart?: number;
   userId?: string;
 }): {
@@ -75,7 +75,7 @@ export function absoluteLifetime(user?: {
  *
  * Prefers `expiresAt` (ms) when present; falls back to `exp` (seconds).
  */
-export function timeLeftMs(payload?: {
+export function timeLeftMsPolicy(payload?: {
   exp?: number;
   expiresAt?: number;
 }): number {
@@ -86,14 +86,14 @@ export function timeLeftMs(payload?: {
   return expMs - Date.now();
 }
 
-export function shouldRefreshToken(decoded: {
+export function shouldRefreshTokenPolicy(decoded: {
   exp?: number;
   expiresAt?: number;
 }): {
   refresh: boolean;
   timeLeftMs: number;
 } {
-  const remaining = timeLeftMs({
+  const remaining = timeLeftMsPolicy({
     exp: decoded.exp,
     expiresAt: decoded.expiresAt,
   });
@@ -103,7 +103,7 @@ export function shouldRefreshToken(decoded: {
   };
 }
 
-export function makeSessionClaims(
+export function makeSessionClaimsPolicy(
   input: IssueTokenInput & { expiresAtMs: number; iatMs: number },
 ) {
   return {
@@ -123,7 +123,7 @@ export function makeSessionClaims(
  * 1. Decoded session claims (requires decoding the userId string)
  * 2. Use case output DTOs (simple mapping)
  */
-export function toSessionPrincipal(
+export function toSessionPrincipalPolicy(
   source: SessionTokenClaims | AuthUserOutputDto | UpdateSessionSuccess,
 ): SessionPrincipalDto {
   if ("email" in source) {

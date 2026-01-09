@@ -3,7 +3,7 @@ import type { AuthRouteType } from "@/modules/auth/domain/policies/evaluate-rout
 /**
  * Determines the route type based on flags.
  */
-export function getRouteType(flags: {
+export function getRouteTypePolicy(flags: {
   isAdminRoute: boolean;
   isProtectedRoute: boolean;
   isPublicRoute: boolean;

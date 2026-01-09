@@ -2,11 +2,11 @@ import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
-import { evaluateRouteAccess } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
-import { getRouteType } from "@/modules/auth/domain/policies/get-route-type.policy";
+import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
+import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
 
 function toAuthorizationReason(
-  routeType: ReturnType<typeof getRouteType>,
+  routeType: ReturnType<typeof getRouteTypePolicy>,
   policyReason: "not_authenticated" | "not_authorized",
   decodeReason: "ok" | "no_cookie" | "decode_failed",
 ): AuthRequestAuthorizationReason {
@@ -82,13 +82,13 @@ export async function authorizeRequestPolicy(
 ): Promise<AuthRequestAuthorizationOutcome> {
   const decoded = await extractSessionClaims(input.cookie, deps.jwt);
 
-  const routeType = getRouteType({
+  const routeType = getRouteTypePolicy({
     isAdminRoute: input.isAdminRoute,
     isProtectedRoute: input.isProtectedRoute,
     isPublicRoute: input.isPublicRoute,
   });
 
-  const decision = evaluateRouteAccess(routeType, decoded.claims);
+  const decision = evaluateRouteAccessPolicy(routeType, decoded.claims);
 
   if (decision.allowed) {
     return { kind: "next", reason: "ok" };

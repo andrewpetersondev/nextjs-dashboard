@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
-import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
+import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -19,7 +19,7 @@ export type ReadSessionTokenOutcome =
 /**
  * Centralizes session token retrieval and decoding.
  */
-export async function readSessionToken(
+export async function readSessionTokenHelper(
   deps: Readonly<{
     sessionCookieAdapter: SessionStoreContract;
     sessionTokenAdapter: SessionTokenServiceContract;
@@ -39,7 +39,7 @@ export async function readSessionToken(
   if (!decodedResult.ok) {
     let didCleanup = false;
     if (options.cleanupOnInvalidToken) {
-      await cleanupInvalidToken(deps.sessionCookieAdapter);
+      await cleanupInvalidTokenHelper(deps.sessionCookieAdapter);
       didCleanup = true;
     }
 

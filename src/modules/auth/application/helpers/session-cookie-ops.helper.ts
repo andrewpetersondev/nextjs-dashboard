@@ -6,7 +6,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 /**
  * Persists a session token and logs the success.
  */
-export async function setSessionCookieAndLog(
+export async function setSessionCookieAndLogHelper(
   deps: Readonly<{
     logger: LoggingClientContract;
     sessionCookieAdapter: SessionStoreContract;
@@ -34,7 +34,7 @@ export async function setSessionCookieAndLog(
 /**
  * Deletes a session token and logs the outcome.
  */
-export async function deleteSessionCookieAndLog(
+export async function deleteSessionCookieAndLogHelper(
   deps: Readonly<{
     logger: LoggingClientContract;
     sessionCookieAdapter: SessionStoreContract;
