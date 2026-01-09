@@ -5,6 +5,10 @@ import type { SessionUseCaseDependencies } from "@/modules/auth/application/cont
 import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
+import {
+  deleteSessionCookieAndLog,
+  setSessionCookieAndLog,
+} from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
   evaluateSessionLifecycle,
@@ -14,10 +18,10 @@ import {
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * RotateSessionUseCase
@@ -39,76 +43,93 @@ export class RotateSessionUseCase {
   }
 
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-  async execute(): Promise<Result<UpdateSessionOutcome, AppError>> {
-    try {
-      const readResult = await readSessionToken(
-        {
-          sessionCookieAdapter: this.sessionCookieAdapter,
-          sessionTokenAdapter: this.sessionTokenAdapter,
-        },
-        { cleanupOnInvalidToken: true },
-      );
+  execute(): Promise<Result<UpdateSessionOutcome, AppError>> {
+    return safeExecute(
+      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+      async () => {
+        const readResult = await readSessionToken(
+          {
+            sessionCookieAdapter: this.sessionCookieAdapter,
+            sessionTokenAdapter: this.sessionTokenAdapter,
+          },
+          { cleanupOnInvalidToken: true },
+        );
 
-      if (!readResult.ok) {
-        return Err(readResult.error);
-      }
+        if (!readResult.ok) {
+          return readResult;
+        }
 
-      const outcome = readResult.value;
+        const outcome = readResult.value;
 
-      if (outcome.kind === "missing_token") {
-        this.logger.operation("debug", "Session rotation skipped: no cookie", {
+        if (outcome.kind === "missing_token") {
+          this.logger.operation(
+            "debug",
+            "Session rotation skipped: no cookie",
+            {
+              operationContext: "session",
+              operationIdentifiers: { reason: "no_cookie" },
+              operationName: "session.rotate.no_cookie",
+            },
+          );
+          return Ok({ reason: "no_cookie", refreshed: false });
+        }
+
+        if (outcome.kind === "invalid_token") {
+          this.logger.operation(
+            "warn",
+            "Session rotation failed: decode error",
+            {
+              operationContext: "session",
+              operationIdentifiers: { reason: "decode_failed" },
+              operationName: "session.rotate.decode_failed",
+            },
+          );
+          return Ok({ reason: "invalid_or_missing_user", refreshed: false });
+        }
+
+        const decoded = outcome.decoded;
+
+        // Type safety for policy: decision needs userId
+        if (!decoded.userId) {
+          await cleanupInvalidToken(this.sessionCookieAdapter);
+          return Ok({ reason: "invalid_or_missing_user", refreshed: false });
+        }
+
+        const decision = evaluateSessionLifecycle(
+          decoded,
+          decoded.sessionStart,
+        );
+
+        if (requiresTermination(decision)) {
+          return this.handleTermination(decision, decoded);
+        }
+
+        if (requiresRotation(decision)) {
+          return this.handleRotation(decoded);
+        }
+
+        this.logger.operation("debug", "Session rotation not needed", {
           operationContext: "session",
-          operationIdentifiers: { reason: "no_cookie" },
-          operationName: "session.rotate.no_cookie",
+          operationIdentifiers: {
+            reason: "not_needed",
+            timeLeftMs: decision.timeLeftMs,
+            userId: decoded.userId,
+          },
+          operationName: "session.rotate.not_needed",
         });
-        return Ok({ reason: "no_cookie", refreshed: false });
-      }
 
-      if (outcome.kind === "invalid_token") {
-        this.logger.operation("warn", "Session rotation failed: decode error", {
-          operationContext: "session",
-          operationIdentifiers: { reason: "decode_failed" },
-          operationName: "session.rotate.decode_failed",
-        });
-        return Ok({ reason: "invalid_or_missing_user", refreshed: false });
-      }
-
-      const decoded = outcome.decoded;
-
-      // Type safety for policy: decision needs userId
-      if (!decoded.userId) {
-        await cleanupInvalidToken(this.sessionCookieAdapter);
-        return Ok({ reason: "invalid_or_missing_user", refreshed: false });
-      }
-
-      const decision = evaluateSessionLifecycle(decoded, decoded.sessionStart);
-
-      if (requiresTermination(decision)) {
-        return this.handleTermination(decision, decoded);
-      }
-
-      if (requiresRotation(decision)) {
-        return this.handleRotation(decoded);
-      }
-
-      this.logger.operation("debug", "Session rotation not needed", {
-        operationContext: "session",
-        operationIdentifiers: {
+        return Ok({
           reason: "not_needed",
+          refreshed: false,
           timeLeftMs: decision.timeLeftMs,
-          userId: decoded.userId,
-        },
-        operationName: "session.rotate.not_needed",
-      });
-
-      return Ok({
-        reason: "not_needed",
-        refreshed: false,
-        timeLeftMs: decision.timeLeftMs,
-      });
-    } catch (err: unknown) {
-      return Err(normalizeUnknownToAppError(err, "unexpected"));
-    }
+        });
+      },
+      {
+        logger: this.logger,
+        message: "An unexpected error occurred while rotating the session.",
+        operation: "rotateSession",
+      },
+    );
   }
 
   private async handleTermination(
@@ -118,19 +139,23 @@ export class RotateSessionUseCase {
     >,
     decoded: { userId: string; role: string },
   ): Promise<Result<UpdateSessionOutcome, AppError>> {
-    this.logger.operation("info", `Session terminated: ${decision.reason}`, {
-      operationContext: "session",
-      operationIdentifiers: {
-        ageMs: decision.ageMs,
-        maxMs: decision.maxMs,
-        reason: decision.reason,
-        role: decoded.role,
-        userId: decoded.userId,
+    await deleteSessionCookieAndLog(
+      {
+        logger: this.logger,
+        sessionCookieAdapter: this.sessionCookieAdapter,
       },
-      operationName: `session.rotate.${decision.reason}`,
-    });
-
-    await this.sessionCookieAdapter.delete();
+      {
+        identifiers: {
+          ageMs: decision.ageMs,
+          maxMs: decision.maxMs,
+          reason: decision.reason,
+          role: decoded.role,
+          userId: decoded.userId,
+        },
+        message: `Session terminated: ${decision.reason}`,
+        operationName: `session.rotate.${decision.reason}`,
+      },
+    );
 
     if (decision.reason === "absolute_limit_exceeded") {
       return Ok({
@@ -166,18 +191,23 @@ export class RotateSessionUseCase {
 
     const { expiresAtMs, token } = issuedResult.value;
 
-    await this.sessionCookieAdapter.set(token, expiresAtMs);
-
-    this.logger.operation("info", "Session rotated successfully", {
-      operationContext: "session",
-      operationIdentifiers: {
-        expiresAt: expiresAtMs,
-        reason: "rotated",
-        role: user.role,
-        userId: user.userId,
+    await setSessionCookieAndLog(
+      {
+        logger: this.logger,
+        sessionCookieAdapter: this.sessionCookieAdapter,
       },
-      operationName: "session.rotate.success",
-    });
+      {
+        expiresAtMs,
+        identifiers: {
+          reason: "rotated",
+          role: user.role,
+          userId: user.userId,
+        },
+        message: "Session rotated successfully",
+        operationName: "session.rotate.success",
+        token,
+      },
+    );
 
     return Ok({
       expiresAt: expiresAtMs,

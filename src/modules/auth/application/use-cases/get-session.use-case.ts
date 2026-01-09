@@ -9,10 +9,10 @@ import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-
 import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
+import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * ReadSessionUseCase
@@ -33,42 +33,47 @@ export class GetSessionUseCase {
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
-  async execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
-    try {
-      const readResult = await readSessionToken(
-        {
-          sessionCookieAdapter: this.sessionCookieAdapter,
-          sessionTokenAdapter: this.sessionTokenAdapter,
-        },
-        { cleanupOnInvalidToken: true },
-      );
+  execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
+    return safeExecute(
+      async () => {
+        const readResult = await readSessionToken(
+          {
+            sessionCookieAdapter: this.sessionCookieAdapter,
+            sessionTokenAdapter: this.sessionTokenAdapter,
+          },
+          { cleanupOnInvalidToken: true },
+        );
 
-      if (!readResult.ok) {
-        return Err(readResult.error);
-      }
+        if (!readResult.ok) {
+          return readResult;
+        }
 
-      const outcome = readResult.value;
+        const outcome = readResult.value;
 
-      if (outcome.kind !== "decoded") {
-        return Ok(undefined);
-      }
+        if (outcome.kind !== "decoded") {
+          return Ok(undefined);
+        }
 
-      const decoded = outcome.decoded;
+        const decoded = outcome.decoded;
 
-      // Ensure we have a valid identity before converting to principal
-      if (!decoded.userId) {
-        await cleanupInvalidToken(this.sessionCookieAdapter);
-        this.logger.operation("warn", "Session missing userId", {
-          operationContext: "session",
-          operationIdentifiers: { reason: "invalid_claims" },
-          operationName: "session.read.invalid_claims",
-        });
-        return Ok(undefined);
-      }
+        // Ensure we have a valid identity before converting to principal
+        if (!decoded.userId) {
+          await cleanupInvalidToken(this.sessionCookieAdapter);
+          this.logger.operation("warn", "Session missing userId", {
+            operationContext: "session",
+            operationIdentifiers: { reason: "invalid_claims" },
+            operationName: "session.read.invalid_claims",
+          });
+          return Ok(undefined);
+        }
 
-      return Ok(toSessionPrincipal(decoded));
-    } catch (err: unknown) {
-      return Err(normalizeUnknownToAppError(err, "unexpected"));
-    }
+        return Ok(toSessionPrincipal(decoded));
+      },
+      {
+        logger: this.logger,
+        message: "An unexpected error occurred while reading the session.",
+        operation: "getSession",
+      },
+    );
   }
 }
