@@ -7,6 +7,13 @@ import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evalua
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
 
+/**
+ * Resolves session token claims from a raw cookie string, ensuring that decode failures are surfaced
+ * so downstream authorization can respond with an explicit redirect reason.
+ *
+ * @param cookie Cookie header value containing the encoded session token.
+ * @param jwt Codec used to decode the session token.
+ */
 async function extractSessionClaims(
   cookie: string | undefined,
   jwt: SessionTokenCodecContract,
@@ -28,6 +35,13 @@ async function extractSessionClaims(
   return { claims: decodedResult.value, reason: "ok" };
 }
 
+/**
+ * Authorizes a request against route access policies, returning either a pass-through decision
+ * or a redirect destination with contextual reason for UI handling and logging.
+ *
+ * @param input Request metadata, including route classification flags and path.
+ * @param deps Infrastructure dependencies required for decoding and routing.
+ */
 export async function authorizeRequestHelper(
   input: Readonly<{
     cookie: string | undefined;

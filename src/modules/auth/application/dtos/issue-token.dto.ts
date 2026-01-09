@@ -1,6 +1,6 @@
 import "server-only";
 
-export type IssuedToken = Readonly<{
+export type IssuedTokenDto = Readonly<{
   expiresAtMs: number;
   token: string;
 }>;

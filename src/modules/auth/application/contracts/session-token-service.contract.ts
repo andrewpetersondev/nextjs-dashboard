@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { IssuedToken } from "@/modules/auth/application/dtos/issue-token.dto";
+import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -18,7 +18,7 @@ export interface SessionTokenServiceContract {
   /**
    * Issues a new session token with the provided claims.
    */
-  issue(input: IssueTokenRequestDto): Promise<Result<IssuedToken, AppError>>;
+  issue(input: IssueTokenRequestDto): Promise<Result<IssuedTokenDto, AppError>>;
 
   /**
    * Validates decoded claims against the schema.

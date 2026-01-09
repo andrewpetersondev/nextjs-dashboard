@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import type { IssuedToken } from "@/modules/auth/application/dtos/issue-token.dto";
+import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
@@ -33,7 +33,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
    */
   async issue(
     input: IssueTokenRequestDto,
-  ): Promise<Result<IssuedToken, AppError>> {
+  ): Promise<Result<IssuedTokenDto, AppError>> {
     const now = Date.now();
     const expiresAtMs = now + SESSION_DURATION_MS;
 
