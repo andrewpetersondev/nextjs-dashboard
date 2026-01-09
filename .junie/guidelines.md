@@ -1,2 +1,4 @@
 - Use pnpm.
 - sort file trees and lists alphabetically.
+- if my rules conflict with each other tell me about the conflict and ask me what to do.
+- if my rules conflict with common practices tell me about the conflict and ask me what to do.

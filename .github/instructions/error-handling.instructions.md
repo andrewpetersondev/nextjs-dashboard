@@ -9,7 +9,7 @@ The project treats failures as first-class citizens using a "Result-first" appro
 
 ## The Result Pattern
 
-Use `Result<Ok, Err>` from `@/shared/result` for all **expected failures**.
+Use `Result<Ok, Err>` from `@/shared/results/result.types` for all **expected failures**.
 
 ### Layer Responsibilities
 
