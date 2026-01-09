@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/presentation/constants/auth-ui.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {
@@ -57,7 +57,7 @@ async function performSessionPing(): Promise<void> {
 
     const ct = res.headers.get(HEADER_CONTENT_TYPE) ?? "";
     if (res.ok && ct.includes(CONTENT_TYPE_JSON)) {
-      const outcome = (await res.json()) as UpdateSessionOutcome;
+      const outcome = (await res.json()) as UpdateSessionOutcomeDto;
 
       // Handle absolute lifetime exceeded - redirect to force re-authentication
       if (

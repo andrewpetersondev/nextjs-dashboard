@@ -2,10 +2,10 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -32,8 +32,8 @@ export class RotateSessionUseCase {
   }
 
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
-  execute(): Promise<Result<UpdateSessionOutcome, AppError>> {
-    return safeExecute<UpdateSessionOutcome>(
+  execute(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
+    return safeExecute<UpdateSessionOutcomeDto>(
       async () => {
         const readResult = await readSessionTokenHelper(
           {

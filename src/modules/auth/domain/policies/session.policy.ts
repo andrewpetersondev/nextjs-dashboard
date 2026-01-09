@@ -2,9 +2,8 @@ import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authe
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/update-session-success.dto";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
-import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 export const SESSION_DURATION_MS = 900_000 as const; // 15 minutes
 export const SESSION_REFRESH_THRESHOLD_MS = 120_000 as const; // 2 minutes
@@ -30,32 +29,6 @@ export type UpdateSessionFailureReason =
   | "invalid_or_missing_user"
   | "no_cookie"
   | "not_needed";
-
-export type UpdateSessionNotRotated = {
-  readonly ageMs?: number;
-  readonly maxMs?: number;
-  readonly reason: UpdateSessionFailureReason;
-  readonly refreshed: false;
-  readonly timeLeftMs?: number;
-};
-
-export type UpdateSessionSuccess = {
-  readonly expiresAt: number;
-  readonly reason: "rotated";
-  readonly refreshed: true;
-  readonly role: UserRole;
-  readonly userId: UserId;
-};
-
-/**
- * Policy/outcome union for session refresh.
- *
- * - `refreshed: false` cases are expected outcomes (no cookie, not needed, policy exceeded, invalid user)
- * - operational failures are represented as `Err(AppError)` at the service boundary
- */
-export type UpdateSessionOutcome =
-  | UpdateSessionNotRotated
-  | UpdateSessionSuccess;
 
 /** Compute absolute lifetime status from immutable sessionStart. */
 export function absoluteLifetimePolicy(user?: {
@@ -124,7 +97,7 @@ export function makeSessionClaimsPolicy(
  * 2. Use case output DTOs (simple mapping)
  */
 export function toSessionPrincipalPolicy(
-  source: SessionTokenClaims | AuthenticatedUserDto | UpdateSessionSuccess,
+  source: SessionTokenClaims | AuthenticatedUserDto | UpdateSessionSuccessDto,
 ): SessionPrincipalDto {
   if ("email" in source) {
     // Mapping from AuthUserOutputDto

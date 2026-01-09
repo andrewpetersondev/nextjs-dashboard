@@ -1,10 +1,8 @@
 import "server-only";
 
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import type {
-  TerminateSessionReason,
-  UpdateSessionOutcome,
-} from "@/modules/auth/domain/policies/session.policy";
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
+import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -19,7 +17,7 @@ export interface SessionServiceContract {
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>>;
   read(): Promise<Result<SessionPrincipalDto | undefined, AppError>>;
-  rotate(): Promise<Result<UpdateSessionOutcome, AppError>>;
+  rotate(): Promise<Result<UpdateSessionOutcomeDto, AppError>>;
   terminate(reason: TerminateSessionReason): Promise<Result<void, AppError>>;
   verify(): Promise<Result<SessionTransport, AppError>>;
 }

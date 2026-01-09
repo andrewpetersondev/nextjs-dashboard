@@ -1,9 +1,9 @@
 import "server-only";
 
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
-  evaluateSessionLifecycle,
+  evaluateSessionLifecyclePolicy,
   requiresRotation,
   requiresTermination,
 } from "@/modules/auth/domain/policies/session-lifecycle.policy";
@@ -20,7 +20,7 @@ import type { Result } from "@/shared/results/result.types";
  */
 export async function rotateSessionWorkflow(deps: {
   sessionService: ReturnType<typeof createSessionServiceFactory>;
-}): Promise<Result<UpdateSessionOutcome, AppError>> {
+}): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
   const { sessionService } = deps;
 
   // 1. Read and decode the raw token claims for policy evaluation.
@@ -54,7 +54,10 @@ export async function rotateSessionWorkflow(deps: {
   }
 
   // 2. Evaluate lifecycle policy using the raw claims
-  const decision = evaluateSessionLifecycle(decoded, decoded.sessionStart);
+  const decision = evaluateSessionLifecyclePolicy(
+    decoded,
+    decoded.sessionStart,
+  );
 
   // 3. Branch based on policy decision
   if (requiresTermination(decision)) {

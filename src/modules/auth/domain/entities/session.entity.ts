@@ -44,6 +44,22 @@ export function getSessionTimeLeftMs(
   return session.expiresAt - now;
 }
 
+export function isSessionExpired(
+  session: SessionEntity,
+  now: number = Date.now(),
+): boolean {
+  return getSessionTimeLeftMs(session, now) <= 0;
+}
+
+export function isSessionApproachingExpiry(
+  session: SessionEntity,
+  thresholdMs: number,
+  now: number = Date.now(),
+): boolean {
+  const remaining = getSessionTimeLeftMs(session, now);
+  return remaining > 0 && remaining <= thresholdMs;
+}
+
 /**
  * Domain Logic: Checks if the session has exceeded its absolute maximum lifetime.
  */
@@ -51,7 +67,7 @@ export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
   maxLifetimeMs: number,
   now: number = Date.now(),
-): { age: number; exceeded: boolean } {
-  const age = now - session.sessionStart;
-  return { age, exceeded: age > maxLifetimeMs };
+): { ageMs: number; exceeded: boolean } {
+  const ageMs = now - session.sessionStart;
+  return { ageMs, exceeded: ageMs > maxLifetimeMs };
 }

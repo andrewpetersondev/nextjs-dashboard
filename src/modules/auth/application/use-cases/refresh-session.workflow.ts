@@ -1,7 +1,8 @@
 import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
-import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
+
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
@@ -13,6 +14,6 @@ import type { Result } from "@/shared/results/result.types";
  */
 export async function refreshSessionWorkflow(
   deps: Readonly<{ sessionService: SessionServiceContract }>,
-): Promise<Result<UpdateSessionOutcome, AppError>> {
+): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
   return await deps.sessionService.rotate();
 }

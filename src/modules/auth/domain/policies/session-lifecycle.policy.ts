@@ -3,7 +3,7 @@ import {
   absoluteLifetimePolicy,
   MAX_ABSOLUTE_SESSION_MS,
   shouldRefreshTokenPolicy,
-} from "./session.policy";
+} from "@/modules/auth/domain/policies/session.policy";
 
 export type SessionLifecycleAction = "continue" | "rotate" | "terminate";
 
@@ -33,7 +33,7 @@ export type SessionLifecycleDecision =
  * @param sessionStart - The session start timestamp in milliseconds
  * @returns A decision indicating whether to continue, rotate, or terminate the session
  */
-export function evaluateSessionLifecycle(
+export function evaluateSessionLifecyclePolicy(
   decoded: SessionTokenClaims,
   sessionStart: number,
 ): SessionLifecycleDecision {
