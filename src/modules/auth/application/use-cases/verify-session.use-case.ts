@@ -2,6 +2,8 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
 import {
   makeInvalidSessionClaimsError,
   makeMissingSessionError,
@@ -30,18 +32,32 @@ export class VerifySessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = deps.logger.child({
-      scope: "use-case",
-      useCase: "verifySession",
-    });
+    this.logger = makeAuthUseCaseLogger(deps.logger, "verifySession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
   async execute(): Promise<Result<SessionTransport, AppError>> {
-    const token = await this.sessionCookieAdapter.get();
+    const readResult = await readSessionToken(
+      {
+        sessionCookieAdapter: this.sessionCookieAdapter,
+        sessionTokenAdapter: this.sessionTokenAdapter,
+      },
+      { cleanupOnInvalidToken: false },
+    );
 
-    if (!token) {
+    if (!readResult.ok) {
+      this.logger.operation("warn", "Session token decode failed", {
+        operationContext: "session",
+        operationIdentifiers: { reason: "decode_failed" },
+        operationName: "session.verify.decode_failed",
+      });
+      return Err(readResult.error);
+    }
+
+    const outcome = readResult.value;
+
+    if (outcome.kind === "missing_token") {
       this.logger.operation("debug", "No session token found", {
         operationContext: "session",
         operationIdentifiers: { reason: "no_token" },
@@ -50,18 +66,16 @@ export class VerifySessionUseCase {
       return Err(makeMissingSessionError());
     }
 
-    const decodedResult = await this.sessionTokenAdapter.decode(token);
-
-    if (!decodedResult.ok) {
+    if (outcome.kind === "invalid_token") {
       this.logger.operation("warn", "Session token decode failed", {
         operationContext: "session",
         operationIdentifiers: { reason: "decode_failed" },
         operationName: "session.verify.decode_failed",
       });
-      return Err(decodedResult.error);
+      return Err(makeMissingSessionError()); // Consistent with "no valid session"
     }
 
-    const decoded = decodedResult.value;
+    const decoded = outcome.decoded;
 
     if (!decoded.userId) {
       this.logger.operation("warn", "Session missing userId", {

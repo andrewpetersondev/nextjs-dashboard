@@ -2,6 +2,8 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import { makeAuthUseCaseLogger } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { readSessionToken } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidToken } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import type { UpdateSessionOutcome } from "@/modules/auth/domain/policies/session.policy";
 import {
@@ -31,19 +33,29 @@ export class RotateSessionUseCase {
   private readonly sessionTokenAdapter: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = deps.logger.child({
-      scope: "use-case",
-      useCase: "rotateSession",
-    });
+    this.logger = makeAuthUseCaseLogger(deps.logger, "rotateSession");
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
     this.sessionTokenAdapter = deps.sessionTokenAdapter;
   }
 
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
   async execute(): Promise<Result<UpdateSessionOutcome, AppError>> {
     try {
-      const current = await this.sessionCookieAdapter.get();
+      const readResult = await readSessionToken(
+        {
+          sessionCookieAdapter: this.sessionCookieAdapter,
+          sessionTokenAdapter: this.sessionTokenAdapter,
+        },
+        { cleanupOnInvalidToken: true },
+      );
 
-      if (!current) {
+      if (!readResult.ok) {
+        return Err(readResult.error);
+      }
+
+      const outcome = readResult.value;
+
+      if (outcome.kind === "missing_token") {
         this.logger.operation("debug", "Session rotation skipped: no cookie", {
           operationContext: "session",
           operationIdentifiers: { reason: "no_cookie" },
@@ -52,19 +64,23 @@ export class RotateSessionUseCase {
         return Ok({ reason: "no_cookie", refreshed: false });
       }
 
-      const decodedResult = await this.sessionTokenAdapter.decode(current);
-
-      if (!decodedResult.ok) {
+      if (outcome.kind === "invalid_token") {
         this.logger.operation("warn", "Session rotation failed: decode error", {
           operationContext: "session",
           operationIdentifiers: { reason: "decode_failed" },
           operationName: "session.rotate.decode_failed",
         });
+        return Ok({ reason: "invalid_or_missing_user", refreshed: false });
+      }
+
+      const decoded = outcome.decoded;
+
+      // Type safety for policy: decision needs userId
+      if (!decoded.userId) {
         await cleanupInvalidToken(this.sessionCookieAdapter);
         return Ok({ reason: "invalid_or_missing_user", refreshed: false });
       }
 
-      const decoded = decodedResult.value;
       const decision = evaluateSessionLifecycle(decoded, decoded.sessionStart);
 
       if (requiresTermination(decision)) {
