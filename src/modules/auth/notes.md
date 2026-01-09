@@ -38,13 +38,13 @@ Each section describes the problem, proposes a solution, and lists the files tha
 
 | Item | Title                     | Status | Files to Extract                              |
 | ---- | ------------------------- | ------ | --------------------------------------------- |
-| #1   | Session token reading     | TODO   | `read-session-token.helper.ts`                |
-| #2   | Cookie set/delete logging | TODO   | `session-cookie-ops.helper.ts`                |
+| #1   | Session token reading     | ✓ DONE | `read-session-token.helper.ts`                |
+| #2   | Cookie set/delete logging | ✓ DONE | `session-cookie-ops.helper.ts`                |
 | #3   | Rotate session branching  | TODO   | Split or convert to workflow                  |
 | #4   | Anti-enumeration errors   | ✓ DONE | `auth-error.factory.ts` (exists)              |
-| #5   | Workflow repetition       | TODO   | `establish-session-for-auth-user.workflow.ts` |
+| #5   | Workflow repetition       | ✓ DONE | `establish-session-for-auth-user.workflow.ts` |
 | #6   | Demo user transaction     | TODO   | `create-demo-user.tx.helper.ts`               |
-| #7   | Logger normalization      | TODO   | `make-auth-use-case-logger.helper.ts`         |
+| #7   | Logger normalization      | ✓ DONE | `make-auth-use-case-logger.helper.ts`         |
 
 Below are the main "repeat/complexity hotspots" in this folder that are good extraction targets (to helpers/policies/services), with **what** to extract and **why**.
 
@@ -259,8 +259,11 @@ This section proposes **concrete new files** and **how to update existing files*
 **Current state:**
 
 - ✓ Item #4: `auth-error.factory.ts` (exists)
-- ✓ Item #1 (partial): `session-cleanup.helper.ts` (exists)
-- TODO: Items #1–3, #5–7 (remaining extractions)
+- ✓ Item #1: `read-session-token.helper.ts` (exists)
+- ✓ Item #2: `session-cookie-ops.helper.ts` (exists)
+- ✓ Item #5: `establish-session-for-auth-user.workflow.ts` (exists)
+- ✓ Item #7: `make-auth-use-case-logger.helper.ts` (exists)
+- TODO: Items #3, #6 (remaining extractions)
 
 ---
 

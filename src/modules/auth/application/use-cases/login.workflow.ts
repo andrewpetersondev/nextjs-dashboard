@@ -2,11 +2,10 @@ import "server-only";
 
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/use-cases/establish-session-for-auth-user.workflow";
 import type { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
-import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -26,17 +25,7 @@ export async function loginWorkflow(
 ): Promise<Result<SessionPrincipalDto, AppError>> {
   const authResult = await deps.loginUseCase.execute(input);
 
-  if (!authResult.ok) {
-    return Err(authResult.error);
-  }
-
-  const user = toSessionPrincipal(authResult.value);
-
-  const sessionResult = await deps.sessionService.establish(user);
-
-  if (!sessionResult.ok) {
-    return Err(sessionResult.error);
-  }
-
-  return Ok(sessionResult.value);
+  return await establishSessionForAuthUserWorkflow(authResult, {
+    sessionService: deps.sessionService,
+  });
 }

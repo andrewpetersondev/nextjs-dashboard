@@ -91,11 +91,11 @@ export async function signupAction(
   });
 
   const uow = createUnitOfWorkFactory(getAppDb(), logger, requestId);
-  const createUserUseCase = createCreateUserUseCaseFactory(uow, logger);
+  const signupUseCase = createCreateUserUseCaseFactory(uow, logger);
   const sessionService = createSessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
-    signupWorkflow(input, { createUserUseCase, sessionService }),
+    signupWorkflow(input, { sessionService, signupUseCase }),
   );
 
   if (!sessionResult.ok) {

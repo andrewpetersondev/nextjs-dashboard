@@ -3,16 +3,13 @@ import "server-only";
 import type { SessionAdapterContract } from "@/modules/auth/application/contracts/session-adapter.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { CreateDemoUserUseCase } from "@/modules/auth/application/use-cases/create-demo-user.use-case";
-import { toSessionPrincipal } from "@/modules/auth/domain/policies/session.policy";
+import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/use-cases/establish-session-for-auth-user.workflow";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Orchestrates the demo-user "story":
- * - create demo user (DB transaction)
- * - establish session (cookie/JWT, non-transactional)
+ * Orchestrates the creation of a demo user and session.
  */
 export async function createDemoUserWorkflow(
   role: UserRole,
@@ -21,19 +18,9 @@ export async function createDemoUserWorkflow(
     sessionService: SessionAdapterContract;
   }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  const demoResult = await deps.createDemoUserUseCase.execute(role);
+  const userResult = await deps.createDemoUserUseCase.execute(role);
 
-  if (!demoResult.ok) {
-    return Err(demoResult.error);
-  }
-
-  const user = toSessionPrincipal(demoResult.value);
-
-  const sessionResult = await deps.sessionService.establish(user);
-
-  if (!sessionResult.ok) {
-    return Err(sessionResult.error);
-  }
-
-  return Ok(sessionResult.value);
+  return await establishSessionForAuthUserWorkflow(userResult, {
+    sessionService: deps.sessionService,
+  });
 }
