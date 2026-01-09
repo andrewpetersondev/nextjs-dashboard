@@ -13,10 +13,10 @@ import type { PasswordHasherContract } from "@/modules/auth/domain/services/pass
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
 
 export class CreateDemoUserUseCase {
   private readonly hasher: PasswordHasherContract;
@@ -39,72 +39,53 @@ export class CreateDemoUserUseCase {
     this.uow = uow;
   }
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <extract policy logic>
-  async execute(role: UserRole): Promise<Result<AuthUserOutputDto, AppError>> {
-    const logger = this.logger.child({ role });
+  execute(role: UserRole): Promise<Result<AuthUserOutputDto, AppError>> {
+    return safeExecute(
+      async () => {
+        // 1. Preparation (Non-transactional side effects)
+        const demoPassword = this.passwordGenerator.generate(10);
+        const passwordHash = await this.hasher.hash(demoPassword);
 
-    try {
-      const demoPassword = this.passwordGenerator.generate(10);
-      const passwordHash = await this.hasher.hash(demoPassword);
+        // 2. Persistence (Transactional boundary)
+        const txResult = await this.uow.withTransaction(async (tx) => {
+          const counter = await tx.authUsers.incrementDemoUserCounter(role);
 
-      const txResult = await this.uow.withTransaction(async (tx) => {
-        const counter = await tx.authUsers.incrementDemoUserCounter(role);
+          if (!validateDemoUserCounter(counter)) {
+            return Err(makeInvalidDemoCounterError(counter));
+          }
 
-        if (!validateDemoUserCounter(counter)) {
-          return Err(makeInvalidDemoCounterError(counter));
-        }
+          const { email, username } = generateDemoUserIdentity(role, counter);
 
-        const { email, username } = generateDemoUserIdentity(role, counter);
+          const createdResult = await tx.authUsers.signup({
+            email,
+            password: passwordHash,
+            role,
+            username,
+          });
 
-        const createdResult = await tx.authUsers.signup({
-          email,
-          password: passwordHash,
-          role,
-          username,
+          if (!createdResult.ok) {
+            const mapped = toSignupUniquenessConflict(createdResult.error);
+            return Err(mapped ?? createdResult.error);
+          }
+
+          return Ok(toAuthUserOutputDto(createdResult.value));
         });
 
-        if (!createdResult.ok) {
-          const mapped = toSignupUniquenessConflict(createdResult.error);
-          return Err(mapped ?? createdResult.error);
+        if (txResult.ok) {
+          this.logger.operation("info", "Create demo user succeeded", {
+            operationContext: "create-demo-user.use-case",
+            operationIdentifiers: { role },
+            operationName: "demoUser.success",
+          });
         }
 
-        const created = createdResult.value;
-
-        return Ok<AuthUserOutputDto>(toAuthUserOutputDto(created));
-      });
-
-      if (!txResult.ok) {
-        logger.operation("warn", "Create demo user failed", {
-          error: txResult.error,
-          operationContext: "create-demo-user.use-case",
-          operationIdentifiers: { role },
-          operationName: "demoUser.failed",
-        });
-
-        return Err(txResult.error);
-      }
-
-      logger.operation("info", "Create demo user succeeded", {
-        operationContext: "create-demo-user.use-case",
-        operationIdentifiers: { role },
-        operationName: "demoUser.success",
-      });
-
-      return Ok(txResult.value);
-    } catch (err: unknown) {
-      const error = makeUnexpectedError(err, {
-        message: "demoUser.unexpected",
-        metadata: { role },
-      });
-
-      logger.operation("error", "Create demo user unexpected error", {
-        error,
-        operationContext: "create-demo-user.use-case",
-        operationIdentifiers: { role },
-        operationName: "demoUser.unexpected",
-      });
-
-      return Err(error);
-    }
+        return txResult;
+      },
+      {
+        logger: this.logger,
+        message: "An unexpected error occurred while creating a demo user.",
+        operation: "createDemoUser",
+      },
+    );
   }
 }
