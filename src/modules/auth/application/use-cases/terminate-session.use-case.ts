@@ -4,10 +4,10 @@ import type { SessionUseCaseDependencies } from "@/modules/auth/application/cont
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
+import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * Terminates a session by deleting the cookie.
@@ -25,26 +25,24 @@ export class TerminateSessionUseCase {
     this.sessionCookieAdapter = deps.sessionCookieAdapter;
   }
 
-  async execute(
-    reason: TerminateSessionReason,
-  ): Promise<Result<void, AppError>> {
-    try {
-      await this.sessionCookieAdapter.delete();
+  execute(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
+    return safeExecute(
+      async () => {
+        await this.sessionCookieAdapter.delete();
 
-      this.logger.operation("info", "Session terminated", {
-        operationContext: "session",
-        operationIdentifiers: { reason },
-        operationName: "session.terminate.success",
-      });
+        this.logger.operation("info", "Session terminated", {
+          operationContext: "session",
+          operationIdentifiers: { reason },
+          operationName: "session.terminate.success",
+        });
 
-      return Ok(undefined);
-    } catch (err: unknown) {
-      this.logger.errorWithDetails("Failed to terminate session", err, {
+        return Ok(undefined);
+      },
+      {
+        logger: this.logger,
+        message: "An unexpected error occurred during session termination.",
         operation: "terminateSession",
-        reason,
-      });
-
-      return Err(normalizeUnknownToAppError(err, "unexpected"));
-    }
+      },
+    );
   }
 }

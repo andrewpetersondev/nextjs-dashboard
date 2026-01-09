@@ -2,18 +2,15 @@ import "server-only";
 
 import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import { applyAntiEnumerationPolicy } from "@/modules/auth/domain/policies/auth-security.policy";
+import { AuthErrorFactory } from "@/modules/auth/application/factories/auth-error.factory";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import {
-  makeAppError,
-  normalizeUnknownToAppError,
-} from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * LoginUseCase
@@ -35,50 +32,46 @@ export class LoginUseCase {
     this.logger = logger.withContext("auth:use-case:login-user");
   }
 
-  async execute(
+  execute(
     input: Readonly<AuthLoginInputDto>,
   ): Promise<Result<AuthUserOutputDto, AppError>> {
-    try {
-      const userResult = await this.repo.findByEmail({ email: input.email });
+    return safeExecute(
+      async () => {
+        const userResult = await this.repo.findByEmail({ email: input.email });
 
-      if (!userResult.ok) {
-        return userResult;
-      }
+        if (!userResult.ok) {
+          return userResult;
+        }
 
-      const user = userResult.value;
+        const user = userResult.value;
 
-      if (!user) {
-        return Err(
-          applyAntiEnumerationPolicy(
-            makeAppError("not_found", {
-              cause: "user_not_found",
-              message: "User does not exist.",
-              metadata: { email: input.email },
+        if (!user) {
+          return Err(
+            AuthErrorFactory.makeCredentialFailure("user_not_found", {
+              email: input.email,
             }),
-          ),
-        );
-      }
+          );
+        }
 
-      const passwordOk = await this.hasher.compare(
-        input.password,
-        user.password,
-      );
-      if (!passwordOk) {
-        return Err(
-          applyAntiEnumerationPolicy(
-            makeAppError("invalid_credentials", {
-              cause: "invalid_password",
-              message: "Password does not match.",
-              metadata: { userId: user.id },
+        const passwordOk = await this.hasher.compare(
+          input.password,
+          user.password,
+        );
+        if (!passwordOk) {
+          return Err(
+            AuthErrorFactory.makeCredentialFailure("invalid_password", {
+              userId: user.id,
             }),
-          ),
-        );
-      }
+          );
+        }
 
-      return Ok(toAuthUserOutputDto(user));
-    } catch (err: unknown) {
-      this.logger.error("login.use-case.execute failed. error catch block");
-      return Err(normalizeUnknownToAppError(err, "unexpected"));
-    }
+        return Ok(toAuthUserOutputDto(user));
+      },
+      {
+        logger: this.logger,
+        message: "An unexpected error occurred during authentication.",
+        operation: "loginUser",
+      },
+    );
   }
 }

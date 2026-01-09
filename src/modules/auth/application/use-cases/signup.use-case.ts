@@ -2,17 +2,21 @@ import "server-only";
 
 import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
+import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { AuthSignupSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
-import { toUserId } from "@/shared/branding/converters/id-converters";
-import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
+import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
 
+/**
+ * SignupUseCase
+ *
+ * Single business capability: Create a new user account.
+ */
 export class SignupUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
@@ -32,45 +36,32 @@ export class SignupUseCase {
    * Executes the user creation process.
    * Assumes input has been validated at the boundary.
    */
-  async execute(
+  execute(
     input: Readonly<AuthSignupSchemaDto>,
   ): Promise<Result<AuthUserOutputDto, AppError>> {
-    const _logger = this.logger.child({ email: input.email });
+    return safeExecute(
+      () =>
+        this.uow.withTransaction(async (tx) => {
+          const passwordHash = await this.hasher.hash(input.password);
 
-    try {
-      const createdResult = await this.uow.withTransaction(async (tx) => {
-        const passwordHash = await this.hasher.hash(input.password);
+          const createdResultTx = await tx.authUsers.signup({
+            email: input.email,
+            password: passwordHash,
+            role: getDefaultRegistrationRole(),
+            username: input.username,
+          });
 
-        const createdResultTx = await tx.authUsers.signup({
-          email: input.email,
-          password: passwordHash,
-          role: getDefaultRegistrationRole(),
-          username: input.username,
-        });
+          if (!createdResultTx.ok) {
+            return createdResultTx;
+          }
 
-        if (!createdResultTx.ok) {
-          // No infrastructure mapping here!
-          return createdResultTx;
-        }
-
-        const created = createdResultTx.value;
-
-        return Ok<AuthUserOutputDto>({
-          email: created.email,
-          id: toUserId(created.id),
-          role: parseUserRole(created.role),
-          username: created.username,
-        });
-      });
-
-      return createdResult;
-    } catch (err: unknown) {
-      const error = makeUnexpectedError(err, {
+          return Ok(toAuthUserOutputDto(createdResultTx.value));
+        }),
+      {
+        logger: this.logger,
         message: "An unexpected error occurred during user creation.",
-        metadata: { operation: "createUser" },
-      });
-
-      return Err(error);
-    }
+        operation: "createUser",
+      },
+    );
   }
 }
