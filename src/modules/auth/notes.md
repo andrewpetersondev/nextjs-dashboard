@@ -1,8 +1,52 @@
-# Part 1
+# Auth Module Refactoring Notes
 
-## Candidates in `src/modules/auth/application/use-cases` that should be extracted
+## Table of Contents
 
-Below are the main “repeat/complexity hotspots” in this folder that are good extraction targets (to helpers/policies/services), with **what** to extract and **why**.
+- [Overview](#overview)
+- [Part 1: Extraction Candidates](#part-1-extraction-candidates)
+  - [Status Summary](#status-summary)
+  - [Item #1: Session Token Reading](#1-repeated-read-cookie--decode-token--handle-failures-logic-partially-extracted)
+  - [Item #2: Cookie Operations Logging](#2-session-cookie-setdelete--logging-wrappers-extract-a-small-session-store-operations-helper)
+  - [Item #3: Rotate Session Branching](#3-rotatesessionusecase-private-methods-are-doing-workflow-ish-branching-extract-handlers-or-a-workflow)
+  - [Item #4: Anti-Enumeration (✓ DONE)](#4-anti-enumeration-error-mapping-at-the-use-case-boundary-completed-)
+  - [Item #5: Workflow Repetition](#5-workflows-share-a-repeated-execute--map-to-session-principal--establish-session-pattern-extract-a-shared-workflow-helper)
+  - [Item #6: Demo User Transaction](#6-createdemouserusecase-execute-contains-a-large-transaction-script--mapping-extract-the-transaction-body)
+  - [Item #7: Logger Normalization](#7-inconsistent-logger-context-patterns-extract-a-logger-factory-or-normalize-constructors)
+- [Part 2: Concrete Extraction Plan](#part-2-concrete-extraction-plan)
+  - [Implementation Order](#suggested-implementation-order-fastest-payoff-first)
+  - [Helpers & Factories](#extraction-targets)
+  - [Design Decisions](#two-small-naming-consistency-calls-pick-one-and-apply-everywhere)
+
+---
+
+## Overview
+
+This document identifies **7 main refactoring opportunities** in the auth module's application layer:
+
+- **1 item completed** (#4: Anti-enumeration error factory ✓)
+- **6 items pending** (#1–3, #5–7)
+
+Each section describes the problem, proposes a solution, and lists the files that need updates.
+
+**Goal:** Keep use cases thin, prevent repetition, maintain consistency across auth workflows.
+
+---
+
+# Part 1: Extraction Candidates
+
+## Status Summary
+
+| Item | Title                     | Status | Files to Extract                              |
+| ---- | ------------------------- | ------ | --------------------------------------------- |
+| #1   | Session token reading     | TODO   | `read-session-token.helper.ts`                |
+| #2   | Cookie set/delete logging | TODO   | `session-cookie-ops.helper.ts`                |
+| #3   | Rotate session branching  | TODO   | Split or convert to workflow                  |
+| #4   | Anti-enumeration errors   | ✓ DONE | `auth-error.factory.ts` (exists)              |
+| #5   | Workflow repetition       | TODO   | `establish-session-for-auth-user.workflow.ts` |
+| #6   | Demo user transaction     | TODO   | `create-demo-user.tx.helper.ts`               |
+| #7   | Logger normalization      | TODO   | `make-auth-use-case-logger.helper.ts`         |
+
+Below are the main "repeat/complexity hotspots" in this folder that are good extraction targets (to helpers/policies/services), with **what** to extract and **why**.
 
 ---
 
@@ -101,16 +145,26 @@ If you want to keep “use case = single capability”, then:
 
 ---
 
-## 4) Anti-enumeration error mapping at the use-case boundary (COMPLETED)
+---
 
-### Status: Done
+## ✅ 4) Anti-enumeration error mapping at the use-case boundary (COMPLETED)
 
-Extracted to `AuthErrorFactory.makeCredentialFailure` in `src/modules/auth/application/factories/auth-error.factory.ts`.
+### Status: Done ✓
 
-### Why it was worth it
+**Implementation:**
 
-- Prevents accidental bypass of the anti-enumeration policy.
-- Makes `LoginUseCase` read like intent instead of mechanics.
+- `src/modules/auth/application/factories/auth-error.factory.ts` — Factory with `makeCredentialFailure`, `makeSessionRequired`, etc.
+- `src/modules/auth/application/use-cases/login.use-case.ts` — Uses the factory consistently
+
+**What works:**
+
+- Login correctly applies anti-enumeration (no "user not found" vs "invalid password" leakage)
+- Error reasons logged internally for debugging; public error always `invalid_credentials`
+
+**Impact:**
+
+- Prevents accidental bypass of the anti-enumeration policy
+- Makes `LoginUseCase` read like intent instead of mechanics
 
 ---
 
@@ -189,17 +243,41 @@ A single helper that produces the logger consistently:
 
 ---
 
-# Part 2
+# Part 2: Concrete Extraction Plan
 
-## Concrete extraction plan (file names + signatures + what changes where)
+## Overview
 
-This plan keeps your “use case = single capability” intent, pushes repetition into **application/helpers** and **application/factories**, and keeps domain policies in **domain/policies**.
+This section proposes **concrete new files** and **how to update existing files** to implement items #1–3, #5–7.
 
-I’m proposing **new files** (no edits shown yet), plus a quick “replace usage in X” checklist.
+**Architecture principles:**
+
+- Use case = single capability (use `.workflow.ts` for orchestration)
+- Extract repetition → `application/helpers` and `application/factories`
+- Keep domain logic in `domain/policies`
+- Each helper has a single, clear responsibility
+
+**Current state:**
+
+- ✓ Item #4: `auth-error.factory.ts` (exists)
+- ✓ Item #1 (partial): `session-cleanup.helper.ts` (exists)
+- TODO: Items #1–3, #5–7 (remaining extractions)
 
 ---
 
-## 1) Normalize “read cookie → decode → optional cleanup → validate claims” into one helper
+## Extraction Targets
+
+| #   | File                                          | Purpose                                    | Affects       |
+| --- | --------------------------------------------- | ------------------------------------------ | ------------- |
+| 1   | `read-session-token.helper.ts`                | Centralize token reading & decode branches | 3 use-cases   |
+| 2   | `require-session-user-id.helper.ts`           | Validate `userId` claim                    | 3 use-cases   |
+| 3   | `session-cookie-ops.helper.ts`                | Wrap set/delete + logging                  | 3 use-cases   |
+| 4   | `make-auth-use-case-logger.helper.ts`         | Standardize logger creation                | All use-cases |
+| 5   | `establish-session-for-auth-user.workflow.ts` | Shared "user → session" pattern            | 3 workflows   |
+| 6   | `create-demo-user.tx.helper.ts`               | Extract transaction body                   | 1 use-case    |
+
+---
+
+## 1) Normalize "read cookie → decode → optional cleanup → validate claims" into one helper
 
 ### New file
 
@@ -463,26 +541,41 @@ Bonus: you can delete the `biome-ignore ... noExcessiveLinesPerFunction` once ex
 
 ---
 
-## Suggested implementation order (fastest payoff first)
+## Suggested Implementation Order
 
-1. `read-session-token.helper.ts` + update `get-session`, `rotate-session`, `verify-session`
-2. `session-cookie-ops.helper.ts` + update `establish-session`, `rotate-session`, `terminate-session`
-3. `establish-session-for-auth-user.workflow.ts` + update 3 workflows
-4. (DONE) `AuthErrorFactory.makeCredentialFailure`
-5. `create-demo-user.tx.helper.ts` + update `create-demo-user.use-case`
-6. `make-auth-use-case-logger.helper.ts` + update constructors opportunistically
+**Fastest payoff first (recommended sequence):**
 
----
-
-## Two small naming consistency calls (pick one and apply everywhere)
-
-- Use-case identity strings: `"getSession"` vs `"readSession"` vs `"verifySession"`  
-  I’d pick **file verb** (e.g. `getSession`, `verifySession`, `rotateSession`) to reduce synonym drift.
-- Operation names: you already have `session.rotate.*` / `session.verify.*`—keep that prefixing; the helper should accept `operationName` so callers stay explicit.
+1. **`read-session-token.helper.ts`** → Reduces 3 use-cases (`get-session`, `rotate-session`, `verify-session`)
+2. **`session-cookie-ops.helper.ts`** → Centralizes logging repetition, affects 3 use-cases
+3. **`establish-session-for-auth-user.workflow.ts`** → DRY pattern across 3 workflows
+4. ✓ **`auth-error.factory.ts`** (already completed)
+5. **`create-demo-user.tx.helper.ts`** → Simplifies densest function
+6. **`make-auth-use-case-logger.helper.ts`** → Update constructors opportunistically
 
 ---
 
-If you want me to actually draft the new files and the minimal edits to each use-case/workflow, tell me whether you prefer the helper return type to be:
+## Design Decisions
 
-- **`Result<Outcome, AppError>`** (fits your existing Result style), or
-- a **non-Result** discriminated union and keep Result at the use-case boundary.
+### Return Type Strategy
+
+**Decision:** Use `Result<Outcome, AppError>` for all helpers
+
+- Consistent with existing codebase patterns
+- Keeps error handling at use-case boundary
+
+### Use-case Identity Strings
+
+**Problem:** Drift between `"readSession"`, `"getSession"`, `"verifySession"`
+
+**Decision:** Use **file verb** everywhere (e.g., `getSession`, `verifySession`, `rotateSession`)
+
+- Reduces synonym drift
+- Maps filename → log context directly
+- Use helper: `makeAuthUseCaseLogger(logger, "rotateSession")`
+
+### Operation Names
+
+**Pattern:** Keep existing `session.rotate.*`, `session.verify.*` prefixes
+
+- `session-cookie-ops.helper` requires explicit `operationName` parameter
+- Forces intentionality in operation naming
