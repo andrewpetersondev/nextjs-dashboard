@@ -6,14 +6,14 @@ Below are the main “repeat/complexity hotspots” in this folder that are good
 
 ---
 
-## 1) Repeated “read cookie → decode token → handle failures” logic (extract a helper)
+## 1) Repeated “read cookie → decode token → handle failures” logic (partially extracted)
 
 ### Where it shows up
 
 - `get-session.use-case.ts`:
   - `get()` cookie
   - `decode(token)`
-  - on decode failure: `cleanupInvalidToken(...)` and then either `Err(unexpected)` or `Ok(undefined)`
+  - on decode failure: `cleanupInvalidToken(...)` (already extracted) and then either `Err(unexpected)` or `Ok(undefined)`
   - extra validation: `if (!decoded.userId) { cleanup; Ok(undefined) }`
 - `rotate-session.use-case.ts`:
   - `get()` cookie
@@ -27,11 +27,11 @@ Below are the main “repeat/complexity hotspots” in this folder that are good
 
 ### What to extract
 
-A small helper (application-layer helper) that centralizes:
+A small helper (application-layer helper) that centralizes the remaining repetition:
 
 - fetching token from `SessionStoreContract`
 - decoding via `SessionTokenServiceContract`
-- optionally cleaning up invalid tokens
+- optionally cleaning up invalid tokens (calling `cleanupInvalidToken`)
 - returning a normalized “decoded session or reason” shape
 
 Example extraction target (conceptually):
@@ -101,23 +101,15 @@ If you want to keep “use case = single capability”, then:
 
 ---
 
-## 4) Anti-enumeration error mapping at the use-case boundary (extract “credential failure” factory)
+## 4) Anti-enumeration error mapping at the use-case boundary (COMPLETED)
 
-### Where it shows up
+### Status: Done
 
-- `login.use-case.ts` creates errors via `makeAppError(...)` and then wraps with `applyAntiEnumerationPolicy(...)` twice:
-  - user missing → `not_found` → apply policy
-  - invalid password → `invalid_credentials` → apply policy
+Extracted to `AuthErrorFactory.makeCredentialFailure` in `src/modules/auth/application/factories/auth-error.factory.ts`.
 
-### What to extract
+### Why it was worth it
 
-A small function that produces the _public-safe_ credential error in one place, e.g.:
-
-- `makeCredentialFailureError(...)` (internally uses `applyAntiEnumerationPolicy(...)`)
-
-### Why it’s worth it
-
-- Prevents accidental bypass of the anti-enumeration policy if future branches add new credential failures.
+- Prevents accidental bypass of the anti-enumeration policy.
 - Makes `LoginUseCase` read like intent instead of mechanics.
 
 ---
@@ -157,17 +149,17 @@ A reusable workflow helper like:
 - `create-demo-user.use-case.ts`:
   - password generation + hashing
   - transactional block with counter increment, validation, identity generation, signup, infra error mapping, dto mapping
-  - explicit lint suppression: `biome-ignore ... <extract policy logic>`
+  - uses `safeExecute` for top-level wrapping
 
 ### What to extract (high-value)
 
 - Extract the **transaction script** into a dedicated function, e.g.:
   - `create-demo-user.tx.ts` or `create-demo-user.transaction.ts`
-- Also consider extracting the **infrastructure error mapping** call (`toSignupUniquenessConflict(...)`) behind a boundary so the use case doesn’t need to know about infrastructure mapping directly.
+- The infrastructure error mapping (`toSignupUniquenessConflict(...)`) is already used, but could be further abstracted.
 
 ### Why it’s worth it
 
-- It’s the densest function in the folder, and already marked as “should extract”.
+- It’s the densest function in the folder.
 - Makes the use case read as: “prepare inputs → run tx script → log → return”.
 
 ---
@@ -179,6 +171,7 @@ A reusable workflow helper like:
 - Some use-cases use `deps.logger.child({ scope, useCase })`
 - `login.use-case.ts` uses `logger.withContext("auth:use-case:login-user")`
 - `signup.use-case.ts` uses `logger.child({ scope: "use-case", useCase: "createUser" })`
+- `get-session.use-case.ts` uses `readSession` as useCase name while file is `get-session`.
 
 ### What to extract
 
@@ -475,7 +468,7 @@ Bonus: you can delete the `biome-ignore ... noExcessiveLinesPerFunction` once ex
 1. `read-session-token.helper.ts` + update `get-session`, `rotate-session`, `verify-session`
 2. `session-cookie-ops.helper.ts` + update `establish-session`, `rotate-session`, `terminate-session`
 3. `establish-session-for-auth-user.workflow.ts` + update 3 workflows
-4. `make-credential-failure-error.factory.ts` + update `login.use-case`
+4. (DONE) `AuthErrorFactory.makeCredentialFailure`
 5. `create-demo-user.tx.helper.ts` + update `create-demo-user.use-case`
 6. `make-auth-use-case-logger.helper.ts` + update constructors opportunistically
 
