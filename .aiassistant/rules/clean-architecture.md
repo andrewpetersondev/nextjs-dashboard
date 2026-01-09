@@ -5,33 +5,35 @@ patterns: src/modules/**/*.ts
 
 # Clean Architecture Standards
 
+Rules for maintaining strict architectural boundaries and ensuring business logic remains independent of frameworks and drivers.
+
 ## Core Principles
 
-1. **Strict Dependency Rule**: Source code dependencies must point only inwards.
-   - `Domain` knows NOTHING about `Application`, `Infrastructure`, or `Presentation`.
-   - `Application` knows NOTHING about `Infrastructure` or `Presentation`.
-2. **Persistence Ignorance**: The Domain layer should not be aware of how data is stored.
-3. **Library Independence**: Core business logic (Entities/Domain Services) should avoid dependencies on third-party libraries (including Zod) where possible to prevent "vendor lock-in" of the business core.
-4. **Framework Isolation**: `domain/` and `application/` must never import from `next/*`, `react`, or any DB-specific libraries (e.g., `drizzle-orm`).
+1. **The Dependency Rule**: Source code dependencies must point only inwards. Nothing in an inner circle can know anything at all about something in an outer circle.
+2. **Framework Independence**: The architecture does not depend on the existence of some library of feature-laden software. Business logic is separated from Next.js, React, and DB drivers.
+3. **Testability**: Business rules are tested in isolation using mocks for contracts. Use Cases should be testable with pure vitest/jest without a browser or DB.
 
-## Layer Responsibilities & Mapping
+## Layer Mapping
 
-| Layer            | Responsibility             | Contents                                                                       |
-| :--------------- | :------------------------- | :----------------------------------------------------------------------------- |
-| `domain`         | Enterprise Business Rules  | Entities, Value Objects, Domain Services (Interfaces), Domain Exceptions.      |
-| `application`    | Application Business Rules | Use Cases (Interactors), DTOs, Application Service Contracts (Ports), Mappers. |
-| `infrastructure` | Technical Details          | DB Repositories (Adapters), External API clients, Framework-specific logic.    |
-| `presentation`   | Delivery Mechanism         | UI Components, Server Actions (Adapters), Controllers.                         |
+| Folder           |
+| :--------------- |
+| `domain`         |
+| `application`    |
+| `infrastructure` |
+| `presentation`   |
 
 ## Dependency Constraints
 
-- **Inner Core Isolation**: High-level modules (Application) must not depend on low-level modules (Infrastructure). Both must depend on abstractions (Contracts).
-- **Boundary Crossing**: Data crossing from Infrastructure to Application must be mapped. Never leak Database Records or raw API responses into the Use Cases.
-- **Testability**: Business rules must be testable in isolation. Use Cases should be verifiable using mocks for contracts without requiring a browser or database.
+- **Inner Core Isolation**: `domain/` and `application/` must never import from `infrastructure/`, `next/*`, `react`, or any DB-specific libraries.
+- **Dependency Inversion**: High-level modules (Application) must not depend on low-level modules (Infrastructure). Both must depend on abstractions (Contracts).
+- **Use Case and Service Driven**: One file per Use Case or Service. Files should be the "screaming architecture" of what the module does.
+- **Contract First**: Infrastructure must implement interfaces defined in `domain`. Use cases only ever interact with
+  these contracts.
+- **Boundary Crossing**: Data crossing the boundary from Infrastructure to Application should be mapped to Domain Entities or DTOs. Never leak DB rows or raw API responses into Use Cases.
 
-- **The Domain Boundary**: `domain/` must NEVER import from `application/`. This includes DTOs. If a repository needs to live in the domain, it must only accept and return Domain Entities or Primitives.
-- **Repository Placement**:
-  - **Domain Repositories**: Interfaces that deal with Entities live in `domain`.
-  - **Application Repositories**: Interfaces that deal with DTOs or specific Use Case needs live in `application`.
-- **Mappers**: Logic that converts Entities to DTOs belongs in the `application` layer (Mappers), not the Domain.
-- **Side-Effect Isolation**: Implementations of "mechanisms" (e.g., Random Password Generation, Hashing, GUID generation) belong in `infrastructure`. The domain only defines the "Need" via an interface.
+## Transaction & Persistence Rules
+
+- **Unit of Work**: Use a `UnitOfWork` or `Transaction` contract to manage atomicity. Use Cases should own the transaction boundary, but not the implementation details.
+- **Pure Dependency Injection**: Transaction-scoped dependencies (e.g., `AuthTxDeps`) must remain DB-only.
+- **Constraint**: Never perform side effects like network calls, cookie manipulation, or password hashing inside a database transaction block.
+- **Repository Isolation**: Repositories must not expose transaction logic; they should accept a transaction context provided by the Use Case via the contract.

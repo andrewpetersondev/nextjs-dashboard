@@ -19,8 +19,8 @@ Standardized naming to ensure predictability, discoverability, and easy refactor
 2. **Consistency Over Strict Suffixes**: If an object is treated as a "Service" by its consumers, its contract and dependency name should reflect that (e.g., `SessionServiceContract`), even if it is implemented by an adapter.
 3. **Domain-Aligned Verbs**: Method names in contracts should match the business language (e.g., `terminate` instead of `deleteCookie`).
 4. **Logic vs. Capability**:
-   - **Policies (`.policy.ts`)**: The "Brain" - Pure business rules, logic, and invariants (no side effects).
-   - **Contracts (`.contract.ts`)**: The "Hands" - Interfaces for side-effects, persistence, or external capabilities.
+   - **Policies (`.policy.ts`)** represent the logic/rules (The "Brain").
+   - **Contracts (`.contract.ts`)** represent the interface for side-effects or external capabilities (The "Hands").
 5. **Reduce Synonym Drift**: Stick to the standard verb vocabulary to keep the codebase predictable.
 
 ---
@@ -28,46 +28,48 @@ Standardized naming to ensure predictability, discoverability, and easy refactor
 ## File and Folder Naming
 
 - **Files**: Use **kebab-case**. Filename must match the **primary export** (e.g., `to-pg-error.ts` exports `toPgError`).
-- **Folders**: Use **nouns** (e.g., `catalog/`, `factories/`, `utils/`, `helpers/`).
-- **One Concept Per File**: Avoid `*.types.ts` files. Split types into files reflecting their role (e.g., move a DTO type to a `.dto.ts` file).
-- **Prefixing**: Boundary files (DTOs, Schemas, Transports) should be named after the **action** or **concept**, not just the module (e.g., `login-credentials.schema.ts` instead of `auth-user.schema.ts`).
+- **Folders**: Use **nouns** (e.g., `catalog/`, `factories/`, `utils/`).
+- **One Concept Per File**: Avoid `*.types.ts` files. Split types into files reflecting their role.
 
 ### Boundary-Explicit Suffixes
 
-| Suffix          | Meaning                                  | Layer/Boundary               |
-| :-------------- | :--------------------------------------- | :--------------------------- |
-| `.entity.ts`    | Stateful domain object (with identity)   | Domain (Entities)            |
-| `.value.ts`     | Value object / Branded primitive         | Domain (Entities)            |
-| `.policy.ts`    | Pure function for business rules/logic   | Domain / Application         |
-| `.schema.ts`    | Zod/Validation schema                    | Application ↔ Presentation   |
-| `.dto.ts`       | Stable data transfer object              | Application (Use Cases)      |
-| `.helper.ts`    | Reusable orchestration logic (stateless) | Application / Infrastructure |
-| `.transport.ts` | Wire/HTTP/Cookie-only shape              | Interface Adapters           |
-| `.view.ts`      | Server → Client UI shape                 | UI Boundary                  |
-| `.contract.ts`  | Dependency boundary interface (Port)     | Domain/Application           |
-| `.adapter.ts`   | Port implementation / Implementation     | Infrastructure               |
-| `.dal.ts`       | Raw Data Access Logic (DB/API)           | Infrastructure               |
-| `.mapper.ts`    | Data translation between layers          | Application / Infrastructure |
-| `.factory.ts`   | Dependency injection / Wiring            | Infrastructure               |
-| `.record.ts`    | Persistence/Database row shape           | Infrastructure               |
-| `.output.ts`    | Data payload of a use case/workflow      | Application (Use Cases)      |
-| `.event.ts`     | Domain or System event fact              | Domain / Application         |
-| `.tokens.ts`    | Dependency injection tokens/constants    | Module Root                  |
-| `.use-case.ts`  | Single business capability               | Application (Use Cases)      |
-| `.workflow.ts`  | Multi-step orchestration helper          | Application (Use Cases)      |
-| `.action.ts`    | Next.js Server Action                    | Interface Adapters           |
+Use these suffixes for types and files to indicate their role in the architecture:
+
+To avoid "dumping grounds" like `*.types.ts`, use suffixes that indicate the type's role and boundary.
+
+    **Guidelines:**
+
+- **No `*.types.ts` files.** If you have one, split it based on the table above.
+
+| Suffix          | Meaning                                | Layer/Boundary     |
+| :-------------- | :------------------------------------- | :----------------- |
+| `.entity.ts`    | Stateful domain object (with identity) | Entities           |
+| `.value.ts`     | Value object / Branded primitive       | Entities           |
+| `.policy.ts`    | Interface for business rules/logic     | Entities           |
+| `.schema.ts`    | Zod/Validation schema                  | Entities ↔ App     |
+| `.dto.ts`       | Stable data transfer object            | Use Cases          |
+| `.transport.ts` | Wire/HTTP/Cookie-only shape            | Interface Adapters |
+| `.view.ts`      | Server → Client UI shape               | UI Boundary        |
+| `.contract.ts`  | Dependency boundary interface          | Use Cases          |
+| `.adapter.ts`   | Port implementation / Implementation   | Infrastructure     |
+| `.dal.ts`       | Raw Data Access Logic (DB/API)         | Infrastructure     |
+| `.mapper.ts`    | Data translation between layers        | Infrastructure/App |
+| `.factory.ts`   | Dependency injection / Wiring          | Infrastructure     |
+| `.record.ts`    | Persistence/Database row shape         | Infrastructure     |
+| `.output.ts`    | Data payload of a use case/workflow    | Use Cases          |
+| `.event.ts`     | Domain or System event fact            | Entities / App     |
+| `.tokens.ts`    | Dependency injection tokens/constants  | Module Root        |
+| `.use-case.ts`  | Single business capability             | Use Cases          |
+| `.action.ts`    | Next.js Server Action                  | Interface Adapters |
+| `.workflow.ts`  | Multi-step orchestration               | Use Cases          |
 
 ## Implementation vs. Contract Naming
 
 To ensure Dependency Inversion is obvious and clean:
 
-- **Contracts (Interfaces)**: Must use the `.contract.ts` suffix and `Contract` PascalCase suffix (e.g., `SessionServiceContract`).
-- **Adapters (Classes)**: Must use the `.adapter.ts` suffix. The class name should reflect the technology (e.g., `CookieSessionAdapter`).
-- **Dependency Injection**: Use the name of the contract (minus the suffix) for member variables (e.g., `private readonly sessionService: SessionServiceContract`). - Keep dependency names **consumer-centric**: prefer `SessionServiceContract` over implementation-leaky names like `CookieSessionContract`. - Avoid using `adapter`, `cookie`, `pg`, etc. in **Application-layer** dependency variable names (e.g., prefer `sessionService`, not `cookieSessionAdapter`).
-
-  ## Type Naming
-  - **PascalCase** for types (`UserId`, `SessionClaims`, `LoginCredentialsDto`).
-  - **Integration scoping**: mention the integration/driver when the type is not generic or is tied to a specific system (e.g., `PgErrorMetadata` vs `ErrorMetadataValue`).
+- **Contracts (Interfaces)**: Must use the `.contract.ts` suffix and `Contract` PascalCase suffix. Use consumer-centric names (e.g., `SessionServiceContract` instead of `SessionAdapterContract`).
+- **Adapters (Classes)**: Must use the `.adapter.ts` suffix. The class name should reflect the technology or implementation detail (e.g., `CookieSessionAdapter` or `PgUserRepositoryAdapter`).
+- **Dependency Injection**: Use the name of the contract (minus the suffix) for member variables (e.g., `private readonly sessionService: SessionServiceContract`). Avoid using `adapter` in variable names within the Application layer.
 
 ## Function Naming: Verb Vocabulary
 
@@ -81,11 +83,19 @@ To ensure Dependency Inversion is obvious and clean:
 | `hasX`       | Metadata/capability checks                                       | `hasMetadata`      |
 | `getX`       | Safe, side-effect-free access                                    | `getFieldErrors`   |
 
-- **Avoid**: `mapX` (prefer `toX`), `convertX`, and redundant suffixes like `XFactory` (prefer `makeX`).
+- **Avoid**: `mapX` (unless between equal representations), `convertX`, `createXFactory` (redundant).
+
+## File Organization
+
+- **Prefixing**: Boundary files (DTOs, Schemas, Transports) should be named after the **action** or **concept**, not just the module (e.g., `login-credentials.schema.ts` instead of `auth-user.schema.ts`).
+
+## Type Naming
+
+- Use **PascalCase**.
+- **Integration Scoping**: Mention the integration if the type is not generic (e.g., `PgErrorMetadata` vs `ErrorMetadataValue`).
 
 ## Revised Naming Principles
 
-1. **Consistency Over Strict Suffixes**: If an object is treated as a "Service" by its consumers (Use Cases/Workflows), its contract and dependency name should reflect that, even if it eventually adapts to an external system.
-2. **Consumer-Centric Naming**: Use Cases should depend on "Services" or "Repositories." "Adapter" is an implementation detail belonging to the Infrastructure layer.
-3. **Domain-Aligned Verbs**: Ensure method names in contracts match the language used in the business logic (e.g., `terminate` instead of `logout`).
-4. **Helper Isolation**: Helpers (`.helper.ts`) should be used for cross-cutting orchestration that is too complex for a single Use Case but doesn't warrant a full Service.
+1. Consistency Over Strict Suffixes: If an object is treated as a "Service" by its consumers (Use Cases/Workflows), its contract and dependency name should reflect that, even if it eventually adapts to an external system.
+2. Consumer-Centric Naming: Use Cases should depend on "Services" or "Repositories." "Adapter" is an implementation detail belonging to the Infrastructure layer.
+3. Domain-Aligned Verbs: Ensure method names in contracts match the language used in the business logic (e.g., terminate vs logout).
