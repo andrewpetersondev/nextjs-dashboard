@@ -16,17 +16,14 @@ export type CredentialFailureReason =
 export type CredentialFailureContext = { email: string } | { userId: string };
 
 /**
- * Factory for creating authentication-related errors.
+ * Application-level Auth Error Factory.
  *
- * This factory implements the Anti-Enumeration Policy by ensuring that
- * specific internal reasons (like whether a user exists or just has a wrong password)
- * are mapped to a consistent public error identity.
+ * Handles cross-cutting concerns like Anti-Enumeration that transform
+ * specific domain/infra failures into safe application results.
  */
 export const AuthErrorFactory = {
   /**
-   * Creates a unified credential failure error.
-   * Internally captures the specific reason for logging, but returns
-   * a 'invalid_credentials' code for public safety.
+   * Implements Anti-Enumeration: Maps specific reasons to a generic identity.
    */
   makeCredentialFailure(
     reason: CredentialFailureReason,
@@ -38,20 +35,6 @@ export const AuthErrorFactory = {
       metadata: {
         ...context,
         policy: "anti-enumeration",
-        reason,
-      },
-    });
-  },
-
-  /**
-   * Creates an error for when a session is required but missing or invalid.
-   */
-  makeSessionRequired(reason: "expired" | "invalid" | "missing"): AppError {
-    return makeAppError(APP_ERROR_KEYS.unauthorized, {
-      cause: reason,
-      message: "Authentication required",
-      metadata: {
-        policy: "session-lifecycle",
         reason,
       },
     });

@@ -4,10 +4,7 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
-import {
-  makeInvalidSessionClaimsErrorPolicy,
-  makeMissingSessionErrorPolicy,
-} from "@/modules/auth/domain/policies/auth-security.policy";
+import { AuthSecurityErrors } from "@/modules/auth/domain/policies/auth-security.policy";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
@@ -63,16 +60,16 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "no_token" },
         operationName: "session.verify.no_token",
       });
-      return Err(makeMissingSessionErrorPolicy());
+      return Err(AuthSecurityErrors.missingSession());
     }
 
     if (outcome.kind === "invalid_token") {
-      this.logger.operation("warn", "Session token decode failed", {
+      this.logger.operation("warn", "Session token invalid", {
         operationContext: "session",
-        operationIdentifiers: { reason: "decode_failed" },
-        operationName: "session.verify.decode_failed",
+        operationIdentifiers: { reason: "invalid_token" },
+        operationName: "session.verify.invalid_token",
       });
-      return Err(makeMissingSessionErrorPolicy()); // Consistent with "no valid session"
+      return Err(AuthSecurityErrors.missingSession());
     }
 
     const decoded = outcome.decoded;
@@ -83,9 +80,7 @@ export class VerifySessionUseCase {
         operationIdentifiers: { reason: "invalid_claims" },
         operationName: "session.verify.invalid_claims",
       });
-      return Err(
-        makeInvalidSessionClaimsErrorPolicy("Missing userId in claims"),
-      );
+      return Err(AuthSecurityErrors.invalidClaims("Missing userId in claims"));
     }
 
     return Ok({
