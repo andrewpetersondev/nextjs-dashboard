@@ -1,31 +1,11 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
+import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/application/dtos/auth-request-authorization.output";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
-
-function toAuthorizationReason(
-  routeType: ReturnType<typeof getRouteTypePolicy>,
-  policyReason: "not_authenticated" | "not_authorized",
-  decodeReason: "ok" | "no_cookie" | "decode_failed",
-): AuthRequestAuthorizationReason {
-  if (decodeReason !== "ok" && policyReason === "not_authenticated") {
-    return decodeReason;
-  }
-
-  if (routeType === "admin") {
-    return policyReason === "not_authenticated"
-      ? "admin.not_authenticated"
-      : "admin.not_authorized";
-  }
-
-  if (routeType === "protected") {
-    return "protected.not_authenticated";
-  }
-
-  return "public.bounce_authenticated";
-}
+import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
 
 async function extractSessionClaims(
   cookie: string | undefined,
@@ -48,23 +28,7 @@ async function extractSessionClaims(
   return { claims: decodedResult.value, reason: "ok" };
 }
 
-export type AuthRequestAuthorizationReason =
-  | "admin.not_authenticated"
-  | "admin.not_authorized"
-  | "decode_failed"
-  | "no_cookie"
-  | "protected.not_authenticated"
-  | "public.bounce_authenticated";
-
-export type AuthRequestAuthorizationOutcome =
-  | Readonly<{ kind: "next"; reason: "ok" }>
-  | Readonly<{
-      kind: "redirect";
-      reason: AuthRequestAuthorizationReason;
-      to: `/${string}`;
-    }>;
-
-export async function authorizeRequestPolicy(
+export async function authorizeRequestHelper(
   input: Readonly<{
     cookie: string | undefined;
     isAdminRoute: boolean;
@@ -99,7 +63,7 @@ export async function authorizeRequestPolicy(
       ? deps.routes.login
       : deps.routes.dashboardRoot;
 
-  const reason = toAuthorizationReason(
+  const reason = toAuthorizationReasonPolicy(
     routeType,
     decision.reason,
     decoded.reason,

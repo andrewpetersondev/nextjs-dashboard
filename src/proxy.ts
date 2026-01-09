@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { authorizeRequestPolicy } from "@/modules/auth/domain/policies/authorize-request.policy";
+import { authorizeRequestHelper } from "@/modules/auth/application/helpers/authorize-request.helper";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/adapters/session-cookie-adapter.constants";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
@@ -24,7 +24,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const jwt = createSessionJwtAdapter();
 
-  const outcome = await authorizeRequestPolicy(
+  const outcome = await authorizeRequestHelper(
     { cookie, isAdminRoute, isProtectedRoute, isPublicRoute, path },
     {
       jwt,
