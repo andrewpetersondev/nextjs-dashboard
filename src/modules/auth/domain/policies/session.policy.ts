@@ -1,5 +1,5 @@
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
-import type { IssueTokenInput } from "@/modules/auth/application/dtos/issue-token.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
+import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
@@ -104,7 +104,7 @@ export function shouldRefreshTokenPolicy(decoded: {
 }
 
 export function makeSessionClaimsPolicy(
-  input: IssueTokenInput & { expiresAtMs: number; iatMs: number },
+  input: IssueTokenRequestDto & { expiresAtMs: number; iatMs: number },
 ) {
   return {
     exp: Math.floor(input.expiresAtMs / ONE_SECOND_MS),
@@ -124,7 +124,7 @@ export function makeSessionClaimsPolicy(
  * 2. Use case output DTOs (simple mapping)
  */
 export function toSessionPrincipalPolicy(
-  source: SessionTokenClaims | AuthUserOutputDto | UpdateSessionSuccess,
+  source: SessionTokenClaims | AuthenticatedUserDto | UpdateSessionSuccess,
 ): SessionPrincipalDto {
   if ("email" in source) {
     // Mapping from AuthUserOutputDto

@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { AuthLoginInputDto } from "@/modules/auth/application/dtos/auth-login.input.dto";
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
+import type { LoginRequestDto } from "@/modules/auth/application/dtos/login-request.dto";
 import { AuthErrorFactory } from "@/modules/auth/application/factories/auth-error.factory";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
@@ -33,8 +33,8 @@ export class LoginUseCase {
   }
 
   execute(
-    input: Readonly<AuthLoginInputDto>,
-  ): Promise<Result<AuthUserOutputDto, AppError>> {
+    input: Readonly<LoginRequestDto>,
+  ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute(
       async () => {
         const userResult = await this.repo.findByEmail({ email: input.email });

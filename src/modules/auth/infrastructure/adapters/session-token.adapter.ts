@@ -2,10 +2,8 @@ import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import type {
-  IssuedToken,
-  IssueTokenInput,
-} from "@/modules/auth/application/dtos/issue-token.dto";
+import type { IssuedToken } from "@/modules/auth/application/dtos/issue-token.dto";
+import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import {
   makeSessionClaimsPolicy,
@@ -33,7 +31,9 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
   /**
    * Issues a new session token with the provided claims.
    */
-  async issue(input: IssueTokenInput): Promise<Result<IssuedToken, AppError>> {
+  async issue(
+    input: IssueTokenRequestDto,
+  ): Promise<Result<IssuedToken, AppError>> {
     const now = Date.now();
     const expiresAtMs = now + SESSION_DURATION_MS;
 

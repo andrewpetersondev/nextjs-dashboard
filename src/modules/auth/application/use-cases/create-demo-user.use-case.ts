@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { createDemoUserTxHelper } from "@/modules/auth/application/helpers/create-demo-user.tx.helper";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
@@ -30,8 +30,8 @@ export class CreateDemoUserUseCase {
     this.uow = uow;
   }
 
-  execute(role: UserRole): Promise<Result<AuthUserOutputDto, AppError>> {
-    return safeExecute<AuthUserOutputDto>(
+  execute(role: UserRole): Promise<Result<AuthenticatedUserDto, AppError>> {
+    return safeExecute<AuthenticatedUserDto>(
       async () => {
         const result = await createDemoUserTxHelper(
           {

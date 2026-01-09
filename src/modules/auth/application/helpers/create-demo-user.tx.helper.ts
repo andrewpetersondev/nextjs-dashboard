@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterError,
@@ -23,7 +23,7 @@ export async function createDemoUserTxHelper(
     passwordGenerator: PasswordGeneratorContract;
   }>,
   role: UserRole,
-): Promise<Result<AuthUserOutputDto, AppError>> {
+): Promise<Result<AuthenticatedUserDto, AppError>> {
   const { uow, hasher, passwordGenerator } = deps;
 
   const password = passwordGenerator.generate(10);

@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { SessionClaimsSchema } from "@/modules/auth/domain/schemas/session-claims.schema";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 

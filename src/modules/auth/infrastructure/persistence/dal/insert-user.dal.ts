@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthSignupInputDto } from "@/modules/auth/application/dtos/auth-signup.input.dto";
+import type { SignupRequestDto } from "@/modules/auth/application/dtos/signup-request.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, type UserRow, users } from "@/server/db/schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -23,7 +23,7 @@ import type { Result } from "@/shared/results/result.types";
  */
 export async function insertUserDal(
   db: AppDatabase,
-  input: AuthSignupInputDto,
+  input: SignupRequestDto,
   logger: LoggingClientContract,
 ): Promise<Result<UserRow, AppError>> {
   const { email, password, role, username } = input;

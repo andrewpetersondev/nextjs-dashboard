@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
@@ -39,7 +39,7 @@ export class SignupUseCase {
    */
   execute(
     input: Readonly<AuthSignupSchemaDto>,
-  ): Promise<Result<AuthUserOutputDto, AppError>> {
+  ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute(
       () =>
         this.uow.withTransaction(async (tx) => {

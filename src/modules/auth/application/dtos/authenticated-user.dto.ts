@@ -6,4 +6,4 @@ import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.en
  * Data payload returned by Auth Use Cases.
  * Derived from AuthUserEntity, omitting sensitive password hash.
  */
-export type AuthUserOutputDto = Readonly<Omit<AuthUserEntity, "password">>;
+export type AuthenticatedUserDto = Readonly<Omit<AuthUserEntity, "password">>;

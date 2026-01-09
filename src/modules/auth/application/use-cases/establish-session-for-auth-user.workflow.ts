@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
-import type { AuthUserOutputDto } from "@/modules/auth/application/dtos/auth-user.output.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { toSessionPrincipalPolicy } from "@/modules/auth/domain/policies/session.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -14,7 +14,7 @@ import type { Result } from "@/shared/results/result.types";
  * Centralizes the transformation from AuthUserOutputDto to SessionPrincipalDto.
  */
 export async function establishSessionForAuthUserWorkflow(
-  authUserResult: Result<AuthUserOutputDto, AppError>,
+  authUserResult: Result<AuthenticatedUserDto, AppError>,
   deps: Readonly<{ sessionService: SessionServiceContract }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
   if (!authUserResult.ok) {

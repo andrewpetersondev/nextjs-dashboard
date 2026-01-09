@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { AuthSignupInputDto } from "@/modules/auth/application/dtos/auth-signup.input.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
+import type { SignupRequestDto } from "@/modules/auth/application/dtos/signup-request.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
 import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import type { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user.repository";
@@ -49,7 +49,7 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
   }
 
   signup(
-    input: Readonly<AuthSignupInputDto>,
+    input: Readonly<SignupRequestDto>,
   ): Promise<Result<AuthUserEntity, AppError>> {
     return this.repo.signup(input);
   }
