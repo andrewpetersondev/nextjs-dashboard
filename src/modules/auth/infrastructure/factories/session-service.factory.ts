@@ -4,7 +4,7 @@ import type { SessionServiceContract } from "@/modules/auth/application/contract
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/establish-session.use-case";
-import { GetSessionUseCase } from "@/modules/auth/application/use-cases/get-session.use-case";
+import { ReadSessionUseCase } from "@/modules/auth/application/use-cases/read-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotate-session.use-case";
 import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
@@ -32,7 +32,7 @@ export function createSessionServiceFactory(
   return {
     establish: (user: SessionPrincipalDto) =>
       new EstablishSessionUseCase(deps).execute(user),
-    read: () => new GetSessionUseCase(deps).execute(),
+    read: () => new ReadSessionUseCase(deps).execute(),
     rotate: () => new RotateSessionUseCase(deps).execute(),
     terminate: (reason: TerminateSessionReason) =>
       new TerminateSessionUseCase(deps).execute(reason),

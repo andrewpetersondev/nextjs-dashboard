@@ -22,13 +22,13 @@ import { safeExecute } from "@/shared/results/safe-execute";
  * - Decode token via SessionTokenService
  * - Return principal info (or undefined if no valid session)
  */
-export class GetSessionUseCase {
+export class ReadSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionStore: SessionStoreContract;
   private readonly sessionTokenService: SessionTokenServiceContract;
 
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "getSession");
+    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "readSession");
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
