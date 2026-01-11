@@ -65,19 +65,19 @@ export class SessionJwtAdapter {
    * Encodes session claims into a signed JWT.
    *
    * @param claims - The session payload to encode
-   * @param expiresAtMs - Unix timestamp in milliseconds when the token expires
+   * @param expiresAtSec - Unix timestamp in seconds when the token expires
    * @returns Signed JWT token string
    * @throws Error if signing fails (e.g., invalid claims, crypto errors)
    */
   async encode(
     claims: SessionTokenClaims,
-    expiresAtMs: number,
+    expiresAtSec: number,
   ): Promise<Result<string, AppError>> {
     try {
       let signer = new SignJWT(claims satisfies JWTPayload)
         .setProtectedHeader({ alg: JWT_ALG_HS256, typ: JWT_TYP_JWT })
         .setIssuedAt()
-        .setExpirationTime(new Date(expiresAtMs));
+        .setExpirationTime(expiresAtSec);
 
       if (SESSION_ISSUER) {
         signer = signer.setIssuer(SESSION_ISSUER);
@@ -95,7 +95,7 @@ export class SessionJwtAdapter {
       return Err(
         makeUnexpectedError(error, {
           message: "jwt.sign.failed",
-          metadata: { expiresAtMs },
+          metadata: { expiresAtSec },
         }),
       );
     }

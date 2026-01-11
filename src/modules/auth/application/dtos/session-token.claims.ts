@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionClaimsSchema } from "@/modules/auth/domain/schemas/session-claims.schema";
+import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt-claims.schema";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
@@ -8,4 +8,4 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
  *
  * Codec boundary: these types exist because we encode/decode a token.
  */
-export type SessionTokenClaims = SessionClaimsSchema<UserRole>;
+export type SessionTokenClaims = SessionJwtClaims<UserRole>;

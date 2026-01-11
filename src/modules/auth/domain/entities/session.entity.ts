@@ -3,26 +3,56 @@ import "server-only";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
-// todo: SessionEntity vs SessionClaimsSchema vs SessionTokenClaims vs SessionPrincipalDto need further review. one
-//  area of concern is the use of branded types vs plain types (e.g., UserId vs string). another area of concern is
-//  `exp` vs `expiresAt` redundancy and naming consistency
-
 /**
  * Represents the core session data as a domain entity.
  * This is the central source of truth for an authenticated session's state.
+ *
+ * All timestamps are in UNIX seconds for consistency with JWT standards.
  */
 export type SessionEntity = Readonly<{
+  /** Expiration time (UNIX timestamp in seconds) */
   expiresAt: number;
+  /** Issued at time (UNIX timestamp in seconds) */
   issuedAt: number;
+  /** User role */
   role: UserRole;
+  /** Session absolute start time (UNIX timestamp in seconds) */
   sessionStart: number;
+  /** User identifier (branded) */
   userId: UserId;
 }>;
 
 /**
- * Creates a Session entity.
+ * Creates a Session entity with validation.
+ *
+ * Validates:
+ * - expiresAt must be greater than issuedAt
+ * - sessionStart must be less than or equal to issuedAt
+ * - expiresAt must be in the future (relative to current time)
+ *
+ * @throws Error if validation fails (fail-fast principle)
  */
 export function buildSessionEntity(input: SessionEntity): SessionEntity {
+  const nowSec = Math.floor(Date.now() / 1000);
+
+  if (input.expiresAt <= input.issuedAt) {
+    throw new Error(
+      `Invalid session: expiresAt (${input.expiresAt}) must be greater than issuedAt (${input.issuedAt})`,
+    );
+  }
+
+  if (input.sessionStart > input.issuedAt) {
+    throw new Error(
+      `Invalid session: sessionStart (${input.sessionStart}) must be less than or equal to issuedAt (${input.issuedAt})`,
+    );
+  }
+
+  if (input.expiresAt <= nowSec) {
+    throw new Error(
+      `Invalid session: expiresAt (${input.expiresAt}) must be in the future (now: ${nowSec})`,
+    );
+  }
+
   return {
     expiresAt: input.expiresAt,
     issuedAt: input.issuedAt,
@@ -33,29 +63,35 @@ export function buildSessionEntity(input: SessionEntity): SessionEntity {
 }
 
 /**
- * Domain Logic: Calculates the remaining time in milliseconds.
+ * Domain Logic: Calculates the remaining time in seconds.
  */
-export function getSessionTimeLeftMs(
+export function getSessionTimeLeftSec(
   session: SessionEntity,
-  now: number = Date.now(),
+  nowSec: number = Math.floor(Date.now() / 1000),
 ): number {
-  return session.expiresAt - now;
+  return session.expiresAt - nowSec;
 }
 
+/**
+ * Domain Logic: Checks if session has expired.
+ */
 export function isSessionExpired(
   session: SessionEntity,
-  now: number = Date.now(),
+  nowSec: number = Math.floor(Date.now() / 1000),
 ): boolean {
-  return getSessionTimeLeftMs(session, now) <= 0;
+  return getSessionTimeLeftSec(session, nowSec) <= 0;
 }
 
+/**
+ * Domain Logic: Checks if session is approaching expiry within threshold.
+ */
 export function isSessionApproachingExpiry(
   session: SessionEntity,
-  thresholdMs: number,
-  now: number = Date.now(),
+  thresholdSec: number,
+  nowSec: number = Math.floor(Date.now() / 1000),
 ): boolean {
-  const remaining = getSessionTimeLeftMs(session, now);
-  return remaining > 0 && remaining <= thresholdMs;
+  const remaining = getSessionTimeLeftSec(session, nowSec);
+  return remaining > 0 && remaining <= thresholdSec;
 }
 
 /**
@@ -63,9 +99,9 @@ export function isSessionApproachingExpiry(
  */
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
-  maxLifetimeMs: number,
-  now: number = Date.now(),
-): { ageMs: number; exceeded: boolean } {
-  const ageMs = now - session.sessionStart;
-  return { ageMs, exceeded: ageMs > maxLifetimeMs };
+  maxLifetimeSec: number,
+  nowSec: number = Math.floor(Date.now() / 1000),
+): { ageSec: number; exceeded: boolean } {
+  const ageSec = nowSec - session.sessionStart;
+  return { ageSec, exceeded: ageSec > maxLifetimeSec };
 }

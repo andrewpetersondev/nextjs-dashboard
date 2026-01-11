@@ -1,13 +1,13 @@
 import {
-  getSessionTimeLeftMs,
+  getSessionTimeLeftSec,
   isSessionAbsoluteLifetimeExceeded,
   isSessionApproachingExpiry,
   isSessionExpired,
   type SessionEntity,
 } from "@/modules/auth/domain/entities/session.entity";
 import {
-  MAX_ABSOLUTE_SESSION_MS,
-  SESSION_REFRESH_THRESHOLD_MS,
+  MAX_ABSOLUTE_SESSION_SEC,
+  SESSION_REFRESH_THRESHOLD_SEC,
   type SessionLifecycleReason,
 } from "@/modules/auth/domain/policies/session.policy";
 
@@ -17,12 +17,12 @@ export type SessionLifecycleDecision =
   | Readonly<{
       action: "continue";
       reason: "valid";
-      timeLeftMs: number;
+      timeLeftSec: number;
     }>
   | Readonly<{
       action: "rotate";
       reason: "approaching_expiry";
-      timeLeftMs: number;
+      timeLeftSec: number;
     }>
   | Readonly<{
       action: "terminate";
@@ -30,8 +30,8 @@ export type SessionLifecycleDecision =
         SessionLifecycleReason,
         "expired" | "absolute_limit_exceeded"
       >;
-      ageMs?: number;
-      maxMs?: number;
+      ageSec?: number;
+      maxSec?: number;
     }>;
 
 /**
@@ -39,34 +39,36 @@ export type SessionLifecycleDecision =
  */
 export function evaluateSessionLifecyclePolicy(
   session: SessionEntity,
-  now: number = Date.now(),
+  nowSec: number = Math.floor(Date.now() / 1000),
 ): SessionLifecycleDecision {
-  const { ageMs, exceeded } = isSessionAbsoluteLifetimeExceeded(
+  const { ageSec, exceeded } = isSessionAbsoluteLifetimeExceeded(
     session,
-    MAX_ABSOLUTE_SESSION_MS,
-    now,
+    MAX_ABSOLUTE_SESSION_SEC,
+    nowSec,
   );
 
   if (exceeded) {
     return {
       action: "terminate",
-      ageMs,
-      maxMs: MAX_ABSOLUTE_SESSION_MS,
+      ageSec,
+      maxSec: MAX_ABSOLUTE_SESSION_SEC,
       reason: "absolute_limit_exceeded",
     };
   }
 
-  if (isSessionExpired(session, now)) {
+  if (isSessionExpired(session, nowSec)) {
     return { action: "terminate", reason: "expired" };
   }
 
-  const timeLeftMs = getSessionTimeLeftMs(session, now);
+  const timeLeftSec = getSessionTimeLeftSec(session, nowSec);
 
-  if (isSessionApproachingExpiry(session, SESSION_REFRESH_THRESHOLD_MS, now)) {
-    return { action: "rotate", reason: "approaching_expiry", timeLeftMs };
+  if (
+    isSessionApproachingExpiry(session, SESSION_REFRESH_THRESHOLD_SEC, nowSec)
+  ) {
+    return { action: "rotate", reason: "approaching_expiry", timeLeftSec };
   }
 
-  return { action: "continue", reason: "valid", timeLeftMs };
+  return { action: "continue", reason: "valid", timeLeftSec };
 }
 
 /**

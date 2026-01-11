@@ -10,11 +10,11 @@ export type UpdateSessionFailureReason =
   | "not_needed";
 
 export type UpdateSessionNotRotatedDto = {
-  readonly ageMs?: number;
-  readonly maxMs?: number;
+  readonly ageSec?: number;
+  readonly maxSec?: number;
   readonly reason: UpdateSessionFailureReason;
   readonly refreshed: false;
-  readonly timeLeftMs?: number;
+  readonly timeLeftSec?: number;
 };
 
 export type UpdateSessionSuccessDto = {

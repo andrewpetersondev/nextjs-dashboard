@@ -5,12 +5,10 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
-import {
-  makeSessionClaimsPolicy,
-  SESSION_DURATION_MS,
-} from "@/modules/auth/domain/policies/session.policy";
+import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
+import { toJwtClaims } from "@/modules/auth/infrastructure/mappers/to-jwt-claims.mapper";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -34,24 +32,22 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
   async issue(
     input: IssueTokenRequestDto,
   ): Promise<Result<IssuedTokenDto, AppError>> {
-    const now = Date.now();
-    const expiresAtMs = now + SESSION_DURATION_MS;
+    const nowSec = Math.floor(Date.now() / 1000);
+    const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
-    const claims = makeSessionClaimsPolicy({
-      expiresAtMs,
-      iatMs: now,
-      role: input.role,
-      sessionStart: input.sessionStart,
-      userId: input.userId,
-    });
+    const claims = toJwtClaims(
+      input,
+      expiresAtSec,
+      nowSec,
+    ) as SessionTokenClaims;
 
-    const encodedResult = await this.codec.encode(claims, expiresAtMs);
+    const encodedResult = await this.codec.encode(claims, expiresAtSec);
 
     if (!encodedResult.ok) {
       return Err(encodedResult.error);
     }
 
-    return Ok({ expiresAtMs, token: encodedResult.value });
+    return Ok({ expiresAtMs: expiresAtSec * 1000, token: encodedResult.value });
   }
 
   /**

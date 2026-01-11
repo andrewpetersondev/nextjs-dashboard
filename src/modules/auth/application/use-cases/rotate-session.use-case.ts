@@ -6,7 +6,7 @@ import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/up
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import { toIssueTokenRequestDto } from "@/modules/auth/application/mappers/to-issue-token-request-dto.mapper";
+import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -31,7 +31,7 @@ export class RotateSessionUseCase {
     this.sessionTokenService = deps.sessionTokenService;
   }
 
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: false positive (rotation flow is intentionally verbose)
   execute(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
     return safeExecute<UpdateSessionOutcomeDto>(
       async () => {
@@ -58,13 +58,11 @@ export class RotateSessionUseCase {
 
         const { userId, role, sessionStart } = outcome.decoded;
 
-        const user = toIssueTokenRequestDto({
+        const issuedResult = await this.sessionTokenService.issue({
           role,
           sessionStart,
-          userId,
+          userId: userIdCodec.decode(userId),
         });
-
-        const issuedResult = await this.sessionTokenService.issue(user);
 
         if (!issuedResult.ok) {
           return Err(issuedResult.error);
@@ -81,8 +79,8 @@ export class RotateSessionUseCase {
             expiresAtMs,
             identifiers: {
               reason: "rotated",
-              role: user.role,
-              userId: user.userId,
+              role,
+              userId: userIdCodec.decode(userId),
             },
             message: "Session rotated successfully",
             operationName: "session.rotate.success",
@@ -95,8 +93,8 @@ export class RotateSessionUseCase {
           expiresAt: expiresAtMs,
           reason: "rotated",
           refreshed: true,
-          role: user.role,
-          userId: user.userId,
+          role,
+          userId: userIdCodec.decode(userId),
         });
       },
       {

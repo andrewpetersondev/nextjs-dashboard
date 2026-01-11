@@ -1,6 +1,5 @@
 import "server-only";
 
-import { ONE_SECOND_MS } from "@/modules/auth/domain/policies/session.policy";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/adapters/session-cookie-adapter.constants";
 import { createCookieService } from "@/server/cookies/cookie.factory";
 import { isProd } from "@/shared/config/env-shared";
@@ -37,10 +36,8 @@ export class SessionCookieAdapter {
    * @param expiresAtMs - The expiration time in milliseconds since epoch
    */
   async set(value: string, expiresAtMs: number): Promise<void> {
-    const maxAge = Math.max(
-      0,
-      Math.floor((expiresAtMs - Date.now()) / ONE_SECOND_MS),
-    );
+    const secondsUntilExpiry = Math.floor((expiresAtMs - Date.now()) / 1000);
+    const maxAge = Math.max(0, secondsUntilExpiry);
 
     await this.cookies.set(SESSION_COOKIE_NAME, value, {
       httpOnly: SESSION_COOKIE_HTTPONLY,

@@ -16,6 +16,7 @@ export const iatSchema = z.number().int().nonnegative();
 export const expSchema = z.number().int().positive();
 
 // Codec: string <-> branded UserId
+// todo: should the encode/decode be swapped? right now decoding takes a plain string and produces a branded UserId
 export const userIdCodec = z.codec(
   z.uuid(), // input: UUID string
   z.custom<UserId>(), // output: branded UserId
