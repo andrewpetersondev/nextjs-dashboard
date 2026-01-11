@@ -4,10 +4,9 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { mapToIssueTokenRequest } from "@/modules/auth/application/helpers/map-to-issue-token-request.helper";
+import { prepareSessionForTokenIssue } from "@/modules/auth/application/helpers/prepare-session-for-token-issue.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -59,10 +58,10 @@ export class RotateSessionUseCase {
 
         const { userId, role, sessionStart } = outcome.decoded;
 
-        const user = mapToIssueTokenRequest({
+        const user = prepareSessionForTokenIssue({
           role,
           sessionStart,
-          userId: userIdCodec.decode(userId),
+          userId,
         });
 
         const issuedResult = await this.sessionTokenService.issue(user);

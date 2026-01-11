@@ -1,3 +1,5 @@
+// todo: this file may indicate the need for a AuthorizationRequestEntity
+
 export type AuthRequestAuthorizationReason =
   | "admin.not_authenticated"
   | "admin.not_authorized"

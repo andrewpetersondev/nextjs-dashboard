@@ -1,8 +1,18 @@
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
+import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 // todo: where should i place mappers like this? in 'helpers' seems ok for now but what about long term? did i name
 //  this function and file correctly? check project conventions
+
+/**
+ * Parameters for preparing decoded session data for token issuance.
+ */
+export type PrepareSessionForTokenIssueParams = {
+  role: UserRole;
+  sessionStart: number;
+  userId: string;
+};
 
 /**
  * Maps decoded session data to a token issuance request.
@@ -10,8 +20,8 @@ import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
  * Transforms the raw userId string into the proper codec-decoded format
  * required by the session token service.
  */
-export function mapToIssueTokenRequest(
-  params: IssueTokenRequestDto,
+export function prepareSessionForTokenIssue(
+  params: PrepareSessionForTokenIssueParams,
 ): IssueTokenRequestDto {
   return {
     role: params.role,
