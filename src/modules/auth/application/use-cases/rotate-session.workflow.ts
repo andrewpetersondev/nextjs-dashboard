@@ -16,7 +16,8 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-// todo: why is this not used? replace the adapters to use use cases and helpers
+// todo: why is this not used? replace the adapters to use use cases and helpers. refactor this to use use-cases and
+//  helpers, not adapters directly. how can i actually implement this workflow in the app?
 
 /**
  * Orchestrates the session rotation lifecycle.
@@ -24,7 +25,6 @@ import type { Result } from "@/shared/results/result.types";
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <why is this function not used?>
 export async function rotateSessionWorkflow(deps: {
-  // todo: do i want to use `ReturnType<...>` ? probably not
   sessionService: SessionServiceContract;
 }): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
   const { sessionService } = deps;
