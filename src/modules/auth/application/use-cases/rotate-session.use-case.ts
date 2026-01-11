@@ -4,6 +4,7 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
+import { mapToIssueTokenRequest } from "@/modules/auth/application/helpers/map-to-issue-token-request.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
@@ -58,12 +59,11 @@ export class RotateSessionUseCase {
 
         const { userId, role, sessionStart } = outcome.decoded;
 
-        const user = {
-          // todo: i do not like casting. i think i have a function for this
-          role: role as "ADMIN" | "USER" | "GUEST",
+        const user = mapToIssueTokenRequest({
+          role,
           sessionStart,
           userId: userIdCodec.decode(userId),
-        };
+        });
 
         const issuedResult = await this.sessionTokenService.issue(user);
 

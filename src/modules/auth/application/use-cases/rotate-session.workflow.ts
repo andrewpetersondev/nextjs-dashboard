@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { makeSession } from "@/modules/auth/domain/entities/session.entity";
@@ -11,10 +12,11 @@ import {
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
 import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
-import type { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+
+// todo: why is this not used? replace the adapters to use use cases and helpers
 
 /**
  * Orchestrates the session rotation lifecycle.
@@ -23,7 +25,7 @@ import type { Result } from "@/shared/results/result.types";
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <why is this function not used?>
 export async function rotateSessionWorkflow(deps: {
   // todo: do i want to use `ReturnType<...>` ? probably not
-  sessionService: ReturnType<typeof createSessionServiceFactory>;
+  sessionService: SessionServiceContract;
 }): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
   const { sessionService } = deps;
 
