@@ -1,6 +1,7 @@
 // todo: why do i need `exp` and `expiresAt`? they seem redundant and confusing. Also, should this type be an Entity
 //  instead of a schema? If it should remain as a schema, then should `SessionTokenClaims` be an Entity instead of a
-//  `DTO`?
+//  `DTO`? Also, some of these types come from infrastructure (e.g., JWT) and some are domain types, so should i
+//  have an infrastructure type and a domain type and map between them, or maybe extend one from the other?
 export type SessionClaimsSchema<R = string> = {
   exp: number;
   expiresAt: number;

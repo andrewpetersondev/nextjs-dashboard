@@ -22,7 +22,7 @@ export type SessionEntity = Readonly<{
 /**
  * Creates a Session entity.
  */
-export function buildSession(input: SessionEntity): SessionEntity {
+export function buildSessionEntity(input: SessionEntity): SessionEntity {
   return {
     expiresAt: input.expiresAt,
     issuedAt: input.issuedAt,
