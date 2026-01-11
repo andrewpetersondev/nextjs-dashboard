@@ -1,8 +1,7 @@
 import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
-// todo: this dependency is pointing outward creating a violation
-import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
+import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
@@ -15,6 +14,6 @@ export async function verifySessionOptimisticWorkflow(
   deps: Readonly<{
     sessionService: SessionServiceContract;
   }>,
-): Promise<Result<SessionTransport, AppError>> {
+): Promise<Result<SessionVerificationDto, AppError>> {
   return await deps.sessionService.verify();
 }

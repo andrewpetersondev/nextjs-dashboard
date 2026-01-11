@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/application/use-cases/verify-session-optimistic.workflow";
 import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
-import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -17,7 +17,7 @@ import { ROUTES } from "@/shared/routes/routes";
  * - logging
  */
 export const verifySessionOptimistic = cache(
-  async (): Promise<SessionTransport> => {
+  async (): Promise<SessionVerificationDto> => {
     const requestId = crypto.randomUUID();
 
     const logger = defaultLogger

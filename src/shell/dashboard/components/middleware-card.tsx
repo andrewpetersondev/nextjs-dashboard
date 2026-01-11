@@ -1,6 +1,6 @@
 import type { JSX } from "react";
+import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import { verifySessionOptimistic } from "@/modules/auth/infrastructure/actions/verify-session-optimistic.action";
-import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import {
   GUEST_ROLE,
   USER_ROLES,
@@ -11,7 +11,7 @@ import { H6 } from "@/ui/atoms/headings";
 const allowedRoles: readonly UserRole[] = USER_ROLES;
 
 export async function MiddlewareCard(): Promise<JSX.Element> {
-  const session: SessionTransport = await verifySessionOptimistic();
+  const session: SessionVerificationDto = await verifySessionOptimistic();
 
   const role: UserRole = allowedRoles.includes(session.role as UserRole)
     ? (session.role as UserRole)

@@ -2,13 +2,12 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
 import { AuthSecurityErrors } from "@/modules/auth/domain/policies/auth-security.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-// todo: this dependency is pointing outward creating a violation
-import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
@@ -35,7 +34,7 @@ export class VerifySessionUseCase {
     this.sessionTokenService = deps.sessionTokenService;
   }
 
-  async execute(): Promise<Result<SessionTransport, AppError>> {
+  async execute(): Promise<Result<SessionVerificationDto, AppError>> {
     const readResult = await readSessionTokenHelper(
       {
         sessionStore: this.sessionStore,
