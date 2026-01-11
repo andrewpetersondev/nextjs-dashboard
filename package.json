@@ -16,7 +16,7 @@
     "react-dom": "19.2.3",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.4.0",
-    "use-debounce": "^10.0.6",
+    "use-debounce": "^10.1.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {
@@ -26,9 +26,9 @@
     "@testing-library/cypress": "^10.1.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.1",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.6",
     "@types/pg": "^8.16.0",
-    "@types/react": "19.2.7",
+    "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
     "axe-core": "^4.11.1",
@@ -46,7 +46,7 @@
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^6.0.3",
+    "vite-tsconfig-paths": "^6.0.4",
     "vitest": "^4.0.16",
     "wait-on": "^9.0.3"
   },
