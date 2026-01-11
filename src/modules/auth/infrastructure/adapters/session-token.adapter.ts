@@ -9,7 +9,10 @@ import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.pol
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
 import { toJwtClaims } from "@/modules/auth/infrastructure/mappers/to-jwt-claims.mapper";
-import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
+import {
+  nowInSeconds,
+  secondsToMilliseconds,
+} from "@/shared/constants/time.constants";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -33,7 +36,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
   async issue(
     input: IssueTokenRequestDto,
   ): Promise<Result<IssuedTokenDto, AppError>> {
-    const nowSec = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
+    const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
     const claims = toJwtClaims(
@@ -49,7 +52,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
     }
 
     return Ok({
-      expiresAtMs: expiresAtSec * MILLISECONDS_PER_SECOND,
+      expiresAtMs: secondsToMilliseconds(expiresAtSec),
       token: encodedResult.value,
     });
   }

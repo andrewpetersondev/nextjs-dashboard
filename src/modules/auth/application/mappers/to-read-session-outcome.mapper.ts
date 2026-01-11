@@ -2,7 +2,7 @@ import "server-only";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
 import { getSessionTimeLeftSec } from "@/modules/auth/domain/entities/session.entity";
-import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
+import { nowInSeconds } from "@/shared/constants/time.constants";
 
 /**
  * Maps a SessionEntity to a ReadSessionOutcomeDto.
@@ -12,7 +12,7 @@ import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
  */
 export function toReadSessionOutcome(
   session: SessionEntity,
-  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
+  nowSec: number = nowInSeconds(),
 ): Readonly<ReadSessionOutcomeDto> {
   return {
     expiresAt: session.expiresAt,

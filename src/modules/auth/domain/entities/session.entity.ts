@@ -1,7 +1,10 @@
 import "server-only";
 
 import type { UserId } from "@/shared/branding/brands";
-import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
+import {
+  MILLISECONDS_PER_SECOND,
+  nowInSeconds,
+} from "@/shared/constants/time.constants";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
@@ -101,7 +104,7 @@ export function isSessionApproachingExpiry(
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
   maxLifetimeSec: number,
-  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
+  nowSec: number = nowInSeconds(),
 ): { ageSec: number; exceeded: boolean } {
   const ageSec = nowSec - session.sessionStart;
   return { ageSec, exceeded: ageSec > maxLifetimeSec };

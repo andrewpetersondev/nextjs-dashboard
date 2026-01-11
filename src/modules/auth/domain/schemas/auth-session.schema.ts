@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
+import { nowInSeconds } from "@/shared/constants/time.constants";
 import { userRoleSchema } from "@/shared/domain/user/user-role.schema";
 
 /**
@@ -38,7 +38,7 @@ export const sessionStartSchema = z
   .number()
   .int()
   .nonnegative()
-  .refine((val) => val <= Math.floor(Date.now() / MILLISECONDS_PER_SECOND), {
+  .refine((val) => val <= nowInSeconds(), {
     message: "sessionStart must not be in the future",
   });
 
