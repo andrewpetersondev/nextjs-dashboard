@@ -7,6 +7,7 @@ import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
 import { AuthSecurityErrors } from "@/modules/auth/domain/policies/auth-security.policy";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
+// todo: this dependency is pointing outward creating a violation
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

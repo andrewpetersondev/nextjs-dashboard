@@ -10,6 +10,7 @@ import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
+// todo: this dependency is pointing outward creating a violation
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/auth-error.mapper";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

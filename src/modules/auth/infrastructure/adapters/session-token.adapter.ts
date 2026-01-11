@@ -6,9 +6,11 @@ import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
-import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
+import {
+  DecryptPayloadSchema,
+  userIdCodec,
+} from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
-import { toJwtClaims } from "@/modules/auth/infrastructure/mappers/to-jwt-claims.mapper";
 import { toSessionTokenClaims } from "@/modules/auth/infrastructure/mappers/to-session-token-claims.mapper";
 import {
   nowInSeconds,
@@ -32,6 +34,14 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
   }
 
   /**
+   * Decodes a token and returns the application-level claims.
+   */
+  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
+    // Implementation now satisfies the contract directly
+    return await this.codec.decode(token);
+  }
+
+  /**
    * Issues a new session token with the provided claims.
    */
   async issue(
@@ -40,9 +50,15 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
     const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
-    const jwtClaims = toJwtClaims(input, expiresAtSec, nowSec);
+    // Use a mapper to create the Application DTO first
+    const claims: SessionTokenClaims = {
+      exp: expiresAtSec,
+      iat: nowSec,
+      role: input.role,
+      sub: userIdCodec.encode(input.userId),
+    };
 
-    const encodedResult = await this.codec.encode(jwtClaims, expiresAtSec);
+    const encodedResult = await this.codec.encode(claims, expiresAtSec);
 
     if (!encodedResult.ok) {
       return Err(encodedResult.error);
@@ -52,17 +68,6 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
       expiresAtMs: secondsToMilliseconds(expiresAtSec),
       token: encodedResult.value,
     });
-  }
-
-  /**
-   * Decodes a token and returns the raw payload.
-   */
-  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
-    const result = await this.codec.decode(token);
-    if (!result.ok) {
-      return result;
-    }
-    return toSessionTokenClaims(result.value);
   }
 
   /**

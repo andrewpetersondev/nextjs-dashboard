@@ -1,13 +1,14 @@
 import "server-only";
+
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Codec for encoding/decoding session tokens.
+ * Port for token serialization/deserialization.
  *
- * Works with infrastructure-level JWT claims (sub, iat, exp).
- * All timestamps are in UNIX seconds.
+ * Clean Architecture: This contract belongs to the Application layer and
+ * speaks only in Application DTOs (SessionTokenClaims).
  */
 export interface SessionTokenCodecContract {
   decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
