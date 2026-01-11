@@ -8,6 +8,7 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
+// todo: consider moving type to improve organization and clarity
 export type ReadSessionTokenOutcome =
   | { kind: "missing_token" }
   | { kind: "invalid_token"; didCleanup: boolean }

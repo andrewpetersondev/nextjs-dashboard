@@ -83,6 +83,7 @@ export class VerifySessionUseCase {
       return Err(AuthSecurityErrors.invalidClaims("Missing userId in claims"));
     }
 
+    // todo: i think i should use a builder or mapper for this
     return Ok({
       isAuthorized: true,
       role: decoded.role,
