@@ -56,3 +56,5 @@ export const DecryptPayloadSchema = z
     message: "exp must be greater than iat",
     path: ["exp"],
   });
+
+// todo: why does EncryptPayloadSchema not exist?

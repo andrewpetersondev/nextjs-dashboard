@@ -57,17 +57,18 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
   /**
    * Decodes a token and returns the raw payload.
    */
-  decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
-    return this.codec.decode(token).then((result) => {
-      if (!result.ok) {
-        return result;
-      }
-      return toSessionTokenClaims(result.value);
-    });
+  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
+    const result = await this.codec.decode(token);
+    if (!result.ok) {
+      return result;
+    }
+    return toSessionTokenClaims(result.value);
   }
 
   /**
    * Validates decoded claims against the schema.
+   *
+   * todo: why is this not an async function?
    */
   validate(claims: unknown): Result<SessionTokenClaims, AppError> {
     const parsed = DecryptPayloadSchema.safeParse(claims);
