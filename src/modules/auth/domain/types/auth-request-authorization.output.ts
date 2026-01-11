@@ -1,12 +1,6 @@
 // todo: this file may indicate the need for a AuthorizationRequestEntity
 
-export type AuthRequestAuthorizationReason =
-  | "admin.not_authenticated"
-  | "admin.not_authorized"
-  | "decode_failed"
-  | "no_cookie"
-  | "protected.not_authenticated"
-  | "public.bounce_authenticated";
+import type { AuthRequestAuthorizationReason } from "@/modules/auth/domain/types/auth-request-authorization-reason.type";
 
 export type AuthRequestAuthorizationOutcome =
   | Readonly<{ kind: "next"; reason: "ok" }>

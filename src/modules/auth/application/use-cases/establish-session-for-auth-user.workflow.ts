@@ -2,8 +2,8 @@ import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
-import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { toSessionPrincipalPolicy } from "@/modules/auth/application/mappers/to-session-principal-policy.mapper";
+import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";

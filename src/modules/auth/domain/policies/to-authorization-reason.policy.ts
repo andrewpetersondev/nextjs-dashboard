@@ -1,5 +1,5 @@
-import type { AuthRequestAuthorizationReason } from "@/modules/auth/application/dtos/auth-request-authorization.output";
 import type { AuthRouteType } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
+import type { AuthRequestAuthorizationReason } from "@/modules/auth/domain/types/auth-request-authorization-reason.type";
 
 export function toAuthorizationReasonPolicy(
   routeType: AuthRouteType,

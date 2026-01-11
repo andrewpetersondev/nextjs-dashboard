@@ -1,9 +1,9 @@
 import "server-only";
 
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
-import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
+import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";

@@ -1,6 +1,6 @@
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
-import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
+import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
 
 /**
  * Domain Policy: Maps authentication outputs to SessionIdentityDto.

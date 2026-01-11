@@ -2,13 +2,13 @@ import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/establish-session.use-case";
 import { ReadSessionUseCase } from "@/modules/auth/application/use-cases/read-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotate-session.use-case";
 import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
+import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
 import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

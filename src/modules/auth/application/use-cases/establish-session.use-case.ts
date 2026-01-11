@@ -2,10 +2,10 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
+import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";
