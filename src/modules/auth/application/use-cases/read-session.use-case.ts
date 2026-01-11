@@ -58,9 +58,9 @@ export class ReadSessionUseCase {
         const decoded = outcome.decoded;
 
         // Ensure we have a valid identity before converting to session
-        if (!decoded.userId) {
+        if (!decoded.sub) {
           await cleanupInvalidTokenHelper(this.sessionStore);
-          this.logger.operation("warn", "Session missing userId", {
+          this.logger.operation("warn", "Session missing subject (sub)", {
             operationContext: "session",
             operationIdentifiers: { reason: "invalid_claims" },
             operationName: "session.read.invalid_claims",

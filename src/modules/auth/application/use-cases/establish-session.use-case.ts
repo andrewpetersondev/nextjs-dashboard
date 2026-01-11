@@ -6,7 +6,6 @@ import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";
@@ -36,11 +35,8 @@ export class EstablishSessionUseCase {
   ): Promise<Result<SessionIdentityDto, AppError>> {
     return safeExecute(
       async () => {
-        const sessionStart = nowInSeconds();
-
         const issuedResult = await this.sessionTokenService.issue({
           role: user.role,
-          sessionStart,
           userId: user.id,
         });
 
@@ -59,7 +55,6 @@ export class EstablishSessionUseCase {
             expiresAtMs,
             identifiers: {
               role: user.role,
-              sessionStart,
               userId: user.id,
             },
             message: "Session established",

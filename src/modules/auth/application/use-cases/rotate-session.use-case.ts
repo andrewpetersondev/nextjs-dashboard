@@ -50,19 +50,18 @@ export class RotateSessionUseCase {
 
         const outcome = readResult.value;
 
-        if (outcome.kind !== "decoded" || !outcome.decoded.userId) {
+        if (outcome.kind !== "decoded" || !outcome.decoded.sub) {
           return Ok({
             reason: "invalid_or_missing_user",
             refreshed: false,
           } as const);
         }
 
-        const { userId, role, sessionStart } = outcome.decoded;
+        const { sub, role } = outcome.decoded;
 
         const issuedResult = await this.sessionTokenService.issue({
           role,
-          sessionStart,
-          userId: userIdCodec.decode(userId),
+          userId: userIdCodec.decode(sub),
         });
 
         if (!issuedResult.ok) {
@@ -70,6 +69,8 @@ export class RotateSessionUseCase {
         }
 
         const { expiresAtMs, token } = issuedResult.value;
+
+        const decodedUserId = userIdCodec.decode(sub);
 
         await setSessionCookieAndLogHelper(
           {
@@ -81,7 +82,7 @@ export class RotateSessionUseCase {
             identifiers: {
               reason: "rotated",
               role,
-              userId: userIdCodec.decode(userId),
+              userId: decodedUserId,
             },
             message: "Session rotated successfully",
             operationName: "session.rotate.success",
@@ -93,7 +94,7 @@ export class RotateSessionUseCase {
           buildUpdateSessionSuccess({
             expiresAtMs,
             role,
-            userId: userIdCodec.decode(userId),
+            userId: decodedUserId,
           }),
         );
       },

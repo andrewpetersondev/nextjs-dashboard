@@ -1,6 +1,6 @@
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { UnbrandedIssueTokenRequestDto } from "@/modules/auth/application/dtos/unbranded-issue-token-request.dto";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
+import { toUserId } from "@/shared/branding/converters/id-converters";
 
 // todo: where should i place mappers like this? seems ok for now but what about long term? did i name
 //  this function and file correctly? check project conventions
@@ -16,7 +16,6 @@ export function toIssueTokenRequestDto(
 ): IssueTokenRequestDto {
   return {
     role: params.role,
-    sessionStart: params.sessionStart,
-    userId: userIdCodec.decode(params.userId),
+    userId: toUserId(params.userId),
   };
 }

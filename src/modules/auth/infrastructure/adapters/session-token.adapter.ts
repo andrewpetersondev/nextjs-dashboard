@@ -9,6 +9,7 @@ import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.pol
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
 import { toJwtClaims } from "@/modules/auth/infrastructure/mappers/to-jwt-claims.mapper";
+import { toSessionTokenClaims } from "@/modules/auth/infrastructure/mappers/to-session-token-claims.mapper";
 import {
   nowInSeconds,
   secondsToMilliseconds,
@@ -39,13 +40,9 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
     const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
-    const claims = toJwtClaims(
-      input,
-      expiresAtSec,
-      nowSec,
-    ) as SessionTokenClaims;
+    const jwtClaims = toJwtClaims(input, expiresAtSec, nowSec);
 
-    const encodedResult = await this.codec.encode(claims, expiresAtSec);
+    const encodedResult = await this.codec.encode(jwtClaims, expiresAtSec);
 
     if (!encodedResult.ok) {
       return Err(encodedResult.error);
@@ -61,7 +58,12 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
    * Decodes a token and returns the raw payload.
    */
   decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
-    return this.codec.decode(token);
+    return this.codec.decode(token).then((result) => {
+      if (!result.ok) {
+        return result;
+      }
+      return toSessionTokenClaims(result.value);
+    });
   }
 
   /**
@@ -80,7 +82,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
       );
     }
 
-    return Ok(parsed.data);
+    return toSessionTokenClaims(parsed.data);
   }
 }
 

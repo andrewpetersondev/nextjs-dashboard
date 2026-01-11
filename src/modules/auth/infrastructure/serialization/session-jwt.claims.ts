@@ -1,34 +1,31 @@
 import "server-only";
 
-// todo: should userId, sessionStart, and role be moved out of the claims because they are application specific?
-
 /**
- * JWT payload schema for session tokens (infrastructure serialization detail).
+ * JWT payload schema for session tokens (infrastructure-only).
  *
- * This represents the raw claims stored in and decoded from JWT tokens.
- * This is an infrastructure type specific to JWT/JOSE implementation.
+ * Contains JWT-standard claims plus minimal application data needed for performance.
+ * This structure balances clean architecture with practical performance requirements.
  *
- * **Timestamp Fields:**
- * - `iat`: JWT-standard issued-at time in **seconds** (required by JWT spec)
- * - `expiresAt`: Application-level expiration in **seconds**
- * - `sessionStart`: Session absolute start time in **seconds**
+ * **Standard JWT Claims:**
+ * - `sub`: Subject (user identifier as UUID string)
+ * - `iat`: Issued-at time (UNIX timestamp in seconds)
+ * - `exp`: Expiration time (UNIX timestamp in seconds)
  *
- * Note: `exp` (expiration) is computed by JOSE's `.setExpirationTime()` and
- * is not included in our schema as it's redundant with `expiresAt`.
+ * **Performance Optimization (Denormalized Data):**
+ * - `role`: User role (string) - Cached from user record at token issuance.
+ *   This avoids database lookups on every request. Role changes require re-authentication.
  *
- * @typeParam R - Role type (string for raw JWT, UserRole for typed usage)
+ * Note: While `role` is application-specific, storing it in JWT is a pragmatic
+ * tradeoff between architectural purity and performance. The JWT infrastructure
+ * remains decoupled as role is treated as an opaque string at this layer.
  */
-export type SessionJwtClaims<R = string> = {
-  // todo: replace expiresAt with exp because jwt claims standard uses (iss, sub, aud, exp, nbf, iat, jti)
-  /** Application-level expiration time (UNIX timestamp in seconds) */
-  expiresAt: number;
-  /** JWT-standard issued-at time (UNIX timestamp in seconds) */
+export type SessionJwtClaims = {
+  /** Expiration time (UNIX timestamp in seconds) - JWT standard */
+  exp: number;
+  /** Issued-at time (UNIX timestamp in seconds) - JWT standard */
   iat: number;
-  /** User role (string in JWT, typed in application layer) */
-  role: R;
-  /** Session absolute start time (UNIX timestamp in seconds) */
-  sessionStart: number;
-  // todo: add type param for plain, unbranded user id?
-  /** User identifier (UUID string, decoded to UserId in domain) */
-  userId: string;
+  /** User role (cached for performance) - string at infrastructure layer */
+  role: string;
+  /** Subject: User identifier (UUID string) - JWT standard */
+  sub: string;
 };

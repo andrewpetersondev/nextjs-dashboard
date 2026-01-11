@@ -1,11 +1,20 @@
 import "server-only";
 
-import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
- * Claims/payload shapes used for encoding/decoding session tokens.
+ * Application-layer session token claims.
  *
- * Codec boundary: these types exist because we encode/decode a token.
+ * This represents the application's view of session data after it has been
+ * decoded and validated from the infrastructure transport (e.g., JWT).
  */
-export type SessionTokenClaims = SessionJwtClaims<UserRole>;
+export type SessionTokenClaims = {
+  /** Expiration time (UNIX timestamp in seconds) */
+  readonly exp: number;
+  /** Issued-at time (UNIX timestamp in seconds) */
+  readonly iat: number;
+  /** User role - strongly typed for application layer */
+  readonly role: UserRole;
+  /** Subject: User identifier (UUID string) */
+  readonly sub: string;
+};

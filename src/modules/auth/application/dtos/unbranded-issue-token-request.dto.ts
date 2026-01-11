@@ -7,9 +7,9 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
  * Parameters for preparing decoded session data for token issuance.
+ * Plain-string userId version of IssueTokenRequestDto.
  */
 export type UnbrandedIssueTokenRequestDto = {
   role: UserRole;
-  sessionStart: number;
   userId: string;
 };

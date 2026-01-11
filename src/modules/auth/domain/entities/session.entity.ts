@@ -12,19 +12,14 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
  * This is the central source of truth for an authenticated session's state.
  *
  * All timestamps are in UNIX seconds for consistency with JWT standards.
- *
- * todo: this is so similar to SessionJwtClaims and SessionTokenClaims that maybe i should find a better strategy
- * for layering and clean architecture boundaries
  */
 export type SessionEntity = Readonly<{
   /** Expiration time (UNIX timestamp in seconds) */
   expiresAt: number;
-  /** Issued at time (UNIX timestamp in seconds) */
+  /** Issued at time (UNIX timestamp in seconds) - also serves as session start time */
   issuedAt: number;
   /** User role */
   role: UserRole;
-  /** Session absolute start time (UNIX timestamp in seconds) */
-  sessionStart: number;
   /** User identifier (branded) */
   userId: UserId;
 }>;
@@ -34,7 +29,6 @@ export type SessionEntity = Readonly<{
  *
  * Validates:
  * - expiresAt must be greater than issuedAt
- * - sessionStart must be less than or equal to issuedAt
  * - expiresAt must be in the future (relative to current time)
  *
  * @throws Error if validation fails (fail-fast principle)
@@ -48,12 +42,6 @@ export function buildSessionEntity(input: SessionEntity): SessionEntity {
     );
   }
 
-  if (input.sessionStart > input.issuedAt) {
-    throw new Error(
-      `Invalid session: sessionStart (${input.sessionStart}) must be less than or equal to issuedAt (${input.issuedAt})`,
-    );
-  }
-
   if (input.expiresAt <= nowSec) {
     throw new Error(
       `Invalid session: expiresAt (${input.expiresAt}) must be in the future (now: ${nowSec})`,
@@ -64,7 +52,6 @@ export function buildSessionEntity(input: SessionEntity): SessionEntity {
     expiresAt: input.expiresAt,
     issuedAt: input.issuedAt,
     role: input.role,
-    sessionStart: input.sessionStart,
     userId: input.userId,
   };
 }
@@ -103,12 +90,13 @@ export function isSessionApproachingExpiry(
 
 /**
  * Domain Logic: Checks if the session has exceeded its absolute maximum lifetime.
+ * Uses issuedAt as the session start time.
  */
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
   maxLifetimeSec: number,
   nowSec: number = nowInSeconds(),
 ): { ageSec: number; exceeded: boolean } {
-  const ageSec = nowSec - session.sessionStart;
+  const ageSec = nowSec - session.issuedAt;
   return { ageSec, exceeded: ageSec > maxLifetimeSec };
 }

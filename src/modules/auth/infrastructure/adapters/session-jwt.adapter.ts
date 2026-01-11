@@ -9,6 +9,7 @@ import {
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/adapters/session-jwt-adapter.constants";
+import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -107,9 +108,9 @@ export class SessionJwtAdapter {
    * @param token - The JWT token string to decode
    * @returns `Ok(payload)` if verification succeeds, `Err(appError)` otherwise
    */
-  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
+  async decode(token: string): Promise<Result<SessionJwtClaims, AppError>> {
     try {
-      const { payload } = await jwtVerify<SessionTokenClaims>(
+      const { payload } = await jwtVerify<SessionJwtClaims>(
         token,
         this.encodedKey,
         this.verifyOptions,

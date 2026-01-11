@@ -19,7 +19,7 @@ export function evaluateRouteAccessPolicy(
   routeType: AuthRouteType,
   claims: SessionTokenClaims | undefined,
 ): AuthRouteAccessDecision {
-  const isAuthenticated = Boolean(claims?.userId);
+  const isAuthenticated = Boolean(claims?.sub);
 
   if (routeType === "admin") {
     if (!isAuthenticated) {

@@ -6,6 +6,7 @@ import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
+import { toSessionTokenClaims } from "@/modules/auth/infrastructure/mappers/to-session-token-claims.mapper";
 
 /**
  * Resolves session token claims from a raw cookie string, ensuring that decode failures are surfaced
@@ -32,7 +33,12 @@ async function extractSessionClaims(
     return { claims: undefined, reason: "decode_failed" };
   }
 
-  return { claims: decodedResult.value, reason: "ok" };
+  const enrichedResult = toSessionTokenClaims(decodedResult.value);
+  if (!enrichedResult.ok) {
+    return { claims: undefined, reason: "decode_failed" };
+  }
+
+  return { claims: enrichedResult.value, reason: "ok" };
 }
 
 /**

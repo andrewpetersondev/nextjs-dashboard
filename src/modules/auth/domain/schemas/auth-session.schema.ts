@@ -2,7 +2,6 @@ import { z } from "zod";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { nowInSeconds } from "@/shared/constants/time.constants";
-import { userRoleSchema } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Issued At (iat) claim schema.
@@ -16,8 +15,19 @@ export const iatSchema = z.number().int().nonnegative();
  */
 export const expSchema = z.number().int().positive();
 
+/**
+ * Subject (sub) claim schema.
+ * Must be a valid UUID string representing the user identifier.
+ */
+export const subSchema = z.string().uuid();
+
+/**
+ * Role claim schema (infrastructure layer).
+ * Validated as string at JWT layer, typed as UserRole at application layer.
+ */
+export const roleClaimSchema = z.string().min(1);
+
 // Codec: string <-> branded UserId
-// todo: should the encode/decode be swapped? right now decoding takes a plain string and produces a branded UserId
 export const userIdCodec = z.codec(
   z.uuid(), // input: UUID string
   z.custom<UserId>(), // output: branded UserId
@@ -27,51 +37,22 @@ export const userIdCodec = z.codec(
   },
 );
 
-// Accept either UUID string or UserId in inputs; always produce UserId
-export const userIdSchema = z
-  .union([z.string().uuid(), userIdCodec])
-  .transform<UserId>((val) => (typeof val === "string" ? toUserId(val) : val));
-
-export const expiresAtSchema = z.number().int().positive();
-
-export const sessionStartSchema = z
-  .number()
-  .int()
-  .nonnegative()
-  .refine((val) => val <= nowInSeconds(), {
-    message: "sessionStart must not be in the future",
-  });
-
-export const EncryptPayloadBase = z.object({
-  expiresAt: expiresAtSchema,
-  role: userRoleSchema,
-  sessionStart: sessionStartSchema,
-  userId: userIdSchema,
-});
-
-export const EncryptPayloadSchema = EncryptPayloadBase.refine(
-  (val) => val.sessionStart <= val.expiresAt,
-  {
-    message: "sessionStart must be less than or equal to expiresAt",
-    path: ["sessionStart"],
-  },
-);
-
 /**
- * DecryptPayloadSchema
+ * DecryptPayloadSchema - JWT claims validation
  *
- * Extends the base EncryptPayloadSchema with standard JWT-like claims:
- * - exp: token expiration time
- * - iat: token issued-at time
- *
- * Use this schema to validate payloads after decryption, ensuring temporal claims are present and well-typed.
+ * Validates the raw JWT payload after decryption/verification.
+ * Contains JWT-standard claims (sub, iat, exp) plus role for performance.
  */
-export const DecryptPayloadSchema = EncryptPayloadBase.extend({
-  exp: expSchema,
-  iat: iatSchema.refine((val) => val <= Date.now() + 5000, {
-    message: "iat must not be in the future (allowing small clock skew)",
-  }),
-}).refine((val) => val.sessionStart <= val.expiresAt, {
-  message: "sessionStart must be less than or equal to expiresAt",
-  path: ["sessionStart"],
-});
+export const DecryptPayloadSchema = z
+  .object({
+    exp: expSchema,
+    iat: iatSchema.refine((val) => val <= nowInSeconds() + 5, {
+      message: "iat must not be in the future (allowing small clock skew)",
+    }),
+    role: roleClaimSchema,
+    sub: subSchema,
+  })
+  .refine((val) => val.exp > val.iat, {
+    message: "exp must be greater than iat",
+    path: ["exp"],
+  });

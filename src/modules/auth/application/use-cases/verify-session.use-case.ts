@@ -74,13 +74,13 @@ export class VerifySessionUseCase {
 
     const decoded = outcome.decoded;
 
-    if (!decoded.userId) {
-      this.logger.operation("warn", "Session missing userId", {
+    if (!decoded.sub) {
+      this.logger.operation("warn", "Session missing subject (sub)", {
         operationContext: "session",
         operationIdentifiers: { reason: "invalid_claims" },
         operationName: "session.verify.invalid_claims",
       });
-      return Err(AuthSecurityErrors.invalidClaims("Missing userId in claims"));
+      return Err(AuthSecurityErrors.invalidClaims("Missing sub in claims"));
     }
 
     const sessionEntity = toSessionEntity(decoded);
