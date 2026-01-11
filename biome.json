@@ -118,6 +118,11 @@
         "noProcessGlobal": "on",
         "noReactPropAssignments": "on",
         "noUndeclaredVariables": "on",
+        "noUnusedFunctionParameters": "on",
+        "noUnusedImports": "on",
+        "noUnusedLabels": "on",
+        "noUnusedPrivateClassMembers": "on",
+        "noUnusedVariables": "on",
         "useJsonImportAttributes": "on",
         "useSingleJsDocAsterisk": "on",
         "useUniqueElementIds": "on"

@@ -10,6 +10,7 @@ import {
   SESSION_REFRESH_THRESHOLD_SEC,
   type SessionLifecycleReason,
 } from "@/modules/auth/domain/policies/session.policy";
+import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
 
 export type SessionLifecycleAction = "continue" | "rotate" | "terminate";
 
@@ -39,7 +40,7 @@ export type SessionLifecycleDecision =
  */
 export function evaluateSessionLifecyclePolicy(
   session: SessionEntity,
-  nowSec: number = Math.floor(Date.now() / 1000),
+  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
 ): SessionLifecycleDecision {
   const { ageSec, exceeded } = isSessionAbsoluteLifetimeExceeded(
     session,

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { buildUpdateSessionSuccess } from "@/modules/auth/application/builders/update-session-outcome.builder";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
@@ -88,14 +89,13 @@ export class RotateSessionUseCase {
           },
         );
 
-        // todo: create a builder pattern for this dto `buildXXX`
-        return Ok({
-          expiresAt: expiresAtMs,
-          reason: "rotated",
-          refreshed: true,
-          role,
-          userId: userIdCodec.decode(userId),
-        });
+        return Ok(
+          buildUpdateSessionSuccess({
+            expiresAtMs,
+            role,
+            userId: userIdCodec.decode(userId),
+          }),
+        );
       },
       {
         logger: this.logger,

@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { UserId } from "@/shared/branding/brands";
+import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
@@ -33,7 +34,7 @@ export type SessionEntity = Readonly<{
  * @throws Error if validation fails (fail-fast principle)
  */
 export function buildSessionEntity(input: SessionEntity): SessionEntity {
-  const nowSec = Math.floor(Date.now() / 1000);
+  const nowSec = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
 
   if (input.expiresAt <= input.issuedAt) {
     throw new Error(
@@ -67,7 +68,7 @@ export function buildSessionEntity(input: SessionEntity): SessionEntity {
  */
 export function getSessionTimeLeftSec(
   session: SessionEntity,
-  nowSec: number = Math.floor(Date.now() / 1000),
+  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
 ): number {
   return session.expiresAt - nowSec;
 }
@@ -77,7 +78,7 @@ export function getSessionTimeLeftSec(
  */
 export function isSessionExpired(
   session: SessionEntity,
-  nowSec: number = Math.floor(Date.now() / 1000),
+  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
 ): boolean {
   return getSessionTimeLeftSec(session, nowSec) <= 0;
 }
@@ -88,7 +89,7 @@ export function isSessionExpired(
 export function isSessionApproachingExpiry(
   session: SessionEntity,
   thresholdSec: number,
-  nowSec: number = Math.floor(Date.now() / 1000),
+  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
 ): boolean {
   const remaining = getSessionTimeLeftSec(session, nowSec);
   return remaining > 0 && remaining <= thresholdSec;
@@ -100,7 +101,7 @@ export function isSessionApproachingExpiry(
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
   maxLifetimeSec: number,
-  nowSec: number = Math.floor(Date.now() / 1000),
+  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
 ): { ageSec: number; exceeded: boolean } {
   const ageSec = nowSec - session.sessionStart;
   return { ageSec, exceeded: ageSec > maxLifetimeSec };

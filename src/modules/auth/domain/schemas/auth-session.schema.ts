@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
+import { MILLISECONDS_PER_SECOND } from "@/shared/constants/time.constants";
 import { userRoleSchema } from "@/shared/domain/user/user-role.schema";
 
 /**
@@ -37,7 +38,7 @@ export const sessionStartSchema = z
   .number()
   .int()
   .nonnegative()
-  .refine((val) => val <= Date.now(), {
+  .refine((val) => val <= Math.floor(Date.now() / MILLISECONDS_PER_SECOND), {
     message: "sessionStart must not be in the future",
   });
 
@@ -67,8 +68,7 @@ export const EncryptPayloadSchema = EncryptPayloadBase.refine(
  */
 export const DecryptPayloadSchema = EncryptPayloadBase.extend({
   exp: expSchema,
-  // biome-ignore lint/style/noMagicNumbers: <ignore>
-  iat: iatSchema.refine((val) => val * 1000 <= Date.now() + 5000, {
+  iat: iatSchema.refine((val) => val <= Date.now() + 5000, {
     message: "iat must not be in the future (allowing small clock skew)",
   }),
 }).refine((val) => val.sessionStart <= val.expiresAt, {

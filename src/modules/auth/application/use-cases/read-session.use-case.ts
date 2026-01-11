@@ -1,12 +1,12 @@
 import "server-only";
 
+import { buildReadSessionOutcome } from "@/modules/auth/application/builders/read-session-outcome.builder";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
-import { toReadSessionOutcome } from "@/modules/auth/application/mappers/to-read-session-outcome.mapper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -69,7 +69,7 @@ export class ReadSessionUseCase {
         }
 
         const sessionEntity = toSessionEntity(decoded);
-        return Ok(toReadSessionOutcome(sessionEntity));
+        return Ok(buildReadSessionOutcome(sessionEntity));
       },
       {
         logger: this.logger,
