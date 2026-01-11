@@ -37,8 +37,8 @@ export class VerifySessionUseCase {
   async execute(): Promise<Result<SessionTransport, AppError>> {
     const readResult = await readSessionTokenHelper(
       {
-        sessionCookieAdapter: this.sessionStore,
-        sessionTokenAdapter: this.sessionTokenService,
+        sessionStore: this.sessionStore,
+        sessionTokenService: this.sessionTokenService,
       },
       { cleanupOnInvalidToken: false },
     );

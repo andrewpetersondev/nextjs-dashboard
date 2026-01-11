@@ -21,25 +21,25 @@ export type ReadSessionTokenOutcome =
  */
 export async function readSessionTokenHelper(
   deps: Readonly<{
-    sessionCookieAdapter: SessionStoreContract;
-    sessionTokenAdapter: SessionTokenServiceContract;
+    sessionStore: SessionStoreContract;
+    sessionTokenService: SessionTokenServiceContract;
   }>,
   options: Readonly<{
     cleanupOnInvalidToken: boolean;
   }>,
 ): Promise<Result<ReadSessionTokenOutcome, AppError>> {
-  const token = await deps.sessionCookieAdapter.get();
+  const token = await deps.sessionStore.get();
 
   if (!token) {
     return Ok({ kind: "missing_token" });
   }
 
-  const decodedResult = await deps.sessionTokenAdapter.decode(token);
+  const decodedResult = await deps.sessionTokenService.decode(token);
 
   if (!decodedResult.ok) {
     let didCleanup = false;
     if (options.cleanupOnInvalidToken) {
-      await cleanupInvalidTokenHelper(deps.sessionCookieAdapter);
+      await cleanupInvalidTokenHelper(deps.sessionStore);
       didCleanup = true;
     }
 

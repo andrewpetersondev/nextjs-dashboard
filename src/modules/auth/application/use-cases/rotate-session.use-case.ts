@@ -37,8 +37,8 @@ export class RotateSessionUseCase {
       async () => {
         const readResult = await readSessionTokenHelper(
           {
-            sessionCookieAdapter: this.sessionStore,
-            sessionTokenAdapter: this.sessionTokenService,
+            sessionStore: this.sessionStore,
+            sessionTokenService: this.sessionTokenService,
           },
           { cleanupOnInvalidToken: true },
         );
@@ -90,6 +90,7 @@ export class RotateSessionUseCase {
           },
         );
 
+        // todo: create a builder pattern for this dto `buildXXX`
         return Ok({
           expiresAt: expiresAtMs,
           reason: "rotated",

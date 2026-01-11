@@ -38,8 +38,8 @@ export class GetSessionUseCase {
       async () => {
         const readResult = await readSessionTokenHelper(
           {
-            sessionCookieAdapter: this.sessionStore,
-            sessionTokenAdapter: this.sessionTokenService,
+            sessionStore: this.sessionStore,
+            sessionTokenService: this.sessionTokenService,
           },
           { cleanupOnInvalidToken: true },
         );
