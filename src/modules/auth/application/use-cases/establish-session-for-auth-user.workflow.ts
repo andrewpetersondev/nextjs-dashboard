@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { toSessionPrincipalPolicy } from "@/modules/auth/domain/policies/session.policy";
+import { toSessionPrincipalPolicy } from "@/modules/auth/application/mappers/to-session-principal-policy.mapper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";

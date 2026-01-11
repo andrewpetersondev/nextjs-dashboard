@@ -6,7 +6,7 @@ import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/up
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import { toIssueTokenRequestDto } from "@/modules/auth/application/helpers/to-issue-token-request-dto.helper";
+import { toIssueTokenRequestDto } from "@/modules/auth/application/mappers/to-issue-token-request-dto.mapper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

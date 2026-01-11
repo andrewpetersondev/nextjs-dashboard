@@ -2,7 +2,7 @@ import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
-// todo: where should i place mappers like this? in 'helpers' seems ok for now but what about long term? did i name
+// todo: where should i place mappers like this? seems ok for now but what about long term? did i name
 //  this function and file correctly? check project conventions
 
 // todo: is this type just a dto? it is a subset of SessionEntity but with userId as plain string instead of branded
