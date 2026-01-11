@@ -3,6 +3,10 @@ import "server-only";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
+// todo: SessionEntity vs SessionClaimsSchema vs SessionTokenClaims vs SessionPrincipalDto need further review. one
+//  area of concern is the use of branded types vs plain types (e.g., UserId vs string). another area of concern is
+//  `exp` vs `expiresAt` redundancy and naming consistency
+
 /**
  * Represents the core session data as a domain entity.
  * This is the central source of truth for an authenticated session's state.
@@ -18,13 +22,7 @@ export type SessionEntity = Readonly<{
 /**
  * Creates a Session entity.
  */
-export function makeSession(input: {
-  expiresAt: number;
-  issuedAt: number;
-  role: UserRole;
-  sessionStart: number;
-  userId: UserId;
-}): SessionEntity {
+export function buildSession(input: SessionEntity): SessionEntity {
   return {
     expiresAt: input.expiresAt,
     issuedAt: input.issuedAt,

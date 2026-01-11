@@ -3,6 +3,8 @@ import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
 
+// todo: should this be moved to `src/modules/auth/infrastructure/` after a  small refactor? or should it be kept here?
+
 /**
  * Adapter for Next.js cookies.
  */

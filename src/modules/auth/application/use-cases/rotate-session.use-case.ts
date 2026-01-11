@@ -4,9 +4,9 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { prepareSessionForTokenIssue } from "@/modules/auth/application/helpers/prepare-session-for-token-issue.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
+import { toIssueTokenRequestDto } from "@/modules/auth/application/helpers/to-issue-token-request-dto.helper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -58,7 +58,7 @@ export class RotateSessionUseCase {
 
         const { userId, role, sessionStart } = outcome.decoded;
 
-        const user = prepareSessionForTokenIssue({
+        const user = toIssueTokenRequestDto({
           role,
           sessionStart,
           userId,

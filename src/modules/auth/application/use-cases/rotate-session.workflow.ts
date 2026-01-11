@@ -3,7 +3,7 @@ import "server-only";
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
-import { makeSession } from "@/modules/auth/domain/entities/session.entity";
+import { buildSession } from "@/modules/auth/domain/entities/session.entity";
 import {
   evaluateSessionLifecyclePolicy,
   requiresRotation,
@@ -60,7 +60,7 @@ export async function rotateSessionWorkflow(deps: {
   }
 
   // 1. Map raw claims to Domain Entity
-  const session = makeSession({
+  const session = buildSession({
     expiresAt: decoded.expiresAt,
     issuedAt: decoded.iat * 1000,
     role: decoded.role,
