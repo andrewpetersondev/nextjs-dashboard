@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/establish-session.use-case";
 import { ReadSessionUseCase } from "@/modules/auth/application/use-cases/read-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotate-session.use-case";
@@ -30,7 +30,7 @@ export function createSessionServiceFactory(
   };
 
   return {
-    establish: (user: SessionPrincipalDto) =>
+    establish: (user: SessionIdentityDto) =>
       new EstablishSessionUseCase(deps).execute(user),
     read: () => new ReadSessionUseCase(deps).execute(),
     rotate: () => new RotateSessionUseCase(deps).execute(),

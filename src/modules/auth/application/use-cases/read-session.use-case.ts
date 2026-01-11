@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
@@ -33,7 +33,7 @@ export class ReadSessionUseCase {
     this.sessionTokenService = deps.sessionTokenService;
   }
 
-  execute(): Promise<Result<SessionPrincipalDto | undefined, AppError>> {
+  execute(): Promise<Result<SessionIdentityDto | undefined, AppError>> {
     return safeExecute(
       async () => {
         const readResult = await readSessionTokenHelper(

@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
@@ -31,8 +31,8 @@ export class EstablishSessionUseCase {
   }
 
   execute(
-    user: SessionPrincipalDto,
-  ): Promise<Result<SessionPrincipalDto, AppError>> {
+    user: SessionIdentityDto,
+  ): Promise<Result<SessionIdentityDto, AppError>> {
     return safeExecute(
       async () => {
         const sessionStart = Date.now();

@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/use-cases/establish-session-for-auth-user.workflow";
 import type { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
 import type { AuthLoginSchemaDto } from "@/modules/auth/domain/schemas/auth-user.schema";
@@ -22,7 +22,7 @@ export async function loginWorkflow(
     loginUseCase: LoginUseCase;
     sessionService: SessionServiceContract;
   }>,
-): Promise<Result<SessionPrincipalDto, AppError>> {
+): Promise<Result<SessionIdentityDto, AppError>> {
   const authResult = await deps.loginUseCase.execute(input);
 
   return await establishSessionForAuthUserWorkflow(authResult, {

@@ -1,5 +1,5 @@
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
-import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
+import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
@@ -13,7 +13,7 @@ import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
  */
 export function toSessionPrincipalPolicy(
   source: SessionTokenClaims | AuthenticatedUserDto | UpdateSessionSuccessDto,
-): SessionPrincipalDto {
+): SessionIdentityDto {
   if ("email" in source) {
     // Mapping from AuthUserOutputDto
     return {
