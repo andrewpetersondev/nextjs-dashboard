@@ -4,8 +4,8 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
+import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
 import { AuthSecurityErrors } from "@/modules/auth/domain/policies/auth-security.policy";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { SessionTransport } from "@/modules/auth/infrastructure/serialization/session.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -83,11 +83,13 @@ export class VerifySessionUseCase {
       return Err(AuthSecurityErrors.invalidClaims("Missing userId in claims"));
     }
 
-    // todo: i think i should use a builder or mapper for this
+    const sessionEntity = toSessionEntity(decoded);
+
+    // todo: can i move this to a policy? should it be a builder? should it be a mapper?
     return Ok({
       isAuthorized: true,
-      role: decoded.role,
-      userId: userIdCodec.decode(decoded.userId),
+      role: sessionEntity.role,
+      userId: String(sessionEntity.userId),
     });
   }
 }

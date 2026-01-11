@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
@@ -16,7 +17,11 @@ export interface SessionServiceContract {
   establish(
     user: SessionIdentityDto,
   ): Promise<Result<SessionIdentityDto, AppError>>;
-  read(): Promise<Result<SessionIdentityDto | undefined, AppError>>;
+  /**
+   * Reads the current session and returns full session state including lifecycle info.
+   * Returns undefined if no valid session is found.
+   */
+  read(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>>;
   rotate(): Promise<Result<UpdateSessionOutcomeDto, AppError>>;
   terminate(reason: TerminateSessionReason): Promise<Result<void, AppError>>;
   verify(): Promise<Result<SessionTransport, AppError>>;

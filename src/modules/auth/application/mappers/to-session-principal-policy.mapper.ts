@@ -1,33 +1,30 @@
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import type { SessionIdentityDto } from "@/modules/auth/application/dtos/session-identity.dto";
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 
 /**
- * Domain Policy: Maps various authentication outputs to a SessionPrincipalDto.
+ * Domain Policy: Maps authentication outputs to SessionIdentityDto.
  *
- * This centralizes the reconstruction of the identity principal from:
- * 1. Decoded session claims (requires decoding the userId string)
- * 2. Use case output DTOs (simple mapping)
+ * Handles:
+ * 1. AuthenticatedUserDto - direct mapping of identity
+ * 2. UpdateSessionSuccessDto - rotation outcome with branded userId
+ *
+ * @deprecated For SessionTokenClaims, use toSessionEntity() + toReadSessionOutcome() instead
  */
 export function toSessionPrincipalPolicy(
-  source: SessionTokenClaims | AuthenticatedUserDto | UpdateSessionSuccessDto,
+  source: AuthenticatedUserDto | UpdateSessionSuccessDto,
 ): SessionIdentityDto {
   if ("email" in source) {
-    // Mapping from AuthUserOutputDto
+    // Mapping from AuthenticatedUserDto
     return {
       id: source.id,
       role: source.role,
     };
   }
 
-  // Handles both SessionTokenClaims and UpdateSessionSuccess
+  // Mapping from UpdateSessionSuccessDto (already has branded userId)
   return {
-    id:
-      typeof source.userId === "string"
-        ? userIdCodec.decode(source.userId)
-        : source.userId,
+    id: source.userId,
     role: source.role,
   };
 }
