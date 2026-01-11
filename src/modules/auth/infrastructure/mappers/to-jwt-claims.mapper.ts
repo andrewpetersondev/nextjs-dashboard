@@ -2,7 +2,7 @@ import "server-only";
 
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
-import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt-claims.schema";
+import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**

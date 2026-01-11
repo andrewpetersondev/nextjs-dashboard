@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt-claims.schema";
+import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**
