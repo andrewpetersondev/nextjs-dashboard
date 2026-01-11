@@ -7,6 +7,9 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
  *
  * This represents the application's view of session data after it has been
  * decoded and validated from the infrastructure transport (e.g., JWT).
+ *
+ * // todo: I think SessionPrincipalClaims (domain layer) is sort of mixed up with SessionTokenClaims (application
+ * //  layer) and SessionJwtClaims (infrastructure layer). Maybe I should have a clear mapping between these.
  */
 export type SessionTokenClaims = {
   /** Expiration time (UNIX timestamp in seconds) */

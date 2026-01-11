@@ -18,6 +18,10 @@ import "server-only";
  * Note: While `role` is application-specific, storing it in JWT is a pragmatic
  * tradeoff between architectural purity and performance. The JWT infrastructure
  * remains decoupled as role is treated as an opaque string at this layer.
+ *
+ *
+ * // todo: I think SessionPrincipalClaims (domain layer) is sort of mixed up with SessionTokenClaims (application
+ * //  layer) and SessionJwtClaims (infrastructure layer). Maybe I should have a clear mapping between these.
  */
 export type SessionJwtClaims = {
   /** Expiration time (UNIX timestamp in seconds) - JWT standard */

@@ -18,7 +18,7 @@
  *
  * @typeParam R - Role type (string for JWT, UserRole for typed usage)
  */
-export type SessionClaimsSchema<R = string> = {
+export type SessionPrincipalClaims<R = string> = {
   /** JWT-standard expiration time (UNIX timestamp in seconds) */
   exp: number;
   /** Application-level expiration time (UNIX timestamp in milliseconds) */
@@ -37,3 +37,6 @@ export type SessionClaimsSchema<R = string> = {
 //  instead of a schema? If it should remain as a schema, then should `SessionTokenClaims` be an Entity instead of a
 //  `DTO`? Also, some of these types come from infrastructure (e.g., JWT) and some are domain types, so should i
 //  have an infrastructure type and a domain type and map between them, or maybe extend one from the other?
+
+// todo: I think SessionPrincipalClaims (domain layer) is sort of mixed up with SessionTokenClaims (application
+//  layer) and SessionJwtClaims (infrastructure layer). Maybe I should have a clear mapping between these.

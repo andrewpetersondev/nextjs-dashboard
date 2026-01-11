@@ -1,6 +1,5 @@
 import "server-only";
-
-import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
+import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
@@ -11,9 +10,9 @@ import type { Result } from "@/shared/results/result.types";
  * All timestamps are in UNIX seconds.
  */
 export interface SessionTokenCodecContract {
-  decode(token: string): Promise<Result<SessionJwtClaims, AppError>>;
+  decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
   encode(
-    claims: SessionJwtClaims,
+    claims: SessionTokenClaims,
     expiresAtSec: number,
   ): Promise<Result<string, AppError>>;
 }
