@@ -12,6 +12,9 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
  * This is the central source of truth for an authenticated session's state.
  *
  * All timestamps are in UNIX seconds for consistency with JWT standards.
+ *
+ * todo: this is so similar to SessionJwtClaims and SessionTokenClaims that maybe i should find a better strategy
+ * for layering and clean architecture boundaries
  */
 export type SessionEntity = Readonly<{
   /** Expiration time (UNIX timestamp in seconds) */

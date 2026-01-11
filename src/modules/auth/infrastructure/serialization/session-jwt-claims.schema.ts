@@ -1,5 +1,7 @@
 import "server-only";
 
+// todo: should userId, sessionStart, and role be moved out of the claims because they are application specific?
+
 /**
  * JWT payload schema for session tokens (infrastructure serialization detail).
  *
@@ -17,6 +19,7 @@ import "server-only";
  * @typeParam R - Role type (string for raw JWT, UserRole for typed usage)
  */
 export type SessionJwtClaims<R = string> = {
+  // todo: replace expiresAt with exp because jwt claims standard uses (iss, sub, aud, exp, nbf, iat, jti)
   /** Application-level expiration time (UNIX timestamp in seconds) */
   expiresAt: number;
   /** JWT-standard issued-at time (UNIX timestamp in seconds) */
@@ -25,6 +28,7 @@ export type SessionJwtClaims<R = string> = {
   role: R;
   /** Session absolute start time (UNIX timestamp in seconds) */
   sessionStart: number;
+  // todo: add type param for plain, unbranded user id?
   /** User identifier (UUID string, decoded to UserId in domain) */
   userId: string;
 };
