@@ -2,7 +2,7 @@ import "server-only";
 
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
-import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
+import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 
 /**
  * Maps an IssueTokenRequestDto to JWT claims for encoding.
@@ -19,7 +19,7 @@ export function toJwtClaims(
   input: IssueTokenRequestDto,
   expiresAtSec: number,
   iatSec: number,
-): SessionJwtClaims {
+): SessionJwtClaimsTransport {
   return {
     exp: expiresAtSec,
     iat: iatSec,

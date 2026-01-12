@@ -9,8 +9,8 @@ import {
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/adapters/session-jwt-adapter.constants";
-import { toSessionTokenClaims } from "@/modules/auth/infrastructure/mappers/to-session-token-claims.mapper";
-import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
+import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
+import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptions } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.type";
 import {
   SESSION_AUDIENCE,
@@ -74,7 +74,7 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
     token: string,
   ): Promise<Result<SessionTokenClaimsDto, AppError>> {
     try {
-      const { payload } = await jwtVerify<SessionJwtClaims>(
+      const { payload } = await jwtVerify<SessionJwtClaimsTransport>(
         token,
         this.encodedKey,
         this.verifyOptions,
@@ -96,7 +96,7 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
       }
 
       // Infrastructure performs the mapping to Application DTO before returning
-      return toSessionTokenClaims(parsed.data);
+      return toSessionTokenClaimsDto(parsed.data);
     } catch (error: unknown) {
       logger.warn("JWT verification failed", {
         error: String(error),
@@ -125,7 +125,7 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
   ): Promise<Result<string, AppError>> {
     try {
       // Map Application DTO -> Infrastructure JWT shape
-      const jwtClaims: SessionJwtClaims = {
+      const jwtClaims: SessionJwtClaimsTransport = {
         exp: claims.exp,
         iat: claims.iat,
         role: claims.role, // string conversion handled by assignment if role is union

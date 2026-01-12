@@ -7,7 +7,7 @@ import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-typ
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
 import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/types/auth-request-authorization.output";
 // todo : this dependency is outward creating violation
-import { toSessionTokenClaims } from "@/modules/auth/infrastructure/mappers/to-session-token-claims.mapper";
+import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 
 /**
  * Resolves session token claims from a raw cookie string, ensuring that decode failures are surfaced
@@ -34,7 +34,7 @@ async function extractSessionClaims(
     return { claims: undefined, reason: "decode_failed" };
   }
 
-  const enrichedResult = toSessionTokenClaims(decodedResult.value);
+  const enrichedResult = toSessionTokenClaimsDto(decodedResult.value);
   if (!enrichedResult.ok) {
     return { claims: undefined, reason: "decode_failed" };
   }

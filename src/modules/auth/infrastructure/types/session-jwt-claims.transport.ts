@@ -1,8 +1,5 @@
 import "server-only";
 
-// todo: I think SessionPrincipalClaims (domain layer) is sort of mixed up with SessionTokenClaims (application
-//  layer) and SessionJwtClaims (infrastructure layer). Maybe I should have a clear mapping between these.
-
 /**
  * JWT payload schema for session tokens (infrastructure-only).
  *
@@ -22,7 +19,7 @@ import "server-only";
  * tradeoff between architectural purity and performance. The JWT infrastructure
  * remains decoupled as role is treated as an opaque string at this layer.
  */
-export type SessionJwtClaims = {
+export type SessionJwtClaimsTransport = {
   /** Expiration time (UNIX timestamp in seconds) - JWT standard */
   exp: number;
   /** Issued-at time (UNIX timestamp in seconds) - JWT standard */

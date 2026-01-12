@@ -11,7 +11,7 @@ import {
   userIdCodec,
 } from "@/modules/auth/domain/schemas/auth-session.schema";
 import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
-import { toSessionTokenClaims } from "@/modules/auth/infrastructure/mappers/to-session-token-claims.mapper";
+import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import {
   nowInSeconds,
   secondsToMilliseconds,
@@ -90,7 +90,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
       );
     }
 
-    return toSessionTokenClaims(parsed.data);
+    return toSessionTokenClaimsDto(parsed.data);
   }
 }
 
