@@ -1,4 +1,4 @@
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
 import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 
@@ -12,7 +12,7 @@ import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
  * - All timestamps remain in seconds (JWT standard)
  */
 export function toSessionEntity(
-  tokenClaims: SessionTokenClaims,
+  tokenClaims: SessionTokenClaimsDto,
 ): SessionEntity {
   return {
     expiresAt: tokenClaims.exp,

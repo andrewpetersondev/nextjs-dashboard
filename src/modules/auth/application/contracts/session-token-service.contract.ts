@@ -2,18 +2,19 @@ import "server-only";
 
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
  * Contract for session token operations.
+ * Redundant naming: Suffix 'Contract' in both file and type name.
  */
 export interface SessionTokenServiceContract {
   /**
    * Decodes a token and returns the raw payload.
    */
-  decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
+  decode(token: string): Promise<Result<SessionTokenClaimsDto, AppError>>;
 
   /**
    * Issues a new session token with the provided claims.
@@ -23,5 +24,5 @@ export interface SessionTokenServiceContract {
   /**
    * Validates decoded claims against the schema.
    */
-  validate(claims: unknown): Result<SessionTokenClaims, AppError>;
+  validate(claims: unknown): Result<SessionTokenClaimsDto, AppError>;
 }

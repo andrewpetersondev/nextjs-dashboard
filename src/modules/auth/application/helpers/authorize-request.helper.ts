@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
@@ -21,7 +21,7 @@ async function extractSessionClaims(
   jwt: SessionTokenCodecContract,
 ): Promise<
   Readonly<
-    | { claims: SessionTokenClaims; reason: "ok" }
+    | { claims: SessionTokenClaimsDto; reason: "ok" }
     | { claims: undefined; reason: "no_cookie" | "decode_failed" }
   >
 > {

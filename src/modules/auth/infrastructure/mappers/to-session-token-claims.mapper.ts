@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import type { SessionJwtClaims } from "@/modules/auth/infrastructure/serialization/session-jwt.claims";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -20,7 +20,7 @@ import type { Result } from "@/shared/results/result.types";
  */
 export function toSessionTokenClaims(
   jwtClaims: SessionJwtClaims,
-): Result<SessionTokenClaims, AppError> {
+): Result<SessionTokenClaimsDto, AppError> {
   const role = parseUserRole(jwtClaims.role);
 
   if (!role) {

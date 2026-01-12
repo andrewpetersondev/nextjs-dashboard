@@ -1,4 +1,4 @@
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
 
 export type AuthRouteType = "admin" | "protected" | "public";
@@ -17,7 +17,7 @@ export type AuthRouteAccessDecision =
  */
 export function evaluateRouteAccessPolicy(
   routeType: AuthRouteType,
-  claims: SessionTokenClaims | undefined,
+  claims: SessionTokenClaimsDto | undefined,
 ): AuthRouteAccessDecision {
   const isAuthenticated = Boolean(claims?.sub);
 

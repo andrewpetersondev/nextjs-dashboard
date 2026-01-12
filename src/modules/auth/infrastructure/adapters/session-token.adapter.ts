@@ -4,7 +4,7 @@ import type { SessionTokenCodecContract } from "@/modules/auth/application/contr
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
 import {
   DecryptPayloadSchema,
@@ -36,7 +36,9 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
   /**
    * Decodes a token and returns the application-level claims.
    */
-  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
+  async decode(
+    token: string,
+  ): Promise<Result<SessionTokenClaimsDto, AppError>> {
     // Implementation now satisfies the contract directly
     return await this.codec.decode(token);
   }
@@ -51,7 +53,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
     // Use a mapper to create the Application DTO first
-    const claims: SessionTokenClaims = {
+    const claims: SessionTokenClaimsDto = {
       exp: expiresAtSec,
       iat: nowSec,
       role: input.role,
@@ -75,7 +77,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
    *
    * todo: why is this not an async function?
    */
-  validate(claims: unknown): Result<SessionTokenClaims, AppError> {
+  validate(claims: unknown): Result<SessionTokenClaimsDto, AppError> {
     const parsed = DecryptPayloadSchema.safeParse(claims);
 
     if (!parsed.success) {

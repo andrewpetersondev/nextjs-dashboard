@@ -1,7 +1,7 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
 import {
   CLOCK_TOLERANCE_SEC,
@@ -70,7 +70,9 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
    * @param token - The JWT token string to decode
    * @returns `Ok(payload)` if verification succeeds, `Err(appError)` otherwise
    */
-  async decode(token: string): Promise<Result<SessionTokenClaims, AppError>> {
+  async decode(
+    token: string,
+  ): Promise<Result<SessionTokenClaimsDto, AppError>> {
     try {
       const { payload } = await jwtVerify<SessionJwtClaims>(
         token,
@@ -118,7 +120,7 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
    * @throws Error if signing fails (e.g., invalid claims, crypto errors)
    */
   async encode(
-    claims: SessionTokenClaims,
+    claims: SessionTokenClaimsDto,
     expiresAtSec: number,
   ): Promise<Result<string, AppError>> {
     try {

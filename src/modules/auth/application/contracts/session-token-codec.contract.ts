@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionTokenClaims } from "@/modules/auth/application/dtos/session-token.claims";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
@@ -11,9 +11,9 @@ import type { Result } from "@/shared/results/result.types";
  * speaks only in Application DTOs (SessionTokenClaims).
  */
 export interface SessionTokenCodecContract {
-  decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
+  decode(token: string): Promise<Result<SessionTokenClaimsDto, AppError>>;
   encode(
-    claims: SessionTokenClaims,
+    claims: SessionTokenClaimsDto,
     expiresAtSec: number,
   ): Promise<Result<string, AppError>>;
 }
