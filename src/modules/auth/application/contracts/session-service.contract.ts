@@ -12,6 +12,8 @@ import type { Result } from "@/shared/results/result.types";
  * Contract defining session operations available to the application layer.
  * This abstraction allows workflows to remain independent of the specific
  * infrastructure implementation (JWT, Cookies, etc.).
+ *
+ * "Application-level contract composed from use-cases; not for direct infrastructure implementation"
  */
 export interface SessionServiceContract {
   establish(
