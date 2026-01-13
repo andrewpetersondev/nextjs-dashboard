@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
-import { DbUnitOfWorkAdapter } from "@/modules/auth/infrastructure/adapters/unit-of-work.adapter";
+import { DrizzleUnitOfWorkAdapter } from "@/modules/auth/infrastructure/adapters/drizzle-unit-of-work.adapter";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -10,5 +10,5 @@ export function createUnitOfWorkFactory(
   logger: LoggingClientContract,
   requestId: string,
 ): UnitOfWorkContract {
-  return new DbUnitOfWorkAdapter(db, logger, requestId);
+  return new DrizzleUnitOfWorkAdapter(db, logger, requestId);
 }

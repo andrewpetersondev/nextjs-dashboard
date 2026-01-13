@@ -5,13 +5,13 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import {
-  SessionTokenClaimsSchema,
-  userIdCodec,
-} from "@/modules/auth/application/schemas/session-token-claims.schema";
+import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
 import { createJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
-import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
+import {
+  toSessionTokenClaimsDto,
+  toSessionTokenClaimsDtoFromRequest,
+} from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import {
   nowInSeconds,
   secondsToMilliseconds,
@@ -52,13 +52,11 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
     const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
-    // Use a mapper to create the Application DTO first
-    const claims: SessionTokenClaimsDto = {
-      exp: expiresAtSec,
-      iat: nowSec,
-      role: input.role,
-      sub: userIdCodec.encode(input.userId),
-    };
+    const claims = toSessionTokenClaimsDtoFromRequest(
+      input,
+      nowSec,
+      expiresAtSec,
+    );
 
     const encodedResult = await this.codec.encode(claims);
 

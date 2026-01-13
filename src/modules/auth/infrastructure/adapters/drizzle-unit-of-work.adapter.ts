@@ -10,7 +10,7 @@ import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/a
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
-export class DbUnitOfWorkAdapter implements UnitOfWorkContract {
+export class DrizzleUnitOfWorkAdapter implements UnitOfWorkContract {
   private readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
   private readonly requestId: string;

@@ -28,7 +28,13 @@ export async function createDemoUserTxHelper(
   const { uow, hasher, passwordGenerator } = deps;
 
   const password = passwordGenerator.generate(10);
-  const passwordHash = await hasher.hash(password);
+  const hashResult = await hasher.hash(password);
+
+  if (!hashResult.ok) {
+    return hashResult;
+  }
+
+  const passwordHash = hashResult.value;
 
   const result = await uow.withTransaction(async (tx) => {
     // 1. Get and increment demo counter

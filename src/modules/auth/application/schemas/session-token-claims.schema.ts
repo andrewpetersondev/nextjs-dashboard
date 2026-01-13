@@ -27,8 +27,11 @@ export const subSchema = z.string().uuid();
  */
 export const roleClaimSchema = z.string().min(1);
 
-// Codec: string <-> branded UserId
-export const userIdCodec = z.codec(
+/**
+ * Transformer for string <-> branded UserId.
+ * Used at boundaries to ensure type safety.
+ */
+export const userIdTransformer = z.codec(
   z.uuid(), // input: UUID string
   z.custom<UserId>(), // output: branded UserId
   {

@@ -43,11 +43,15 @@ export class SignupUseCase {
     return safeExecute(
       () =>
         this.uow.withTransaction(async (tx) => {
-          const passwordHash = await this.hasher.hash(input.password);
+          const hashResult = await this.hasher.hash(input.password);
+
+          if (!hashResult.ok) {
+            return hashResult;
+          }
 
           const createdResultTx = await tx.authUsers.signup({
             email: input.email,
-            password: passwordHash,
+            password: hashResult.value,
             role: getDefaultRegistrationRole(),
             username: input.username,
           });

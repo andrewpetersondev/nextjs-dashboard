@@ -1,6 +1,8 @@
 import "server-only";
 
 import type { Hash } from "@/shared/branding/brands";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Application-layer contract for password hashing and verification.
@@ -14,15 +16,15 @@ export interface PasswordHasherContract {
    *
    * @param password - The raw password to verify
    * @param hash - The stored hash to compare against
-   * @returns True if the password matches the hash
+   * @returns Result indicating if the password matches, or AppError for technical failures
    */
-  compare(password: string, hash: Hash): Promise<boolean>;
+  compare(password: string, hash: Hash): Promise<Result<boolean, AppError>>;
 
   /**
    * Hashes a raw password for secure storage.
    *
    * @param password - The raw password to hash
-   * @returns The resulting hash
+   * @returns Result containing the resulting hash, or AppError for technical failures
    */
-  hash(password: string): Promise<Hash>;
+  hash(password: string): Promise<Result<Hash, AppError>>;
 }

@@ -8,7 +8,7 @@ import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/up
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import { userIdCodec } from "@/modules/auth/application/schemas/session-token-claims.schema";
+import { userIdTransformer } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
@@ -61,7 +61,7 @@ export class RotateSessionUseCase {
 
         const issuedResult = await this.sessionTokenService.issue({
           role,
-          userId: userIdCodec.decode(sub),
+          userId: userIdTransformer.decode(sub),
         });
 
         if (!issuedResult.ok) {
@@ -70,7 +70,7 @@ export class RotateSessionUseCase {
 
         const { expiresAtMs, token } = issuedResult.value;
 
-        const decodedUserId = userIdCodec.decode(sub);
+        const decodedUserId = userIdTransformer.decode(sub);
 
         await setSessionCookieAndLogHelper(
           {
