@@ -8,7 +8,7 @@ import {
   SignupRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
 import { signupWorkflow } from "@/modules/auth/application/use-cases/signup.workflow";
-import { toSignupFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
+import { toSignupFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.mapper";
 import { createSessionService } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import { createSignupUseCase } from "@/modules/auth/infrastructure/factories/signup-use-case.factory";
 import { createUnitOfWork } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";

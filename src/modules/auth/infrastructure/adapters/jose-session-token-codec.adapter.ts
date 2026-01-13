@@ -11,7 +11,7 @@ import {
 } from "@/modules/auth/infrastructure/constants/session-jwt.constants";
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
-import type { SessionJwtVerifyOptions } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.type";
+import type { SessionJwtVerifyOptions } from "@/modules/auth/infrastructure/types/session-jwt-verify-options";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,

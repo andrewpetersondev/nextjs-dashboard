@@ -8,7 +8,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  * Auth-flavored transaction logger.
  * Keeps the existing import path stable, while using the shared implementation.
  */
-export class TransactionLogger extends SharedTransactionLogger {
+export class AuthTransactionLoggerAdapter extends SharedTransactionLogger {
   constructor(logger: LoggingClientContract) {
     super(
       {
