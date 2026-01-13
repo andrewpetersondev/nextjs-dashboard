@@ -6,71 +6,21 @@ apply: always
 
 Standardized naming to ensure predictability, discoverability, and easy refactoring.
 
-**Goals**:
-
-- Make intent obvious from names (especially at boundaries)
-- Keep imports predictable (deep imports are encouraged)
-- Reduce "synonym drift" (`map*` vs `to*` vs `convert*`)
-- Make tests mirror the unit they validate
-- Prevent naming ambiguity and drift through redundant but clear naming
-
----
-
 ## Core Naming Principles
 
-1. **Intentional Over Generic**: Names should reveal use case context, not just data structure
-
-- ✅ `AuthenticatedUserDto` (reveals it's for authenticated users)
-- ❌ `UserDto` (too generic, invites drift across different contexts)
-
-2. **Redundancy for Clarity**: Include suffixes in both type names AND filenames
+1. **Intentional Over Generic**: Names reveal context. `AuthenticatedUserDto` over `UserDto`.
+2. **Redundancy for Clarity**: Include suffixes in both type names AND filenames.
 
 - ✅ `LoginRequestDto` in `login-request.dto.ts`
-- ❌ `LoginRequest` in `login.dto.ts`
 
-3. **Consumer-Centric Naming**: Use Cases and Workflows depend on "Services" or "Repositories"
+3. **Consumer-Centric Naming**: Use Cases depend on "Contracts".
+   - Avoid tech-leaky words like "Adapter" or "Pg" in Application layer dependency names.
 
-- Avoid implementation-leaky words like "Adapter", "Cookie", "Pg" in Application layer dependency names
 - ✅ `sessionService: SessionServiceContract`
-- ❌ `sessionAdapter: SessionAdapterContract`
 
-4. **Reusability Signal**: Contract naming should signal scope
-
-- **Generic contracts** (reusable across modules): `PasswordHasherContract`, `EmailSenderContract`
-- **Domain-specific contracts** (single module): `SessionTokenServiceContract`, `AuthUserRepositoryContract`
-
-5. **Domain-Aligned Verbs**: Method names in contracts match business language
-
-- ✅ `session.terminate()` (business language)
-- ❌ `session.deleteCookie()` (implementation detail)
-
----
-
-## File and Folder Naming
-
-### Files
-
-- **Format**: Use **kebab-case** always
-- **Matching**: Filename must match the **primary export**
-  - `to-user-dto.ts` exports `toUserDto`
-  - `login-request.dto.ts` exports `LoginRequestDto`
-  - `password-validation.policy.ts` exports `validatePassword` (and related functions)
-- **One Concept Per File**: Avoid dumping grounds like `*.types.ts` or `utils.ts`
-
-### Folders
-
-- **Format**: Use **plural nouns** for collections
-  - ✅ `entities/`, `policies/`, `factories/`, `helpers/`, `contracts/`
-  - ❌ `entity/`, `policy/`, `util/`
-- **Grouping**: Organize by type/role, not by feature within a layer
-
-```
-application/
-contracts/       # Not application/session/contracts/
-dtos/
-helpers/
-use-cases/
-```
+4. **Contract Location**:
+   - Side-effect contracts (Repositories/Services) live in `application/contracts/`.
+   - Domain remains 100% side-effect free logic.
 
 ---
 
@@ -113,18 +63,14 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ---
 
-## Identifying Implementations vs. Bridges
+## Implementation vs. Bridges
 
-To prevent naming collisions and clarify intent:
+1. **Implementations**: Named after technology or role.
 
-1. **Implementations** should be named after the technology or specific role:
-
-- ✅ `auth-user.repository.ts` (Class: `AuthUserRepository`)
 - ✅ `bcrypt-password.service.ts` (Class: `BcryptPasswordService`)
 
-2. **Bridges (Adapters)** should be named after the Contract they satisfy:
+2. **Bridges (Adapters)**: Named after the Contract they satisfy.
 
-- ✅ `auth-user-repository.adapter.ts` (Satisfies `AuthUserRepositoryContract`)
 - ✅ `password-hasher.adapter.ts` (Satisfies `PasswordHasherContract`)
 
 ---
@@ -714,3 +660,24 @@ export const SESSION_SERVICE = Symbol("SESSION_SERVICE");
 ```
 
 ---
+
+## Folder Organization (Modular Clean Architecture)
+
+```
+modules/{feature}/
+domain/
+entities/
+policies/
+application/
+contracts/       # All Repository/Service interfaces live here
+dtos/
+use-cases/
+mappers/
+infrastructure/
+repositories/    # Concrete Drizzle/DB implementations
+adapters/        # Tech-specific bridges
+factories/       # DI wiring
+presentation/
+actions/         # Server Actions
+components/      # UI
+```

@@ -84,3 +84,39 @@ Server Actions must remain **thin** and framework-focused. They are the bridge b
 - Feature modules should be self-contained "bounded contexts".
 - Cross-module imports are only allowed from a module's `shared` or `ui` folders, or from the global `src/shared`.
 - **Hard Rule**: Never import from another module's `server/**` directory.
+
+## Constructor Standards
+
+To maintain consistency and avoid implicit behavior, all classes must use explicit property assignment.
+
+- **No Parameter Properties**: Avoid using `private readonly prop: Type` inside the constructor argument list.
+- **Explicit Assignment**: Define the property in the class body and assign it in the constructor body.
+
+```typescript
+// ✅ Good
+export class BcryptPasswordService {
+  private readonly saltRounds: number;
+
+  constructor(saltRounds: number) {
+    this.saltRounds = saltRounds;
+  }
+}
+
+// ❌ Bad: Shorthand parameter properties
+export class BcryptPasswordService {
+  constructor(private readonly saltRounds: number) {}
+}
+```
+
+**Constructor Standard (Hard Rule)**:
+
+```typescript
+// ✅ Good: Explicit assignment
+export class LoginUseCase {
+  private readonly userRepo: AuthUserRepositoryContract;
+
+  constructor(userRepo: AuthUserRepositoryContract) {
+    this.userRepo = userRepo;
+  }
+}
+```

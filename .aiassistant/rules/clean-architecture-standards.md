@@ -23,8 +23,8 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 | Layer            | Responsibility             | Contents                                                                                     |
 | :--------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
-| `domain`         | Enterprise Business Rules  | Entities (interfaces only), Value Objects, Policies (pure functions), Repository Contracts.  |
-| `application`    | Application Business Rules | Use Cases, Workflows, DTOs, Service Contracts (Ports), Schemas (Zod), Mappers, Helpers.      |
+| `domain`         | Enterprise Business Rules  | Entities (interfaces), Value Objects, Policies (pure functions).                             |
+| `application`    | Application Business Rules | Use Cases, Workflows, DTOs, Contracts (Ports), Schemas (Zod), Mappers, Helpers.              |
 | `infrastructure` | Technical Details          | Repository Implementations, Adapters, DAL, Mappers (row ↔ entity), Framework-specific logic. |
 | `presentation`   | Delivery Mechanism         | UI Components, Server Actions, Form Validation, Transport types.                             |
 
@@ -32,18 +32,15 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 ### Domain Layer Rules
 
-**Purpose**: Define the **what** of your business—entities, rules, and required capabilities—without any **how**.
+**Purpose**: Define the **what** of your business—entities and rules—without any side-effect concerns.
 
 - **Allowed Imports**:
   - Primitives and TypeScript utilities
   - Shared domain types (`@/shared/domain/`)
-  - Value objects and branded types from shared
-  - **Nothing else**
 - **Forbidden Imports**:
-  - Application layer (DTOs, schemas, use cases)
+  - Application layer (DTOs, schemas, use cases, contracts)
   - Infrastructure implementations
   - Zod, Drizzle, Next.js, React
-  - Any third-party libraries (except type-only imports if unavoidable)
 
 **What Belongs Here**:
 
@@ -59,7 +56,7 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   }
   ```
 
-- **Policies** (`policies/`): Pure functions encoding business rules and invariants
+- **Policies** (`policies/`): Pure functions encoding invariants.
 
   ```typescript
   // ✅ Good: Pure business logic
@@ -96,30 +93,28 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 **What Does NOT Belong Here**:
 
-    - ❌ Repository Contracts (move to `application/contracts/`)
-    - ❌ Service Contracts (move to `application/contracts/`)
-
-- ❌ Zod schemas (move to `application/schemas/`)
-- ❌ DTOs (move to `application/dtos/`)
-- ❌ Mappers that reference DTOs (move to `application/mappers/`)
-- ❌ Any implementation logic (move to `infrastructure/`)
+- ❌ **Repository/Service Contracts** (move to `application/contracts/`)
+- ❌ **Zod schemas** (move to `application/schemas/`)
+- ❌ **DTOs** (move to `application/dtos/`)
 
 ### Application Layer Rules
 
 **Purpose**: Define **application-specific business rules** and orchestrate domain logic to fulfill use cases.
 
 - **Allowed Imports**:
-  - Domain layer (entities, policies, contracts)
+  - Domain layer (entities, policies)
   - Shared utilities (`@/shared/`)
   - Zod for schema validation
-  - Type-only imports from infrastructure (for dependency injection)
 - **Forbidden Imports**:
   - Infrastructure implementations (classes, concrete adapters)
   - Database libraries (Drizzle, Prisma)
-  - Framework code (Next.js, React) except types
   - Presentation layer
 
 **What Belongs Here**:
+
+- **Use Cases** (`use-cases/`): Single-responsibility business operations.
+- **Contracts** (`contracts/`): Interfaces defining dependencies (Ports) for repositories and services.
+- **Workflows** (`use-cases/`): Multi-step orchestrations.
 
 - **Use Cases** (`use-cases/`): Single-responsibility business operations
 
@@ -395,14 +390,16 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
 
 ## Boundary Crossing & Data Flow
 
-### Data Flow Direction
-
 ```
 
 Presentation → Application → Domain ← Infrastructure
     ↓              ↓           ↓           ↓
 Transport     →   DTO    →   Entity  ←   Row
 ```
+
+1. **Domain entities never leave the application boundary** — map to DTOs before returning to presentation.
+2. **Database rows never enter use cases** — map to entities in repositories.
+3. **DTOs are the stable boundary** between presentation and application.
 
 **Key Rules**:
 
