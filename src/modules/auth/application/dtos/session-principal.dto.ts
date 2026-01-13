@@ -8,7 +8,7 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
 /**
  * Minimal identity used by the application layer to establish/refresh sessions.
  */
-export interface SessionIdentityDto {
+export interface SessionPrincipalDto {
   readonly id: UserId;
   readonly role: UserRole;
 }

@@ -3,10 +3,9 @@ import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
+import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
-import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";
@@ -32,8 +31,8 @@ export class EstablishSessionUseCase {
   }
 
   execute(
-    user: SessionIdentityDto,
-  ): Promise<Result<SessionIdentityDto, AppError>> {
+    user: SessionPrincipalDto,
+  ): Promise<Result<SessionPrincipalDto, AppError>> {
     return safeExecute(
       async () => {
         const issuedResult = await this.sessionTokenService.issue({
