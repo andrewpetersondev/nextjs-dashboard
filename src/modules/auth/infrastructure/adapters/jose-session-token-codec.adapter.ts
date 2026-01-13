@@ -11,7 +11,7 @@ import {
 } from "@/modules/auth/infrastructure/constants/session-jwt.constants";
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
-import type { SessionJwtVerifyOptions } from "@/modules/auth/infrastructure/types/session-jwt-verify-options";
+import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.transport";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -37,7 +37,7 @@ const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
  */
 export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
   private readonly encodedKey: Uint8Array;
-  private readonly verifyOptions: SessionJwtVerifyOptions;
+  private readonly verifyOptions: SessionJwtVerifyOptionsTransport;
 
   constructor() {
     this.encodedKey = this.initializeKey();
@@ -55,7 +55,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
     return encoder.encode(secret);
   }
 
-  private buildVerifyOptions(): SessionJwtVerifyOptions {
+  private buildVerifyOptions(): SessionJwtVerifyOptionsTransport {
     return {
       algorithms: [JWT_ALG_HS256],
       ...(SESSION_AUDIENCE ? { audience: SESSION_AUDIENCE } : {}),

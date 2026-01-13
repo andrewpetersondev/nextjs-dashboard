@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
@@ -18,7 +17,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  * @param logger - Logging client
  * @returns Counter id as number
  */
-export async function demoUserCounterDal(
+export async function incrementDemoUserCounterDal(
   db: AppDatabase,
   role: UserRole,
   logger: LoggingClientContract,

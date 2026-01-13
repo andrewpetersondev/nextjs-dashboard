@@ -1,12 +1,11 @@
 import "server-only";
-
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import { toAuthUserEntity } from "@/modules/auth/infrastructure/mappers/to-auth-user-entity.mapper";
+import { authUserRowToEntity } from "@/modules/auth/infrastructure/mappers/auth-user-row-to-entity.mapper";
 import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/mappers/to-signup-uniqueness-conflict.mapper";
-import { demoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
+import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/increment-demo-user-counter.dal";
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
@@ -51,7 +50,7 @@ export class AuthUserRepository {
    * are allowed to propagate to be handled/mapped by higher layers.
    */
   async incrementDemoUserCounter(role: UserRole): Promise<number> {
-    return await demoUserCounterDal(this.db, role, this.logger);
+    return await incrementDemoUserCounterDal(this.db, role, this.logger);
   }
 
   async findByEmail(
@@ -69,7 +68,7 @@ export class AuthUserRepository {
 
     const row = rowResult.value;
 
-    return Ok(row ? toAuthUserEntity(row) : null);
+    return Ok(row ? authUserRowToEntity(row) : null);
   }
 
   /**
@@ -92,7 +91,7 @@ export class AuthUserRepository {
       return Err(mapped ?? rowResult.error);
     }
 
-    const entity = toAuthUserEntity(rowResult.value);
+    const entity = authUserRowToEntity(rowResult.value);
 
     return Ok(entity);
   }

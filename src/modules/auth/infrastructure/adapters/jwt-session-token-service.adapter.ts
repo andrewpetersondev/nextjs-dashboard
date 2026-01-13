@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
@@ -8,10 +7,8 @@ import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/sess
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
 import { createJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
-import {
-  toSessionTokenClaimsDto,
-  toSessionTokenClaimsDtoFromRequest,
-} from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
+import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
+import { toSessionTokenClaimsDtoFromRequest } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto-from-request.mapper";
 import {
   nowInSeconds,
   secondsToMilliseconds,
