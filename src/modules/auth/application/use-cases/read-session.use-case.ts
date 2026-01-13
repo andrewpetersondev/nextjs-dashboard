@@ -1,6 +1,7 @@
 import "server-only";
 
 import { buildReadSessionOutcome } from "@/modules/auth/application/builders/read-session-outcome.builder";
+import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
@@ -8,7 +9,6 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
-import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";

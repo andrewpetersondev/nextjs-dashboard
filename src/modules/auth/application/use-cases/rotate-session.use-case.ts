@@ -1,6 +1,7 @@
 import "server-only";
 
 import { buildUpdateSessionSuccess } from "@/modules/auth/application/builders/update-session-outcome.builder";
+import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";

@@ -1,7 +1,7 @@
 /**
  * JWT configuration constants.
  *
- * Used by SessionJwtAdapter for encoding/decoding session tokens.
+ * Used by JoseSessionTokenCodecAdapter for encoding/decoding session tokens.
  */
 export const JWT_ALG_HS256 = "HS256" as const;
 export const JWT_TYP_JWT = "JWT" as const;
