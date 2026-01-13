@@ -473,8 +473,8 @@ export class RefreshSessionUseCase { ... }
 // ✅ Good
 // login.workflow.ts
 export async function loginWorkflow(
-input: LoginRequestDto,
-deps: LoginDependencies,
+  input: LoginRequestDto,
+  deps: LoginDependencies,
 ): Promise<Result<SessionPrincipalDto, AppError>> { ... }
 ```
 
@@ -498,18 +498,18 @@ deps: LoginDependencies,
 // ✅ Good
 // read-session-token.helper.ts
 export async function readSessionTokenHelper(
-deps: SessionDependencies,
+  deps: SessionDependencies,
 ): Promise<Result<SessionToken, AppError>> { ... }
 
 // validate-and-refresh-session.helper.ts
 export async function validateAndRefreshSessionHelper(
-deps: SessionDependencies,
+  deps: SessionDependencies,
 ): Promise<Result<SessionPrincipal, AppError>> { ... }
 
 // make-auth-use-case-logger.helper.ts
 export function makeAuthUseCaseLoggerHelper(
-logger: LoggerContract,
-useCase: string,
+  logger: LoggerContract,
+  useCase: string,
 ): LoggerContract { ... }
 ```
 
@@ -535,9 +535,9 @@ useCase: string,
 // ✅ Good: Clear CRUD operations
 // get-user-by-id.dal.ts
 export async function getUserByIdDal(
-db: Database,
-id: UserId,
-logger: LoggerContract,
+  db: Database,
+  id: UserId,
+  logger: LoggerContract,
 ): Promise<Result<UserRow | null, AppError>> { ... }
 
 // get-user-by-email.dal.ts

@@ -10,14 +10,14 @@ import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/te
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/cookie-session-store.adapter";
-import { createJwtSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/jwt-session-token-service.adapter";
+import { createJwtSessionTokenServiceAdapter } from "@/modules/auth/infrastructure/adapters/jwt-session-token-service.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
  * Composition Root for Session operations.
  * Returns a wired implementation of the SessionServiceContract.
  */
-export function createSessionServiceFactory(
+export function createSessionService(
   logger: LoggingClientContract,
   requestId: string,
 ): SessionServiceContract {
@@ -26,7 +26,7 @@ export function createSessionServiceFactory(
   const deps: SessionUseCaseDependencies = {
     logger: scopedLogger,
     sessionStore: createSessionCookieAdapter(),
-    sessionTokenService: createJwtSessionTokenAdapter(),
+    sessionTokenService: createJwtSessionTokenServiceAdapter(),
   };
 
   return {

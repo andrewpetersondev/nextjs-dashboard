@@ -8,10 +8,10 @@ import {
   SignupRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
 import { signupWorkflow } from "@/modules/auth/application/use-cases/signup.workflow";
-import { mapSignupErrorToFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
-import { createCreateUserUseCaseFactory } from "@/modules/auth/infrastructure/factories/create-user-use-case.factory";
-import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
-import { createUnitOfWorkFactory } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
+import { toSignupFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
+import { createSessionService } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import { createSignupUseCase } from "@/modules/auth/infrastructure/factories/signup-use-case.factory";
+import { createUnitOfWork } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
 import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -90,9 +90,9 @@ export async function signupAction(
     operationName: "signup.validation.success",
   });
 
-  const uow = createUnitOfWorkFactory(getAppDb(), logger, requestId);
-  const signupUseCase = createCreateUserUseCaseFactory(uow, logger);
-  const sessionService = createSessionServiceFactory(logger, requestId);
+  const uow = createUnitOfWork(getAppDb(), logger, requestId);
+  const signupUseCase = createSignupUseCase(uow, logger);
+  const sessionService = createSessionService(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
     signupWorkflow(input, { sessionService, signupUseCase }),
@@ -112,7 +112,7 @@ export async function signupAction(
       operationName: "signup.authentication.failed",
     });
 
-    return mapSignupErrorToFormResult(error, input);
+    return toSignupFormResult(error, input);
   }
 
   const { id: userId, role } = sessionResult.value;

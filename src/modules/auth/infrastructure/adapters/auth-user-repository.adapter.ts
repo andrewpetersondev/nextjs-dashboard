@@ -4,13 +4,13 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/cont
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import type { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user-repository";
+import type { AuthUserRepositoryImplementation } from "@/modules/auth/infrastructure/repositories/auth-user-repository.implementation";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Adapter that exposes an infrastructure {@link AuthUserRepository} through the
+ * Adapter that exposes an infrastructure {@link AuthUserRepositoryImplementation} through the
  * application-facing {@link AuthUserRepositoryContract}.
  *
  * ## Why this exists
@@ -26,12 +26,12 @@ import type { Result } from "@/shared/results/result.types";
  * - No business rules: those belong in services/use-cases
  */
 export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
-  private readonly authUsers: AuthUserRepository;
+  private readonly authUsers: AuthUserRepositoryImplementation;
 
   /**
    * @param authUsers - Concrete repository implementation to delegate to.
    */
-  constructor(authUsers: AuthUserRepository) {
+  constructor(authUsers: AuthUserRepositoryImplementation) {
     this.authUsers = authUsers;
   }
 

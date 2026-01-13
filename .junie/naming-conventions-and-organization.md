@@ -473,8 +473,8 @@ export class RefreshSessionUseCase { ... }
 // ✅ Good
 // login.workflow.ts
 export async function loginWorkflow(
-input: LoginRequestDto,
-deps: LoginDependencies,
+  input: LoginRequestDto,
+  deps: LoginDependencies,
 ): Promise<Result<SessionPrincipalDto, AppError>> { ... }
 ```
 

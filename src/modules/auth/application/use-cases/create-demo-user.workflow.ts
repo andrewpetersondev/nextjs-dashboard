@@ -14,11 +14,11 @@ import type { Result } from "@/shared/results/result.types";
 export async function createDemoUserWorkflow(
   role: UserRole,
   deps: Readonly<{
-    createDemoUserUseCase: CreateDemoUserUseCase;
+    demoUserUseCase: CreateDemoUserUseCase;
     sessionService: SessionServiceContract;
   }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  const userResult = await deps.createDemoUserUseCase.execute(role);
+  const userResult = await deps.demoUserUseCase.execute(role);
 
   return await establishSessionForAuthUserWorkflow(userResult, {
     sessionService: deps.sessionService,

@@ -96,9 +96,9 @@ export class JwtSessionTokenServiceAdapter
 }
 
 /**
- * Factory function for creating JwtSessionTokenAdapter instances.
+ * Factory function for creating JwtSessionTokenServiceAdapter instances.
  */
-export function createJwtSessionTokenAdapter(): SessionTokenServiceContract {
+export function createJwtSessionTokenServiceAdapter(): SessionTokenServiceContract {
   return new JwtSessionTokenServiceAdapter(
     createJoseSessionTokenCodecAdapter(),
   );

@@ -5,7 +5,7 @@ import { DrizzleAuthUnitOfWorkAdapter } from "@/modules/auth/infrastructure/adap
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
-export function createUnitOfWorkFactory(
+export function createUnitOfWork(
   db: AppDatabase,
   logger: LoggingClientContract,
   requestId: string,

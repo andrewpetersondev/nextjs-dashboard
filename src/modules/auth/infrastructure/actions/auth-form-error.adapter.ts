@@ -93,7 +93,7 @@ export function toLoginFormResult(
  * @remarks
  * Returns `FormResult<never>` because this function only returns errors (never success).
  */
-export function mapSignupErrorToFormResult(
+export function toSignupFormResult(
   error: AppError,
   formData: SignupFormData,
 ): FormResult<never> {

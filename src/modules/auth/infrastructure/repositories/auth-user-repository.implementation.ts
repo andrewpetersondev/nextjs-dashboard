@@ -3,8 +3,8 @@ import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/mappers/auth-error.mapper";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/mappers/to-auth-user-entity.mapper";
+import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/mappers/to-signup-uniqueness-conflict.mapper";
 import { demoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
@@ -37,7 +37,7 @@ import type { Result } from "@/shared/results/result.types";
  * ## Server-only
  * Intended for server execution (database access + Node crypto UUID).
  */
-export class AuthUserRepository {
+export class AuthUserRepositoryImplementation {
   /** Database connection (or transaction-scoped connection) used by DAL calls. */
   protected readonly db: AppDatabase;
 

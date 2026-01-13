@@ -5,7 +5,7 @@ import { SignupUseCase } from "@/modules/auth/application/use-cases/signup.use-c
 import { BcryptPasswordHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-password-hasher.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
-export function createCreateUserUseCaseFactory(
+export function createSignupUseCase(
   uow: AuthUnitOfWorkContract,
   logger: LoggingClientContract,
 ): SignupUseCase {

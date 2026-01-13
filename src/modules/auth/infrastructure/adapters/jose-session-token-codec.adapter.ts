@@ -158,6 +158,6 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
 }
 
 // Factory function
-export function createJoseSessionTokenCodecAdapter(): JoseSessionTokenCodecAdapter {
+export function createJoseSessionTokenCodecAdapter(): SessionTokenCodecContract {
   return new JoseSessionTokenCodecAdapter();
 }

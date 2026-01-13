@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { demoUserActionAdapter } from "@/modules/auth/infrastructure/actions/demo-user.action";
+import { demoUserAction } from "@/modules/auth/infrastructure/actions/demo-user.action";
 import type { AuthActionProps } from "@/modules/auth/presentation/auth-action-props.transport";
 import { SignupForm } from "@/modules/auth/presentation/components/forms/signup-form";
 import { AuthFormDemoSection } from "@/modules/auth/presentation/components/shared/auth-form-demo-section";
@@ -17,7 +17,7 @@ export function SignupCard({
       <DividerAtom label={AUTH_DIVIDER_LABEL} />
       <AuthFormDemoSection
         demoAdminText="Sign Up as Demo Admin"
-        demoUserAction={demoUserActionAdapter}
+        demoUserAction={demoUserAction}
         demoUserText="Sign Up as Demo User"
       />
       <AuthFormSocialSection mode="signup" />

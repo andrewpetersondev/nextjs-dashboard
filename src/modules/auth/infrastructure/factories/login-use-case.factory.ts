@@ -4,14 +4,14 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/cont
 import { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { BcryptPasswordHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-password-hasher.adapter";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user-repository";
+import { AuthUserRepositoryImplementation } from "@/modules/auth/infrastructure/repositories/auth-user-repository.implementation";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
  * Clean Architecture Factory: Wires Infrastructure into Use Case.
  */
-export function createLoginUseCaseFactory(
+export function createLoginUseCase(
   db: AppDatabase,
   logger: LoggingClientContract,
   requestId: string,
@@ -19,7 +19,11 @@ export function createLoginUseCaseFactory(
   const scopedLogger = logger.withContext("auth").withRequest(requestId);
 
   // Implementation (Infrastructure)
-  const repo = new AuthUserRepository(db, scopedLogger, requestId);
+  const repo = new AuthUserRepositoryImplementation(
+    db,
+    scopedLogger,
+    requestId,
+  );
 
   // Adapter (Bridge Infrastructure to Contract)
   const repoContract: AuthUserRepositoryContract =

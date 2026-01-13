@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { createDemoUserWorkflow } from "@/modules/auth/application/use-cases/create-demo-user.workflow";
-import { createCreateDemoUserUseCaseFactory } from "@/modules/auth/infrastructure/factories/demo-user-use-case.factory";
-import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
-import { createUnitOfWorkFactory } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
+import { createDemoUserUseCase } from "@/modules/auth/infrastructure/factories/demo-user-use-case.factory";
+import { createSessionService } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import { createUnitOfWork } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
@@ -39,12 +39,12 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const uow = createUnitOfWorkFactory(getAppDb(), logger, requestId);
-  const createDemoUserUseCase = createCreateDemoUserUseCaseFactory(uow, logger);
-  const sessionService = createSessionServiceFactory(logger, requestId);
+  const uow = createUnitOfWork(getAppDb(), logger, requestId);
+  const demoUserUseCase = createDemoUserUseCase(uow, logger);
+  const sessionService = createSessionService(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
-    createDemoUserWorkflow(role, { createDemoUserUseCase, sessionService }),
+    createDemoUserWorkflow(role, { demoUserUseCase, sessionService }),
   );
 
   if (!sessionResult.ok) {
@@ -86,7 +86,7 @@ async function createDemoUserInternal(
  * @param formData - Form data containing the hidden 'role' field
  * @returns FormResult on error, redirects on success
  */
-export async function demoUserActionAdapter(
+export async function demoUserAction(
   _prevState: FormResult<never>,
   formData: FormData,
 ): Promise<FormResult<never>> {
