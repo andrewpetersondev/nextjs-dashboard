@@ -28,7 +28,7 @@ export function toSessionTokenClaimsDto(
       makeAppError(APP_ERROR_KEYS.validation, {
         cause: `Invalid role value: ${jwtClaims.role}`,
         message: "session.claims.invalid_role",
-        //       todo: in the future refactor makeAppError metadata so I can use  metadata: { sub:
+        //       TODO: in the future refactor makeAppError metadata so I can use  metadata: { sub:
         //        jwtClaims.sub },
         metadata: {},
       }),

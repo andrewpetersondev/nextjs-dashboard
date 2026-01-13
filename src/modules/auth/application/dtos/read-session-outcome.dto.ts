@@ -1,6 +1,6 @@
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 
-// todo: this is the SessionEntity minus userId (instead of userId it has id: UserId) and role plus timeLeftSec
+// TODO: this is the SessionEntity minus userId (instead of userId it has id: UserId) and role plus timeLeftSec
 export type ReadSessionOutcomeDto = SessionPrincipalDto & {
   readonly expiresAt: number;
   readonly issuedAt: number;

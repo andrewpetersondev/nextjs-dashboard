@@ -60,6 +60,8 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
       sub: userIdCodec.encode(input.userId),
     };
 
+    // TODO: .encode() should only accept claims parameter. the expiresAtSec parameter is redundant since exp is in the
+    // claim
     const encodedResult = await this.codec.encode(claims, expiresAtSec);
 
     if (!encodedResult.ok) {
@@ -75,7 +77,7 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
   /**
    * Validates decoded claims against the schema.
    *
-   * todo: why is this not an async function?
+   * TODO: why is this not an async function?
    */
   validate(claims: unknown): Result<SessionTokenClaimsDto, AppError> {
     const parsed = SessionTokenClaimsSchema.safeParse(claims);

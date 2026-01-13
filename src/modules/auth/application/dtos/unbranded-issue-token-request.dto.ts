@@ -1,8 +1,8 @@
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
-// todo: why is this not readonly? should it be?
+// TODO: why is this not readonly? should it be?
 
-// todo: is this type just a dto? it is a subset of SessionEntity but with userId as plain string instead of branded
+// TODO: is this type just a dto? it is a subset of SessionEntity but with userId as plain string instead of branded
 //  string. it is IssueTokenRequestDto but with userId as string. should i just use IssueTokenRequestDto and decode
 
 /**

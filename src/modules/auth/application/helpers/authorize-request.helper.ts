@@ -6,7 +6,7 @@ import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evalua
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
 import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/types/auth-request-authorization.output";
-// todo : this dependency is outward creating violation
+// TODO : this dependency is outward creating violation
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 
 /**

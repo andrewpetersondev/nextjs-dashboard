@@ -85,7 +85,7 @@ export class VerifySessionUseCase {
 
     const sessionEntity = toSessionEntity(decoded);
 
-    // todo: can i move this to a policy? should it be a builder? should it be a mapper?
+    // TODO: can i move this to a policy? should it be a builder? should it be a mapper?
     return Ok({
       isAuthorized: true,
       role: sessionEntity.role,
