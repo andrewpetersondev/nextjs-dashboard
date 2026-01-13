@@ -2,20 +2,11 @@ import "server-only";
 
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
+import type { ReadSessionTokenOutcomeDto } from "@/modules/auth/application/dtos/read-session-token-outcome.dto";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-// TODO: consider moving type to improve organization and clarity
-export type ReadSessionTokenOutcome =
-  | { kind: "missing_token" }
-  | { kind: "invalid_token"; didCleanup: boolean }
-  | {
-      kind: "decoded";
-      decoded: SessionTokenClaimsDto;
-    };
 
 /**
  * Centralizes session token retrieval and decoding.
@@ -28,13 +19,22 @@ export async function readSessionTokenHelper(
   options: Readonly<{
     cleanupOnInvalidToken: boolean;
   }>,
-): Promise<Result<ReadSessionTokenOutcome, AppError>> {
-  const token = await deps.sessionStore.get();
+): Promise<Result<ReadSessionTokenOutcomeDto, AppError>> {
+  // 1. Get the token from the store (returns Result<string | undefined, AppError>)
+  const tokenResult = await deps.sessionStore.get();
+
+  // 2. Handle failure or missing token early
+  if (!tokenResult.ok) {
+    return tokenResult; // Propagate the error
+  }
+
+  const token = tokenResult.value;
 
   if (!token) {
     return Ok({ kind: "missing_token" });
   }
 
+  // 3. Now 'token' is a raw string, safe to pass to decode
   const decodedResult = await deps.sessionTokenService.decode(token);
 
   if (!decodedResult.ok) {
