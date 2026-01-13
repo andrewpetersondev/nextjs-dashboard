@@ -6,7 +6,6 @@ import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
-import { createJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import { toSessionTokenClaimsDtoFromRequest } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto-from-request.mapper";
 import {
@@ -90,13 +89,4 @@ export class JwtSessionTokenServiceAdapter
 
     return Ok(toSessionTokenClaimsDto(parsed.data));
   }
-}
-
-/**
- * Factory function for creating JwtSessionTokenServiceAdapter instances.
- */
-export function createJwtSessionTokenServiceAdapter(): SessionTokenServiceContract {
-  return new JwtSessionTokenServiceAdapter(
-    createJoseSessionTokenCodecAdapter(),
-  );
 }

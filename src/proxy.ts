@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { authorizeRequestHelper } from "@/modules/auth/application/helpers/authorize-request.helper";
-import { createJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/constants/session-cookie.constants";
+import { makeJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/factories/jose-session-token-codec.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,
@@ -12,6 +12,16 @@ import {
 } from "@/shared/routes/routes";
 
 export default async function proxy(req: NextRequest): Promise<NextResponse> {
+  const requestId =
+    req.headers.get("x-request-id") ??
+    `mw-${crypto
+      .randomUUID()
+      // biome-ignore lint/style/noMagicNumbers: <ignore for now>
+      .slice(0, 8)}`;
+  const logger = defaultLogger
+    .withContext("auth:middleware")
+    .withRequest(requestId);
+
   const path = normalizePath(req.nextUrl.pathname);
   const isAdminRoute = isAdminRouteHelper(path);
   const isProtectedRoute = isProtectedRouteHelper(path);
@@ -22,7 +32,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   }
 
   const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-  const jwt = createJoseSessionTokenCodecAdapter();
+  const jwt = makeJoseSessionTokenCodecAdapter(logger);
 
   const outcome = await authorizeRequestHelper(
     { cookie, isAdminRoute, isProtectedRoute, isPublicRoute, path },
@@ -36,7 +46,8 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   );
 
   if (outcome.kind === "redirect") {
-    const logger = defaultLogger.withContext("auth:middleware");
+    // We log BEFORE returning the response to ensure the Edge Runtime doesn't
+    // kill the execution context before the log is dispatched.
     logger.operation("info", "Auth middleware redirect", {
       operationContext: "server",
       operationIdentifiers: {

@@ -49,6 +49,7 @@ export const userIdTransformer = z.codec(
 export const SessionTokenClaimsSchema = z
   .object({
     exp: expSchema,
+    // biome-ignore lint/style/noMagicNumbers: <ignore for now>
     iat: iatSchema.refine((val) => val <= nowInSeconds() + 5, {
       message: "iat must not be in the future (allowing small clock skew)",
     }),

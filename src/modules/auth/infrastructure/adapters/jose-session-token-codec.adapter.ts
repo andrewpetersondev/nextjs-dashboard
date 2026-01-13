@@ -12,14 +12,10 @@ import {
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.transport";
-import {
-  SESSION_AUDIENCE,
-  SESSION_ISSUER,
-  SESSION_SECRET,
-} from "@/server/config/env-server";
+import { SESSION_AUDIENCE, SESSION_ISSUER } from "@/server/config/env-server";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -37,30 +33,36 @@ const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
  */
 export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
   private readonly encodedKey: Uint8Array;
+  private readonly logger: LoggingClientContract;
   private readonly verifyOptions: SessionJwtVerifyOptionsTransport;
 
-  constructor() {
-    this.encodedKey = this.initializeKey();
-    this.verifyOptions = this.buildVerifyOptions();
+  constructor(
+    logger: LoggingClientContract,
+    secret: string,
+    issuer?: string,
+    audience?: string,
+  ) {
+    this.logger = logger;
+    this.encodedKey = this.initializeKey(secret);
+    this.verifyOptions = this.buildVerifyOptions(issuer, audience);
   }
 
-  private initializeKey(): Uint8Array {
-    const secret = SESSION_SECRET;
-    if (!secret) {
-      throw new Error("SESSION_SECRET is not defined");
-    }
+  private initializeKey(secret: string): Uint8Array {
     if (secret.length < MIN_HS256_KEY_LENGTH) {
       throw new Error("Weak SESSION_SECRET: must be at least 32 characters");
     }
     return encoder.encode(secret);
   }
 
-  private buildVerifyOptions(): SessionJwtVerifyOptionsTransport {
+  private buildVerifyOptions(
+    issuer?: string,
+    audience?: string,
+  ): SessionJwtVerifyOptionsTransport {
     return {
       algorithms: [JWT_ALG_HS256],
-      ...(SESSION_AUDIENCE ? { audience: SESSION_AUDIENCE } : {}),
+      ...(audience ? { audience } : {}),
       clockTolerance: CLOCK_TOLERANCE_SEC,
-      ...(SESSION_ISSUER ? { issuer: SESSION_ISSUER } : {}),
+      ...(issuer ? { issuer } : {}),
     };
   }
 
@@ -83,7 +85,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       const parsed = SessionTokenClaimsSchema.safeParse(payload);
 
       if (!parsed.success) {
-        logger.warn("JWT payload validation failed", {
+        this.logger.warn("JWT payload validation failed", {
           errors: parsed.error.flatten().fieldErrors,
         });
 
@@ -98,7 +100,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       // Infrastructure performs the mapping to Application DTO before returning
       return Ok(toSessionTokenClaimsDto(parsed.data));
     } catch (error: unknown) {
-      logger.warn("JWT verification failed", {
+      this.logger.warn("JWT verification failed", {
         error: String(error),
       });
 
@@ -143,7 +145,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       const token = await signer.sign(this.encodedKey);
       return Ok(token);
     } catch (error: unknown) {
-      logger.error("JWT signing failed", {
+      this.logger.error("JWT signing failed", {
         error: String(error),
       });
 
@@ -155,9 +157,4 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       );
     }
   }
-}
-
-// Factory function
-export function createJoseSessionTokenCodecAdapter(): SessionTokenCodecContract {
-  return new JoseSessionTokenCodecAdapter();
 }
