@@ -4,7 +4,7 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/cont
 import { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { BcryptPasswordHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-password-hasher.adapter";
-import { AuthUserRepositoryImplementation } from "@/modules/auth/infrastructure/repositories/auth-user-repository.implementation";
+import { DrizzleAuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/repositories/drizzle-auth-user-repository.adapter";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -19,7 +19,7 @@ export function createLoginUseCase(
   const scopedLogger = logger.withContext("auth").withRequest(requestId);
 
   // Implementation (Infrastructure)
-  const repo = new AuthUserRepositoryImplementation(
+  const repo = new DrizzleAuthUserRepositoryAdapter(
     db,
     scopedLogger,
     requestId,

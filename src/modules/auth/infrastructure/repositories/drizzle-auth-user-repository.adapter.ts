@@ -37,7 +37,7 @@ import type { Result } from "@/shared/results/result.types";
  * ## Server-only
  * Intended for server execution (database access + Node crypto UUID).
  */
-export class AuthUserRepositoryImplementation {
+export class DrizzleAuthUserRepositoryAdapter {
   /** Database connection (or transaction-scoped connection) used by DAL calls. */
   protected readonly db: AppDatabase;
 

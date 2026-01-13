@@ -8,10 +8,10 @@ import {
   SignupRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
 import { signupWorkflow } from "@/modules/auth/application/use-cases/signup.workflow";
-import { toSignupFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.mapper";
 import { createSessionService } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import { createSignupUseCase } from "@/modules/auth/infrastructure/factories/signup-use-case.factory";
 import { createUnitOfWork } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
+import { toSignupFormResult } from "@/modules/auth/infrastructure/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
