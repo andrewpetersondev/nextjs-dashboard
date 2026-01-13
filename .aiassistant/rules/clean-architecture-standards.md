@@ -657,28 +657,3 @@ auth/
       login-form.tsx
     *.transport.ts
 ```
-
-### Naming Rules
-
-- **One concept per file**: `login.use-case.ts`, not `auth-use-cases.ts`
-- **Descriptive names**: File names should describe what they do
-- **Consistent suffixes**: Use suffixes from naming-conventions.md
-- **No barrel files**: Avoid `index.ts` re-exports
-
-## Migration Strategy
-
-To align existing code with these rules:
-
-1. **Move Zod schemas** from `domain/schemas/` to `application/schemas/`
-2. **Move DTO mappers** from `domain/policies/` to `application/mappers/`
-3. **Keep pure business logic** in `domain/policies/`
-4. **Extract validation policies** from schemas into pure functions
-5. **Update imports** to respect dependency direction
-
-## Why These Rules Matter
-
-- **Maintainability**: Clear boundaries make code easier to understand and modify
-- **Testability**: Pure domain logic is trivial to test without mocks
-- **Flexibility**: Swap infrastructure (database, framework) without touching business logic
-- **Team Scaling**: New developers understand where code belongs
-- **Refactoring Safety**: Changes in one layer don't cascade to others
