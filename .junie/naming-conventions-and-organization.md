@@ -116,7 +116,7 @@ To prevent naming collisions and clarify intent:
 1. **Implementations** should be named after the technology or specific role:
 
 - ✅ `auth-user.repository.ts` (Class: `AuthUserRepository`)
-- ✅ `bcrypt-password.service.ts` (Class: `BcryptPasswordHasher`)
+- ✅ `bcrypt-password.service.ts` (Class: `BcryptPasswordService`)
 
 2. **Bridges (Adapters)** should be named after the Contract they satisfy:
 
@@ -743,7 +743,7 @@ modules/auth/
         drizzle/
           auth-user.repository.ts   → AuthUserRepository
     services/
-       bcrypt-password.service.ts  → BcryptPasswordHasher
+       bcrypt-password.service.ts  → BcryptPasswordService
     dal/
       get-user-by-email.dal.ts    → getUserByEmailDal()
       insert-user.dal.ts          → insertUserDal()
