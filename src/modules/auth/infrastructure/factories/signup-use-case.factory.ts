@@ -1,13 +1,23 @@
 import "server-only";
-
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import { SignupUseCase } from "@/modules/auth/application/use-cases/signup.use-case";
-import { BcryptPasswordHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-password-hasher.adapter";
+import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
+import { PasswordHasherAdapter } from "@/modules/auth/infrastructure/adapters/password-hasher.adapter";
+import { BcryptPasswordService } from "@/modules/auth/infrastructure/services/bcrypt-password.service";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
+/**
+ * Clean Architecture Factory: Wires Infrastructure into Use Case.
+ */
 export function createSignupUseCase(
   uow: AuthUnitOfWorkContract,
   logger: LoggingClientContract,
 ): SignupUseCase {
-  return new SignupUseCase(uow, new BcryptPasswordHasherAdapter(), logger);
+  const passwordService = new BcryptPasswordService();
+
+  const hasher: PasswordHasherContract = new PasswordHasherAdapter(
+    passwordService,
+  );
+
+  return new SignupUseCase(uow, hasher, logger);
 }
