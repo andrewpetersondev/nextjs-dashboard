@@ -8,8 +8,7 @@ import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/up
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
-import type { SessionStoreContract } from "@/modules/auth/domain/services/session-store.contract";
+import { userIdCodec } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";

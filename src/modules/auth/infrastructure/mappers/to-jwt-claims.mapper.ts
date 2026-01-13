@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
+import { userIdCodec } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 
 /**

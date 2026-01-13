@@ -1,6 +1,6 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
+import { userIdCodec } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
-import { userIdCodec } from "@/modules/auth/domain/schemas/auth-session.schema";
 
 /**
  * Maps JWT token claims to SessionEntity.
