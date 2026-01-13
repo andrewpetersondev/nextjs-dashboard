@@ -126,11 +126,19 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   ```typescript
   // ✅ Good: Depends on contracts, not implementations
   export class LoginUseCase {
+    private readonly userRepo: AuthUserRepositoryContract;
+    private readonly hasher: PasswordHasherContract;
+    private readonly logger: LoggerContract;
+
     constructor(
-      private readonly userRepo: AuthUserRepositoryContract,
-      private readonly hasher: PasswordHasherContract,
-      private readonly logger: LoggerContract,
-    ) {}
+      userRepo: AuthUserRepositoryContract,
+      hasher: PasswordHasherContract,
+      logger: LoggerContract,
+    ) {
+      this.userRepo = userRepo;
+      this.hasher = hasher;
+      this.logger = logger;
+    }
 
     async execute(
       input: LoginRequestDto,
@@ -426,6 +434,20 @@ Transport     →   DTO    →   Entity  ←   Row
 ```typescript
 // ✅ Good: Use case owns transaction boundary
 export class CreateUserUseCase {
+  private readonly hasher: PasswordHasherContract;
+  private readonly uow: UnitOfWorkContract;
+  private readonly emailService: EmailServiceContract;
+
+  constructor(
+    hasher: PasswordHasherContract,
+    uow: UnitOfWorkContract,
+    emailService: EmailServiceContract,
+  ) {
+    this.hasher = hasher;
+    this.uow = uow;
+    this.emailService = emailService;
+  }
+
   async execute(input: CreateUserDto): Promise<Result<UserDto, AppError>> {
     // 1. Perform side effects BEFORE transaction
     const passwordHash = await this.hasher.hash(input.password);

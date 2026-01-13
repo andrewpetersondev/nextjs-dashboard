@@ -380,11 +380,19 @@ In use cases and workflows, **use the contract name** (without "Contract" suffix
 ```typescript
 // ✅ Good: Consumer-centric dependency names
 export class LoginUseCase {
+  private readonly userRepo: UserRepositoryContract;
+  private readonly hasher: PasswordHasherContract;
+  private readonly logger: LoggerContract;
+
   constructor(
-    private readonly userRepo: UserRepositoryContract,
-    private readonly hasher: PasswordHasherContract,
-    private readonly logger: LoggerContract,
-  ) {}
+    userRepo: UserRepositoryContract,
+    hasher: PasswordHasherContract,
+    logger: LoggerContract,
+  ) {
+    this.userRepo = userRepo;
+    this.hasher = hasher;
+    this.logger = logger;
+  }
 }
 
 // ❌ Bad: Implementation-leaky names
@@ -441,10 +449,13 @@ export interface AuthUserRepositoryContract {
 // ✅ Good
 // infrastructure/repositories/user.repository.ts
 export class UserRepository implements UserRepositoryContract {
-  constructor(
-    private readonly db: Database,
-    private readonly logger: LoggerContract,
-  ) {}
+  private readonly db: Database;
+  private readonly logger: LoggerContract;
+
+  constructor(db: Database, logger: LoggerContract) {
+    this.db = db;
+    this.logger = logger;
+  }
 
   async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
     const rowResult = await getUserByIdDal(this.db, id, this.logger);
