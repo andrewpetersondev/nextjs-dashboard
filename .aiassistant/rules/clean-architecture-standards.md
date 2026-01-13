@@ -96,6 +96,9 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 **What Does NOT Belong Here**:
 
+    - ❌ Repository Contracts (move to `application/contracts/`)
+    - ❌ Service Contracts (move to `application/contracts/`)
+
 - ❌ Zod schemas (move to `application/schemas/`)
 - ❌ DTOs (move to `application/dtos/`)
 - ❌ Mappers that reference DTOs (move to `application/mappers/`)
@@ -124,16 +127,27 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   // ✅ Good: Depends on contracts, not implementations
   export class LoginUseCase {
     constructor(
-      private readonly userRepo: UserRepositoryContract,
+      private readonly userRepo: AuthUserRepositoryContract,
       private readonly hasher: PasswordHasherContract,
       private readonly logger: LoggerContract,
     ) {}
 
     async execute(
       input: LoginRequestDto,
-    ): Promise<Result<UserEntity, AppError>> {
+    ): Promise<Result<AuthUserEntity, AppError>> {
       // Orchestration logic only
     }
+  }
+  ```
+
+- **Contracts** (`contracts/`): Interfaces defining dependencies (Ports) for repositories and services.
+
+  ```typescript
+  // ✅ Good: Consolidate all Ports here
+  export interface AuthUserRepositoryContract {
+    findByEmail(
+      query: AuthUserLookupQueryDto,
+    ): Promise<Result<AuthUserEntity | null, AppError>>;
   }
   ```
 
@@ -545,16 +559,11 @@ auth/
     policies/
       password-validation.policy.ts
       session-lifecycle.policy.ts
-      authorization.policy.ts
-    repositories/
-      user-repository.contract.ts
-      session-repository.contract.ts
-    services/
-      password-hasher.contract.ts
-      token-generator.contract.ts
 
   application/
     contracts/
+          auth-user-repository.contract.ts
+          password-hasher.contract.ts
       session-service.contract.ts
       unit-of-work.contract.ts
     dtos/
