@@ -1,13 +1,12 @@
 import "server-only";
-
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/constants/session-cookie.constants";
-import { createCookieService } from "@/server/cookies/cookie.factory";
+import type { CookieContract } from "@/server/cookies/cookie.contract";
 import { isProd } from "@/shared/config/env-shared";
 import { millisecondsToSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -15,8 +14,21 @@ const SESSION_COOKIE_HTTPONLY = true as const;
 const SESSION_COOKIE_PATH = "/" as const;
 const SESSION_COOKIE_SAMESITE = "strict" as const;
 
+/**
+ * Adapter that implements session storage using browser cookies.
+ *
+ * @remarks
+ * This adapter bridges the application-facing {@link SessionStoreContract}
+ * with the underlying cookie service implementation.
+ */
 export class CookieSessionStoreAdapter implements SessionStoreContract {
-  private readonly cookies = createCookieService();
+  private readonly cookies: CookieContract;
+  private readonly logger: LoggingClientContract;
+
+  constructor(cookies: CookieContract, logger: LoggingClientContract) {
+    this.cookies = cookies;
+    this.logger = logger;
+  }
 
   /**
    * Deletes the session cookie, effectively logging out the user.
@@ -24,12 +36,12 @@ export class CookieSessionStoreAdapter implements SessionStoreContract {
   async delete(): Promise<Result<void, AppError>> {
     try {
       await this.cookies.delete(SESSION_COOKIE_NAME);
-      logger.info("Session cookie deleted", {
+      this.logger.info("Session cookie deleted", {
         logging: { context: "SessionCookieAdapter.delete" },
       });
       return Ok(undefined);
     } catch (error) {
-      logger.error("Failed to delete session cookie", { error });
+      this.logger.error("Failed to delete session cookie", { error });
       return Err(
         makeUnexpectedError(error, { message: "session.store.delete.failed" }),
       );
@@ -45,7 +57,7 @@ export class CookieSessionStoreAdapter implements SessionStoreContract {
       const value = await this.cookies.get(SESSION_COOKIE_NAME);
       return Ok(value);
     } catch (error) {
-      logger.error("Failed to get session cookie", { error });
+      this.logger.error("Failed to get session cookie", { error });
       return Err(
         makeUnexpectedError(error, { message: "session.store.get.failed" }),
       );
@@ -75,21 +87,16 @@ export class CookieSessionStoreAdapter implements SessionStoreContract {
         secure: isProd(),
       });
 
-      logger.debug("Session cookie set", {
+      this.logger.debug("Session cookie set", {
         logging: { context: "SessionCookieAdapter.set", expiresAtMs, maxAge },
       });
 
       return Ok(undefined);
     } catch (error) {
-      logger.error("Failed to set session cookie", { error });
+      this.logger.error("Failed to set session cookie", { error });
       return Err(
         makeUnexpectedError(error, { message: "session.store.set.failed" }),
       );
     }
   }
-}
-
-// Factory function for creating adapter instances without singletons
-export function createSessionCookieAdapter(): CookieSessionStoreAdapter {
-  return new CookieSessionStoreAdapter();
 }

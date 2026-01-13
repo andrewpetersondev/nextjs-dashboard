@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
@@ -9,8 +8,8 @@ import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotat
 import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
-import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/cookie-session-store.adapter";
 import { createJwtSessionTokenServiceAdapter } from "@/modules/auth/infrastructure/adapters/jwt-session-token-service.adapter";
+import { makeCookieSessionStoreAdapter } from "@/modules/auth/infrastructure/factories/cookie-session-store.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -25,7 +24,8 @@ export function createSessionService(
 
   const deps: SessionUseCaseDependencies = {
     logger: scopedLogger,
-    sessionStore: createSessionCookieAdapter(),
+    // TODO: confirm if i should be passing in the scoped logger to sessionStore
+    sessionStore: makeCookieSessionStoreAdapter(scopedLogger),
     sessionTokenService: createJwtSessionTokenServiceAdapter(),
   };
 
