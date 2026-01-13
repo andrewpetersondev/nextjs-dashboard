@@ -24,5 +24,5 @@ export interface SessionTokenServiceContract {
   /**
    * Validates decoded claims against the schema.
    */
-  validate(claims: unknown): Result<SessionTokenClaimsDto, AppError>;
+  validate(claims: unknown): Promise<Result<SessionTokenClaimsDto, AppError>>;
 }
