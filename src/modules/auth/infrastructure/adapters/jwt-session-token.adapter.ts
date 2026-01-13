@@ -91,7 +91,7 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
       );
     }
 
-    return toSessionTokenClaimsDto(parsed.data);
+    return Ok(toSessionTokenClaimsDto(parsed.data));
   }
 }
 

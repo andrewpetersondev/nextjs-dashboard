@@ -96,7 +96,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       }
 
       // Infrastructure performs the mapping to Application DTO before returning
-      return toSessionTokenClaimsDto(parsed.data);
+      return Ok(toSessionTokenClaimsDto(parsed.data));
     } catch (error: unknown) {
       logger.warn("JWT verification failed", {
         error: String(error),
