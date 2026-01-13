@@ -14,7 +14,7 @@ import type { Result } from "@/shared/results/result.types";
  * - establish session (cookie/JWT, non-transactional)
  */
 export async function signupWorkflow(
-  input: Readonly<AuthSignupSchemaDto>,
+  input: Readonly<SignupRequestDto>,
   deps: Readonly<{
     sessionService: SessionServiceContract;
     signupUseCase: SignupUseCase;

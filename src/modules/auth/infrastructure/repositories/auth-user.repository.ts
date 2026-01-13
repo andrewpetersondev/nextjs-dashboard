@@ -1,7 +1,7 @@
 import "server-only";
 
+import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
-import type { SignupRequestDto } from "@/modules/auth/application/dtos/signup-request.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
 import { demoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/demo-user-counter.dal";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
@@ -101,7 +101,7 @@ export class AuthUserRepository {
    * upper layers can map them consistently.
    */
   async signup(
-    input: Readonly<SignupRequestDto>,
+    input: Readonly<AuthUserCreateDto>,
   ): Promise<Result<AuthUserEntity, AppError>> {
     const rowResult = await insertUserDal(this.db, input, this.logger);
 

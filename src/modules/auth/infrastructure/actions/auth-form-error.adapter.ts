@@ -3,7 +3,7 @@ import "server-only";
 import {
   LOGIN_FIELDS_LIST,
   SIGNUP_FIELDS_LIST,
-} from "@/modules/auth/domain/schemas/auth-user.schema";
+} from "@/modules/auth/application/schemas/login-request.schema";
 import type { LoginField } from "@/modules/auth/presentation/login.transport";
 import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

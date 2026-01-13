@@ -1,10 +1,10 @@
 import type { z } from "zod";
 import type {
-  AuthLoginSchemaDto,
-  LoginSchema,
-} from "@/modules/auth/domain/schemas/auth-user.schema";
+  LoginRequestDto,
+  LoginRequestSchema,
+} from "@/modules/auth/application/schemas/login-request.schema";
 
 /** Field names for type-safe error handling in UI */
-export type LoginField = keyof AuthLoginSchemaDto;
+export type LoginField = keyof LoginRequestDto;
 /** The raw input from the form (before Zod parsing) */
-export type LoginTransport = z.input<typeof LoginSchema>;
+export type LoginTransport = z.input<typeof LoginRequestSchema>;

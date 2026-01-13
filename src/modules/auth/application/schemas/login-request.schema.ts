@@ -19,22 +19,22 @@ export const AuthCredentialsSchema = z.strictObject({
  *
  * Alias of AuthCredentialsSchema.
  */
-export const LoginSchema = AuthCredentialsSchema;
+export const LoginRequestSchema = AuthCredentialsSchema;
 
 /**
  * Object schema for signup form.
  *
  * Extends credentials with normalized username.
  */
-export const SignupSchema = AuthCredentialsSchema.safeExtend({
+export const SignupRequestSchema = AuthCredentialsSchema.safeExtend({
   username: UsernameSchema,
 });
 
 /** The validated data used by the Workflow and Services */
-export type AuthLoginSchemaDto = z.output<typeof LoginSchema>;
+export type LoginRequestDto = z.output<typeof LoginRequestSchema>;
 
 /** The validated data used by the Workflow and Services */
-export type AuthSignupSchemaDto = z.output<typeof SignupSchema>;
+export type SignupRequestDto = z.output<typeof SignupRequestSchema>;
 
-export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginSchema);
-export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupSchema);
+export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginRequestSchema);
+export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupRequestSchema);

@@ -1,7 +1,7 @@
 import "server-only";
 
+import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
-import type { SignupRequestDto } from "@/modules/auth/application/dtos/signup-request.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -38,6 +38,6 @@ export interface AuthUserRepositoryContract {
    * @returns Result with the created user entity, or AppError for expected failures.
    */
   signup(
-    input: Readonly<SignupRequestDto>,
+    input: Readonly<AuthUserCreateDto>,
   ): Promise<Result<AuthUserEntity, AppError>>;
 }

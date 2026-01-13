@@ -17,7 +17,7 @@ import type { Result } from "@/shared/results/result.types";
  * to protect against account enumeration.
  */
 export async function loginWorkflow(
-  input: Readonly<AuthLoginSchemaDto>,
+  input: Readonly<LoginRequestDto>,
   deps: Readonly<{
     loginUseCase: LoginUseCase;
     sessionService: SessionServiceContract;

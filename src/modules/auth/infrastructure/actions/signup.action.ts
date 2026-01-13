@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { signupWorkflow } from "@/modules/auth/application/use-cases/signup.workflow";
 import {
-  type AuthSignupSchemaDto,
   SIGNUP_FIELDS_LIST,
-  SignupSchema,
-} from "@/modules/auth/domain/schemas/auth-user.schema";
+  type SignupRequestDto,
+  SignupRequestSchema,
+} from "@/modules/auth/application/schemas/login-request.schema";
+import { signupWorkflow } from "@/modules/auth/application/use-cases/signup.workflow";
 import { mapSignupErrorToFormResult } from "@/modules/auth/infrastructure/actions/auth-form-error.adapter";
 import { createCreateUserUseCaseFactory } from "@/modules/auth/infrastructure/factories/create-user-use-case.factory";
 import { createSessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
@@ -62,7 +62,7 @@ export async function signupAction(
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, SignupSchema, fields),
+    validateForm(formData, SignupRequestSchema, fields),
   );
 
   if (!validated.ok) {
@@ -80,7 +80,7 @@ export async function signupAction(
     return validated;
   }
 
-  const input = validated.value.data satisfies AuthSignupSchemaDto;
+  const input = validated.value.data satisfies SignupRequestDto;
 
   logger.operation("info", "Signup form validated", {
     duration: tracker.getLastDuration("validation"),

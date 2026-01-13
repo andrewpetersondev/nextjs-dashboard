@@ -2,7 +2,7 @@
 
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import { LOGIN_FIELDS_LIST } from "@/modules/auth/domain/schemas/auth-user.schema";
+import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/schemas/login-request.schema";
 import type { AuthActionProps } from "@/modules/auth/presentation/auth-action-props.transport";
 import { AuthActionsRow } from "@/modules/auth/presentation/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/presentation/components/shared/auth-form-feedback";
