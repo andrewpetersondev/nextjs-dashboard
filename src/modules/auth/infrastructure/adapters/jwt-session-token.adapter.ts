@@ -5,12 +5,12 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/con
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
 import {
-  DecryptPayloadSchema,
+  SessionTokenClaimsSchema,
   userIdCodec,
-} from "@/modules/auth/domain/schemas/auth-session.schema";
-import { createSessionJwtAdapter } from "@/modules/auth/infrastructure/adapters/session-jwt.adapter";
+} from "@/modules/auth/application/schemas/session-token-claims.schema";
+import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
+import { createJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import {
   nowInSeconds,
@@ -26,7 +26,7 @@ import type { Result } from "@/shared/results/result.types";
  * Handles token-specific operations (encode, decode, validate).
  * Separates crypto/JWT concerns from session lifecycle.
  */
-export class SessionTokenAdapter implements SessionTokenServiceContract {
+export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
   private readonly codec: SessionTokenCodecContract;
 
   constructor(codec: SessionTokenCodecContract) {
@@ -78,7 +78,7 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
    * todo: why is this not an async function?
    */
   validate(claims: unknown): Result<SessionTokenClaimsDto, AppError> {
-    const parsed = DecryptPayloadSchema.safeParse(claims);
+    const parsed = SessionTokenClaimsSchema.safeParse(claims);
 
     if (!parsed.success) {
       return Err(
@@ -95,8 +95,8 @@ export class SessionTokenAdapter implements SessionTokenServiceContract {
 }
 
 /**
- * Factory function for creating SessionTokenAdapter instances.
+ * Factory function for creating JwtSessionTokenAdapter instances.
  */
-export function createSessionTokenAdapter(): SessionTokenServiceContract {
-  return new SessionTokenAdapter(createSessionJwtAdapter());
+export function createJwtSessionTokenAdapter(): SessionTokenServiceContract {
+  return new JwtSessionTokenAdapter(createJoseSessionTokenCodecAdapter());
 }

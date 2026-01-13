@@ -2,7 +2,7 @@ import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { DecryptPayloadSchema } from "@/modules/auth/domain/schemas/auth-session.schema";
+import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import {
   CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,
@@ -35,7 +35,7 @@ const encoder: Readonly<{ encode: (s: string) => Uint8Array }> =
  * - Caches encoded key and verify options for performance
  * - Handles both expected and unexpected JWT errors gracefully
  */
-export class SessionJwtAdapter implements SessionTokenCodecContract {
+export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
   private readonly encodedKey: Uint8Array;
   private readonly verifyOptions: SessionJwtVerifyOptions;
 
@@ -80,7 +80,7 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
         this.verifyOptions,
       );
 
-      const parsed = DecryptPayloadSchema.safeParse(payload);
+      const parsed = SessionTokenClaimsSchema.safeParse(payload);
 
       if (!parsed.success) {
         logger.warn("JWT payload validation failed", {
@@ -160,6 +160,6 @@ export class SessionJwtAdapter implements SessionTokenCodecContract {
 }
 
 // Factory function
-export function createSessionJwtAdapter(): SessionJwtAdapter {
-  return new SessionJwtAdapter();
+export function createJoseSessionTokenCodecAdapter(): JoseSessionTokenCodecAdapter {
+  return new JoseSessionTokenCodecAdapter();
 }

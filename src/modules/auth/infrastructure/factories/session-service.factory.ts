@@ -9,9 +9,8 @@ import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotat
 import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
-import type { SessionIdentityDto } from "@/modules/auth/domain/types/session-identity.dto";
+import { createJwtSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/jwt-session-token.adapter";
 import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
-import { createSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/session-token.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -27,7 +26,7 @@ export function createSessionServiceFactory(
   const deps: SessionUseCaseDependencies = {
     logger: scopedLogger,
     sessionStore: createSessionCookieAdapter(),
-    sessionTokenService: createSessionTokenAdapter(),
+    sessionTokenService: createJwtSessionTokenAdapter(),
   };
 
   return {
