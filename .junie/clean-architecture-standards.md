@@ -287,19 +287,56 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 - **Factories** (`factories/`): Wire up dependencies and construct use cases.
   - Factories are responsible for instantiating the **Bridge (Adapter)** and injecting the **Implementation** into it.
+  - **Explicit Wiring Rule**: Dependencies must be instantiated separately before being passed to the constructor. Avoid nested instantiation.
 
-  ```typescript
-  // ✅ Good: Wiring the Bridge with its Implementation
-  export function makeLoginUseCase(): LoginUseCase {
-    const authUserRepo = new AuthUserRepositoryAdapter(
-      new AuthUserRepository(db, logger),
-    );
+    ```typescript
+    // ✅ Good: Explicit wiring and assignment
+    export function createLoginUseCase(
+      db: AppDatabase,
+      logger: Logger,
+    ): LoginUseCase {
+      const repo = new AuthUserRepository(db, logger);
+      const repoContract: AuthUserRepositoryContract =
+        new AuthUserRepositoryAdapter(repo);
 
-    const passwordHasher = new BcryptHasherAdapter(new BcryptPasswordService());
+      const service = new BcryptPasswordService();
+      const hasher = new BcryptPasswordHasherAdapter(service);
 
-    return new LoginUseCase(authUserRepo, passwordHasher, logger);
+      return new LoginUseCase(repoContract, hasher, logger);
+    }
+
+    // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
+    export function makeLoginUseCase(): LoginUseCase {
+      return new LoginUseCase(
+        new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
+        new BcryptHasherAdapter(new BcryptPasswordService()),
+        logger,
+      );
+    }
+    ```
+
+## Constructor Standards
+
+To maintain consistency and avoid implicit behavior, all classes must use explicit property assignment in the constructor.
+
+- **No Parameter Properties**: Avoid using `private readonly prop: Type` inside the constructor argument list.
+- **Explicit Assignment**: Define the property in the class body and assign it in the constructor body.
+
+```typescript
+// ✅ Good: Explicit assignment
+export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
+  private readonly service: BcryptPasswordService;
+
+  constructor(service: BcryptPasswordService) {
+    this.service = service;
   }
-  ```
+}
+
+// ❌ Bad: Shorthand parameter properties
+export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
+  constructor(private readonly service: BcryptPasswordService) {}
+}
+```
 
 ### Presentation Layer Rules
 

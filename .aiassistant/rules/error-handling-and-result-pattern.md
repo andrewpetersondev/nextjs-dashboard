@@ -49,8 +49,11 @@ The `AppError` constructor automatically validates and sanitizes `metadata` agai
 ### Specialized Factories
 
 - **`makeAppError`**: Standard factory for domain/application errors.
-- **`makeUnexpectedError`**: Wraps a trigger (the `error` parameter) into an `unexpected` key. It preserves the trigger's properties as the `cause`.
-- **`normalizeUnknownToAppError`**: Converts any caught `unknown` (string, Error, etc.) into a structured `AppError`.
+- **`makeUnexpectedError`**: Preferred for wrapping technical exceptions in Infrastructure.
+  - Wraps a trigger (the `error` parameter) into an `unexpected` key.
+  - Automatically normalizes the trigger and attaches it as the `cause`.
+- **`normalizeUnknownToAppError`**: Converts any caught `unknown` into an `AppError`.
+  - Use this when you need a generic fallback but don't want to explicitly mark it as "unexpected".
 
 ### Infrastructure Normalizers
 
