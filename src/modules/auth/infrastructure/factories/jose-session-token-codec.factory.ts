@@ -11,7 +11,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 /**
  * Factory for JoseSessionTokenCodecAdapter.
  */
-export function makeJoseSessionTokenCodecAdapter(
+export function createJoseSessionTokenCodecAdapter(
   logger: LoggingClientContract,
 ): JoseSessionTokenCodecAdapter {
   if (!SESSION_SECRET) {

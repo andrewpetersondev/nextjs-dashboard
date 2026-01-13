@@ -9,7 +9,7 @@ import {
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/constants/session-jwt.constants";
-import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
+import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/jwt-to-session-token-claims-dto.mapper";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.transport";
 import { SESSION_AUDIENCE, SESSION_ISSUER } from "@/server/config/env-server";
@@ -98,7 +98,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       }
 
       // Infrastructure performs the mapping to Application DTO before returning
-      return Ok(toSessionTokenClaimsDto(parsed.data));
+      return Ok(jwtToSessionTokenClaimsDto(parsed.data));
     } catch (error: unknown) {
       this.logger.warn("JWT verification failed", {
         error: String(error),

@@ -8,8 +8,8 @@ import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotat
 import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
-import { makeCookieSessionStoreAdapter } from "@/modules/auth/infrastructure/factories/cookie-session-store.factory";
-import { makeJwtSessionTokenServiceAdapter } from "@/modules/auth/infrastructure/factories/jwt-session-token-service.factory";
+import { createCookieSessionStoreAdapter } from "@/modules/auth/infrastructure/factories/cookie-session-store.factory";
+import { createJwtSessionTokenServiceAdapter } from "@/modules/auth/infrastructure/factories/jwt-session-token-service.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -25,8 +25,8 @@ export function createSessionService(
   const deps: SessionUseCaseDependencies = {
     logger: scopedLogger,
     // TODO: confirm if i should be passing in the scoped logger to sessionStore
-    sessionStore: makeCookieSessionStoreAdapter(scopedLogger),
-    sessionTokenService: makeJwtSessionTokenServiceAdapter(scopedLogger),
+    sessionStore: createCookieSessionStoreAdapter(scopedLogger),
+    sessionTokenService: createJwtSessionTokenServiceAdapter(scopedLogger),
   };
 
   return {

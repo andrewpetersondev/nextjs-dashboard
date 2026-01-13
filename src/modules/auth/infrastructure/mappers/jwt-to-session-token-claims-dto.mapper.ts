@@ -12,7 +12,7 @@ import type { UserRole } from "@/shared/domain/user/user-role.types";
  * @param jwtClaims - Raw JWT claims from token decode
  * @returns Application-layer claims
  */
-export function toSessionTokenClaimsDto(
+export function jwtToSessionTokenClaimsDto(
   jwtClaims: SessionJwtClaimsTransport,
 ): SessionTokenClaimsDto {
   return {
