@@ -4,7 +4,7 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/cont
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import type { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user.repository";
+import type { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user-repository";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -26,31 +26,31 @@ import type { Result } from "@/shared/results/result.types";
  * - No business rules: those belong in services/use-cases
  */
 export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
-  private readonly repo: AuthUserRepository;
+  private readonly authUsers: AuthUserRepository;
 
   /**
-   * @param repo - Concrete repository implementation to delegate to.
+   * @param authUsers - Concrete repository implementation to delegate to.
    */
-  constructor(repo: AuthUserRepository) {
-    this.repo = repo;
+  constructor(authUsers: AuthUserRepository) {
+    this.authUsers = authUsers;
   }
 
   /**
    * @inheritdoc
    */
   incrementDemoUserCounter(role: UserRole): Promise<number> {
-    return this.repo.incrementDemoUserCounter(role);
+    return this.authUsers.incrementDemoUserCounter(role);
   }
 
   findByEmail(
     query: Readonly<AuthUserLookupQueryDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
-    return this.repo.findByEmail(query);
+    return this.authUsers.findByEmail(query);
   }
 
   signup(
     input: Readonly<AuthUserCreateDto>,
   ): Promise<Result<AuthUserEntity, AppError>> {
-    return this.repo.signup(input);
+    return this.authUsers.signup(input);
   }
 }
