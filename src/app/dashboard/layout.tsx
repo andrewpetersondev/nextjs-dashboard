@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from "react";
-import { logoutAction } from "@/modules/auth/infrastructure/actions/logout.action";
+import { logoutAction } from "@/modules/auth/presentation/actions/logout.action";
 import { SessionRefresh } from "@/modules/auth/presentation/features/session-refresh";
 import { SideNav } from "@/shell/dashboard/components/sidenav";
 

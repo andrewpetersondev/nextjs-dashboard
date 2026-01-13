@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { signupAction } from "@/modules/auth/infrastructure/actions/signup.action";
+import { signupAction } from "@/modules/auth/presentation/actions/signup.action";
 import { AuthPageWrapper } from "@/modules/auth/presentation/components/shared/auth-page-wrapper";
 import { SignupCard } from "@/modules/auth/presentation/components/signup-card";
 import { SIGNUP_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";

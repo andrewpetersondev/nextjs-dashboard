@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { demoUserAction } from "@/modules/auth/infrastructure/actions/demo-user.action";
+import { demoUserAction } from "@/modules/auth/presentation/actions/demo-user.action";
 import type { AuthActionProps } from "@/modules/auth/presentation/auth-action-props.transport";
 import { LoginForm } from "@/modules/auth/presentation/components/forms/login-form";
 import { AuthFormDemoSection } from "@/modules/auth/presentation/components/shared/auth-form-demo-section";

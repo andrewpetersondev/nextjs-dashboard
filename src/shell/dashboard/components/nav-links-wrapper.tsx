@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
-import { verifySessionOptimistic } from "@/modules/auth/infrastructure/actions/verify-session-optimistic.action";
+import { verifySessionOptimistic } from "@/modules/auth/presentation/actions/verify-session-optimistic.action";
 import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import { NavLinks } from "@/shell/dashboard/components/nav-links";
