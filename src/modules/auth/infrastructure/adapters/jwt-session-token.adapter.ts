@@ -76,10 +76,11 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
 
   /**
    * Validates decoded claims against the schema.
-   *
-   * TODO: why is this not an async function?
    */
-  validate(claims: unknown): Result<SessionTokenClaimsDto, AppError> {
+  // biome-ignore lint/suspicious/useAwait: keep it as async to unify contracts
+  async validate(
+    claims: unknown,
+  ): Promise<Result<SessionTokenClaimsDto, AppError>> {
     const parsed = SessionTokenClaimsSchema.safeParse(claims);
 
     if (!parsed.success) {
