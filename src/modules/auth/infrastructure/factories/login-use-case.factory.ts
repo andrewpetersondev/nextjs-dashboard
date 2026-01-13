@@ -1,9 +1,9 @@
 import "server-only";
 
+import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
 import { LoginUseCase } from "@/modules/auth/application/use-cases/login.use-case";
-import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
-import { BcryptHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-hasher.adapter";
+import { BcryptPasswordHasherAdapter } from "@/modules/auth/infrastructure/adapters/bcrypt-password-hasher.adapter";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -24,7 +24,7 @@ export function createLoginUseCaseFactory(
   // Adapter (Bridge Infrastructure to Contract)
   const repoContract: AuthUserRepositoryContract =
     new AuthUserRepositoryAdapter(repo);
-  const hasher = new BcryptHasherAdapter();
+  const hasher = new BcryptPasswordHasherAdapter();
 
   // Use Case (Application Core)
   return new LoginUseCase(repoContract, hasher, scopedLogger);

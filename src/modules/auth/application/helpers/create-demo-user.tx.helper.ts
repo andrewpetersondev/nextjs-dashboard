@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import {
   generateDemoUserIdentity,
@@ -7,7 +8,6 @@ import {
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/registration.policy";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
-import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 // TODO: this dependency is pointing outward creating a violation

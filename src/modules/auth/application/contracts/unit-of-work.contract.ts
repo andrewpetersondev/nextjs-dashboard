@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { AuthTxDepsContract } from "@/modules/auth/domain/repositories/auth-tx-deps.contract";
+import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
 
 export interface UnitOfWorkContract {
   /**

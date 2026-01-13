@@ -26,7 +26,9 @@ import type { Result } from "@/shared/results/result.types";
  * Handles token-specific operations (encode, decode, validate).
  * Separates crypto/JWT concerns from session lifecycle.
  */
-export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
+export class JwtSessionTokenServiceAdapter
+  implements SessionTokenServiceContract
+{
   private readonly codec: SessionTokenCodecContract;
 
   constructor(codec: SessionTokenCodecContract) {
@@ -97,5 +99,7 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
  * Factory function for creating JwtSessionTokenAdapter instances.
  */
 export function createJwtSessionTokenAdapter(): SessionTokenServiceContract {
-  return new JwtSessionTokenAdapter(createJoseSessionTokenCodecAdapter());
+  return new JwtSessionTokenServiceAdapter(
+    createJoseSessionTokenCodecAdapter(),
+  );
 }

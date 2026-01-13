@@ -1,11 +1,11 @@
 import "server-only";
 
+import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import type { SignupRequestDto } from "@/modules/auth/application/schemas/login-request.schema";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
-import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

@@ -1,9 +1,9 @@
 import "server-only";
 
+import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { createDemoUserTxHelper } from "@/modules/auth/application/helpers/create-demo-user.tx.helper";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import type { UnitOfWorkContract } from "@/modules/auth/domain/repositories/unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import type { UserRole } from "@/shared/domain/user/user-role.types";

@@ -19,7 +19,7 @@ const SALT_ROUNDS = 10 as const;
  * This class belongs to the **infrastructure** layer as it wraps the
  * `bcryptjs` library.
  */
-export class BcryptHasherAdapter implements PasswordHasherContract {
+export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
   /**
    * Hashes a password using bcrypt.
    *

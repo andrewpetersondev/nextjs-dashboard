@@ -1,10 +1,10 @@
 import "server-only";
 
+import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { AuthErrorFactory } from "@/modules/auth/application/factories/auth-error.factory";
 import type { LoginRequestDto } from "@/modules/auth/application/schemas/login-request.schema";
 import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.policy";
-import type { AuthUserRepositoryContract } from "@/modules/auth/domain/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

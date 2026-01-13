@@ -15,7 +15,7 @@ const SESSION_COOKIE_HTTPONLY = true as const;
 const SESSION_COOKIE_PATH = "/" as const;
 const SESSION_COOKIE_SAMESITE = "strict" as const;
 
-export class SessionCookieAdapter implements SessionStoreContract {
+export class CookieSessionStoreAdapter implements SessionStoreContract {
   private readonly cookies = createCookieService();
 
   /**
@@ -90,6 +90,6 @@ export class SessionCookieAdapter implements SessionStoreContract {
 }
 
 // Factory function for creating adapter instances without singletons
-export function createSessionCookieAdapter(): SessionCookieAdapter {
-  return new SessionCookieAdapter();
+export function createSessionCookieAdapter(): CookieSessionStoreAdapter {
+  return new CookieSessionStoreAdapter();
 }

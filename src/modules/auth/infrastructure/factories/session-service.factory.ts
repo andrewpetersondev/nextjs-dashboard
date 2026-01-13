@@ -9,8 +9,8 @@ import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/rotat
 import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
-import { createJwtSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/jwt-session-token.adapter";
-import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/session-cookie.adapter";
+import { createSessionCookieAdapter } from "@/modules/auth/infrastructure/adapters/cookie-session-store.adapter";
+import { createJwtSessionTokenAdapter } from "@/modules/auth/infrastructure/adapters/jwt-session-token-service.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
