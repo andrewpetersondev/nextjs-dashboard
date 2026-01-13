@@ -1,5 +1,4 @@
 import "server-only";
-
 // biome-ignore lint/correctness/noNodejsModules: <server-only file>
 import { randomUUID } from "node:crypto";
 import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
@@ -10,7 +9,14 @@ import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/a
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
-export class DrizzleAuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
+/**
+ * Adapter implementing the Unit of Work pattern for the Auth module.
+ *
+ * @remarks
+ * This adapter manages database transactions and ensures that all repositories
+ * within the transaction scope share the same database client and logger context.
+ */
+export class AuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
   private readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
   private readonly requestId: string;
@@ -25,6 +31,13 @@ export class DrizzleAuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
     this.requestId = requestId;
   }
 
+  /**
+   * Executes a function within a database transaction.
+   *
+   * @param fn - The function to execute within the transaction context.
+   * @returns The result of the executed function.
+   * @throws Error if the database does not support transactions or if the transaction fails.
+   */
   async withTransaction<T>(
     fn: (tx: AuthTxDepsContract) => Promise<T>,
   ): Promise<T> {
@@ -49,13 +62,16 @@ export class DrizzleAuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
 
     try {
       const result = await dbWithTx.transaction(async (txDb: AppDatabase) => {
+        // Note: In a larger refactor, these could be moved to a Factory
         const txAuthUserRepo = new AuthUserRepository(
           txDb,
           txLogger,
           this.requestId,
         );
+        const authUsers = new AuthUserRepositoryAdapter(txAuthUserRepo);
+
         const txDeps: AuthTxDepsContract = {
-          authUsers: new AuthUserRepositoryAdapter(txAuthUserRepo),
+          authUsers,
         };
 
         return await fn(txDeps);

@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
@@ -25,17 +24,17 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
     this.authUsers = authUsers;
   }
 
+  findByEmail(
+    query: Readonly<AuthUserLookupQueryDto>,
+  ): Promise<Result<AuthUserEntity | null, AppError>> {
+    return this.authUsers.findByEmail(query);
+  }
+
   /**
    * @inheritdoc
    */
   incrementDemoUserCounter(role: UserRole): Promise<number> {
     return this.authUsers.incrementDemoUserCounter(role);
-  }
-
-  findByEmail(
-    query: Readonly<AuthUserLookupQueryDto>,
-  ): Promise<Result<AuthUserEntity | null, AppError>> {
-    return this.authUsers.findByEmail(query);
   }
 
   signup(

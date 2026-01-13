@@ -1,5 +1,4 @@
 import "server-only";
-
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { isPgMetadata } from "@/shared/errors/core/error-metadata.value";
@@ -11,7 +10,13 @@ export function toSignupUniquenessConflict(error: AppError): AppError | null {
     return null;
   }
 
+  // TODO: fallback is not ideal
+  //    const { constraint } = error.metadata;
+  //    if (!constraint) {
+  //        return null;
+  //    }
   const constraint = error.metadata.constraint ?? "";
+
   const fieldErrors: Record<string, string[]> = {};
 
   if (constraint.includes("email")) {
