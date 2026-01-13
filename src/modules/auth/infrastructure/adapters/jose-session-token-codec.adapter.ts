@@ -8,7 +8,7 @@ import {
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/modules/auth/infrastructure/adapters/session-jwt-adapter.constants";
+} from "@/modules/auth/infrastructure/constants/session-jwt.constants";
 import { toSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/to-session-token-claims-dto.mapper";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptions } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.type";

@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { authorizeRequestHelper } from "@/modules/auth/application/helpers/authorize-request.helper";
 import { createJoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/adapters/session-cookie-adapter.constants";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/constants/session-cookie.constants";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import type { SignupRequestDto } from "@/modules/auth/application/schemas/login-request.schema";
@@ -21,10 +21,10 @@ import { safeExecute } from "@/shared/results/safe-execute";
 export class SignupUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
-  private readonly uow: UnitOfWorkContract;
+  private readonly uow: AuthUnitOfWorkContract;
 
   constructor(
-    uow: UnitOfWorkContract,
+    uow: AuthUnitOfWorkContract,
     hasher: PasswordHasherContract,
     logger: LoggingClientContract,
   ) {

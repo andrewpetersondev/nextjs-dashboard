@@ -2,7 +2,7 @@ import "server-only";
 
 import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
 
-export interface UnitOfWorkContract {
+export interface AuthUnitOfWorkContract {
   /**
    * Runs the callback inside a database transaction.
    *

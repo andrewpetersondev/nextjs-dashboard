@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { UnitOfWorkContract } from "@/modules/auth/application/contracts/unit-of-work.contract";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import {
   generateDemoUserIdentity,
@@ -19,7 +19,7 @@ import type { Result } from "@/shared/results/result.types";
 
 export async function createDemoUserTxHelper(
   deps: Readonly<{
-    uow: UnitOfWorkContract;
+    uow: AuthUnitOfWorkContract;
     hasher: PasswordHasherContract;
     passwordGenerator: PasswordGeneratorContract;
   }>,
