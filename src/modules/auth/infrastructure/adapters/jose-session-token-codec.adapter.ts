@@ -115,26 +115,24 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
    * Encodes session claims into a signed JWT.
    *
    * @param claims - The session payload to encode
-   * @param expiresAtSec - Unix timestamp in seconds when the token expires
    * @returns Signed JWT token string
    * @throws Error if signing fails (e.g., invalid claims, crypto errors)
    */
   async encode(
     claims: SessionTokenClaimsDto,
-    expiresAtSec: number,
   ): Promise<Result<string, AppError>> {
     try {
       // Map Application DTO -> Infrastructure JWT shape
       const jwtClaims: SessionJwtClaimsTransport = {
         exp: claims.exp,
         iat: claims.iat,
-        role: claims.role, // string conversion handled by assignment if role is union
+        role: claims.role,
         sub: claims.sub,
       };
       let signer = new SignJWT(jwtClaims satisfies JWTPayload)
         .setProtectedHeader({ alg: JWT_ALG_HS256, typ: JWT_TYP_JWT })
         .setIssuedAt()
-        .setExpirationTime(expiresAtSec);
+        .setExpirationTime(claims.exp);
 
       if (SESSION_ISSUER) {
         signer = signer.setIssuer(SESSION_ISSUER);
@@ -152,7 +150,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       return Err(
         makeUnexpectedError(error, {
           message: "jwt.sign.failed",
-          metadata: { expiresAtSec },
+          metadata: { expiresAtSec: claims.exp },
         }),
       );
     }

@@ -12,8 +12,5 @@ import type { Result } from "@/shared/results/result.types";
  */
 export interface SessionTokenCodecContract {
   decode(token: string): Promise<Result<SessionTokenClaimsDto, AppError>>;
-  encode(
-    claims: SessionTokenClaimsDto,
-    expiresAtSec: number,
-  ): Promise<Result<string, AppError>>;
+  encode(claims: SessionTokenClaimsDto): Promise<Result<string, AppError>>;
 }

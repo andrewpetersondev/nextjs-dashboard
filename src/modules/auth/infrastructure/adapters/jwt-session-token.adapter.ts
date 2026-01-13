@@ -60,9 +60,7 @@ export class JwtSessionTokenAdapter implements SessionTokenServiceContract {
       sub: userIdCodec.encode(input.userId),
     };
 
-    // TODO: .encode() should only accept claims parameter. the expiresAtSec parameter is redundant since exp is in the
-    // claim
-    const encodedResult = await this.codec.encode(claims, expiresAtSec);
+    const encodedResult = await this.codec.encode(claims);
 
     if (!encodedResult.ok) {
       return Err(encodedResult.error);
