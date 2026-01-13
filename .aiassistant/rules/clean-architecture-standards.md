@@ -224,29 +224,35 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 **What Belongs Here**:
 
-- **Repositories** (`repositories/`): Implement repository contracts
+- **Repositories** (`repositories/`): Concrete persistence implementations.
+  - Use the `.repository.ts` suffix.
+  - Handle direct DAL coordination and technology-specific logic (e.g., Drizzle).
+
+    ```typescript
+    // ✅ Good: Implements contract, coordinates DAL + mappers
+    export class UserRepository implements UserRepositoryContract {
+      async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+        const rowResult = await getUserByIdDal(this.db, id, this.logger);
+        if (!rowResult.ok) return rowResult;
+
+        const entity = rowResult.value ? toUserEntity(rowResult.value) : null;
+        return Ok(entity);
+      }
+    }
+    ```
+
+- **Services** (`services/`): Concrete technical logic implementations.
+  - Use the `.service.ts` suffix for implementations (e.g., `bcrypt-password.service.ts`).
+
+- **Adapters** (`adapters/`): Structural bridges between contracts and implementations.
+  - Use the `.adapter.ts` suffix.
+  - Responsibilities: satisfy the contract, delegate to the concrete implementation, and provide a stable boundary for the Application layer to consume.
 
   ```typescript
-  // ✅ Good: Implements contract, coordinates DAL + mappers
-  export class UserRepository implements UserRepositoryContract {
-    async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-      const rowResult = await getUserByIdDal(this.db, id, this.logger);
-      if (!rowResult.ok) return rowResult;
-
-      const entity = rowResult.value ? toUserEntity(rowResult.value) : null;
-      return Ok(entity);
-    }
-  }
-  ```
-
-- **Adapters** (`adapters/`): Implement service contracts
-
-  ```typescript
-  // ✅ Good: Implements contract with specific technology
-  export class BcryptHasherAdapter implements PasswordHasherContract {
-    async hash(plain: string): Promise<string> {
-      return bcrypt.hash(plain, 10);
-    }
+  // ✅ Good: Structural bridge satisfied by an implementation
+  export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
+    constructor(private readonly repo: AuthUserRepository) {}
+    // ... delegation ...
   }
   ```
 
@@ -284,15 +290,19 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   }
   ```
 
-- **Factories** (`factories/`): Wire up dependencies and construct use cases
+- **Factories** (`factories/`): Wire up dependencies and construct use cases.
+  - Factories are responsible for instantiating the **Bridge (Adapter)** and injecting the **Implementation** into it.
+
   ```typescript
-  // ✅ Good: Dependency injection wiring
+  // ✅ Good: Wiring the Bridge with its Implementation
   export function makeLoginUseCase(): LoginUseCase {
-    return new LoginUseCase(
-      new UserRepository(db, logger),
-      new BcryptHasherAdapter(),
-      logger,
+    const authUserRepo = new AuthUserRepositoryAdapter(
+      new AuthUserRepository(db, logger),
     );
+
+    const passwordHasher = new BcryptHasherAdapter(new BcryptPasswordService());
+
+    return new LoginUseCase(authUserRepo, passwordHasher, logger);
   }
   ```
 
@@ -585,8 +595,8 @@ auth/
 
   infrastructure/
     adapters/
+      auth-user-repository.adapter.ts
       bcrypt-hasher.adapter.ts
-      jwt-token.adapter.ts
       cookie-session.adapter.ts
     dal/
       get-user-by-email.dal.ts
@@ -595,7 +605,10 @@ auth/
       user-row-to-entity.mapper.ts
       pg-error.mapper.ts
     repositories/
-      user.repository.ts
+      drizzle/
+        user.repository.ts
+    services/
+      bcrypt-password.service.ts
     factories/
       login-use-case.factory.ts
 

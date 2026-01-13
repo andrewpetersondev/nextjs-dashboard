@@ -10,7 +10,7 @@
 .gitignore
 biome.json
 devtools
-drizzle
+src/drizzle
 eslint.config.mjs
 
 # ======================================================

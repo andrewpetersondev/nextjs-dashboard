@@ -6,7 +6,7 @@ import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/au
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/observability/auth-transaction.logger";
-import { DrizzleAuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/repositories/drizzle-auth-user-repository.adapter";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/drizzle/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -49,7 +49,7 @@ export class DrizzleAuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
 
     try {
       const result = await dbWithTx.transaction(async (txDb: AppDatabase) => {
-        const txAuthUserRepo = new DrizzleAuthUserRepositoryAdapter(
+        const txAuthUserRepo = new AuthUserRepository(
           txDb,
           txLogger,
           this.requestId,

@@ -17,27 +17,9 @@ import type { Result } from "@/shared/results/result.types";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.
- *
- * ## Layering
- * This class sits in the **infrastructure** layer and encapsulates all direct
- * database/DAL interactions needed by authentication flows.
- *
- * Application code should typically depend on an application-facing contract
- * (e.g., `AuthUserRepositoryContract`) and receive this repository via an adapter.
- *
- * ## Responsibilities
- * - Call DAL functions to read/write user data required for auth use-cases
- * - Convert raw database rows into domain entities via mappers
- * - Emit structured logs for repository-level events
- *
- * ## Non-responsibilities
- * - Defining authentication semantics (e.g., “invalid credentials”) — belongs in services
- * - Mapping expected domain/app errors — higher layers handle that
- *
- * ## Server-only
- * Intended for server execution (database access + Node crypto UUID).
+ * This class handles the actual DAL calls and data mapping.
  */
-export class DrizzleAuthUserRepositoryAdapter {
+export class AuthUserRepository {
   /** Database connection (or transaction-scoped connection) used by DAL calls. */
   protected readonly db: AppDatabase;
 

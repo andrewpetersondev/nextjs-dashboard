@@ -4,34 +4,24 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/cont
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import type { DrizzleAuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/repositories/drizzle-auth-user-repository.adapter";
+import type { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/drizzle/auth-user.repository";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Adapter that exposes an infrastructure {@link DrizzleAuthUserRepositoryAdapter} through the
+ * Adapter that exposes an infrastructure {@link AuthUserRepository} through the
  * application-facing {@link AuthUserRepositoryContract}.
  *
- * ## Why this exists
- * The application layer depends only on contracts. The infrastructure layer provides
- * concrete repositories. This adapter bridges the two without leaking
- * infrastructure types into the application core.
- *
- * ## Responsibilities
- * - Delegate calls to the underlying repository implementation
- *
- * ## Non-responsibilities
- * - No logging: logging is the repository implementation’s job
- * - No business rules: those belong in services/use-cases
+ * @remarks The adapter is a wrapper for now, but in the future, code will be added.
  */
 export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
-  private readonly authUsers: DrizzleAuthUserRepositoryAdapter;
+  private readonly authUsers: AuthUserRepository;
 
   /**
    * @param authUsers - Concrete repository implementation to delegate to.
    */
-  constructor(authUsers: DrizzleAuthUserRepositoryAdapter) {
+  constructor(authUsers: AuthUserRepository) {
     this.authUsers = authUsers;
   }
 

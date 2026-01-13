@@ -76,27 +76,28 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ### Suffix Reference Table
 
-| Suffix           | Meaning                                     | Layer/Boundary         | Example Type Name        | Example File Name               |
-| :--------------- | :------------------------------------------ | :--------------------- | :----------------------- | :------------------------------ |
-| `.entity.ts`     | Domain object with identity                 | Domain                 | `UserEntity`             | `user.entity.ts`                |
-| `.value.ts`      | Value object / Branded primitive            | Domain / Shared        | `Email`, `UserId`        | `email.value.ts`                |
-| `.policy.ts`     | Pure business rules/logic (no side effects) | Domain                 | N/A (exports functions)  | `password-validation.policy.ts` |
-| `.schema.ts`     | Zod validation schema                       | Application            | `LoginRequestSchema`     | `login-request.schema.ts`       |
-| `.dto.ts`        | Data transfer object (boundary crossing)    | Application            | `LoginRequestDto`        | `login-request.dto.ts`          |
-| `.helper.ts`     | Stateless orchestration logic               | Application            | N/A (exports functions)  | `read-session-token.helper.ts`  |
-| `.transport.ts`  | Wire/HTTP/Cookie-only shape                 | Presentation           | `LoginTransport`         | `login.transport.ts`            |
-| `.view.ts`       | Server → Client UI shape                    | Presentation           | `UserProfileView`        | `user-profile.view.ts`          |
-| `.contract.ts`   | Dependency boundary interface (Port)        | Domain / Application   | `PasswordHasherContract` | `password-hasher.contract.ts`   |
-| `.adapter.ts`    | Port implementation                         | Infrastructure         | `BcryptHasherAdapter`    | `bcrypt-hasher.adapter.ts`      |
-| `.repository.ts` | Repository implementation                   | Infrastructure         | `UserRepository`         | `user.repository.ts`            |
-| `.dal.ts`        | Raw data access logic                       | Infrastructure         | N/A (exports functions)  | `get-user-by-email.dal.ts`      |
-| `.mapper.ts`     | Data translation between layers             | All (context-specific) | N/A (exports functions)  | `user-row-to-entity.mapper.ts`  |
-| `.factory.ts`    | Dependency injection / Wiring               | Infrastructure         | N/A (exports functions)  | `login-use-case.factory.ts`     |
-| `.record.ts`     | Database row shape (from Drizzle schema)    | Infrastructure         | `UserRow`                | `user.record.ts`                |
-| `.use-case.ts`   | Single business capability                  | Application            | `LoginUseCase` (class)   | `login.use-case.ts`             |
-| `.workflow.ts`   | Multi-step orchestration                    | Application            | N/A (exports functions)  | `login.workflow.ts`             |
-| `.action.ts`     | Next.js Server Action                       | Presentation           | N/A (exports functions)  | `login.action.ts`               |
-| `.event.ts`      | Domain or system event                      | Domain / Application   | `UserCreatedEvent`       | `user-created.event.ts`         |
+| Suffix           | Meaning                                     | Layer/Boundary         | Example Type Name           | Example File Name                 |
+| :--------------- | :------------------------------------------ | :--------------------- | :-------------------------- | :-------------------------------- |
+| `.entity.ts`     | Domain object with identity                 | Domain                 | `UserEntity`                | `user.entity.ts`                  |
+| `.value.ts`      | Value object / Branded primitive            | Domain / Shared        | `Email`, `UserId`           | `email.value.ts`                  |
+| `.policy.ts`     | Pure business rules/logic (no side effects) | Domain                 | N/A (exports functions)     | `password-validation.policy.ts`   |
+| `.schema.ts`     | Zod validation schema                       | Application            | `LoginRequestSchema`        | `login-request.schema.ts`         |
+| `.dto.ts`        | Data transfer object (boundary crossing)    | Application            | `LoginRequestDto`           | `login-request.dto.ts`            |
+| `.helper.ts`     | Stateless orchestration logic               | Application            | N/A (exports functions)     | `read-session-token.helper.ts`    |
+| `.transport.ts`  | Wire/HTTP/Cookie-only shape                 | Presentation           | `LoginTransport`            | `login.transport.ts`              |
+| `.view.ts`       | Server → Client UI shape                    | Presentation           | `UserProfileView`           | `user-profile.view.ts`            |
+| `.contract.ts`   | Dependency boundary interface (Port)        | Domain / Application   | `PasswordHasherContract`    | `password-hasher.contract.ts`     |
+| `.adapter.ts`    | Structural Bridge (delegates/wraps)         | Infrastructure         | `AuthUserRepositoryAdapter` | `auth-user-repository.adapter.ts` |
+| `.repository.ts` | Concrete Persistence Implementation         | Infrastructure         | `AuthUserRepository`        | `auth-user.repository.ts`         |
+| `.service.ts`    | Concrete Logic Implementation               | Infrastructure         | `BcryptPasswordHasher`      | `bcrypt-password.service.ts`      |
+| `.dal.ts`        | Raw data access logic                       | Infrastructure         | N/A (exports functions)     | `get-user-by-email.dal.ts`        |
+| `.mapper.ts`     | Data translation between layers             | All (context-specific) | N/A (exports functions)     | `user-row-to-entity.mapper.ts`    |
+| `.factory.ts`    | Dependency injection / Wiring               | Infrastructure         | N/A (exports functions)     | `login-use-case.factory.ts`       |
+| `.record.ts`     | Database row shape (from Drizzle schema)    | Infrastructure         | `UserRow`                   | `user.record.ts`                  |
+| `.use-case.ts`   | Single business capability                  | Application            | `LoginUseCase` (class)      | `login.use-case.ts`               |
+| `.workflow.ts`   | Multi-step orchestration                    | Application            | N/A (exports functions)     | `login.workflow.ts`               |
+| `.action.ts`     | Next.js Server Action                       | Presentation           | N/A (exports functions)     | `login.action.ts`                 |
+| `.event.ts`      | Domain or system event                      | Domain / Application   | `UserCreatedEvent`          | `user-created.event.ts`           |
 
 ### Hard Rules
 
@@ -105,6 +106,22 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
   - ✅ `LoginRequestDto` in `login-request.dto.ts`
   - ❌ `LoginRequest` in `login-request.dto.ts` (missing suffix in type name)
   - ❌ `LoginRequestDto` in `login-request.ts` (missing suffix in file name)
+
+---
+
+## Identifying Implementations vs. Bridges
+
+To prevent naming collisions and clarify intent:
+
+1. **Implementations** should be named after the technology or specific role:
+
+- ✅ `auth-user.repository.ts` (Class: `AuthUserRepository`)
+- ✅ `bcrypt-password.service.ts` (Class: `BcryptPasswordHasher`)
+
+2. **Bridges (Adapters)** should be named after the Contract they satisfy:
+
+- ✅ `auth-user-repository.adapter.ts` (Satisfies `AuthUserRepositoryContract`)
+- ✅ `password-hasher.adapter.ts` (Satisfies `PasswordHasherContract`)
 
 ---
 
@@ -719,10 +736,14 @@ modules/auth/
 
   infrastructure/
     adapters/
+      auth-user-repository.adapter.ts → AuthUserRepositoryAdapter
       bcrypt-hasher.adapter.ts    → BcryptHasherAdapter
       cookie-session.adapter.ts   → CookieSessionAdapter
     repositories/
-      user.repository.ts          → UserRepository
+        drizzle/
+          auth-user.repository.ts   → AuthUserRepository
+    services/
+       bcrypt-password.service.ts  → BcryptPasswordHasher
     dal/
       get-user-by-email.dal.ts    → getUserByEmailDal()
       insert-user.dal.ts          → insertUserDal()
