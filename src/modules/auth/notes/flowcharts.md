@@ -14,7 +14,7 @@ flowchart TD
 %% Preparation
   B --> C["Generate requestId"]
   B --> D["Get Request Metadata<br/>(IP, User Agent)"]
-  D --> TRACK["Initialize PerformanceTracker"]
+  D --> TRACK["Initialize PerformanceTracker<br/>& Scoped Logger"]
 
 %% Validation
   TRACK --> E["validateForm(formData, LoginSchema, fields)"]
@@ -23,7 +23,7 @@ flowchart TD
   E --> F{"validated.ok?"}
 
 %% Validation Error Path
-  F -->|No| G["Extract Field Errors"]
+  F -->|No| G["Extract Field Errors<br/>(extractFieldErrors)"]
   G --> H["Return validated (Err Result)"]
 
 %% Workflow Execution
@@ -49,56 +49,53 @@ flowchart TD
 
 ## 2. Workflow Layer: `loginWorkflow`
 
-**Responsibility:** Orchestrates the login "story". It coordinates authentication and session establishment while providing anti-enumeration security by unifying error responses.
+**Responsibility:** Orchestrates the login "story" by coordinating authentication and session establishment.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>AuthLoginSchemaDto<br/>(email, password)"] --> B[loginWorkflow]
+  A["Input<br/>LoginRequestDto<br/>(email, password)"] --> B[loginWorkflow]
 
 %% Use Case Call
   B --> C["loginUseCase.execute(input)"]
 
-%% Auth Result Decision
-  C --> D{authResult.ok?}
+%% Auth Result
+  C --> D["authResult"]
 
-%% Error Handling Branch
-  D -->|No| E["isCredentialFailure?<br/>(invalid_credentials OR not_found)"]
+%% Sub-workflow delegation
+  D --> E["establishSessionForAuthUserWorkflow<br/>(authResult, deps)"]
 
-%% Anti-Enumeration mapping
-  E -->|Yes| F["makeAppError(APP_ERROR_KEYS.invalid_credentials)<br/>(Unified Error)"]
-  E -->|No| G["Propagate Original Error"]
+%% Sub-workflow execution
+  E --> F{authResult.ok?}
 
-F --> Z["Return Result.Err(AppError)"]
-G --> Z
+  F -->|No| G["Propagate error"]
+  F -->|Yes| H["Map AuthenticatedUserDto → SessionPrincipalDto<br/>(toSessionPrincipalPolicy)"]
 
-%% Success Branch
-D -->|Yes| H["Map AuthUserOutputDto<br/>(id, email, username, role)<br/>to SessionPrincipalDto (id, role)"]
-H --> I["sessionService.establish(principal)"]
+  H --> I["sessionService.establish(principal)"]
 
-%% Session Result Decision
-I --> J{sessionResult.ok?}
-
-J -->|No| K["Propagate Session Error"]
-J -->|Yes| L["Return Result.Ok<SessionPrincipalDto (id, role)>"]
-
-K --> Z
-L --> Z1["Return Result.Ok(...)"]
+%% Results
+  G --> Z["Return Result.Err(AppError)"]
+  I --> J{sessionResult.ok?}
+  J -->|No| Z
+  J -->|Yes| Z1["Return Result.Ok<SessionPrincipalDto (id, role)>"]
 ```
 
 ## 3. Application Use Cases
 
 ### 3.1. `LoginUseCase`
 
-**Responsibility:** Executes core authentication logic by finding the user and verifying their credentials using a hashing service.
+**Responsibility:** Executes core authentication logic by finding the user and verifying their credentials using a hashing service. Implements anti-enumeration by mapping specific credential failures to a unified error.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>AuthLoginSchemaDto<br/>(email, password)"] --> B[LoginUseCase.execute]
+  A["Input<br/>LoginRequestDto<br/>(email, password)"] --> B[LoginUseCase.execute]
+
+%% Wrapper
+  B --> B1["safeExecute wrapper"]
 
 %% Repository Call
-  B --> C["repo.login({ email })"]
+  B1 --> C["repo.findByEmail({ email })"]
 
 %% Repo Result Decision
   C --> D{Result.ok?}
@@ -113,9 +110,10 @@ flowchart TD
 %% User existence decision
   F --> G{User exists?}
 
-%% Not Found Path
-  G -->|No| H["makeAppError('not_found', { cause: 'user_not_found' })"]
-  H --> Z
+%% Not Found Path - Anti-Enumeration
+  G -->|No| H["AuthErrorFactory.makeCredentialFailure<br/>('user_not_found', { email })"]
+  H --> H1["Maps to: invalid_credentials<br/>(reason: 'user_not_found')"]
+  H1 --> Z
 
 %% Password Verification
   G -->|Yes| I["hasher.compare(password, user.password)"]
@@ -123,52 +121,55 @@ flowchart TD
 %% Password Decision
   I --> J{Password OK?}
 
-%% Invalid Credentials Path
-  J -->|No| K["makeAppError('invalid_credentials', { cause: 'invalid_password' })"]
-  K --> Z
+%% Invalid Credentials Path - Anti-Enumeration
+  J -->|No| K["AuthErrorFactory.makeCredentialFailure<br/>('invalid_password', { userId })"]
+  K --> K1["Maps to: invalid_credentials<br/>(reason: 'invalid_password')"]
+  K1 --> Z
 
 %% Success Path
-  J -->|Yes| L["Map to AuthUserOutputDto<br/>(id, email, username, role)"]
-  L --> M["Ok(AuthUserOutputDto: id, email, username, role)"]
+  J -->|Yes| L["Map to AuthenticatedUserDto<br/>(toAuthUserOutputDto)"]
+  L --> M["Ok(AuthenticatedUserDto)"]
 
 %% Outputs
   M --> Z1["Return Result.Ok(...)"]
 
 %% Catch block
-  B -. catch .-> N["Log error & normalize to 'unexpected'"]
+  B1 -. catch .-> N["Log error & normalize to 'unexpected'"]
   N --> Z
 ```
 
-### 3.2. `EstablishSessionCommand`
+### 3.2. `EstablishSessionUseCase` (via `SessionService`)
 
-**Responsibility:** Handles session lifecycle by issuing a new token and persisting it to the session store.
+**Responsibility:** Handles session lifecycle by issuing a new token via `SessionTokenService` and persisting it via `SessionStore`.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>SessionPrincipalDto<br/>(id, role)"] --> B[EstablishSessionCommand.execute]
+  A["Input<br/>SessionPrincipalDto<br/>(id, role)"] --> B[SessionService.establish]
 
 %% Token Generation
-  B --> C["sessionTokenAdapter.issue({ role, sessionStart, userId })"]
+  B --> C["sessionTokenService.issue<br/>({ role, userId })"]
 
 %% Issue Result Decision
-  C --> D{"issueResult.ok?"}
+  C --> D{"issuedResult.ok?"}
 
 %% Token Error path
   D -->|No| E["Propagate Err(AppError)"]
   E --> Z["Return Result.Err(AppError)"]
 
-%% Success path: Persistence
+%% Success path: Extract values
   D -->|Yes| F["Extract token & expiresAtMs"]
-  F --> G["sessionCookieAdapter.set(token, expiresAtMs)"]
+
+%% Persistence via SessionStore
+  F --> G["sessionStore.set<br/>(token, expiresAtMs)"]
 
 %% Completion
-  G --> H["Log info: Session established"]
+  G --> H["Log operation: Session established"]
   H --> I["Ok(SessionPrincipalDto: id, role)"]
-  I --> Z1["Return Result.Ok<SessionPrincipalDto (id, role)>"]
+  I --> Z1["Return Result.Ok<SessionPrincipalDto>"]
 
 %% Catch block
-  B -. catch .-> J["Normalize to 'unexpected'"]
+  B -. catch .-> J["safeExecute: Normalize to 'unexpected'"]
   J --> Z
 ```
 
@@ -176,12 +177,12 @@ flowchart TD
 
 ### 4.1. Repository: `AuthUserRepository`
 
-**Responsibility:** Provides a clean interface for auth-related data persistence, mapping raw database rows to domain entities.
+**Responsibility:** Provides a clean interface for auth-related data persistence, mapping raw database rows to domain entities via contract.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>AuthLoginInputDto<br/>(email)"] --> B[AuthUserRepository.login]
+  A["Input<br/>AuthUserLookupQueryDto<br/>(email)"] --> B[AuthUserRepository.findByEmail]
 
 %% DAL call
 B -->|call| C["getUserByEmailDal<br/>(db, email, logger)"]
@@ -200,7 +201,7 @@ D -->|Yes| F["Extract UserRow | null"]
 F --> G{Row exists?}
 
 %% Mapping path
-G -->|Yes| H["Map UserRow → AuthUserEntity<br/>(toAuthUserEntity)"]
+G -->|Yes| H["Map UserRow → AuthUserEntity<br/>(authUserRowToEntity)"]
 H --> I["Wrap in Ok(AuthUserEntity)"]
 
 %% Null passthrough
