@@ -1,13 +1,19 @@
-# Steps to Create a Database
+# Steps to Setup a Database with Docker
 
-## Step 1: Use Docker to Create a Database
+## Step 1: Create a Docker Network
+
+```bash
+docker network create dashboard-network
+```
+
+## Step 2: Use Docker to Create a Database
 
 ```bash
 docker run --name dashboard-postgres \
   --network dashboard-network \
-  -e POSTGRES_USER={your_postgres_user} \
-  -e POSTGRES_PASSWORD={your_postgres_password} \
-  -e POSTGRES_DB={your_postgres_db} \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=postgres \
   -p 5432:5432 \
   -v pg-data:/var/lib/postgresql \
   -d postgres:latest
