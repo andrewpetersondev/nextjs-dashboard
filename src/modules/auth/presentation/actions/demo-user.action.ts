@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createDemoUserWorkflow } from "@/modules/auth/application/use-cases/create-demo-user.workflow";
+import { createDemoUserWorkflow } from "@/modules/auth/application/demo/create-demo-user.workflow";
 import { createDemoUserUseCase } from "@/modules/auth/infrastructure/composition/create-demo-user-use-case.factory";
 import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
 import { createUnitOfWork } from "@/modules/auth/infrastructure/composition/create-unit-of-work.factory";

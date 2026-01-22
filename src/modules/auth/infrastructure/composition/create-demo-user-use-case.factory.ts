@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
-import { CreateDemoUserUseCase } from "@/modules/auth/application/use-cases/create-demo-user.use-case";
+import { CreateDemoUserUseCase } from "@/modules/auth/application/demo/create-demo-user.use-case";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 import { PasswordHasherAdapter } from "@/modules/auth/infrastructure/crypto/adapters/password-hasher.adapter";
 import { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service";

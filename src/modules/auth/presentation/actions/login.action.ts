@@ -1,13 +1,12 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { loginWorkflow } from "@/modules/auth/application/authentication/login.workflow";
 import {
   LOGIN_FIELDS_LIST,
   type LoginRequestDto,
   LoginRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
-import { loginWorkflow } from "@/modules/auth/application/use-cases/login.workflow";
 import { createLoginUseCase } from "@/modules/auth/infrastructure/composition/create-login-use-case.factory";
 import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
 import type { LoginField } from "@/modules/auth/presentation/login.transport";
