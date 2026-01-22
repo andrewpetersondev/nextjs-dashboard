@@ -1,15 +1,14 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
-import type { SessionTokenCodecStrategyContract } from "@/modules/auth/application/contracts/session-token-codec-strategy.contract";
 import {
   CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/constants/session-jwt.constants";
+import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/contracts/session-jwt-crypto.contract";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/types/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/types/session-jwt-verify-options.transport";
-import { SESSION_AUDIENCE, SESSION_ISSUER } from "@/server/config/env-server";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -19,18 +18,15 @@ import type { Result } from "@/shared/results/result.types";
 const encoder = new TextEncoder();
 
 /**
- * Jose-specific implementation of JWT encoding/decoding.
- * Handles all jose library mechanics, key management, and verification options.
+ * Jose-specific implementation of JWT signing and verification.
+ * Handles jose library mechanics, key management, and verification options.
  *
- * Responsibility: "How" to encode/decode using the jose library.
- *
- * BUG: this class accepts `issuer` and `audience` but it also imports and uses `SESSION_ISSUER` and
- * `SESSION_AUDIENCE` indicating a subtle bug and drift.
+ * Responsibility: "How" to sign/verify JWTs using the jose library.
  */
-export class JoseSessionTokenCodecStrategyService
-  implements SessionTokenCodecStrategyContract
-{
+export class JoseSessionTokenCodecService implements SessionJwtCryptoContract {
+  private readonly audience: string | undefined;
   private readonly encodedKey: Uint8Array;
+  private readonly issuer: string | undefined;
   private readonly logger: LoggingClientContract;
   private readonly verifyOptions: SessionJwtVerifyOptionsTransport;
 
@@ -42,6 +38,8 @@ export class JoseSessionTokenCodecStrategyService
   ) {
     this.logger = logger;
     this.encodedKey = this.initializeKey(secret);
+    this.issuer = issuer;
+    this.audience = audience;
     this.verifyOptions = this.buildVerifyOptions(issuer, audience);
   }
 
@@ -54,11 +52,11 @@ export class JoseSessionTokenCodecStrategyService
         .setIssuedAt()
         .setExpirationTime(claims.exp);
 
-      if (SESSION_ISSUER) {
-        signer = signer.setIssuer(SESSION_ISSUER);
+      if (this.issuer) {
+        signer = signer.setIssuer(this.issuer);
       }
-      if (SESSION_AUDIENCE) {
-        signer = signer.setAudience(SESSION_AUDIENCE);
+      if (this.audience) {
+        signer = signer.setAudience(this.audience);
       }
       const token = await signer.sign(this.encodedKey);
       return Ok(token);

@@ -10,7 +10,7 @@ import type { Result } from "@/shared/results/result.types";
  *
  * TODO: is this an infrastructure contract or an application contract?
  */
-export interface SessionTokenCodecStrategyContract {
+export interface SessionJwtCryptoContract {
   sign(claims: SessionJwtClaimsTransport): Promise<Result<string, AppError>>;
   verify(token: string): Promise<Result<SessionJwtClaimsTransport, AppError>>;
 }

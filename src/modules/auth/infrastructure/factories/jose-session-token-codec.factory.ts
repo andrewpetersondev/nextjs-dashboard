@@ -1,6 +1,6 @@
 import "server-only";
 import { JoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/adapters/jose-session-token-codec.adapter";
-import { JoseSessionTokenCodecStrategyService } from "@/modules/auth/infrastructure/services/jose-session-token-codec-strategy.service";
+import { JoseSessionTokenCodecService } from "@/modules/auth/infrastructure/services/jose-session-token-codec.service";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -18,7 +18,7 @@ export function createJoseSessionTokenCodecAdapter(
     throw new Error("SESSION_SECRET is not defined");
   }
 
-  const strategy = new JoseSessionTokenCodecStrategyService(
+  const strategy = new JoseSessionTokenCodecService(
     logger,
     SESSION_SECRET,
     SESSION_ISSUER,

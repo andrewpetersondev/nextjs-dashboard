@@ -1,8 +1,8 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import type { SessionTokenCodecStrategyContract } from "@/modules/auth/application/contracts/session-token-codec-strategy.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
+import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/contracts/session-jwt-crypto.contract";
 import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/mappers/jwt-to-session-token-claims-dto.mapper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
@@ -18,14 +18,14 @@ import type { Result } from "@/shared/results/result.types";
  */
 export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
   private readonly logger: LoggingClientContract;
-  private readonly strategy: SessionTokenCodecStrategyContract;
+  private readonly jwtCrypto: SessionJwtCryptoContract;
 
   constructor(
     logger: LoggingClientContract,
-    strategy: SessionTokenCodecStrategyContract,
+    strategy: SessionJwtCryptoContract,
   ) {
     this.logger = logger;
-    this.strategy = strategy;
+    this.jwtCrypto = strategy;
   }
 
   /**
@@ -34,7 +34,7 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
   async decode(
     token: string,
   ): Promise<Result<SessionTokenClaimsDto, AppError>> {
-    const strategyResult = await this.strategy.verify(token);
+    const strategyResult = await this.jwtCrypto.verify(token);
 
     if (!strategyResult.ok) {
       return Err(strategyResult.error);
@@ -71,6 +71,6 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
       sub: claims.sub,
     };
 
-    return await this.strategy.sign(jwtClaims);
+    return await this.jwtCrypto.sign(jwtClaims);
   }
 }

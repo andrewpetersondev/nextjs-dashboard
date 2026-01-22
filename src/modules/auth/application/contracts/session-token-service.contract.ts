@@ -8,7 +8,6 @@ import type { Result } from "@/shared/results/result.types";
 
 /**
  * Contract for session token operations.
- * Redundant naming: Suffix 'Contract' in both file and type name.
  */
 export interface SessionTokenServiceContract {
   /**
