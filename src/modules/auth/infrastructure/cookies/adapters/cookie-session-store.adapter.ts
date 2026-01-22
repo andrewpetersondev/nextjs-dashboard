@@ -1,6 +1,11 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
+import {
+  SESSION_COOKIE_HTTPONLY,
+  SESSION_COOKIE_NAME,
+  SESSION_COOKIE_PATH,
+  SESSION_COOKIE_SAMESITE,
+} from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
 import { isProd } from "@/shared/config/env-shared";
 import { millisecondsToSeconds } from "@/shared/constants/time.constants";
@@ -9,10 +14,6 @@ import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-
-const SESSION_COOKIE_HTTPONLY = true as const;
-const SESSION_COOKIE_PATH = "/" as const;
-const SESSION_COOKIE_SAMESITE = "strict" as const;
 
 /**
  * Adapter that implements session storage using browser cookies.
