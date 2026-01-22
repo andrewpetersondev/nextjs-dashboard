@@ -1,14 +1,9 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import {
-  SESSION_COOKIE_HTTPONLY,
-  SESSION_COOKIE_NAME,
-  SESSION_COOKIE_PATH,
-  SESSION_COOKIE_SAMESITE,
-} from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
+import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructure/cookies/helpers/to-session-cookie-max-age-seconds.helper";
+import { getSessionCookieOptionsPolicy } from "@/modules/auth/infrastructure/cookies/policies/session-cookie-options.policy";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
-import { isProd } from "@/shared/config/env-shared";
-import { millisecondsToSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -75,18 +70,14 @@ export class CookieSessionStoreAdapter implements SessionStoreContract {
     expiresAtMs: number,
   ): Promise<Result<void, AppError>> {
     try {
-      const secondsUntilExpiry = millisecondsToSeconds(
-        expiresAtMs - Date.now(),
-      );
-      const maxAge = Math.max(0, secondsUntilExpiry);
+      const nowMs = Date.now();
+      const maxAge = toSessionCookieMaxAgeSecondsHelper(expiresAtMs, nowMs);
 
-      await this.cookies.set(SESSION_COOKIE_NAME, value, {
-        httpOnly: SESSION_COOKIE_HTTPONLY,
-        maxAge,
-        path: SESSION_COOKIE_PATH,
-        sameSite: SESSION_COOKIE_SAMESITE,
-        secure: isProd(),
-      });
+      await this.cookies.set(
+        SESSION_COOKIE_NAME,
+        value,
+        getSessionCookieOptionsPolicy({ maxAge }),
+      );
 
       this.logger.debug("Session cookie set", {
         logging: { context: "SessionCookieAdapter.set", expiresAtMs, maxAge },
