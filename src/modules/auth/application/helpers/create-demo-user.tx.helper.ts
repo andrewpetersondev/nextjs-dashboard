@@ -1,5 +1,7 @@
 import "server-only";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
+import type { PasswordGeneratorContract } from "@/modules/auth/application/contracts/password-generator.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
 import {
@@ -7,8 +9,6 @@ import {
   makeInvalidDemoCounterError,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/registration.policy";
-import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
-import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 // TODO: this dependency is pointing outward creating a violation
 import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { UserRole } from "@/shared/domain/user/user-role.types";

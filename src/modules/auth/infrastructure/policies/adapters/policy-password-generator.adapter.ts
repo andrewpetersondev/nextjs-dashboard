@@ -1,5 +1,5 @@
+import type { PasswordGeneratorContract } from "@/modules/auth/application/contracts/password-generator.contract";
 import { makeRandomPassword } from "@/modules/auth/domain/policies/password.policy";
-import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 
 /**
  * Implementation of PasswordGeneratorContract using the domain's password policy.

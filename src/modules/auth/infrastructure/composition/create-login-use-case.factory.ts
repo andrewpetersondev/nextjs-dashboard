@@ -1,7 +1,7 @@
 import "server-only";
 import { LoginUseCase } from "@/modules/auth/application/authentication/login.use-case";
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
-import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import { PasswordHasherAdapter } from "@/modules/auth/infrastructure/crypto/adapters/password-hasher.adapter";
 import { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-user-repository.adapter";
