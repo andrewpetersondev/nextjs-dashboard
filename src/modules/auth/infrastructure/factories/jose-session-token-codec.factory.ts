@@ -9,7 +9,7 @@ import {
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Factory for JoseSessionTokenCodecAdapter with its jose strategy.
+ * Factory for JoseSessionTokenCodecAdapter with its jose JWT crypto implementation.
  */
 export function createJoseSessionTokenCodecAdapter(
   logger: LoggingClientContract,
@@ -18,12 +18,12 @@ export function createJoseSessionTokenCodecAdapter(
     throw new Error("SESSION_SECRET is not defined");
   }
 
-  const strategy = new JoseSessionTokenCodecService(
+  const jwtCrypto = new JoseSessionTokenCodecService(
     logger,
     SESSION_SECRET,
     SESSION_ISSUER,
     SESSION_AUDIENCE,
   );
 
-  return new JoseSessionTokenCodecAdapter(logger, strategy);
+  return new JoseSessionTokenCodecAdapter(logger, jwtCrypto);
 }

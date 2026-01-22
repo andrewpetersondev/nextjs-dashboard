@@ -32,16 +32,16 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   }
 
   const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-  const jwt = createJoseSessionTokenCodecAdapter(logger);
+  const tokenCodec = createJoseSessionTokenCodecAdapter(logger);
 
   const outcome = await authorizeRequestHelper(
     { cookie, isAdminRoute, isProtectedRoute, isPublicRoute, path },
     {
-      jwt,
       routes: {
         dashboardRoot: ROUTES.dashboard.root,
         login: ROUTES.auth.login,
       },
+      tokenCodec,
     },
   );
 

@@ -12,11 +12,11 @@ import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/type
  * so downstream authorization can respond with an explicit redirect reason.
  *
  * @param cookie Cookie header value containing the encoded session token.
- * @param jwt Codec used to decode the session token.
+ * @param tokenCodec Codec used to decode the session token.
  */
 async function extractSessionClaims(
   cookie: string | undefined,
-  jwt: SessionTokenCodecContract,
+  tokenCodec: SessionTokenCodecContract,
 ): Promise<
   Readonly<
     | { claims: SessionTokenClaimsDto; reason: "ok" }
@@ -27,7 +27,7 @@ async function extractSessionClaims(
     return { claims: undefined, reason: "no_cookie" };
   }
 
-  const decodedResult = await jwt.decode(cookie);
+  const decodedResult = await tokenCodec.decode(cookie);
   if (!decodedResult.ok) {
     return { claims: undefined, reason: "decode_failed" };
   }
@@ -51,14 +51,14 @@ export async function authorizeRequestHelper(
     path: string;
   }>,
   deps: Readonly<{
-    jwt: SessionTokenCodecContract;
+    tokenCodec: SessionTokenCodecContract;
     routes: Readonly<{
       dashboardRoot: `/${string}`;
       login: `/${string}`;
     }>;
   }>,
 ): Promise<AuthRequestAuthorizationOutcome> {
-  const decoded = await extractSessionClaims(input.cookie, deps.jwt);
+  const decoded = await extractSessionClaims(input.cookie, deps.tokenCodec);
 
   const routeType = getRouteTypePolicy({
     isAdminRoute: input.isAdminRoute,

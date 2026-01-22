@@ -22,10 +22,10 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
 
   constructor(
     logger: LoggingClientContract,
-    strategy: SessionJwtCryptoContract,
+    jwtCrypto: SessionJwtCryptoContract,
   ) {
     this.logger = logger;
-    this.jwtCrypto = strategy;
+    this.jwtCrypto = jwtCrypto;
   }
 
   /**
@@ -34,13 +34,13 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
   async decode(
     token: string,
   ): Promise<Result<SessionTokenClaimsDto, AppError>> {
-    const strategyResult = await this.jwtCrypto.verify(token);
+    const jwtCryptoResult = await this.jwtCrypto.verify(token);
 
-    if (!strategyResult.ok) {
-      return Err(strategyResult.error);
+    if (!jwtCryptoResult.ok) {
+      return Err(jwtCryptoResult.error);
     }
 
-    const parsed = SessionTokenClaimsSchema.safeParse(strategyResult.value);
+    const parsed = SessionTokenClaimsSchema.safeParse(jwtCryptoResult.value);
 
     if (!parsed.success) {
       this.logger.warn("JWT payload validation failed", {
