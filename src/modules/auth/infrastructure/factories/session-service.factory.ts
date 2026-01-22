@@ -9,7 +9,7 @@ import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/te
 import { VerifySessionUseCase } from "@/modules/auth/application/use-cases/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import { createCookieSessionStoreAdapter } from "@/modules/auth/infrastructure/factories/cookie-session-store.factory";
-import { createJwtSessionTokenServiceAdapter } from "@/modules/auth/infrastructure/jwt/factories/jwt-session-token-service.factory";
+import { createSessionTokenService } from "@/modules/auth/infrastructure/jwt/factories/jwt-session-token-service.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -26,7 +26,7 @@ export function createSessionService(
     logger: scopedLogger,
     // TODO: confirm if i should be passing in the scoped logger to sessionStore
     sessionStore: createCookieSessionStoreAdapter(scopedLogger),
-    sessionTokenService: createJwtSessionTokenServiceAdapter(scopedLogger),
+    sessionTokenService: createSessionTokenService(scopedLogger),
   };
 
   return {

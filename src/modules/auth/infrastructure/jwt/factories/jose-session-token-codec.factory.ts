@@ -1,4 +1,5 @@
 import "server-only";
+import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import { JoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/jwt/adapters/jose-session-token-codec.adapter";
 import { JoseSessionJwtCryptoService } from "@/modules/auth/infrastructure/jwt/services/jose-session-jwt-crypto.service";
 import {
@@ -9,11 +10,13 @@ import {
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Factory for JoseSessionTokenCodecAdapter with its jose JWT crypto implementation.
+ * Factory for the session token codec.
+ *
+ * Returns the application-facing contract to avoid leaking implementation details.
  */
-export function createJoseSessionTokenCodecAdapter(
+export function createSessionTokenCodec(
   logger: LoggingClientContract,
-): JoseSessionTokenCodecAdapter {
+): SessionTokenCodecContract {
   if (!SESSION_SECRET) {
     throw new Error("SESSION_SECRET is not defined");
   }
