@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/constants/session-jwt.constants";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { nowInSeconds } from "@/shared/constants/time.constants";
@@ -49,10 +50,12 @@ export const userIdTransformer = z.codec(
 export const SessionTokenClaimsSchema = z
   .object({
     exp: expSchema,
-    // biome-ignore lint/style/noMagicNumbers: <ignore for now>
-    iat: iatSchema.refine((val) => val <= nowInSeconds() + 5, {
-      message: "iat must not be in the future (allowing small clock skew)",
-    }),
+    iat: iatSchema.refine(
+      (val) => val <= nowInSeconds() + CLOCK_TOLERANCE_SEC,
+      {
+        message: "iat must not be in the future (allowing small clock skew)",
+      },
+    ),
     role: roleClaimSchema,
     sub: subSchema,
   })

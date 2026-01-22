@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { Hash } from "@/shared/branding/brands";
 
+// TODO: Eventually, make this an environment variable.
 const SALT_ROUNDS = 10 as const;
 
 /**
