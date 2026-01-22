@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { createDemoUserWorkflow } from "@/modules/auth/application/use-cases/create-demo-user.workflow";
-import { createDemoUserUseCase } from "@/modules/auth/infrastructure/factories/demo-user-use-case.factory";
-import { createSessionService } from "@/modules/auth/infrastructure/factories/session-service.factory";
-import { createUnitOfWork } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
+import { createDemoUserUseCase } from "@/modules/auth/infrastructure/composition/create-demo-user-use-case.factory";
+import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
+import { createUnitOfWork } from "@/modules/auth/infrastructure/composition/create-unit-of-work.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";

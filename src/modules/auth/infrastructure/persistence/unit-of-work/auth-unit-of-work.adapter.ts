@@ -3,9 +3,9 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
-import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/adapters/auth-user-repository.adapter";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/observability/auth-transaction.logger";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/repositories/auth-user.repository";
+import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-user-repository.adapter";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 

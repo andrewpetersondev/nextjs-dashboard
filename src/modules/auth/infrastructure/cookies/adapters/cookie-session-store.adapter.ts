@@ -1,6 +1,6 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/constants/session-cookie.constants";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
 import { isProd } from "@/shared/config/env-shared";
 import { millisecondsToSeconds } from "@/shared/constants/time.constants";

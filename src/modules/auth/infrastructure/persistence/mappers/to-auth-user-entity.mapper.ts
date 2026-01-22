@@ -10,7 +10,7 @@ import { parseUserRole } from "@/shared/domain/user/user-role.parser";
  * Maps a raw database user row to the AuthUserEntity.
  * Includes sensitive data (password hash) required for authentication.
  */
-export function authUserRowToEntity(row: UserRow): AuthUserEntity {
+export function toAuthUserEntity(row: UserRow): AuthUserEntity {
   return {
     email: row.email,
     id: toUserId(row.id),

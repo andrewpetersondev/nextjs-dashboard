@@ -11,7 +11,7 @@ import { toAuthUserOutputDto } from "@/modules/auth/domain/policies/user-mapper.
 import type { PasswordGeneratorContract } from "@/modules/auth/domain/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/domain/services/password-hasher.contract";
 // TODO: this dependency is pointing outward creating a violation
-import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/to-signup-uniqueness-conflict.mapper";
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -57,7 +57,7 @@ export async function createDemoUserTxHelper(
     });
 
     if (!signupResult.ok) {
-      const mapped = toSignupUniquenessConflict(signupResult.error);
+      const mapped = pgUniqueViolationToSignupConflictError(signupResult.error);
       return Err(mapped ?? signupResult.error);
     }
 

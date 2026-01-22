@@ -5,7 +5,9 @@ import { isPgMetadata } from "@/shared/errors/core/error-metadata.value";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 
-export function toSignupUniquenessConflict(error: AppError): AppError | null {
+export function pgUniqueViolationToSignupConflictError(
+  error: AppError,
+): AppError | null {
   if (error.key !== APP_ERROR_KEYS.integrity || !isPgMetadata(error.metadata)) {
     return null;
   }

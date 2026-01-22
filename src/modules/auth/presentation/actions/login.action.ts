@@ -8,8 +8,8 @@ import {
   LoginRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
 import { loginWorkflow } from "@/modules/auth/application/use-cases/login.workflow";
-import { createLoginUseCase } from "@/modules/auth/infrastructure/factories/login-use-case.factory";
-import { createSessionService } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import { createLoginUseCase } from "@/modules/auth/infrastructure/composition/create-login-use-case.factory";
+import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
 import type { LoginField } from "@/modules/auth/presentation/login.transport";
 import { toLoginFormResult } from "@/modules/auth/presentation/mappers/auth-form-error.mapper";
 import { getAppDb } from "@/server/db/db.connection";

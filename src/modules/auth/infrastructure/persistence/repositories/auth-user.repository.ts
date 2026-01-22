@@ -5,8 +5,8 @@ import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.en
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
 import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/increment-demo-user-counter.dal";
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
-import { authUserRowToEntity } from "@/modules/auth/infrastructure/persistence/mappers/auth-user-row-to-entity.mapper";
-import { toSignupUniquenessConflict } from "@/modules/auth/infrastructure/persistence/mappers/to-signup-uniqueness-conflict.mapper";
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
+import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/mappers/to-auth-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -68,7 +68,7 @@ export class AuthUserRepository {
 
     const row = rowResult.value;
 
-    return Ok(row ? authUserRowToEntity(row) : null);
+    return Ok(row ? toAuthUserEntity(row) : null);
   }
 
   /**
@@ -87,11 +87,11 @@ export class AuthUserRepository {
     const rowResult = await insertUserDal(this.db, input, this.logger);
 
     if (!rowResult.ok) {
-      const mapped = toSignupUniquenessConflict(rowResult.error);
+      const mapped = pgUniqueViolationToSignupConflictError(rowResult.error);
       return Err(mapped ?? rowResult.error);
     }
 
-    const entity = authUserRowToEntity(rowResult.value);
+    const entity = toAuthUserEntity(rowResult.value);
 
     return Ok(entity);
   }
