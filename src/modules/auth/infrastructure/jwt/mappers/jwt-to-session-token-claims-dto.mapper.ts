@@ -1,6 +1,6 @@
 import "server-only";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/types/session-jwt-claims.transport";
+import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/transports/session-jwt-claims.transport";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 
 /**

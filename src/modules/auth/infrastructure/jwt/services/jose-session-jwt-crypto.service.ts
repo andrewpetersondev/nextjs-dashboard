@@ -7,8 +7,8 @@ import {
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/jwt/constants/session-jwt.constants";
 import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/jwt/contracts/session-jwt-crypto.contract";
-import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/types/session-jwt-claims.transport";
-import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/jwt/types/session-jwt-verify-options.transport";
+import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/transports/session-jwt-claims.transport";
+import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/jwt/transports/session-jwt-verify-options.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

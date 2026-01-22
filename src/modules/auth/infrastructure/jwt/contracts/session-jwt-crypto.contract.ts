@@ -1,4 +1,4 @@
-import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/types/session-jwt-claims.transport";
+import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/transports/session-jwt-claims.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
