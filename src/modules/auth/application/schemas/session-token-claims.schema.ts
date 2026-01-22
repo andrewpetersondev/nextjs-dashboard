@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/constants/session-jwt.constants";
+import { CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/jwt/constants/session-jwt.constants";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { nowInSeconds } from "@/shared/constants/time.constants";
