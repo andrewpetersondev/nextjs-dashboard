@@ -9,7 +9,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 /**
  * Clean Architecture Factory: Wires Infrastructure into Use Case.
  */
-export function createSignupUseCase(
+export function signupUseCaseFactory(
   uow: AuthUnitOfWorkContract,
   logger: LoggingClientContract,
 ): SignupUseCase {

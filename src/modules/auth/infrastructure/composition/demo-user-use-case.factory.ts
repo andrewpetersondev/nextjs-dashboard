@@ -7,7 +7,7 @@ import { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/serv
 import { PolicyPasswordGeneratorAdapter } from "@/modules/auth/infrastructure/policies/adapters/policy-password-generator.adapter";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
-export function createDemoUserUseCase(
+export function demoUserUseCaseFactory(
   uow: AuthUnitOfWorkContract,
   logger: LoggingClientContract,
 ): CreateDemoUserUseCase {

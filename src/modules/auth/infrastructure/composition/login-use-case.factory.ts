@@ -12,7 +12,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 /**
  * Clean Architecture Factory: Wires Infrastructure into Use Case.
  */
-export function createLoginUseCase(
+export function loginUseCaseFactory(
   db: AppDatabase,
   logger: LoggingClientContract,
   requestId: string,

@@ -7,8 +7,8 @@ import {
   type LoginRequestDto,
   LoginRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
-import { createLoginUseCase } from "@/modules/auth/infrastructure/composition/create-login-use-case.factory";
-import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
+import { loginUseCaseFactory } from "@/modules/auth/infrastructure/composition/login-use-case.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/session-service.factory";
 import type { LoginField } from "@/modules/auth/presentation/login.transport";
 import { toLoginFormResult } from "@/modules/auth/presentation/mappers/auth-form-error.mapper";
 import { getAppDb } from "@/server/db/db.connection";
@@ -78,9 +78,9 @@ export async function loginAction(
     operationName: "login.validation.success",
   });
 
-  const loginUseCase = createLoginUseCase(getAppDb(), logger, requestId);
+  const loginUseCase = loginUseCaseFactory(getAppDb(), logger, requestId);
 
-  const sessionService = createSessionService(logger, requestId);
+  const sessionService = sessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
     loginWorkflow(input, { loginUseCase, sessionService }),

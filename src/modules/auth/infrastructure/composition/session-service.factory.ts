@@ -16,7 +16,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  * Composition Root for Session operations.
  * Returns a wired implementation of the SessionServiceContract.
  */
-export function createSessionService(
+export function sessionServiceFactory(
   logger: LoggingClientContract,
   requestId: string,
 ): SessionServiceContract {

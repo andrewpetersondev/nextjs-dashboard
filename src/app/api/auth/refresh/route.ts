@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { refreshSessionWorkflow } from "@/modules/auth/application/session/refresh-session.workflow";
-import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/session-service.factory";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,
@@ -27,7 +27,7 @@ async function rotateSession(): Promise<
 > {
   const requestId = crypto.randomUUID();
   const logger = defaultLogger.withContext("auth:route").withRequest(requestId);
-  const sessionService = createSessionService(logger, requestId);
+  const sessionService = sessionServiceFactory(logger, requestId);
   return await refreshSessionWorkflow({ sessionService });
 }
 

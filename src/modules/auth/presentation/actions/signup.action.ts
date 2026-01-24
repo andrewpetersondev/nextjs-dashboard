@@ -7,9 +7,9 @@ import {
   type SignupRequestDto,
   SignupRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
-import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
-import { createSignupUseCase } from "@/modules/auth/infrastructure/composition/create-signup-use-case.factory";
-import { createUnitOfWork } from "@/modules/auth/infrastructure/composition/create-unit-of-work.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/session-service.factory";
+import { signupUseCaseFactory } from "@/modules/auth/infrastructure/composition/signup-use-case.factory";
+import { unitOfWorkFactory } from "@/modules/auth/infrastructure/composition/unit-of-work.factory";
 import { toSignupFormResult } from "@/modules/auth/presentation/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import { getAppDb } from "@/server/db/db.connection";
@@ -89,9 +89,9 @@ export async function signupAction(
     operationName: "signup.validation.success",
   });
 
-  const uow = createUnitOfWork(getAppDb(), logger, requestId);
-  const signupUseCase = createSignupUseCase(uow, logger);
-  const sessionService = createSessionService(logger, requestId);
+  const uow = unitOfWorkFactory(getAppDb(), logger, requestId);
+  const signupUseCase = signupUseCaseFactory(uow, logger);
+  const sessionService = sessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
     signupWorkflow(input, { sessionService, signupUseCase }),

@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation";
 import { createDemoUserWorkflow } from "@/modules/auth/application/demo/create-demo-user.workflow";
-import { createDemoUserUseCase } from "@/modules/auth/infrastructure/composition/create-demo-user-use-case.factory";
-import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
-import { createUnitOfWork } from "@/modules/auth/infrastructure/composition/create-unit-of-work.factory";
+import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/composition/demo-user-use-case.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/session-service.factory";
+import { unitOfWorkFactory } from "@/modules/auth/infrastructure/composition/unit-of-work.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
@@ -39,9 +39,9 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const uow = createUnitOfWork(getAppDb(), logger, requestId);
-  const demoUserUseCase = createDemoUserUseCase(uow, logger);
-  const sessionService = createSessionService(logger, requestId);
+  const uow = unitOfWorkFactory(getAppDb(), logger, requestId);
+  const demoUserUseCase = demoUserUseCaseFactory(uow, logger);
+  const sessionService = sessionServiceFactory(logger, requestId);
 
   const sessionResult = await tracker.measure("authentication", () =>
     createDemoUserWorkflow(role, { demoUserUseCase, sessionService }),

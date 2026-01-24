@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/application/session/verify-session-optimistic.workflow";
-import { createSessionService } from "@/modules/auth/infrastructure/composition/create-session-service.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -24,7 +24,7 @@ export const verifySessionOptimistic = cache(
       .withContext("auth:action")
       .withRequest(requestId);
 
-    const sessionService = createSessionService(logger, requestId);
+    const sessionService = sessionServiceFactory(logger, requestId);
 
     const res = await verifySessionOptimisticWorkflow({ sessionService });
 
