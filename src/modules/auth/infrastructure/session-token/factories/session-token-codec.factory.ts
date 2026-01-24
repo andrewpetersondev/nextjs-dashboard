@@ -14,7 +14,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  *
  * Returns the application-facing contract to avoid leaking implementation details.
  */
-export function createSessionTokenCodec(
+export function sessionTokenCodecFactory(
   logger: LoggingClientContract,
 ): SessionTokenCodecContract {
   if (!SESSION_SECRET) {

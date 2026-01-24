@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import { SessionTokenServiceAdapter } from "@/modules/auth/infrastructure/session-token/adapters/session-token-service.adapter";
-import { createSessionTokenCodec } from "@/modules/auth/infrastructure/session-token/factories/session-token-codec.factory";
+import { sessionTokenCodecFactory } from "@/modules/auth/infrastructure/session-token/factories/session-token-codec.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -9,9 +9,9 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  *
  * Returns the application-facing contract to avoid leaking implementation details.
  */
-export function createSessionTokenService(
+export function sessionTokenServiceFactory(
   logger: LoggingClientContract,
 ): SessionTokenServiceContract {
-  const tokenCodec = createSessionTokenCodec(logger);
+  const tokenCodec = sessionTokenCodecFactory(logger);
   return new SessionTokenServiceAdapter(tokenCodec);
 }

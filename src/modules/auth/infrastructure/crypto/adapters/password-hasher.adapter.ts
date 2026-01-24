@@ -8,8 +8,6 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Bcrypt-based implementation of the PasswordHasherContract.
- *
  * This adapter bridges the domain's need for password hashing
  * with the concrete BcryptPasswordService implementation.
  */

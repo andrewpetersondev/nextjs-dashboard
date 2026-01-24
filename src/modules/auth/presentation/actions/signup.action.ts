@@ -7,9 +7,9 @@ import {
   type SignupRequestDto,
   SignupRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition-root/session-service.factory";
-import { signupUseCaseFactory } from "@/modules/auth/infrastructure/composition-root/signup-use-case.factory";
-import { unitOfWorkFactory } from "@/modules/auth/infrastructure/composition-root/unit-of-work.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
+import { signupUseCaseFactory } from "@/modules/auth/infrastructure/factories/signup-use-case.factory";
+import { unitOfWorkFactory } from "@/modules/auth/infrastructure/factories/unit-of-work.factory";
 import { toSignupFormResult } from "@/modules/auth/presentation/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/signup.transport";
 import { getAppDb } from "@/server/db/db.connection";

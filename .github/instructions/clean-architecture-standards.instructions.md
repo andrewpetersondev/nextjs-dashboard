@@ -12,7 +12,7 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 2.  **Persistence Ignorance**: The Domain layer must not contain database-specific logic or know how data is stored.
 3.  **Library Independence**: Domain entities and core business logic must remain pure TypeScript. Avoid third-party library dependencies (including Zod) in domain entities and policies.
 4.  **Framework Isolation**: `domain/` and `application/` must never import from `next/*`, `react`, or any DB-specific libraries (Drizzle, Prisma, etc.).
-5.  **Testability**: Business rules must be testable in isolation using mocks for contracts. Use Cases should be verifiable using pure Vitest without a browser or database.
+5.  **Testability**: Business rules must be testable in isolation using mocks for Ports (Contracts). Use Cases should be verifiable using pure Vitest without a browser or database.
 
 ## Layer Responsibilities & Mapping
 
@@ -320,6 +320,20 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
       );
     }
     ```
+
+**Additional Rule: Ports vs Infrastructure Seams**
+
+Infrastructure may define internal interfaces for implementation flexibility (e.g., swapping JWT libraries).
+These are **Infrastructure seams** and must not be labeled as Application/Domain Ports.
+
+- ✅ Allowed: `infrastructure/**/strategies/*.strategy.ts` used only by Infrastructure code
+- ✅ Allowed: Infrastructure services implementing Infrastructure strategies
+- ❌ Avoid: Naming Infrastructure-only seams as `*.contract.ts` / `*Contract` (misleads dependency ownership)
+
+Sanity checks:
+
+- If `domain/**` or `application/**` imports the interface → it’s a **Port** → it belongs in `domain/**` or `application/contracts/`.
+- If the interface is referenced only by `infrastructure/**` files → it’s an **Infrastructure seam** → use `Strategy/Provider/Client` naming and keep it in Infrastructure.
 
 ## Constructor Standards
 

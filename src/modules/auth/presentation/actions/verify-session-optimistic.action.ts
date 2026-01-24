@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import { verifySessionOptimisticWorkflow } from "@/modules/auth/application/session/verify-session-optimistic.workflow";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition-root/session-service.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/factories/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

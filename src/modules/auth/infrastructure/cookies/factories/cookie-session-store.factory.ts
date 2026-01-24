@@ -8,7 +8,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  *
  * @param logger - The logging client to use for observability.
  */
-export function createCookieSessionStoreAdapter(
+export function cookieSessionStoreFactory(
   logger: LoggingClientContract,
 ): CookieSessionStoreAdapter {
   const cookies = createCookieService();
