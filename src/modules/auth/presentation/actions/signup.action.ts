@@ -7,8 +7,8 @@ import {
   type SignupRequestDto,
   SignupRequestSchema,
 } from "@/modules/auth/application/schemas/login-request.schema";
+import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-unit-of-work.factory";
 import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/factories/signup-use-case.factory";
-import { unitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/factories/unit-of-work.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
 import { toSignupFormResult } from "@/modules/auth/presentation/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/signup.transport";
@@ -89,7 +89,7 @@ export async function signupAction(
     operationName: "signup.validation.success",
   });
 
-  const uow = unitOfWorkFactory(getAppDb(), logger, requestId);
+  const uow = authUnitOfWorkFactory(getAppDb(), logger, requestId);
   const signupUseCase = signupUseCaseFactory(uow, logger);
   const sessionService = sessionServiceFactory(logger, requestId);
 

@@ -1,5 +1,4 @@
 "use client";
-
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
 import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/schemas/login-request.schema";

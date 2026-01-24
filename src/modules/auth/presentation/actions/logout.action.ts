@@ -1,5 +1,4 @@
 "use server";
-
 import { redirect } from "next/navigation";
 import { logoutWorkflow } from "@/modules/auth/application/session/logout.workflow";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";

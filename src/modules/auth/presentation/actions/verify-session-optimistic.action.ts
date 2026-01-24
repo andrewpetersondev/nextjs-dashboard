@@ -1,5 +1,4 @@
 "use server";
-
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";

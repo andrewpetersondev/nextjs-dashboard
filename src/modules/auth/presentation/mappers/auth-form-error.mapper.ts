@@ -1,5 +1,4 @@
 import "server-only";
-
 import {
   LOGIN_FIELDS_LIST,
   SIGNUP_FIELDS_LIST,

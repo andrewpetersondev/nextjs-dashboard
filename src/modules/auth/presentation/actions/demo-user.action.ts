@@ -1,8 +1,8 @@
 "use server";
 import { redirect } from "next/navigation";
 import { createDemoUserWorkflow } from "@/modules/auth/application/demo/create-demo-user.workflow";
+import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-unit-of-work.factory";
 import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/persistence/factories/demo-user-use-case.factory";
-import { unitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/factories/unit-of-work.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
@@ -38,7 +38,7 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const uow = unitOfWorkFactory(getAppDb(), logger, requestId);
+  const uow = authUnitOfWorkFactory(getAppDb(), logger, requestId);
   const demoUserUseCase = demoUserUseCaseFactory(uow, logger);
   const sessionService = sessionServiceFactory(logger, requestId);
 

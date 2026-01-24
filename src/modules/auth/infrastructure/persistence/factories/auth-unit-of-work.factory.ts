@@ -5,7 +5,7 @@ import { authTxDepsFactory } from "@/modules/auth/infrastructure/persistence/fac
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
-export function unitOfWorkFactory(
+export function authUnitOfWorkFactory(
   db: AppDatabase,
   logger: LoggingClientContract,
   requestId: string,

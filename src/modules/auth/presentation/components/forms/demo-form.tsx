@@ -1,5 +1,4 @@
 "use client";
-
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
