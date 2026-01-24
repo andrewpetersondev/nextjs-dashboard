@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
 
 export interface AuthUnitOfWorkContract {

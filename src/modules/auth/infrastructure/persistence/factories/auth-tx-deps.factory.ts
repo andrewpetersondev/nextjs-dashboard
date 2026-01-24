@@ -1,0 +1,26 @@
+import "server-only";
+import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
+import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-user-repository.adapter";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
+import type { AppDatabase } from "@/server/db/db.connection";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+
+/**
+ * Factory: creates transaction-scoped dependency contracts for auth persistence.
+ *
+ * @remarks
+ * This keeps repository wiring out of the UnitOfWork adapter so "factories do wiring"
+ * and the adapter focuses on transaction mechanics.
+ */
+export function authTxDepsFactory(
+  txDb: AppDatabase,
+  txLogger: LoggingClientContract,
+  requestId: string,
+): AuthTxDepsContract {
+  const authUserRepo = new AuthUserRepository(txDb, txLogger, requestId);
+  const authUsers = new AuthUserRepositoryAdapter(authUserRepo);
+
+  return {
+    authUsers,
+  };
+}

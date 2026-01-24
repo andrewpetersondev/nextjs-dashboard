@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";

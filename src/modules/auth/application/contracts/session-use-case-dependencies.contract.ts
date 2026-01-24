@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

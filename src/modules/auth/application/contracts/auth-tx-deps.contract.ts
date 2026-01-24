@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
 
 /**

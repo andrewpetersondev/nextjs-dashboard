@@ -4,8 +4,7 @@ import { randomUUID } from "node:crypto";
 import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/observability/auth-transaction.logger";
-import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-user-repository.adapter";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
+import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-tx-deps.factory.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -19,16 +18,19 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 export class AuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
   private readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
+  private readonly makeTxDeps: AuthTxDepsFactory;
   private readonly requestId: string;
 
   constructor(
     db: AppDatabase,
     logger: LoggingClientContract,
     requestId: string,
+    makeTxDeps: AuthTxDepsFactory,
   ) {
     this.db = db;
     this.logger = logger;
     this.requestId = requestId;
+    this.makeTxDeps = makeTxDeps;
   }
 
   /**
@@ -62,18 +64,7 @@ export class AuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
 
     try {
       const result = await dbWithTx.transaction(async (txDb: AppDatabase) => {
-        // Note: In a larger refactor, these could be moved to a Factory
-        const txAuthUserRepo = new AuthUserRepository(
-          txDb,
-          txLogger,
-          this.requestId,
-        );
-        const authUsers = new AuthUserRepositoryAdapter(txAuthUserRepo);
-
-        const txDeps: AuthTxDepsContract = {
-          authUsers,
-        };
-
+        const txDeps = this.makeTxDeps(txDb, txLogger, this.requestId);
         return await fn(txDeps);
       });
 

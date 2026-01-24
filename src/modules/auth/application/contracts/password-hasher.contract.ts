@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { Hash } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
