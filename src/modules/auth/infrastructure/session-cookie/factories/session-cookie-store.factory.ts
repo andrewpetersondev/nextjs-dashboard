@@ -1,6 +1,6 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import { CookieSessionStoreAdapter } from "@/modules/auth/infrastructure/cookies/adapters/cookie-session-store.adapter";
+import { SessionCookieStoreAdapter } from "@/modules/auth/infrastructure/session-cookie/adapters/session-cookie-store.adapter";
 import { createCookieService } from "@/server/cookies/cookie.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -9,9 +9,9 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
  *
  * @param logger - The logging client to use for observability.
  */
-export function cookieSessionStoreFactory(
+export function sessionCookieStoreFactory(
   logger: LoggingClientContract,
 ): SessionStoreContract {
   const cookies = createCookieService();
-  return new CookieSessionStoreAdapter(cookies, logger);
+  return new SessionCookieStoreAdapter(cookies, logger);
 }

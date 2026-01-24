@@ -4,7 +4,7 @@ import {
   SESSION_COOKIE_HTTPONLY,
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
-} from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
+} from "@/modules/auth/infrastructure/session-cookie/constants/session-cookie.constants";
 import { isProd } from "@/shared/config/env-shared";
 
 /**
