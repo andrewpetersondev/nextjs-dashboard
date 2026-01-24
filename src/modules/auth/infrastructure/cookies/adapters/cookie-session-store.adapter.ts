@@ -1,8 +1,8 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
+import { getSessionCookieOptionsConfig } from "@/modules/auth/infrastructure/cookies/config/session-cookie-options.policy";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
 import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructure/cookies/helpers/to-session-cookie-max-age-seconds.helper";
-import { getSessionCookieOptionsPolicy } from "@/modules/auth/infrastructure/cookies/policies/session-cookie-options.policy";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
@@ -76,7 +76,7 @@ export class CookieSessionStoreAdapter implements SessionStoreContract {
       await this.cookies.set(
         SESSION_COOKIE_NAME,
         value,
-        getSessionCookieOptionsPolicy({ maxAge }),
+        getSessionCookieOptionsConfig({ maxAge }),
       );
 
       this.logger.debug("Session cookie set", {

@@ -8,13 +8,13 @@ import {
 import { isProd } from "@/shared/config/env-shared";
 
 /**
- * Session cookie options policy.
+ * Session cookie options config.
  *
  * @remarks
  * Centralizes cookie security and scoping decisions (SameSite, Secure, Path, HttpOnly)
  * so the adapter only coordinates storage operations.
  */
-export function getSessionCookieOptionsPolicy(input: {
+export function getSessionCookieOptionsConfig(input: {
   readonly maxAge: number;
 }): Partial<ResponseCookie> {
   return {

@@ -5,6 +5,12 @@ import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/re
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
+export type AuthTxDepsFactory = (
+  txDb: AppDatabase,
+  txLogger: LoggingClientContract,
+  requestId: string,
+) => AuthTxDepsContract;
+
 /**
  * Factory: creates transaction-scoped dependency contracts for auth persistence.
  *

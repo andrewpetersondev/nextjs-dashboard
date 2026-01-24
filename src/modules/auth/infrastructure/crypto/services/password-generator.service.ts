@@ -4,7 +4,7 @@ import { makeRandomPassword } from "@/modules/auth/domain/policies/password.poli
 /**
  * Implementation of PasswordGeneratorContract using the domain's password policy.
  */
-export class PasswordGeneratorAdapter implements PasswordGeneratorContract {
+export class PasswordGeneratorService implements PasswordGeneratorContract {
   generate(length: number): string {
     return makeRandomPassword(length);
   }

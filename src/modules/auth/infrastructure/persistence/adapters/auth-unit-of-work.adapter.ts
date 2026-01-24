@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/observability/auth-transaction.logger";
-import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-tx-deps.factory.types";
+import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-tx-deps.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 

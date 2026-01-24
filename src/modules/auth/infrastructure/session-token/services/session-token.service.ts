@@ -19,10 +19,12 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Handles token-specific operations (encode, decode, validate).
- * Separates crypto/JWT concerns from session lifecycle.
+ * Concrete infrastructure implementation of SessionTokenServiceContract.
+ *
+ * Responsibility: token issuance + validation behavior.
+ * Delegates encoding/decoding mechanics to SessionTokenCodecContract.
  */
-export class SessionTokenServiceAdapter implements SessionTokenServiceContract {
+export class SessionTokenService implements SessionTokenServiceContract {
   private readonly codec: SessionTokenCodecContract;
 
   constructor(codec: SessionTokenCodecContract) {
