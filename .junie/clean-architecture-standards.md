@@ -18,8 +18,8 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 | Layer            | Responsibility             | Contents                                                                                     |
 | :--------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
-| `domain`         | Enterprise Business Rules  | Entities (interfaces only), Value Objects, Policies (pure functions), Repository Contracts.  |
-| `application`    | Application Business Rules | Use Cases, Workflows, DTOs, Service Contracts (Ports), Schemas (Zod), Mappers, Helpers.      |
+| `domain`         | Enterprise Business Rules  | Entities (interfaces), Value Objects, Policies (pure functions).                             |
+| `application`    | Application Business Rules | Use Cases, Workflows, DTOs, Contracts (Ports), Schemas (Zod), Mappers, Helpers.              |
 | `infrastructure` | Technical Details          | Repository Implementations, Adapters, DAL, Mappers (row ↔ entity), Framework-specific logic. |
 | `presentation`   | Delivery Mechanism         | UI Components, Server Actions, Form Validation, Transport types.                             |
 
@@ -27,18 +27,15 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 ### Domain Layer Rules
 
-**Purpose**: Define the **what** of your business—entities, rules, and required capabilities—without any **how**.
+**Purpose**: Define the **what** of your business—entities and rules—without any side-effect concerns.
 
 - **Allowed Imports**:
   - Primitives and TypeScript utilities
   - Shared domain types (`@/shared/domain/`)
-  - Value objects and branded types from shared
-  - **Nothing else**
 - **Forbidden Imports**:
-  - Application layer (DTOs, schemas, use cases)
+  - Application layer (DTOs, schemas, use cases, contracts)
   - Infrastructure implementations
   - Zod, Drizzle, Next.js, React
-  - Any third-party libraries (except type-only imports if unavoidable)
 
 **What Belongs Here**:
 
@@ -54,7 +51,7 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   }
   ```
 
-- **Policies** (`policies/`): Pure functions encoding business rules and invariants
+- **Policies** (`policies/`): Pure functions encoding invariants.
 
   ```typescript
   // ✅ Good: Pure business logic
@@ -91,41 +88,47 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
 **What Does NOT Belong Here**:
 
-    - ❌ Repository Contracts (move to `application/contracts/`)
-    - ❌ Service Contracts (move to `application/contracts/`)
-
-- ❌ Zod schemas (move to `application/schemas/`)
-- ❌ DTOs (move to `application/dtos/`)
-- ❌ Mappers that reference DTOs (move to `application/mappers/`)
-- ❌ Any implementation logic (move to `infrastructure/`)
+- ❌ **Repository/Service Contracts** (move to `application/contracts/`)
+- ❌ **Zod schemas** (move to `application/schemas/`)
+- ❌ **DTOs** (move to `application/dtos/`)
 
 ### Application Layer Rules
 
 **Purpose**: Define **application-specific business rules** and orchestrate domain logic to fulfill use cases.
 
 - **Allowed Imports**:
-  - Domain layer (entities, policies, contracts)
+  - Domain layer (entities, policies)
   - Shared utilities (`@/shared/`)
   - Zod for schema validation
-  - Type-only imports from infrastructure (for dependency injection)
 - **Forbidden Imports**:
   - Infrastructure implementations (classes, concrete adapters)
   - Database libraries (Drizzle, Prisma)
-  - Framework code (Next.js, React) except types
   - Presentation layer
 
 **What Belongs Here**:
+
+- **Use Cases** (`use-cases/`): Single-responsibility business operations.
+- **Contracts** (`contracts/`): Interfaces defining dependencies (Ports) for repositories and services.
+- **Workflows** (`use-cases/`): Multi-step orchestrations.
 
 - **Use Cases** (`use-cases/`): Single-responsibility business operations
 
   ```typescript
   // ✅ Good: Depends on contracts, not implementations
   export class LoginUseCase {
+    private readonly userRepo: AuthUserRepositoryContract;
+    private readonly hasher: PasswordHasherContract;
+    private readonly logger: LoggerContract;
+
     constructor(
-      private readonly userRepo: AuthUserRepositoryContract,
-      private readonly hasher: PasswordHasherContract,
-      private readonly logger: LoggerContract,
-    ) {}
+      userRepo: AuthUserRepositoryContract,
+      hasher: PasswordHasherContract,
+      logger: LoggerContract,
+    ) {
+      this.userRepo = userRepo;
+      this.hasher = hasher;
+      this.logger = logger;
+    }
 
     async execute(
       input: LoginRequestDto,
@@ -291,7 +294,7 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
     ```typescript
     // ✅ Good: Explicit wiring and assignment
-    export function createLoginUseCase(
+    export function loginUseCaseFactory(
       db: AppDatabase,
       logger: Logger,
     ): LoginUseCase {
@@ -306,7 +309,10 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
     }
 
     // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
-    export function makeLoginUseCase(): LoginUseCase {
+    export function makeLoginUseCase(
+      db: AppDatabase,
+      logger: Logger,
+    ): LoginUseCase {
       return new LoginUseCase(
         new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
         new BcryptHasherAdapter(new BcryptPasswordService()),
@@ -382,14 +388,16 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
 
 ## Boundary Crossing & Data Flow
 
-### Data Flow Direction
-
 ```
 
 Presentation → Application → Domain ← Infrastructure
     ↓              ↓           ↓           ↓
 Transport     →   DTO    →   Entity  ←   Row
 ```
+
+1. **Domain entities never leave the application boundary** — map to DTOs before returning to presentation.
+2. **Database rows never enter use cases** — map to entities in repositories.
+3. **DTOs are the stable boundary** between presentation and application.
 
 **Key Rules**:
 
@@ -421,6 +429,20 @@ Transport     →   DTO    →   Entity  ←   Row
 ```typescript
 // ✅ Good: Use case owns transaction boundary
 export class CreateUserUseCase {
+  private readonly hasher: PasswordHasherContract;
+  private readonly uow: UnitOfWorkContract;
+  private readonly emailService: EmailServiceContract;
+
+  constructor(
+    hasher: PasswordHasherContract,
+    uow: UnitOfWorkContract,
+    emailService: EmailServiceContract,
+  ) {
+    this.hasher = hasher;
+    this.uow = uow;
+    this.emailService = emailService;
+  }
+
   async execute(input: CreateUserDto): Promise<Result<UserDto, AppError>> {
     // 1. Perform side effects BEFORE transaction
     const passwordHash = await this.hasher.hash(input.password);
@@ -652,28 +674,3 @@ auth/
       login-form.tsx
     *.transport.ts
 ```
-
-### Naming Rules
-
-- **One concept per file**: `login.use-case.ts`, not `auth-use-cases.ts`
-- **Descriptive names**: File names should describe what they do
-- **Consistent suffixes**: Use suffixes from naming-conventions.md
-- **No barrel files**: Avoid `index.ts` re-exports
-
-## Migration Strategy
-
-To align existing code with these rules:
-
-1. **Move Zod schemas** from `domain/schemas/` to `application/schemas/`
-2. **Move DTO mappers** from `domain/policies/` to `application/mappers/`
-3. **Keep pure business logic** in `domain/policies/`
-4. **Extract validation policies** from schemas into pure functions
-5. **Update imports** to respect dependency direction
-
-## Why These Rules Matter
-
-- **Maintainability**: Clear boundaries make code easier to understand and modify
-- **Testability**: Pure domain logic is trivial to test without mocks
-- **Flexibility**: Swap infrastructure (database, framework) without touching business logic
-- **Team Scaling**: New developers understand where code belongs
-- **Refactoring Safety**: Changes in one layer don't cascade to others

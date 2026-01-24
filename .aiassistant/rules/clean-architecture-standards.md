@@ -299,7 +299,7 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 
     ```typescript
     // ✅ Good: Explicit wiring and assignment
-    export function createLoginUseCase(
+    export function loginUseCaseFactory(
       db: AppDatabase,
       logger: Logger,
     ): LoginUseCase {
@@ -314,7 +314,10 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
     }
 
     // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
-    export function makeLoginUseCase(): LoginUseCase {
+    export function makeLoginUseCase(
+      db: AppDatabase,
+      logger: Logger,
+    ): LoginUseCase {
       return new LoginUseCase(
         new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
         new BcryptHasherAdapter(new BcryptPasswordService()),

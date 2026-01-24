@@ -214,26 +214,26 @@ Reduce synonym drift by sticking to these standard verbs.
 
 ### Standard Verb Table
 
-| Verb         | Usage                                           | Returns            | Side Effects | Example                     |
-| :----------- | :---------------------------------------------- | :----------------- | :----------- | :-------------------------- |
-| `toX`        | Pure mapping/transformation                     | Transformed value  | None         | `toUserDto(entity)`         |
-| `fromX`      | Reverse transformation (when `to` is ambiguous) | Transformed value  | None         | `fromJson(string)`          |
-| `normalizeX` | Convert foreign/unsafe input to canonical shape | Normalized value   | None         | `normalizePgError(err)`     |
-| `extractX`   | Pull info from unknown/complex values           | Value or undefined | None         | `extractMetadata(error)`    |
-| `makeX`      | Simple factory/constructor                      | New object         | None         | `makeAppError(key)`         |
-| `createX`    | Complex factory (use for DI factories)          | New object         | Possible     | `createUserUseCase()`       |
-| `buildX`     | Builder pattern (accumulates state)             | Builder or value   | None         | `buildQuery().where()...`   |
-| `isX`        | Type guard                                      | Boolean            | None         | `isAppError(err)`           |
-| `hasX`       | Capability/metadata check                       | Boolean            | None         | `hasMetadata(error)`        |
-| `canX`       | Authorization/permission check                  | Boolean            | None         | `canUserDelete(user, post)` |
-| `shouldX`    | Business rule decision                          | Boolean            | None         | `shouldRotateSession(s)`    |
-| `getX`       | Safe access (may return undefined)              | Value or undefined | None         | `getFieldErrors(result)`    |
-| `findX`      | Search operation (may return null)              | Value or null      | Possible     | `findUserById(id)`          |
-| `fetchX`     | Remote/async retrieval                          | Value or error     | Yes          | `fetchFromApi(url)`         |
-| `validateX`  | Validation logic                                | Boolean or errors  | None         | `validatePassword(pw)`      |
-| `evaluateX`  | Complex business rule evaluation                | Decision object    | None         | `evaluateSessionPolicy(s)`  |
-| `calculateX` | Computation/derivation                          | Computed value     | None         | `calculateDiscount(user)`   |
-| `generateX`  | Produce new value (may have randomness)         | Generated value    | Possible     | `generateToken()`           |
+| Verb             | Usage                                           | Returns            | Side Effects | Example                     |
+| :--------------- | :---------------------------------------------- | :----------------- | :----------- | :-------------------------- |
+| `toX`            | Pure mapping/transformation                     | Transformed value  | None         | `toUserDto(entity)`         |
+| `fromX`          | Reverse transformation (when `to` is ambiguous) | Transformed value  | None         | `fromJson(string)`          |
+| `normalizeX`     | Convert foreign/unsafe input to canonical shape | Normalized value   | None         | `normalizePgError(err)`     |
+| `extractX`       | Pull info from unknown/complex values           | Value or undefined | None         | `extractMetadata(error)`    |
+| `makeX`          | Simple factory/constructor                      | New object         | None         | `makeAppError(key)`         |
+| `{thing}Factory` | Complex factory (use for DI factories)          | New object         | Possible     | `userUseCaseFactory()`      |
+| `buildX`         | Builder pattern (accumulates state)             | Builder or value   | None         | `buildQuery().where()...`   |
+| `isX`            | Type guard                                      | Boolean            | None         | `isAppError(err)`           |
+| `hasX`           | Capability/metadata check                       | Boolean            | None         | `hasMetadata(error)`        |
+| `canX`           | Authorization/permission check                  | Boolean            | None         | `canUserDelete(user, post)` |
+| `shouldX`        | Business rule decision                          | Boolean            | None         | `shouldRotateSession(s)`    |
+| `getX`           | Safe access (may return undefined)              | Value or undefined | None         | `getFieldErrors(result)`    |
+| `findX`          | Search operation (may return null)              | Value or null      | Possible     | `findUserById(id)`          |
+| `fetchX`         | Remote/async retrieval                          | Value or error     | Yes          | `fetchFromApi(url)`         |
+| `validateX`      | Validation logic                                | Boolean or errors  | None         | `validatePassword(pw)`      |
+| `evaluateX`      | Complex business rule evaluation                | Decision object    | None         | `evaluateSessionPolicy(s)`  |
+| `calculateX`     | Computation/derivation                          | Computed value     | None         | `calculateDiscount(user)`   |
+| `generateX`      | Produce new value (may have randomness)         | Generated value    | Possible     | `generateToken()`           |
 
 ### Verbs to Avoid
 

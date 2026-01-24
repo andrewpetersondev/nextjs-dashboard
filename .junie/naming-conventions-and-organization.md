@@ -2,71 +2,23 @@
 
 Standardized naming to ensure predictability, discoverability, and easy refactoring.
 
-**Goals**:
-
-- Make intent obvious from names (especially at boundaries)
-- Keep imports predictable (deep imports are encouraged)
-- Reduce "synonym drift" (`map*` vs `to*` vs `convert*`)
-- Make tests mirror the unit they validate
-- Prevent naming ambiguity and drift through redundant but clear naming
-
----
-
 ## Core Naming Principles
 
-1. **Intentional Over Generic**: Names should reveal use case context, not just data structure
-
-- ✅ `AuthenticatedUserDto` (reveals it's for authenticated users)
-- ❌ `UserDto` (too generic, invites drift across different contexts)
-
-2. **Redundancy for Clarity**: Include suffixes in both type names AND filenames
+1. **Intentional Over Generic**: Names reveal context. `AuthenticatedUserDto` over `UserDto`.
+2. **Redundancy for Clarity**: Include suffixes in both type names AND filenames.
 
 - ✅ `LoginRequestDto` in `login-request.dto.ts`
-- ❌ `LoginRequest` in `login.dto.ts`
 
-3. **Consumer-Centric Naming**: Use Cases and Workflows depend on "Services" or "Repositories"
+3. **Consumer-Centric Naming**: Use Cases depend on "Contracts".
 
-- Avoid implementation-leaky words like "Adapter", "Cookie", "Pg" in Application layer dependency names
+- Avoid tech-leaky words like "Adapter" or "Pg" in Application layer dependency names.
+
 - ✅ `sessionService: SessionServiceContract`
-- ❌ `sessionAdapter: SessionAdapterContract`
 
-4. **Reusability Signal**: Contract naming should signal scope
+4. **Contract Location**:
 
-- **Generic contracts** (reusable across modules): `PasswordHasherContract`, `EmailSenderContract`
-- **Domain-specific contracts** (single module): `SessionTokenServiceContract`, `AuthUserRepositoryContract`
-
-5. **Domain-Aligned Verbs**: Method names in contracts match business language
-
-- ✅ `session.terminate()` (business language)
-- ❌ `session.deleteCookie()` (implementation detail)
-
----
-
-## File and Folder Naming
-
-### Files
-
-- **Format**: Use **kebab-case** always
-- **Matching**: Filename must match the **primary export**
-  - `to-user-dto.ts` exports `toUserDto`
-  - `login-request.dto.ts` exports `LoginRequestDto`
-  - `password-validation.policy.ts` exports `validatePassword` (and related functions)
-- **One Concept Per File**: Avoid dumping grounds like `*.types.ts` or `utils.ts`
-
-### Folders
-
-- **Format**: Use **plural nouns** for collections
-  - ✅ `entities/`, `policies/`, `factories/`, `helpers/`, `contracts/`
-  - ❌ `entity/`, `policy/`, `util/`
-- **Grouping**: Organize by type/role, not by feature within a layer
-
-```
-application/
-contracts/       # Not application/session/contracts/
-dtos/
-helpers/
-use-cases/
-```
+- Side-effect contracts (Repositories/Services) live in `application/contracts/`.
+- Domain remains 100% side-effect free logic.
 
 ---
 
@@ -109,18 +61,14 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ---
 
-## Identifying Implementations vs. Bridges
+## Implementation vs. Bridges
 
-To prevent naming collisions and clarify intent:
+1. **Implementations**: Named after technology or role.
 
-1. **Implementations** should be named after the technology or specific role:
-
-- ✅ `auth-user.repository.ts` (Class: `AuthUserRepository`)
 - ✅ `bcrypt-password.service.ts` (Class: `BcryptPasswordService`)
 
-2. **Bridges (Adapters)** should be named after the Contract they satisfy:
+2. **Bridges (Adapters)**: Named after the Contract they satisfy.
 
-- ✅ `auth-user-repository.adapter.ts` (Satisfies `AuthUserRepositoryContract`)
 - ✅ `password-hasher.adapter.ts` (Satisfies `PasswordHasherContract`)
 
 ---
@@ -264,26 +212,26 @@ Reduce synonym drift by sticking to these standard verbs.
 
 ### Standard Verb Table
 
-| Verb         | Usage                                           | Returns            | Side Effects | Example                     |
-| :----------- | :---------------------------------------------- | :----------------- | :----------- | :-------------------------- |
-| `toX`        | Pure mapping/transformation                     | Transformed value  | None         | `toUserDto(entity)`         |
-| `fromX`      | Reverse transformation (when `to` is ambiguous) | Transformed value  | None         | `fromJson(string)`          |
-| `normalizeX` | Convert foreign/unsafe input to canonical shape | Normalized value   | None         | `normalizePgError(err)`     |
-| `extractX`   | Pull info from unknown/complex values           | Value or undefined | None         | `extractMetadata(error)`    |
-| `makeX`      | Simple factory/constructor                      | New object         | None         | `makeAppError(key)`         |
-| `createX`    | Complex factory (use for DI factories)          | New object         | Possible     | `createUserUseCase()`       |
-| `buildX`     | Builder pattern (accumulates state)             | Builder or value   | None         | `buildQuery().where()...`   |
-| `isX`        | Type guard                                      | Boolean            | None         | `isAppError(err)`           |
-| `hasX`       | Capability/metadata check                       | Boolean            | None         | `hasMetadata(error)`        |
-| `canX`       | Authorization/permission check                  | Boolean            | None         | `canUserDelete(user, post)` |
-| `shouldX`    | Business rule decision                          | Boolean            | None         | `shouldRotateSession(s)`    |
-| `getX`       | Safe access (may return undefined)              | Value or undefined | None         | `getFieldErrors(result)`    |
-| `findX`      | Search operation (may return null)              | Value or null      | Possible     | `findUserById(id)`          |
-| `fetchX`     | Remote/async retrieval                          | Value or error     | Yes          | `fetchFromApi(url)`         |
-| `validateX`  | Validation logic                                | Boolean or errors  | None         | `validatePassword(pw)`      |
-| `evaluateX`  | Complex business rule evaluation                | Decision object    | None         | `evaluateSessionPolicy(s)`  |
-| `calculateX` | Computation/derivation                          | Computed value     | None         | `calculateDiscount(user)`   |
-| `generateX`  | Produce new value (may have randomness)         | Generated value    | Possible     | `generateToken()`           |
+| Verb             | Usage                                           | Returns            | Side Effects | Example                     |
+| :--------------- | :---------------------------------------------- | :----------------- | :----------- | :-------------------------- |
+| `toX`            | Pure mapping/transformation                     | Transformed value  | None         | `toUserDto(entity)`         |
+| `fromX`          | Reverse transformation (when `to` is ambiguous) | Transformed value  | None         | `fromJson(string)`          |
+| `normalizeX`     | Convert foreign/unsafe input to canonical shape | Normalized value   | None         | `normalizePgError(err)`     |
+| `extractX`       | Pull info from unknown/complex values           | Value or undefined | None         | `extractMetadata(error)`    |
+| `makeX`          | Simple factory/constructor                      | New object         | None         | `makeAppError(key)`         |
+| `{thing}Factory` | Complex factory (use for DI factories)          | New object         | Possible     | `userUseCaseFactory()`      |
+| `buildX`         | Builder pattern (accumulates state)             | Builder or value   | None         | `buildQuery().where()...`   |
+| `isX`            | Type guard                                      | Boolean            | None         | `isAppError(err)`           |
+| `hasX`           | Capability/metadata check                       | Boolean            | None         | `hasMetadata(error)`        |
+| `canX`           | Authorization/permission check                  | Boolean            | None         | `canUserDelete(user, post)` |
+| `shouldX`        | Business rule decision                          | Boolean            | None         | `shouldRotateSession(s)`    |
+| `getX`           | Safe access (may return undefined)              | Value or undefined | None         | `getFieldErrors(result)`    |
+| `findX`          | Search operation (may return null)              | Value or null      | Possible     | `findUserById(id)`          |
+| `fetchX`         | Remote/async retrieval                          | Value or error     | Yes          | `fetchFromApi(url)`         |
+| `validateX`      | Validation logic                                | Boolean or errors  | None         | `validatePassword(pw)`      |
+| `evaluateX`      | Complex business rule evaluation                | Decision object    | None         | `evaluateSessionPolicy(s)`  |
+| `calculateX`     | Computation/derivation                          | Computed value     | None         | `calculateDiscount(user)`   |
+| `generateX`      | Produce new value (may have randomness)         | Generated value    | Possible     | `generateToken()`           |
 
 ### Verbs to Avoid
 
@@ -376,11 +324,19 @@ In use cases and workflows, **use the contract name** (without "Contract" suffix
 ```typescript
 // ✅ Good: Consumer-centric dependency names
 export class LoginUseCase {
+  private readonly userRepo: UserRepositoryContract;
+  private readonly hasher: PasswordHasherContract;
+  private readonly logger: LoggerContract;
+
   constructor(
-    private readonly userRepo: UserRepositoryContract,
-    private readonly hasher: PasswordHasherContract,
-    private readonly logger: LoggerContract,
-  ) {}
+    userRepo: UserRepositoryContract,
+    hasher: PasswordHasherContract,
+    logger: LoggerContract,
+  ) {
+    this.userRepo = userRepo;
+    this.hasher = hasher;
+    this.logger = logger;
+  }
 }
 
 // ❌ Bad: Implementation-leaky names
@@ -437,10 +393,13 @@ export interface AuthUserRepositoryContract {
 // ✅ Good
 // infrastructure/repositories/user.repository.ts
 export class UserRepository implements UserRepositoryContract {
-  constructor(
-    private readonly db: Database,
-    private readonly logger: LoggerContract,
-  ) {}
+  private readonly db: Database;
+  private readonly logger: LoggerContract;
+
+  constructor(db: Database, logger: LoggerContract) {
+    this.db = db;
+    this.logger = logger;
+  }
 
   async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
     const rowResult = await getUserByIdDal(this.db, id, this.logger);
@@ -700,92 +659,23 @@ export const SESSION_SERVICE = Symbol("SESSION_SERVICE");
 
 ---
 
-## Practical Examples
-
-### Example: Login Flow Naming
+## Folder Organization (Modular Clean Architecture)
 
 ```
-
-modules/auth/
-  domain/
-    entities/
-      user.entity.ts              → UserEntity
-      session.entity.ts           → SessionEntity
-    policies/
-      password.policy.ts          → validatePassword(), makeRandomPassword()
-      authorization.policy.ts     → canUserAccess(), evaluatePermissions()
-    repositories/
-      user-repository.contract.ts → UserRepositoryContract
-    services/
-      password-hasher.contract.ts → PasswordHasherContract
-
-  application/
-    dtos/
-      login-request.dto.ts        → LoginRequestDto
-      authenticated-user.dto.ts   → AuthenticatedUserDto
-      session-principal.dto.ts    → SessionPrincipalDto
-    schemas/
-      login-request.schema.ts     → LoginRequestSchema
-    mappers/
-      to-authenticated-user.mapper.ts → toAuthenticatedUserDto()
-    helpers/
-      read-session-token.helper.ts    → readSessionTokenHelper()
-    use-cases/
-      login.use-case.ts           → LoginUseCase
-      login.workflow.ts           → loginWorkflow()
-
-  infrastructure/
-    adapters/
-      auth-user-repository.adapter.ts → AuthUserRepositoryAdapter
-      bcrypt-hasher.adapter.ts    → BcryptHasherAdapter
-      cookie-session.adapter.ts   → CookieSessionAdapter
-    repositories/
-        drizzle/
-          auth-user.repository.ts   → AuthUserRepository
-    services/
-       bcrypt-password.service.ts  → BcryptPasswordService
-    dal/
-      get-user-by-email.dal.ts    → getUserByEmailDal()
-      insert-user.dal.ts          → insertUserDal()
-    mappers/
-      user-row-to-entity.mapper.ts → toUserEntity()
-      pg-error.mapper.ts           → normalizePgError()
-    factories/
-      login-use-case.factory.ts   → makeLoginUseCase()
-
-  presentation/
-    actions/
-      login.action.ts             → loginAction()
-    components/
-      login-form.tsx              → LoginForm
-    login.transport.ts            → LoginTransport, LoginField
+modules/{feature}/
+domain/
+entities/
+policies/
+application/
+contracts/       # All Repository/Service interfaces live here
+dtos/
+use-cases/
+mappers/
+infrastructure/
+repositories/    # Concrete Drizzle/DB implementations
+adapters/        # Tech-specific bridges
+factories/       # DI wiring
+presentation/
+actions/         # Server Actions
+components/      # UI
 ```
-
----
-
-## Migration Checklist
-
-To align existing code with these conventions:
-
-- [ ] Rename generic DTOs to intentional names (`UserDto` → `AuthenticatedUserDto`)
-- [ ] Add suffix redundancy to type names (`LoginRequest` → `LoginRequestDto`)
-- [ ] Move entity→DTO mappers from `domain/policies/` to `application/mappers/`
-- [ ] Keep only business-semantic mappers in policies
-- [ ] Rename contracts to consumer-centric names (`CookieSessionContract` → `SessionStoreContract`)
-- [ ] Update dependency injection to use contract names without tech details
-- [ ] Standardize mapper naming with `to` prefix
-- [ ] Ensure all files use kebab-case
-- [ ] Remove `*.types.ts` dumping grounds
-- [ ] Add technology prefixes to integration-specific types (`PgError`, `JwtClaims`)
-
----
-
-## Summary
-
-These naming conventions create a **predictable, searchable codebase** where:
-
-1. **Intent is obvious** from file and type names
-2. **Architectural role** is clear from suffixes
-3. **Drift is prevented** through intentional, redundant naming
-4. **Synonym confusion** is eliminated with standard verbs
-5. **Boundaries are explicit** through consumer-centric naming
