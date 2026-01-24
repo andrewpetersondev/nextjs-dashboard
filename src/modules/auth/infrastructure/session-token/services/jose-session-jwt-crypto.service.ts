@@ -1,14 +1,14 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
+import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/application/constants/session-token.constants";
 import {
-  CLOCK_TOLERANCE_SEC,
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
-} from "@/modules/auth/infrastructure/jwt/constants/session-jwt.constants";
-import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/jwt/contracts/session-jwt-crypto.contract";
-import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/jwt/transports/session-jwt-claims.transport";
-import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/jwt/transports/session-jwt-verify-options.transport";
+} from "@/modules/auth/infrastructure/session-token/constants/session-jwt.constants";
+import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/session-token/contracts/session-jwt-crypto.contract";
+import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/session-token/transports/session-jwt-claims.transport";
+import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/session-token/transports/session-jwt-verify-options.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -103,7 +103,7 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoContract {
     return {
       algorithms: [JWT_ALG_HS256],
       ...(audience ? { audience } : {}),
-      clockTolerance: CLOCK_TOLERANCE_SEC,
+      clockTolerance: SESSION_TOKEN_CLOCK_TOLERANCE_SEC,
       ...(issuer ? { issuer } : {}),
     };
   }

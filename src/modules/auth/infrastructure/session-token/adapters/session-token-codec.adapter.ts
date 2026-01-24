@@ -2,8 +2,8 @@ import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
-import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/jwt/contracts/session-jwt-crypto.contract";
-import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/jwt/mappers/jwt-to-session-token-claims-dto.mapper";
+import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/session-token/contracts/session-jwt-crypto.contract";
+import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session-token/mappers/jwt-to-session-token-claims-dto.mapper";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -17,7 +17,7 @@ import type { Result } from "@/shared/results/result.types";
  * Responsibility: Transforms Application layer DTOs to/from JWT tokens.
  * Delegates jose-specific mechanics to the strategy.
  */
-export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
+export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
   private readonly logger: LoggingClientContract;
   private readonly jwtCrypto: SessionJwtCryptoContract;
 

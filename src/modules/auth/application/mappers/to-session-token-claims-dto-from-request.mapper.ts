@@ -1,6 +1,6 @@
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { userIdTransformer } from "@/modules/auth/application/schemas/session-token-claims.schema";
+import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 
 /**
  * Maps a token issuance request to the application-level claims DTO.
@@ -15,6 +15,6 @@ export function toSessionTokenClaimsDtoFromRequest(
     exp,
     iat,
     role: input.role,
-    sub: userIdTransformer.encode(input.userId),
+    sub: UserIdSchema.encode(input.userId),
   };
 }

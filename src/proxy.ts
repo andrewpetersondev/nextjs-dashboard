@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { authorizeRequestHelper } from "@/modules/auth/application/helpers/authorize-request.helper";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
-import { createSessionTokenService } from "@/modules/auth/infrastructure/jwt/factories/jwt-session-token-service.factory";
+import { createSessionTokenService } from "@/modules/auth/infrastructure/session-token/factories/session-token-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,

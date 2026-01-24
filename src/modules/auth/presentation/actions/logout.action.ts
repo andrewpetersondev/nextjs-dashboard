@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { logoutWorkflow } from "@/modules/auth/application/session/logout.workflow";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/session-service.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition-root/session-service.factory";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 

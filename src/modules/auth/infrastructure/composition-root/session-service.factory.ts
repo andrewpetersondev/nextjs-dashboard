@@ -9,7 +9,7 @@ import { TerminateSessionUseCase } from "@/modules/auth/application/session/term
 import { VerifySessionUseCase } from "@/modules/auth/application/session/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
 import { createCookieSessionStoreAdapter } from "@/modules/auth/infrastructure/cookies/factories/cookie-session-store.factory";
-import { createSessionTokenService } from "@/modules/auth/infrastructure/jwt/factories/jwt-session-token-service.factory";
+import { createSessionTokenService } from "@/modules/auth/infrastructure/session-token/factories/session-token-service.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**

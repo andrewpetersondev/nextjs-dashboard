@@ -7,7 +7,7 @@ import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/sess
 import { toSessionTokenClaimsDtoFromRequest } from "@/modules/auth/application/mappers/to-session-token-claims-dto-from-request.mapper";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session.policy";
-import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/jwt/mappers/jwt-to-session-token-claims-dto.mapper";
+import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session-token/mappers/jwt-to-session-token-claims-dto.mapper";
 import {
   nowInSeconds,
   secondsToMilliseconds,
@@ -22,9 +22,7 @@ import type { Result } from "@/shared/results/result.types";
  * Handles token-specific operations (encode, decode, validate).
  * Separates crypto/JWT concerns from session lifecycle.
  */
-export class JwtSessionTokenServiceAdapter
-  implements SessionTokenServiceContract
-{
+export class SessionTokenServiceAdapter implements SessionTokenServiceContract {
   private readonly codec: SessionTokenCodecContract;
 
   constructor(codec: SessionTokenCodecContract) {

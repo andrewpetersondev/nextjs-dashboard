@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import { JwtSessionTokenServiceAdapter } from "@/modules/auth/infrastructure/jwt/adapters/jwt-session-token-service.adapter";
-import { createSessionTokenCodec } from "@/modules/auth/infrastructure/jwt/factories/jose-session-token-codec.factory";
+import { SessionTokenServiceAdapter } from "@/modules/auth/infrastructure/session-token/adapters/session-token-service.adapter";
+import { createSessionTokenCodec } from "@/modules/auth/infrastructure/session-token/factories/session-token-codec.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -13,5 +13,5 @@ export function createSessionTokenService(
   logger: LoggingClientContract,
 ): SessionTokenServiceContract {
   const tokenCodec = createSessionTokenCodec(logger);
-  return new JwtSessionTokenServiceAdapter(tokenCodec);
+  return new SessionTokenServiceAdapter(tokenCodec);
 }

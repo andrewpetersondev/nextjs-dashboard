@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
-import { JoseSessionTokenCodecAdapter } from "@/modules/auth/infrastructure/jwt/adapters/jose-session-token-codec.adapter";
-import { JoseSessionJwtCryptoService } from "@/modules/auth/infrastructure/jwt/services/jose-session-jwt-crypto.service";
+import { SessionTokenCodecAdapter } from "@/modules/auth/infrastructure/session-token/adapters/session-token-codec.adapter";
+import { JoseSessionJwtCryptoService } from "@/modules/auth/infrastructure/session-token/services/jose-session-jwt-crypto.service";
 import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
@@ -28,5 +28,5 @@ export function createSessionTokenCodec(
     SESSION_AUDIENCE,
   );
 
-  return new JoseSessionTokenCodecAdapter(logger, jwtCrypto);
+  return new SessionTokenCodecAdapter(logger, jwtCrypto);
 }

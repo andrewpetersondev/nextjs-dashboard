@@ -1,5 +1,5 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { userIdTransformer } from "@/modules/auth/application/schemas/session-token-claims.schema";
+import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
 
 /**
@@ -18,6 +18,6 @@ export function toSessionEntity(
     expiresAt: tokenClaims.exp,
     issuedAt: tokenClaims.iat,
     role: tokenClaims.role,
-    userId: userIdTransformer.decode(tokenClaims.sub),
+    userId: UserIdSchema.decode(tokenClaims.sub),
   };
 }
