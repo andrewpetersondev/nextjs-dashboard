@@ -49,7 +49,7 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoContract {
     try {
       let signer = new SignJWT(claims satisfies JWTPayload)
         .setProtectedHeader({ alg: JWT_ALG_HS256, typ: JWT_TYP_JWT })
-        .setIssuedAt()
+        .setIssuedAt(claims.iat)
         .setExpirationTime(claims.exp);
 
       if (this.issuer) {

@@ -4,8 +4,9 @@ import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/sess
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/jwt/contracts/session-jwt-crypto.contract";
 import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/jwt/mappers/jwt-to-session-token-claims-dto.mapper";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
@@ -45,12 +46,14 @@ export class JoseSessionTokenCodecAdapter implements SessionTokenCodecContract {
     if (!parsed.success) {
       this.logger.warn("JWT payload validation failed", {
         errors: parsed.error.flatten().fieldErrors,
+        tokenLength: token.length,
       });
 
       return Err(
-        makeUnexpectedError(parsed.error, {
+        makeAppError(APP_ERROR_KEYS.validation, {
+          cause: parsed.error,
           message: "jwt.validation.failed",
-          metadata: { token: token.slice(0, 10) },
+          metadata: {},
         }),
       );
     }

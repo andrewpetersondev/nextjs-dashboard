@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { authorizeRequestHelper } from "@/modules/auth/application/helpers/authorize-request.helper";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
-import { createSessionTokenCodec } from "@/modules/auth/infrastructure/jwt/factories/jose-session-token-codec.factory";
+import { createSessionTokenService } from "@/modules/auth/infrastructure/jwt/factories/jwt-session-token-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,
@@ -32,7 +32,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   }
 
   const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-  const tokenCodec = createSessionTokenCodec(logger);
+  const sessionTokenService = createSessionTokenService(logger);
 
   const outcome = await authorizeRequestHelper(
     { cookie, isAdminRoute, isProtectedRoute, isPublicRoute, path },
@@ -41,7 +41,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
         dashboardRoot: ROUTES.dashboard.root,
         login: ROUTES.auth.login,
       },
-      tokenCodec,
+      sessionTokenService,
     },
   );
 

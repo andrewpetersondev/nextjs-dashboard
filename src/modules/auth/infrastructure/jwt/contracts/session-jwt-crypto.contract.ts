@@ -7,8 +7,6 @@ import type { Result } from "@/shared/results/result.types";
  * Decouples "what we do" (encode/decode tokens) from "how we do it" (jose, algorithms, etc).
  *
  * Clean Architecture: Infrastructure contract for JWT implementation details.
- *
- * TODO: is this an infrastructure contract or an application contract?
  */
 export interface SessionJwtCryptoContract {
   sign(claims: SessionJwtClaimsTransport): Promise<Result<string, AppError>>;

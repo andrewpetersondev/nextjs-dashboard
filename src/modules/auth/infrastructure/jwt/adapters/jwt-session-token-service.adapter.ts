@@ -33,12 +33,21 @@ export class JwtSessionTokenServiceAdapter
 
   /**
    * Decodes a token and returns the application-level claims.
+   *
+   * @remarks
+   * Canonical path: decode/verify via codec, then validate via this service
+   * so all consumers get consistent schema + error behavior.
    */
   async decode(
     token: string,
   ): Promise<Result<SessionTokenClaimsDto, AppError>> {
-    // Implementation now satisfies the contract directly
-    return await this.codec.decode(token);
+    const decodedResult = await this.codec.decode(token);
+
+    if (!decodedResult.ok) {
+      return Err(decodedResult.error);
+    }
+
+    return await this.validate(decodedResult.value);
   }
 
   /**

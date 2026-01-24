@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
+import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
@@ -12,11 +12,11 @@ import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/type
  * so downstream authorization can respond with an explicit redirect reason.
  *
  * @param cookie Cookie header value containing the encoded session token.
- * @param tokenCodec Codec used to decode the session token.
+ * @param sessionTokenService Service used to decode + validate the session token.
  */
 async function extractSessionClaims(
   cookie: string | undefined,
-  tokenCodec: SessionTokenCodecContract,
+  sessionTokenService: SessionTokenServiceContract,
 ): Promise<
   Readonly<
     | { claims: SessionTokenClaimsDto; reason: "ok" }
@@ -27,7 +27,7 @@ async function extractSessionClaims(
     return { claims: undefined, reason: "no_cookie" };
   }
 
-  const decodedResult = await tokenCodec.decode(cookie);
+  const decodedResult = await sessionTokenService.decode(cookie);
   if (!decodedResult.ok) {
     return { claims: undefined, reason: "decode_failed" };
   }
@@ -51,14 +51,17 @@ export async function authorizeRequestHelper(
     path: string;
   }>,
   deps: Readonly<{
-    tokenCodec: SessionTokenCodecContract;
     routes: Readonly<{
       dashboardRoot: `/${string}`;
       login: `/${string}`;
     }>;
+    sessionTokenService: SessionTokenServiceContract;
   }>,
 ): Promise<AuthRequestAuthorizationOutcome> {
-  const decoded = await extractSessionClaims(input.cookie, deps.tokenCodec);
+  const decoded = await extractSessionClaims(
+    input.cookie,
+    deps.sessionTokenService,
+  );
 
   const routeType = getRouteTypePolicy({
     isAdminRoute: input.isAdminRoute,
