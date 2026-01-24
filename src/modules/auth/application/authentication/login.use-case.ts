@@ -52,11 +52,16 @@ export class LoginUseCase {
           );
         }
 
-        const passwordOk = await this.hasher.compare(
+        const passwordOkResult = await this.hasher.compare(
           input.password,
           user.password,
         );
-        if (!passwordOk) {
+
+        if (!passwordOkResult.ok) {
+          return Err(passwordOkResult.error);
+        }
+
+        if (!passwordOkResult.value) {
           return Err(
             AuthErrorFactory.makeCredentialFailure("invalid_password", {
               userId: user.id,

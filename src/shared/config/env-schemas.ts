@@ -40,6 +40,7 @@ export type SessionAudience = z.infer<typeof SessionAudienceSchema>;
 
 // Canonical server/tooling schema for secrets used everywhere
 export const ServerEnvSchema = z.object({
+  authBcryptSaltRounds: z.coerce.number().int().positive(),
   databaseUrl: z.string().min(1),
   sessionAudience: SessionAudienceSchema,
   sessionIssuer: SessionIssuerSchema,

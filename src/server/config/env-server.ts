@@ -21,6 +21,7 @@ function parseServerEnv() {
 
   // Use centralized env mapping from shared config
   const envToValidate = mapEnvVars({
+    authBcryptSaltRounds: "AUTH_BCRYPT_SALT_ROUNDS",
     databaseUrl: "DATABASE_URL",
     sessionAudience: "SESSION_AUDIENCE",
     sessionIssuer: "SESSION_ISSUER",
@@ -47,6 +48,7 @@ function parseServerEnv() {
 /** Export validated server-only variables */
 const env = parseServerEnv();
 
+export const AUTH_BCRYPT_SALT_ROUNDS = env.authBcryptSaltRounds;
 export const DATABASE_URL = env.databaseUrl;
 export const SESSION_SECRET = env.sessionSecret;
 export const SESSION_ISSUER = env.sessionIssuer;

@@ -11,6 +11,7 @@ import type { Result } from "@/shared/results/result.types";
  * Type-safe env accessor.
  */
 const ENV_VARIABLES_TUPLE = [
+  "AUTH_BCRYPT_SALT_ROUNDS",
   "NODE_ENV",
   "DATABASE_ENV",
   "LOG_LEVEL",
