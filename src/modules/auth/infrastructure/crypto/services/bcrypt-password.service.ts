@@ -4,6 +4,7 @@ import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { Hash } from "@/shared/branding/brands";
 
 // TODO: Eventually, make this an environment variable.
+// temporary hard-coded baseline
 const SALT_ROUNDS = 10 as const;
 
 /**

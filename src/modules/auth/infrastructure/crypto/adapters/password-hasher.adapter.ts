@@ -8,7 +8,7 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * This adapter bridges the domain's need for password hashing
+ * This adapter bridges the application's need for password hashing
  * with the concrete BcryptPasswordService implementation.
  */
 export class PasswordHasherAdapter implements PasswordHasherContract {
