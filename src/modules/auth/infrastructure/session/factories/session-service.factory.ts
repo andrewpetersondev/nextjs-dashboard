@@ -2,7 +2,7 @@ import "server-only";
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { cookieSessionStoreFactory } from "@/modules/auth/infrastructure/cookies/factories/cookie-session-store.factory";
-import { SessionFacade } from "@/modules/auth/infrastructure/session/services/session.facade";
+import { SessionService } from "@/modules/auth/infrastructure/session/services/session.service";
 import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/session-token/factories/session-token-service.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -21,5 +21,5 @@ export function sessionServiceFactory(
     sessionTokenService: sessionTokenServiceFactory(scopedLogger),
   };
 
-  return new SessionFacade(deps);
+  return new SessionService(deps);
 }

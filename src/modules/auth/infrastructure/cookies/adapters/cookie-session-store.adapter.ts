@@ -1,6 +1,6 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
-import { getSessionCookieOptionsConfig } from "@/modules/auth/infrastructure/cookies/config/session-cookie-options.policy";
+import { getSessionCookieOptionsConfig } from "@/modules/auth/infrastructure/cookies/config/get-session-cookie-options.config";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/cookies/constants/session-cookie.constants";
 import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructure/cookies/helpers/to-session-cookie-max-age-seconds.helper";
 import type { CookieContract } from "@/server/cookies/cookie.contract";

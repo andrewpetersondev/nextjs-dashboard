@@ -13,7 +13,7 @@ import type { TerminateSessionReason } from "@/modules/auth/domain/policies/sess
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
-export class SessionFacade implements SessionServiceContract {
+export class SessionService implements SessionServiceContract {
   private readonly deps: SessionUseCaseDependencies;
 
   constructor(deps: SessionUseCaseDependencies) {
