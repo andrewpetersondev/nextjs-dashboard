@@ -6,7 +6,7 @@ import {
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/session-token/constants/session-jwt.constants";
-import type { SessionJwtCryptoContract } from "@/modules/auth/infrastructure/session-token/contracts/session-jwt-crypto.contract";
+import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session-token/strategies/session-jwt-crypto.strategy";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/session-token/transports/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/session-token/transports/session-jwt-verify-options.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -23,7 +23,7 @@ const encoder = new TextEncoder();
  *
  * Responsibility: "How" to sign/verify JWTs using the jose library.
  */
-export class JoseSessionJwtCryptoService implements SessionJwtCryptoContract {
+export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
   private readonly audience: string | undefined;
   private readonly encodedKey: Uint8Array;
   private readonly issuer: string | undefined;

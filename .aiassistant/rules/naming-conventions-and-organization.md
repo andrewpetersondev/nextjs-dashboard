@@ -22,6 +22,14 @@ Standardized naming to ensure predictability, discoverability, and easy refactor
    - Side-effect contracts (Repositories/Services) live in `application/contracts/`.
    - Domain remains 100% side-effect free logic.
 
+5. **Port vs Infrastructure Seam (Anti-Drift Rule)**:
+   - Use `*.contract.ts` / `*Contract` **only** for **Ports** that are imported by `domain/**` or `application/**`.
+   - If an interface/type is used **only inside** `infrastructure/**`, it is **not** a Port. Prefer an explicit Infrastructure seam name like:
+     - `*.strategy.ts` / `*Strategy`
+     - `*.provider.ts` / `*Provider`
+     - `*.client.ts` / `*Client`
+   - Heuristic: if the only references are Infrastructure files (e.g., an Infrastructure adapter + an Infrastructure service), naming it `*Contract` is misleading and will cause “naming drift”.
+
 ---
 
 ## Boundary-Explicit Suffixes
@@ -41,6 +49,7 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 | `.transport.ts`  | Wire/HTTP/Cookie-only shape                 | Presentation           | `LoginTransport`            | `login.transport.ts`              |
 | `.view.ts`       | Server → Client UI shape                    | Presentation           | `UserProfileView`           | `user-profile.view.ts`            |
 | `.contract.ts`   | Dependency boundary interface (Port)        | Domain / Application   | `PasswordHasherContract`    | `password-hasher.contract.ts`     |
+| `.strategy.ts`   | Infrastructure-internal interface/seam      | Infrastructure         | `SessionJwtCryptoStrategy`  | `session-jwt-crypto.strategy.ts`  |
 | `.adapter.ts`    | Structural Bridge (delegates/wraps)         | Infrastructure         | `AuthUserRepositoryAdapter` | `auth-user-repository.adapter.ts` |
 | `.repository.ts` | Concrete Persistence Implementation         | Infrastructure         | `AuthUserRepository`        | `auth-user.repository.ts`         |
 | `.service.ts`    | Concrete Logic Implementation               | Infrastructure         | `BcryptPasswordHasher`      | `bcrypt-password.service.ts`      |
@@ -133,13 +142,25 @@ Follow the standard verb vocabulary (see below).
 
 ```typescript
 // ✅ Good: Clear transformation direction
-export function toUserEntity(dto: CreateUserDto): UserEntity { ... }
-export function toAuthenticatedUserDto(entity: UserEntity): AuthenticatedUserDto { ... }
-export function toUserRow(entity: UserEntity): InsertUser { ... }
+export function toUserEntity(dto: CreateUserDto): UserEntity {
+  // ...
+}
+export function toAuthenticatedUserDto(
+  entity: UserEntity,
+): AuthenticatedUserDto {
+  // ...
+}
+export function toUserRow(entity: UserEntity): InsertUser {
+  // ...
+}
 
 // ❌ Bad: Ambiguous or verbose
-export function mapUser(dto: CreateUserDto): UserEntity { ... }
-export function convertDtoToEntity(dto: CreateUserDto): UserEntity { ... }
+export function mapUser(dto: CreateUserDto): UserEntity {
+  // ...
+}
+export function convertDtoToEntity(dto: CreateUserDto): UserEntity {
+  // ...
+}
 ```
 
 ### Special Case: Pure Mapping in Policies
@@ -197,13 +218,23 @@ Policies contain pure business logic with no side effects.
 ```typescript
 // ✅ Good: Multiple related rules grouped by concept
 // password.policy.ts
-export function validatePasswordStrength(password: string): boolean { ... }
-export function requiresPasswordChange(lastChanged: Date): boolean { ... }
-export function makeRandomPassword(length: number): string { ... }
+export function validatePasswordStrength(password: string): boolean {
+  // ...
+}
+export function requiresPasswordChange(lastChanged: Date): boolean {
+  // ...
+}
+export function makeRandomPassword(length: number): string {
+  // ...
+}
 
 // ✅ Also Good: Single important rule with clear name
 // evaluate-session-lifecycle.policy.ts
-export function evaluateSessionLifecyclePolicy(session: SessionEntity): Decision { ... }
+export function evaluateSessionLifecyclePolicy(
+  session: SessionEntity,
+): Decision {
+  // ...
+}
 ```
 
 ---
@@ -251,18 +282,38 @@ Reduce synonym drift by sticking to these standard verbs.
 
 ```typescript
 // ✅ Good: Clear, standard verbs
-export function toUserDto(entity: UserEntity): UserDto { ... }
-export function isAuthenticated(user: UserEntity | null): boolean { ... }
-export function canDeletePost(user: UserEntity, post: PostEntity): boolean { ... }
-export function makeAppError(key: string, metadata?: Metadata): AppError { ... }
-export function evaluateSessionLifecycle(session: SessionEntity): Decision { ... }
-export function normalizeDbError(error: unknown): AppError { ... }
+export function toUserDto(entity: UserEntity): UserDto {
+  // ...
+}
+export function isAuthenticated(user: UserEntity | null): boolean {
+  // ...
+}
+export function canDeletePost(user: UserEntity, post: PostEntity): boolean {
+  // ...
+}
+export function makeAppError(key: string, metadata?: Metadata): AppError {
+  // ...
+}
+export function evaluateSessionLifecycle(session: SessionEntity): Decision {
+  // ...
+}
+export function normalizeDbError(error: unknown): AppError {
+  // ...
+}
 
 // ❌ Bad: Non-standard or vague verbs
-export function mapUserToDto(entity: UserEntity): UserDto { ... }
-export function convertUserEntity(entity: UserEntity): UserDto { ... }
-export function processSession(session: SessionEntity): Decision { ... }
-export function handleError(error: unknown): AppError { ... }
+export function mapUserToDto(entity: UserEntity): UserDto {
+  // ...
+}
+export function convertUserEntity(entity: UserEntity): UserDto {
+  // ...
+}
+export function processSession(session: SessionEntity): Decision {
+  // ...
+}
+export function handleError(error: unknown): AppError {
+  // ...
+}
 ```
 
 ---
@@ -272,6 +323,8 @@ export function handleError(error: unknown): AppError { ... }
 ### Contracts (Interfaces)
 
 **Location**: `domain/services/` or `application/contracts/`
+
+**Meaning**: A Contract is a **Port** owned by the inner layers (Domain/Application) and implemented by Infrastructure.
 
 **Naming**:
 
@@ -297,6 +350,17 @@ export interface SessionTokenServiceContract {
 }
 ```
 
+### Strategies (Infrastructure seams)
+
+**Location**: `infrastructure/**/strategies/` (or another clearly Infrastructure-only folder)
+
+**Meaning**: A Strategy is an **internal Infrastructure seam** used to swap technical mechanisms (libraries, algorithms) without claiming to be an Application/Domain Port.
+
+**Naming**:
+
+- File: `{capability}.strategy.ts`
+- Type: `{Capability}Strategy`
+
 ### Adapters (Implementations)
 
 **Location**: `infrastructure/adapters/`
@@ -310,13 +374,19 @@ export interface SessionTokenServiceContract {
 ```typescript
 // ✅ Good: Technology in adapter name
 // bcrypt-hasher.adapter.ts
-export class BcryptHasherAdapter implements PasswordHasherContract { ... }
+export class BcryptHasherAdapter implements PasswordHasherContract {
+  // ...
+}
 
 // cookie-session.adapter.ts
-export class CookieSessionAdapter implements SessionStoreContract { ... }
+export class CookieSessionAdapter implements SessionStoreContract {
+  // ...
+}
 
 // jwt-token.adapter.ts
-export class JwtTokenAdapter implements SessionTokenServiceContract { ... }
+export class JwtTokenAdapter implements SessionTokenServiceContract {
+  // ...
+}
 ```
 
 ### Dependency Injection Naming
@@ -429,13 +499,19 @@ export class UserRepository implements UserRepositoryContract {
 ```typescript
 // ✅ Good
 // login.use-case.ts
-export class LoginUseCase { ... }
+export class LoginUseCase {
+  // ...
+}
 
 // create-user.use-case.ts
-export class CreateUserUseCase { ... }
+export class CreateUserUseCase {
+  // ...
+}
 
 // refresh-session.use-case.ts
-export class RefreshSessionUseCase { ... }
+export class RefreshSessionUseCase {
+  // ...
+}
 ```
 
 ### Workflows
@@ -453,7 +529,9 @@ export class RefreshSessionUseCase { ... }
 export async function loginWorkflow(
   input: LoginRequestDto,
   deps: LoginDependencies,
-): Promise<Result<SessionPrincipalDto, AppError>> { ... }
+): Promise<Result<SessionPrincipalDto, AppError>> {
+  // ...
+}
 ```
 
 **Use Case vs Workflow**:
@@ -477,18 +555,9 @@ export async function loginWorkflow(
 // read-session-token.helper.ts
 export async function readSessionTokenHelper(
   deps: SessionDependencies,
-): Promise<Result<SessionToken, AppError>> { ... }
-
-// validate-and-refresh-session.helper.ts
-export async function validateAndRefreshSessionHelper(
-  deps: SessionDependencies,
-): Promise<Result<SessionPrincipal, AppError>> { ... }
-
-// make-auth-use-case-logger.helper.ts
-export function makeAuthUseCaseLoggerHelper(
-  logger: LoggerContract,
-  useCase: string,
-): LoggerContract { ... }
+): Promise<Result<SessionToken, AppError>> {
+  // ...
+}
 ```
 
 **When to Use Helpers**:
@@ -669,13 +738,14 @@ domain/
 entities/
 policies/
 application/
-contracts/       # All Repository/Service interfaces live here
+contracts/       # Ports (Contracts) live here
 dtos/
 use-cases/
 mappers/
 infrastructure/
-repositories/    # Concrete Drizzle/DB implementations
-adapters/        # Tech-specific bridges
+repositories/    # Concrete implementations
+adapters/        # Bridges to Ports
+strategies/      # Infrastructure seams (internal)
 factories/       # DI wiring
 presentation/
 actions/         # Server Actions

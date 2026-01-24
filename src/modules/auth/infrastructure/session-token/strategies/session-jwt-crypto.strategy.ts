@@ -3,12 +3,13 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Strategy for JWT token operations.
- * Decouples "what we do" (encode/decode tokens) from "how we do it" (jose, algorithms, etc).
+ * Strategy for JWT signing and verification.
+ * Decouples "what we do" (sign/verify tokens) from "how we do it" (jose, algorithms, key handling).
  *
- * Clean Architecture: Infrastructure contract for JWT implementation details.
+ * Clean Architecture: Infrastructure seam for swapping JWT implementations without affecting
+ * application-facing token contracts.
  */
-export interface SessionJwtCryptoContract {
+export interface SessionJwtCryptoStrategy {
   sign(claims: SessionJwtClaimsTransport): Promise<Result<string, AppError>>;
   verify(token: string): Promise<Result<SessionJwtClaimsTransport, AppError>>;
 }
