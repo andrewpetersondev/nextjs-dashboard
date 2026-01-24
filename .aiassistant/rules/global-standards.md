@@ -83,40 +83,19 @@ Server Actions must remain **thin** and framework-focused. They are the bridge b
 
 - Feature modules should be self-contained "bounded contexts".
 - Cross-module imports are only allowed from a module's `shared` or `ui` folders, or from the global `src/shared`.
-- **Hard Rule**: Never import from another module's `server/**` directory.
 
-## Constructor Standards
+### `@/server/**` boundary (server-only infrastructure)
 
-To maintain consistency and avoid implicit behavior, all classes must use explicit property assignment.
+`@/server/**` is a server-only infrastructure boundary for shared sensitive code (DB, secrets, cookies, crypto, event bus).
 
-- **No Parameter Properties**: Avoid using `private readonly prop: Type` inside the constructor argument list.
-- **Explicit Assignment**: Define the property in the class body and assign it in the constructor body.
+**Allowed imports**:
 
-```typescript
-// ✅ Good
-export class BcryptPasswordService {
-  private readonly saltRounds: number;
+- `infrastructure/**` → may import from `@/server/**`
+- `presentation/**` (server actions, route handlers) → may import from `@/server/**`
+- `shared/**` (server utilities only) → may import from `@/server/**` **only if** the importing file is server-only
 
-  constructor(saltRounds: number) {
-    this.saltRounds = saltRounds;
-  }
-}
+**Forbidden imports**:
 
-// ❌ Bad: Shorthand parameter properties
-export class BcryptPasswordService {
-  constructor(private readonly saltRounds: number) {}
-}
-```
-
-**Constructor Standard (Hard Rule)**:
-
-```typescript
-// ✅ Good: Explicit assignment
-export class LoginUseCase {
-  private readonly userRepo: AuthUserRepositoryContract;
-
-  constructor(userRepo: AuthUserRepositoryContract) {
-    this.userRepo = userRepo;
-  }
-}
-```
+- `domain/**` → must never import from `@/server/**`
+- `application/**` → must never import from `@/server/**`
+- Client Components (`"use client"`) → must never import from `@/server/**` (enforced via `"server-only"`)

@@ -79,4 +79,19 @@ Server Actions must remain **thin** and framework-focused. They are the bridge b
 
 - Feature modules should be self-contained "bounded contexts".
 - Cross-module imports are only allowed from a module's `shared` or `ui` folders, or from the global `src/shared`.
-- **Hard Rule**: Never import from another module's `server/**` directory.
+
+### `@/server/**` boundary (server-only infrastructure)
+
+`@/server/**` is a server-only infrastructure boundary for shared sensitive code (DB, secrets, cookies, crypto, event bus).
+
+**Allowed imports**:
+
+- `infrastructure/**` → may import from `@/server/**`
+- `presentation/**` (server actions, route handlers) → may import from `@/server/**`
+- `shared/**` (server utilities only) → may import from `@/server/**` **only if** the importing file is server-only
+
+**Forbidden imports**:
+
+- `domain/**` → must never import from `@/server/**`
+- `application/**` → must never import from `@/server/**`
+- Client Components (`"use client"`) → must never import from `@/server/**` (enforced via `"server-only"`)
