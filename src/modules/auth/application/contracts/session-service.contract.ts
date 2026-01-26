@@ -2,7 +2,7 @@ import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
-import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
+import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

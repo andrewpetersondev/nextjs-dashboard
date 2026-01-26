@@ -9,7 +9,7 @@ import { ReadSessionUseCase } from "@/modules/auth/application/session/read-sess
 import { RotateSessionUseCase } from "@/modules/auth/application/session/rotate-session.use-case";
 import { TerminateSessionUseCase } from "@/modules/auth/application/session/terminate-session.use-case";
 import { VerifySessionUseCase } from "@/modules/auth/application/session/verify-session.use-case";
-import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session.policy";
+import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
