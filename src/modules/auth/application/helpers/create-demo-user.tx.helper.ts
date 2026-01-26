@@ -4,13 +4,13 @@ import type { PasswordGeneratorContract } from "@/modules/auth/application/contr
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
+// TODO: this dependency is pointing outward creating a violation
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/domain/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterError,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/registration.policy";
-// TODO: this dependency is pointing outward creating a violation
-import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { UserRole } from "@/shared/domain/user/user-role.types";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
