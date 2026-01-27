@@ -3,7 +3,7 @@ import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read
 import type { ReadSessionUseCase } from "@/modules/auth/application/session/read-session.use-case";
 import { AuthSecurityErrors } from "@/modules/auth/domain/policies/auth-security.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err } from "@/shared/results/result";
+import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -39,6 +39,6 @@ export class RequireSessionUseCase {
       return Err(AuthSecurityErrors.missingSession());
     }
 
-    return readResult as Result<ReadSessionOutcomeDto, AppError>;
+    return Ok(session);
   }
 }

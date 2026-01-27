@@ -14,5 +14,11 @@ export function sessionCookieStoreFactory(
   logger: LoggingClientContract,
 ): SessionStoreContract {
   const cookies = createCookieService();
-  return new SessionCookieStoreAdapter(cookies, logger);
+
+  const store: SessionStoreContract = new SessionCookieStoreAdapter(
+    cookies,
+    logger,
+  );
+
+  return store;
 }
