@@ -17,10 +17,16 @@ type LoginFormData = Readonly<Partial<Record<LoginField, string>>>;
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;
 
 /**
- * Maps invalid_credentials errors to field-level errors for email and password.
+ * Maps `invalid_credentials` errors to field-level errors for both email and password.
  *
- * Provides a unified security response that doesn't reveal which field
- * was incorrect, preventing username enumeration attacks.
+ * @remarks
+ * This function provides a unified security response that doesn't reveal whether
+ * the email or the password was incorrect, thereby preventing username enumeration attacks.
+ *
+ * @param error - The application error to map.
+ * @param formData - The data submitted with the login form.
+ * @returns A {@link FormResult} containing the mapped errors.
+ * @internal
  */
 function mapLoginInvalidCredentialsError(
   error: AppError,
@@ -42,10 +48,18 @@ function mapLoginInvalidCredentialsError(
 }
 
 /**
- * Maps generic auth errors to FormResult with appropriate field and form-level errors.
+ * Maps generic authentication errors to a {@link FormResult} with appropriate field and form-level errors.
  *
- * Ensures that if no specific field errors exist, the general error message
- * is surfaced at the form level for user feedback.
+ * @remarks
+ * This helper ensures that if no specific field errors are found in the {@link AppError},
+ * the general error message is surfaced at the form level to provide feedback to the user.
+ *
+ * @template TField - The type of form fields.
+ * @param error - The application error to map.
+ * @param formData - The data submitted with the form.
+ * @param fields - The list of valid field names for the form.
+ * @returns A {@link FormResult} containing the mapped errors.
+ * @internal
  */
 function mapGenericAuthError<TField extends string>(
   error: AppError,
@@ -64,13 +78,19 @@ function mapGenericAuthError<TField extends string>(
 }
 
 /**
- * Converts login authentication errors into UI-compatible FormResults.
- *
- * Handles invalid_credentials with unified security responses for email/password fields.
+ * Converts login authentication errors into UI-compatible {@link FormResult} objects.
  *
  * @remarks
- * Returns `FormResult<never>` because this function only returns errors (never success).
- * The type casting is safe since error results are covariant in their success type parameter.
+ * This function specifically handles `invalid_credentials` by providing a unified
+ * security response for both email and password fields. Other errors are mapped
+ * generically.
+ *
+ * Returns `FormResult<never>` because this mapper is intended for error scenarios
+ * only (it never returns a success state).
+ *
+ * @param error - The application error encountered during login.
+ * @param formData - The data submitted with the login form.
+ * @returns A {@link FormResult} containing the mapped errors.
  */
 export function toLoginFormResult(
   error: AppError,
@@ -84,13 +104,19 @@ export function toLoginFormResult(
 }
 
 /**
- * Converts signup authentication errors into UI-compatible FormResults.
- *
- * Maps all errors consistently without special credential handling
- * (signup doesn't have the same enumeration attack surface as login).
+ * Converts signup authentication errors into UI-compatible {@link FormResult} objects.
  *
  * @remarks
- * Returns `FormResult<never>` because this function only returns errors (never success).
+ * Maps all signup errors consistently. Unlike login, signup doesn't require
+ * the same unified error message strategy for security against enumeration,
+ * as the existence of an account is typically revealed during the process.
+ *
+ * Returns `FormResult<never>` because this mapper is intended for error scenarios
+ * only (it never returns a success state).
+ *
+ * @param error - The application error encountered during signup.
+ * @param formData - The data submitted with the signup form.
+ * @returns A {@link FormResult} containing the mapped errors.
  */
 export function toSignupFormResult(
   error: AppError,

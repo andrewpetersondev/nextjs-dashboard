@@ -24,21 +24,23 @@ import { ROUTES } from "@/shared/routes/routes";
 const fields = SIGNUP_FIELDS_LIST;
 
 /**
- * Handles the signup action by validating form data, creating the user,
- * establishing a session, and redirecting on success.
- *
- * Flow:
- * - Validate form → if invalid, return FormResult with field errors.
- * - Signup → map Ok(user) to { id, role } only.
- * - Establish session → on failure, map to UI-safe FormResult.
- * - Redirect to dashboard on success.
+ * Next.js Server Action for user registration (signup).
  *
  * @remarks
- * - Transaction ensures user + initial data are created atomically.
- * - Request ID propagates through all layers for observability.
- * - Password is hashed before storage (never stored in plain text).
+ * This action orchestrates the entire signup flow:
+ * 1. Validates the {@link FormData} against {@link SignupRequestSchema}.
+ * 2. Executes the {@link signupWorkflow} which handles user creation within a
+ *    transaction and session establishment.
+ * 3. Tracks performance and logs the outcome (success or failure).
+ * 4. Maps domain/application errors to UI-compatible {@link FormResult}.
+ * 5. Revalidates the dashboard path and redirects on success.
  *
- * @returns FormResult on validation/auth errors, never returns on success (redirects)
+ * It is intended to be used with the `useActionState` hook in the signup form component.
+ *
+ * @param _prevState - The previous form state (unused but required by `useActionState`).
+ * @param formData - The form data containing registration details (email, password, username).
+ * @returns A promise resolving to a {@link FormResult} containing error details if the process fails.
+ * @redirects {ROUTES.dashboard.root} on success.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup flow is inherently multi-step
 export async function signupAction(

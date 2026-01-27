@@ -23,10 +23,22 @@ import { ROUTES } from "@/shared/routes/routes";
 const fields = LOGIN_FIELDS_LIST;
 
 /**
- * Next.js Server Action boundary for user authentication.
+ * Next.js Server Action for user authentication (login).
  *
- * Orchestrates form validation, authentication workflow execution,
- * and result mapping to UI-compatible FormResult or Next.js redirect.
+ * @remarks
+ * This action orchestrates the entire login process:
+ * 1. Validates the {@link FormData} against {@link LoginRequestSchema}.
+ * 2. Executes the {@link loginWorkflow} which handles authentication and session establishment.
+ * 3. Tracks performance and logs the outcome (success or failure).
+ * 4. Maps domain/application errors to UI-compatible {@link FormResult}.
+ * 5. Revalidates the dashboard path and redirects on success.
+ *
+ * It is intended to be used with the `useActionState` hook in the login form component.
+ *
+ * @param _prevState - The previous form state (unused but required by `useActionState`).
+ * @param formData - The form data containing login credentials (email, password).
+ * @returns A promise resolving to a {@link FormResult} containing error details if the process fails.
+ * @redirects {ROUTES.dashboard.root} on success.
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary requires validation, orchestration, logging, and result mapping
 export async function loginAction(

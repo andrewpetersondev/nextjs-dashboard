@@ -10,10 +10,19 @@ import { ROUTES } from "@/shared/routes/routes";
 /**
  * Verifies the user's session using an optimistic (cookie-based) check.
  *
- * Boundary responsibilities:
- * - caching (React)
- * - redirecting (Next.js)
- * - logging
+ * @remarks
+ * This function is cached using React's `cache` to prevent redundant checks
+ * within the same render pass. It is typically used in Server Components
+ * to ensure a user is authenticated before rendering protected content.
+ *
+ * Responsibilities:
+ * - Executes the {@link verifySessionOptimisticWorkflow}.
+ * - Redirects to the login page if no valid session is found.
+ * - Logs the outcome of the verification.
+ * - Provides optimistic session data (role, userId) on success.
+ *
+ * @returns A promise resolving to the {@link SessionVerificationDto}.
+ * @redirects {ROUTES.auth.login} if the session is invalid or missing.
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationDto> => {

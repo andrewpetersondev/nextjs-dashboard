@@ -16,8 +16,14 @@ import { ROUTES } from "@/shared/routes/routes";
 
 /**
  * Internal helper: creates a demo user for the given role.
- * Used by both role-specific adapters.
  *
+ * @remarks
+ * This function orchestrates the demo user creation workflow, including
+ * database transaction management, performance tracking, and logging.
+ *
+ * @param role - The {@link UserRole} of the demo user to create.
+ * @returns A promise resolving to a {@link FormResult} containing error details if the process fails.
+ * @redirects {ROUTES.dashboard.root} on success.
  * @internal
  */
 async function createDemoUserInternal(
@@ -76,14 +82,17 @@ async function createDemoUserInternal(
 }
 
 /**
- * Server action adapter for creating a demo user.
- * Accepts FormData and extracts the role from the hidden input field.
+ * Next.js Server Action for creating a demo user.
  *
- * Used by useActionState in demo-form.tsx.
+ * @remarks
+ * This action extracts the user role from the provided {@link FormData} and
+ * delegates the user creation process to {@link createDemoUserInternal}.
+ * It is intended to be used with the `useActionState` hook in UI components.
  *
- * @param _prevState - Previous form state (unused, required by useActionState)
- * @param formData - Form data containing the hidden 'role' field
- * @returns FormResult on error, redirects on success
+ * @param _prevState - The previous form state (unused but required by `useActionState`).
+ * @param formData - The form data containing the 'role' field.
+ * @returns A promise resolving to a {@link FormResult} containing error details if the process fails.
+ * @redirects {ROUTES.dashboard.root} on success.
  */
 export async function demoUserAction(
   _prevState: FormResult<never>,
