@@ -1,6 +1,7 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
+import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/dtos/issue-rotated-token-request.dto";
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
@@ -59,10 +60,44 @@ export class SessionTokenService implements SessionTokenServiceContract {
     const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
+    const sid = crypto.randomUUID();
+    const jti = crypto.randomUUID();
+
+    const claims = toSessionTokenClaimsDtoFromRequest(input, {
+      exp: expiresAtSec,
+      iat: nowSec,
+      jti,
+      sid,
+    });
+
+    const encodedResult = await this.codec.encode(claims);
+
+    if (!encodedResult.ok) {
+      return Err(encodedResult.error);
+    }
+
+    return Ok({
+      expiresAtMs: secondsToMilliseconds(expiresAtSec),
+      token: encodedResult.value,
+    });
+  }
+
+  async issueRotated(
+    input: IssueRotatedTokenRequestDto,
+  ): Promise<Result<IssuedTokenDto, AppError>> {
+    const nowSec = nowInSeconds();
+    const expiresAtSec = nowSec + SESSION_DURATION_SEC;
+
+    const jti = crypto.randomUUID();
+
     const claims = toSessionTokenClaimsDtoFromRequest(
-      input,
-      nowSec,
-      expiresAtSec,
+      { role: input.role, userId: input.userId },
+      {
+        exp: expiresAtSec,
+        iat: nowSec,
+        jti,
+        sid: input.sid,
+      },
     );
 
     const encodedResult = await this.codec.encode(claims);

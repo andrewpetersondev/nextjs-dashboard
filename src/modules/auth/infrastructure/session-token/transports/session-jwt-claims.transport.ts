@@ -10,6 +10,11 @@ import "server-only";
  * - `sub`: Subject (user identifier as UUID string)
  * - `iat`: Issued-at time (UNIX timestamp in seconds)
  * - `exp`: Expiration time (UNIX timestamp in seconds)
+ * - `nbf`: Not-before time (UNIX timestamp in seconds)
+ * - `jti`: JWT ID (unique token identifier)
+ *
+ * **Session Lifecycle:**
+ * - `sid`: Session ID (stable session identifier, useful for revocation/rotation)
  *
  * **Performance Optimization (Denormalized Data):**
  * - `role`: User role (string) - Cached from user record at token issuance.
@@ -24,8 +29,14 @@ export type SessionJwtClaimsTransport = {
   exp: number;
   /** Issued-at time (UNIX timestamp in seconds) - JWT standard */
   iat: number;
+  /** JWT ID (unique token identifier) - JWT standard */
+  jti: string;
+  /** Not-before time (UNIX timestamp in seconds) - JWT standard */
+  nbf: number;
   /** User role (cached for performance) - string at infrastructure layer */
   role: string;
+  /** Session ID (stable identifier for a session) - application/session standard */
+  sid: string;
   /** Subject: User identifier (UUID string) - JWT standard */
   sub: string;
 };

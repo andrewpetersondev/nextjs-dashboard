@@ -12,10 +12,28 @@ import { UserRoleEnum } from "@/shared/domain/user/user-role.schema";
 export const IatSchema = z.number().int().nonnegative();
 
 /**
+ * Not Before (nbf) claim schema.
+ * Represents a non-negative integer UNIX timestamp (in seconds) before which the token must be considered invalid.
+ */
+export const NbfSchema = z.number().int().nonnegative();
+
+/**
  * Expiration (exp) claim schema.
  * Represents a positive integer UNIX timestamp (in seconds) after which the token must be considered invalid.
  */
 export const ExpSchema = z.number().int().positive();
+
+/**
+ * JWT ID (jti) claim schema.
+ * Unique identifier for the token instance (useful for rotation/replay detection).
+ */
+export const JtiSchema = z.uuid();
+
+/**
+ * Session ID (sid) claim schema.
+ * Stable identifier for the session (useful for revocation/logout).
+ */
+export const SidSchema = z.uuid();
 
 /**
  * Subject (sub) claim schema.
@@ -44,10 +62,27 @@ export const SessionTokenClaimsSchema = z
         message: "iat must not be in the future (allowing small clock skew)",
       },
     ),
+    jti: JtiSchema,
+    nbf: NbfSchema.refine(
+      (nbf: number) =>
+        nbf <= nowInSeconds() + SESSION_TOKEN_CLOCK_TOLERANCE_SEC,
+      {
+        message: "nbf must not be in the future (allowing small clock skew)",
+      },
+    ),
     role: UserRoleEnum,
+    sid: SidSchema,
     sub: SubSchema,
   })
   .refine((val) => val.exp > val.iat, {
     message: "exp must be greater than iat",
     path: ["exp"],
+  })
+  .refine((val) => val.nbf <= val.exp, {
+    message: "nbf must be less than or equal to exp",
+    path: ["nbf"],
+  })
+  .refine((val) => val.nbf <= val.iat, {
+    message: "nbf must be less than or equal to iat",
+    path: ["nbf"],
   });

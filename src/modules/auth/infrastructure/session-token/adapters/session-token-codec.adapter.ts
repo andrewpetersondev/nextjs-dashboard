@@ -70,7 +70,10 @@ export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
     const jwtClaims = {
       exp: claims.exp,
       iat: claims.iat,
+      jti: claims.jti,
+      nbf: claims.nbf,
       role: claims.role,
+      sid: claims.sid,
       sub: claims.sub,
     };
 

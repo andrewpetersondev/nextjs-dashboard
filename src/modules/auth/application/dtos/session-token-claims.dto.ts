@@ -12,8 +12,14 @@ export type SessionTokenClaimsDto = {
   readonly exp: number;
   /** Issued-at time (UNIX timestamp in seconds) */
   readonly iat: number;
+  /** JWT ID (unique token identifier) */
+  readonly jti: string;
+  /** Not-before time (UNIX timestamp in seconds) */
+  readonly nbf: number;
   /** User role - strongly typed for application layer */
   readonly role: UserRole;
+  /** Session ID (stable identifier for the session) */
+  readonly sid: string;
   /** Subject: User identifier (UUID string) */
   readonly sub: string;
 };

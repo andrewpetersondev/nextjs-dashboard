@@ -8,13 +8,20 @@ import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-c
  */
 export function toSessionTokenClaimsDtoFromRequest(
   input: IssueTokenRequestDto,
-  iat: number,
-  exp: number,
+  params: Readonly<{
+    exp: number;
+    iat: number;
+    jti: string;
+    sid: string;
+  }>,
 ): SessionTokenClaimsDto {
   return {
-    exp,
-    iat,
+    exp: params.exp,
+    iat: params.iat,
+    jti: params.jti,
+    nbf: params.iat,
     role: input.role,
+    sid: params.sid,
     sub: UserIdSchema.encode(input.userId),
   };
 }

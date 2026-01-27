@@ -18,7 +18,10 @@ export function jwtToSessionTokenClaimsDto(
   return {
     exp: jwtClaims.exp,
     iat: jwtClaims.iat,
+    jti: jwtClaims.jti,
+    nbf: jwtClaims.nbf,
     role: jwtClaims.role as UserRole,
+    sid: jwtClaims.sid,
     sub: jwtClaims.sub,
   };
 }

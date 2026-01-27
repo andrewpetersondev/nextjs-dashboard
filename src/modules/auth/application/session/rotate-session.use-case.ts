@@ -57,10 +57,11 @@ export class RotateSessionUseCase {
           } as const);
         }
 
-        const { sub, role } = outcome.decoded;
+        const { sid, sub, role } = outcome.decoded;
 
-        const issuedResult = await this.sessionTokenService.issue({
+        const issuedResult = await this.sessionTokenService.issueRotated({
           role,
+          sid,
           userId: UserIdSchema.decode(sub),
         });
 
