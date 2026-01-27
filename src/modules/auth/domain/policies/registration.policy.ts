@@ -6,6 +6,8 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 
 /**
  * Domain Policy: Default Registration Role.
+ *
+ * @returns The default `UserRole` for new registrations.
  */
 export function getDefaultRegistrationRole(): UserRole {
   return parseUserRole("USER");
@@ -13,6 +15,10 @@ export function getDefaultRegistrationRole(): UserRole {
 
 /**
  * Domain Policy: Demo User Identity Generation.
+ *
+ * @param role - The role for the demo user.
+ * @param counter - A unique counter to ensure distinct identities.
+ * @returns An object containing the generated email and username.
  */
 export function generateDemoUserIdentity(
   role: UserRole,
@@ -26,6 +32,9 @@ export function generateDemoUserIdentity(
 
 /**
  * Validates the demo user counter returned by the repository.
+ *
+ * @param counter - The value to validate.
+ * @returns True if the counter is a positive number.
  */
 export function validateDemoUserCounter(counter: unknown): counter is number {
   return typeof counter === "number" && counter > 0;
@@ -33,6 +42,9 @@ export function validateDemoUserCounter(counter: unknown): counter is number {
 
 /**
  * Creates a domain-specific error for invalid demo counters.
+ *
+ * @param cause - The original cause of the error.
+ * @returns An `AppError` representing the validation failure.
  */
 export function makeInvalidDemoCounterError(cause: unknown): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, {

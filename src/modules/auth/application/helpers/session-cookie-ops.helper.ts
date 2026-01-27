@@ -4,7 +4,11 @@ import type { SessionStoreContract } from "@/modules/auth/application/contracts/
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Persists a session token and logs the success.
+ * Persists a session token and logs the operation success.
+ *
+ * @param deps - Dependencies including the logger and the session store adapter.
+ * @param params - Configuration parameters for the session cookie and log entry.
+ * @returns A promise that resolves when the token is stored and the operation is logged.
  */
 export async function setSessionCookieAndLogHelper(
   deps: Readonly<{
@@ -32,7 +36,11 @@ export async function setSessionCookieAndLogHelper(
 }
 
 /**
- * Deletes a session token and logs the outcome.
+ * Deletes a session token and logs the operation outcome.
+ *
+ * @param deps - Dependencies including the logger and the session store adapter.
+ * @param params - Configuration parameters for the log entry.
+ * @returns A promise that resolves when the token is deleted and the operation is logged.
  */
 export async function deleteSessionCookieAndLogHelper(
   deps: Readonly<{

@@ -11,12 +11,24 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
+/**
+ * Handles the creation of a temporary demo user for specific roles.
+ *
+ * This use case manages the generation of a random password, hashing it,
+ * and persisting the demo user in the database.
+ */
 export class CreateDemoUserUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
   private readonly passwordGenerator: PasswordGeneratorContract;
   private readonly uow: AuthUnitOfWorkContract;
 
+  /**
+   * @param uow - Unit of Work for transactional database operations.
+   * @param hasher - Service for hashing user passwords.
+   * @param passwordGenerator - Service for generating compliant random passwords.
+   * @param logger - Logging client for audit and debugging.
+   */
   constructor(
     uow: AuthUnitOfWorkContract,
     hasher: PasswordHasherContract,
@@ -29,6 +41,14 @@ export class CreateDemoUserUseCase {
     this.uow = uow;
   }
 
+  /**
+   * Executes the demo user creation logic.
+   *
+   * @param role - The role to assign to the new demo user.
+   * @returns A Result containing the created user DTO or an AppError.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   execute(role: UserRole): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute<AuthenticatedUserDto>(
       async () => {

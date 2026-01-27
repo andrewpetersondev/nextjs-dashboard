@@ -1,19 +1,34 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.schema";
 
+/**
+ * Supported route categories for authentication and authorization.
+ */
 export type AuthRouteType = "admin" | "protected" | "public";
 
+/**
+ * Result of the route access evaluation.
+ */
 export type AuthRouteAccessDecision =
-  | Readonly<{ allowed: true }>
   | Readonly<{
+      /** Access is granted */
+      allowed: true;
+    }>
+  | Readonly<{
+      /** Access is denied */
       allowed: false;
+      /** Reason for denial */
       reason: "not_authenticated" | "not_authorized";
+      /** Suggested redirect destination */
       redirectTo: "login" | "dashboard";
     }>;
 
 /**
- * Pure function that determines route access based on claims and route type.
- * No side effects - just policy logic.
+ * Pure function that determines route access based on session claims and route type.
+ *
+ * @param routeType - The classification of the route being accessed.
+ * @param claims - The session token claims, if an active session exists.
+ * @returns A decision indicating if access is allowed or why it was denied.
  */
 export function evaluateRouteAccessPolicy(
   routeType: AuthRouteType,

@@ -4,10 +4,11 @@
  * Ensures presence of at least one letter, one number, and one special character,
  * and validates length using the shared policy constants.
  *
- * @param length - Desired password length. Must be within inclusive min/max bounds.
+ * @param length - Desired password length. Must be between 5 and 20.
+ * @returns A randomly generated compliant password string.
  * @throws Error if the length is outside the allowed range.
  *
- * TODO: confirm this will never fail
+ * @todo Confirm this will never fail.
  */
 export const makeRandomPassword = (length = 10): string => {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

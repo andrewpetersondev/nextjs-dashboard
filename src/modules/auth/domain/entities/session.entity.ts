@@ -31,7 +31,9 @@ export type SessionEntity = Readonly<{
  * - expiresAt must be greater than issuedAt
  * - expiresAt must be in the future (relative to current time)
  *
- * @throws Error if validation fails (fail-fast principle)
+ * @param input - The session data to validate and build.
+ * @returns A validated `SessionEntity`.
+ * @throws Error if validation fails (fail-fast principle).
  */
 export function buildSessionEntity(input: SessionEntity): SessionEntity {
   const nowSec = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
@@ -58,6 +60,10 @@ export function buildSessionEntity(input: SessionEntity): SessionEntity {
 
 /**
  * Domain Logic: Calculates the remaining time in seconds.
+ *
+ * @param session - The session entity.
+ * @param nowSec - Current UNIX timestamp in seconds.
+ * @returns Number of seconds until session expiry.
  */
 export function getSessionTimeLeftSec(
   session: SessionEntity,
@@ -68,6 +74,10 @@ export function getSessionTimeLeftSec(
 
 /**
  * Domain Logic: Checks if session has expired.
+ *
+ * @param session - The session entity.
+ * @param nowSec - Current UNIX timestamp in seconds.
+ * @returns True if the session is expired.
  */
 export function isSessionExpired(
   session: SessionEntity,
@@ -78,6 +88,11 @@ export function isSessionExpired(
 
 /**
  * Domain Logic: Checks if session is approaching expiry within threshold.
+ *
+ * @param session - The session entity.
+ * @param thresholdSec - The threshold in seconds.
+ * @param nowSec - Current UNIX timestamp in seconds.
+ * @returns True if the session is within the expiry threshold.
  */
 export function isSessionApproachingExpiry(
   session: SessionEntity,
@@ -91,6 +106,11 @@ export function isSessionApproachingExpiry(
 /**
  * Domain Logic: Checks if the session has exceeded its absolute maximum lifetime.
  * Uses issuedAt as the session start time.
+ *
+ * @param session - The session entity.
+ * @param maxLifetimeSec - Maximum allowed lifetime in seconds.
+ * @param nowSec - Current UNIX timestamp in seconds.
+ * @returns Object containing the session age and whether it exceeded the limit.
  */
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,

@@ -5,14 +5,19 @@ import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Domain entity used within the Auth module.
- * Includes the password hash needed for verification.
+ * Represents a user with credentials needed for authentication.
  *
- * @remarks Remember that this is a copy of UserEntity
+ * @remarks This is a specialized view of `UserEntity` for the Auth domain.
  */
 export interface AuthUserEntity {
+  /** User's email address */
   readonly email: string;
+  /** Unique user identifier (branded) */
   readonly id: UserId;
+  /** Hashed password for verification (branded) */
   readonly password: Hash;
+  /** User's system role */
   readonly role: UserRole;
+  /** Unique username */
   readonly username: string;
 }

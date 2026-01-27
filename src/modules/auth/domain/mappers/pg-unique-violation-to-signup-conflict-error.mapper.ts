@@ -4,6 +4,13 @@ import { isPgMetadata } from "@/shared/errors/core/error-metadata.value";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 
+/**
+ * Maps a Postgres unique violation error to a domain-specific signup conflict error.
+ * Inspects the error metadata to identify which field (email or username) caused the violation.
+ *
+ * @param error - The original `AppError` to map.
+ * @returns A new `AppError` with conflict details, or `null` if the error is not a unique violation.
+ */
 export function pgUniqueViolationToSignupConflictError(
   error: AppError,
 ): AppError | null {
