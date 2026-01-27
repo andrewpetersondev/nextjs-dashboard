@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { UserId } from "@/shared/branding/brands";
 import {
   MILLISECONDS_PER_SECOND,

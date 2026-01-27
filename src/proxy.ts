@@ -12,12 +12,26 @@ import {
 } from "@/shared/routes/routes";
 
 export default async function proxy(req: NextRequest): Promise<NextResponse> {
+  /**
+   * Unique identifier for the current request.
+   *
+   * This identifier is first checked from the incoming request's headers,
+   * specifically the `x-request-id` field. If the `x-request-id` is not
+   * present or is undefined, a new random identifier is generated, prefixed
+   * with `mw-`, followed by the first 8 characters of a UUID.
+   *
+   * @readonly
+   * @remarks
+   * The use of this identifier ensures traceability of requests, which is
+   * useful for logging, debugging, and distributed systems.
+   */
   const requestId =
     req.headers.get("x-request-id") ??
     `mw-${crypto
       .randomUUID()
       // biome-ignore lint/style/noMagicNumbers: <ignore for now>
       .slice(0, 8)}`;
+
   const logger = defaultLogger
     .withContext("auth:middleware")
     .withRequest(requestId);
