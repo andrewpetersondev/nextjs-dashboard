@@ -11,7 +11,11 @@ import type { Result } from "@/shared/results/result.types";
  * This abstraction allows workflows to remain independent of the specific
  * infrastructure implementation (JWT, Cookies, etc.).
  *
- * "Application-level contract composed from use-cases; not for direct infrastructure implementation"
+ * Recommended usage:
+ * - Use `read()` when session is optional (anonymous allowed).
+ * - Use `verify()` when session is required (unauthorized is an error).
+ *
+ * Avoid constructing session use cases directly in actions/workflows.
  */
 export interface SessionServiceContract {
   /**

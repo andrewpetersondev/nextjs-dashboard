@@ -2,7 +2,6 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
-import { verifySessionOptimisticWorkflow } from "@/modules/auth/application/session/verify-session-optimistic.workflow";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
@@ -16,7 +15,7 @@ import { ROUTES } from "@/shared/routes/routes";
  * to ensure a user is authenticated before rendering protected content.
  *
  * Responsibilities:
- * - Executes the {@link verifySessionOptimisticWorkflow}.
+ * - Verifies the session via {@link SessionServiceContract}.
  * - Redirects to the login page if no valid session is found.
  * - Logs the outcome of the verification.
  * - Provides optimistic session data (role, userId) on success.
@@ -34,7 +33,7 @@ export const verifySessionOptimistic = cache(
 
     const sessionService = sessionServiceFactory(logger, requestId);
 
-    const res = await verifySessionOptimisticWorkflow({ sessionService });
+    const res = await sessionService.verify();
 
     if (!res.ok) {
       logger.operation("warn", "No valid session found", {

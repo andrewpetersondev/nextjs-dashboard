@@ -6,11 +6,12 @@ import type { SessionVerificationDto } from "@/modules/auth/application/dtos/ses
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { EstablishSessionUseCase } from "@/modules/auth/application/session/establish-session.use-case";
 import { ReadSessionUseCase } from "@/modules/auth/application/session/read-session.use-case";
+import { RequireSessionUseCase } from "@/modules/auth/application/session/require-session.use-case";
 import { RotateSessionUseCase } from "@/modules/auth/application/session/rotate-session.use-case";
 import { TerminateSessionUseCase } from "@/modules/auth/application/session/terminate-session.use-case";
-import { VerifySessionUseCase } from "@/modules/auth/application/session/verify-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
@@ -78,7 +79,18 @@ export class SessionService implements SessionServiceContract {
    *
    * @returns A promise resolving to a {@link Result} containing the session verification data.
    */
-  verify(): Promise<Result<SessionVerificationDto, AppError>> {
-    return new VerifySessionUseCase(this.deps).execute();
+  async verify(): Promise<Result<SessionVerificationDto, AppError>> {
+    const requireSessionUseCase: RequireSessionUseCase =
+      new RequireSessionUseCase(new ReadSessionUseCase(this.deps));
+
+    const sessionResult = await requireSessionUseCase.execute();
+    if (!sessionResult.ok) {
+      return Err(sessionResult.error);
+    }
+    return Ok({
+      isAuthorized: true,
+      role: sessionResult.value.role,
+      userId: String(sessionResult.value.id),
+    });
   }
 }
