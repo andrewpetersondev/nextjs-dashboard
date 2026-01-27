@@ -9,7 +9,6 @@ import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/up
  * 1. AuthenticatedUserDto - direct mapping of identity
  * 2. UpdateSessionSuccessDto - rotation outcome with branded userId
  *
- * @deprecated For SessionTokenClaims, use toSessionEntity() + toReadSessionOutcome() instead
  */
 export function toSessionPrincipalPolicy(
   source: AuthenticatedUserDto | UpdateSessionSuccessDto,

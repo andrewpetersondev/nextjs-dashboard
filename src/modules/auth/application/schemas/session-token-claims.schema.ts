@@ -20,7 +20,7 @@ export const ExpSchema = z.number().int().positive();
  * Subject (sub) claim schema.
  * Must be a valid UUID string representing the user identifier.
  */
-export const SubSchema = z.string().uuid();
+export const SubSchema = z.uuid();
 
 /**
  * Role claim as it appears in the token payload.
