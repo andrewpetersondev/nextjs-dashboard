@@ -8,14 +8,14 @@ export const ADMIN_ROLE: UserRole = "ADMIN";
 export const GUEST_ROLE: UserRole = "GUEST";
 export const USER_ROLE: UserRole = "USER";
 
-export const userRoleEnum = z.enum(USER_ROLES);
+export const UserRoleEnum = z.enum(USER_ROLES);
 
 /**
  * Role schema: trims, uppercases, and validates against allowed roles.
  * Uses pipe to ensure validation runs on the normalized value.
  */
-export const userRoleSchema = z
+export const UserRoleFormSchema = z
   .string()
   .trim()
   .toUpperCase()
-  .pipe(userRoleEnum);
+  .pipe(UserRoleEnum);

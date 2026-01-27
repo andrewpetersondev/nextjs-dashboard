@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userRoleSchema } from "@/shared/domain/user/user-role.schema";
+import { UserRoleFormSchema } from "@/shared/domain/user/user-role.schema";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { EmailSchema } from "@/shared/validation/zod/email.schema";
 import { PasswordSchema } from "@/shared/validation/zod/password.schema";
@@ -19,7 +19,7 @@ function optionalEdit<T extends z.ZodType>(schema: T) {
 export const UserFormBaseSchema = z.strictObject({
   email: EmailSchema, // already trims + lowercases via pipe
   password: PasswordSchema, // trims with strength rules
-  role: userRoleSchema, // normalized + validated
+  role: UserRoleFormSchema, // normalized + validated
   username: UsernameSchema, // trims + lowercases
 });
 
@@ -31,7 +31,7 @@ export const CreateUserFormSchema = UserFormBaseSchema;
  */
 export const emailEdit = optionalEdit(EmailSchema);
 export const passwordEdit = optionalEdit(PasswordSchema);
-export const roleEdit = optionalEdit(userRoleSchema);
+export const roleEdit = optionalEdit(UserRoleFormSchema);
 export const usernameEdit = optionalEdit(UsernameSchema);
 
 /**

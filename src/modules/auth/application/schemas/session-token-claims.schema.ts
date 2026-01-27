@@ -3,7 +3,7 @@ import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/application/co
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { nowInSeconds } from "@/shared/constants/time.constants";
-import { USER_ROLES } from "@/shared/domain/user/user-role.schema";
+import { UserRoleEnum } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Issued At (iat) claim schema.
@@ -22,14 +22,6 @@ export const ExpSchema = z.number().int().positive();
  * Must be a valid UUID string representing the user identifier.
  */
 export const SubSchema = z.uuid();
-
-/**
- * Role claim as it appears in the token payload.
- *
- * @remarks
- * This is a string at the token boundary; it is mapped to {@link UserRole} at the application DTO boundary.
- */
-export const RoleStringSchema = z.enum(USER_ROLES);
 
 /**
  * UserId boundary schema (UUID string ⇄ branded UserId).
@@ -52,7 +44,7 @@ export const SessionTokenClaimsSchema = z
         message: "iat must not be in the future (allowing small clock skew)",
       },
     ),
-    role: RoleStringSchema,
+    role: UserRoleEnum,
     sub: SubSchema,
   })
   .refine((val) => val.exp > val.iat, {
