@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { refreshSessionWorkflow } from "@/modules/auth/application/session/refresh-session.workflow";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
 import {
   CACHE_CONTROL_NO_STORE,
@@ -23,12 +22,12 @@ function applyNoStoreHeaders(res: NextResponse): NextResponse {
 }
 
 async function rotateSession(): Promise<
-  ReturnType<typeof refreshSessionWorkflow>
+  ReturnType<ReturnType<typeof sessionServiceFactory>["rotate"]>
 > {
   const requestId = crypto.randomUUID();
   const logger = defaultLogger.withContext("auth:route").withRequest(requestId);
   const sessionService = sessionServiceFactory(logger, requestId);
-  return await refreshSessionWorkflow({ sessionService });
+  return await sessionService.rotate();
 }
 
 function toRefreshResponse(
