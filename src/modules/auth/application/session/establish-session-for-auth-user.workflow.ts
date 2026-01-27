@@ -11,7 +11,12 @@ import type { Result } from "@/shared/results/result.types";
 /**
  * Shared sub-workflow to establish a session after a user has been authenticated or created.
  *
- * Centralizes the transformation from AuthUserOutputDto to SessionPrincipalDto.
+ * This workflow centralizes the transformation from an authenticated user DTO
+ * to a session principal and then delegates session establishment to the session service.
+ *
+ * @param authUserResult - The result of a login or signup operation.
+ * @param deps - Workflow dependencies (session service).
+ * @returns A Result containing the session principal or an AppError.
  */
 export async function establishSessionForAuthUserWorkflow(
   authUserResult: Result<AuthenticatedUserDto, AppError>,

@@ -16,24 +16,33 @@ import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
- * ReadSessionUseCase
+ * Reads and decodes the current session.
  *
- * Single-capability verb:
- * - Read cookie from store
- * - Decode token via SessionTokenService
- * - Return full session outcome with lifecycle info (or undefined if no valid session)
+ * This use case handles retrieving the session token from storage,
+ * decoding it, and returning a detailed session outcome.
+ * If the token is invalid, it may perform cleanup depending on the internal helper configuration.
  */
 export class ReadSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionStore: SessionStoreContract;
   private readonly sessionTokenService: SessionTokenServiceContract;
 
+  /**
+   * @param deps - Dependencies required for reading the session.
+   */
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "readSession");
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
 
+  /**
+   * Executes the session reading logic.
+   *
+   * @returns A Result containing the session outcome DTO or undefined if no valid session exists.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   execute(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>> {
     return safeExecute<ReadSessionOutcomeDto | undefined>(
       async () => {

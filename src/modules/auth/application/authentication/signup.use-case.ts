@@ -13,15 +13,22 @@ import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
- * SignupUseCase
+ * Handles the creation of a new user account.
  *
- * Single business capability: Create a new user account.
+ * This use case manages the signup process, including password hashing,
+ * determining the default role, and persisting the new user record
+ * within a transaction.
  */
 export class SignupUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
   private readonly uow: AuthUnitOfWorkContract;
 
+  /**
+   * @param uow - Unit of Work for transactional database operations.
+   * @param hasher - Service for hashing user passwords.
+   * @param logger - Logging client for audit and debugging.
+   */
   constructor(
     uow: AuthUnitOfWorkContract,
     hasher: PasswordHasherContract,
@@ -34,7 +41,11 @@ export class SignupUseCase {
 
   /**
    * Executes the user creation process.
-   * Assumes input has been validated at the boundary.
+   *
+   * @param input - The signup request data (email, password, username).
+   * @returns A Result containing the created user DTO or an AppError.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
    */
   execute(
     input: Readonly<SignupRequestDto>,

@@ -14,26 +14,33 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * VerifySessionUseCase
+ * Verifies the validity of the current session.
  *
- * Single-capability query:
- * - Reads token from sessionStore
- * - Decodes and validates claims
- * - Returns session transport or failure reason
- *
- * No side effects on failure (does not delete invalid tokens).
+ * This use case reads the session token from storage and validates its claims.
+ * It is a read-only operation and does not have side effects like deleting
+ * invalid tokens on failure.
  */
 export class VerifySessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionStore: SessionStoreContract;
   private readonly sessionTokenService: SessionTokenServiceContract;
 
+  /**
+   * @param deps - Dependencies required for session verification.
+   */
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "verifySession");
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
 
+  /**
+   * Executes the session verification logic.
+   *
+   * @returns A Result containing the session verification DTO or an AppError.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   async execute(): Promise<Result<SessionVerificationDto, AppError>> {
     const readResult = await readSessionTokenHelper(
       {

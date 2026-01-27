@@ -12,15 +12,21 @@ import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
- * LoginUseCase
+ * Authenticates a user by validating their credentials against stored records.
  *
- * Single business capability: Authenticate a user by email/password.
+ * This use case handles the core business logic for user authentication,
+ * including user lookup, password verification, and mapping to a safe DTO.
  */
 export class LoginUseCase {
   private readonly hasher: PasswordHasherContract;
   private readonly logger: LoggingClientContract;
   private readonly repo: AuthUserRepositoryContract;
 
+  /**
+   * @param repo - Repository for accessing user authentication data.
+   * @param hasher - Service for hashing and comparing passwords.
+   * @param logger - Logging client for audit and debugging.
+   */
   constructor(
     repo: AuthUserRepositoryContract,
     hasher: PasswordHasherContract,
@@ -31,6 +37,14 @@ export class LoginUseCase {
     this.logger = logger.withContext("auth:use-case:login-user");
   }
 
+  /**
+   * Executes the login business logic.
+   *
+   * @param input - The login credentials (email and password).
+   * @returns A Result containing the authenticated user DTO or an AppError.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   execute(
     input: Readonly<LoginRequestDto>,
   ): Promise<Result<AuthenticatedUserDto, AppError>> {

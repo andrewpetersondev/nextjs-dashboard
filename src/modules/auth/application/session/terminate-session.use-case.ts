@@ -12,18 +12,31 @@ import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
- * Terminates a session by deleting the cookie.
- * Logs the termination reason for auditing.
+ * Terminates an active session.
+ *
+ * This use case handles the removal of the session token from storage
+ * (e.g., deleting a cookie) and logs the termination reason.
  */
 export class TerminateSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionStore: SessionStoreContract;
 
+  /**
+   * @param deps - Dependencies required for session termination.
+   */
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "terminateSession");
     this.sessionStore = deps.sessionStore;
   }
 
+  /**
+   * Executes the session termination logic.
+   *
+   * @param reason - The reason for terminating the session.
+   * @returns A Result indicating success or an AppError.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   execute(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
     return safeExecute(
       async () => {

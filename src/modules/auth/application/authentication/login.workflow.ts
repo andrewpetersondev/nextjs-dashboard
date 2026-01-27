@@ -8,12 +8,18 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Orchestrates the login "story":
- * - authenticate user credentials
- * - establish a session for the authenticated user
+ * Orchestrates the login "story" by coordinating authentication and session management.
  *
- * Maps specific authentication failures to a unified credential error
+ * Workflow:
+ * 1. Authenticate user credentials using the provided use case.
+ * 2. If successful, establish a session for the authenticated user.
+ *
+ * This workflow maps specific authentication failures to a unified credential error
  * to protect against account enumeration.
+ *
+ * @param input - The login credentials.
+ * @param deps - Workflow dependencies (use cases and services).
+ * @returns A Result containing the session principal or an AppError.
  */
 export async function loginWorkflow(
   input: Readonly<LoginRequestDto>,

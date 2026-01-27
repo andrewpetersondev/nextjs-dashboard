@@ -13,23 +13,33 @@ import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
- * EstablishSessionUseCase
+ * Establishes a new session for a user.
  *
- * Single-capability application use-case:
- * - Issue a new session token via SessionTokenService
- * - Persist it via SessionStore
+ * This use case handles issuing a new session token and persisting it
+ * to the session store (e.g., setting a cookie).
  */
 export class EstablishSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionStore: SessionStoreContract;
   private readonly sessionTokenService: SessionTokenServiceContract;
 
+  /**
+   * @param deps - Dependencies required for session establishment.
+   */
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "establishSession");
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
 
+  /**
+   * Executes the session establishment logic.
+   *
+   * @param user - The user principal for whom the session is being established.
+   * @returns A Result containing the session principal or an AppError.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   execute(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>> {

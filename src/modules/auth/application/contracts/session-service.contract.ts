@@ -14,15 +14,42 @@ import type { Result } from "@/shared/results/result.types";
  * "Application-level contract composed from use-cases; not for direct infrastructure implementation"
  */
 export interface SessionServiceContract {
+  /**
+   * Establishes a new session for the given user principal.
+   *
+   * @param user - The user principal for whom the session is established.
+   * @returns A Result containing the session principal or an AppError.
+   */
   establish(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>>;
+
   /**
-   * Reads the current session and returns full session state including lifecycle info.
-   * Returns undefined if no valid session is found.
+   * Reads the current session and returns the full session state including lifecycle info.
+   *
+   * @returns A Result containing the session outcome or undefined if no valid session is found.
    */
   read(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>>;
+
+  /**
+   * Rotates the current session token to extend its lifetime or enhance security.
+   *
+   * @returns A Result containing the updated session outcome.
+   */
   rotate(): Promise<Result<UpdateSessionOutcomeDto, AppError>>;
+
+  /**
+   * Terminates the current session.
+   *
+   * @param reason - The reason for terminating the session (e.g., logout, expired).
+   * @returns A Result indicating success or an AppError.
+   */
   terminate(reason: TerminateSessionReason): Promise<Result<void, AppError>>;
+
+  /**
+   * Verifies the validity of the current session.
+   *
+   * @returns A Result containing the session verification status.
+   */
   verify(): Promise<Result<SessionVerificationDto, AppError>>;
 }

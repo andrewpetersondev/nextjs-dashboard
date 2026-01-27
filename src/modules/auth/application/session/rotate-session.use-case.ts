@@ -16,22 +16,33 @@ import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
- * RotateSessionUseCase
+ * Performs rotation of a valid session.
  *
- * Single-capability: Performs the actual rotation of a valid session.
- * Assumes the session has already been validated and deemed eligible for rotation.
+ * This use case handles the actual process of issuing a new rotated token
+ * (reusing the session ID but getting a new JWT ID) and updating the session store.
+ * It assumes the session has already been validated.
  */
 export class RotateSessionUseCase {
   private readonly logger: LoggingClientContract;
   private readonly sessionStore: SessionStoreContract;
   private readonly sessionTokenService: SessionTokenServiceContract;
 
+  /**
+   * @param deps - Dependencies required for session rotation.
+   */
   constructor(deps: SessionUseCaseDependencies) {
     this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "rotateSession");
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
 
+  /**
+   * Executes the session rotation logic.
+   *
+   * @returns A Result containing the update session outcome DTO.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: false positive (rotation flow is intentionally verbose)
   execute(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
     return safeExecute<UpdateSessionOutcomeDto>(

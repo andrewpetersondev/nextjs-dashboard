@@ -9,24 +9,41 @@ import type { Result } from "@/shared/results/result.types";
  * Application contract for session token operations.
  */
 export interface SessionTokenServiceContract {
+  /**
+   * Decodes an encoded session token.
+   *
+   * @param token - The encoded session token string.
+   * @returns A Result containing the decoded session token claims or an AppError.
+   */
   decode(token: string): Promise<Result<SessionTokenClaimsDto, AppError>>;
 
   /**
-   * Issues a brand-new session token (new session).
-   * Generates a new `sid` + `jti`.
+   * Issues a brand-new session token for a new session.
+   *
+   * Generates a new session ID (sid) and JWT ID (jti).
+   *
+   * @param input - The request data for issuing a new token.
+   * @returns A Result containing the newly issued token DTO or an AppError.
    */
   issue(input: IssueTokenRequestDto): Promise<Result<IssuedTokenDto, AppError>>;
 
   /**
-   * Issues a rotated session token (existing session).
-   * Reuses the provided `sid`, generates a new `jti`.
+   * Issues a rotated session token for an existing session.
+   *
+   * Reuses the provided session ID (sid) and generates a new JWT ID (jti).
+   *
+   * @param input - The request data for issuing a rotated token.
+   * @returns A Result containing the rotated token DTO or an AppError.
    */
   issueRotated(
     input: IssueRotatedTokenRequestDto,
   ): Promise<Result<IssuedTokenDto, AppError>>;
 
   /**
-   * Validates decoded claims against the schema.
+   * Validates decoded claims against the session token schema.
+   *
+   * @param claims - The claims to validate (typically from a decoded token).
+   * @returns A Result containing the validated session token claims or an AppError.
    */
   validate(claims: unknown): Promise<Result<SessionTokenClaimsDto, AppError>>;
 }

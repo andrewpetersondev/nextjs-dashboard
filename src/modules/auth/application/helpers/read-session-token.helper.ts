@@ -9,7 +9,14 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Centralizes session token retrieval and decoding.
+ * Centralizes the retrieval and decoding of a session token from the store.
+ *
+ * This helper coordinates the interaction between the session store and the
+ * session token service.
+ *
+ * @param deps - Dependencies (session store and token service).
+ * @param options - Configuration options (e.g., whether to cleanup on invalid token).
+ * @returns A Result containing the read session token outcome or an AppError.
  */
 export async function readSessionTokenHelper(
   deps: Readonly<{

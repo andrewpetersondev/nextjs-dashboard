@@ -8,9 +8,15 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Orchestrates the signup "story":
- * - create user (DB transaction)
- * - establish session (cookie/JWT, non-transactional)
+ * Orchestrates the signup "story" by coordinating user creation and session establishment.
+ *
+ * Workflow:
+ * 1. Create a new user account (including password hashing and DB persistence).
+ * 2. If user creation is successful, establish a new session (JWT/Cookies).
+ *
+ * @param input - The signup request data.
+ * @param deps - Workflow dependencies (use cases and services).
+ * @returns A Result containing the session principal or an AppError.
  */
 export async function signupWorkflow(
   input: Readonly<SignupRequestDto>,

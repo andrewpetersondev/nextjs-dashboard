@@ -36,11 +36,14 @@ async function extractSessionClaims(
 }
 
 /**
- * Authorizes a request against route access policies, returning either a pass-through decision
- * or a redirect destination with contextual reason for UI handling and logging.
+ * Authorizes a request against route access policies.
  *
- * @param input Request metadata, including route classification flags and path.
- * @param deps Infrastructure dependencies required for decoding and routing.
+ * This helper coordinates session claim extraction and policy evaluation to
+ * determine if a request should proceed or be redirected.
+ *
+ * @param input - Request metadata, including route classification flags and path.
+ * @param deps - Infrastructure dependencies required for decoding and routing.
+ * @returns An authorization outcome (either "next" or "redirect").
  */
 export async function authorizeRequestHelper(
   input: Readonly<{

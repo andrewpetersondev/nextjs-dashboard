@@ -3,13 +3,13 @@ import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-c
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
 
 /**
- * Maps JWT token claims to SessionEntity.
+ * Maps session token claims to a session domain entity.
  *
- * Converts infrastructure JWT claims to domain entity:
- * - Decodes userId from `sub` (string) to branded UserId
- * - Maps `exp` to expiresAt
- * - Maps `iat` to issuedAt
- * - All timestamps remain in seconds (JWT standard)
+ * This function converts the application-layer claims DTO (typically decoded from a JWT)
+ * into a branded domain entity, handling the decoding of identifiers.
+ *
+ * @param tokenClaims - The decoded session token claims.
+ * @returns The session domain entity.
  */
 export function toSessionEntity(
   tokenClaims: SessionTokenClaimsDto,

@@ -5,10 +5,14 @@ import { getSessionTimeLeftSec } from "@/modules/auth/domain/entities/session.en
 import { nowInSeconds } from "@/shared/constants/time.constants";
 
 /**
- * Maps a SessionEntity to a ReadSessionOutcomeDto.
+ * Maps a session entity to a read session outcome DTO.
  *
- * Includes computed session state (timeLeftSec) for client visibility into
- * session freshness and remaining lifetime.
+ * This function includes computed session state, such as the time left until
+ * expiration, to provide the client with visibility into session freshness.
+ *
+ * @param session - The session entity from the domain layer.
+ * @param nowSec - The current time in seconds (defaults to now).
+ * @returns The session outcome DTO.
  */
 export function toReadSessionOutcome(
   session: SessionEntity,
