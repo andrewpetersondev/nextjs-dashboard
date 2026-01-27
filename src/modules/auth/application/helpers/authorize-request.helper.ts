@@ -72,14 +72,19 @@ export async function authorizeRequestHelper(
     isPublicRoute: input.isPublicRoute,
   });
 
-  const decision = evaluateRouteAccessPolicy(routeType, decoded.claims);
+  const isAuthenticated = Boolean(decoded.claims?.sub);
+
+  const decision = evaluateRouteAccessPolicy(routeType, {
+    isAuthenticated,
+    role: decoded.claims?.role,
+  });
 
   if (decision.allowed) {
     return { kind: "next", reason: "ok" };
   }
 
   const redirectTo =
-    decision.redirectTo === "login"
+    decision.reason === "not_authenticated"
       ? deps.routes.login
       : deps.routes.dashboardRoot;
 
