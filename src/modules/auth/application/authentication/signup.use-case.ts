@@ -4,7 +4,8 @@ import type { PasswordHasherContract } from "@/modules/auth/application/contract
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
-import type { SignupRequestDto } from "@/modules/auth/application/schemas/login-request.schema";
+
+import type { SignupRequestDto } from "@/modules/auth/application/schemas/signup-request.schema";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

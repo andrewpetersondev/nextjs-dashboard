@@ -23,40 +23,6 @@ export type SessionEntity = Readonly<{
 }>;
 
 /**
- * Creates a Session entity with validation.
- *
- * Validates:
- * - expiresAt must be greater than issuedAt
- * - expiresAt must be in the future (relative to current time)
- *
- * @param input - The session data to validate and build.
- * @returns A validated `SessionEntity`.
- * @throws Error if validation fails (fail-fast principle).
- */
-export function buildSessionEntity(input: SessionEntity): SessionEntity {
-  const nowSec = Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
-
-  if (input.expiresAt <= input.issuedAt) {
-    throw new Error(
-      `Invalid session: expiresAt (${input.expiresAt}) must be greater than issuedAt (${input.issuedAt})`,
-    );
-  }
-
-  if (input.expiresAt <= nowSec) {
-    throw new Error(
-      `Invalid session: expiresAt (${input.expiresAt}) must be in the future (now: ${nowSec})`,
-    );
-  }
-
-  return {
-    expiresAt: input.expiresAt,
-    issuedAt: input.issuedAt,
-    role: input.role,
-    userId: input.userId,
-  };
-}
-
-/**
  * Domain Logic: Calculates the remaining time in seconds.
  *
  * @param session - The session entity.

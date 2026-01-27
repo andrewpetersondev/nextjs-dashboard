@@ -1,9 +1,6 @@
-import "server-only";
-
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
 import { getSessionTimeLeftSec } from "@/modules/auth/domain/entities/session.entity";
-import { nowInSeconds } from "@/shared/constants/time.constants";
 
 /**
  * Builds a ReadSessionOutcomeDto from a SessionEntity.
@@ -13,7 +10,7 @@ import { nowInSeconds } from "@/shared/constants/time.constants";
  */
 export function buildReadSessionOutcome(
   session: Readonly<SessionEntity>,
-  nowSec: number = nowInSeconds(),
+  nowSec: number,
 ): Readonly<ReadSessionOutcomeDto> {
   const timeLeftSec = getSessionTimeLeftSec(session, nowSec);
 

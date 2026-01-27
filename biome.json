@@ -96,7 +96,8 @@
     "enabled": true,
     "rules": {
       "a11y": {
-        "noNoninteractiveElementInteractions": "on"
+        "noNoninteractiveElementInteractions": "on",
+        "recommended": true
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "on",
@@ -106,6 +107,7 @@
         "noImplicitCoercions": "on",
         "noUselessStringConcat": "on",
         "noVoid": "on",
+        "recommended": true,
         "useSimplifiedLogicExpression": "on",
         "useWhile": "on"
       },
@@ -121,6 +123,7 @@
         "noUnusedLabels": "on",
         "noUnusedPrivateClassMembers": "on",
         "noUnusedVariables": "on",
+        "recommended": true,
         "useJsonImportAttributes": "on",
         "useSingleJsDocAsterisk": "on",
         "useUniqueElementIds": "on"
@@ -142,12 +145,14 @@
         "noDelete": "on",
         "noNamespaceImport": "on",
         "noReExportAll": "on",
+        "recommended": true,
         "useTopLevelRegex": "on"
       },
       "recommended": true,
       "security": {
         "noDangerouslySetInnerHtml": "on",
-        "noDangerouslySetInnerHtmlWithChildren": "on"
+        "noDangerouslySetInnerHtmlWithChildren": "on",
+        "recommended": true
       },
       "style": {
         "noCommonJs": "on",
@@ -168,6 +173,7 @@
         "noUnusedTemplateLiteral": "on",
         "noUselessElse": "on",
         "noYodaExpression": "on",
+        "recommended": true,
         "useAsConstAssertion": "on",
         "useAtIndex": "on",
         "useBlockStatements": "on",
@@ -212,6 +218,7 @@
         "noSkippedTests": "on",
         "noUnassignedVariables": "on",
         "noVar": "on",
+        "recommended": true,
         "useAwait": "on",
         "useErrorMessage": "on",
         "useGuardForIn": "on",

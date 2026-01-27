@@ -6,7 +6,7 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupRequestDto,
   SignupRequestSchema,
-} from "@/modules/auth/application/schemas/login-request.schema";
+} from "@/modules/auth/application/schemas/signup-request.schema";
 import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-unit-of-work.factory";
 import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/factories/signup-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
