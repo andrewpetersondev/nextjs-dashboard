@@ -14,13 +14,13 @@ import type { UserRole } from "@/shared/domain/user/user-role.schema";
  * All timestamps are in UNIX seconds for consistency with JWT standards.
  */
 export type SessionEntity = Readonly<{
-  /** Expiration time (UNIX timestamp in seconds) */
+  /** Expiration time (UNIX timestamp in seconds, matches JWT 'exp' claim) */
   expiresAt: number;
-  /** Issued at time (UNIX timestamp in seconds) - also serves as session start time */
+  /** Issued at time (UNIX timestamp in seconds, matches JWT 'iat' claim) */
   issuedAt: number;
-  /** User role */
+  /** User role for authorization checks within the session */
   role: UserRole;
-  /** User identifier (branded) */
+  /** Unique user identifier (branded UserId) */
   userId: UserId;
 }>;
 

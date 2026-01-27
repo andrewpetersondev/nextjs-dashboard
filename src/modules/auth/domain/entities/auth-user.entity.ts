@@ -10,14 +10,14 @@ import type { UserRole } from "@/shared/domain/user/user-role.schema";
  * @remarks This is a specialized view of `UserEntity` for the Auth domain.
  */
 export interface AuthUserEntity {
-  /** User's email address */
+  /** User's primary email address used for identification and login. */
   readonly email: string;
-  /** Unique user identifier (branded) */
+  /** Unique user identifier (branded UserId). */
   readonly id: UserId;
-  /** Hashed password for verification (branded) */
+  /** Hashed password (branded Hash) for secure credential verification. */
   readonly password: Hash;
-  /** User's system role */
+  /** System-level role (e.g., 'admin', 'user') for access control. */
   readonly role: UserRole;
-  /** Unique username */
+  /** Unique username chosen by the user. */
   readonly username: string;
 }

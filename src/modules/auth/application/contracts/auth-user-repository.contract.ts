@@ -23,17 +23,20 @@ export interface AuthUserRepositoryContract {
   /**
    * Fetches a user candidate by their unique email.
    *
-   * @param query - The lookup criteria.
+   * @param query - The lookup criteria including the email address.
+   * @returns A promise resolving to a {@link Result} containing the found {@link AuthUserEntity},
+   * null if no user matches the email, or an {@link AppError} for infrastructure failures.
    */
   findByEmail(
     query: Readonly<AuthUserLookupQueryDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>>;
 
   /**
-   * Creates a new user account.
+   * Creates a new user account in the persistent store.
    *
    * @param input - Signup payload required to create a user.
-   * @returns Result with the created user entity, or AppError for expected failures.
+   * @returns A promise resolving to a {@link Result} containing the newly created {@link AuthUserEntity},
+   * or an {@link AppError} (e.g., if the email already exists or a validation fails).
    */
   signup(
     input: Readonly<AuthUserCreateDto>,

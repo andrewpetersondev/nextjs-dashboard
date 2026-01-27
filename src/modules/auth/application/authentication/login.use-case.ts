@@ -41,9 +41,15 @@ export class LoginUseCase {
    * Executes the login business logic.
    *
    * @param input - The login credentials (email and password).
-   * @returns A Result containing the authenticated user DTO or an AppError.
+   * @returns A promise resolving to a {@link Result} containing the authenticated user DTO or an {@link AppError}.
    *
-   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+   * @remarks
+   * Potential error scenarios (returned as Err):
+   * - 'user_not_found': No user exists with the provided email.
+   * - 'invalid_password': The password does not match the stored hash.
+   * - Other infrastructure or validation errors.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result by safeExecute).
    */
   execute(
     input: Readonly<LoginRequestDto>,

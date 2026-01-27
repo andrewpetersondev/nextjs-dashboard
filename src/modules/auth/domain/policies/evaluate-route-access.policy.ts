@@ -26,6 +26,12 @@ export type AuthRouteAccessDecision =
 /**
  * Pure function that determines route access based on session claims and route type.
  *
+ * @remarks
+ * Redirect Logic:
+ * - If a user is not authenticated and tries to access a 'protected' or 'admin' route, they are redirected to 'login'.
+ * - If an authenticated user tries to access an 'admin' route without having the 'admin' role, they are redirected to 'dashboard'.
+ * - If an authenticated user tries to access a 'public' route (e.g., login/signup pages), they are redirected to 'dashboard' to avoid redundant authentication.
+ *
  * @param routeType - The classification of the route being accessed.
  * @param claims - The session token claims, if an active session exists.
  * @returns A decision indicating if access is allowed or why it was denied.

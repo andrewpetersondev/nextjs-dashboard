@@ -64,8 +64,12 @@ export class SessionTokenService implements SessionTokenServiceContract {
   /**
    * Issues a new session token with the provided claims.
    *
+   * @remarks
+   * This method generates unique identifiers for the session (sid) and the token (jti),
+   * sets the issued-at (iat) and expiration (exp) times, and encodes the claims into a token string.
+   *
    * @param input - The request containing user data for the token.
-   * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
+   * @returns A promise resolving to a {@link Result} containing the {@link IssuedTokenDto} (token + expiration) or an {@link AppError}.
    */
   async issue(
     input: IssueTokenRequestDto,
