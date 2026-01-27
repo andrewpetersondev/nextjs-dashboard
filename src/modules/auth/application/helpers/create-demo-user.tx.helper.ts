@@ -4,7 +4,6 @@ import type { PasswordGeneratorContract } from "@/modules/auth/application/contr
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
-// TODO: this dependency is pointing outward creating a violation
 import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/domain/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import {
   generateDemoUserIdentity,
