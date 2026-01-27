@@ -5,6 +5,9 @@ import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/re
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
+/**
+ * Factory type for creating transaction-scoped auth dependencies.
+ */
 export type AuthTxDepsFactory = (
   txDb: AppDatabase,
   txLogger: LoggingClientContract,
@@ -12,11 +15,16 @@ export type AuthTxDepsFactory = (
 ) => AuthTxDepsContract;
 
 /**
- * Factory: creates transaction-scoped dependency contracts for auth persistence.
+ * Factory for creating transaction-scoped dependency contracts for auth persistence.
  *
  * @remarks
  * This keeps repository wiring out of the UnitOfWork adapter so "factories do wiring"
  * and the adapter focuses on transaction mechanics.
+ *
+ * @param txDb - The transaction-scoped database connection.
+ * @param txLogger - The transaction-scoped logger.
+ * @param requestId - Unique identifier for the current request.
+ * @returns An object containing transaction-scoped dependencies.
  */
 export function authTxDepsFactory(
   txDb: AppDatabase,

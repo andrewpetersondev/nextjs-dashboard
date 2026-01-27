@@ -8,11 +8,14 @@ import {
 import { isProd } from "@/shared/config/env-shared";
 
 /**
- * Session cookie options config.
+ * Retrieves the session cookie options configuration.
  *
  * @remarks
  * Centralizes cookie security and scoping decisions (SameSite, Secure, Path, HttpOnly)
  * so the adapter only coordinates storage operations.
+ *
+ * @param input - Configuration input containing maxAge.
+ * @returns Partial {@link ResponseCookie} options.
  */
 export function getSessionCookieOptionsConfig(input: {
   readonly maxAge: number;

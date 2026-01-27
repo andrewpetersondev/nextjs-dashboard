@@ -12,13 +12,15 @@ import type { Result } from "@/shared/results/result.types";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.
- * The database generates the ID.
- * Throws on invariant violations; never returns null.
  *
- * @param db - Database connection
- * @param input - Signup payload
- * @param logger - Logging client
- * @returns Result of the inserted user row (full record including DB-generated ID)
+ * @remarks
+ * The database generates the ID. Throws on invariant violations; never returns null.
+ *
+ * @param db - Database connection.
+ * @param input - Signup payload containing user details and pre-hashed password.
+ * @param logger - Logging client.
+ * @returns A promise resolving to a {@link Result} containing the inserted user row (full record including DB-generated ID).
+ * @throws {@link AppError} if the database returns an empty result set or on unexpected database errors.
  */
 export async function insertUserDal(
   db: AppDatabase,

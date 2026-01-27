@@ -5,8 +5,10 @@ import { SessionTokenService } from "@/modules/auth/infrastructure/session-token
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Factory for the session token service.
- * Returns the application-facing contract to avoid leaking implementation details.
+ * Factory for creating the session token service.
+ *
+ * @param logger - The logging client.
+ * @returns An implementation of the {@link SessionTokenServiceContract}.
  */
 export function sessionTokenServiceFactory(
   logger: LoggingClientContract,

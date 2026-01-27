@@ -5,6 +5,13 @@ import { passwordGeneratorFactory } from "@/modules/auth/infrastructure/crypto/f
 import { passwordHasherFactory } from "@/modules/auth/infrastructure/crypto/factories/password-hasher.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
+/**
+ * Factory for creating the CreateDemoUserUseCase.
+ *
+ * @param uow - The Unit of Work for database transactions.
+ * @param logger - The logging client.
+ * @returns An instance of {@link CreateDemoUserUseCase}.
+ */
 export function demoUserUseCaseFactory(
   uow: AuthUnitOfWorkContract,
   logger: LoggingClientContract,

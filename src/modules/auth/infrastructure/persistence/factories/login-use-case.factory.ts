@@ -8,7 +8,12 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Clean Architecture Factory: Wires Infrastructure into Use Case.
+ * Factory for creating the LoginUseCase.
+ *
+ * @param db - The database connection.
+ * @param logger - The logging client.
+ * @param requestId - Unique identifier for the current request.
+ * @returns An instance of {@link LoginUseCase}.
  */
 export function loginUseCaseFactory(
   db: AppDatabase,

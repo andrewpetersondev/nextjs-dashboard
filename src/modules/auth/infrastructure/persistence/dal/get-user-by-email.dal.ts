@@ -9,12 +9,14 @@ import type { Result } from "@/shared/results/result.types";
 
 /**
  * Finds a user by email for login.
+ *
+ * @remarks
  * No password verification here; Service layer compares raw vs stored hash.
  *
- * @param db - Database connection
- * @param email - User email to search
- * @param logger - Logging client
- * @returns Result of found user row or null if not found
+ * @param db - Database connection.
+ * @param email - User email to search.
+ * @param logger - Logging client.
+ * @returns A promise resolving to a {@link Result} containing the found user row or null if not found.
  */
 export async function getUserByEmailDal(
   db: AppDatabase,

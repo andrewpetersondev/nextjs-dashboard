@@ -5,9 +5,10 @@ import { createCookieService } from "@/server/cookies/cookie.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Factory function for creating adapter instances.
+ * Factory for creating the session cookie store.
  *
- * @param logger - The logging client to use for observability.
+ * @param logger - The logging client.
+ * @returns An implementation of the {@link SessionStoreContract}.
  */
 export function sessionCookieStoreFactory(
   logger: LoggingClientContract,

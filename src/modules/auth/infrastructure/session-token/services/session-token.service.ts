@@ -24,10 +24,17 @@ import type { Result } from "@/shared/results/result.types";
  *
  * Responsibility: token issuance + validation behavior.
  * Delegates encoding/decoding mechanics to SessionTokenCodecContract.
+ *
+ * @implements {SessionTokenServiceContract}
  */
 export class SessionTokenService implements SessionTokenServiceContract {
   private readonly codec: SessionTokenCodecContract;
 
+  /**
+   * Initializes the session token service.
+   *
+   * @param codec - The codec used for encoding and decoding tokens.
+   */
   constructor(codec: SessionTokenCodecContract) {
     this.codec = codec;
   }
@@ -38,6 +45,9 @@ export class SessionTokenService implements SessionTokenServiceContract {
    * @remarks
    * Canonical path: decode/verify via codec, then validate via this service
    * so all consumers get consistent schema + error behavior.
+   *
+   * @param token - The token to decode.
+   * @returns A promise resolving to a {@link Result} containing the decoded claims or an {@link AppError}.
    */
   async decode(
     token: string,
@@ -53,6 +63,9 @@ export class SessionTokenService implements SessionTokenServiceContract {
 
   /**
    * Issues a new session token with the provided claims.
+   *
+   * @param input - The request containing user data for the token.
+   * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
    */
   async issue(
     input: IssueTokenRequestDto,
@@ -82,6 +95,12 @@ export class SessionTokenService implements SessionTokenServiceContract {
     });
   }
 
+  /**
+   * Issues a rotated session token.
+   *
+   * @param input - The request containing existing session data for rotation.
+   * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
+   */
   async issueRotated(
     input: IssueRotatedTokenRequestDto,
   ): Promise<Result<IssuedTokenDto, AppError>> {
@@ -113,7 +132,10 @@ export class SessionTokenService implements SessionTokenServiceContract {
   }
 
   /**
-   * Validates decoded claims against the schema.
+   * Validates decoded claims against the session token claims schema.
+   *
+   * @param claims - The claims to validate.
+   * @returns A promise resolving to a {@link Result} containing the validated claims DTO or an {@link AppError}.
    */
   // biome-ignore lint/suspicious/useAwait: keep it as async to unify contracts
   async validate(

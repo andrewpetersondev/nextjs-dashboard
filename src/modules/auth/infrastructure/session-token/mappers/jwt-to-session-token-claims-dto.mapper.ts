@@ -4,13 +4,13 @@ import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/se
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
- * Converts infrastructure JWT claims to application-layer session token claims.
+ * Converts infrastructure JWT claims to application-layer session token claims DTO.
  *
  * This mapper bridges infrastructure (JWT with role as string) and application
- * layers (SessionTokenClaims with role as UserRole enum).
+ * layers (SessionTokenClaims with role as {@link UserRole} enum).
  *
- * @param jwtClaims - Raw JWT claims from token decode
- * @returns Application-layer claims
+ * @param jwtClaims - Raw JWT claims from token decode.
+ * @returns Application-layer session token claims DTO.
  */
 export function jwtToSessionTokenClaimsDto(
   jwtClaims: SessionJwtClaimsTransport,

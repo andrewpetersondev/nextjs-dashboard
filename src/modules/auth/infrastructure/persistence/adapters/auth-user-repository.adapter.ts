@@ -24,6 +24,12 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
     this.authUsers = authUsers;
   }
 
+  /**
+   * Finds a user by email.
+   *
+   * @param query - The lookup query containing the email.
+   * @returns A promise resolving to a {@link Result} containing the user entity or null.
+   */
   findByEmail(
     query: Readonly<AuthUserLookupQueryDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
@@ -37,6 +43,12 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
     return this.authUsers.incrementDemoUserCounter(role);
   }
 
+  /**
+   * Registers a new user.
+   *
+   * @param input - The signup data.
+   * @returns A promise resolving to a {@link Result} containing the created user entity.
+   */
   signup(
     input: Readonly<AuthUserCreateDto>,
   ): Promise<Result<AuthUserEntity, AppError>> {

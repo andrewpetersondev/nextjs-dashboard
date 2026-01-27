@@ -7,7 +7,13 @@ import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/sessio
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Factory: wires Infrastructure dependencies into a concrete SessionServiceContract implementation.
+ * Factory for creating the session service.
+ *
+ * Wires infrastructure dependencies into a concrete {@link SessionServiceContract} implementation.
+ *
+ * @param logger - The logging client.
+ * @param requestId - Unique identifier for the current request.
+ * @returns An implementation of the {@link SessionServiceContract}.
  */
 export function sessionServiceFactory(
   logger: LoggingClientContract,

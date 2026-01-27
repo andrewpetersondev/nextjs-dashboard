@@ -22,6 +22,8 @@ const encoder = new TextEncoder();
  * Handles jose library mechanics, key management, and verification options.
  *
  * Responsibility: "How" to sign/verify JWTs using the jose library.
+ *
+ * @implements {SessionJwtCryptoStrategy}
  */
 export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
   private readonly audience: string | undefined;
@@ -30,6 +32,14 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
   private readonly logger: LoggingClientContract;
   private readonly verifyOptions: SessionJwtVerifyOptionsTransport;
 
+  /**
+   * Initializes the jose session JWT crypto service.
+   *
+   * @param logger - The logging client.
+   * @param secret - The secret key for signing and verification.
+   * @param issuer - The expected issuer of the token.
+   * @param audience - The expected audience of the token.
+   */
   constructor(
     logger: LoggingClientContract,
     secret: string,
@@ -43,6 +53,12 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
     this.verifyOptions = this.buildVerifyOptions(issuer, audience);
   }
 
+  /**
+   * Signs a set of claims into a JWT.
+   *
+   * @param claims - The claims to sign.
+   * @returns A promise resolving to a {@link Result} containing the signed JWT or an {@link AppError}.
+   */
   async sign(
     claims: SessionJwtClaimsTransport,
   ): Promise<Result<string, AppError>> {
@@ -73,6 +89,12 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
     }
   }
 
+  /**
+   * Verifies a JWT and extracts its claims.
+   *
+   * @param token - The JWT token to verify.
+   * @returns A promise resolving to a {@link Result} containing the verified claims or an {@link AppError}.
+   */
   async verify(
     token: string,
   ): Promise<Result<SessionJwtClaimsTransport, AppError>> {

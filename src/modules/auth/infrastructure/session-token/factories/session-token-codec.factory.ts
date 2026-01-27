@@ -10,9 +10,11 @@ import {
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Factory for the session token codec.
+ * Factory for creating the session token codec.
  *
- * Returns the application-facing contract to avoid leaking implementation details.
+ * @param logger - The logging client.
+ * @returns An implementation of the {@link SessionTokenCodecContract}.
+ * @throws Error if the session secret is missing.
  */
 export function sessionTokenCodecFactory(
   logger: LoggingClientContract,

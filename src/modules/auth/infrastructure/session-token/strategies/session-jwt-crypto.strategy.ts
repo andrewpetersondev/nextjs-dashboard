@@ -10,6 +10,19 @@ import type { Result } from "@/shared/results/result.types";
  * application-facing token contracts.
  */
 export interface SessionJwtCryptoStrategy {
+  /**
+   * Signs a set of claims into a JWT string.
+   *
+   * @param claims - The JWT claims to sign.
+   * @returns A promise resolving to a {@link Result} containing the signed JWT or an {@link AppError}.
+   */
   sign(claims: SessionJwtClaimsTransport): Promise<Result<string, AppError>>;
+
+  /**
+   * Verifies a JWT string and returns its claims.
+   *
+   * @param token - The JWT token to verify.
+   * @returns A promise resolving to a {@link Result} containing the verified claims or an {@link AppError}.
+   */
   verify(token: string): Promise<Result<SessionJwtClaimsTransport, AppError>>;
 }

@@ -18,9 +18,17 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 export class AuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
   private readonly db: AppDatabase;
   private readonly logger: LoggingClientContract;
-  private readonly makeTxDeps: AuthTxDepsFactory;
   private readonly requestId: string;
+  private readonly makeTxDeps: AuthTxDepsFactory;
 
+  /**
+   * Initializes the Unit of Work adapter.
+   *
+   * @param db - The main database connection.
+   * @param logger - The logging client.
+   * @param requestId - Unique identifier for the current request.
+   * @param makeTxDeps - Factory to create transaction-scoped dependencies.
+   */
   constructor(
     db: AppDatabase,
     logger: LoggingClientContract,

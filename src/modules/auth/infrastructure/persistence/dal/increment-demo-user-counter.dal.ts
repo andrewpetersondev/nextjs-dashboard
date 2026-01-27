@@ -10,12 +10,15 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 
 /**
  * Increments and retrieves the demo user counter for a given role.
- * Ensures the returned value is a valid number.
  *
- * @param db - Database connection
- * @param role - Demo user role
- * @param logger - Logging client
- * @returns Counter id as number
+ * @remarks
+ * Ensures the returned value is a valid number. Throws on invariant violations.
+ *
+ * @param db - Database connection.
+ * @param role - Demo user role.
+ * @param logger - Logging client.
+ * @returns A promise resolving to the counter id as a number.
+ * @throws {@link AppError} if the database returns an empty result set or if the returned row is missing an ID.
  */
 export async function incrementDemoUserCounterDal(
   db: AppDatabase,

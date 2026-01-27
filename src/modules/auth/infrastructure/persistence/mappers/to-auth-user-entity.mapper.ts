@@ -7,8 +7,12 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 
 /**
- * Maps a raw database user row to the AuthUserEntity.
+ * Maps a raw database user row to the {@link AuthUserEntity}.
+ *
  * Includes sensitive data (password hash) required for authentication.
+ *
+ * @param row - The database user row to map.
+ * @returns The mapped {@link AuthUserEntity}.
  */
 export function toAuthUserEntity(row: UserRow): AuthUserEntity {
   return {

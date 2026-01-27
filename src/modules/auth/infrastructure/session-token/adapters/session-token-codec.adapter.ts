@@ -16,11 +16,19 @@ import type { Result } from "@/shared/results/result.types";
  *
  * Responsibility: Transforms Application layer DTOs to/from JWT tokens.
  * Delegates jose-specific mechanics to the strategy.
+ *
+ * @implements {SessionTokenCodecContract}
  */
 export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
   private readonly logger: LoggingClientContract;
   private readonly jwtCrypto: SessionJwtCryptoStrategy;
 
+  /**
+   * Initializes the session token codec adapter.
+   *
+   * @param logger - The logging client.
+   * @param jwtCrypto - The strategy for JWT cryptography operations.
+   */
   constructor(
     logger: LoggingClientContract,
     jwtCrypto: SessionJwtCryptoStrategy,
@@ -31,6 +39,9 @@ export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
 
   /**
    * Decodes and verifies a JWT token, returning Application layer claims.
+   *
+   * @param token - The JWT token to decode.
+   * @returns A promise resolving to a {@link Result} containing the decoded claims or an {@link AppError}.
    */
   async decode(
     token: string,
@@ -63,6 +74,9 @@ export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
 
   /**
    * Encodes session claims into a signed JWT.
+   *
+   * @param claims - The session claims to encode.
+   * @returns A promise resolving to a {@link Result} containing the signed JWT string or an {@link AppError}.
    */
   async encode(
     claims: SessionTokenClaimsDto,

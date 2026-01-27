@@ -13,31 +13,71 @@ import type { TerminateSessionReason } from "@/modules/auth/domain/policies/sess
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
+/**
+ * Concrete implementation of the SessionServiceContract.
+ *
+ * This service acts as a facade over various session-related use cases,
+ * delegating execution to specialized use case classes.
+ *
+ * @implements {SessionServiceContract}
+ */
 export class SessionService implements SessionServiceContract {
   private readonly deps: SessionUseCaseDependencies;
 
+  /**
+   * Initializes the session service.
+   *
+   * @param deps - The dependencies required by session use cases.
+   */
   constructor(deps: SessionUseCaseDependencies) {
     this.deps = deps;
   }
 
+  /**
+   * Establishes a new session for a user.
+   *
+   * @param user - The user principal for whom to establish the session.
+   * @returns A promise resolving to a {@link Result} containing the user principal.
+   */
   establish(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>> {
     return new EstablishSessionUseCase(this.deps).execute(user);
   }
 
+  /**
+   * Reads the current session.
+   *
+   * @returns A promise resolving to a {@link Result} containing the session outcome or undefined if no session.
+   */
   read(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>> {
     return new ReadSessionUseCase(this.deps).execute();
   }
 
+  /**
+   * Rotates the current session.
+   *
+   * @returns A promise resolving to a {@link Result} containing the updated session outcome.
+   */
   rotate(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
     return new RotateSessionUseCase(this.deps).execute();
   }
 
+  /**
+   * Terminates the current session.
+   *
+   * @param reason - The reason for terminating the session.
+   * @returns A promise resolving to a {@link Result} indicating success.
+   */
   terminate(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
     return new TerminateSessionUseCase(this.deps).execute(reason);
   }
 
+  /**
+   * Verifies the current session.
+   *
+   * @returns A promise resolving to a {@link Result} containing the session verification data.
+   */
   verify(): Promise<Result<SessionVerificationDto, AppError>> {
     return new VerifySessionUseCase(this.deps).execute();
   }

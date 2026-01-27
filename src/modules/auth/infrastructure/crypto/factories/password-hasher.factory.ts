@@ -5,7 +5,12 @@ import { getAuthCryptoConfig } from "@/modules/auth/infrastructure/crypto/config
 import { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service";
 
 /**
- * Factory for the password hasher contract.
+ * Creates an instance of the password hasher contract.
+ *
+ * This factory initializes the {@link BcryptPasswordService} with configuration
+ * and wraps it in a {@link PasswordHasherAdapter}.
+ *
+ * @returns An implementation of the {@link PasswordHasherContract}.
  */
 export function passwordHasherFactory(): PasswordHasherContract {
   const config = getAuthCryptoConfig();

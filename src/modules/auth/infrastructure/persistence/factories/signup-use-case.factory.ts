@@ -5,7 +5,11 @@ import { passwordHasherFactory } from "@/modules/auth/infrastructure/crypto/fact
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
- * Clean Architecture Factory: Wires Infrastructure into Use Case.
+ * Factory for creating the SignupUseCase.
+ *
+ * @param uow - The Unit of Work for database transactions.
+ * @param logger - The logging client.
+ * @returns An instance of {@link SignupUseCase}.
  */
 export function signupUseCaseFactory(
   uow: AuthUnitOfWorkContract,

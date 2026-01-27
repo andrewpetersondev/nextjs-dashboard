@@ -2,10 +2,14 @@ import "server-only";
 import { millisecondsToSeconds } from "@/shared/constants/time.constants";
 
 /**
- * Converts an absolute expiration time in milliseconds to cookie `maxAge` seconds.
+ * Converts an absolute expiration time in milliseconds to cookie `maxAge` in seconds.
  *
  * @remarks
- * The adapter passes `Date.now()` explicitly to keep the time dependency visible and testable.
+ * The adapter passes `nowMs` (usually `Date.now()`) explicitly to keep the time dependency visible and testable.
+ *
+ * @param expiresAtMs - The absolute expiration time in milliseconds.
+ * @param nowMs - The current time in milliseconds.
+ * @returns The number of seconds until expiration, or 0 if already expired.
  */
 export function toSessionCookieMaxAgeSecondsHelper(
   expiresAtMs: number,

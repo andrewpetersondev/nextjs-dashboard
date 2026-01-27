@@ -53,6 +53,12 @@ export class AuthUserRepository {
     return await incrementDemoUserCounterDal(this.db, role, this.logger);
   }
 
+  /**
+   * Finds a user by email.
+   *
+   * @param query - The lookup query containing the email.
+   * @returns A promise resolving to a {@link Result} containing the user entity or null.
+   */
   async findByEmail(
     query: Readonly<AuthUserLookupQueryDto>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {

@@ -16,11 +16,19 @@ import type { Result } from "@/shared/results/result.types";
  * @remarks
  * This adapter bridges the application-facing {@link SessionStoreContract}
  * with the underlying cookie service implementation.
+ *
+ * @implements {SessionStoreContract}
  */
 export class SessionCookieStoreAdapter implements SessionStoreContract {
   private readonly cookies: CookieContract;
   private readonly logger: LoggingClientContract;
 
+  /**
+   * Initializes the session cookie store adapter.
+   *
+   * @param cookies - The cookie management contract.
+   * @param logger - The logging client.
+   */
   constructor(cookies: CookieContract, logger: LoggingClientContract) {
     this.cookies = cookies;
     this.logger = logger;
@@ -28,6 +36,8 @@ export class SessionCookieStoreAdapter implements SessionStoreContract {
 
   /**
    * Deletes the session cookie, effectively logging out the user.
+   *
+   * @returns A promise resolving to a {@link Result} indicating success or containing an {@link AppError}.
    */
   async delete(): Promise<Result<void, AppError>> {
     try {
@@ -46,7 +56,8 @@ export class SessionCookieStoreAdapter implements SessionStoreContract {
 
   /**
    * Retrieves the current session cookie value.
-   * @returns The session cookie value, or undefined if not set
+   *
+   * @returns A promise resolving to a {@link Result} containing the session cookie value, or undefined if not set.
    */
   async get(): Promise<Result<string | undefined, AppError>> {
     try {
@@ -62,8 +73,10 @@ export class SessionCookieStoreAdapter implements SessionStoreContract {
 
   /**
    * Sets the session cookie with the provided value and options.
-   * @param value - The session token to store
-   * @param expiresAtMs - The expiration time in milliseconds since epoch
+   *
+   * @param value - The session token to store.
+   * @param expiresAtMs - The expiration time in milliseconds since epoch.
+   * @returns A promise resolving to a {@link Result} indicating success or containing an {@link AppError}.
    */
   async set(
     value: string,
