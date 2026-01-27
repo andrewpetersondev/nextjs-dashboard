@@ -5,7 +5,7 @@ import type { PasswordHasherContract } from "@/modules/auth/application/contract
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { createDemoUserTxHelper } from "@/modules/auth/application/helpers/create-demo-user.tx.helper";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import type { Result } from "@/shared/results/result.types";

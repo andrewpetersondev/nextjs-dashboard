@@ -1,6 +1,5 @@
 import "server-only";
-
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Result of a session verification check.

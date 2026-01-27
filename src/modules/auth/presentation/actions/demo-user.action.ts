@@ -5,7 +5,7 @@ import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence
 import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/persistence/factories/demo-user-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";

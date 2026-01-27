@@ -1,7 +1,7 @@
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

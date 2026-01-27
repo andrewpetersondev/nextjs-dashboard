@@ -8,7 +8,7 @@ import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.types";
+} from "@/shared/domain/user/user-role.schema";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 
 interface AuthFormDemoSectionProps {

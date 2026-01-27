@@ -1,4 +1,4 @@
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * API/UI

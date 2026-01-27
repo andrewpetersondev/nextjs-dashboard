@@ -5,7 +5,7 @@ import type {
   UpdateSessionSuccessDto,
 } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Builds a successful rotation outcome.

@@ -1,6 +1,9 @@
 import { users } from "@/server/db/schema/users";
 import type { Hash } from "@/shared/branding/brands";
-import { USER_ROLE, type UserRole } from "@/shared/domain/user/user-role.types";
+import {
+  USER_ROLE,
+  type UserRole,
+} from "@/shared/domain/user/user-role.schema";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 

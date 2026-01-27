@@ -1,4 +1,4 @@
-import { USER_ROLE } from "../../../src/shared/domain/user/user-role.types";
+import {USER_ROLE} from "../../../src/shared/domain/user/user-role.schema";
 import { DASHBOARD_PATH } from "../shared/paths";
 import { TEN_SECONDS } from "../shared/times";
 import { DEMO_USER } from "../shared/users";

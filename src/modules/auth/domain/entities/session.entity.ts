@@ -5,7 +5,7 @@ import {
   MILLISECONDS_PER_SECOND,
   nowInSeconds,
 } from "@/shared/constants/time.constants";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Represents the core session data as a domain entity.

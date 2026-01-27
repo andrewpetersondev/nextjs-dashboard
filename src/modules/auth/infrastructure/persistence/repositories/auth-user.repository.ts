@@ -8,7 +8,7 @@ import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persi
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/mappers/to-auth-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";

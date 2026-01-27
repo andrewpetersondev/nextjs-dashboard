@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 // TODO:  why does this shape have no properties that are specific to sessions, cookies, or tokens?
 

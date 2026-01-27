@@ -10,7 +10,7 @@ import {
   makeInvalidDemoCounterError,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/registration.policy";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";

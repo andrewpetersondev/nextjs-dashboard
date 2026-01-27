@@ -3,6 +3,7 @@ import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/application/co
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { nowInSeconds } from "@/shared/constants/time.constants";
+import { USER_ROLES } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Issued At (iat) claim schema.
@@ -26,9 +27,9 @@ export const SubSchema = z.uuid();
  * Role claim as it appears in the token payload.
  *
  * @remarks
- * This is a string at the token boundary; it is mapped to `UserRole` at the application DTO boundary.
+ * This is a string at the token boundary; it is mapped to {@link UserRole} at the application DTO boundary.
  */
-export const RoleStringSchema = z.string().min(1);
+export const RoleStringSchema = z.enum(USER_ROLES);
 
 /**
  * UserId boundary schema (UUID string ⇄ branded UserId).

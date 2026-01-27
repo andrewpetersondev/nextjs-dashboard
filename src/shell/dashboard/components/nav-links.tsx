@@ -12,7 +12,7 @@ import type { ComponentType, JSX, SVGProps } from "react";
 import {
   ADMIN_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.types";
+} from "@/shared/domain/user/user-role.schema";
 import { ROUTES } from "@/shared/routes/routes";
 import { cn } from "@/ui/utils/cn";
 

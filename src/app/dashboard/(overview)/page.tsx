@@ -11,7 +11,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.types";
+} from "@/shared/domain/user/user-role.schema";
 import { formatCurrency } from "@/shared/utilities/money/convert";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";

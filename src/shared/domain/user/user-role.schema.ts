@@ -1,7 +1,14 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/shared/domain/user/user-role.types";
 
-const userRoleEnum = z.enum(USER_ROLES);
+export const USER_ROLES = ["ADMIN", "GUEST", "USER"] as const;
+
+export type UserRole = (typeof USER_ROLES)[number];
+
+export const ADMIN_ROLE: UserRole = "ADMIN";
+export const GUEST_ROLE: UserRole = "GUEST";
+export const USER_ROLE: UserRole = "USER";
+
+export const userRoleEnum = z.enum(USER_ROLES);
 
 /**
  * Role schema: trims, uppercases, and validates against allowed roles.

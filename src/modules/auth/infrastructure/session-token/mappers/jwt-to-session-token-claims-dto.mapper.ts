@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/session-token/transports/session-jwt-claims.transport";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Converts infrastructure JWT claims to application-layer session token claims.

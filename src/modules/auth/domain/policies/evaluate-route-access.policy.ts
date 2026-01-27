@@ -1,5 +1,5 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { ADMIN_ROLE } from "@/shared/domain/user/user-role.types";
+import { ADMIN_ROLE } from "@/shared/domain/user/user-role.schema";
 
 export type AuthRouteType = "admin" | "protected" | "public";
 

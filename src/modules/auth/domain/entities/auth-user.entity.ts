@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Hash, UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.types";
+import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
  * Domain entity used within the Auth module.

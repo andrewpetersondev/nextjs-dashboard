@@ -6,7 +6,7 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.types";
+} from "@/shared/domain/user/user-role.schema";
 import { SEED_CONFIG } from "./constants";
 import { type NewInvoice, periods } from "./seed-shared";
 import {
