@@ -5,7 +5,6 @@ import {
   isSessionExpired,
   type SessionEntity,
 } from "@/modules/auth/domain/entities/session.entity";
-import { nowInSeconds } from "@/shared/constants/time.constants";
 
 /**
  * Architectural actions to take based on session state evaluation.
@@ -65,21 +64,21 @@ export type SessionLifecycleDecision =
         "expired" | "absolute_limit_exceeded"
       >;
       /** Current age of the session in seconds */
-      ageSec?: number;
+      ageSec: number;
       /** Maximum allowed lifetime in seconds */
-      maxSec?: number;
+      maxSec: number;
     }>;
 
 /**
  * Pure function that evaluates the state of a session and decides on the next architectural action.
  *
  * @param session - The session entity to evaluate.
- * @param nowSec - Current UNIX timestamp in seconds (defaults to now).
+ * @param nowSec - Current UNIX timestamp in seconds.
  * @returns A decision object specifying the required action and reason.
  */
 export function evaluateSessionLifecyclePolicy(
   session: SessionEntity,
-  nowSec: number = nowInSeconds(),
+  nowSec: number,
 ): SessionLifecycleDecision {
   const { ageSec, exceeded } = isSessionAbsoluteLifetimeExceeded(
     session,
@@ -97,7 +96,12 @@ export function evaluateSessionLifecyclePolicy(
   }
 
   if (isSessionExpired(session, nowSec)) {
-    return { action: "terminate", reason: "expired" };
+    return {
+      action: "terminate",
+      ageSec,
+      maxSec: MAX_ABSOLUTE_SESSION_SEC,
+      reason: "expired",
+    };
   }
 
   const timeLeftSec = getSessionTimeLeftSec(session, nowSec);

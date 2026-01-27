@@ -1,8 +1,4 @@
 import type { UserId } from "@/shared/branding/brands";
-import {
-  MILLISECONDS_PER_SECOND,
-  nowInSeconds,
-} from "@/shared/constants/time.constants";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
@@ -31,7 +27,7 @@ export type SessionEntity = Readonly<{
  */
 export function getSessionTimeLeftSec(
   session: SessionEntity,
-  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
+  nowSec: number,
 ): number {
   return session.expiresAt - nowSec;
 }
@@ -45,7 +41,7 @@ export function getSessionTimeLeftSec(
  */
 export function isSessionExpired(
   session: SessionEntity,
-  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
+  nowSec: number,
 ): boolean {
   return getSessionTimeLeftSec(session, nowSec) <= 0;
 }
@@ -61,7 +57,7 @@ export function isSessionExpired(
 export function isSessionApproachingExpiry(
   session: SessionEntity,
   thresholdSec: number,
-  nowSec: number = Math.floor(Date.now() / MILLISECONDS_PER_SECOND),
+  nowSec: number,
 ): boolean {
   const remaining = getSessionTimeLeftSec(session, nowSec);
   return remaining > 0 && remaining <= thresholdSec;
@@ -79,7 +75,7 @@ export function isSessionApproachingExpiry(
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
   maxLifetimeSec: number,
-  nowSec: number = nowInSeconds(),
+  nowSec: number,
 ): { ageSec: number; exceeded: boolean } {
   const ageSec = nowSec - session.issuedAt;
   return { ageSec, exceeded: ageSec > maxLifetimeSec };
