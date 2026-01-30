@@ -43,13 +43,15 @@ export class AuthUserRepository {
    * Increments the demo user counter for a given role.
    *
    * @param role - Role whose counter should be incremented.
-   * @returns The updated counter value.
+   * @returns Result containing the updated counter value.
    *
    * @remarks
    * This method delegates to the DAL and returns its numeric result. Any DAL errors
    * are allowed to propagate to be handled/mapped by higher layers.
    */
-  async incrementDemoUserCounter(role: UserRole): Promise<number> {
+  async incrementDemoUserCounter(
+    role: UserRole,
+  ): Promise<Result<number, AppError>> {
     return await incrementDemoUserCounterDal(this.db, role, this.logger);
   }
 

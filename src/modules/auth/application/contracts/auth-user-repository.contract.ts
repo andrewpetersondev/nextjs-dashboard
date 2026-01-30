@@ -16,9 +16,9 @@ export interface AuthUserRepositoryContract {
    * Increments the demo user counter for a specific role.
    *
    * @param role - The role whose demo counter should be incremented.
-   * @returns The updated counter value after incrementing.
+   * @returns The updated counter value after incrementing (or AppError on failure).
    */
-  incrementDemoUserCounter(role: UserRole): Promise<number>;
+  incrementDemoUserCounter(role: UserRole): Promise<Result<number, AppError>>;
 
   /**
    * Fetches a user candidate by their unique email.

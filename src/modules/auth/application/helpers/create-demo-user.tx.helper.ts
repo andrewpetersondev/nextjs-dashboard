@@ -37,10 +37,14 @@ export async function createDemoUserTxHelper(
   const passwordHash = hashResult.value;
 
   const result = await uow.withTransaction(async (tx) => {
-    // 1. Get and increment demo counter
-    const counter = await tx.authUsers.incrementDemoUserCounter(role);
+    const counterResult = await tx.authUsers.incrementDemoUserCounter(role);
 
-    // 2. Validate counter using domain policy
+    if (!counterResult.ok) {
+      return Err(counterResult.error);
+    }
+
+    const counter = counterResult.value;
+
     if (!validateDemoUserCounter(counter)) {
       const failure = makeInvalidDemoCounterFailure();
 
@@ -53,7 +57,6 @@ export async function createDemoUserTxHelper(
       return Err(error);
     }
 
-    // 3. Generate identity using domain policy
     const { email, username } = generateDemoUserIdentity(role, counter);
 
     // 4. Perform signup

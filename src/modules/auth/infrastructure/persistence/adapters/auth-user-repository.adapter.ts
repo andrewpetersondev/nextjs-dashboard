@@ -39,7 +39,7 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
   /**
    * @inheritdoc
    */
-  incrementDemoUserCounter(role: UserRole): Promise<number> {
+  incrementDemoUserCounter(role: UserRole): Promise<Result<number, AppError>> {
     return this.authUsers.incrementDemoUserCounter(role);
   }
 
