@@ -12,10 +12,13 @@ export interface SessionTokenServiceContract {
   /**
    * Decodes an encoded session token.
    *
+   * Contract: this returns decoded-but-untrusted payload. Call `validate()` to
+   * enforce schema/invariants and obtain application-level claims.
+   *
    * @param token - The encoded session token string.
-   * @returns A Result containing the decoded session token claims or an AppError.
+   * @returns A Result containing the decoded token payload or an AppError.
    */
-  decode(token: string): Promise<Result<SessionTokenClaimsDto, AppError>>;
+  decode(token: string): Promise<Result<unknown, AppError>>;
 
   /**
    * Issues a brand-new session token for a new session.

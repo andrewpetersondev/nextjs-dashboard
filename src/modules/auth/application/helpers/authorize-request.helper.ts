@@ -2,7 +2,11 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { AUTH_POLICY_REASONS } from "@/modules/auth/domain/constants/auth-policy.constants";
-import { AUTH_REQUEST_REASONS } from "@/modules/auth/domain/constants/auth-request.constants";
+import {
+  AUTH_REQUEST_REASONS,
+  AUTH_SESSION_DECODE_RESULTS,
+  type AuthSessionDecodeResult,
+} from "@/modules/auth/domain/constants/auth-request.constants";
 import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/outputs/auth-request-authorization.output";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/route/evaluate-route-access.policy";
 import { tryGetRouteTypePolicy } from "@/modules/auth/domain/policies/route/get-route-type.policy";
@@ -20,20 +24,45 @@ async function extractSessionClaims(
   sessionTokenService: SessionTokenServiceContract,
 ): Promise<
   Readonly<
-    | { claims: SessionTokenClaimsDto; reason: "ok" }
-    | { claims: undefined; reason: "no_cookie" | "decode_failed" }
+    | {
+        claims: SessionTokenClaimsDto;
+        reason: typeof AUTH_SESSION_DECODE_RESULTS.OK;
+      }
+    | {
+        claims: undefined;
+        reason: Exclude<
+          AuthSessionDecodeResult,
+          typeof AUTH_SESSION_DECODE_RESULTS.OK
+        >;
+      }
   >
 > {
   if (!cookie) {
-    return { claims: undefined, reason: "no_cookie" };
+    return { claims: undefined, reason: AUTH_SESSION_DECODE_RESULTS.NO_COOKIE };
   }
 
   const decodedResult = await sessionTokenService.decode(cookie);
   if (!decodedResult.ok) {
-    return { claims: undefined, reason: "decode_failed" };
+    return {
+      claims: undefined,
+      reason: AUTH_SESSION_DECODE_RESULTS.DECODE_FAILED,
+    };
   }
 
-  return { claims: decodedResult.value, reason: "ok" };
+  const validatedResult = await sessionTokenService.validate(
+    decodedResult.value,
+  );
+  if (!validatedResult.ok) {
+    return {
+      claims: undefined,
+      reason: AUTH_SESSION_DECODE_RESULTS.INVALID_CLAIMS,
+    };
+  }
+
+  return {
+    claims: validatedResult.value,
+    reason: AUTH_SESSION_DECODE_RESULTS.OK,
+  };
 }
 
 /**

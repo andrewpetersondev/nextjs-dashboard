@@ -30,7 +30,7 @@ export function sessionTokenCodecFactory(
     SESSION_AUDIENCE,
   );
 
-  const codec = new SessionTokenCodecAdapter(logger, jwtCrypto);
+  const codec = new SessionTokenCodecAdapter(jwtCrypto);
 
   return codec;
 }

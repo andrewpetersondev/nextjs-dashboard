@@ -10,12 +10,15 @@ import type { Result } from "@/shared/results/result.types";
  */
 export interface SessionTokenCodecContract {
   /**
-   * Decodes an encoded session token into its constituent claims.
+   * Decodes and cryptographically verifies an encoded session token.
+   *
+   * Contract: this returns the decoded payload as-is (untrusted). Callers must
+   * validate/transform it into application-level claims separately.
    *
    * @param token - The encoded session token string.
-   * @returns A Result containing the decoded session token claims or an AppError.
+   * @returns A Result containing the decoded token payload or an AppError.
    */
-  decode(token: string): Promise<Result<SessionTokenClaimsDto, AppError>>;
+  decode(token: string): Promise<Result<unknown, AppError>>;
 
   /**
    * Encodes session token claims into a secure token string.

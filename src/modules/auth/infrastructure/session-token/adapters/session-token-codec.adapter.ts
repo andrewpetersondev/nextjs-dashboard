@@ -1,13 +1,8 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/contracts/session-token-codec.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
-import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session-token/mappers/jwt-to-session-token-claims-dto.mapper";
 import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session-token/strategies/session-jwt-crypto.strategy";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -20,20 +15,14 @@ import type { Result } from "@/shared/results/result.types";
  * @implements {SessionTokenCodecContract}
  */
 export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
-  private readonly logger: LoggingClientContract;
   private readonly jwtCrypto: SessionJwtCryptoStrategy;
 
   /**
    * Initializes the session token codec adapter.
    *
-   * @param logger - The logging client.
    * @param jwtCrypto - The strategy for JWT cryptography operations.
    */
-  constructor(
-    logger: LoggingClientContract,
-    jwtCrypto: SessionJwtCryptoStrategy,
-  ) {
-    this.logger = logger;
+  constructor(jwtCrypto: SessionJwtCryptoStrategy) {
     this.jwtCrypto = jwtCrypto;
   }
 
@@ -43,33 +32,14 @@ export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
    * @param token - The JWT token to decode.
    * @returns A promise resolving to a {@link Result} containing the decoded claims or an {@link AppError}.
    */
-  async decode(
-    token: string,
-  ): Promise<Result<SessionTokenClaimsDto, AppError>> {
+  async decode(token: string): Promise<Result<unknown, AppError>> {
     const jwtCryptoResult = await this.jwtCrypto.verify(token);
 
     if (!jwtCryptoResult.ok) {
       return Err(jwtCryptoResult.error);
     }
 
-    const parsed = SessionTokenClaimsSchema.safeParse(jwtCryptoResult.value);
-
-    if (!parsed.success) {
-      this.logger.warn("JWT payload validation failed", {
-        errors: parsed.error.flatten().fieldErrors,
-        tokenLength: token.length,
-      });
-
-      return Err(
-        makeAppError(APP_ERROR_KEYS.validation, {
-          cause: parsed.error,
-          message: "jwt.validation.failed",
-          metadata: {},
-        }),
-      );
-    }
-
-    return Ok(jwtToSessionTokenClaimsDto(parsed.data));
+    return Ok(jwtCryptoResult.value);
   }
 
   /**

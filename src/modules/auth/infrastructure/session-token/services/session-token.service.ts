@@ -40,25 +40,17 @@ export class SessionTokenService implements SessionTokenServiceContract {
   }
 
   /**
-   * Decodes a token and returns the application-level claims.
+   * Decodes and cryptographically verifies a token.
    *
    * @remarks
-   * Canonical path: decode/verify via codec, then validate via this service
-   * so all consumers get consistent schema + error behavior.
+   * Contract: this returns decoded-but-untrusted payload. Call `validate()` to
+   * enforce schema/invariants and obtain application-level claims.
    *
    * @param token - The token to decode.
-   * @returns A promise resolving to a {@link Result} containing the decoded claims or an {@link AppError}.
+   * @returns A promise resolving to a {@link Result} containing the decoded payload or an {@link AppError}.
    */
-  async decode(
-    token: string,
-  ): Promise<Result<SessionTokenClaimsDto, AppError>> {
-    const decodedResult = await this.codec.decode(token);
-
-    if (!decodedResult.ok) {
-      return Err(decodedResult.error);
-    }
-
-    return await this.validate(decodedResult.value);
+  async decode(token: string): Promise<Result<unknown, AppError>> {
+    return await this.codec.decode(token);
   }
 
   /**

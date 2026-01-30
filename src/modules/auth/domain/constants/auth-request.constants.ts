@@ -27,6 +27,7 @@ export type AuthRequestReason =
  */
 export const AUTH_SESSION_DECODE_RESULTS = {
   DECODE_FAILED: "decode_failed",
+  INVALID_CLAIMS: "invalid_claims",
   NO_COOKIE: "no_cookie",
   OK: "ok",
 } as const;

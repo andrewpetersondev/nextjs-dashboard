@@ -8,6 +8,28 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
+async function tryCleanupInvalidToken(
+  params: Readonly<{
+    logger: LoggingClientContract;
+    sessionStore: SessionStoreContract;
+    shouldCleanup: boolean;
+  }>,
+): Promise<boolean> {
+  if (!params.shouldCleanup) {
+    return false;
+  }
+
+  const cleanup = await cleanupInvalidTokenHelper(
+    {
+      logger: params.logger,
+      sessionStore: params.sessionStore,
+    },
+    { reason: "invalid_token", source: "readSessionTokenHelper" },
+  );
+
+  return cleanup.didCleanup;
+}
+
 /**
  * Centralizes the retrieval and decoding of a session token from the store.
  *
@@ -46,17 +68,11 @@ export async function readSessionTokenHelper(
   const decodedResult = await deps.sessionTokenService.decode(token);
 
   if (!decodedResult.ok) {
-    let didCleanup = false;
-    if (options.cleanupOnInvalidToken) {
-      const cleanup = await cleanupInvalidTokenHelper(
-        {
-          logger: deps.logger,
-          sessionStore: deps.sessionStore,
-        },
-        { reason: "invalid_token", source: "readSessionTokenHelper" },
-      );
-      didCleanup = cleanup.didCleanup;
-    }
+    const didCleanup = await tryCleanupInvalidToken({
+      logger: deps.logger,
+      sessionStore: deps.sessionStore,
+      shouldCleanup: options.cleanupOnInvalidToken,
+    });
 
     if (decodedResult.error.key === "unexpected") {
       return Err(decodedResult.error);
@@ -65,8 +81,26 @@ export async function readSessionTokenHelper(
     return Ok({ didCleanup, kind: "invalid_token" });
   }
 
+  const validatedResult = await deps.sessionTokenService.validate(
+    decodedResult.value,
+  );
+
+  if (!validatedResult.ok) {
+    const didCleanup = await tryCleanupInvalidToken({
+      logger: deps.logger,
+      sessionStore: deps.sessionStore,
+      shouldCleanup: options.cleanupOnInvalidToken,
+    });
+
+    if (validatedResult.error.key === "unexpected") {
+      return Err(validatedResult.error);
+    }
+
+    return Ok({ didCleanup, kind: "invalid_token" });
+  }
+
   return Ok({
-    decoded: decodedResult.value,
+    decoded: validatedResult.value,
     kind: "decoded",
   });
 }
