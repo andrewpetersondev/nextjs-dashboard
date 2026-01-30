@@ -9,7 +9,7 @@ import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterError,
   validateDemoUserCounter,
-} from "@/modules/auth/domain/policies/registration.policy";
+} from "@/modules/auth/domain/policies/user/registration.policy";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";

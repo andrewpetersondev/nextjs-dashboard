@@ -20,7 +20,7 @@ import {
   evaluateSessionLifecyclePolicy,
   requiresRotation,
   requiresTermination,
-} from "@/modules/auth/domain/policies/session/session-lifecycle.policy";
+} from "@/modules/auth/domain/policies/session/evaluate-session-lifecycle.policy";
 import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

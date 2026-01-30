@@ -1,8 +1,10 @@
 import {
   MAX_ABSOLUTE_SESSION_SEC,
+  SESSION_REFRESH_THRESHOLD_SEC,
+} from "@/modules/auth/domain/constants/session-config.constants";
+import {
   SESSION_LIFECYCLE_ACTIONS,
   SESSION_LIFECYCLE_REASONS,
-  SESSION_REFRESH_THRESHOLD_SEC,
 } from "@/modules/auth/domain/constants/session-lifecycle.constants";
 import {
   getSessionTimeLeftSec,
@@ -13,35 +15,27 @@ import {
 } from "@/modules/auth/domain/entities/session.entity";
 
 /**
- * Domain Policy: Recognized reasons for terminating a session.
- */
-export type TerminateSessionReason =
-  | typeof SESSION_LIFECYCLE_REASONS.ABSOLUTE_LIMIT_EXCEEDED
-  | typeof SESSION_LIFECYCLE_REASONS.EXPIRED
-  | typeof SESSION_LIFECYCLE_REASONS.LOGOUT;
-
-/**
  * Domain Policy: Reasons for session lifecycle decisions.
  */
-export type SessionLifecycleReason =
+type SessionLifecycleDecisionReason =
   | typeof SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY
   | typeof SESSION_LIFECYCLE_REASONS.VALID
   | TerminateSessionReason;
 
-export type SessionLifecycleTerminationDecision = Readonly<{
+type SessionLifecycleTerminationDecision = Readonly<{
   readonly action: typeof SESSION_LIFECYCLE_ACTIONS.TERMINATE;
   readonly ageSec: number;
   readonly maxSec: number;
-  readonly reason: SessionLifecycleReason;
+  readonly reason: SessionLifecycleDecisionReason;
 }>;
 
-export type SessionLifecycleRotateDecision = Readonly<{
+type SessionLifecycleRotateDecision = Readonly<{
   readonly action: typeof SESSION_LIFECYCLE_ACTIONS.ROTATE;
   readonly reason: typeof SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY;
   readonly timeLeftSec: number;
 }>;
 
-export type SessionLifecycleContinueDecision = Readonly<{
+type SessionLifecycleContinueDecision = Readonly<{
   readonly action: typeof SESSION_LIFECYCLE_ACTIONS.CONTINUE;
   readonly reason: typeof SESSION_LIFECYCLE_REASONS.VALID;
   readonly timeLeftSec: number;
@@ -50,10 +44,18 @@ export type SessionLifecycleContinueDecision = Readonly<{
 /**
  * Represents the structured result of a session lifecycle evaluation.
  */
-export type SessionLifecycleDecision =
+type SessionLifecycleDecision =
   | SessionLifecycleContinueDecision
   | SessionLifecycleRotateDecision
   | SessionLifecycleTerminationDecision;
+
+/**
+ * Domain Policy: Recognized reasons for terminating a session.
+ */
+export type TerminateSessionReason =
+  | typeof SESSION_LIFECYCLE_REASONS.ABSOLUTE_LIMIT_EXCEEDED
+  | typeof SESSION_LIFECYCLE_REASONS.EXPIRED
+  | typeof SESSION_LIFECYCLE_REASONS.LOGOUT;
 
 /**
  * Pure function that evaluates the state of a session and decides on the next architectural action.

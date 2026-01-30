@@ -6,7 +6,7 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
 
 import type { SignupRequestDto } from "@/modules/auth/application/schemas/signup-request.schema";
-import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/registration.policy";
+import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/user/registration.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";
