@@ -1,3 +1,7 @@
+import type {
+  DurationSeconds,
+  TimeDeltaSeconds,
+} from "@/modules/auth/domain/values/auth-brands.value";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
@@ -14,8 +18,8 @@ export const UPDATE_SESSION_OUTCOME_REASON = {
 } as const;
 
 export type UpdateSessionTerminationNotRotatedDto = Readonly<{
-  readonly ageSec: number;
-  readonly maxSec: number;
+  readonly ageSec: DurationSeconds;
+  readonly maxSec: DurationSeconds;
   readonly reason:
     | typeof UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
     | typeof UPDATE_SESSION_OUTCOME_REASON.expired;
@@ -32,7 +36,7 @@ export type UpdateSessionNoSessionNotRotatedDto = Readonly<{
 export type UpdateSessionNotNeededNotRotatedDto = Readonly<{
   readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.notNeeded;
   readonly refreshed: false;
-  readonly timeLeftSec: number;
+  readonly timeLeftSec: TimeDeltaSeconds;
 }>;
 
 export type UpdateSessionNotRotatedDto =
@@ -41,7 +45,7 @@ export type UpdateSessionNotRotatedDto =
   | UpdateSessionTerminationNotRotatedDto;
 
 export type UpdateSessionSuccessDto = {
-  readonly expiresAt: number;
+  readonly expiresAtMs: number;
   readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.rotated;
   readonly refreshed: true;
   readonly role: UserRole;

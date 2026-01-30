@@ -27,9 +27,9 @@ export function buildReadSessionOutcome(
   }
 
   return {
-    expiresAt: session.expiresAt,
+    expiresAtSec: session.expiresAt,
     id: session.userId,
-    issuedAt: session.issuedAt,
+    issuedAtSec: session.issuedAt,
     role: session.role,
     timeLeftSec,
   };

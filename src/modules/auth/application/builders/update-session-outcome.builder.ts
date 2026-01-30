@@ -4,6 +4,10 @@ import {
   type UpdateSessionNotRotatedDto,
   type UpdateSessionSuccessDto,
 } from "@/modules/auth/application/dtos/update-session-outcome.dto";
+import type {
+  DurationSeconds,
+  TimeDeltaSeconds,
+} from "@/modules/auth/domain/values/auth-brands.value";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
@@ -15,14 +19,14 @@ type UpdateSessionNotRotatedParams = Readonly<
     }
   | {
       readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.notNeeded;
-      readonly timeLeftSec: number;
+      readonly timeLeftSec: TimeDeltaSeconds;
     }
   | {
       readonly reason:
         | typeof UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
         | typeof UPDATE_SESSION_OUTCOME_REASON.expired;
-      readonly ageSec: number;
-      readonly maxSec: number;
+      readonly ageSec: DurationSeconds;
+      readonly maxSec: DurationSeconds;
     }
 >;
 
@@ -41,7 +45,7 @@ export function buildUpdateSessionSuccess(
   }
 
   return {
-    expiresAt: params.expiresAtMs,
+    expiresAtMs: params.expiresAtMs,
     reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
     refreshed: true,
     role: params.role,
