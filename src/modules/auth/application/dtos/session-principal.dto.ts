@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 

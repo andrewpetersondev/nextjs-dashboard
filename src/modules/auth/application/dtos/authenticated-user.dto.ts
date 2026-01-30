@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
 
 /**

@@ -1,4 +1,3 @@
-import "server-only";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
 /**
