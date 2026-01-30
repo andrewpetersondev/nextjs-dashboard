@@ -24,50 +24,42 @@ export const MAX_ABSOLUTE_SESSION_SEC = 2_592_000 as const;
 export type TerminateSessionReason =
   | "absolute_limit_exceeded"
   | "expired"
-  | "invalid_token"
-  | "user_logout";
+  | "logout";
 
 /**
  * Domain Policy: Reasons for session lifecycle decisions.
  */
 export type SessionLifecycleReason =
-  | TerminateSessionReason
   | "approaching_expiry"
-  | "valid";
+  | "valid"
+  | TerminateSessionReason;
+
+export type SessionLifecycleTerminationDecision = Readonly<{
+  readonly action: "terminate";
+  readonly ageSec: number;
+  readonly maxSec: number;
+  readonly reason: "absolute_limit_exceeded" | "expired";
+}>;
+
+export type SessionLifecycleRotateDecision = Readonly<{
+  readonly action: "rotate";
+  readonly reason: "approaching_expiry";
+  readonly timeLeftSec: number;
+}>;
+
+export type SessionLifecycleContinueDecision = Readonly<{
+  readonly action: "continue";
+  readonly reason: "valid";
+  readonly timeLeftSec: number;
+}>;
 
 /**
  * Represents the structured result of a session lifecycle evaluation.
  */
 export type SessionLifecycleDecision =
-  | Readonly<{
-      /** No action needed, session is still valid */
-      action: "continue";
-      /** Reason: valid */
-      reason: "valid";
-      /** Seconds remaining until expiry */
-      timeLeftSec: number;
-    }>
-  | Readonly<{
-      /** Session should be rotated (renewed) */
-      action: "rotate";
-      /** Reason: approaching_expiry */
-      reason: "approaching_expiry";
-      /** Seconds remaining until current expiry */
-      timeLeftSec: number;
-    }>
-  | Readonly<{
-      /** Session must be terminated */
-      action: "terminate";
-      /** Specific reason for termination */
-      reason: Extract<
-        SessionLifecycleReason,
-        "expired" | "absolute_limit_exceeded"
-      >;
-      /** Current age of the session in seconds */
-      ageSec: number;
-      /** Maximum allowed lifetime in seconds */
-      maxSec: number;
-    }>;
+  | SessionLifecycleContinueDecision
+  | SessionLifecycleRotateDecision
+  | SessionLifecycleTerminationDecision;
 
 /**
  * Pure function that evaluates the state of a session and decides on the next architectural action.
@@ -120,7 +112,7 @@ export function evaluateSessionLifecyclePolicy(
  */
 export function requiresRotation(
   decision: SessionLifecycleDecision,
-): decision is Extract<SessionLifecycleDecision, { action: "rotate" }> {
+): decision is SessionLifecycleRotateDecision {
   return decision.action === "rotate";
 }
 
@@ -129,6 +121,6 @@ export function requiresRotation(
  */
 export function requiresTermination(
   decision: SessionLifecycleDecision,
-): decision is Extract<SessionLifecycleDecision, { action: "terminate" }> {
+): decision is SessionLifecycleTerminationDecision {
   return decision.action === "terminate";
 }
