@@ -1,3 +1,12 @@
+import type {
+  DurationSeconds,
+  TimeDeltaSeconds,
+  UnixSeconds,
+} from "@/modules/auth/domain/values/auth-brands.value";
+import {
+  calculateAgeSec,
+  calculateTimeLeftSec,
+} from "@/modules/auth/domain/values/time.value";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 
@@ -5,13 +14,14 @@ import type { UserRole } from "@/shared/domain/user/user-role.schema";
  * Represents the core session data as a domain entity.
  * This is the central source of truth for an authenticated session's state.
  *
- * All timestamps are in UNIX seconds for consistency with JWT standards.
+ * @remarks
+ * All timestamps are UNIX seconds (not milliseconds).
  */
 export type SessionEntity = Readonly<{
-  /** Expiration time (UNIX timestamp in seconds, matches JWT 'exp' claim) */
-  expiresAt: number;
-  /** Issued at time (UNIX timestamp in seconds, matches JWT 'iat' claim) */
-  issuedAt: number;
+  /** Expiration time (UNIX seconds, matches JWT `exp`) */
+  expiresAt: UnixSeconds;
+  /** Issued at time (UNIX seconds, matches JWT `iat`) */
+  issuedAt: UnixSeconds;
   /** User role for authorization checks within the session */
   role: UserRole;
   /** Unique user identifier (branded UserId) */
@@ -19,17 +29,13 @@ export type SessionEntity = Readonly<{
 }>;
 
 /**
- * Domain Logic: Calculates the remaining time in seconds.
- *
- * @param session - The session entity.
- * @param nowSec - Current UNIX timestamp in seconds.
- * @returns Number of seconds until session expiry.
+ * Domain Logic: Calculates the remaining time until expiry (signed).
  */
 export function getSessionTimeLeftSec(
   session: SessionEntity,
-  nowSec: number,
-): number {
-  return session.expiresAt - nowSec;
+  nowSec: UnixSeconds,
+): TimeDeltaSeconds {
+  return calculateTimeLeftSec(session.expiresAt, nowSec);
 }
 
 /**
@@ -41,7 +47,7 @@ export function getSessionTimeLeftSec(
  */
 export function isSessionExpired(
   session: SessionEntity,
-  nowSec: number,
+  nowSec: UnixSeconds,
 ): boolean {
   return getSessionTimeLeftSec(session, nowSec) <= 0;
 }
@@ -56,10 +62,10 @@ export function isSessionExpired(
  */
 export function isSessionApproachingExpiry(
   session: SessionEntity,
-  thresholdSec: number,
-  nowSec: number,
+  thresholdSec: DurationSeconds,
+  nowSec: UnixSeconds,
 ): boolean {
-  const remaining = getSessionTimeLeftSec(session, nowSec);
+  const remaining: TimeDeltaSeconds = getSessionTimeLeftSec(session, nowSec);
   return remaining > 0 && remaining <= thresholdSec;
 }
 
@@ -74,9 +80,9 @@ export function isSessionApproachingExpiry(
  */
 export function isSessionAbsoluteLifetimeExceeded(
   session: SessionEntity,
-  maxLifetimeSec: number,
-  nowSec: number,
-): { ageSec: number; exceeded: boolean } {
-  const ageSec = nowSec - session.issuedAt;
+  maxLifetimeSec: DurationSeconds,
+  nowSec: UnixSeconds,
+): Readonly<{ ageSec: DurationSeconds; exceeded: boolean }> {
+  const ageSec: DurationSeconds = calculateAgeSec(session.issuedAt, nowSec);
   return { ageSec, exceeded: ageSec > maxLifetimeSec };
 }

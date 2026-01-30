@@ -1,16 +1,24 @@
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
-import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
-import { getSessionTimeLeftSec } from "@/modules/auth/domain/entities/session.entity";
+import {
+  getSessionTimeLeftSec,
+  type SessionEntity,
+} from "@/modules/auth/domain/entities/session.entity";
+import type { UnixSeconds } from "@/modules/auth/domain/values/auth-brands.value";
 
 /**
  * Builds a ReadSessionOutcomeDto from a SessionEntity.
  *
- * Validation:
- * - Ensures computed timeLeftSec is non-negative (if negative, session is expired and should be handled upstream)
+ * @remarks
+ * This builder is intentionally strict:
+ * if the session is already expired (negative time left), upstream should have
+ * handled it and terminated/cleared the session.
+ *
+ * @throws Error
+ * Thrown when the computed time left is negative.
  */
 export function buildReadSessionOutcome(
-  session: Readonly<SessionEntity>,
-  nowSec: number,
+  session: SessionEntity,
+  nowSec: UnixSeconds,
 ): Readonly<ReadSessionOutcomeDto> {
   const timeLeftSec = getSessionTimeLeftSec(session, nowSec);
 
@@ -24,5 +32,5 @@ export function buildReadSessionOutcome(
     issuedAt: session.issuedAt,
     role: session.role,
     timeLeftSec,
-  } as const;
+  };
 }

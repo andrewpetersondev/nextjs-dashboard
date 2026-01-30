@@ -1,6 +1,7 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { SessionEntity } from "@/modules/auth/domain/entities/session.entity";
+import { toUnixSeconds } from "@/modules/auth/domain/values/time.value";
 
 /**
  * Maps session token claims to a session domain entity.
@@ -15,8 +16,8 @@ export function toSessionEntity(
   tokenClaims: SessionTokenClaimsDto,
 ): SessionEntity {
   return {
-    expiresAt: tokenClaims.exp,
-    issuedAt: tokenClaims.iat,
+    expiresAt: toUnixSeconds(tokenClaims.exp),
+    issuedAt: toUnixSeconds(tokenClaims.iat),
     role: tokenClaims.role,
     userId: UserIdSchema.decode(tokenClaims.sub),
   };

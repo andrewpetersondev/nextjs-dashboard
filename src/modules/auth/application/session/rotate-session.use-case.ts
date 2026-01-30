@@ -21,6 +21,7 @@ import {
   requiresRotation,
   requiresTermination,
 } from "@/modules/auth/domain/policies/session/evaluate-session-lifecycle.policy";
+import { toUnixSeconds } from "@/modules/auth/domain/values/time.value";
 import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -61,7 +62,7 @@ export class RotateSessionUseCase {
     return safeExecute<UpdateSessionOutcomeDto>(
       // biome-ignore lint/complexity/noExcessiveLinesPerFunction: rotation flow is intentionally verbose (many early returns for clarity)
       async () => {
-        const nowSec = nowInSeconds();
+        const nowSec = toUnixSeconds(nowInSeconds());
 
         const readResult = await readSessionTokenHelper(
           {
@@ -112,12 +113,22 @@ export class RotateSessionUseCase {
           );
         }
 
-        const { sid, sub, role } = outcome.decoded;
+        const { role, sid, sub } = outcome.decoded;
+
+        if (!sid) {
+          return Ok(
+            buildUpdateSessionNotRotated({
+              reason: UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser,
+            }),
+          );
+        }
+
+        const decodedUserId = UserIdSchema.decode(sub);
 
         const issuedResult = await this.sessionTokenService.issueRotated({
           role,
           sid,
-          userId: UserIdSchema.decode(sub),
+          userId: decodedUserId,
         });
 
         if (!issuedResult.ok) {
@@ -125,7 +136,6 @@ export class RotateSessionUseCase {
         }
 
         const { expiresAtMs, token } = issuedResult.value;
-        const decodedUserId = UserIdSchema.decode(sub);
 
         await setSessionCookieAndLogHelper(
           {

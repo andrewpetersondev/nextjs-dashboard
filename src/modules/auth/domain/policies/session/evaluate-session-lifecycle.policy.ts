@@ -15,6 +15,10 @@ import {
   isSessionExpired,
   type SessionEntity,
 } from "@/modules/auth/domain/entities/session.entity";
+import type {
+  TimeDeltaSeconds,
+  UnixSeconds,
+} from "@/modules/auth/domain/values/auth-brands.value";
 
 /**
  * Domain Policy: Recognized reasons for terminating a session.
@@ -45,21 +49,21 @@ export type SessionLifecycleDecisionReason =
 
 export type SessionLifecycleTerminationDecision = Readonly<{
   readonly action: typeof SESSION_LIFECYCLE_ACTIONS.TERMINATE;
-  readonly ageSec: number;
-  readonly maxSec: number;
+  readonly ageSec: typeof MAX_ABSOLUTE_SESSION_SEC extends infer T ? T : never;
+  readonly maxSec: typeof MAX_ABSOLUTE_SESSION_SEC;
   readonly reason: TerminateSessionReason;
 }>;
 
 export type SessionLifecycleRotateDecision = Readonly<{
   readonly action: typeof SESSION_LIFECYCLE_ACTIONS.ROTATE;
   readonly reason: typeof SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY;
-  readonly timeLeftSec: number;
+  readonly timeLeftSec: TimeDeltaSeconds;
 }>;
 
 export type SessionLifecycleContinueDecision = Readonly<{
   readonly action: typeof SESSION_LIFECYCLE_ACTIONS.CONTINUE;
   readonly reason: typeof SESSION_LIFECYCLE_REASONS.VALID;
-  readonly timeLeftSec: number;
+  readonly timeLeftSec: TimeDeltaSeconds;
 }>;
 
 /**
@@ -79,7 +83,7 @@ export type SessionLifecycleDecision =
  */
 export function evaluateSessionLifecyclePolicy(
   session: SessionEntity,
-  nowSec: number,
+  nowSec: UnixSeconds,
 ): SessionLifecycleDecision {
   const { ageSec, exceeded } = isSessionAbsoluteLifetimeExceeded(
     session,
@@ -105,7 +109,7 @@ export function evaluateSessionLifecyclePolicy(
     };
   }
 
-  const timeLeftSec = getSessionTimeLeftSec(session, nowSec);
+  const timeLeftSec: TimeDeltaSeconds = getSessionTimeLeftSec(session, nowSec);
 
   if (
     isSessionApproachingExpiry(session, SESSION_REFRESH_THRESHOLD_SEC, nowSec)

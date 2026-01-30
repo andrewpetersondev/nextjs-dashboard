@@ -3,20 +3,24 @@
  *
  * Ensures presence of at least one letter, one number, and one special character.
  *
- * @param length - Desired password length. Must be between 5 and 20.
+ * @param length - Desired password length. Must be an integer between 5 and 20.
  * @returns A randomly generated compliant password string.
- * @throws Error if the length is outside the allowed range.
+ * @throws Error if the length is not a safe integer or is outside the allowed range.
  */
 export function makeRandomPassword(length: number): string {
-  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const lowercase = "abcdefghijklmnopqrstuvwxyz";
-  const digits = "0123456789";
-  const specials = '!@#$%^&*(),.?":{}|<>';
+  const uppercase: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase: string = "abcdefghijklmnopqrstuvwxyz";
+  const digits: string = "0123456789";
+  const specials: string = '!@#$%^&*(),.?":{}|<>';
 
-  const all = uppercase + lowercase + digits + specials;
+  const all: string = uppercase + lowercase + digits + specials;
 
   const min: number = 5;
   const max: number = 20;
+
+  if (!Number.isSafeInteger(length)) {
+    throw new Error("Password length must be a safe integer.");
+  }
 
   if (length < min || length > max) {
     throw new Error(
@@ -41,15 +45,9 @@ export function makeRandomPassword(length: number): string {
 
   // Fisher-Yates shuffle for randomness distribution.
   for (let i = seed.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-
-    const a = seed[i];
-    const b = seed[j];
-
-    if (a === undefined || b === undefined) {
-      // biome-ignore lint/nursery/noContinue: <it is fine>
-      continue;
-    }
+    const j: number = Math.floor(Math.random() * (i + 1));
+    const a: string = seed[i] as string;
+    const b: string = seed[j] as string;
 
     seed[i] = b;
     seed[j] = a;

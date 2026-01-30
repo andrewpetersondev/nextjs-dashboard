@@ -12,6 +12,7 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
+import { toUnixSeconds } from "@/modules/auth/domain/values/time.value";
 import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -53,7 +54,8 @@ export class ReadSessionUseCase {
   execute(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>> {
     return safeExecute<ReadSessionOutcomeDto | undefined>(
       async () => {
-        const nowSec = nowInSeconds();
+        const nowSec = toUnixSeconds(nowInSeconds());
+
         const readResult = await readSessionTokenHelper(
           {
             sessionStore: this.sessionStore,
