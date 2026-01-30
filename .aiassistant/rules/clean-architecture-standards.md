@@ -633,63 +633,9 @@ export type LoginRequestDto = z.output<typeof LoginRequestSchema>;
 ### File Organization
 
 ```
-
 auth/
   domain/
-    entities/
-      user.entity.ts
-      session.entity.ts
-    policies/
-      password-validation.policy.ts
-      session-lifecycle.policy.ts
-
   application/
-    contracts/
-          auth-user-repository.contract.ts
-          password-hasher.contract.ts
-      session-service.contract.ts
-      unit-of-work.contract.ts
-    dtos/
-      login-request.dto.ts
-      authenticated-user.dto.ts
-      session-principal.dto.ts
-    schemas/
-      login-request.schema.ts
-      signup-request.schema.ts
-    mappers/
-      user-entity-to-dto.mapper.ts
-    helpers/
-      session-validation.helper.ts
-    use-cases/
-      login.use-case.ts
-      login.workflow.ts
-      signup.use-case.ts
-      get-session.use-case.ts
-
   infrastructure/
-    adapters/
-      auth-user-repository.adapter.ts
-      bcrypt-hasher.adapter.ts
-      cookie-session.adapter.ts
-    dal/
-      get-user-by-email.dal.ts
-      insert-user.dal.ts
-    mappers/
-      user-row-to-entity.mapper.ts
-      pg-error.mapper.ts
-    repositories/
-      drizzle/
-        user.repository.ts
-    services/
-      bcrypt-password.service.ts
-    factories/
-      login-use-case.factory.ts
-
   presentation/
-    actions/
-      login.action.ts
-      logout.action.ts
-    components/
-      login-form.tsx
-    *.transport.ts
 ```
