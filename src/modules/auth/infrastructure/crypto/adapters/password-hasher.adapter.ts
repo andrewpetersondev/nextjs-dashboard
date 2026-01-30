@@ -1,5 +1,5 @@
 import "server-only";
-import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/authn/contracts/password-hasher.contract";
 import type { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service";
 import type { Hash } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

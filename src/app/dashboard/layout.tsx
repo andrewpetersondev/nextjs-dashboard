@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from "react";
-import { logoutAction } from "@/modules/auth/presentation/actions/logout.action";
-import { SessionRefresh } from "@/modules/auth/presentation/features/session-refresh";
+import { logoutAction } from "@/modules/auth/presentation/authn/actions/logout.action";
+import { SessionRefresh } from "@/modules/auth/presentation/session/features/session-refresh";
 import { SideNav } from "@/shell/dashboard/components/sidenav";
 
 const ROOT_LAYOUT_CLASS =

@@ -1,5 +1,5 @@
 import "server-only";
-import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/authn/contracts/auth-unit-of-work.contract";
 import { AuthUnitOfWorkAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-unit-of-work.adapter";
 import { authTxDepsFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-tx-deps.factory";
 import type { AppDatabase } from "@/server/db/db.connection";

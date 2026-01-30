@@ -1,6 +1,6 @@
 import "server-only";
-import type { PasswordGeneratorContract } from "@/modules/auth/application/contracts/password-generator.contract";
-import { makeRandomPassword } from "@/modules/auth/domain/policies/user/password.policy";
+import type { PasswordGeneratorContract } from "@/modules/auth/application/authn/contracts/password-generator.contract";
+import { makeRandomPassword } from "@/modules/auth/domain/auth-user/policies/password.policy";
 
 /**
  * Implementation of the password generator service.

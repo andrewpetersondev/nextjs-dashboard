@@ -1,0 +1,106 @@
+import "server-only";
+import type { AuthUserRepositoryContract } from "@/modules/auth/application/authn/contracts/auth-user-repository.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/authn/contracts/password-hasher.contract";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos/authenticated-user.dto";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/authn/mappers/to-authenticated-user.mapper";
+import type { LoginRequestDto } from "@/modules/auth/application/authn/schemas/login-request.schema";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
+import { AuthErrorFactory } from "@/modules/auth/application/factories/auth-error.factory";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/factories/make-auth-use-case-logger.helper";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
+import { safeExecute } from "@/shared/results/safe-execute";
+
+/**
+ * Authenticates a user by validating their credentials against stored records.
+ *
+ * This use case handles the core business logic for user authentication,
+ * including user lookup, password verification, and mapping to a safe DTO.
+ */
+export class LoginUseCase {
+  private readonly hasher: PasswordHasherContract;
+  private readonly logger: LoggingClientContract;
+  private readonly repo: AuthUserRepositoryContract;
+
+  /**
+   * @param repo - Repository for accessing user authentication data.
+   * @param hasher - Service for hashing and comparing passwords.
+   * @param logger - Logging client for audit and debugging.
+   */
+  constructor(
+    repo: AuthUserRepositoryContract,
+    hasher: PasswordHasherContract,
+    logger: LoggingClientContract,
+  ) {
+    this.repo = repo;
+    this.hasher = hasher;
+    this.logger = makeAuthUseCaseLoggerHelper(
+      logger,
+      AUTH_USE_CASE_NAMES.LOGIN_USER,
+    );
+  }
+
+  /**
+   * Executes the login business logic.
+   *
+   * @param input - The login credentials (email and password).
+   * @returns A promise resolving to a {@link Result} containing the authenticated user DTO or an {@link AppError}.
+   *
+   * @remarks
+   * Potential error scenarios (returned as Err):
+   * - 'user_not_found': No user exists with the provided email.
+   * - 'invalid_password': The password does not match the stored hash.
+   * - Other infrastructure or validation errors.
+   *
+   * @throws {Error} If an unexpected system failure occurs (wrapped in Result by safeExecute).
+   */
+  execute(
+    input: Readonly<LoginRequestDto>,
+  ): Promise<Result<AuthenticatedUserDto, AppError>> {
+    return safeExecute(
+      async () => {
+        const userResult = await this.repo.findByEmail({ email: input.email });
+
+        if (!userResult.ok) {
+          return userResult;
+        }
+
+        const user = userResult.value;
+
+        if (!user) {
+          return Err(
+            AuthErrorFactory.makeCredentialFailure("user_not_found", {
+              email: input.email,
+            }),
+          );
+        }
+
+        const passwordOkResult = await this.hasher.compare(
+          input.password,
+          user.password,
+        );
+
+        if (!passwordOkResult.ok) {
+          return Err(passwordOkResult.error);
+        }
+
+        if (!passwordOkResult.value) {
+          return Err(
+            AuthErrorFactory.makeCredentialFailure("invalid_password", {
+              userId: user.id,
+            }),
+          );
+        }
+
+        return Ok(toAuthenticatedUserDto(user));
+      },
+      {
+        logger: this.logger,
+        message: "An unexpected error occurred during authentication.",
+        operation: AUTH_USE_CASE_NAMES.LOGIN_USER,
+      },
+    );
+  }
+}
