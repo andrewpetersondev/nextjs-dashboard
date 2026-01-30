@@ -1,9 +1,11 @@
 import {
   AUTH_POLICY_REASONS,
-  AUTH_ROUTE_TYPES,
   type AuthPolicyReason,
-  type AuthRouteType,
 } from "@/modules/auth/domain/constants/auth-policy.constants";
+import {
+  AUTH_ROUTE_TYPES,
+  type AuthRouteType,
+} from "@/modules/auth/domain/constants/auth-route.constants";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.schema";
 

@@ -1,4 +1,4 @@
-import type { AuthRequestReason } from "@/modules/auth/domain/constants/auth-policy.constants";
+import type { AuthRequestReason } from "@/modules/auth/domain/constants/auth-request.constants";
 
 /**
  * Represents the outcome of an authorization request check.

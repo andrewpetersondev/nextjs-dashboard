@@ -1,13 +1,17 @@
 import {
   AUTH_POLICY_REASONS,
-  AUTH_REQUEST_REASONS,
-  AUTH_ROUTE_TYPES,
-  AUTH_SESSION_DECODE_RESULTS,
   type AuthPolicyReason,
-  type AuthRequestReason,
-  type AuthRouteType,
-  type AuthSessionDecodeResult,
 } from "@/modules/auth/domain/constants/auth-policy.constants";
+import {
+  AUTH_REQUEST_REASONS,
+  AUTH_SESSION_DECODE_RESULTS,
+  type AuthRequestReason,
+  type AuthSessionDecodeResult,
+} from "@/modules/auth/domain/constants/auth-request.constants";
+import {
+  AUTH_ROUTE_TYPES,
+  type AuthRouteType,
+} from "@/modules/auth/domain/constants/auth-route.constants";
 
 /**
  * Maps internal policy and decoding results to a public authorization reason.

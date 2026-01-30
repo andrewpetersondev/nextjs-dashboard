@@ -1,7 +1,5 @@
-import {
-  AUTH_POLICY_NAMES,
-  DEMO_IDENTITY_CONFIG,
-} from "@/modules/auth/domain/constants/auth-policy.constants";
+import { AUTH_POLICY_NAMES } from "@/modules/auth/domain/constants/auth-policy.constants";
+import { DEMO_IDENTITY_CONFIG } from "@/modules/auth/domain/constants/demo-identity.constants";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

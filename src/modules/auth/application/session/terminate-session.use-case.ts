@@ -4,7 +4,7 @@ import type { SessionStoreContract } from "@/modules/auth/application/contracts/
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { deleteSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
-import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session-lifecycle.policy";
+import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session/session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";

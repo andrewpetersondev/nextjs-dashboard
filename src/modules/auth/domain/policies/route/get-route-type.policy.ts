@@ -1,7 +1,7 @@
 import {
   AUTH_ROUTE_TYPES,
   type AuthRouteType,
-} from "@/modules/auth/domain/constants/auth-policy.constants";
+} from "@/modules/auth/domain/constants/auth-route.constants";
 
 /**
  * Determines the route type based on boolean flags.

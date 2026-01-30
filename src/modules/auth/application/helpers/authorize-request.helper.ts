@@ -2,10 +2,10 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { AUTH_POLICY_REASONS } from "@/modules/auth/domain/constants/auth-policy.constants";
-import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
-import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
-import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
-import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/types/auth-request-authorization.output";
+import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/outputs/auth-request-authorization.output";
+import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/route/evaluate-route-access.policy";
+import { getRouteTypePolicy } from "@/modules/auth/domain/policies/route/get-route-type.policy";
+import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/route/to-authorization-reason.policy";
 
 /**
  * Resolves session token claims from a raw cookie string, ensuring that decode failures are surfaced

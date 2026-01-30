@@ -7,7 +7,7 @@ import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { toSessionTokenClaimsDtoFromRequest } from "@/modules/auth/application/mappers/to-session-token-claims-dto-from-request.mapper";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
-import { SESSION_DURATION_SEC } from "@/modules/auth/domain/policies/session-lifecycle.policy";
+import { SESSION_DURATION_SEC } from "@/modules/auth/domain/constants/session-lifecycle.constants";
 import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session-token/mappers/jwt-to-session-token-claims-dto.mapper";
 import {
   nowInSeconds,

@@ -1,7 +1,9 @@
 import {
+  MAX_ABSOLUTE_SESSION_SEC,
   SESSION_LIFECYCLE_ACTIONS,
   SESSION_LIFECYCLE_REASONS,
-} from "@/modules/auth/domain/constants/auth-policy.constants";
+  SESSION_REFRESH_THRESHOLD_SEC,
+} from "@/modules/auth/domain/constants/session-lifecycle.constants";
 import {
   getSessionTimeLeftSec,
   isSessionAbsoluteLifetimeExceeded,
@@ -9,13 +11,6 @@ import {
   isSessionExpired,
   type SessionEntity,
 } from "@/modules/auth/domain/entities/session.entity";
-
-/** Session duration in seconds (15 minutes) */
-export const SESSION_DURATION_SEC = 900 as const;
-/** Threshold in seconds for triggering session rotation (2 minutes) */
-export const SESSION_REFRESH_THRESHOLD_SEC = 120 as const;
-/** Maximum absolute session lifetime in seconds (30 days) */
-export const MAX_ABSOLUTE_SESSION_SEC = 2_592_000 as const;
 
 /**
  * Domain Policy: Recognized reasons for terminating a session.
