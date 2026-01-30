@@ -2,9 +2,10 @@ import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
 import { AUTH_POLICY_REASONS } from "@/modules/auth/domain/constants/auth-policy.constants";
+import { AUTH_REQUEST_REASONS } from "@/modules/auth/domain/constants/auth-request.constants";
 import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/outputs/auth-request-authorization.output";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/route/evaluate-route-access.policy";
-import { getRouteTypePolicy } from "@/modules/auth/domain/policies/route/get-route-type.policy";
+import { tryGetRouteTypePolicy } from "@/modules/auth/domain/policies/route/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/route/to-authorization-reason.policy";
 
 /**
@@ -66,11 +67,21 @@ export async function authorizeRequestHelper(
     deps.sessionTokenService,
   );
 
-  const routeType = getRouteTypePolicy({
+  const routeTypeResult = tryGetRouteTypePolicy({
     isAdminRoute: input.isAdminRoute,
     isProtectedRoute: input.isProtectedRoute,
     isPublicRoute: input.isPublicRoute,
   });
+
+  if (!routeTypeResult.ok) {
+    return {
+      kind: "redirect",
+      reason: AUTH_REQUEST_REASONS.ROUTE_FLAGS_INVALID,
+      to: deps.routes.login,
+    };
+  }
+
+  const routeType = routeTypeResult.value;
 
   const isAuthenticated = Boolean(decoded.claims?.sub);
 

@@ -10,6 +10,11 @@ import type {
 } from "@/modules/auth/domain/values/auth-brands.value";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 type UpdateSessionNotRotatedParams = Readonly<
   | {
@@ -32,6 +37,8 @@ type UpdateSessionNotRotatedParams = Readonly<
 
 /**
  * Builds a successful rotation outcome.
+ *
+ * Non-throwing: returns a Result so callers can propagate an AppError instead of 500-ing.
  */
 export function buildUpdateSessionSuccess(
   params: Readonly<{
@@ -39,18 +46,27 @@ export function buildUpdateSessionSuccess(
     role: UserRole;
     userId: UserId;
   }>,
-): Readonly<UpdateSessionSuccessDto> {
+): Result<Readonly<UpdateSessionSuccessDto>, AppError> {
   if (params.expiresAtMs <= Date.now()) {
-    throw new Error("Invalid rotation: expiresAtMs must be in the future");
+    return Err(
+      makeAppError(APP_ERROR_KEYS.validation, {
+        cause: `Invalid rotation: expiresAtMs must be in the future (${String(params.expiresAtMs)})`,
+        message: "Invalid session rotation state",
+        metadata: {
+          policy: "session",
+          reason: "rotation_expires_at_not_in_future",
+        },
+      }),
+    );
   }
 
-  return {
+  return Ok({
     expiresAtMs: params.expiresAtMs,
     reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
     refreshed: true,
     role: params.role,
     userId: params.userId,
-  } as const;
+  } as const);
 }
 
 /**

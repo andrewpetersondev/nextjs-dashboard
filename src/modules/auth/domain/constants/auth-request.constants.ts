@@ -8,6 +8,7 @@ export const AUTH_REQUEST_REASONS = {
   NO_COOKIE: "no_cookie",
   PROTECTED_NOT_AUTHENTICATED: "protected.not_authenticated",
   PUBLIC_BOUNCE_AUTHENTICATED: "public.bounce_authenticated",
+  ROUTE_FLAGS_INVALID: "route_flags_invalid",
 } as const;
 
 /**

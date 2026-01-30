@@ -9,19 +9,37 @@ import { UserRoleEnum } from "@/shared/domain/user/user-role.schema";
  * Issued At (iat) claim schema.
  * Represents a non-negative integer UNIX timestamp (in seconds) indicating when the token was issued.
  */
-export const IatSchema = z.number().int().nonnegative();
+export const IatSchema = z
+  .number()
+  .int()
+  .nonnegative()
+  .refine((v: number) => Number.isSafeInteger(v), {
+    message: "iat must be a safe integer",
+  });
 
 /**
  * Not Before (nbf) claim schema.
  * Represents a non-negative integer UNIX timestamp (in seconds) before which the token must be considered invalid.
  */
-export const NbfSchema = z.number().int().nonnegative();
+export const NbfSchema = z
+  .number()
+  .int()
+  .nonnegative()
+  .refine((v: number) => Number.isSafeInteger(v), {
+    message: "nbf must be a safe integer",
+  });
 
 /**
  * Expiration (exp) claim schema.
  * Represents a positive integer UNIX timestamp (in seconds) after which the token must be considered invalid.
  */
-export const ExpSchema = z.number().int().positive();
+export const ExpSchema = z
+  .number()
+  .int()
+  .positive()
+  .refine((v: number) => Number.isSafeInteger(v), {
+    message: "exp must be a safe integer",
+  });
 
 /**
  * JWT ID (jti) claim schema.

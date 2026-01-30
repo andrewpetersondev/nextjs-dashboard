@@ -55,8 +55,6 @@ export class ReadSessionUseCase {
   execute(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>> {
     return safeExecute<ReadSessionOutcomeDto | undefined>(
       async () => {
-        const nowSec = toUnixSeconds(nowInSeconds());
-
         const readResult = await readSessionTokenHelper(
           {
             sessionStore: this.sessionStore,
@@ -77,7 +75,6 @@ export class ReadSessionUseCase {
 
         const decoded = outcome.decoded;
 
-        // Ensure we have a valid identity before converting to session
         if (!decoded.sub) {
           await cleanupInvalidTokenHelper(this.sessionStore);
           this.logger.operation("warn", "Session missing subject (sub)", {
@@ -88,8 +85,24 @@ export class ReadSessionUseCase {
           return Ok(undefined);
         }
 
+        const nowSec = toUnixSeconds(nowInSeconds());
+
         const sessionEntity = toSessionEntity(decoded);
-        return Ok(buildReadSessionOutcome(sessionEntity, nowSec));
+
+        const built = buildReadSessionOutcome(sessionEntity, nowSec);
+        if (!built.ok) {
+          await cleanupInvalidTokenHelper(this.sessionStore);
+
+          this.logger.operation("warn", "Session outcome build failed", {
+            operationContext: AUTH_LOG_CONTEXTS.SESSION,
+            operationIdentifiers: { reason: built.error.key },
+            operationName: AUTH_OPERATIONS.SESSION_READ_INVALID_CLAIMS,
+          });
+
+          return Ok(undefined);
+        }
+
+        return Ok(built.value);
       },
       {
         logger: this.logger,

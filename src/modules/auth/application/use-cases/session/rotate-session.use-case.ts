@@ -67,8 +67,6 @@ export class RotateSessionUseCase {
       // biome-ignore lint/complexity/noExcessiveLinesPerFunction: rotation flow is intentionally verbose (many early returns for clarity)
       // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: rotation flow is intentionally verbose (many early returns for clarity)
       async () => {
-        const nowSec = toUnixSeconds(nowInSeconds());
-
         const readResult = await readSessionTokenHelper(
           {
             sessionStore: this.sessionStore,
@@ -90,6 +88,8 @@ export class RotateSessionUseCase {
             }),
           );
         }
+
+        const nowSec = toUnixSeconds(nowInSeconds());
 
         const sessionEntity = toSessionEntity(outcome.decoded);
         const decision = evaluateSessionLifecyclePolicy(sessionEntity, nowSec);
@@ -160,13 +160,17 @@ export class RotateSessionUseCase {
           },
         );
 
-        return Ok(
-          buildUpdateSessionSuccess({
-            expiresAtMs,
-            role,
-            userId: decodedUserId,
-          }),
-        );
+        const built = buildUpdateSessionSuccess({
+          expiresAtMs,
+          role,
+          userId: decodedUserId,
+        });
+
+        if (!built.ok) {
+          return Err(built.error);
+        }
+
+        return Ok(built.value);
       },
       {
         logger: this.logger,
