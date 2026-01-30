@@ -1,8 +1,8 @@
 import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/dtos/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/dtos/auth-user-lookup-query.dto";
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { AuthUserEntity } from "@/modules/auth/domain/entities/auth-user.entity";
-import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/domain/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
 import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/increment-demo-user-counter.dal";
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
