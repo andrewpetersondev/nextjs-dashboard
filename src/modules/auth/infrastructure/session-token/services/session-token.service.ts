@@ -5,7 +5,7 @@ import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/dto
 import type { IssuedTokenDto } from "@/modules/auth/application/dtos/issue-token.dto";
 import type { IssueTokenRequestDto } from "@/modules/auth/application/dtos/issue-token-request.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
-import { toSessionTokenClaimsDtoFromRequest } from "@/modules/auth/application/mappers/to-session-token-claims-dto-from-request.mapper";
+import { toSessionTokenClaimsDto } from "@/modules/auth/application/mappers/to-session-token-claims-dto.mapper";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/constants/session-config.constants";
 import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session-token/mappers/jwt-to-session-token-claims-dto.mapper";
@@ -80,7 +80,7 @@ export class SessionTokenService implements SessionTokenServiceContract {
     const sid = crypto.randomUUID();
     const jti = crypto.randomUUID();
 
-    const claims = toSessionTokenClaimsDtoFromRequest(input, {
+    const claims = toSessionTokenClaimsDto(input, {
       exp: expiresAtSec,
       iat: nowSec,
       jti,
@@ -113,7 +113,7 @@ export class SessionTokenService implements SessionTokenServiceContract {
 
     const jti = crypto.randomUUID();
 
-    const claims = toSessionTokenClaimsDtoFromRequest(
+    const claims = toSessionTokenClaimsDto(
       { role: input.role, userId: input.userId },
       {
         exp: expiresAtSec,

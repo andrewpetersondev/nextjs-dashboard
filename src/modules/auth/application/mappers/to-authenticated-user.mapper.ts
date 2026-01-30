@@ -4,15 +4,13 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 
 /**
- * Maps a persisted authentication user entity to its safe output DTO representation.
+ * Maps a persisted authentication user entity to a safe authenticated-user DTO.
  *
- * This function centralizes the transformation logic to ensure consistency
- * across use cases and to ensure that sensitive data is not leaked.
- *
- * @param user - The user entity from the domain layer.
- * @returns A safe DTO for use in application and presentation layers.
+ * @remarks
+ * This is a pure mapper (no business rules). It also ensures that sensitive
+ * properties (like password hashes) never leave the Auth domain boundary.
  */
-export function toAuthUserOutputDto(
+export function toAuthenticatedUserDto(
   user: AuthUserEntity,
 ): AuthenticatedUserDto {
   return {

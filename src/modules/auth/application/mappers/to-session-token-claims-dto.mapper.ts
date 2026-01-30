@@ -6,7 +6,7 @@ import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-c
  * Maps a token issuance request to the application-level claims DTO.
  * Encapsulates the transformation of branded types to transport strings.
  */
-export function toSessionTokenClaimsDtoFromRequest(
+export function toSessionTokenClaimsDto(
   input: IssueTokenRequestDto,
   params: Readonly<{
     exp: number;

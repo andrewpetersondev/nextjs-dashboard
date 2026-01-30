@@ -5,14 +5,11 @@ import type { UpdateSessionSuccessDto } from "@/modules/auth/application/dtos/up
 /**
  * Maps authentication or session update outputs to a session principal.
  *
- * This function serves as a domain policy mapper that extracts the core
- * identity (ID and role) from various output DTOs to create a unified
- * session principal.
- *
- * @param source - The source DTO (either from login/signup or session rotation).
- * @returns The session principal DTO.
+ * @remarks
+ * This is a pure mapper (no business rules). It consolidates multiple successful
+ * outcomes into the canonical `SessionPrincipalDto` shape.
  */
-export function toSessionPrincipalPolicy(
+export function toSessionPrincipal(
   source: AuthenticatedUserDto | UpdateSessionSuccessDto,
 ): SessionPrincipalDto {
   if ("email" in source) {

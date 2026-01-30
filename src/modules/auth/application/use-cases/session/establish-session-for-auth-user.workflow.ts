@@ -2,7 +2,7 @@ import "server-only";
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
-import { toSessionPrincipalPolicy } from "@/modules/auth/application/mappers/to-session-principal-policy.mapper";
+import { toSessionPrincipal } from "@/modules/auth/application/mappers/to-session-principal.mapper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
@@ -25,7 +25,7 @@ export async function establishSessionForAuthUserWorkflow(
     return Err(authUserResult.error);
   }
 
-  const principal = toSessionPrincipalPolicy(authUserResult.value);
+  const principal = toSessionPrincipal(authUserResult.value);
 
   return await deps.sessionService.establish(principal);
 }

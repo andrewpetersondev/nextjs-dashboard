@@ -5,7 +5,7 @@ import type { PasswordHasherContract } from "@/modules/auth/application/contract
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { AuthErrorFactory } from "@/modules/auth/application/factories/auth-error.factory";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/mappers/to-authenticated-user.mapper";
 import type { LoginRequestDto } from "@/modules/auth/application/schemas/login-request.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
@@ -94,7 +94,7 @@ export class LoginUseCase {
           );
         }
 
-        return Ok(toAuthUserOutputDto(user));
+        return Ok(toAuthenticatedUserDto(user));
       },
       {
         logger: this.logger,

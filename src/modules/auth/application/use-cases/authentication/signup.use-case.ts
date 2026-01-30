@@ -4,7 +4,7 @@ import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contract
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
-import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/mappers/to-authenticated-user.mapper";
 import type { SignupRequestDto } from "@/modules/auth/application/schemas/signup-request.schema";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/user/registration.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -74,7 +74,7 @@ export class SignupUseCase {
             return createdResultTx;
           }
 
-          return Ok(toAuthUserOutputDto(createdResultTx.value));
+          return Ok(toAuthenticatedUserDto(createdResultTx.value));
         }),
       {
         logger: this.logger,
