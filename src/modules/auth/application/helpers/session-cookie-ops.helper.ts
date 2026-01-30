@@ -1,6 +1,9 @@
 import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Persists a session token and logs the operation success.
@@ -21,8 +24,28 @@ export async function setSessionCookieAndLogHelper(
     operationName: string;
     token: string;
   }>,
-): Promise<void> {
-  await deps.sessionCookieAdapter.set(params.token, params.expiresAtMs);
+): Promise<Result<void, AppError>> {
+  const setResult = await deps.sessionCookieAdapter.set(
+    params.token,
+    params.expiresAtMs,
+  );
+
+  if (!setResult.ok) {
+    deps.logger.errorWithDetails(
+      "Session persistence failed",
+      setResult.error,
+      {
+        operationContext: AUTH_LOG_CONTEXTS.SESSION,
+        operationIdentifiers: {
+          ...params.identifiers,
+          expiresAt: params.expiresAtMs,
+        },
+        operationName: `${params.operationName}.error`,
+      },
+    );
+
+    return Err(setResult.error);
+  }
 
   deps.logger.operation("info", params.message, {
     operationContext: AUTH_LOG_CONTEXTS.SESSION,
@@ -32,6 +55,8 @@ export async function setSessionCookieAndLogHelper(
     },
     operationName: params.operationName,
   });
+
+  return Ok(undefined);
 }
 
 /**
@@ -51,12 +76,28 @@ export async function deleteSessionCookieAndLogHelper(
     message: string;
     operationName: string;
   }>,
-): Promise<void> {
-  await deps.sessionCookieAdapter.delete();
+): Promise<Result<void, AppError>> {
+  const deleteResult = await deps.sessionCookieAdapter.delete();
+
+  if (!deleteResult.ok) {
+    deps.logger.errorWithDetails(
+      "Session deletion failed",
+      deleteResult.error,
+      {
+        operationContext: AUTH_LOG_CONTEXTS.SESSION,
+        operationIdentifiers: params.identifiers,
+        operationName: `${params.operationName}.error`,
+      },
+    );
+
+    return Err(deleteResult.error);
+  }
 
   deps.logger.operation("info", params.message, {
     operationContext: AUTH_LOG_CONTEXTS.SESSION,
     operationIdentifiers: params.identifiers,
     operationName: params.operationName,
   });
+
+  return Ok(undefined);
 }

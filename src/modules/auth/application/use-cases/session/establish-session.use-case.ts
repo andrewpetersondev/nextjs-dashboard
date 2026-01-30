@@ -11,7 +11,7 @@ import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers
 import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/session/session-use-case.deps";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Ok } from "@/shared/results/result";
+import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
@@ -62,7 +62,7 @@ export class EstablishSessionUseCase {
 
         const { expiresAtMs, token } = issuedResult.value;
 
-        await setSessionCookieAndLogHelper(
+        const cookieResult = await setSessionCookieAndLogHelper(
           {
             logger: this.logger,
             sessionCookieAdapter: this.sessionStore,
@@ -78,6 +78,10 @@ export class EstablishSessionUseCase {
             token,
           },
         );
+
+        if (!cookieResult.ok) {
+          return Err(cookieResult.error);
+        }
 
         return Ok(user);
       },

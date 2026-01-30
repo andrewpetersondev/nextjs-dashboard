@@ -143,7 +143,7 @@ export class RotateSessionUseCase {
 
         const { expiresAtMs, token } = issuedResult.value;
 
-        await setSessionCookieAndLogHelper(
+        const cookieResult = await setSessionCookieAndLogHelper(
           {
             logger: this.logger,
             sessionCookieAdapter: this.sessionStore,
@@ -160,6 +160,10 @@ export class RotateSessionUseCase {
             token,
           },
         );
+
+        if (!cookieResult.ok) {
+          return Err(cookieResult.error);
+        }
 
         const built = buildUpdateSessionSuccess({
           expiresAtMs,

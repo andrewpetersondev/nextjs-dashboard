@@ -7,7 +7,7 @@ import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/se
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session/evaluate-session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Ok } from "@/shared/results/result";
+import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
 
@@ -43,7 +43,7 @@ export class TerminateSessionUseCase {
   execute(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
     return safeExecute(
       async () => {
-        await deleteSessionCookieAndLogHelper(
+        const deleteResult = await deleteSessionCookieAndLogHelper(
           {
             logger: this.logger,
             sessionCookieAdapter: this.sessionStore,
@@ -54,6 +54,10 @@ export class TerminateSessionUseCase {
             operationName: "session.terminate.success",
           },
         );
+
+        if (!deleteResult.ok) {
+          return Err(deleteResult.error);
+        }
 
         return Ok(undefined);
       },
