@@ -1,8 +1,6 @@
 import { z } from "zod";
-import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/application/constants/session-token.constants";
 import type { UserId } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { nowInSeconds } from "@/shared/constants/time.constants";
 import { UserRoleEnum } from "@/shared/domain/user/user-role.schema";
 
 /**
@@ -70,37 +68,12 @@ export const UserIdSchema = z.codec(z.uuid(), z.custom<UserId>(), {
 /**
  * Validates the raw session token payload (e.g., JWT claims) after verification.
  */
-export const SessionTokenClaimsSchema = z
-  .object({
-    exp: ExpSchema,
-    iat: IatSchema.refine(
-      (iat: number) =>
-        iat <= nowInSeconds() + SESSION_TOKEN_CLOCK_TOLERANCE_SEC,
-      {
-        message: "iat must not be in the future (allowing small clock skew)",
-      },
-    ),
-    jti: JtiSchema,
-    nbf: NbfSchema.refine(
-      (nbf: number) =>
-        nbf <= nowInSeconds() + SESSION_TOKEN_CLOCK_TOLERANCE_SEC,
-      {
-        message: "nbf must not be in the future (allowing small clock skew)",
-      },
-    ),
-    role: UserRoleEnum,
-    sid: SidSchema,
-    sub: SubSchema,
-  })
-  .refine((val) => val.exp > val.iat, {
-    message: "exp must be greater than iat",
-    path: ["exp"],
-  })
-  .refine((val) => val.nbf <= val.exp, {
-    message: "nbf must be less than or equal to exp",
-    path: ["nbf"],
-  })
-  .refine((val) => val.nbf <= val.iat, {
-    message: "nbf must be less than or equal to iat",
-    path: ["nbf"],
-  });
+export const SessionTokenClaimsSchema = z.object({
+  exp: ExpSchema,
+  iat: IatSchema,
+  jti: JtiSchema,
+  nbf: NbfSchema,
+  role: UserRoleEnum,
+  sid: SidSchema,
+  sub: SubSchema,
+});

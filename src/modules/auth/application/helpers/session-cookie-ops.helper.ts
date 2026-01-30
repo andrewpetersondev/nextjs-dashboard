@@ -31,16 +31,25 @@ export async function setSessionCookieAndLogHelper(
   );
 
   if (!setResult.ok) {
+    deps.logger.operation("warn", "Session cookie persistence failed", {
+      operationContext: AUTH_LOG_CONTEXTS.SESSION,
+      operationIdentifiers: {
+        ...params.identifiers,
+        expiresAtMs: params.expiresAtMs,
+      },
+      operationName: `${params.operationName}.failed`,
+    });
+
     deps.logger.errorWithDetails(
-      "Session persistence failed",
+      "Session cookie persistence failed with an application error.",
       setResult.error,
       {
         operationContext: AUTH_LOG_CONTEXTS.SESSION,
         operationIdentifiers: {
           ...params.identifiers,
-          expiresAt: params.expiresAtMs,
+          expiresAtMs: params.expiresAtMs,
         },
-        operationName: `${params.operationName}.error`,
+        operationName: `${params.operationName}.failed.details`,
       },
     );
 
@@ -51,7 +60,7 @@ export async function setSessionCookieAndLogHelper(
     operationContext: AUTH_LOG_CONTEXTS.SESSION,
     operationIdentifiers: {
       ...params.identifiers,
-      expiresAt: params.expiresAtMs,
+      expiresAtMs: params.expiresAtMs,
     },
     operationName: params.operationName,
   });
@@ -80,13 +89,19 @@ export async function deleteSessionCookieAndLogHelper(
   const deleteResult = await deps.sessionCookieAdapter.delete();
 
   if (!deleteResult.ok) {
+    deps.logger.operation("warn", "Session cookie deletion failed", {
+      operationContext: AUTH_LOG_CONTEXTS.SESSION,
+      operationIdentifiers: params.identifiers,
+      operationName: `${params.operationName}.failed`,
+    });
+
     deps.logger.errorWithDetails(
-      "Session deletion failed",
+      "Session cookie deletion failed with an application error.",
       deleteResult.error,
       {
         operationContext: AUTH_LOG_CONTEXTS.SESSION,
         operationIdentifiers: params.identifiers,
-        operationName: `${params.operationName}.error`,
+        operationName: `${params.operationName}.failed.details`,
       },
     );
 

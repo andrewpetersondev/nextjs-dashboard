@@ -9,6 +9,10 @@ import { toUnixSeconds } from "@/modules/auth/domain/values/time.value";
  * This function converts the application-layer claims DTO (typically decoded from a JWT)
  * into a branded domain entity, handling the decoding of identifiers.
  *
+ * @remarks
+ * This mapping intentionally keeps only domain-relevant session state.
+ * Token-specific claims like `sid` and `jti` are not part of `SessionEntity`.
+ *
  * @param tokenClaims - The decoded session token claims.
  * @returns The session domain entity.
  */

@@ -11,6 +11,7 @@ import type { Result } from "@/shared/results/result.types";
 async function tryCleanupInvalidToken(
   params: Readonly<{
     logger: LoggingClientContract;
+    reason: "invalid_claims" | "invalid_claims_semantics" | "invalid_token";
     sessionStore: SessionStoreContract;
     shouldCleanup: boolean;
   }>,
@@ -24,7 +25,7 @@ async function tryCleanupInvalidToken(
       logger: params.logger,
       sessionStore: params.sessionStore,
     },
-    { reason: "invalid_token", source: "readSessionTokenHelper" },
+    { reason: params.reason, source: "readSessionTokenHelper" },
   );
 
   return cleanup.didCleanup;
@@ -70,6 +71,7 @@ export async function readSessionTokenHelper(
   if (!decodedResult.ok) {
     const didCleanup = await tryCleanupInvalidToken({
       logger: deps.logger,
+      reason: "invalid_token",
       sessionStore: deps.sessionStore,
       shouldCleanup: options.cleanupOnInvalidToken,
     });
@@ -86,8 +88,25 @@ export async function readSessionTokenHelper(
   );
 
   if (!validatedResult.ok) {
+    const metadataReason =
+      validatedResult.error.key === "validation"
+        ? (validatedResult.error.metadata as Readonly<{ reason?: string }>)
+            .reason
+        : undefined;
+
+    const kind:
+      | "invalid_claims"
+      | "invalid_claims_semantics"
+      | "invalid_token" =
+      metadataReason === "invalid_schema"
+        ? "invalid_claims"
+        : metadataReason
+          ? "invalid_claims_semantics"
+          : "invalid_token";
+
     const didCleanup = await tryCleanupInvalidToken({
       logger: deps.logger,
+      reason: kind,
       sessionStore: deps.sessionStore,
       shouldCleanup: options.cleanupOnInvalidToken,
     });
@@ -96,7 +115,7 @@ export async function readSessionTokenHelper(
       return Err(validatedResult.error);
     }
 
-    return Ok({ didCleanup, kind: "invalid_token" });
+    return Ok({ didCleanup, kind });
   }
 
   return Ok({

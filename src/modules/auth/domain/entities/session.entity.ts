@@ -16,6 +16,9 @@ import type { UserRole } from "@/shared/domain/user/user-role.schema";
  *
  * @remarks
  * All timestamps are UNIX seconds (not milliseconds).
+ *
+ * This entity intentionally models the *session* (domain state), not the session *token*.
+ * Token-specific identifiers/claims such as `sid` and `jti` live in application-layer DTOs.
  */
 export type SessionEntity = Readonly<{
   /** Expiration time (UNIX seconds, matches JWT `exp`) */

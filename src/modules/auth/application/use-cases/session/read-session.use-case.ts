@@ -76,20 +76,6 @@ export class ReadSessionUseCase {
 
         const decoded = outcome.decoded;
 
-        if (!decoded.sub) {
-          await cleanupInvalidTokenHelper(
-            { logger: this.logger, sessionStore: this.sessionStore },
-            { reason: "invalid_claims", source: "readSessionUseCase" },
-          );
-
-          this.logger.operation("warn", "Session missing subject (sub)", {
-            operationContext: AUTH_LOG_CONTEXTS.SESSION,
-            operationIdentifiers: { reason: "invalid_claims" },
-            operationName: AUTH_OPERATIONS.SESSION_READ_INVALID_CLAIMS,
-          });
-          return Ok(undefined);
-        }
-
         const nowSec = toUnixSeconds(nowInSeconds());
 
         const sessionEntity = toSessionEntity(decoded);

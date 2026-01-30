@@ -19,6 +19,7 @@ export async function cleanupInvalidTokenHelper(
     reason:
       | "invalid_token"
       | "invalid_claims"
+      | "invalid_claims_semantics"
       | "invalid_session_state"
       | "unknown";
     source: "readSessionTokenHelper" | "readSessionUseCase";

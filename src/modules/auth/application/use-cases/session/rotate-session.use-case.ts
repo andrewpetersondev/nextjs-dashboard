@@ -6,6 +6,7 @@ import {
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
+import type { SessionTokenIdentityDto } from "@/modules/auth/application/dtos/session-token-identity.dto";
 import {
   UPDATE_SESSION_OUTCOME_REASON,
   type UpdateSessionNotRotatedDto,
@@ -15,7 +16,6 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
-import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
 import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/session/session-use-case.deps";
 import {
   evaluateSessionLifecyclePolicy,
@@ -82,7 +82,7 @@ export class RotateSessionUseCase {
 
         const outcome = readResult.value;
 
-        if (outcome.kind !== "decoded" || !outcome.decoded.sub) {
+        if (outcome.kind !== "decoded") {
           return Ok(
             buildUpdateSessionNotRotated({
               reason: UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser,
@@ -92,8 +92,11 @@ export class RotateSessionUseCase {
 
         const nowSec = toUnixSeconds(nowInSeconds());
 
-        const sessionEntity = toSessionEntity(outcome.decoded);
-        const decision = evaluateSessionLifecyclePolicy(sessionEntity, nowSec);
+        const claims = outcome.decoded;
+
+        const session = toSessionEntity(claims);
+        const tokenIdentity: SessionTokenIdentityDto = { sid: claims.sid };
+        const decision = evaluateSessionLifecyclePolicy(session, nowSec);
 
         if (requiresTermination(decision)) {
           const failureReason: UpdateSessionNotRotatedDto["reason"] =
@@ -119,22 +122,10 @@ export class RotateSessionUseCase {
           );
         }
 
-        const { role, sid, sub } = outcome.decoded;
-
-        if (!sid) {
-          return Ok(
-            buildUpdateSessionNotRotated({
-              reason: UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser,
-            }),
-          );
-        }
-
-        const decodedUserId = UserIdSchema.decode(sub);
-
         const issuedResult = await this.sessionTokenService.issueRotated({
-          role,
-          sid,
-          userId: decodedUserId,
+          role: session.role,
+          sid: tokenIdentity.sid,
+          userId: session.userId,
         });
 
         if (!issuedResult.ok) {
@@ -152,8 +143,8 @@ export class RotateSessionUseCase {
             expiresAtMs,
             identifiers: {
               reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
-              role,
-              userId: decodedUserId,
+              role: session.role,
+              userId: session.userId,
             },
             message: "Session rotated successfully",
             operationName: "session.rotate.success",
@@ -167,8 +158,8 @@ export class RotateSessionUseCase {
 
         const built = buildUpdateSessionSuccess({
           expiresAtMs,
-          role,
-          userId: decodedUserId,
+          role: session.role,
+          userId: session.userId,
         });
 
         if (!built.ok) {
