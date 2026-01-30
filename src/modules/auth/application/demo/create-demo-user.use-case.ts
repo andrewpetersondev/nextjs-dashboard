@@ -1,4 +1,5 @@
 import "server-only";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/application/contracts/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
@@ -35,7 +36,10 @@ export class CreateDemoUserUseCase {
     passwordGenerator: PasswordGeneratorContract,
     logger: LoggingClientContract,
   ) {
-    this.logger = makeAuthUseCaseLoggerHelper(logger, "createDemoUser");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      logger,
+      AUTH_USE_CASE_NAMES.CREATE_DEMO_USER,
+    );
     this.hasher = hasher;
     this.passwordGenerator = passwordGenerator;
     this.uow = uow;
@@ -74,7 +78,7 @@ export class CreateDemoUserUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred while creating a demo user.",
-        operation: "createDemoUser",
+        operation: AUTH_USE_CASE_NAMES.CREATE_DEMO_USER,
       },
     );
   }

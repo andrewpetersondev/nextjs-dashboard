@@ -1,5 +1,5 @@
 import "server-only";
-
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
@@ -25,7 +25,10 @@ export class TerminateSessionUseCase {
    * @param deps - Dependencies required for session termination.
    */
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "terminateSession");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      deps.logger,
+      AUTH_USE_CASE_NAMES.TERMINATE_SESSION,
+    );
     this.sessionStore = deps.sessionStore;
   }
 
@@ -57,7 +60,7 @@ export class TerminateSessionUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred during session termination.",
-        operation: "terminateSession",
+        operation: AUTH_USE_CASE_NAMES.TERMINATE_SESSION,
       },
     );
   }

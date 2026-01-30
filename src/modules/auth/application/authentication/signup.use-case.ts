@@ -1,10 +1,10 @@
 import "server-only";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
-
 import type { SignupRequestDto } from "@/modules/auth/application/schemas/signup-request.schema";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/policies/user/registration.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -36,7 +36,10 @@ export class SignupUseCase {
     logger: LoggingClientContract,
   ) {
     this.hasher = hasher;
-    this.logger = makeAuthUseCaseLoggerHelper(logger, "signupUser");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      logger,
+      AUTH_USE_CASE_NAMES.SIGNUP_USER,
+    );
     this.uow = uow;
   }
 
@@ -76,7 +79,7 @@ export class SignupUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred during user creation.",
-        operation: "createUser",
+        operation: AUTH_USE_CASE_NAMES.SIGNUP_USER,
       },
     );
   }

@@ -3,6 +3,7 @@ import {
   buildUpdateSessionNotRotated,
   buildUpdateSessionSuccess,
 } from "@/modules/auth/application/builders/update-session-outcome.builder";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
@@ -45,7 +46,10 @@ export class RotateSessionUseCase {
    * @param deps - Dependencies required for session rotation.
    */
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "rotateSession");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      deps.logger,
+      AUTH_USE_CASE_NAMES.ROTATE_SESSION,
+    );
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
@@ -61,6 +65,7 @@ export class RotateSessionUseCase {
   execute(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
     return safeExecute<UpdateSessionOutcomeDto>(
       // biome-ignore lint/complexity/noExcessiveLinesPerFunction: rotation flow is intentionally verbose (many early returns for clarity)
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: rotation flow is intentionally verbose (many early returns for clarity)
       async () => {
         const nowSec = toUnixSeconds(nowInSeconds());
 
@@ -166,7 +171,7 @@ export class RotateSessionUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred while rotating the session.",
-        operation: "rotateSession",
+        operation: AUTH_USE_CASE_NAMES.ROTATE_SESSION,
       },
     );
   }

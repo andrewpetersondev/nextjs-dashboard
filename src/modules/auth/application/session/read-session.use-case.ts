@@ -1,3 +1,4 @@
+import "server-only";
 import { buildReadSessionOutcome } from "@/modules/auth/application/builders/read-session-outcome.builder";
 import {
   AUTH_LOG_CONTEXTS,
@@ -93,7 +94,7 @@ export class ReadSessionUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred while reading the session.",
-        operation: AUTH_USE_CASE_NAMES.GET_SESSION,
+        operation: AUTH_USE_CASE_NAMES.READ_SESSION,
       },
     );
   }

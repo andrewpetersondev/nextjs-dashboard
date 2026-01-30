@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";

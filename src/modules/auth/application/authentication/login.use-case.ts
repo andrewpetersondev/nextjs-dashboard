@@ -1,8 +1,10 @@
 import "server-only";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/dtos/authenticated-user.dto";
 import { AuthErrorFactory } from "@/modules/auth/application/factories/auth-error.factory";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
 import type { LoginRequestDto } from "@/modules/auth/application/schemas/login-request.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -34,7 +36,10 @@ export class LoginUseCase {
   ) {
     this.repo = repo;
     this.hasher = hasher;
-    this.logger = logger.withContext("auth:use-case:login-user");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      logger,
+      AUTH_USE_CASE_NAMES.LOGIN_USER,
+    );
   }
 
   /**
@@ -94,7 +99,7 @@ export class LoginUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred during authentication.",
-        operation: "loginUser",
+        operation: AUTH_USE_CASE_NAMES.LOGIN_USER,
       },
     );
   }

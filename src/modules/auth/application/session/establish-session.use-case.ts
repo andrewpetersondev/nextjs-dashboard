@@ -1,3 +1,4 @@
+import "server-only";
 import {
   AUTH_OPERATIONS,
   AUTH_USE_CASE_NAMES,

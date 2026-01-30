@@ -14,7 +14,12 @@ export const AUTH_OPERATIONS = {
 } as const;
 
 export const AUTH_USE_CASE_NAMES = {
+  CREATE_DEMO_USER: "createDemoUser",
   ESTABLISH_SESSION: "establishSession",
   GET_SESSION: "getSession",
+  LOGIN_USER: "loginUser",
   READ_SESSION: "readSession",
+  ROTATE_SESSION: "rotateSession",
+  SIGNUP_USER: "createUser",
+  TERMINATE_SESSION: "terminateSession",
 } as const;
