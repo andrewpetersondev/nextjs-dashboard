@@ -1,10 +1,9 @@
 import { AUTH_POLICY_NAMES } from "@/modules/auth/domain/constants/auth-policy.constants";
 import { DEMO_IDENTITY_CONFIG } from "@/modules/auth/domain/constants/demo-identity.constants";
-import { parseUserRole } from "@/shared/domain/user/user-role.parser";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import {
+  USER_ROLE,
+  type UserRole,
+} from "@/shared/domain/user/user-role.schema";
 
 /**
  * Domain Policy: Default Registration Role.
@@ -12,7 +11,7 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
  * @returns The default `UserRole` for new registrations.
  */
 export function getDefaultRegistrationRole(): UserRole {
-  return parseUserRole("USER");
+  return USER_ROLE;
 }
 
 /**
@@ -43,15 +42,30 @@ export function validateDemoUserCounter(counter: unknown): counter is number {
 }
 
 /**
- * Creates a domain-specific error for invalid demo counters.
+ * Domain Policy: Registration failures.
  *
- * @param cause - The original cause of the error.
- * @returns An `AppError` representing the validation failure.
+ * @remarks
+ * Domain must not manufacture application error types (`AppError`) or depend on error catalogs.
+ * Failures are modeled as domain values and mapped to `AppError` in outer layers.
  */
-export function makeInvalidDemoCounterError(cause: unknown): AppError {
-  return makeAppError(APP_ERROR_KEYS.validation, {
-    cause: cause instanceof Error ? cause : String(cause),
-    message: "Demo user counter returned invalid value",
-    metadata: { policy: AUTH_POLICY_NAMES.REGISTRATION },
-  });
+export const REGISTRATION_FAILURE_KINDS = {
+  INVALID_DEMO_COUNTER: "invalid_demo_counter",
+} as const;
+
+export type RegistrationFailureKind =
+  (typeof REGISTRATION_FAILURE_KINDS)[keyof typeof REGISTRATION_FAILURE_KINDS];
+
+export type RegistrationFailure = Readonly<{
+  readonly kind: RegistrationFailureKind;
+  readonly policy: typeof AUTH_POLICY_NAMES.REGISTRATION;
+}>;
+
+/**
+ * Creates a domain-specific failure value for invalid demo counters.
+ */
+export function makeInvalidDemoCounterFailure(): RegistrationFailure {
+  return {
+    kind: REGISTRATION_FAILURE_KINDS.INVALID_DEMO_COUNTER,
+    policy: AUTH_POLICY_NAMES.REGISTRATION,
+  };
 }

@@ -7,11 +7,13 @@ import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/applicati
 import { toAuthUserOutputDto } from "@/modules/auth/application/mappers/to-auth-user-output-dto.mapper";
 import {
   generateDemoUserIdentity,
-  makeInvalidDemoCounterError,
+  makeInvalidDemoCounterFailure,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/policies/user/registration.policy";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -40,7 +42,15 @@ export async function createDemoUserTxHelper(
 
     // 2. Validate counter using domain policy
     if (!validateDemoUserCounter(counter)) {
-      return Err(makeInvalidDemoCounterError(counter));
+      const failure = makeInvalidDemoCounterFailure();
+
+      const error: AppError = makeAppError(APP_ERROR_KEYS.validation, {
+        cause: "Demo user counter returned invalid value",
+        message: "Demo user counter returned invalid value",
+        metadata: { policy: failure.policy },
+      });
+
+      return Err(error);
     }
 
     // 3. Generate identity using domain policy

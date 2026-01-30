@@ -1,8 +1,10 @@
 import "server-only";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import type { ReadSessionUseCase } from "@/modules/auth/application/session/read-session.use-case";
-import { AuthSecurityErrors } from "@/modules/auth/domain/policies/security/auth-security.policy";
+import { AuthSecurityFailures } from "@/modules/auth/domain/policies/security/auth-security.policy";
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -36,7 +38,18 @@ export class RequireSessionUseCase {
     const session: ReadSessionOutcomeDto | undefined = readResult.value;
 
     if (!session) {
-      return Err(AuthSecurityErrors.missingSession());
+      const failure = AuthSecurityFailures.missingSession();
+
+      return Err(
+        makeAppError(APP_ERROR_KEYS.unauthorized, {
+          cause: "No active session found.",
+          message: "No active session found.",
+          metadata: {
+            policy: failure.policy,
+            reason: failure.reason,
+          },
+        }),
+      );
     }
 
     return Ok(session);
