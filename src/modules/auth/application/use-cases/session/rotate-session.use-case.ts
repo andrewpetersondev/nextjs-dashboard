@@ -6,7 +6,6 @@ import {
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import {
   UPDATE_SESSION_OUTCOME_REASON,
   type UpdateSessionNotRotatedDto,
@@ -17,6 +16,7 @@ import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
 import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
+import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/session/session-use-case.deps";
 import {
   evaluateSessionLifecyclePolicy,
   requiresRotation,
@@ -45,7 +45,7 @@ export class RotateSessionUseCase {
   /**
    * @param deps - Dependencies required for session rotation.
    */
-  constructor(deps: SessionUseCaseDependencies) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = makeAuthUseCaseLoggerHelper(
       deps.logger,
       AUTH_USE_CASE_NAMES.ROTATE_SESSION,

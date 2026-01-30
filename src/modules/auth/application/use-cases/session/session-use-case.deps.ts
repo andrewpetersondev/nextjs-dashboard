@@ -5,7 +5,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 /**
  * Common dependencies required by Session-related application use cases.
  */
-export type SessionUseCaseDependencies = Readonly<{
+export type SessionUseCaseDeps = Readonly<{
   logger: LoggingClientContract;
   sessionStore: SessionStoreContract;
   sessionTokenService: SessionTokenServiceContract;

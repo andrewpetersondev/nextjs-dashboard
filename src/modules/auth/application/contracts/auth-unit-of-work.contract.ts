@@ -1,4 +1,4 @@
-import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
+import type { AuthTxDeps } from "@/modules/auth/application/contracts/auth-tx.deps";
 
 /**
  * Interface for managing database transactions within the authentication module.
@@ -17,5 +17,5 @@ export interface AuthUnitOfWorkContract {
    * @returns The result of the callback function.
    * @throws {Error} If the transaction fails or the callback throws.
    */
-  withTransaction<T>(fn: (tx: AuthTxDepsContract) => Promise<T>): Promise<T>;
+  withTransaction<T>(fn: (tx: AuthTxDeps) => Promise<T>): Promise<T>;
 }

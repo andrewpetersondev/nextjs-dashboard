@@ -7,12 +7,12 @@ import {
 } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
+import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/session/session-use-case.deps";
 import { toUnixSeconds } from "@/modules/auth/domain/values/time.value";
 import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -36,7 +36,7 @@ export class ReadSessionUseCase {
   /**
    * @param deps - Dependencies required for reading the session.
    */
-  constructor(deps: SessionUseCaseDependencies) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = makeAuthUseCaseLoggerHelper(
       deps.logger,
       AUTH_USE_CASE_NAMES.READ_SESSION,

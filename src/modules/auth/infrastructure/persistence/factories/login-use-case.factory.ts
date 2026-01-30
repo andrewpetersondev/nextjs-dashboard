@@ -1,6 +1,6 @@
 import "server-only";
-import { LoginUseCase } from "@/modules/auth/application/authentication/login.use-case";
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/contracts/auth-user-repository.contract";
+import { LoginUseCase } from "@/modules/auth/application/use-cases/authentication/login.use-case";
 import { passwordHasherFactory } from "@/modules/auth/infrastructure/crypto/factories/password-hasher.factory";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";

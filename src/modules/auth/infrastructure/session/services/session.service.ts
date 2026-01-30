@@ -1,14 +1,15 @@
+import "server-only";
 import type { SessionServiceContract } from "@/modules/auth/application/contracts/session-service.contract";
-import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import type { SessionVerificationDto } from "@/modules/auth/application/dtos/session-verification.dto";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
-import { EstablishSessionUseCase } from "@/modules/auth/application/session/establish-session.use-case";
-import { ReadSessionUseCase } from "@/modules/auth/application/session/read-session.use-case";
-import { RequireSessionUseCase } from "@/modules/auth/application/session/require-session.use-case";
-import { RotateSessionUseCase } from "@/modules/auth/application/session/rotate-session.use-case";
-import { TerminateSessionUseCase } from "@/modules/auth/application/session/terminate-session.use-case";
+import { EstablishSessionUseCase } from "@/modules/auth/application/use-cases/session/establish-session.use-case";
+import { ReadSessionUseCase } from "@/modules/auth/application/use-cases/session/read-session.use-case";
+import { RequireSessionUseCase } from "@/modules/auth/application/use-cases/session/require-session.use-case";
+import { RotateSessionUseCase } from "@/modules/auth/application/use-cases/session/rotate-session.use-case";
+import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/session/session-use-case.deps";
+import { TerminateSessionUseCase } from "@/modules/auth/application/use-cases/session/terminate-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/policies/session/evaluate-session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
@@ -23,14 +24,14 @@ import type { Result } from "@/shared/results/result.types";
  * @implements {SessionServiceContract}
  */
 export class SessionService implements SessionServiceContract {
-  private readonly deps: SessionUseCaseDependencies;
+  private readonly deps: SessionUseCaseDeps;
 
   /**
    * Initializes the session service.
    *
    * @param deps - The dependencies required by session use cases.
    */
-  constructor(deps: SessionUseCaseDependencies) {
+  constructor(deps: SessionUseCaseDeps) {
     this.deps = deps;
   }
 

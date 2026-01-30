@@ -1,5 +1,5 @@
 import "server-only";
-import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
+import type { AuthTxDeps } from "@/modules/auth/application/contracts/auth-tx.deps";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -12,7 +12,7 @@ export type AuthTxDepsFactory = (
   txDb: AppDatabase,
   txLogger: LoggingClientContract,
   requestId: string,
-) => AuthTxDepsContract;
+) => AuthTxDeps;
 
 /**
  * Factory for creating transaction-scoped dependency contracts for auth persistence.
@@ -30,7 +30,7 @@ export function authTxDepsFactory(
   txDb: AppDatabase,
   txLogger: LoggingClientContract,
   requestId: string,
-): AuthTxDepsContract {
+): AuthTxDeps {
   const authUserRepo = new AuthUserRepository(txDb, txLogger, requestId);
   const authUsers = new AuthUserRepositoryAdapter(authUserRepo);
 

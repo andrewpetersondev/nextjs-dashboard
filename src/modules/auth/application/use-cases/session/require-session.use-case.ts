@@ -1,6 +1,6 @@
 import "server-only";
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/dtos/read-session-outcome.dto";
-import type { ReadSessionUseCase } from "@/modules/auth/application/session/read-session.use-case";
+import type { ReadSessionUseCase } from "@/modules/auth/application/use-cases/session/read-session.use-case";
 import { AuthSecurityFailures } from "@/modules/auth/domain/policies/security/auth-security.policy";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

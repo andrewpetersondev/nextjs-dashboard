@@ -5,10 +5,10 @@ import {
 } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
-import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/dtos/session-principal.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
+import type { SessionUseCaseDeps } from "@/modules/auth/application/use-cases/session/session-use-case.deps";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Ok } from "@/shared/results/result";
@@ -29,7 +29,7 @@ export class EstablishSessionUseCase {
   /**
    * @param deps - Dependencies required for session establishment.
    */
-  constructor(deps: SessionUseCaseDependencies) {
+  constructor(deps: SessionUseCaseDeps) {
     this.logger = makeAuthUseCaseLoggerHelper(
       deps.logger,
       AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,

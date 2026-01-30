@@ -1,7 +1,7 @@
 import "server-only";
 // biome-ignore lint/correctness/noNodejsModules: <server-only file>
 import { randomUUID } from "node:crypto";
-import type { AuthTxDepsContract } from "@/modules/auth/application/contracts/auth-tx-deps.contract";
+import type { AuthTxDeps } from "@/modules/auth/application/contracts/auth-tx.deps";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/observability/loggers/auth-transaction.logger";
 import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-tx-deps.factory";
@@ -48,9 +48,7 @@ export class AuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
    * @returns The result of the executed function.
    * @throws Error if the database does not support transactions or if the transaction fails.
    */
-  async withTransaction<T>(
-    fn: (tx: AuthTxDepsContract) => Promise<T>,
-  ): Promise<T> {
+  async withTransaction<T>(fn: (tx: AuthTxDeps) => Promise<T>): Promise<T> {
     const dbWithTx = this.db as AppDatabase & {
       transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
     };

@@ -1,6 +1,6 @@
 import "server-only";
-import { SignupUseCase } from "@/modules/auth/application/authentication/signup.use-case";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/contracts/auth-unit-of-work.contract";
+import { SignupUseCase } from "@/modules/auth/application/use-cases/authentication/signup.use-case";
 import { passwordHasherFactory } from "@/modules/auth/infrastructure/crypto/factories/password-hasher.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
