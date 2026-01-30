@@ -57,6 +57,7 @@ export class ReadSessionUseCase {
       async () => {
         const readResult = await readSessionTokenHelper(
           {
+            logger: this.logger,
             sessionStore: this.sessionStore,
             sessionTokenService: this.sessionTokenService,
           },
@@ -76,7 +77,11 @@ export class ReadSessionUseCase {
         const decoded = outcome.decoded;
 
         if (!decoded.sub) {
-          await cleanupInvalidTokenHelper(this.sessionStore);
+          await cleanupInvalidTokenHelper(
+            { logger: this.logger, sessionStore: this.sessionStore },
+            { reason: "invalid_claims", source: "readSessionUseCase" },
+          );
+
           this.logger.operation("warn", "Session missing subject (sub)", {
             operationContext: AUTH_LOG_CONTEXTS.SESSION,
             operationIdentifiers: { reason: "invalid_claims" },
@@ -91,7 +96,10 @@ export class ReadSessionUseCase {
 
         const built = buildReadSessionOutcome(sessionEntity, nowSec);
         if (!built.ok) {
-          await cleanupInvalidTokenHelper(this.sessionStore);
+          await cleanupInvalidTokenHelper(
+            { logger: this.logger, sessionStore: this.sessionStore },
+            { reason: "invalid_session_state", source: "readSessionUseCase" },
+          );
 
           this.logger.operation("warn", "Session outcome build failed", {
             operationContext: AUTH_LOG_CONTEXTS.SESSION,

@@ -69,6 +69,7 @@ export class RotateSessionUseCase {
       async () => {
         const readResult = await readSessionTokenHelper(
           {
+            logger: this.logger,
             sessionStore: this.sessionStore,
             sessionTokenService: this.sessionTokenService,
           },

@@ -1,10 +1,10 @@
 import "server-only";
-
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { ReadSessionTokenOutcomeDto } from "@/modules/auth/application/dtos/read-session-token-outcome.dto";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/helpers/session-cleanup.helper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
@@ -20,6 +20,7 @@ import type { Result } from "@/shared/results/result.types";
  */
 export async function readSessionTokenHelper(
   deps: Readonly<{
+    logger: LoggingClientContract;
     sessionStore: SessionStoreContract;
     sessionTokenService: SessionTokenServiceContract;
   }>,
@@ -47,8 +48,14 @@ export async function readSessionTokenHelper(
   if (!decodedResult.ok) {
     let didCleanup = false;
     if (options.cleanupOnInvalidToken) {
-      await cleanupInvalidTokenHelper(deps.sessionStore);
-      didCleanup = true;
+      const cleanup = await cleanupInvalidTokenHelper(
+        {
+          logger: deps.logger,
+          sessionStore: deps.sessionStore,
+        },
+        { reason: "invalid_token", source: "readSessionTokenHelper" },
+      );
+      didCleanup = cleanup.didCleanup;
     }
 
     if (decodedResult.error.key === "unexpected") {
