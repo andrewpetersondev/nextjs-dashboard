@@ -1,7 +1,7 @@
 import "server-only";
-
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/dtos/session-token-claims.dto";
+import { AUTH_POLICY_REASONS } from "@/modules/auth/domain/constants/auth-policy.constants";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
 import { getRouteTypePolicy } from "@/modules/auth/domain/policies/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/policies/to-authorization-reason.policy";
@@ -84,7 +84,7 @@ export async function authorizeRequestHelper(
   }
 
   const redirectTo =
-    decision.reason === "not_authenticated"
+    decision.reason === AUTH_POLICY_REASONS.NOT_AUTHENTICATED
       ? deps.routes.login
       : deps.routes.dashboardRoot;
 

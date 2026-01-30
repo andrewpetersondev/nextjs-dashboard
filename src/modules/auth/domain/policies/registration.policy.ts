@@ -1,3 +1,7 @@
+import {
+  AUTH_POLICY_NAMES,
+  DEMO_IDENTITY_CONFIG,
+} from "@/modules/auth/domain/constants/auth-policy.constants";
 import { parseUserRole } from "@/shared/domain/user/user-role.parser";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
@@ -25,8 +29,8 @@ export function generateDemoUserIdentity(
   counter: number,
 ): { email: string; username: string } {
   return {
-    email: `demo+${role}${counter}@demo.com`,
-    username: `Demo_${role.toUpperCase()}_${counter}`,
+    email: `demo+${role}${counter}@${DEMO_IDENTITY_CONFIG.EMAIL_DOMAIN}`,
+    username: `${DEMO_IDENTITY_CONFIG.USERNAME_PREFIX}_${role.toUpperCase()}_${counter}`,
   };
 }
 
@@ -50,6 +54,6 @@ export function makeInvalidDemoCounterError(cause: unknown): AppError {
   return makeAppError(APP_ERROR_KEYS.validation, {
     cause: cause instanceof Error ? cause : String(cause),
     message: "Demo user counter returned invalid value",
-    metadata: { policy: "registration" },
+    metadata: { policy: AUTH_POLICY_NAMES.REGISTRATION },
   });
 }

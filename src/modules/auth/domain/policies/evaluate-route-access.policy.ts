@@ -1,10 +1,11 @@
+import {
+  AUTH_POLICY_REASONS,
+  AUTH_ROUTE_TYPES,
+  type AuthPolicyReason,
+  type AuthRouteType,
+} from "@/modules/auth/domain/constants/auth-policy.constants";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { ADMIN_ROLE } from "@/shared/domain/user/user-role.schema";
-
-/**
- * Supported route categories for authentication and authorization.
- */
-export type AuthRouteType = "admin" | "protected" | "public";
 
 /**
  * Result of the route access evaluation (domain-level: authorization only).
@@ -18,7 +19,7 @@ export type AuthRouteAccessDecision =
       /** Access is denied */
       allowed: false;
       /** Reason for denial */
-      reason: "not_authenticated" | "not_authorized";
+      reason: AuthPolicyReason;
     }>;
 
 /**
@@ -35,26 +36,35 @@ export function evaluateRouteAccessPolicy(
     role: UserRole | undefined;
   }>,
 ): AuthRouteAccessDecision {
-  if (routeType === "admin") {
+  if (routeType === AUTH_ROUTE_TYPES.ADMIN) {
     if (!input.isAuthenticated) {
-      return { allowed: false, reason: "not_authenticated" };
+      return {
+        allowed: false,
+        reason: AUTH_POLICY_REASONS.NOT_AUTHENTICATED,
+      };
     }
     if (input.role !== ADMIN_ROLE) {
-      return { allowed: false, reason: "not_authorized" };
+      return {
+        allowed: false,
+        reason: AUTH_POLICY_REASONS.NOT_AUTHORIZED,
+      };
     }
     return { allowed: true };
   }
 
-  if (routeType === "protected") {
+  if (routeType === AUTH_ROUTE_TYPES.PROTECTED) {
     if (!input.isAuthenticated) {
-      return { allowed: false, reason: "not_authenticated" };
+      return {
+        allowed: false,
+        reason: AUTH_POLICY_REASONS.NOT_AUTHENTICATED,
+      };
     }
     return { allowed: true };
   }
 
   // public
   if (input.isAuthenticated) {
-    return { allowed: false, reason: "not_authorized" };
+    return { allowed: false, reason: AUTH_POLICY_REASONS.NOT_AUTHORIZED };
   }
 
   return { allowed: true };

@@ -1,6 +1,4 @@
-// TODO: this file may indicate the need for a AuthorizationRequestEntity
-
-import type { AuthRequestAuthorizationReason } from "@/modules/auth/domain/types/auth-request-authorization-reason.type";
+import type { AuthRequestReason } from "@/modules/auth/domain/constants/auth-policy.constants";
 
 /**
  * Represents the outcome of an authorization request check.
@@ -17,7 +15,7 @@ export type AuthRequestAuthorizationOutcome =
       /** Request must be redirected */
       kind: "redirect";
       /** Reason for redirection */
-      reason: AuthRequestAuthorizationReason;
+      reason: AuthRequestReason;
       /** Destination path for redirection */
       to: `/${string}`;
     }>;

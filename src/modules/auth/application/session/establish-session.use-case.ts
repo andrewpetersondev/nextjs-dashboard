@@ -1,5 +1,7 @@
-import "server-only";
-
+import {
+  AUTH_OPERATIONS,
+  AUTH_USE_CASE_NAMES,
+} from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
@@ -27,7 +29,10 @@ export class EstablishSessionUseCase {
    * @param deps - Dependencies required for session establishment.
    */
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "establishSession");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      deps.logger,
+      AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,
+    );
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
@@ -68,7 +73,7 @@ export class EstablishSessionUseCase {
               userId: user.id,
             },
             message: "Session established",
-            operationName: "session.establish.success",
+            operationName: AUTH_OPERATIONS.SESSION_ESTABLISH_SUCCESS,
             token,
           },
         );
@@ -78,7 +83,7 @@ export class EstablishSessionUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred while establishing the session.",
-        operation: "establishSession",
+        operation: AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,
       },
     );
   }

@@ -1,16 +1,13 @@
 /**
  * Generates a random password that complies with the shared password policy rules.
  *
- * Ensures presence of at least one letter, one number, and one special character,
- * and validates length using the shared policy constants.
+ * Ensures presence of at least one letter, one number, and one special character.
  *
  * @param length - Desired password length. Must be between 5 and 20.
  * @returns A randomly generated compliant password string.
  * @throws Error if the length is outside the allowed range.
- *
- * @todo Confirm this will never fail.
  */
-export const makeRandomPassword = (length = 10): string => {
+export function makeRandomPassword(length: number): string {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const lowercase = "abcdefghijklmnopqrstuvwxyz";
   const digits = "0123456789";
@@ -59,4 +56,4 @@ export const makeRandomPassword = (length = 10): string => {
   }
 
   return seed.join("");
-};
+}

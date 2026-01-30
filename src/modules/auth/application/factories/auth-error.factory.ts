@@ -1,3 +1,4 @@
+import { AUTH_OPERATIONS } from "@/modules/auth/application/constants/auth-logging.constants";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -34,7 +35,7 @@ export const AuthErrorFactory = {
       message: "Invalid email or password",
       metadata: {
         ...context,
-        policy: "anti-enumeration",
+        policy: AUTH_OPERATIONS.ANTI_ENUMERATION,
         reason,
       },
     });

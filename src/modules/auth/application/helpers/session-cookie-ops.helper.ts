@@ -1,5 +1,4 @@
-import "server-only";
-
+import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
@@ -26,7 +25,7 @@ export async function setSessionCookieAndLogHelper(
   await deps.sessionCookieAdapter.set(params.token, params.expiresAtMs);
 
   deps.logger.operation("info", params.message, {
-    operationContext: "session",
+    operationContext: AUTH_LOG_CONTEXTS.SESSION,
     operationIdentifiers: {
       ...params.identifiers,
       expiresAt: params.expiresAtMs,
@@ -56,7 +55,7 @@ export async function deleteSessionCookieAndLogHelper(
   await deps.sessionCookieAdapter.delete();
 
   deps.logger.operation("info", params.message, {
-    operationContext: "session",
+    operationContext: AUTH_LOG_CONTEXTS.SESSION,
     operationIdentifiers: params.identifiers,
     operationName: params.operationName,
   });

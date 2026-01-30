@@ -1,4 +1,7 @@
-import type { AuthRouteType } from "@/modules/auth/domain/policies/evaluate-route-access.policy";
+import {
+  AUTH_ROUTE_TYPES,
+  type AuthRouteType,
+} from "@/modules/auth/domain/constants/auth-policy.constants";
 
 /**
  * Determines the route type based on boolean flags.
@@ -12,10 +15,10 @@ export function getRouteTypePolicy(flags: {
   isPublicRoute: boolean;
 }): AuthRouteType {
   if (flags.isAdminRoute) {
-    return "admin";
+    return AUTH_ROUTE_TYPES.ADMIN;
   }
   if (flags.isProtectedRoute) {
-    return "protected";
+    return AUTH_ROUTE_TYPES.PROTECTED;
   }
-  return "public";
+  return AUTH_ROUTE_TYPES.PUBLIC;
 }

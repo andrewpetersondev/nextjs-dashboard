@@ -1,5 +1,4 @@
-import "server-only";
-
+import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/constants/auth-logging.constants";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 
 /**
@@ -13,7 +12,7 @@ export function makeAuthUseCaseLoggerHelper(
   useCase: string,
 ): LoggingClientContract {
   return logger.child({
-    scope: "use-case",
+    scope: AUTH_LOG_CONTEXTS.USE_CASE,
     useCase,
   });
 }

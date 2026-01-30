@@ -1,6 +1,9 @@
-import "server-only";
-
 import { buildReadSessionOutcome } from "@/modules/auth/application/builders/read-session-outcome.builder";
+import {
+  AUTH_LOG_CONTEXTS,
+  AUTH_OPERATIONS,
+  AUTH_USE_CASE_NAMES,
+} from "@/modules/auth/application/constants/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
@@ -32,7 +35,10 @@ export class ReadSessionUseCase {
    * @param deps - Dependencies required for reading the session.
    */
   constructor(deps: SessionUseCaseDependencies) {
-    this.logger = makeAuthUseCaseLoggerHelper(deps.logger, "readSession");
+    this.logger = makeAuthUseCaseLoggerHelper(
+      deps.logger,
+      AUTH_USE_CASE_NAMES.READ_SESSION,
+    );
     this.sessionStore = deps.sessionStore;
     this.sessionTokenService = deps.sessionTokenService;
   }
@@ -72,9 +78,9 @@ export class ReadSessionUseCase {
         if (!decoded.sub) {
           await cleanupInvalidTokenHelper(this.sessionStore);
           this.logger.operation("warn", "Session missing subject (sub)", {
-            operationContext: "session",
+            operationContext: AUTH_LOG_CONTEXTS.SESSION,
             operationIdentifiers: { reason: "invalid_claims" },
-            operationName: "session.read.invalid_claims",
+            operationName: AUTH_OPERATIONS.SESSION_READ_INVALID_CLAIMS,
           });
           return Ok(undefined);
         }
@@ -85,7 +91,7 @@ export class ReadSessionUseCase {
       {
         logger: this.logger,
         message: "An unexpected error occurred while reading the session.",
-        operation: "getSession",
+        operation: AUTH_USE_CASE_NAMES.GET_SESSION,
       },
     );
   }
