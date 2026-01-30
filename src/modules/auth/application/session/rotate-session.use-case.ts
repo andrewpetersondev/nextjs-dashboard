@@ -1,14 +1,27 @@
 import "server-only";
-
-import { buildUpdateSessionSuccess } from "@/modules/auth/application/builders/update-session-outcome.builder";
+import {
+  buildUpdateSessionNotRotated,
+  buildUpdateSessionSuccess,
+} from "@/modules/auth/application/builders/update-session-outcome.builder";
 import type { SessionStoreContract } from "@/modules/auth/application/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/contracts/session-token-service.contract";
 import type { SessionUseCaseDependencies } from "@/modules/auth/application/contracts/session-use-case-dependencies.contract";
-import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/dtos/update-session-outcome.dto";
+import {
+  UPDATE_SESSION_OUTCOME_REASON,
+  type UpdateSessionNotRotatedDto,
+  type UpdateSessionOutcomeDto,
+} from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/helpers/make-auth-use-case-logger.helper";
 import { readSessionTokenHelper } from "@/modules/auth/application/helpers/read-session-token.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/helpers/session-cookie-ops.helper";
+import { toSessionEntity } from "@/modules/auth/application/mappers/to-session-entity.mapper";
 import { UserIdSchema } from "@/modules/auth/application/schemas/session-token-claims.schema";
+import {
+  evaluateSessionLifecyclePolicy,
+  requiresRotation,
+  requiresTermination,
+} from "@/modules/auth/domain/policies/session-lifecycle.policy";
+import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
@@ -43,10 +56,13 @@ export class RotateSessionUseCase {
    *
    * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
    */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: false positive (rotation flow is intentionally verbose)
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: rotation flow is intentionally verbose (many early returns for clarity)
   execute(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
     return safeExecute<UpdateSessionOutcomeDto>(
+      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: rotation flow is intentionally verbose (many early returns for clarity)
       async () => {
+        const nowSec = nowInSeconds();
+
         const readResult = await readSessionTokenHelper(
           {
             sessionStore: this.sessionStore,
@@ -62,10 +78,38 @@ export class RotateSessionUseCase {
         const outcome = readResult.value;
 
         if (outcome.kind !== "decoded" || !outcome.decoded.sub) {
-          return Ok({
-            reason: "invalid_or_missing_user",
-            refreshed: false,
-          } as const);
+          return Ok(
+            buildUpdateSessionNotRotated({
+              reason: UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser,
+            }),
+          );
+        }
+
+        const sessionEntity = toSessionEntity(outcome.decoded);
+        const decision = evaluateSessionLifecyclePolicy(sessionEntity, nowSec);
+
+        if (requiresTermination(decision)) {
+          const failureReason: UpdateSessionNotRotatedDto["reason"] =
+            decision.reason === "absolute_limit_exceeded"
+              ? UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
+              : UPDATE_SESSION_OUTCOME_REASON.expired;
+
+          return Ok(
+            buildUpdateSessionNotRotated({
+              ageSec: decision.ageSec,
+              maxSec: decision.maxSec,
+              reason: failureReason,
+            }),
+          );
+        }
+
+        if (!requiresRotation(decision)) {
+          return Ok(
+            buildUpdateSessionNotRotated({
+              reason: UPDATE_SESSION_OUTCOME_REASON.notNeeded,
+              timeLeftSec: decision.timeLeftSec,
+            }),
+          );
         }
 
         const { sid, sub, role } = outcome.decoded;
@@ -81,7 +125,6 @@ export class RotateSessionUseCase {
         }
 
         const { expiresAtMs, token } = issuedResult.value;
-
         const decodedUserId = UserIdSchema.decode(sub);
 
         await setSessionCookieAndLogHelper(
@@ -92,7 +135,7 @@ export class RotateSessionUseCase {
           {
             expiresAtMs,
             identifiers: {
-              reason: "rotated",
+              reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
               role,
               userId: decodedUserId,
             },

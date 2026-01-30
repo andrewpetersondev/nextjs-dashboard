@@ -1,11 +1,30 @@
 import "server-only";
-
-import type {
-  UpdateSessionNotRotatedDto,
-  UpdateSessionSuccessDto,
+import {
+  UPDATE_SESSION_OUTCOME_REASON,
+  type UpdateSessionNotRotatedDto,
+  type UpdateSessionSuccessDto,
 } from "@/modules/auth/application/dtos/update-session-outcome.dto";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
+
+type UpdateSessionNotRotatedParams = Readonly<
+  | {
+      readonly reason:
+        | typeof UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser
+        | typeof UPDATE_SESSION_OUTCOME_REASON.noCookie;
+    }
+  | {
+      readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.notNeeded;
+      readonly timeLeftSec: number;
+    }
+  | {
+      readonly reason:
+        | typeof UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
+        | typeof UPDATE_SESSION_OUTCOME_REASON.expired;
+      readonly ageSec: number;
+      readonly maxSec: number;
+    }
+>;
 
 /**
  * Builds a successful rotation outcome.
@@ -23,7 +42,7 @@ export function buildUpdateSessionSuccess(
 
   return {
     expiresAt: params.expiresAtMs,
-    reason: "rotated",
+    reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
     refreshed: true,
     role: params.role,
     userId: params.userId,
@@ -31,25 +50,36 @@ export function buildUpdateSessionSuccess(
 }
 
 /**
- * Builds a not-rotated outcome with optional lifecycle metadata (seconds).
+ * Builds a not-rotated outcome.
+ *
+ * Note: The discriminated union keeps payloads reason-specific (non-optional)
+ * without relying on overload signatures.
  */
 export function buildUpdateSessionNotRotated(
-  params: Readonly<{
-    ageSec?: number;
-    maxSec?: number;
-    reason:
-      | "absolute_lifetime_exceeded"
-      | "invalid_or_missing_user"
-      | "no_cookie"
-      | "not_needed";
-    timeLeftSec?: number;
-  }>,
+  params: UpdateSessionNotRotatedParams,
 ): Readonly<UpdateSessionNotRotatedDto> {
+  if (params.reason === UPDATE_SESSION_OUTCOME_REASON.notNeeded) {
+    return {
+      reason: params.reason,
+      refreshed: false,
+      timeLeftSec: params.timeLeftSec,
+    } as const;
+  }
+
+  if (
+    params.reason === UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded ||
+    params.reason === UPDATE_SESSION_OUTCOME_REASON.expired
+  ) {
+    return {
+      ageSec: params.ageSec,
+      maxSec: params.maxSec,
+      reason: params.reason,
+      refreshed: false,
+    } as const;
+  }
+
   return {
-    ageSec: params.ageSec,
-    maxSec: params.maxSec,
     reason: params.reason,
     refreshed: false,
-    timeLeftSec: params.timeLeftSec,
   } as const;
 }
