@@ -61,8 +61,7 @@ tsconfig.tsbuildinfo
 *.sh
 *.txt
 *.yaml
-# *.tsx
-# *.md
+*.tsx
 
 # ======================================================
 # DOCKER
