@@ -40,7 +40,8 @@ describe("Login Flow Integration", () => {
       })
       .returning();
 
-    testUserId = insertedUser.id;
+    testUserId = insertedUser ? insertedUser.id : "something is wrong";
+    //    testUserId = insertedUser.id;
   });
 
   afterEach(async () => {

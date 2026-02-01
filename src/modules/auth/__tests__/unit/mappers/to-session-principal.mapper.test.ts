@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
-import type { UpdateSessionSuccessDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
+import {
+  UPDATE_SESSION_OUTCOME_REASON,
+  type UpdateSessionSuccessDto,
+} from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { toSessionPrincipal } from "@/modules/auth/application/shared/mappers/flows/login/to-session-principal.mapper";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
@@ -20,7 +23,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -30,7 +33,7 @@ describe("toSessionPrincipal Mapper", () => {
 
       // Assert: Only id and role should be included
       expect(principal).toEqual({
-        id: "user_123",
+        id: "00000000-0000-0000-0000-000000000123",
         role: "USER",
       });
     });
@@ -39,7 +42,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "sensitive@example.com",
-        id: toUserId("user_456"),
+        id: toUserId("00000000-0000-0000-0000-000000000456"),
         role: "ADMIN",
         username: "adminuser",
       };
@@ -56,7 +59,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_789"),
+        id: toUserId("00000000-0000-0000-0000-000000000789"),
         role: "USER",
         username: "sensitiveusername",
       };
@@ -73,7 +76,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "admin@example.com",
-        id: toUserId("user_admin"),
+        id: toUserId("00000000-0000-0000-0000-000000000aaa"),
         role: "ADMIN",
         username: "adminuser",
       };
@@ -82,12 +85,12 @@ describe("toSessionPrincipal Mapper", () => {
       const principal = toSessionPrincipal(authenticatedUser);
 
       // Assert
-      expect(principal.role).toBe("admin");
+      expect(principal.role).toBe("ADMIN");
     });
 
     it("should preserve branded UserId", () => {
       // Arrange
-      const userId = toUserId("user_branded_123");
+      const userId = toUserId("00000000-0000-0000-0000-000000000bbb");
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
         id: userId,
@@ -99,7 +102,7 @@ describe("toSessionPrincipal Mapper", () => {
       const principal = toSessionPrincipal(authenticatedUser);
 
       // Assert: ID should remain branded
-      expect(principal.id).toBe("user_branded_123");
+      expect(principal.id).toBe("00000000-0000-0000-0000-000000000bbb");
     });
   });
 
@@ -107,8 +110,11 @@ describe("toSessionPrincipal Mapper", () => {
     it("should extract id and role from session update", () => {
       // Arrange
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 1_700_000_000_000,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role: "USER",
-        userId: toUserId("user_123"),
+        userId: toUserId("00000000-0000-0000-0000-000000000123"),
       };
 
       // Act
@@ -116,7 +122,7 @@ describe("toSessionPrincipal Mapper", () => {
 
       // Assert
       expect(principal).toEqual({
-        id: "user_123",
+        id: "00000000-0000-0000-0000-000000000123",
         role: "USER",
       });
     });
@@ -124,30 +130,36 @@ describe("toSessionPrincipal Mapper", () => {
     it("should map userId to id field", () => {
       // Arrange
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 1_700_000_000_000,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role: "ADMIN",
-        userId: toUserId("user_admin"),
+        userId: toUserId("00000000-0000-0000-0000-000000000aaa"),
       };
 
       // Act
       const principal = toSessionPrincipal(sessionUpdate);
 
       // Assert: userId should be mapped to id
-      expect(principal.id).toBe("user_admin");
+      expect(principal.id).toBe("00000000-0000-0000-0000-000000000aaa");
       expect(principal).not.toHaveProperty("userId");
     });
 
     it("should handle admin role from session update", () => {
       // Arrange
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 1_700_000_000_000,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role: "ADMIN",
-        userId: toUserId("user_admin"),
+        userId: toUserId("00000000-0000-0000-0000-000000000aaa"),
       };
 
       // Act
       const principal = toSessionPrincipal(sessionUpdate);
 
       // Assert
-      expect(principal.role).toBe("admin");
+      expect(principal.role).toBe("ADMIN");
     });
   });
 
@@ -156,7 +168,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -175,7 +187,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "sensitive.email@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -193,7 +205,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "sensitiveusername",
       };
@@ -211,7 +223,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "very.long.email.address@subdomain.example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "very_long_username_with_many_characters",
       };
@@ -231,7 +243,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -240,25 +252,28 @@ describe("toSessionPrincipal Mapper", () => {
 
       // Act
       const principal = toSessionPrincipal(authenticatedUser);
-      principal.role = "admin"; // Modify principal
+      (principal as any).role = "ADMIN"; // Modify principal
 
       // Assert: Original should be unchanged
       expect(authenticatedUser.email).toBe(originalEmail);
       expect(authenticatedUser.username).toBe(originalUsername);
-      expect(authenticatedUser.role).toBe("user");
+      expect(authenticatedUser.role).toBe("USER");
     });
 
     it("should not modify the original session update", () => {
       // Arrange
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 1_700_000_000_000,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role: "USER",
-        userId: toUserId("user_123"),
+        userId: toUserId("00000000-0000-0000-0000-000000000123"),
       };
       const originalRole = sessionUpdate.role;
 
       // Act
       const principal = toSessionPrincipal(sessionUpdate);
-      principal.role = "admin"; // Modify principal
+      (principal as any).role = "ADMIN"; // Modify principal
 
       // Assert: Original should be unchanged
       expect(sessionUpdate.role).toBe(originalRole);
@@ -268,7 +283,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -286,7 +301,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -295,21 +310,24 @@ describe("toSessionPrincipal Mapper", () => {
       const principal = toSessionPrincipal(authenticatedUser);
 
       // Assert: Should use id from AuthenticatedUserDto
-      expect(principal.id).toBe("user_123");
+      expect(principal.id).toBe("00000000-0000-0000-0000-000000000123");
     });
 
     it("should correctly identify UpdateSessionSuccessDto by absence of email", () => {
       // Arrange
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 1_700_000_000_000,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role: "USER",
-        userId: toUserId("user_456"),
+        userId: toUserId("00000000-0000-0000-0000-000000000456"),
       };
 
       // Act
       const principal = toSessionPrincipal(sessionUpdate);
 
       // Assert: Should use userId from UpdateSessionSuccessDto
-      expect(principal.id).toBe("user_456");
+      expect(principal.id).toBe("00000000-0000-0000-0000-000000000456");
     });
   });
 
@@ -318,7 +336,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "a@b.c",
-        id: toUserId("1"),
+        id: toUserId("00000000-0000-0000-0000-000000000001"),
         role: "USER",
         username: "u",
       };
@@ -328,7 +346,7 @@ describe("toSessionPrincipal Mapper", () => {
 
       // Assert
       expect(principal).toEqual({
-        id: "1",
+        id: "00000000-0000-0000-0000-000000000001",
         role: "USER",
       });
     });
@@ -336,8 +354,11 @@ describe("toSessionPrincipal Mapper", () => {
     it("should handle minimum valid session update", () => {
       // Arrange
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 0,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role: "USER",
-        userId: toUserId("1"),
+        userId: toUserId("00000000-0000-0000-0000-000000000001"),
       };
 
       // Act
@@ -345,14 +366,14 @@ describe("toSessionPrincipal Mapper", () => {
 
       // Assert
       expect(principal).toEqual({
-        id: "1",
+        id: "00000000-0000-0000-0000-000000000001",
         role: "USER",
       });
     });
 
     it("should handle long user IDs", () => {
       // Arrange
-      const longId = "user_very_long_id_with_many_characters_123456789";
+      const longId = "12345678-1234-1234-1234-123456789012";
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
         id: toUserId(longId),
@@ -373,7 +394,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -390,7 +411,7 @@ describe("toSessionPrincipal Mapper", () => {
       // Arrange
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("00000000-0000-0000-0000-000000000123"),
         role: "USER",
         username: "testuser",
       };
@@ -407,8 +428,8 @@ describe("toSessionPrincipal Mapper", () => {
   describe("Consistency Between Input Types", () => {
     it("should produce identical output for same user from different sources", () => {
       // Arrange
-      const userId = toUserId("user_123");
-      const role = "user";
+      const userId = toUserId("00000000-0000-0000-0000-000000000123");
+      const role = "USER";
 
       const authenticatedUser: AuthenticatedUserDto = {
         email: "test@example.com",
@@ -418,6 +439,9 @@ describe("toSessionPrincipal Mapper", () => {
       };
 
       const sessionUpdate: UpdateSessionSuccessDto = {
+        expiresAtMs: 1_700_000_000_000,
+        reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+        refreshed: true,
         role,
         userId,
       };

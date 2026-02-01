@@ -182,11 +182,13 @@ describe("toAuthenticatedUserDto Mapper", () => {
 
       // Act
       const dto = toAuthenticatedUserDto(entity);
-      dto.email = "modified@example.com";
 
       // Assert: Original entity should be unchanged
       expect(entity.email).toBe(originalEmail);
       expect(entity.password).toBe(originalPassword);
+
+      // Also assert mapping output is correct (optional but useful)
+      expect(dto.email).toBe(originalEmail);
     });
 
     it("should create a new object (not reference original)", () => {
@@ -310,6 +312,23 @@ describe("toAuthenticatedUserDto Mapper", () => {
       expect(typeof dto.id).toBe("string");
       expect(typeof dto.role).toBe("string");
       expect(typeof dto.username).toBe("string");
+    });
+
+    it("should prevent mutation of DTO fields (readonly)", () => {
+      const entity: AuthUserEntity = {
+        email: "test@example.com",
+        id: toUserId("user_123"),
+        password: toHash("$2a$10$hash"),
+        role: "USER",
+        username: "testuser",
+      };
+
+      const dto = toAuthenticatedUserDto(entity);
+
+      // @ts-expect-error dto.email is readonly and must not be assignable
+      dto.email = "modified@example.com";
+
+      expect(dto.email).toBe("test@example.com");
     });
   });
 
