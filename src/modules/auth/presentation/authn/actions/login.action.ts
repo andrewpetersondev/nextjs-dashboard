@@ -6,17 +6,12 @@ import {
   type LoginRequestDto,
   LoginRequestSchema,
 } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
-import { loginWorkflow } from "@/modules/auth/application/auth-user/workflows/login.workflow";
-import { loginUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/login-use-case.factory";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
-import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.logic";
-import { getRequestMetadata } from "@/shared/http/request-metadata";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -45,16 +40,12 @@ export async function loginAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
 ): Promise<FormResult<never>> {
-  const requestId = crypto.randomUUID();
-
-  const { ip, userAgent } = await getRequestMetadata();
+  const auth = await makeAuthComposition();
+  const { ip } = auth.request;
 
   const tracker = new PerformanceTracker();
 
-  const logger = defaultLogger
-    .withContext("auth:action")
-    .withRequest(requestId)
-    .child({ ip, userAgent });
+  const logger = auth.loggers.action;
 
   logger.operation("info", "Login action started", {
     operationContext: "authentication",
@@ -90,12 +81,8 @@ export async function loginAction(
     operationName: "login.validation.success",
   });
 
-  const loginUseCase = loginUseCaseFactory(getAppDb(), logger, requestId);
-
-  const sessionService = sessionServiceFactory(logger, requestId);
-
   const sessionResult = await tracker.measure("authentication", () =>
-    loginWorkflow(input, { loginUseCase, sessionService }),
+    auth.workflows.login(input),
   );
 
   if (!sessionResult.ok) {

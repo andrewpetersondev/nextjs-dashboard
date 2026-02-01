@@ -2,8 +2,7 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/session-verification.dto";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**
@@ -25,13 +24,9 @@ import { ROUTES } from "@/shared/routes/routes";
  */
 export const verifySessionOptimistic = cache(
   async (): Promise<SessionVerificationDto> => {
-    const requestId = crypto.randomUUID();
-
-    const logger = defaultLogger
-      .withContext("auth:action")
-      .withRequest(requestId);
-
-    const sessionService = sessionServiceFactory(logger, requestId);
+    const auth = await makeAuthComposition();
+    const logger = auth.loggers.action;
+    const sessionService = auth.services.sessionService;
 
     const res = await sessionService.verify();
 

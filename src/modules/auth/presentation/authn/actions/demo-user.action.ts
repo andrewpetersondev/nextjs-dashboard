@@ -1,16 +1,10 @@
 "use server";
 import { redirect } from "next/navigation";
-import { createDemoUserWorkflow } from "@/modules/auth/application/auth-user/workflows/create-demo-user.workflow";
-import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
-import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/demo-user-use-case.factory";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
-import { getAppDb } from "@/server/db/db.connection";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { getRequestMetadata } from "@/shared/http/request-metadata";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -29,14 +23,11 @@ import { ROUTES } from "@/shared/routes/routes";
 async function createDemoUserInternal(
   role: UserRole,
 ): Promise<FormResult<never>> {
-  const requestId = crypto.randomUUID();
-  const { ip, userAgent } = await getRequestMetadata();
+  const auth = await makeAuthComposition();
+  const { ip } = auth.request;
   const tracker = new PerformanceTracker();
 
-  const logger = defaultLogger
-    .withContext("auth:action")
-    .withRequest(requestId)
-    .child({ ip, role, userAgent });
+  const logger = auth.loggers.action.child({ role });
 
   logger.operation("info", "Demo user action started", {
     operationContext: "authentication",
@@ -44,12 +35,8 @@ async function createDemoUserInternal(
     operationName: "demoUser.start",
   });
 
-  const uow = authUnitOfWorkFactory(getAppDb(), logger, requestId);
-  const demoUserUseCase = demoUserUseCaseFactory(uow, logger);
-  const sessionService = sessionServiceFactory(logger, requestId);
-
   const sessionResult = await tracker.measure("authentication", () =>
-    createDemoUserWorkflow(role, { demoUserUseCase, sessionService }),
+    auth.workflows.demoUser(role),
   );
 
   if (!sessionResult.ok) {

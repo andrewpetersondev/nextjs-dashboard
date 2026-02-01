@@ -1,16 +1,14 @@
 "use server";
 import { redirect } from "next/navigation";
 import { logoutWorkflow } from "@/modules/auth/application/session/workflows/logout.workflow";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
-import { getRequestMetadata } from "@/shared/http/request-metadata";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 
 /**
  * Next.js Server Action for user logout.
  *
  * @remarks
  * This action terminates the user's session by:
- * 1. Initializing the {@link sessionServiceFactory}.
+ * 1. Building the auth composition (request-scoped logger + session service).
  * 2. Executing the {@link logoutWorkflow} to clear session data (e.g., cookies).
  * 3. Logging the outcome of the logout process.
  * 4. Redirecting the user to the landing page.
@@ -19,13 +17,10 @@ import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging
  * @redirects {"/"} always.
  */
 export async function logoutAction(): Promise<void> {
-  const requestId = crypto.randomUUID();
-  const { ip, userAgent } = await getRequestMetadata();
+  const auth = await makeAuthComposition();
+  const { ip } = auth.request;
 
-  const logger = defaultLogger
-    .withContext("auth:action")
-    .withRequest(requestId)
-    .child({ ip, userAgent });
+  const logger = auth.loggers.action;
 
   logger.operation("info", "Logout action start", {
     operationContext: "authentication",
@@ -33,9 +28,9 @@ export async function logoutAction(): Promise<void> {
     operationName: "logout.start",
   });
 
-  const sessionService = sessionServiceFactory(logger, requestId);
-
-  const res = await logoutWorkflow({ sessionService });
+  const res = await logoutWorkflow({
+    sessionService: auth.services.sessionService,
+  });
 
   if (res.ok) {
     logger.operation("info", "Logout success", {

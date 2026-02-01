@@ -12,16 +12,16 @@ import type { Result } from "@/shared/results/result.types";
  */
 const ENV_VARIABLES_TUPLE = [
   "AUTH_BCRYPT_SALT_ROUNDS",
-  "NODE_ENV",
-  "DATABASE_ENV",
-  "LOG_LEVEL",
-  "DATABASE_URL",
-  "SESSION_SECRET",
-  "SESSION_ISSUER",
-  "SESSION_AUDIENCE",
-  "NEXT_PUBLIC_NODE_ENV",
-  "NEXT_PUBLIC_LOG_LEVEL",
   "CYPRESS_BASE_URL",
+  "DATABASE_ENV",
+  "DATABASE_URL",
+  "LOG_LEVEL",
+  "NEXT_PUBLIC_LOG_LEVEL",
+  "NEXT_PUBLIC_NODE_ENV",
+  "NODE_ENV",
+  "SESSION_AUDIENCE",
+  "SESSION_ISSUER",
+  "SESSION_SECRET",
 ] as const;
 export type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
 

@@ -6,18 +6,12 @@ import {
   type SignupRequestDto,
   SignupRequestSchema,
 } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
-import { signupWorkflow } from "@/modules/auth/application/auth-user/workflows/signup.workflow";
-import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
-import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/signup-use-case.factory";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 import { toSignupFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
-import { getAppDb } from "@/server/db/db.connection";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form.logic";
-import { getRequestMetadata } from "@/shared/http/request-metadata";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
@@ -29,8 +23,8 @@ const fields = SIGNUP_FIELDS_LIST;
  * @remarks
  * This action orchestrates the entire signup flow:
  * 1. Validates the {@link FormData} against {@link SignupRequestSchema}.
- * 2. Executes the {@link signupWorkflow} which handles user creation within a
- *    transaction and session establishment.
+ * 2. Executes the auth composition's signup workflow which handles user creation
+ *    within a transaction and session establishment.
  * 3. Tracks performance and logs the outcome (success or failure).
  * 4. Maps domain/application errors to UI-compatible {@link FormResult}.
  * 5. Revalidates the dashboard path and redirects on success.
@@ -47,14 +41,11 @@ export async function signupAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
 ): Promise<FormResult<never>> {
-  const requestId = crypto.randomUUID();
-  const { ip, userAgent } = await getRequestMetadata();
+  const auth = await makeAuthComposition();
+  const { ip } = auth.request;
   const tracker = new PerformanceTracker();
 
-  const logger = defaultLogger
-    .withContext("auth:action")
-    .withRequest(requestId)
-    .child({ ip, userAgent });
+  const logger = auth.loggers.action;
 
   logger.operation("info", "Signup action started", {
     operationContext: "authentication",
@@ -86,17 +77,13 @@ export async function signupAction(
   logger.operation("info", "Signup form validated", {
     duration: tracker.getLastDuration("validation"),
     operationContext: "validation",
-    operationIdentifiers: { email: input.email },
+    operationIdentifiers: { email: input.email, ip },
 
     operationName: "signup.validation.success",
   });
 
-  const uow = authUnitOfWorkFactory(getAppDb(), logger, requestId);
-  const signupUseCase = signupUseCaseFactory(uow, logger);
-  const sessionService = sessionServiceFactory(logger, requestId);
-
   const sessionResult = await tracker.measure("authentication", () =>
-    signupWorkflow(input, { sessionService, signupUseCase }),
+    auth.workflows.signup(input),
   );
 
   if (!sessionResult.ok) {
@@ -121,7 +108,7 @@ export async function signupAction(
   logger.operation("info", "Signup action completed successfully", {
     duration: tracker.getTotalDuration(),
     operationContext: "authentication",
-    operationIdentifiers: { email: input.email, role, userId },
+    operationIdentifiers: { email: input.email, ip, role, userId },
     operationName: "signup.success",
   });
 

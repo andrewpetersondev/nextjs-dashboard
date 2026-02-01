@@ -39,9 +39,9 @@ const redactLogData = createRedactor({
 });
 
 export abstract class AbstractLogger {
+  protected readonly bindings: Record<string, unknown>;
   protected readonly loggerContext?: string;
   protected readonly loggerRequestId?: string;
-  protected readonly bindings: Record<string, unknown>;
 
   constructor(
     context?: string,
@@ -104,18 +104,14 @@ export abstract class AbstractLogger {
     message: string,
     data: T | undefined,
   ): LogEntry<T> {
-    // We are now trusting the caller (LoggingClient) to have prepared 'data'.
-    // We only apply minimal safety if 'data' itself IS an Error object,
-    // which can happen if someone calls logger.error("msg", new Error()).
+    // Minimal safety if 'data' itself is an Error object
+    // (e.g., logger.error("msg", new Error())).
     let safeData = data;
 
     if (safeData instanceof Error) {
       safeData = toSafeErrorShape(safeData) as T;
     }
 
-    // Redaction is temporarily disabled/bypassed for clarity per instruction,
-    // or we can leave it if it's just for PII. Assuming we keep basic PII redaction
-    // but stop over-sanitizing structure.
     const redactedData =
       safeData !== undefined ? (redactLogData(safeData) as T) : undefined;
 
@@ -136,12 +132,10 @@ export abstract class AbstractLogger {
   }
 
   protected format(entry: LogEntry): unknown[] {
-    // Use centralized production detection from config
     if (isPublicProd()) {
       return [JSON.stringify(entry)];
     }
 
-    // Development formatting: human-readable console output
     const prefix: string[] = [entry.timestamp];
     if (entry.requestId) {
       prefix.push(`[req:${entry.requestId}]`);
@@ -150,9 +144,24 @@ export abstract class AbstractLogger {
       prefix.push(`[${entry.loggerContext}]`);
     }
     const head = prefix.join(" ");
-    return entry.data !== undefined
-      ? [head, entry.message, entry.data]
-      : [head, entry.message];
+
+    if (entry.data !== undefined && entry.metadata !== undefined) {
+      return [
+        head,
+        entry.message,
+        { data: entry.data, metadata: entry.metadata },
+      ];
+    }
+
+    if (entry.data !== undefined) {
+      return [head, entry.message, entry.data];
+    }
+
+    if (entry.metadata !== undefined) {
+      return [head, entry.message, { metadata: entry.metadata }];
+    }
+
+    return [head, entry.message];
   }
 
   protected output(entry: LogEntry): void {
