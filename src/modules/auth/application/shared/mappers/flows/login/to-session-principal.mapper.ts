@@ -8,6 +8,8 @@ import type { UpdateSessionSuccessDto } from "@/modules/auth/application/session
  * @remarks
  * This is a pure mapper (no business rules). It consolidates multiple successful
  * outcomes into the canonical `SessionPrincipalDto` shape.
+ *
+ * TODO: REFACTOR SO IT CAN ONLY TAKE ONE INPUT TYPE
  */
 export function toSessionPrincipal(
   source: AuthenticatedUserDto | UpdateSessionSuccessDto,
