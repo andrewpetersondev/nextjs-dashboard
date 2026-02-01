@@ -3,10 +3,10 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import { AuthErrorFactory } from "@/modules/auth/application/auth-user/errors/auth-error.factory";
-import { toAuthenticatedUserDto } from "@/modules/auth/application/auth-user/mappers/to-authenticated-user.mapper";
 import type { LoginRequestDto } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";

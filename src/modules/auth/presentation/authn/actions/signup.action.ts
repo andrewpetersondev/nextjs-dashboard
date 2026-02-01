@@ -6,8 +6,8 @@ import {
   type SignupRequestDto,
   SignupRequestSchema,
 } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
+import { toSignupFormResult } from "@/modules/auth/application/shared/mappers/flows/signup/to-signup-form-result.mapper";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
-import { toSignupFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

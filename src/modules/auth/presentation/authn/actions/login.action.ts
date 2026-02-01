@@ -6,8 +6,8 @@ import {
   type LoginRequestDto,
   LoginRequestSchema,
 } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
+import { toLoginFormResult } from "@/modules/auth/application/shared/mappers/flows/login/to-login-form-result.mapper";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
-import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

@@ -3,8 +3,8 @@ import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-use
 import type { PasswordGeneratorContract } from "@/modules/auth/application/auth-user/contracts/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
-import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/auth-user/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
-import { toAuthenticatedUserDto } from "@/modules/auth/application/auth-user/mappers/to-authenticated-user.mapper";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/shared/mappers/flows/signup/pg-unique-violation-to-signup-conflict-error.mapper";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterFailure,
