@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { createDemoUserWorkflow } from "@/modules/auth/application/authn/workflows/create-demo-user.workflow";
+import { createDemoUserWorkflow } from "@/modules/auth/application/auth-user/workflows/create-demo-user.workflow";
 import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
 import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/demo-user-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";

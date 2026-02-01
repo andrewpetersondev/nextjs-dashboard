@@ -5,8 +5,8 @@ import {
   LOGIN_FIELDS_LIST,
   type LoginRequestDto,
   LoginRequestSchema,
-} from "@/modules/auth/application/authn/schemas/login-request.schema";
-import { loginWorkflow } from "@/modules/auth/application/authn/workflows/login.workflow";
+} from "@/modules/auth/application/auth-user/schemas/login-request.schema";
+import { loginWorkflow } from "@/modules/auth/application/auth-user/workflows/login.workflow";
 import { loginUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/login-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
 import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";

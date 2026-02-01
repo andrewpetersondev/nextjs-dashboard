@@ -1,5 +1,5 @@
 import "server-only";
-import type { AuthUserCreateDto } from "@/modules/auth/application/authn/dtos/auth-user-create.dto";
+import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/auth-user-create.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, type UserRow, users } from "@/server/db/schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

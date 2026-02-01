@@ -5,7 +5,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import { SIGNUP_FIELDS_LIST } from "@/modules/auth/application/authn/schemas/signup-request.schema";
+import { SIGNUP_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
 import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/auth-actions-row";
 import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/auth-form-feedback";
 import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/form-row.wrapper";

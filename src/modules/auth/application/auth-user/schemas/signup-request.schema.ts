@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { AuthCredentialsSchema } from "@/modules/auth/application/authn/schemas/login-request.schema";
+import { AuthCredentialsSchema } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { UsernameSchema } from "@/shared/validation/zod/username.schema";
 

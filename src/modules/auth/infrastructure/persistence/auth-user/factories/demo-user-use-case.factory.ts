@@ -1,6 +1,6 @@
 import "server-only";
-import type { AuthUnitOfWorkContract } from "@/modules/auth/application/authn/contracts/auth-unit-of-work.contract";
-import { CreateDemoUserUseCase } from "@/modules/auth/application/authn/use-cases/create-demo-user.use-case";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/auth-unit-of-work.contract";
+import { CreateDemoUserUseCase } from "@/modules/auth/application/auth-user/use-cases/create-demo-user.use-case";
 import { passwordGeneratorFactory } from "@/modules/auth/infrastructure/crypto/factories/password-generator.factory";
 import { passwordHasherFactory } from "@/modules/auth/infrastructure/crypto/factories/password-hasher.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

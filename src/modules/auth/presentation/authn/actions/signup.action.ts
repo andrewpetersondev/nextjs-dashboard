@@ -5,8 +5,8 @@ import {
   SIGNUP_FIELDS_LIST,
   type SignupRequestDto,
   SignupRequestSchema,
-} from "@/modules/auth/application/authn/schemas/signup-request.schema";
-import { signupWorkflow } from "@/modules/auth/application/authn/workflows/signup.workflow";
+} from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
+import { signupWorkflow } from "@/modules/auth/application/auth-user/workflows/signup.workflow";
 import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
 import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/signup-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";

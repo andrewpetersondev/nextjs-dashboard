@@ -1,8 +1,8 @@
 import "server-only";
 // biome-ignore lint/correctness/noNodejsModules: <server-only file>
 import { randomUUID } from "node:crypto";
-import type { AuthTxDeps } from "@/modules/auth/application/authn/contracts/auth-tx.deps";
-import type { AuthUnitOfWorkContract } from "@/modules/auth/application/authn/contracts/auth-unit-of-work.contract";
+import type { AuthTxDeps } from "@/modules/auth/application/auth-user/contracts/auth-tx.deps";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/auth-unit-of-work.contract";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/logging/auth-transaction.logger";
 import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-tx-deps.factory";
 import type { AppDatabase } from "@/server/db/db.connection";

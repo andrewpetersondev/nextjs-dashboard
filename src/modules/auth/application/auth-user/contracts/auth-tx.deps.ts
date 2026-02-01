@@ -1,4 +1,4 @@
-import type { AuthUserRepositoryContract } from "@/modules/auth/application/authn/contracts/auth-user-repository.contract";
+import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/auth-user-repository.contract";
 
 /**
  * Transaction-scoped dependencies (DB-only).

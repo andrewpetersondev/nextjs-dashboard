@@ -1,5 +1,5 @@
 import "server-only";
-import type { PasswordGeneratorContract } from "@/modules/auth/application/authn/contracts/password-generator.contract";
+import type { PasswordGeneratorContract } from "@/modules/auth/application/auth-user/contracts/password-generator.contract";
 import { PasswordGeneratorService } from "@/modules/auth/infrastructure/crypto/services/password-generator.service";
 
 /**

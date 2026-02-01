@@ -1,7 +1,7 @@
 import "server-only";
-import type { AuthUserRepositoryContract } from "@/modules/auth/application/authn/contracts/auth-user-repository.contract";
-import type { AuthUserCreateDto } from "@/modules/auth/application/authn/dtos/auth-user-create.dto";
-import type { AuthUserLookupQueryDto } from "@/modules/auth/application/authn/dtos/auth-user-lookup-query.dto";
+import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/auth-user-repository.contract";
+import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/auth-user-create.dto";
+import type { AuthUserLookupQueryDto } from "@/modules/auth/application/auth-user/dtos/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import type { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";

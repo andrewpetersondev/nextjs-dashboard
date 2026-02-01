@@ -1,6 +1,6 @@
 import "server-only";
-import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/authn/schemas/login-request.schema";
-import { SIGNUP_FIELDS_LIST } from "@/modules/auth/application/authn/schemas/signup-request.schema";
+import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
+import { SIGNUP_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

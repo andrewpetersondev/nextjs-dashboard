@@ -16,12 +16,12 @@
  */
 
 import "server-only";
-import type { CreateDemoUserRequestDto } from "@/modules/auth/application/authn/schemas/create-demo-user-request.schema";
-import type { LoginRequestDto } from "@/modules/auth/application/authn/schemas/login-request.schema";
-import type { SignupRequestDto } from "@/modules/auth/application/authn/schemas/signup-request.schema";
-import { createDemoUserWorkflow } from "@/modules/auth/application/authn/workflows/create-demo-user.workflow";
-import { loginWorkflow } from "@/modules/auth/application/authn/workflows/login.workflow";
-import { signupWorkflow } from "@/modules/auth/application/authn/workflows/signup.workflow";
+import type { CreateDemoUserRequestDto } from "@/modules/auth/application/auth-user/schemas/create-demo-user-request.schema";
+import type { LoginRequestDto } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
+import type { SignupRequestDto } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
+import { createDemoUserWorkflow } from "@/modules/auth/application/auth-user/workflows/create-demo-user.workflow";
+import { loginWorkflow } from "@/modules/auth/application/auth-user/workflows/login.workflow";
+import { signupWorkflow } from "@/modules/auth/application/auth-user/workflows/signup.workflow";
 import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
 import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/demo-user-use-case.factory";
 import { loginUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/login-use-case.factory";

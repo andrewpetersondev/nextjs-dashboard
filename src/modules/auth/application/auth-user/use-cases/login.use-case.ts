@@ -1,10 +1,10 @@
 import "server-only";
-import type { AuthUserRepositoryContract } from "@/modules/auth/application/authn/contracts/auth-user-repository.contract";
-import type { PasswordHasherContract } from "@/modules/auth/application/authn/contracts/password-hasher.contract";
-import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos/authenticated-user.dto";
-import { AuthErrorFactory } from "@/modules/auth/application/authn/errors/auth-error.factory";
-import { toAuthenticatedUserDto } from "@/modules/auth/application/authn/mappers/to-authenticated-user.mapper";
-import type { LoginRequestDto } from "@/modules/auth/application/authn/schemas/login-request.schema";
+import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/auth-user-repository.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/password-hasher.contract";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/authenticated-user.dto";
+import { AuthErrorFactory } from "@/modules/auth/application/auth-user/errors/auth-error.factory";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/auth-user/mappers/to-authenticated-user.mapper";
+import type { LoginRequestDto } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

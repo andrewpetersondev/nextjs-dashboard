@@ -1,10 +1,10 @@
 import "server-only";
-import type { AuthUnitOfWorkContract } from "@/modules/auth/application/authn/contracts/auth-unit-of-work.contract";
-import type { PasswordGeneratorContract } from "@/modules/auth/application/authn/contracts/password-generator.contract";
-import type { PasswordHasherContract } from "@/modules/auth/application/authn/contracts/password-hasher.contract";
-import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos/authenticated-user.dto";
-import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/authn/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
-import { toAuthenticatedUserDto } from "@/modules/auth/application/authn/mappers/to-authenticated-user.mapper";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/auth-unit-of-work.contract";
+import type { PasswordGeneratorContract } from "@/modules/auth/application/auth-user/contracts/password-generator.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/password-hasher.contract";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/authenticated-user.dto";
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/auth-user/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/auth-user/mappers/to-authenticated-user.mapper";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterFailure,

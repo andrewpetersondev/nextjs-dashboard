@@ -1,4 +1,4 @@
-import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos/authenticated-user.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/authenticated-user.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/session-principal.dto";
 import type { UpdateSessionSuccessDto } from "@/modules/auth/application/session/dtos/update-session-outcome.dto";
 

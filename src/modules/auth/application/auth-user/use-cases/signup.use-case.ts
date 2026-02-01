@@ -1,9 +1,9 @@
 import "server-only";
-import type { AuthUnitOfWorkContract } from "@/modules/auth/application/authn/contracts/auth-unit-of-work.contract";
-import type { PasswordHasherContract } from "@/modules/auth/application/authn/contracts/password-hasher.contract";
-import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos/authenticated-user.dto";
-import { toAuthenticatedUserDto } from "@/modules/auth/application/authn/mappers/to-authenticated-user.mapper";
-import type { SignupRequestDto } from "@/modules/auth/application/authn/schemas/signup-request.schema";
+import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/auth-unit-of-work.contract";
+import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/password-hasher.contract";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/authenticated-user.dto";
+import { toAuthenticatedUserDto } from "@/modules/auth/application/auth-user/mappers/to-authenticated-user.mapper";
+import type { SignupRequestDto } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/auth-user/policies/registration.policy";

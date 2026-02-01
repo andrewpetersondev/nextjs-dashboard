@@ -1,4 +1,4 @@
-import type { AuthTxDeps } from "@/modules/auth/application/authn/contracts/auth-tx.deps";
+import type { AuthTxDeps } from "@/modules/auth/application/auth-user/contracts/auth-tx.deps";
 
 /**
  * Interface for managing database transactions within the authentication module.
