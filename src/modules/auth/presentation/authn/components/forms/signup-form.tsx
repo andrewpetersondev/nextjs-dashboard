@@ -1,12 +1,16 @@
 "use client";
-import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import {
+  AtSymbolIcon,
+  LockClosedIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/authn/schemas/login-request.schema";
+import { SIGNUP_FIELDS_LIST } from "@/modules/auth/application/authn/schemas/signup-request.schema";
+import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/auth-actions-row";
+import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/auth-form-feedback";
+import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/form-row.wrapper";
 import type { AuthActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
-import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
-import { AuthActionsRow } from "@/modules/auth/presentation/components/shared/auth-actions-row";
-import { AuthFormFeedback } from "@/modules/auth/presentation/components/shared/auth-form-feedback";
-import { FormRowWrapper } from "@/modules/auth/presentation/components/shared/form-row.wrapper";
+import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import {
@@ -17,22 +21,23 @@ import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
-const INITIAL_STATE = makeInitialFormState<LoginField>(LOGIN_FIELDS_LIST);
+const INITIAL_STATE = makeInitialFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 /**
- * LoginForm component for user authentication.
+ * SignupForm component for user registration.
  * Follows Hexagonal Adapter pattern for UI boundaries.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: login boundary handles orchestration of multiple field types
-export function LoginForm({
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup boundary handles orchestration of multiple field types
+export function SignupForm({
   action,
-}: AuthActionProps<LoginField>): JSX.Element {
+}: AuthActionProps<SignupField>): JSX.Element {
   const [state, boundAction, pending] = useActionState<
     FormResult<never>,
     FormData
   >(action, INITIAL_STATE);
 
   const baseId = useId();
+  const usernameId = `${baseId}-username`;
   const emailId = `${baseId}-email`;
   const passwordId = `${baseId}-password`;
 
@@ -44,15 +49,30 @@ export function LoginForm({
     <>
       <form
         action={boundAction}
-        aria-label="Login form"
+        aria-label="Signup form"
         autoComplete="off"
         className="space-y-6"
-        data-cy="login-form"
+        data-cy="signup-form"
       >
+        <InputFieldMolecule
+          autoComplete="username"
+          autoFocus={true}
+          dataCy="signup-username-input"
+          defaultValue={values ? values.username : undefined}
+          describedById={`${usernameId}-errors`}
+          error={fieldErrors ? fieldErrors.username : undefined}
+          icon={<UserIcon aria-hidden="true" className={INPUT_ICON_CLASS} />}
+          id={usernameId}
+          label="Username"
+          name="username"
+          placeholder="Enter your username"
+          required={true}
+          type="text"
+        />
         <InputFieldMolecule
           autoComplete="email"
           autoFocus={true}
-          dataCy="login-email-input"
+          dataCy="signup-email-input"
           defaultValue={values ? values.email : undefined}
           describedById={`${emailId}-errors`}
           error={fieldErrors ? fieldErrors.email : undefined}
@@ -67,8 +87,8 @@ export function LoginForm({
           type="email"
         />
         <InputFieldMolecule
-          autoComplete="current-password"
-          dataCy="login-password-input"
+          autoComplete="new-password"
+          dataCy="signup-password-input"
           describedById={`${passwordId}-errors`}
           error={fieldErrors ? fieldErrors.password : undefined}
           icon={
@@ -85,9 +105,9 @@ export function LoginForm({
           <AuthActionsRow />
         </FormRowWrapper>
         <SubmitButtonMolecule
-          data-cy="login-submit-button"
+          data-cy="signup-submit-button"
           fullWidth={true}
-          label="Log In"
+          label="Sign Up"
           pending={pending}
         />
       </form>

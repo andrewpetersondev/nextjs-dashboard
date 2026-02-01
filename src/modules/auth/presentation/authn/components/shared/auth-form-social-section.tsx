@@ -1,5 +1,5 @@
 import type { FC, JSX } from "react";
-import { SocialLoginButton } from "@/modules/auth/presentation/components/shared/social-login-button";
+import { SocialLoginButton } from "@/modules/auth/presentation/authn/components/shared/social-login-button";
 import { AUTH_ENDPOINTS } from "@/modules/auth/presentation/constants/auth-ui.constants";
 
 interface AuthFormSocialSectionProps {
