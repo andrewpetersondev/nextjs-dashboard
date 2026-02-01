@@ -1,5 +1,5 @@
-import { AUTH_POLICY_NAMES } from "@/modules/auth/domain/session/constants/auth-policy.constants";
-import { DEMO_IDENTITY_CONFIG } from "@/modules/auth/domain/session/constants/demo-identity.constants";
+import { AUTH_POLICY_NAMES } from "@/modules/auth/domain/shared/constants/auth-policy.constants";
+import { DEMO_IDENTITY_CONFIG } from "@/modules/auth/domain/shared/constants/demo-identity.constants";
 import {
   USER_ROLE,
   type UserRole,

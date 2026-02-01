@@ -3,11 +3,11 @@ import {
   UPDATE_SESSION_OUTCOME_REASON,
   type UpdateSessionNotRotatedDto,
   type UpdateSessionSuccessDto,
-} from "@/modules/auth/application/session/dtos/update-session-outcome.dto";
+} from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import type {
   DurationSeconds,
   TimeDeltaSeconds,
-} from "@/modules/auth/domain/session/values/auth-brands.value";
+} from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import type { UserId } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

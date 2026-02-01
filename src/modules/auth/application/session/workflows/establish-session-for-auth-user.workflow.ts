@@ -1,7 +1,7 @@
 import "server-only";
-import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/authenticated-user.dto";
+import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/session-principal.dto";
+import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { toSessionPrincipal } from "@/modules/auth/application/session/mappers/to-session-principal.mapper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err } from "@/shared/results/result";

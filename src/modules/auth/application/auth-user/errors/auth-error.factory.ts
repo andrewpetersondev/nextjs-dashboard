@@ -1,4 +1,4 @@
-import { AUTH_OPERATIONS } from "@/modules/auth/application/logging/auth-logging.constants";
+import { AUTH_OPERATIONS } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

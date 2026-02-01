@@ -1,7 +1,7 @@
 import "server-only";
-import type { CreateDemoUserUseCase } from "@/modules/auth/application/auth-user/use-cases/create-demo-user.use-case";
+import type { CreateDemoUserUseCase } from "@/modules/auth/application/auth-user/commands/create-demo-user.use-case";
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/session-principal.dto";
+import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/session/workflows/establish-session-for-auth-user.workflow";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

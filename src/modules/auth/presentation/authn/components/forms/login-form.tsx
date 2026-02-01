@@ -2,9 +2,9 @@
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
 import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
-import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/auth-actions-row";
-import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/auth-form-feedback";
-import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/form-row.wrapper";
+import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/feedback/auth-form-feedback";
+import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/layout/auth-actions-row";
+import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/layout/form-row.wrapper";
 import type { AuthActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";

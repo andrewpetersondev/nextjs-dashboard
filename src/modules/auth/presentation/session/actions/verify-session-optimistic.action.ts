@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/session-verification.dto";
+import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/responses/session-verification.dto";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 import { ROUTES } from "@/shared/routes/routes";
 

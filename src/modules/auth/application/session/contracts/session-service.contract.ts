@@ -1,8 +1,8 @@
-import type { ReadSessionOutcomeDto } from "@/modules/auth/application/session/dtos/read-session-outcome.dto";
-import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/session-principal.dto";
-import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/session-verification.dto";
-import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/update-session-outcome.dto";
-import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/session/evaluate-session-lifecycle.policy";
+import type { ReadSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/read-session-outcome.dto";
+import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
+import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/responses/session-verification.dto";
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
+import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

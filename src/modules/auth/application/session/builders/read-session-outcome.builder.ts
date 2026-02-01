@@ -1,9 +1,9 @@
-import type { ReadSessionOutcomeDto } from "@/modules/auth/application/session/dtos/read-session-outcome.dto";
+import type { ReadSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/read-session-outcome.dto";
 import {
   getSessionTimeLeftSec,
   type SessionEntity,
 } from "@/modules/auth/domain/session/entities/session.entity";
-import type { UnixSeconds } from "@/modules/auth/domain/session/values/auth-brands.value";
+import type { UnixSeconds } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";

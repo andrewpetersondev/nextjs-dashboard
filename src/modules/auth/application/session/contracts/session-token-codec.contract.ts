@@ -1,4 +1,4 @@
-import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/session-token-claims.dto";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

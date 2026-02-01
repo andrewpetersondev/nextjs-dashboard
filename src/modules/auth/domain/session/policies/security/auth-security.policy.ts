@@ -1,7 +1,7 @@
 import {
   AUTH_POLICY_NAMES,
   AUTH_POLICY_REASONS,
-} from "@/modules/auth/domain/session/constants/auth-policy.constants";
+} from "@/modules/auth/domain/shared/constants/auth-policy.constants";
 
 /**
  * Domain Policy: Auth security failures.

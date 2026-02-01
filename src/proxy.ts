@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { authorizeRequestHelper } from "@/modules/auth/application/session/helpers/authorize-request.helper";
-import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/cookie/constants/session-cookie.constants";
-import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/session/token/factories/session-token-service.factory";
+import { authorizeRequestHelper } from "@/modules/auth/application/shared/helpers/authorize-request.helper";
+import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-token-service.factory";
+import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,

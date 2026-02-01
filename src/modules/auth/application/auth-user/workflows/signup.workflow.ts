@@ -1,8 +1,8 @@
 import "server-only";
+import type { SignupUseCase } from "@/modules/auth/application/auth-user/commands/signup.use-case";
 import type { SignupRequestDto } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
-import type { SignupUseCase } from "@/modules/auth/application/auth-user/use-cases/signup.use-case";
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
-import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/session-principal.dto";
+import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/session/workflows/establish-session-for-auth-user.workflow";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";

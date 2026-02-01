@@ -1,7 +1,7 @@
-import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/session/dtos/issue-rotated-token-request.dto";
-import type { IssuedTokenDto } from "@/modules/auth/application/session/dtos/issue-token.dto";
-import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/issue-token-request.dto";
-import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/session-token-claims.dto";
+import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-rotated-token-request.dto";
+import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-token-request.dto";
+import type { IssuedTokenDto } from "@/modules/auth/application/session/dtos/responses/issue-token.dto";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 

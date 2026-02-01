@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/update-session-outcome.dto";
+import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/presentation/constants/auth-ui.constants";
 import { getPublicNodeEnv } from "@/shared/config/env-public";
 import {

@@ -6,11 +6,11 @@ import { loginWorkflow } from "@/modules/auth/application/auth-user/workflows/lo
 import { signupWorkflow } from "@/modules/auth/application/auth-user/workflows/signup.workflow";
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
 import { logoutWorkflow } from "@/modules/auth/application/session/workflows/logout.workflow";
-import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
-import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/demo-user-use-case.factory";
-import { loginUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/login-use-case.factory";
-import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/signup-use-case.factory";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
+import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/auth-unit-of-work.factory";
+import { demoUserUseCaseFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/demo-user-use-case.factory";
+import { loginUseCaseFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/login-use-case.factory";
+import { signupUseCaseFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/signup-use-case.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { getRequestMetadata } from "@/shared/http/request-metadata";

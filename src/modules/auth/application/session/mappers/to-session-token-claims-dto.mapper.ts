@@ -1,5 +1,5 @@
-import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/issue-token-request.dto";
-import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/session-token-claims.dto";
+import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-token-request.dto";
+import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import { UserIdSchema } from "@/modules/auth/application/session/schemas/session-token-claims.schema";
 
 /**
