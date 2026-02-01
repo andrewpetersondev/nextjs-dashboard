@@ -1,11 +1,11 @@
 import "server-only";
 import { type JWTPayload, jwtVerify, SignJWT } from "jose";
-import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/application/constants/session-token.constants";
 import {
   JWT_ALG_HS256,
   JWT_TYP_JWT,
   MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/session/token/constants/session-jwt.constants";
+import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/session/token/constants/session-token.constants";
 import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/token/strategies/session-jwt-crypto.strategy";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/session/token/transports/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/session/token/transports/session-jwt-verify-options.transport";

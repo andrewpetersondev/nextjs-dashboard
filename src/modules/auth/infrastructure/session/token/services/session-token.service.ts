@@ -1,5 +1,4 @@
 import "server-only";
-import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/application/constants/session-token.constants";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/session/contracts/session-token-codec.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/session/contracts/session-token-service.contract";
 import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/session/dtos/issue-rotated-token-request.dto";
@@ -9,6 +8,7 @@ import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/d
 import { toSessionTokenClaimsDto } from "@/modules/auth/application/session/mappers/to-session-token-claims-dto.mapper";
 import { SessionTokenClaimsSchema } from "@/modules/auth/application/session/schemas/session-token-claims.schema";
 import { SESSION_DURATION_SEC } from "@/modules/auth/domain/session/constants/session-config.constants";
+import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/session/token/constants/session-token.constants";
 import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session/token/mappers/jwt-to-session-token-claims-dto.mapper";
 import {
   nowInSeconds,
