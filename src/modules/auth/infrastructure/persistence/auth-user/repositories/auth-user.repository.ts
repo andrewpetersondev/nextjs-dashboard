@@ -3,10 +3,10 @@ import type { AuthUserCreateDto } from "@/modules/auth/application/authn/dtos/au
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/authn/dtos/auth-user-lookup-query.dto";
 import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/authn/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
-import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/dal/get-user-by-email.dal";
-import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persistence/dal/increment-demo-user-counter.dal";
-import { insertUserDal } from "@/modules/auth/infrastructure/persistence/dal/insert-user.dal";
-import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/mappers/to-auth-user-entity.mapper";
+import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/auth-user/dal/get-user-by-email.dal";
+import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persistence/auth-user/dal/increment-demo-user-counter.dal";
+import { insertUserDal } from "@/modules/auth/infrastructure/persistence/auth-user/dal/insert-user.dal";
+import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

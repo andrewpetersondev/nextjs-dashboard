@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/session-verification.dto";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

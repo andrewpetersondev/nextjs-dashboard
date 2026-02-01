@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
-import { LoginCard } from "@/modules/auth/presentation/authn/components/login-card";
-import { AuthPageWrapper } from "@/modules/auth/presentation/authn/components/shared/auth-page-wrapper";
+import { LoginCard } from "@/modules/auth/presentation/components/login-card";
+import { AuthPageWrapper } from "@/modules/auth/presentation/components/shared/auth-page-wrapper";
 import { LOGIN_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
 import { ROUTES } from "@/shared/routes/routes";
 import { LinkPrompt } from "@/ui/molecules/link-prompt";

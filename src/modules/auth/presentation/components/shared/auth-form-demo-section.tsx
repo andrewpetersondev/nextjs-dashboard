@@ -1,5 +1,5 @@
 import type { FC, JSX } from "react";
-import { DemoForm } from "@/modules/auth/presentation/authn/components/forms/demo-form";
+import { DemoForm } from "@/modules/auth/presentation/components/forms/demo-form";
 import {
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,

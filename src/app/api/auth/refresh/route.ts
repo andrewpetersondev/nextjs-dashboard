@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
 import {
   CACHE_CONTROL_NO_STORE,
   EXPIRES_IMMEDIATELY,

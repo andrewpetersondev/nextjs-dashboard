@@ -2,7 +2,7 @@ import { type FC, type JSX, memo, type ReactNode } from "react";
 import {
   GitHubIcon,
   GoogleIcon,
-} from "@/modules/auth/presentation/authn/components/shared/icons";
+} from "@/modules/auth/presentation/components/shared/icons";
 import type { OauthProvider } from "@/modules/auth/presentation/constants/auth-ui.constants";
 
 const SOCIAL_BUTTON_CLASSES =

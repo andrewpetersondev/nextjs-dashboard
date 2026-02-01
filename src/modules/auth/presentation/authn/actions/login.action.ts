@@ -7,8 +7,8 @@ import {
   LoginRequestSchema,
 } from "@/modules/auth/application/authn/schemas/login-request.schema";
 import { loginWorkflow } from "@/modules/auth/application/authn/workflows/login.workflow";
-import { loginUseCaseFactory } from "@/modules/auth/infrastructure/persistence/factories/login-use-case.factory";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
+import { loginUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/login-use-case.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
 import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import { getAppDb } from "@/server/db/db.connection";

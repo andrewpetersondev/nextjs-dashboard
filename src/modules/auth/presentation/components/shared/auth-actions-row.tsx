@@ -1,6 +1,6 @@
 import type { JSX } from "react";
-import { ForgotPasswordLink } from "@/modules/auth/presentation/authn/components/shared/forgot-password-link";
-import { RememberMeCheckbox } from "@/modules/auth/presentation/authn/components/shared/remember-me-checkbox";
+import { ForgotPasswordLink } from "@/modules/auth/presentation/components/shared/forgot-password-link";
+import { RememberMeCheckbox } from "@/modules/auth/presentation/components/shared/remember-me-checkbox";
 
 export function AuthActionsRow(): JSX.Element {
   return (

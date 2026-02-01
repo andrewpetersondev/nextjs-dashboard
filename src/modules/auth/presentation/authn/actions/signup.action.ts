@@ -7,9 +7,9 @@ import {
   SignupRequestSchema,
 } from "@/modules/auth/application/authn/schemas/signup-request.schema";
 import { signupWorkflow } from "@/modules/auth/application/authn/workflows/signup.workflow";
-import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/factories/auth-unit-of-work.factory";
-import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/factories/signup-use-case.factory";
-import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/factories/session-service.factory";
+import { authUnitOfWorkFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-unit-of-work.factory";
+import { signupUseCaseFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/signup-use-case.factory";
+import { sessionServiceFactory } from "@/modules/auth/infrastructure/session/session-service.factory";
 import { toSignupFormResult } from "@/modules/auth/presentation/authn/mappers/auth-form-error.mapper";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import { getAppDb } from "@/server/db/db.connection";

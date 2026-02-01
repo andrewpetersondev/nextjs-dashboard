@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.action";
-import { AuthPageWrapper } from "@/modules/auth/presentation/authn/components/shared/auth-page-wrapper";
-import { SignupCard } from "@/modules/auth/presentation/authn/components/signup-card";
+import { AuthPageWrapper } from "@/modules/auth/presentation/components/shared/auth-page-wrapper";
+import { SignupCard } from "@/modules/auth/presentation/components/signup-card";
 import { SIGNUP_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
 import { ROUTES } from "@/shared/routes/routes";
 import { LinkPrompt } from "@/ui/molecules/link-prompt";
