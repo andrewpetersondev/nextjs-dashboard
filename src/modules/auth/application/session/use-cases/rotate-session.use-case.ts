@@ -1,6 +1,6 @@
 import "server-only";
-import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
-import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/factories/make-auth-use-case-logger.helper";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/logging/auth-logging.constants";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import {
   buildUpdateSessionNotRotated,
   buildUpdateSessionSuccess,

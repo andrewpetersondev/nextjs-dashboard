@@ -4,8 +4,8 @@ import type { PasswordGeneratorContract } from "@/modules/auth/application/authn
 import type { PasswordHasherContract } from "@/modules/auth/application/authn/contracts/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos/authenticated-user.dto";
 import { createDemoUserTxHelper } from "@/modules/auth/application/authn/helpers/create-demo-user.tx.helper";
-import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
-import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/factories/make-auth-use-case-logger.helper";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/logging/auth-logging.constants";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

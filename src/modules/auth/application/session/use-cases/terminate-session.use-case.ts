@@ -1,6 +1,6 @@
 import "server-only";
-import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
-import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/factories/make-auth-use-case-logger.helper";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/logging/auth-logging.constants";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import type { SessionStoreContract } from "@/modules/auth/application/session/contracts/session-store.contract";
 import { deleteSessionCookieAndLogHelper } from "@/modules/auth/application/session/helpers/session-cookie-ops.helper";
 import type { SessionUseCaseDeps } from "@/modules/auth/application/session/use-cases/session-use-case.deps";

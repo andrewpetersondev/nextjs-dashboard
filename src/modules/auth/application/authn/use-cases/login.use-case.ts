@@ -5,8 +5,8 @@ import type { AuthenticatedUserDto } from "@/modules/auth/application/authn/dtos
 import { AuthErrorFactory } from "@/modules/auth/application/authn/errors/auth-error.factory";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/authn/mappers/to-authenticated-user.mapper";
 import type { LoginRequestDto } from "@/modules/auth/application/authn/schemas/login-request.schema";
-import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/constants/auth-logging.constants";
-import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/factories/make-auth-use-case-logger.helper";
+import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/logging/auth-logging.constants";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";

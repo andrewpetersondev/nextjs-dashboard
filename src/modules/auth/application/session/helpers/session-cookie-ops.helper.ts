@@ -1,4 +1,4 @@
-import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/constants/auth-logging.constants";
+import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/logging/auth-logging.constants";
 import type { SessionStoreContract } from "@/modules/auth/application/session/contracts/session-store.contract";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

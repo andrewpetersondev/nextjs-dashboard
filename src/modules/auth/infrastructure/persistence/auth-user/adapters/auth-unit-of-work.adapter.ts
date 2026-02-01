@@ -3,7 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { AuthTxDeps } from "@/modules/auth/application/authn/contracts/auth-tx.deps";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/authn/contracts/auth-unit-of-work.contract";
-import { AuthTransactionLogger } from "@/modules/auth/infrastructure/observability/loggers/auth-transaction.logger";
+import { AuthTransactionLogger } from "@/modules/auth/infrastructure/logging/auth-transaction.logger";
 import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/persistence/auth-user/factories/auth-tx-deps.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";

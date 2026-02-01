@@ -3,8 +3,8 @@ import {
   AUTH_LOG_CONTEXTS,
   AUTH_OPERATIONS,
   AUTH_USE_CASE_NAMES,
-} from "@/modules/auth/application/constants/auth-logging.constants";
-import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/factories/make-auth-use-case-logger.helper";
+} from "@/modules/auth/application/logging/auth-logging.constants";
+import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/logging/make-auth-use-case-logger.helper";
 import { buildReadSessionOutcome } from "@/modules/auth/application/session/builders/read-session-outcome.builder";
 import type { SessionStoreContract } from "@/modules/auth/application/session/contracts/session-store.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/session/contracts/session-token-service.contract";
