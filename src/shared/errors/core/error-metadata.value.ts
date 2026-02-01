@@ -7,6 +7,7 @@ import {
 import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";
 
 export type ValidationErrorMetadata = Readonly<{
+  readonly field?: string;
   readonly fieldErrors?: Record<string, readonly string[]>;
   readonly formData?: Record<string, string>;
   readonly formErrors?: readonly string[];
@@ -16,6 +17,7 @@ export type ValidationErrorMetadata = Readonly<{
 
 export const ValidationErrorMetadataSchema = z
   .object({
+    field: z.string().optional(),
     fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
     formData: z.record(z.string(), z.string()).optional(),
     formErrors: z.array(z.string()).optional(),

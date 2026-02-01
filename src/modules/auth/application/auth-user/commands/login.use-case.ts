@@ -9,6 +9,7 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/l
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
@@ -61,15 +62,33 @@ export class LoginUseCase {
   ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute(
       async () => {
-        const userResult = await this.repo.findByEmail({ email: input.email });
+        const tracker = new PerformanceTracker();
+
+        const userResult = await tracker.measure("repo.findByEmail", () =>
+          this.repo.findByEmail({ email: input.email }),
+        );
 
         if (!userResult.ok) {
+          this.logger.operation("warn", "Login use case failed at repository", {
+            duration: tracker.getTotalDuration(),
+            operationContext: "auth:use-case",
+            operationIdentifiers: { email: input.email },
+            operationName: "login.repo.failed",
+            timings: tracker.getAllTimings(),
+          });
           return userResult;
         }
 
         const user = userResult.value;
 
         if (!user) {
+          this.logger.operation("warn", "Login use case: user not found", {
+            duration: tracker.getTotalDuration(),
+            operationContext: "auth:use-case",
+            operationIdentifiers: { email: input.email },
+            operationName: "login.user_not_found",
+            timings: tracker.getAllTimings(),
+          });
           return Err(
             AuthErrorFactory.makeCredentialFailure("user_not_found", {
               email: input.email,
@@ -77,16 +96,33 @@ export class LoginUseCase {
           );
         }
 
-        const passwordOkResult = await this.hasher.compare(
-          input.password,
-          user.password,
+        const passwordOkResult = await tracker.measure("hasher.compare", () =>
+          this.hasher.compare(input.password, user.password),
         );
 
         if (!passwordOkResult.ok) {
+          this.logger.operation(
+            "warn",
+            "Login use case failed at password hash",
+            {
+              duration: tracker.getTotalDuration(),
+              operationContext: "auth:use-case",
+              operationIdentifiers: { email: input.email, userId: user.id },
+              operationName: "login.hasher.failed",
+              timings: tracker.getAllTimings(),
+            },
+          );
           return Err(passwordOkResult.error);
         }
 
         if (!passwordOkResult.value) {
+          this.logger.operation("warn", "Login use case: invalid password", {
+            duration: tracker.getTotalDuration(),
+            operationContext: "auth:use-case",
+            operationIdentifiers: { email: input.email, userId: user.id },
+            operationName: "login.invalid_password",
+            timings: tracker.getAllTimings(),
+          });
           return Err(
             AuthErrorFactory.makeCredentialFailure("invalid_password", {
               userId: user.id,
@@ -94,7 +130,20 @@ export class LoginUseCase {
           );
         }
 
-        return Ok(toAuthenticatedUserDto(user));
+        const authenticatedUser = tracker.measureSync(
+          "mapper.toAuthenticatedUserDto",
+          () => toAuthenticatedUserDto(user),
+        );
+
+        this.logger.operation("info", "Login use case completed successfully", {
+          duration: tracker.getTotalDuration(),
+          operationContext: "auth:use-case",
+          operationIdentifiers: { email: input.email, userId: user.id },
+          operationName: "login.success",
+          timings: tracker.getAllTimings(),
+        });
+
+        return Ok(authenticatedUser);
       },
       {
         logger: this.logger,

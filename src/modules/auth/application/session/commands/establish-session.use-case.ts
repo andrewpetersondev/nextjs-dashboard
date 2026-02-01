@@ -11,6 +11,7 @@ import {
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
@@ -51,37 +52,81 @@ export class EstablishSessionUseCase {
   ): Promise<Result<SessionPrincipalDto, AppError>> {
     return safeExecute(
       async () => {
-        const issuedResult = await this.sessionTokenService.issue({
-          role: user.role,
-          userId: user.id,
-        });
+        const tracker = new PerformanceTracker();
+
+        const issuedResult = await tracker.measure(
+          "sessionTokenService.issue",
+          () =>
+            this.sessionTokenService.issue({
+              role: user.role,
+              userId: user.id,
+            }),
+        );
 
         if (!issuedResult.ok) {
+          this.logger.operation(
+            "warn",
+            "Session establishment failed at token issuance",
+            {
+              duration: tracker.getTotalDuration(),
+              operationContext: "auth:use-case",
+              operationIdentifiers: { role: user.role, userId: user.id },
+              operationName: "establish-session.token.failed",
+              timings: tracker.getAllTimings(),
+            },
+          );
           return issuedResult;
         }
 
         const { expiresAtMs, token } = issuedResult.value;
 
-        const cookieResult = await setSessionCookieAndLogHelper(
-          {
-            logger: this.logger,
-            sessionCookieAdapter: this.sessionStore,
-          },
-          {
-            expiresAtMs,
-            identifiers: {
-              role: user.role,
-              userId: user.id,
-            },
-            message: "Session established",
-            operationName: AUTH_OPERATIONS.SESSION_ESTABLISH_SUCCESS,
-            token,
-          },
+        const cookieResult = await tracker.measure(
+          "sessionStore.setCookie",
+          () =>
+            setSessionCookieAndLogHelper(
+              {
+                logger: this.logger,
+                sessionCookieAdapter: this.sessionStore,
+              },
+              {
+                expiresAtMs,
+                identifiers: {
+                  role: user.role,
+                  userId: user.id,
+                },
+                message: "Session established",
+                operationName: AUTH_OPERATIONS.SESSION_ESTABLISH_SUCCESS,
+                token,
+              },
+            ),
         );
 
         if (!cookieResult.ok) {
+          this.logger.operation(
+            "warn",
+            "Session establishment failed at cookie setting",
+            {
+              duration: tracker.getTotalDuration(),
+              operationContext: "auth:use-case",
+              operationIdentifiers: { role: user.role, userId: user.id },
+              operationName: "establish-session.cookie.failed",
+              timings: tracker.getAllTimings(),
+            },
+          );
           return Err(cookieResult.error);
         }
+
+        this.logger.operation(
+          "info",
+          "Session establishment completed successfully",
+          {
+            duration: tracker.getTotalDuration(),
+            operationContext: "auth:use-case",
+            operationIdentifiers: { role: user.role, userId: user.id },
+            operationName: "establish-session.success",
+            timings: tracker.getAllTimings(),
+          },
+        );
 
         return Ok(user);
       },

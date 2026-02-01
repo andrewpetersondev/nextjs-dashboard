@@ -51,6 +51,32 @@ export class PerformanceTracker {
   }
 
   /**
+   * Measure execution time for a synchronous phase and record it.
+   *
+   * The provided function `fn` is executed synchronously; on success the duration is recorded,
+   * on error the duration is recorded and an `error` flag is set before re-throwing.
+   *
+   * @param phase - Logical name for the measured phase.
+   * @param fn - Synchronous function to execute and measure.
+   * @returns The returned value from `fn`.
+   * @throws Re-throws any error thrown by `fn` after recording the metric.
+   */
+  measureSync<T>(phase: string, fn: () => T): T {
+    const start = performance.now();
+    try {
+      const result = fn();
+      this.metrics[phase] = { duration: performance.now() - start };
+      return result;
+    } catch (error) {
+      this.metrics[phase] = {
+        duration: performance.now() - start,
+        error: true,
+      };
+      throw error; // Re-throw to preserve original behavior
+    }
+  }
+
+  /**
    * Return a simplified metrics object suitable for logging or telemetry.
    *
    * Each recorded phase maps to its duration (milliseconds). If a phase previously
@@ -76,6 +102,21 @@ export class PerformanceTracker {
       ...simplified,
       total: this.getTotalDuration(),
     };
+  }
+
+  /**
+   * Get all recorded timings for all phases.
+   *
+   * @returns Record mapping phase names to their durations in milliseconds.
+   */
+  getAllTimings(): Record<string, number> {
+    return Object.entries(this.metrics).reduce(
+      (acc, [key, value]) => {
+        acc[key] = value.duration;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   /**
