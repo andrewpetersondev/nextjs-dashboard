@@ -13,238 +13,95 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
  * Transformation: UserRow → AuthUserEntity
  * Layer: Infrastructure → Domain
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
 describe("toAuthUserEntity Mapper", () => {
+  const createTestUserRow = (overrides: Partial<UserRow> = {}): UserRow => ({
+    email: "test@example.com",
+    emailVerified: null,
+    id: "550e8400-e29b-41d4-a716-446655440000",
+    password: "$2a$10$hashedpassword",
+    role: "USER",
+    sensitiveData: "cantTouchThis",
+    username: "testuser",
+    ...overrides,
+  });
+
   describe("Successful Transformations", () => {
-    it("should map a valid user row to AuthUserEntity", () => {
+    it("should map a valid user row to AuthUserEntity with branded types", () => {
       // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440000",
-        password: "$2a$10$hashedpassword",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
+      const userRow = createTestUserRow();
 
       // Act
       const entity = toAuthUserEntity(userRow);
 
       // Assert
       expect(entity).toEqual({
-        email: "test@example.com",
-        id: toUserId("550e8400-e29b-41d4-a716-446655440000"), // Branded as UserId
-        password: toHash("$2a$10$hashedpassword"), // Branded as Hash
-        role: "USER",
-        username: "testuser",
+        email: userRow.email,
+        id: toUserId(userRow.id),
+        password: toHash(userRow.password),
+        role: userRow.role,
+        username: userRow.username,
       });
+
+      // Branded type runtime check
+      expect(typeof entity.id).toBe("string");
+      expect(typeof entity.password).toBe("string");
     });
 
-    it("should handle admin role correctly", () => {
+    it("should correctly parse and map different user roles", () => {
+      const adminRow = createTestUserRow({ role: "ADMIN" });
+      const userRow = createTestUserRow({ role: "USER" });
+
+      expect(toAuthUserEntity(adminRow).role).toBe("ADMIN");
+      expect(toAuthUserEntity(userRow).role).toBe("USER");
+    });
+  });
+
+  describe("Security and Data Integrity", () => {
+    it("should only include auth-related fields and strip database-specific ones", () => {
       // Arrange
-      const userRow: UserRow = {
-        email: "admin@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440001",
-        password: "$2a$10$adminhashedpassword",
-        role: "ADMIN",
-        sensitiveData: "cantTouchThis",
-        username: "adminuser",
-      };
+      const userRow = createTestUserRow();
 
       // Act
       const entity = toAuthUserEntity(userRow);
 
       // Assert
-      expect(entity.role).toBe("ADMIN");
+      const expectedKeys = ["email", "id", "password", "role", "username"];
+      expect(Object.keys(entity).sort()).toEqual(expectedKeys.sort());
+      expect(entity).not.toHaveProperty("sensitiveData");
+      expect(entity).not.toHaveProperty("emailVerified");
     });
 
-    it("should preserve password hash (security requirement)", () => {
-      // Arrange
+    it("should preserve the exact password hash string (branded as Hash)", () => {
       const passwordHash = "$2a$10$verylonghashstring";
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440002",
-        password: passwordHash,
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
+      const userRow = createTestUserRow({ password: passwordHash });
 
-      // Act
       const entity = toAuthUserEntity(userRow);
 
-      // Assert: Password hash must be preserved for authentication
       expect(entity.password).toBe(toHash(passwordHash));
     });
 
-    it("should convert id to branded UserId type", () => {
-      // Arrange
-      const userId = "550e8400-e29b-41d4-a716-446655440003";
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: userId,
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
+    it("should not modify the original input object", () => {
+      const userRow = createTestUserRow();
+      const rowCopy = { ...userRow };
 
-      // Act
-      const entity = toAuthUserEntity(userRow);
+      toAuthUserEntity(userRow);
 
-      // Assert: ID should be branded (type-level check, runtime same value)
-      expect(entity.id).toBe(toUserId(userId));
-      expect(typeof entity.id).toBe("string");
+      expect(userRow).toEqual(rowCopy);
     });
   });
 
   describe("Edge Cases", () => {
-    it("should handle email with special characters", () => {
-      // Arrange
-      const userRow: UserRow = {
+    it("should handle special characters in email and username", () => {
+      const userRow = createTestUserRow({
         email: "user+tag@sub.example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440004",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "specialuser",
-      };
+        username: "test_user.123",
+      });
 
-      // Act
       const entity = toAuthUserEntity(userRow);
 
-      // Assert
       expect(entity.email).toBe("user+tag@sub.example.com");
-    });
-
-    it("should handle username with numbers and underscores", () => {
-      // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440005",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "test_user_123",
-      };
-
-      // Act
-      const entity = toAuthUserEntity(userRow);
-
-      // Assert
-      expect(entity.username).toBe("test_user_123");
-    });
-
-    it("should not include createdAt in entity (not needed for auth)", () => {
-      // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440006",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
-
-      // Act
-      const entity = toAuthUserEntity(userRow);
-
-      // Assert: createdAt should not be in the entity
-      expect(entity).not.toHaveProperty("createdAt");
-    });
-  });
-
-  describe("Data Integrity", () => {
-    it("should not modify the original user row", () => {
-      // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440007",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
-      const originalEmail = userRow.email;
-      const originalId = userRow.id;
-
-      // Act
-      const entity = toAuthUserEntity(userRow);
-
-      // Assert: Original row should be unchanged (entity is a new object)
-      expect(userRow.email).toBe(originalEmail);
-      expect(userRow.id).toBe(originalId);
-    });
-
-    it("should create a new object (not reference original)", () => {
-      // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440008",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
-
-      // Act
-      const entity = toAuthUserEntity(userRow);
-
-      // Assert: Should be different objects
-      expect(entity).not.toBe(userRow);
-    });
-  });
-
-  describe("Security Considerations", () => {
-    it("should include password hash (required for authentication)", () => {
-      // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440009",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
-
-      // Act
-      const entity = toAuthUserEntity(userRow);
-
-      // Assert: Password must be present for authentication
-      expect(entity.password).toBeDefined();
-      expect(entity.password).toBe(toHash("$2a$10$hash"));
-    });
-
-    it("should map all required fields for authentication", () => {
-      // Arrange
-      const userRow: UserRow = {
-        email: "test@example.com",
-        emailVerified: null,
-        id: "550e8400-e29b-41d4-a716-446655440010",
-        password: "$2a$10$hash",
-        role: "USER",
-        sensitiveData: "cantTouchThis",
-        username: "testuser",
-      };
-
-      // Act
-      const entity = toAuthUserEntity(userRow);
-
-      // Assert: All auth-required fields must be present
-      expect(entity.id).toBeDefined();
-      expect(entity.email).toBeDefined();
-      expect(entity.username).toBeDefined();
-      expect(entity.password).toBeDefined();
-      expect(entity.role).toBeDefined();
+      expect(entity.username).toBe("test_user.123");
     });
   });
 });

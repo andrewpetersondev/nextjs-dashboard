@@ -449,42 +449,6 @@
           }
         }
       }
-    },
-    {
-      "includes": [
-        "src/**/*.{test.ts,test.tsx,spec.ts,spec.tsx}",
-        "src/**/__tests__/**/*.{ts,tsx}"
-      ],
-      "linter": {
-        "rules": {
-          "complexity": {
-            "noExcessiveCognitiveComplexity": "off",
-            "noExcessiveLinesPerFunction": "off"
-          },
-          "style": {
-            "noMagicNumbers": "off"
-          },
-          "suspicious": {
-            "noSkippedTests": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": ["cypress/**/*.{ts,tsx}", "cypress.config.ts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noNodejsModules": "off",
-            "noProcessGlobal": "off",
-            "noUndeclaredVariables": "off"
-          },
-          "style": {
-            "noMagicNumbers": "off",
-            "noProcessEnv": "off"
-          }
-        }
-      }
     }
   ],
   "root": true,
