@@ -13,7 +13,7 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
  * Transformation: UserRow → AuthUserEntity
  * Layer: Infrastructure → Domain
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: FIX LATER
 describe("toAuthUserEntity Mapper", () => {
   const createTestUserRow = (overrides: Partial<UserRow> = {}): UserRow => ({
     email: "test@example.com",

@@ -11,6 +11,7 @@ import { getFormErrorPayload } from "@/shared/forms/logic/inspectors/form-error.
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path) => {
     const error = new Error("NEXT_REDIRECT");
+    // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
     (error as any).digest = `NEXT_REDIRECT;${path}`;
     throw error;
   }),
@@ -42,6 +43,7 @@ vi.mock("next/headers", () => {
  * through all layers (presentation → application → infrastructure → database)
  * and back to the UI.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("Login Flow Integration", () => {
   const TEST_EMAIL = "integration-test@example.com";
   const TEST_PASSWORD = "TestPassword123!";
@@ -60,15 +62,19 @@ describe("Login Flow Integration", () => {
   };
 
   const expectRedirectTo = async (
+    // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
     action: Promise<any>,
     expectedPath: string,
   ) => {
     try {
       await action;
+      // biome-ignore lint/suspicious/noMisplacedAssertion: i think this is fine because it is called from inside it()
       expect.fail("Expected redirect to throw NEXT_REDIRECT");
+      // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
     } catch (error: any) {
       if (error.message === "NEXT_REDIRECT") {
         const { redirect: mockRedirect } = await import("next/navigation");
+        // biome-ignore lint/suspicious/noMisplacedAssertion: i think this is fine because it is called from inside it()
         expect(mockRedirect).toHaveBeenCalledWith(expectedPath);
         return;
       }
@@ -100,6 +106,7 @@ describe("Login Flow Integration", () => {
   afterEach(async () => {
     const db = getAppDb();
     if (testUserId) {
+      // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
       await db.delete(users).where(eq(users.id, testUserId as any));
     }
     vi.clearAllMocks();
@@ -118,6 +125,7 @@ describe("Login Flow Integration", () => {
     });
   });
 
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
   describe("Authentication and Validation Errors", () => {
     it("should return validation errors for invalid input format", async () => {
       const formData = createLoginFormData("invalid-email", TEST_PASSWORD);
@@ -149,6 +157,7 @@ describe("Login Flow Integration", () => {
 
       for (const c of cases) {
         const formData = createLoginFormData(c.email, c.password);
+        // biome-ignore lint/performance/noAwaitInLoops: keep until better solution comes
         const result = await loginAction({} as FormResult<unknown>, formData);
 
         expect(result.ok, `Expected failure for ${c.name}`).toBe(false);

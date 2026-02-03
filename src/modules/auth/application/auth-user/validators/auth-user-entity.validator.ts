@@ -23,6 +23,7 @@ import type { Result } from "@/shared/results/result.types";
  * - Role must be valid
  * - Password hash must be present (for authentication entities)
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <FIX LATER>
 export function validateAuthUserEntity(
   entity: AuthUserEntity,
 ): Result<AuthUserEntity, AppError> {

@@ -47,10 +47,12 @@ export class EstablishSessionUseCase {
    *
    * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
   execute(
     user: SessionPrincipalDto,
   ): Promise<Result<SessionPrincipalDto, AppError>> {
     return safeExecute(
+      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
       async () => {
         const tracker = new PerformanceTracker();
 

@@ -14,7 +14,7 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
  * Layer: Domain → Application
  * Security: Removes password hash (security boundary)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("toAuthenticatedUserDto Mapper", () => {
   const createTestAuthUserEntity = (
     overrides: Partial<AuthUserEntity> = {},
@@ -122,7 +122,11 @@ describe("toAuthenticatedUserDto Mapper", () => {
     });
 
     it("should handle extreme field lengths", () => {
-      const longEmail = "a".repeat(100) + "@example.com";
+      const longEmail = `${
+        // biome-ignore lint/style/noMagicNumbers: allowed in tests
+        "a".repeat(100)
+      }@example.com`;
+      // biome-ignore lint/style/noMagicNumbers: allowed in tests
       const longUsername = "u".repeat(50);
       const entity = createTestAuthUserEntity({
         email: longEmail,

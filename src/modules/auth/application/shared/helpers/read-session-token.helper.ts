@@ -41,6 +41,7 @@ async function tryCleanupInvalidToken(
  * @param options - Configuration options (e.g., whether to cleanup on invalid token).
  * @returns A Result containing the read session token outcome or an AppError.
  */
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 export async function readSessionTokenHelper(
   deps: Readonly<{
     logger: LoggingClientContract;
@@ -100,7 +101,8 @@ export async function readSessionTokenHelper(
       | "invalid_token" =
       metadataReason === "invalid_schema"
         ? "invalid_claims"
-        : metadataReason
+        : // biome-ignore lint/style/noNestedTernary: TODO: POSSIBLY NEED TO REFACTOR
+          metadataReason
           ? "invalid_claims_semantics"
           : "invalid_token";
 

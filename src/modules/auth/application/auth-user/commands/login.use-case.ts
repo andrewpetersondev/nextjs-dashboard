@@ -57,10 +57,12 @@ export class LoginUseCase {
    *
    * @throws {Error} If an unexpected system failure occurs (wrapped in Result by safeExecute).
    */
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
   execute(
     input: Readonly<LoginRequestDto>,
   ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute(
+      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
       async () => {
         const tracker = new PerformanceTracker();
 

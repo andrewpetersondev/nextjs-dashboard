@@ -17,7 +17,7 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
  * Layer: Application → Application
  * Security: Minimal data for JWT claims (only id and role)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <explanation>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <FIX LATER>
 describe("toSessionPrincipal Mapper", () => {
   const TEST_USER_ID = toUserId("00000000-0000-0000-0000-000000000123");
 
@@ -138,6 +138,7 @@ describe("toSessionPrincipal Mapper", () => {
       const inputCopy = { ...input };
 
       const principal = toSessionPrincipal(input);
+      // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
       (principal as any).role = "ADMIN";
 
       expect(principal).not.toBe(input);
