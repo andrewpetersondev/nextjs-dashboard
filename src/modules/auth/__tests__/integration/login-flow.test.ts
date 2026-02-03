@@ -1,10 +1,36 @@
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
-import { toHash } from "@/server/crypto/hashing/hashing.value";
+import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import { getAppDb } from "@/server/db/db.connection";
-import { users } from "@/server/db/schema/users";
+import { type NewUserRow, users } from "@/server/db/schema/users";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { getFormErrorPayload } from "@/shared/forms/logic/inspectors/form-error.inspector";
+
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(() => {
+    throw new Error("NEXT_REDIRECT");
+  }),
+}));
+
+vi.mock("next/cache", () => ({
+  revalidatePath: vi.fn(),
+}));
+
+vi.mock("next/headers", () => {
+  const mockHeaders = new Map([
+    ["user-agent", "test-agent"],
+    ["x-forwarded-for", "127.0.0.1"],
+  ]);
+  return {
+    cookies: vi.fn(() => ({
+      delete: vi.fn(),
+      get: vi.fn(),
+      set: vi.fn(),
+    })),
+    headers: vi.fn(async () => mockHeaders),
+  };
+});
 
 /**
  * Integration tests for the complete login flow.
@@ -28,19 +54,28 @@ describe("Login Flow Integration", () => {
   beforeEach(async () => {
     // Setup: Create a test user in the database
     const db = getAppDb();
-    const hashedPassword = await toHash(testPassword);
+    // Use the same hashing service as the application to ensure compatibility
+    const { BcryptPasswordService } = await import(
+      "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service"
+    );
+    const hasher = new BcryptPasswordService(10);
+    const hashedPassword = await hasher.hash(testPassword);
 
     const [insertedUser] = await db
       .insert(users)
       .values({
         email: testEmail,
+        // id is created by the database
+        // id: "550e8400-e29b-41d4-a716-446655440000",
         password: hashedPassword,
         role: "USER",
         username: testUsername,
-      })
+      } satisfies NewUserRow)
       .returning();
 
-    testUserId = insertedUser ? insertedUser.id : "something is wrong";
+    testUserId = insertedUser
+      ? insertedUser.id
+      : "550e8400-e29b-41d4-a716-446655440000";
     //    testUserId = insertedUser.id;
   });
 
@@ -57,32 +92,23 @@ describe("Login Flow Integration", () => {
       formData.append("email", testEmail);
       formData.append("password", testPassword);
 
-      // Mock redirect to prevent actual navigation in tests
-      const mockRedirect = vi.fn(() => {
-        throw new Error("NEXT_REDIRECT"); // Next.js throws this internally
-      });
-      vi.mock("next/navigation", () => ({
-        redirect: mockRedirect,
-        revalidatePath: vi.fn(),
-      }));
+      // Mock redirect and revalidatePath
+      const { redirect: mockRedirect } = await import("next/navigation");
 
       // Act & Assert: Execute login action
       try {
         await loginAction({} as FormResult<unknown>, formData);
-        // If we reach here, redirect didn't throw (unexpected)
-        expect.fail("Expected redirect to throw NEXT_REDIRECT");
       } catch (error) {
         // Assert: Verify redirect was called (successful login)
-        expect(error).toHaveProperty("message", "NEXT_REDIRECT");
-        expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+        // Next.js redirect throws an error that might have "NEXT_REDIRECT" in message or be the error itself
+        if (error.message === "NEXT_REDIRECT") {
+          expect(mockRedirect).toHaveBeenCalledWith("/dashboard");
+          return;
+        }
+        throw error; // Rethrow if it's not the expected redirect error
       }
-
-      // Note: In a real integration test, we would also verify:
-      // 1. Database query was executed (via spy/mock)
-      // 2. Password comparison was performed
-      // 3. Session token was created
-      // 4. Cookie was set with correct attributes
-      // 5. Performance tracking logged timings
+      // If we reach here, redirect didn't throw (unexpected)
+      expect.fail("Expected redirect to throw NEXT_REDIRECT");
     });
 
     it("should establish session with correct user data", async () => {
@@ -91,28 +117,16 @@ describe("Login Flow Integration", () => {
       formData.append("email", testEmail);
       formData.append("password", testPassword);
 
-      // Mock to capture session data
-      const mockRedirect = vi.fn(() => {
-        throw new Error("NEXT_REDIRECT");
-      });
-      vi.mock("next/navigation", () => ({
-        redirect: mockRedirect,
-        revalidatePath: vi.fn(),
-      }));
+      const { redirect: mockRedirect } = await import("next/navigation");
 
       // Act
       try {
         await loginAction({} as FormResult<unknown>, formData);
-      } catch (error) {
+      } catch (_error) {
         // Expected redirect
       }
 
       // Assert: Session should be established
-      // In a real test, we would verify the session cookie contains:
-      // - userId matching testUserId
-      // - role: "user"
-      // - Valid JWT signature
-      // - Correct expiration time
       expect(mockRedirect).toHaveBeenCalled();
     });
   });
@@ -130,8 +144,9 @@ describe("Login Flow Integration", () => {
       // Assert: Should return form errors
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.fieldErrors).toBeDefined();
-        expect(result.error.fieldErrors?.email).toBeDefined();
+        const payload = getFormErrorPayload<LoginField>(result.error);
+        expect(payload.fieldErrors).toBeDefined();
+        expect(payload.fieldErrors?.email).toBeDefined();
       }
     });
 
@@ -148,8 +163,13 @@ describe("Login Flow Integration", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         // Error should be generic to prevent account enumeration
-        expect(result.error.formError).toBeDefined();
-        expect(result.error.formError).toContain("Invalid");
+        const payload = getFormErrorPayload<LoginField>(result.error);
+        // Authentication errors might be plain AppErrors, not FormValidationErrors
+        const errorMessage =
+          payload.formErrors.length > 0
+            ? payload.formErrors[0]
+            : payload.message;
+        expect(errorMessage).toContain("Invalid");
       }
     });
 
@@ -166,8 +186,12 @@ describe("Login Flow Integration", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         // Error should be generic to prevent credential enumeration
-        expect(result.error.formError).toBeDefined();
-        expect(result.error.formError).toContain("Invalid");
+        const payload = getFormErrorPayload<LoginField>(result.error);
+        const errorMessage =
+          payload.formErrors.length > 0
+            ? payload.formErrors[0]
+            : payload.message;
+        expect(errorMessage).toContain("Invalid");
       }
     });
 
@@ -190,7 +214,8 @@ describe("Login Flow Integration", () => {
       // Assert: Should handle error gracefully
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        expect(result.error.formError).toBeDefined();
+        const payload = getFormErrorPayload<LoginField>(result.error);
+        expect(payload.formErrors).toBeDefined();
       }
 
       // Cleanup
@@ -208,28 +233,16 @@ describe("Login Flow Integration", () => {
       formData.append("email", testEmail);
       formData.append("password", testPassword);
 
-      const mockRedirect = vi.fn(() => {
-        throw new Error("NEXT_REDIRECT");
-      });
-      vi.mock("next/navigation", () => ({
-        redirect: mockRedirect,
-        revalidatePath: vi.fn(),
-      }));
+      const { redirect: mockRedirect } = await import("next/navigation");
 
       // Act
       try {
         await loginAction({} as FormResult<unknown>, formData);
-      } catch (error) {
+      } catch (_error) {
         // Expected redirect
       }
 
       // Assert: Verify transformations occurred
-      // 1. UserRow from DB was mapped to AuthUserEntity (with branded types)
-      // 2. AuthUserEntity was mapped to AuthenticatedUserDto (password stripped)
-      // 3. AuthenticatedUserDto was mapped to SessionPrincipalDto (minimal data)
-      // 4. SessionPrincipalDto was encoded to JWT
-      // 5. JWT was set as HTTP-only secure cookie
-
       expect(mockRedirect).toHaveBeenCalled();
     });
   });
@@ -241,18 +254,12 @@ describe("Login Flow Integration", () => {
       formData.append("email", testEmail);
       formData.append("password", testPassword);
 
-      const mockRedirect = vi.fn(() => {
-        throw new Error("NEXT_REDIRECT");
-      });
-      vi.mock("next/navigation", () => ({
-        redirect: mockRedirect,
-        revalidatePath: vi.fn(),
-      }));
+      const { redirect: mockRedirect } = await import("next/navigation");
 
       // Act
       try {
         await loginAction({} as FormResult<unknown>, formData);
-      } catch (error) {
+      } catch (_error) {
         // Expected redirect
       }
 
@@ -285,7 +292,17 @@ describe("Login Flow Integration", () => {
 
       if (!(result1.ok || result2.ok)) {
         // Error messages should be the same to prevent enumeration
-        expect(result1.error.formError).toBe(result2.error.formError);
+        const payload1 = getFormErrorPayload<LoginField>(result1.error);
+        const payload2 = getFormErrorPayload<LoginField>(result2.error);
+        const msg1 =
+          payload1.formErrors.length > 0
+            ? payload1.formErrors[0]
+            : payload1.message;
+        const msg2 =
+          payload2.formErrors.length > 0
+            ? payload2.formErrors[0]
+            : payload2.message;
+        expect(msg1).toBe(msg2);
       }
     });
   });
@@ -297,18 +314,12 @@ describe("Login Flow Integration", () => {
       formData.append("email", testEmail);
       formData.append("password", testPassword);
 
-      const mockRedirect = vi.fn(() => {
-        throw new Error("NEXT_REDIRECT");
-      });
-      vi.mock("next/navigation", () => ({
-        redirect: mockRedirect,
-        revalidatePath: vi.fn(),
-      }));
+      const { redirect: mockRedirect } = await import("next/navigation");
 
       // Act
       try {
         await loginAction({} as FormResult<unknown>, formData);
-      } catch (error) {
+      } catch (_error) {
         // Expected redirect
       }
 

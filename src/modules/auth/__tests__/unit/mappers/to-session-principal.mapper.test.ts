@@ -52,7 +52,7 @@ describe("toSessionPrincipal Mapper", () => {
 
       // Assert: Email should NOT be in principal
       expect(principal).not.toHaveProperty("email");
-      expect((principal as any).email).toBeUndefined();
+      expect(principal.email).toBeUndefined();
     });
 
     it("should strip username from session principal", () => {

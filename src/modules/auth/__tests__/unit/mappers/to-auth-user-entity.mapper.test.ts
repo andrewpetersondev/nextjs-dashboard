@@ -20,8 +20,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
-        password: toHash("$2a$10$hashedpassword"),
+        id: "550e8400-e29b-41d4-a716-446655440000",
+        password: "$2a$10$hashedpassword",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -33,11 +33,9 @@ describe("toAuthUserEntity Mapper", () => {
       // Assert
       expect(entity).toEqual({
         email: "test@example.com",
-        emailVerified: null,
         id: toUserId("550e8400-e29b-41d4-a716-446655440000"), // Branded as UserId
         password: toHash("$2a$10$hashedpassword"), // Branded as Hash
-        role: "user",
-        sensitiveData: "cantTouchThis",
+        role: "USER",
         username: "testuser",
       });
     });
@@ -47,8 +45,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "admin@example.com",
         emailVerified: null,
-        id: toUserId("660e8400-e29b-41d4-a716-446655440001"),
-        password: toHash("$2a$10$adminhashedpassword"),
+        id: "550e8400-e29b-41d4-a716-446655440001",
+        password: "$2a$10$adminhashedpassword",
         role: "ADMIN",
         sensitiveData: "cantTouchThis",
         username: "adminuser",
@@ -58,7 +56,7 @@ describe("toAuthUserEntity Mapper", () => {
       const entity = toAuthUserEntity(userRow);
 
       // Assert
-      expect(entity.role).toBe("admin");
+      expect(entity.role).toBe("ADMIN");
     });
 
     it("should preserve password hash (security requirement)", () => {
@@ -67,8 +65,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("770e8400-e29b-41d4-a716-446655440002"),
-        password: toHash(passwordHash),
+        id: "550e8400-e29b-41d4-a716-446655440002",
+        password: passwordHash,
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -83,12 +81,12 @@ describe("toAuthUserEntity Mapper", () => {
 
     it("should convert id to branded UserId type", () => {
       // Arrange
-      const userId = "880e8400-e29b-41d4-a716-446655440003";
+      const userId = "550e8400-e29b-41d4-a716-446655440003";
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId(userId),
-        password: toHash("$2a$10$hash"),
+        id: userId,
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -109,8 +107,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "user+tag@sub.example.com",
         emailVerified: null,
-        id: toUserId("990e8400-e29b-41d4-a716-446655440004"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440004",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "specialuser",
@@ -128,8 +126,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("aa0e8400-e29b-41d4-a716-446655440005"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440005",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "test_user_123",
@@ -147,8 +145,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("bb0e8400-e29b-41d4-a716-446655440006"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440006",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -168,8 +166,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("cc0e8400-e29b-41d4-a716-446655440007"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440007",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -190,8 +188,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("dd0e8400-e29b-41d4-a716-446655440008"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440008",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -211,8 +209,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("ee0e8400-e29b-41d4-a716-446655440009"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440009",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",
@@ -231,8 +229,8 @@ describe("toAuthUserEntity Mapper", () => {
       const userRow: UserRow = {
         email: "test@example.com",
         emailVerified: null,
-        id: toUserId("ff0e8400-e29b-41d4-a716-446655440010"),
-        password: toHash("$2a$10$hash"),
+        id: "550e8400-e29b-41d4-a716-446655440010",
+        password: "$2a$10$hash",
         role: "USER",
         sensitiveData: "cantTouchThis",
         username: "testuser",

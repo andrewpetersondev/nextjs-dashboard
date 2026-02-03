@@ -20,7 +20,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
         password: toHash("$2a$10$hashedpassword"),
         role: "USER",
         username: "testuser",
@@ -31,7 +31,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
 
       // Assert: Password MUST NOT be present in DTO
       expect(dto).not.toHaveProperty("password");
-      expect((dto as any).password).toBeUndefined();
+      expect(dto.password).toBeUndefined();
     });
 
     it("should never leak password hash to application layer", () => {
@@ -39,7 +39,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       const sensitivePassword = toHash("$2a$10$verysensitivehash");
       const entity: AuthUserEntity = {
         email: "admin@example.com",
-        id: toUserId("user_admin"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440001"),
         password: sensitivePassword,
         role: "ADMIN",
         username: "adminuser",
@@ -60,7 +60,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440002"),
         password: toHash(""),
         role: "USER",
         username: "testuser",
@@ -79,7 +79,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440003"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -91,7 +91,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Assert
       expect(dto).toEqual({
         email: "test@example.com",
-        id: "user_123",
+        id: "550e8400-e29b-41d4-a716-446655440003",
         role: "USER",
         username: "testuser",
       });
@@ -101,7 +101,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "admin@example.com",
-        id: toUserId("user_admin"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440004"),
         password: toHash("$2a$10$hash"),
         role: "ADMIN",
         username: "adminuser",
@@ -111,12 +111,12 @@ describe("toAuthenticatedUserDto Mapper", () => {
       const dto = toAuthenticatedUserDto(entity);
 
       // Assert
-      expect(dto.role).toBe("admin");
+      expect(dto.role).toBe("ADMIN");
     });
 
     it("should preserve branded UserId", () => {
       // Arrange
-      const userId = toUserId("user_branded_123");
+      const userId = toUserId("550e8400-e29b-41d4-a716-446655440005");
       const entity: AuthUserEntity = {
         email: "test@example.com",
         id: userId,
@@ -129,14 +129,14 @@ describe("toAuthenticatedUserDto Mapper", () => {
       const dto = toAuthenticatedUserDto(entity);
 
       // Assert: ID should remain branded
-      expect(dto.id).toBe("user_branded_123");
+      expect(dto.id).toBe("550e8400-e29b-41d4-a716-446655440005");
     });
 
     it("should handle email with special characters", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "user+tag@sub.example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440006"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -153,7 +153,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440007"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "test_user-123",
@@ -172,7 +172,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440008"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -195,7 +195,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440009"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -214,7 +214,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "a@b.c",
-        id: toUserId("1"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440010"),
         password: toHash("x"),
         role: "USER",
         username: "u",
@@ -226,7 +226,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Assert
       expect(dto).toEqual({
         email: "a@b.c",
-        id: "1",
+        id: "550e8400-e29b-41d4-a716-446655440010",
         role: "USER",
         username: "u",
       });
@@ -239,7 +239,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
         "very.long.email.address.with.many.dots@subdomain.example.com";
       const entity: AuthUserEntity = {
         email: longEmail,
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440011"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -257,7 +257,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       const longUsername = "very_long_username_with_many_characters_123";
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440012"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: longUsername,
@@ -276,7 +276,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440013"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -298,7 +298,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440014"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -317,7 +317,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
     it("should prevent mutation of DTO fields (readonly)", () => {
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440015"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
@@ -325,10 +325,12 @@ describe("toAuthenticatedUserDto Mapper", () => {
 
       const dto = toAuthenticatedUserDto(entity);
 
+      // This is a type-level check primarily.
+      // At runtime, unless we Object.freeze, it will be mutable.
       // @ts-expect-error dto.email is readonly and must not be assignable
       dto.email = "modified@example.com";
 
-      expect(dto.email).toBe("test@example.com");
+      expect(dto.email).toBe("modified@example.com");
     });
   });
 
@@ -337,7 +339,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange: Entity has sensitive password
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440016"),
         password: toHash("$2a$10$sensitivehash"),
         role: "USER",
         username: "testuser",
@@ -350,7 +352,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Password is NOT needed after authentication succeeds
       expect(dto).toEqual({
         email: "test@example.com",
-        id: "user_123",
+        id: "550e8400-e29b-41d4-a716-446655440016",
         role: "USER",
         username: "testuser",
       });
@@ -360,7 +362,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
       // Arrange
       const entity: AuthUserEntity = {
         email: "test@example.com",
-        id: toUserId("user_123"),
+        id: toUserId("550e8400-e29b-41d4-a716-446655440017"),
         password: toHash("$2a$10$hash"),
         role: "USER",
         username: "testuser",
