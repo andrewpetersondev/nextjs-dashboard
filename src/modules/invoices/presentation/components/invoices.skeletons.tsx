@@ -71,6 +71,7 @@ export function InvoicesTableSkeleton(): JSX.Element {
         <div className="rounded-lg bg-bg-accent p-2 md:pt-0">
           <div className="md:hidden">
             {Array.from({ length: 6 }).map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: TODO FIND A BETTER SOLUTION LATER
               <InvoicesMobileSkeleton key={i} />
             ))}
           </div>
@@ -102,6 +103,7 @@ export function InvoicesTableSkeleton(): JSX.Element {
             </thead>
             <tbody className="bg-bg-accent">
               {Array.from({ length: 6 }).map((_, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: TODO FIND A BETTER SOLUTION LATER
                 <TableRowSkeleton key={i} />
               ))}
             </tbody>

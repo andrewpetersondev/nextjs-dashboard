@@ -119,6 +119,7 @@ export function Pagination({
             <PaginationNumber
               href={createPageUrl(page)}
               isActive={currentPage === page}
+              // biome-ignore lint/suspicious/noArrayIndexKey: TODO FIND A BETTER SOLUTION LATER
               key={`${page}-${index}`} // Use index to handle duplicate ellipses if any
               page={page}
               position={position}
