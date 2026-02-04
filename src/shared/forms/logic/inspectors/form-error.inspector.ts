@@ -60,12 +60,14 @@ export const extractFormErrors = (error: AppError): FormErrors => {
 export function getFormErrorPayload<F extends string>(
   error: AppError,
 ): FormErrorPayload<F> {
+  const formErrors = extractFormErrors(error);
+
   return {
     fieldErrors:
       extractFieldErrors<F>(error) ??
       (Object.freeze({}) as DenseFieldErrorMap<F, string>),
     formData: extractFieldValues<F>(error) ?? Object.freeze({}),
-    formErrors: extractFormErrors(error),
+    formErrors: formErrors.length > 0 ? formErrors : [error.message],
     message: error.message,
   };
 }
