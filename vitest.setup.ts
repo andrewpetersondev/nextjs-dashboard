@@ -1,4 +1,3 @@
-// Vitest setup file to handle Next.js server-only modules and common mocks in tests
 import { config } from "dotenv";
 import { vi } from "vitest";
 
@@ -33,20 +32,21 @@ vi.mock("next/cache", () => ({
   revalidateTag: vi.fn(),
 }));
 
+const mockCookies = {
+  delete: vi.fn(),
+  get: vi.fn(),
+  getAll: vi.fn(),
+  has: vi.fn(),
+  set: vi.fn(),
+};
+
 vi.mock("next/headers", () => {
   const mockHeaders = new Map([
     ["user-agent", "test-agent"],
     ["x-forwarded-for", "127.0.0.1"],
   ]);
-  const mockCookies = {
-    delete: vi.fn(),
-    get: vi.fn(),
-    getAll: vi.fn(),
-    has: vi.fn(),
-    set: vi.fn(),
-  };
   return {
-    cookies: vi.fn(() => mockCookies),
+    cookies: vi.fn(async () => mockCookies),
     headers: vi.fn(async () => mockHeaders),
   };
 });
