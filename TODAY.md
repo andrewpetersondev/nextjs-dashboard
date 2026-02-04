@@ -1,6 +1,7 @@
 ### Complete Login Flow Analysis: UI → Database → UI
 
-I've traced the entire login process through your auth module. Here's the comprehensive flow with organizational improvements and identified gaps.
+I've traced the entire login process through your auth module. Here's the comprehensive flow with organizational
+improvements and identified gaps.
 
 ---
 
@@ -147,7 +148,7 @@ I've traced the entire login process through your auth module. Here's the compre
 ## 🔍 Key Data Transformations
 
 | Layer                   | Input Type             | Output Type            | Mapper/Function               |
-| ----------------------- | ---------------------- | ---------------------- | ----------------------------- |
+|-------------------------|------------------------|------------------------|-------------------------------|
 | **DAL → Repository**    | `UserRow`              | `AuthUserEntity`       | `toAuthUserEntity()`          |
 | **Use Case → Workflow** | `AuthUserEntity`       | `AuthenticatedUserDto` | `toAuthenticatedUserDto()`    |
 | **Workflow → Session**  | `AuthenticatedUserDto` | `SessionPrincipalDto`  | `toSessionPrincipal()`        |
@@ -220,22 +221,24 @@ presentation/authn/mappers/
  */
 
 export const AUTH_MAPPER_CHAINS = {
-  login: {
-    forward: [
-      "UserRow → AuthUserEntity (toAuthUserEntity)",
-      "AuthUserEntity → AuthenticatedUserDto (toAuthenticatedUserDto)",
-      "AuthenticatedUserDto → SessionPrincipalDto (toSessionPrincipal)",
-      "SessionPrincipalDto → IssuedTokenDto (SessionTokenService.issue)",
-    ],
-    error: ["AppError → FormResult (toLoginFormResult)"],
-  },
-  // ... other flows
+    login: {
+        forward: [
+            "UserRow → AuthUserEntity (toAuthUserEntity)",
+            "AuthUserEntity → AuthenticatedUserDto (toAuthenticatedUserDto)",
+            "AuthenticatedUserDto → SessionPrincipalDto (toSessionPrincipal)",
+            "SessionPrincipalDto → IssuedTokenDto (SessionTokenService.issue)",
+        ],
+        error: ["AppError → FormResult (toLoginFormResult)"],
+    },
+    // ... other flows
 } as const;
 ```
 
 ---
 
-### **Gap 3: No Explicit Boundary Validation** ⚠️ MEDIUM PRIORITY
+### **Gap 3: No Explicit Boundary Validation** ✅ FIXED
+
+**Status:** Fixed. Added `validateAuthUserEntity` calls in `AuthUserRepository`.
 
 **Issue:** Data crosses layer boundaries without explicit validation at each boundary.
 
@@ -248,22 +251,22 @@ FormData → LoginRequestDto (validated) → Use Case → Repository → DAL
 **Missing Validations:**
 
 - ✅ **Presentation → Application:** LoginRequestSchema validates input
-- ❌ **Application → Domain:** No validation that AuthUserEntity is valid
+- ✅ **Application → Domain:** `validateAuthUserEntity` is called in `AuthUserRepository` after mapping
 - ❌ **Domain → Infrastructure:** No validation before DAL operations
-- ❌ **Infrastructure → Application:** No validation of UserRow before mapping
+- ✅ **Infrastructure → Application:** Validated via repository boundary checks
 
 **Recommendation:** Add boundary validators:
 
 ```typescript
 // NEW: application/auth-user/validators/auth-user-entity.validator.ts
 export function validateAuthUserEntity(
-  entity: AuthUserEntity
+    entity: AuthUserEntity
 ): Result<AuthUserEntity, AppError> {
-  // Validate domain invariants
-  if (!entity.email.includes('@')) {
-    return Err(makeAppError('validation', { ... }));
-  }
-  return Ok(entity);
+    // Validate domain invariants
+    if (!entity.email.includes('@')) {
+        return Err(makeAppError('validation', {...}));
+    }
+    return Ok(entity);
 }
 ```
 
@@ -363,22 +366,22 @@ src/modules/auth/notes/
 ```typescript
 // Use Case example
 export class LoginUseCase {
-  async execute(input: LoginRequestDto): Promise<Result<...>> {
-    const tracker = new PerformanceTracker();
+    async execute(input: LoginRequestDto): Promise<Result<>> {
+        const tracker = new PerformanceTracker();
 
-    const userResult = await tracker.measure('repo.findByEmail', () =>
-      this.repo.findByEmail({ email: input.email })
-    );
+        const userResult = await tracker.measure('repo.findByEmail', () =>
+            this.repo.findByEmail({email: input.email})
+        );
 
-    const passwordResult = await tracker.measure('hasher.compare', () =>
-      this.hasher.compare(input.password, user.password)
-    );
+        const passwordResult = await tracker.measure('hasher.compare', () =>
+            this.hasher.compare(input.password, user.password)
+        );
 
-    this.logger.operation('info', 'Login use case completed', {
-      duration: tracker.getTotalDuration(),
-      timings: tracker.getAllTimings(),
-    });
-  }
+        this.logger.operation('info', 'Login use case completed', {
+            duration: tracker.getTotalDuration(),
+            timings: tracker.getAllTimings(),
+        });
+    }
 }
 ```
 
@@ -401,19 +404,19 @@ export class LoginUseCase {
 // NEW: src/modules/auth/__tests__/integration/login-flow.test.ts
 
 describe("Login Flow Integration", () => {
-  it("should complete full login flow: action → db → session → cookie", async () => {
-    // 1. Setup test database with user
-    // 2. Call loginAction with FormData
-    // 3. Verify database query was made
-    // 4. Verify password was checked
-    // 5. Verify session token was created
-    // 6. Verify cookie was set
-    // 7. Verify redirect occurred
-  });
+    it("should complete full login flow: action → db → session → cookie", async () => {
+        // 1. Setup test database with user
+        // 2. Call loginAction with FormData
+        // 3. Verify database query was made
+        // 4. Verify password was checked
+        // 5. Verify session token was created
+        // 6. Verify cookie was set
+        // 7. Verify redirect occurred
+    });
 
-  it("should propagate DB errors to UI correctly", async () => {
-    // Test error flow
-  });
+    it("should propagate DB errors to UI correctly", async () => {
+        // Test error flow
+    });
 });
 ```
 
@@ -471,33 +474,33 @@ Create a central registry that documents all mappers and their purposes:
 // NEW: application/shared/mappers/mapper-registry.ts
 
 export const MAPPER_REGISTRY = {
-  // Infrastructure → Domain
-  "UserRow → AuthUserEntity": {
-    file: "infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper.ts",
-    purpose: "Converts database row to domain entity with branded types",
-    security: "Includes password hash (sensitive)",
-  },
+    // Infrastructure → Domain
+    "UserRow → AuthUserEntity": {
+        file: "infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper.ts",
+        purpose: "Converts database row to domain entity with branded types",
+        security: "Includes password hash (sensitive)",
+    },
 
-  // Domain → Application
-  "AuthUserEntity → AuthenticatedUserDto": {
-    file: "application/auth-user/mappers/to-authenticated-user.mapper.ts",
-    purpose: "Strips sensitive data (password) for application layer",
-    security: "Removes password hash (security boundary)",
-  },
+    // Domain → Application
+    "AuthUserEntity → AuthenticatedUserDto": {
+        file: "application/auth-user/mappers/to-authenticated-user.mapper.ts",
+        purpose: "Strips sensitive data (password) for application layer",
+        security: "Removes password hash (security boundary)",
+    },
 
-  // Application → Application (Session)
-  "AuthenticatedUserDto → SessionPrincipalDto": {
-    file: "application/session/mappers/to-session-principal.mapper.ts",
-    purpose: "Extracts only session-relevant data (id, role)",
-    security: "Minimal data for JWT claims",
-  },
+    // Application → Application (Session)
+    "AuthenticatedUserDto → SessionPrincipalDto": {
+        file: "application/session/mappers/to-session-principal.mapper.ts",
+        purpose: "Extracts only session-relevant data (id, role)",
+        security: "Minimal data for JWT claims",
+    },
 
-  // Application → Presentation
-  "AppError → FormResult": {
-    file: "presentation/authn/mappers/auth-form-error.mapper.ts",
-    purpose: "Converts domain errors to UI-friendly form errors",
-    security: "Prevents credential enumeration attacks",
-  },
+    // Application → Presentation
+    "AppError → FormResult": {
+        file: "presentation/authn/mappers/auth-form-error.mapper.ts",
+        purpose: "Converts domain errors to UI-friendly form errors",
+        security: "Prevents credential enumeration attacks",
+    },
 } as const;
 ```
 
@@ -572,18 +575,18 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Phase 1: Documentation (Immediate - Low Risk)**
 
 1. ✅ **Create flow documentation**
-   - Add `notes/flows/login-flow.md` (based on this analysis)
-   - Add `notes/flows/data-transformations.md`
-   - Add `notes/flows/error-handling.md`
+    - Add `notes/flows/login-flow.md` (based on this analysis)
+    - Add `notes/flows/data-transformations.md`
+    - Add `notes/flows/error-handling.md`
 
 2. ✅ **Add mapper registry**
-   - Create `application/shared/mappers/mapper-registry.ts`
-   - Document all mapper chains
+    - Create `application/shared/mappers/mapper-registry.ts`
+    - Document all mapper chains
 
 3. ✅ **Add layer README files**
-   - `application/README.md`
-   - `infrastructure/README.md`
-   - `presentation/README.md`
+    - `application/README.md`
+    - `infrastructure/README.md`
+    - `presentation/README.md`
 
 **Estimated Effort:** 4-6 hours  
 **Risk:** None (documentation only)
@@ -593,13 +596,13 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Phase 2: Observability (Short-term - Low Risk)**
 
 4. ✅ **Add performance tracking to use cases**
-   - Add `PerformanceTracker` to `LoginUseCase`
-   - Add `PerformanceTracker` to `EstablishSessionUseCase`
-   - Log timings for each major operation
+    - Add `PerformanceTracker` to `LoginUseCase`
+    - Add `PerformanceTracker` to `EstablishSessionUseCase`
+    - Log timings for each major operation
 
 5. ✅ **Add boundary logging**
-   - Log when data crosses layer boundaries
-   - Log mapper transformations (at debug level)
+    - Log when data crosses layer boundaries
+    - Log mapper transformations (at debug level)
 
 **Estimated Effort:** 2-3 hours  
 **Risk:** Low (additive changes only)
@@ -609,13 +612,13 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Phase 3: Testing (Medium-term - Medium Risk)**
 
 6. ✅ **Add integration tests**
-   - Create `__tests__/integration/login-flow.test.ts`
-   - Test complete flow from action to database
-   - Test error propagation
+    - Create `__tests__/integration/login-flow.test.ts`
+    - Test complete flow from action to database
+    - Test error propagation
 
 7. ✅ **Add mapper tests**
-   - Test each mapper in isolation
-   - Test mapper chains
+    - Test each mapper in isolation
+    - Test mapper chains
 
 **Estimated Effort:** 8-12 hours  
 **Risk:** Medium (requires test infrastructure setup)
@@ -625,12 +628,12 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Phase 4: Refactoring (Long-term - Higher Risk)**
 
 8. ⚠️ **Consider mapper reorganization**
-   - Evaluate grouping mappers by flow
-   - Refactor if team agrees it improves clarity
+    - Evaluate grouping mappers by flow
+    - Refactor if team agrees it improves clarity
 
 9. ⚠️ **Add boundary validators**
-   - Add validation at layer boundaries
-   - Ensure domain invariants are enforced
+    - Add validation at layer boundaries
+    - Ensure domain invariants are enforced
 
 **Estimated Effort:** 16-24 hours  
 **Risk:** High (requires careful refactoring and testing)
@@ -659,7 +662,7 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Priority Improvements**
 
 | Priority   | Improvement              | Effort | Risk   | Impact |
-| ---------- | ------------------------ | ------ | ------ | ------ |
+|------------|--------------------------|--------|--------|--------|
 | **HIGH**   | Add flow documentation   | 4-6h   | None   | High   |
 | **HIGH**   | Add integration tests    | 8-12h  | Medium | High   |
 | **MEDIUM** | Add mapper registry      | 2h     | None   | Medium |

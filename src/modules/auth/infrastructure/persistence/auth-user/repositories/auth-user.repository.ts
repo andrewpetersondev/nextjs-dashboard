@@ -1,6 +1,7 @@
 import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup-query.dto";
+import { validateAuthUserEntity } from "@/modules/auth/application/auth-user/validators/auth-user-entity.validator";
 import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/shared/mappers/flows/signup/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import { getUserByEmailDal } from "@/modules/auth/infrastructure/persistence/auth-user/dal/get-user-by-email.dal";
@@ -76,7 +77,22 @@ export class AuthUserRepository {
 
     const row = rowResult.value;
 
-    return Ok(row ? toAuthUserEntity(row) : null);
+    if (!row) {
+      return Ok(null);
+    }
+
+    const entity = toAuthUserEntity(row);
+    const validationResult = validateAuthUserEntity(entity);
+
+    if (!validationResult.ok) {
+      this.logger.error("AuthUserEntity validation failed in findByEmail", {
+        error: validationResult.error,
+        userId: entity.id,
+      });
+      return validationResult;
+    }
+
+    return Ok(entity);
   }
 
   /**
@@ -100,6 +116,15 @@ export class AuthUserRepository {
     }
 
     const entity = toAuthUserEntity(rowResult.value);
+    const validationResult = validateAuthUserEntity(entity);
+
+    if (!validationResult.ok) {
+      this.logger.error("AuthUserEntity validation failed in signup", {
+        error: validationResult.error,
+        userId: entity.id,
+      });
+      return validationResult;
+    }
 
     return Ok(entity);
   }

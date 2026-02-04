@@ -25,7 +25,7 @@ export interface AuthUserRepositoryContract {
    *
    * @param query - The lookup criteria including the email address.
    * @returns A promise resolving to a {@link Result} containing the found {@link AuthUserEntity},
-   * null if no user matches the email, or an {@link AppError} for infrastructure failures.
+   * null if not found, or an {@link AppError} for infrastructure OR validation failures.
    */
   findByEmail(
     query: Readonly<AuthUserLookupQueryDto>,
