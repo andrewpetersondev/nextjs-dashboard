@@ -91,7 +91,9 @@
   "linter": {
     "domains": {
       "next": "all",
-      "project": "recommended"
+      "project": "all",
+      "react": "all",
+      "test": "all"
     },
     "enabled": true,
     "rules": {
@@ -102,7 +104,6 @@
       "complexity": {
         "noExcessiveCognitiveComplexity": "on",
         "noExcessiveLinesPerFunction": "on",
-        "noExcessiveNestedTestSuites": "on",
         "noForEach": "on",
         "noImplicitCoercions": "on",
         "noUselessStringConcat": "on",
@@ -113,10 +114,8 @@
       },
       "correctness": {
         "noGlobalDirnameFilename": "on",
-        "noNestedComponentDefinitions": "on",
         "noNodejsModules": "on",
         "noProcessGlobal": "on",
-        "noReactPropAssignments": "on",
         "noUndeclaredVariables": "on",
         "noUnusedFunctionParameters": "on",
         "noUnusedImports": "on",
@@ -124,15 +123,12 @@
         "noUnusedPrivateClassMembers": "on",
         "noUnusedVariables": "on",
         "recommended": true,
-        "useJsonImportAttributes": "on",
-        "useSingleJsDocAsterisk": "on",
-        "useUniqueElementIds": "on"
+        "useImportExtensions": "off",
+        "useSingleJsDocAsterisk": "on"
       },
       "nursery": {
         "noContinue": "on",
-        "noDeprecatedImports": "on",
         "noDuplicateDependencies": "on",
-        "noDuplicatedSpreadProps": "on",
         "noShadow": "on",
         "noUselessUndefined": "on",
         "useExplicitType": "off",
@@ -150,8 +146,6 @@
       },
       "recommended": true,
       "security": {
-        "noDangerouslySetInnerHtml": "on",
-        "noDangerouslySetInnerHtmlWithChildren": "on",
         "recommended": true
       },
       "style": {
@@ -179,7 +173,6 @@
         "useBlockStatements": "on",
         "useCollapsedElseIf": "on",
         "useCollapsedIf": "on",
-        "useComponentExportOnlyModules": "on",
         "useConsistentArrayType": "on",
         "useConsistentBuiltinInstantiation": "on",
         "useConsistentCurlyBraces": "on",
