@@ -1,40 +1,12 @@
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runAndCaptureRedirectPath } from "@/modules/auth/__tests__/integration/_test-utils_/next-redirect";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import { getAppDb } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { getFormErrorPayload } from "@/shared/forms/logic/inspectors/form-error.inspector";
-
-// Mock Next.js internal modules
-vi.mock("next/navigation", () => ({
-  redirect: vi.fn((path) => {
-    const error = new Error("NEXT_REDIRECT");
-    // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
-    (error as any).digest = `NEXT_REDIRECT;${path}`;
-    throw error;
-  }),
-}));
-
-vi.mock("next/cache", () => ({
-  revalidatePath: vi.fn(),
-}));
-
-vi.mock("next/headers", () => {
-  const mockHeaders = new Map([
-    ["user-agent", "test-agent"],
-    ["x-forwarded-for", "127.0.0.1"],
-  ]);
-  return {
-    cookies: vi.fn(() => ({
-      delete: vi.fn(),
-      get: vi.fn(),
-      set: vi.fn(),
-    })),
-    headers: vi.fn(async () => mockHeaders),
-  };
-});
 
 /**
  * Integration tests for the complete login flow.
@@ -115,10 +87,11 @@ describe("Login Flow Integration", () => {
   describe("Successful Login", () => {
     it("should complete full flow and redirect to dashboard", async () => {
       const formData = createLoginFormData();
-      await expectRedirectTo(
+
+      const redirectedTo = await runAndCaptureRedirectPath(
         loginAction({} as FormResult<unknown>, formData),
-        "/dashboard",
       );
+      expect(redirectedTo).toBe("/dashboard");
 
       const { revalidatePath: mockRevalidatePath } = await import("next/cache");
       expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard");
@@ -164,7 +137,7 @@ describe("Login Flow Integration", () => {
         if (!result.ok) {
           const payload = getFormErrorPayload<LoginField>(result.error);
           const message = payload.formErrors[0] || payload.message;
-          expect(message).toContain("Invalid");
+          expect(message).toContain("Invalid credentials");
           messages.push(message);
         }
       }
