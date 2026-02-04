@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runAndCaptureRedirectPath } from "@/modules/auth/__tests__/integration/_test-utils_/next-redirect";
 import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.action";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
+import { toHash } from "@/server/crypto/hashing/hashing.value";
 import { getAppDb } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -88,7 +89,7 @@ describe("Signup Flow Integration", () => {
       const db = getAppDb();
       await db.insert(users).values({
         email: TEST_EMAIL,
-        password: "hashed_password",
+        password: toHash("hashed_password"),
         role: "USER",
         username: "existing_user",
       });
@@ -140,7 +141,9 @@ describe("Signup Flow Integration", () => {
         expect(payload.formErrors.length).toBeGreaterThan(0);
         // We accept pg_unique_violation too because state might be polluted
         // if cleanup fails, but it SHOULD be the error we throw.
-        expect(payload.formErrors[0].toLowerCase()).toMatch(
+        const firstFormError = payload.formErrors[0];
+        expect(firstFormError).toBeDefined();
+        expect(firstFormError?.toLowerCase()).toMatch(
           // biome-ignore lint/performance/useTopLevelRegex: TODO EXTRACT REGEX
           /database insert failed|unexpected|error|unique|conflict/,
         );

@@ -18,8 +18,8 @@ describe("toAuthUserEntity Mapper", () => {
   const createTestUserRow = (overrides: Partial<UserRow> = {}): UserRow => ({
     email: "test@example.com",
     emailVerified: null,
-    id: "550e8400-e29b-41d4-a716-446655440000",
-    password: "$2a$10$hashedpassword",
+    id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
+    password: toHash("$2a$10$hashedpassword"),
     role: "USER",
     sensitiveData: "cantTouchThis",
     username: "testuser",
@@ -74,7 +74,7 @@ describe("toAuthUserEntity Mapper", () => {
 
     it("should preserve the exact password hash string (branded as Hash)", () => {
       const passwordHash = "$2a$10$verylonghashstring";
-      const userRow = createTestUserRow({ password: passwordHash });
+      const userRow = createTestUserRow({ password: toHash(passwordHash) });
 
       const entity = toAuthUserEntity(userRow);
 

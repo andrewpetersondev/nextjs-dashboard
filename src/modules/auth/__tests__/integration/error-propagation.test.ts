@@ -23,6 +23,7 @@ describe("Auth Error Propagation Integration", () => {
     return formData;
   };
 
+  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
   describe("Database Errors", () => {
     it("should propagate DB connection failure during login as a form-level error", async () => {
       const db = getAppDb();
@@ -74,7 +75,9 @@ describe("Auth Error Propagation Integration", () => {
         expect(result.error.key).toBe(APP_ERROR_KEYS.conflict);
         const payload = getFormErrorPayload(result.error);
         expect(payload.formErrors.length).toBeGreaterThan(0);
-        expect(payload.formErrors[0].toLowerCase()).toMatch(
+        const firstFormError = payload.formErrors[0];
+        expect(firstFormError).toBeDefined();
+        expect(firstFormError?.toLowerCase()).toMatch(
           // biome-ignore lint/performance/useTopLevelRegex: TODO extract later
           /already in use|exists|conflict|unique/,
         );
