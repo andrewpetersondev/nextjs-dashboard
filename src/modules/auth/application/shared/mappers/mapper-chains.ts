@@ -217,12 +217,14 @@ export const AUTH_MAPPER_CHAINS = {
  */
 export type FlowName = keyof typeof AUTH_MAPPER_CHAINS;
 
+export type FlowChain = (typeof AUTH_MAPPER_CHAINS)[FlowName];
+
 /**
  * Get the complete transformation chain for a specific flow.
  */
 export function getFlowChain(flow: FlowName): {
-  forward: string[];
-  error: string[];
+  forward: readonly string[];
+  error: readonly string[];
 } {
   return AUTH_MAPPER_CHAINS[flow];
 }

@@ -9,7 +9,21 @@
  * Organized by data flow direction (Infrastructure → Domain → Application → Presentation)
  */
 
-export const MAPPER_REGISTRY = {
+import type { FlowName } from "./mapper-chains";
+
+type MapperRegistryInfo = {
+  file: string;
+  flows: readonly FlowName[];
+  layer: string;
+  purpose: string;
+  security: string;
+};
+
+const defineMapperRegistry = <T extends Record<string, MapperRegistryInfo>>(
+  registry: T,
+): T => registry;
+
+export const MAPPER_REGISTRY = defineMapperRegistry({
   "AppError → GenericAuthError": {
     file: "application/shared/mappers/flows/login/map-generic-auth.error.ts",
     flows: ["login", "signup"],
@@ -68,7 +82,7 @@ export const MAPPER_REGISTRY = {
 
   "JWTPayload → SessionTokenClaimsDto": {
     file: "infrastructure/session/mappers/jwt-to-session-token-claims-dto.mapper.ts",
-    flows: ["session-validation"],
+    flows: ["sessionValidation"],
     layer: "infrastructure → application",
     purpose: "Converts JWT payload to session token claims DTO",
     security: "Validates JWT structure and claims",
@@ -88,7 +102,7 @@ export const MAPPER_REGISTRY = {
 
   "SessionTokenClaimsDto → SessionTokenClaimsDto": {
     file: "application/session/mappers/to-session-token-claims-dto.mapper.ts",
-    flows: ["session-validation"],
+    flows: ["sessionValidation"],
     layer: "application → application",
     purpose: "Maps session token claims to DTO",
     security: "Validates and normalizes token claims",
@@ -99,11 +113,12 @@ export const MAPPER_REGISTRY = {
 
   "UserRow → AuthUserEntity": {
     file: "infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper.ts",
+    flows: ["demoUser", "login", "signup"],
     layer: "infrastructure → domain",
     purpose: "Converts database row to domain entity with branded types",
     security: "Includes password hash (sensitive)",
   },
-} as const;
+});
 
 /**
  * Type-safe accessor for mapper information.
@@ -113,8 +128,8 @@ export type MapperKey = keyof typeof MAPPER_REGISTRY;
 /**
  * Get all mappers used in a specific flow.
  */
-export function getMappersForFlow(flow: string): MapperKey[] {
+export function getMappersForFlow(flow: FlowName): MapperKey[] {
   return Object.entries(MAPPER_REGISTRY)
-    .filter(([_, info]) => info.flows?.includes(flow))
+    .filter(([_, info]) => (info.flows as readonly FlowName[]).includes(flow))
     .map(([key]) => key as MapperKey);
 }
