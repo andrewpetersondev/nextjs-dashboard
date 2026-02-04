@@ -9,7 +9,7 @@
 # TOOLING
 # ======================================================
 .gitignore
-biome.json
+# biome.json
 devtools
 src/drizzle
 eslint.config.mjs

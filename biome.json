@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "assist": {
     "actions": {
       "recommended": true,
@@ -39,21 +39,21 @@
       "!!**/*.log",
       "!!storage",
       "!!docs",
-      "!tsconfig.tsbuildinfo",
+      "!!tsconfig.tsbuildinfo",
+      "!!.idea",
+      "!!**/*.js",
+      "!!**/*.jsx",
+      "!!node_modules",
+      "!!pnpm-lock.yaml",
       "!.aiassistant",
       "!.github",
-      "!.idea",
       "!.junie",
       "!cypress",
-      "!**/*.js",
-      "!**/*.jsx",
       "!drizzle",
-      "!node_modules",
       "!public",
       "!.aiignore",
       "!.env*",
       "!next-env.d.ts",
-      "!pnpm-lock.yaml",
       "!pnpm-workspace.yaml",
       "!.turbo"
     ]
@@ -150,6 +150,7 @@
       },
       "style": {
         "noCommonJs": "on",
+        "noDoneCallback": "on",
         "noEnum": "on",
         "noExportedImports": "on",
         "noImplicitBoolean": "on",
@@ -158,7 +159,6 @@
         "noNamespace": "on",
         "noNegationElse": "on",
         "noNestedTernary": "on",
-        "noNonNullAssertion": "on",
         "noParameterAssign": "on",
         "noParameterProperties": "on",
         "noProcessEnv": "on",
@@ -379,11 +379,5 @@
         }
       }
     }
-  ],
-  "root": true,
-  "vcs": {
-    "clientKind": "git",
-    "enabled": true,
-    "useIgnoreFile": true
-  }
+  ]
 }
