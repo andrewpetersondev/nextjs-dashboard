@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { AuthCredentialsSchema } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
+import { AuthCredentialsSchema } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { UsernameSchema } from "@/shared/validation/zod/username.schema";
 
@@ -8,11 +8,11 @@ import { UsernameSchema } from "@/shared/validation/zod/username.schema";
  *
  * Extends credentials with normalized username.
  */
-export const SignupRequestSchema = AuthCredentialsSchema.safeExtend({
+export const SignupFormSchema = AuthCredentialsSchema.safeExtend({
   username: UsernameSchema,
 });
 
 /** The validated data used by the Workflow and Services */
-export type SignupRequestDto = z.output<typeof SignupRequestSchema>;
+export type SignupRequestDto = z.output<typeof SignupFormSchema>;
 
-export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupRequestSchema);
+export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupFormSchema);

@@ -2,8 +2,8 @@ import "server-only";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
+import type { SignupCommand } from "@/modules/auth/application/auth-user/dtos/requests/signup.command";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
-import type { SignupRequestDto } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
@@ -53,7 +53,7 @@ export class SignupUseCase {
    * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
    */
   execute(
-    input: Readonly<SignupRequestDto>,
+    input: Readonly<SignupCommand>,
   ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute(
       () =>

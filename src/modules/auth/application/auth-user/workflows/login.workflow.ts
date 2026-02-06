@@ -1,6 +1,6 @@
 import "server-only";
 import type { LoginUseCase } from "@/modules/auth/application/auth-user/commands/login.use-case";
-import type { LoginRequestDto } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
+import type { LoginCommand } from "@/modules/auth/application/auth-user/dtos/requests/login.command";
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/session/workflows/establish-session-for-auth-user.workflow";
@@ -22,7 +22,7 @@ import type { Result } from "@/shared/results/result.types";
  * @returns A Result containing the session principal or an AppError.
  */
 export async function loginWorkflow(
-  input: Readonly<LoginRequestDto>,
+  input: Readonly<LoginCommand>,
   deps: Readonly<{
     loginUseCase: LoginUseCase;
     sessionService: SessionServiceContract;

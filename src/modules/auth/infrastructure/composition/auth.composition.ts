@@ -1,6 +1,6 @@
 import "server-only";
-import type { LoginRequestDto } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
-import type { SignupRequestDto } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
+import type { LoginCommand } from "@/modules/auth/application/auth-user/dtos/requests/login.command";
+import type { SignupCommand } from "@/modules/auth/application/auth-user/dtos/requests/signup.command";
 import { createDemoUserWorkflow } from "@/modules/auth/application/auth-user/workflows/create-demo-user.workflow";
 import { loginWorkflow } from "@/modules/auth/application/auth-user/workflows/login.workflow";
 import { signupWorkflow } from "@/modules/auth/application/auth-user/workflows/signup.workflow";
@@ -95,11 +95,9 @@ export type AuthComposition = Readonly<{
     demoUser(
       input: Readonly<UserRole>,
     ): ReturnType<typeof createDemoUserWorkflow>;
-    login(input: Readonly<LoginRequestDto>): ReturnType<typeof loginWorkflow>;
+    login(input: Readonly<LoginCommand>): ReturnType<typeof loginWorkflow>;
     logout(): ReturnType<typeof logoutWorkflow>;
-    signup(
-      input: Readonly<SignupRequestDto>,
-    ): ReturnType<typeof signupWorkflow>;
+    signup(input: Readonly<SignupCommand>): ReturnType<typeof signupWorkflow>;
   }>;
 }>;
 

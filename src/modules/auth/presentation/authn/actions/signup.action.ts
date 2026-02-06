@@ -1,13 +1,14 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
+import { toSignupCommand } from "@/modules/auth/presentation/authn/adapters/to-signup-command.adapter";
+import { toSignupFormResult } from "@/modules/auth/presentation/authn/mappers/to-signup-form-result.mapper";
 import {
   SIGNUP_FIELDS_LIST,
+  SignupFormSchema,
   type SignupRequestDto,
-  SignupRequestSchema,
-} from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
-import { toSignupFormResult } from "@/modules/auth/application/shared/mappers/flows/signup/to-signup-form-result.mapper";
-import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
+} from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
@@ -22,7 +23,7 @@ const fields = SIGNUP_FIELDS_LIST;
  *
  * @remarks
  * This action orchestrates the entire signup flow:
- * 1. Validates the {@link FormData} against {@link SignupRequestSchema}.
+ * 1. Validates the {@link FormData} against {@link SignupFormSchema}.
  * 2. Executes the auth composition's signup workflow which handles user creation
  *    within a transaction and session establishment.
  * 3. Tracks performance and logs the outcome (success or failure).
@@ -54,7 +55,7 @@ export async function signupAction(
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, SignupRequestSchema, fields),
+    validateForm(formData, SignupFormSchema, fields),
   );
 
   if (!validated.ok) {
@@ -83,7 +84,7 @@ export async function signupAction(
   });
 
   const sessionResult = await tracker.measure("authentication", () =>
-    auth.workflows.signup(input),
+    auth.workflows.signup(toSignupCommand(input)),
   );
 
   if (!sessionResult.ok) {

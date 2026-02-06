@@ -1,6 +1,6 @@
 import "server-only";
-import { SIGNUP_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
-import { mapGenericAuthError } from "@/modules/auth/application/shared/mappers/flows/login/map-generic-auth.error";
+import { mapGenericAuthError } from "@/modules/auth/presentation/authn/mappers/map-generic-auth.error";
+import { SIGNUP_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

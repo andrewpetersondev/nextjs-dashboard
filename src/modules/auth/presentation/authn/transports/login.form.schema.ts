@@ -18,9 +18,9 @@ export const AuthCredentialsSchema = z.strictObject({
  *
  * Alias of AuthCredentialsSchema.
  */
-export const LoginRequestSchema = AuthCredentialsSchema;
+export const LoginFormSchema = AuthCredentialsSchema;
 
 /** The validated data used by the Workflow and Services */
-export type LoginRequestDto = z.output<typeof LoginRequestSchema>;
+export type LoginRequestDto = z.output<typeof LoginFormSchema>;
 
-export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginRequestSchema);
+export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginFormSchema);

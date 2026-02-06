@@ -1,13 +1,14 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
+import { toLoginCommand } from "@/modules/auth/presentation/authn/adapters/to-login-command.adapter";
+import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/to-login-form-result.mapper";
 import {
   LOGIN_FIELDS_LIST,
+  LoginFormSchema,
   type LoginRequestDto,
-  LoginRequestSchema,
-} from "@/modules/auth/application/auth-user/schemas/login-request.schema";
-import { toLoginFormResult } from "@/modules/auth/application/shared/mappers/flows/login/to-login-form-result.mapper";
-import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
+} from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
@@ -22,7 +23,7 @@ const fields = LOGIN_FIELDS_LIST;
  *
  * @remarks
  * This action orchestrates the entire login process:
- * 1. Validates the {@link FormData} against {@link LoginRequestSchema}.
+ * 1. Validates the {@link FormData} against {@link LoginFormSchema}.
  * 2. Executes the {@link loginWorkflow} which handles authentication and session establishment.
  * 3. Tracks performance and logs the outcome (success or failure).
  * 4. Maps domain/application errors to UI-compatible {@link FormResult}.
@@ -54,7 +55,7 @@ export async function loginAction(
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, LoginRequestSchema, fields),
+    validateForm(formData, LoginFormSchema, fields),
   );
 
   if (!validated.ok) {
@@ -82,7 +83,7 @@ export async function loginAction(
   });
 
   const sessionResult = await tracker.measure("authentication", () =>
-    auth.workflows.login(input),
+    auth.workflows.login(toLoginCommand(input)),
   );
 
   if (!sessionResult.ok) {

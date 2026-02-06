@@ -1,11 +1,11 @@
 "use client";
 import { AtSymbolIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
 import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/feedback/auth-form-feedback";
 import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/layout/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/layout/form-row.wrapper";
 import type { AuthActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
+import { LOGIN_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";

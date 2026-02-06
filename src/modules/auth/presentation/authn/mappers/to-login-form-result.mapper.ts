@@ -1,5 +1,5 @@
-import { LOGIN_FIELDS_LIST } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
-import { mapGenericAuthError } from "@/modules/auth/application/shared/mappers/flows/login/map-generic-auth.error";
+import { mapGenericAuthError } from "@/modules/auth/presentation/authn/mappers/map-generic-auth.error";
+import { LOGIN_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";

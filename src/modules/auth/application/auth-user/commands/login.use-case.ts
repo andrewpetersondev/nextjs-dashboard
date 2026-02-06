@@ -1,9 +1,9 @@
 import "server-only";
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
+import type { LoginCommand } from "@/modules/auth/application/auth-user/dtos/requests/login.command";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import { AuthErrorFactory } from "@/modules/auth/application/auth-user/errors/auth-error.factory";
-import type { LoginRequestDto } from "@/modules/auth/application/auth-user/schemas/login-request.schema";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
@@ -59,7 +59,7 @@ export class LoginUseCase {
    */
   // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
   execute(
-    input: Readonly<LoginRequestDto>,
+    input: Readonly<LoginCommand>,
   ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute(
       // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
