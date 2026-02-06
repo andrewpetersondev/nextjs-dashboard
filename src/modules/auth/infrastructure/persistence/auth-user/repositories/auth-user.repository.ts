@@ -1,6 +1,7 @@
 import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup-query.dto";
+import { validateAuthUserCreateDto } from "@/modules/auth/application/auth-user/validators/auth-user-create.validator";
 import { validateAuthUserEntity } from "@/modules/auth/application/auth-user/validators/auth-user-entity.validator";
 import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/shared/mappers/flows/signup/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
@@ -108,6 +109,21 @@ export class AuthUserRepository {
   async signup(
     input: Readonly<AuthUserCreateDto>,
   ): Promise<Result<AuthUserEntity, AppError>> {
+    const preDalValidation = validateAuthUserCreateDto(input);
+
+    if (!preDalValidation.ok) {
+      this.logger.error(
+        "AuthUserCreateDto validation failed before insertUserDal",
+        {
+          email: input.email,
+          error: preDalValidation.error,
+          role: input.role,
+          username: input.username,
+        },
+      );
+      return preDalValidation;
+    }
+
     const rowResult = await insertUserDal(this.db, input, this.logger);
 
     if (!rowResult.ok) {
