@@ -1,9 +1,6 @@
 import "server-only";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
-import { toHash } from "@/server/crypto/hashing/hashing.value";
 import type { UserRow } from "@/server/db/schema";
-import { toUserId } from "@/shared/branding/converters/id-converters";
-import { parseUserRole } from "@/shared/validation/user/user-role.parser";
 
 /**
  * Maps a raw database user row to the {@link AuthUserEntity}.
@@ -16,9 +13,9 @@ import { parseUserRole } from "@/shared/validation/user/user-role.parser";
 export function toAuthUserEntity(row: UserRow): AuthUserEntity {
   return {
     email: row.email,
-    id: toUserId(row.id),
-    password: toHash(row.password),
-    role: parseUserRole(row.role),
+    id: row.id,
+    password: row.password,
+    role: row.role,
     username: row.username,
   };
 }

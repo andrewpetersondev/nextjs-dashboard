@@ -4,6 +4,8 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import { EmailSchema } from "@/shared/validation/zod/email.schema";
+import { UsernameSchema } from "@/shared/validation/zod/username.schema";
 
 /**
  * Validates an AuthUserEntity to ensure it satisfies domain invariants.
@@ -27,49 +29,50 @@ import type { Result } from "@/shared/results/result.types";
 export function validateAuthUserEntity(
   entity: AuthUserEntity,
 ): Result<AuthUserEntity, AppError> {
-  // Validate email format (basic check)
-  if (!entity.email || entity.email.trim().length === 0) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "empty_email",
-        message: "auth.validation.email_required",
-        metadata: {
-          field: "email",
-          reason: "Email cannot be empty",
-        },
-      }),
-    );
-  }
+  const emailResult = EmailSchema.safeParse(entity.email);
 
-  if (!entity.email.includes("@")) {
+  if (!emailResult.success) {
     return Err(
       makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "invalid_email_format",
+        cause: "invalid_email",
         message: "auth.validation.invalid_email",
         metadata: {
           field: "email",
-          reason: "Email must contain @ symbol",
+          reason: "Email must be a valid, normalized email address",
         },
       }),
     );
   }
 
-  // Validate username
-  if (!entity.username || entity.username.trim().length === 0) {
+  const normalizedEmail = emailResult.data;
+
+  const usernameResult = UsernameSchema.safeParse(entity.username);
+
+  if (!usernameResult.success) {
     return Err(
       makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "empty_username",
+        cause: "invalid_username",
         message: "auth.validation.username_required",
         metadata: {
           field: "username",
-          reason: "Username cannot be empty",
+          reason: "Username must be present and satisfy username policy",
         },
       }),
     );
   }
 
+  const normalizedUsername = usernameResult.data;
+
+  // Normalize at the boundary so infra/domain entities always use canonical identity values.
+  // This keeps auth flows resilient even if legacy rows exist in the database.
+  const normalizedEntity: AuthUserEntity = {
+    ...entity,
+    email: normalizedEmail,
+    username: normalizedUsername,
+  };
+
   // Validate user ID
-  if (!entity.id) {
+  if (!normalizedEntity.id) {
     return Err(
       makeAppError(APP_ERROR_KEYS.validation, {
         cause: "missing_user_id",
@@ -83,7 +86,7 @@ export function validateAuthUserEntity(
   }
 
   // Validate password hash (for authentication entities)
-  if (!entity.password || entity.password.length === 0) {
+  if (!normalizedEntity.password || normalizedEntity.password.length === 0) {
     return Err(
       makeAppError(APP_ERROR_KEYS.validation, {
         cause: "missing_password_hash",
@@ -97,7 +100,7 @@ export function validateAuthUserEntity(
   }
 
   // Validate role
-  if (!entity.role) {
+  if (!normalizedEntity.role) {
     return Err(
       makeAppError(APP_ERROR_KEYS.validation, {
         cause: "missing_role",
@@ -111,5 +114,5 @@ export function validateAuthUserEntity(
   }
 
   // All validations passed
-  return Ok(entity);
+  return Ok(normalizedEntity);
 }
