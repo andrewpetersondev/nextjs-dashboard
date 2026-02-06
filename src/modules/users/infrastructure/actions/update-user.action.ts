@@ -139,7 +139,7 @@ export async function updateUserAction(
     const service = createUserService(db);
 
     // Read existing user via service
-    const existing = await service.findUserById(idRes.value);
+    const existing = await service.readUserById(idRes.value);
     if (!existing) {
       return notFoundResult(fields);
     }

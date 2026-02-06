@@ -7,7 +7,7 @@ import type {
   CreateUserData,
   EditUserData,
 } from "@/modules/users/domain/user.schema";
-import { userEntityToDto } from "@/modules/users/infrastructure/mappers/user.mapper";
+import { userEntityToDto } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
@@ -140,9 +140,9 @@ export class UserService {
     }
   }
 
-  async findUserById(id: UserId): Promise<UserDto | null> {
+  async readUserById(id: UserId): Promise<UserDto | null> {
     try {
-      const user = await this.repo.findById(id);
+      const user = await this.repo.readById(id);
       return user ? userEntityToDto(user) : null;
     } catch (err) {
       this.logger.error(USER_ERROR_MESSAGES.readFailed, {
@@ -153,9 +153,9 @@ export class UserService {
     }
   }
 
-  async findUsers(query: string, page: number): Promise<UserDto[]> {
+  async readFilteredUsers(query: string, page: number): Promise<UserDto[]> {
     try {
-      const users = await this.repo.findMany(query, page);
+      const users = await this.repo.readFilteredUsers(query, page);
       return users.map(userEntityToDto);
     } catch (err) {
       this.logger.error("Failed to fetch filtered users", {
@@ -166,9 +166,9 @@ export class UserService {
     }
   }
 
-  async getUserPageCount(query: string): Promise<number> {
+  async readUserPageCount(query: string): Promise<number> {
     try {
-      return await this.repo.getPageCount(query);
+      return await this.repo.readPageCount(query);
     } catch (err) {
       this.logger.error("Failed to count users", {
         error: err,

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { InvoicesSearchSkeleton } from "@/modules/invoices/presentation/components/invoices.skeletons";
-import { fetchUsersPageCountAction } from "@/modules/users/infrastructure/actions/fetch-users-page-count.action";
+import { readUsersPageCountAction } from "@/modules/users/infrastructure/actions/read-users-page-count.action";
+import { UsersTable } from "@/modules/users/presentation/components/tables/users-table";
 import { CreateUserLink } from "@/modules/users/presentation/components/user-action-buttons";
-import { UsersTable } from "@/modules/users/presentation/tables/users-table";
 import { H1 } from "@/ui/atoms/headings";
 import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";
@@ -32,11 +32,11 @@ export default async function Page(
   const searchParams: UsersSearchParams | undefined =
     await dynamicUrl.searchParams;
 
-  const query: string = searchParams?.query || "";
+  const query = searchParams?.query || "";
 
-  const currentPage: number = Number(searchParams?.page) || 1;
+  const currentPage = Number(searchParams?.page) || 1;
 
-  const totalPages: number = await fetchUsersPageCountAction(query);
+  const totalPages = await readUsersPageCountAction(query);
 
   return (
     <main className="w-full">

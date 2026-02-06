@@ -27,16 +27,7 @@ export function userEntityToDto(entity: UserEntity): UserDto {
  * @returns The corresponding UserEntity.
  */
 export function toUserEntity(row: UserRow): UserEntity {
-  if (
-    !(
-      row.id &&
-      row.email &&
-      row.password &&
-      row.role &&
-      row.sensitiveData &&
-      row.username
-    )
-  ) {
+  if (!(row.id && row.email && row.password && row.role && row.username)) {
     throw new Error("Missing required user row fields");
   }
   return {
@@ -44,7 +35,7 @@ export function toUserEntity(row: UserRow): UserEntity {
     id: toUserId(row.id),
     password: row.password,
     role: parseUserRole(row.role),
-    sensitiveData: row.sensitiveData,
+    sensitiveData: row.sensitiveData ?? undefined,
     username: row.username,
   };
 }

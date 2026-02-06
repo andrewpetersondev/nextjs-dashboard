@@ -38,15 +38,15 @@ export class UserRepositoryAdapter
     return this.repo.delete(id);
   }
 
-  findById(id: UserId): Promise<UserEntity | null> {
-    return this.repo.findById(id);
+  readById(id: UserId): Promise<UserEntity | null> {
+    return this.repo.readById(id);
   }
 
-  findMany(query: string, page: number): Promise<UserEntity[]> {
-    return this.repo.findMany(query, page);
+  readFilteredUsers(query: string, page: number): Promise<UserEntity[]> {
+    return this.repo.readFilteredUsers(query, page);
   }
 
-  getPageCount(query: string): Promise<number> {
-    return this.repo.getPageCount(query);
+  readPageCount(query: string): Promise<number> {
+    return this.repo.readPageCount(query);
   }
 }

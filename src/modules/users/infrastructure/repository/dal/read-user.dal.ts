@@ -2,7 +2,7 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
-import { toUserEntity } from "@/modules/users/infrastructure/mappers/user.mapper";
+import { toUserEntity } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";

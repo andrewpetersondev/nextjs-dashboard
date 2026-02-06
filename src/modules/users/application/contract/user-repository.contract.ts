@@ -17,9 +17,9 @@ export interface UserRepositoryContract<Trepo = unknown> {
 
   delete(id: UserId): Promise<UserEntity | null>;
 
-  findById(id: UserId): Promise<UserEntity | null>;
+  readById(id: UserId): Promise<UserEntity | null>;
 
-  findMany(query: string, page: number): Promise<UserEntity[]>;
+  readFilteredUsers(query: string, page: number): Promise<UserEntity[]>;
 
-  getPageCount(query: string): Promise<number>;
+  readPageCount(query: string): Promise<number>;
 }

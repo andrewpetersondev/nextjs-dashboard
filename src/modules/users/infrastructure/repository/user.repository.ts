@@ -6,9 +6,9 @@ import type {
 } from "@/modules/users/domain/user.entity";
 import { createUserDal } from "@/modules/users/infrastructure/repository/dal/create-user.dal";
 import { deleteUserDal } from "@/modules/users/infrastructure/repository/dal/delete-user.dal";
-import { fetchFilteredUsersDal } from "@/modules/users/infrastructure/repository/dal/fetch-filtered-users.dal";
-import { fetchUserByIdDal } from "@/modules/users/infrastructure/repository/dal/fetch-user-by-id.dal";
-import { fetchUsersPagesDal } from "@/modules/users/infrastructure/repository/dal/fetch-users-pages.dal";
+import { readFilteredUsersDal } from "@/modules/users/infrastructure/repository/dal/read-filtered-users.dal";
+import { readUserDal } from "@/modules/users/infrastructure/repository/dal/read-user.dal";
+import { readUsersPageCountDal } from "@/modules/users/infrastructure/repository/dal/read-users-page-count.dal";
 import { updateUserDal } from "@/modules/users/infrastructure/repository/dal/update-user.dal";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -53,15 +53,15 @@ export class UserRepositoryImpl {
     return await deleteUserDal(this.db, id);
   }
 
-  async findById(id: UserId): Promise<UserEntity | null> {
-    return await fetchUserByIdDal(this.db, id);
+  async readById(id: UserId): Promise<UserEntity | null> {
+    return await readUserDal(this.db, id);
   }
 
-  async findMany(query: string, page: number): Promise<UserEntity[]> {
-    return await fetchFilteredUsersDal(this.db, query, page);
+  async readFilteredUsers(query: string, page: number): Promise<UserEntity[]> {
+    return await readFilteredUsersDal(this.db, query, page);
   }
 
-  async getPageCount(query: string): Promise<number> {
-    return await fetchUsersPagesDal(this.db, query);
+  async readPageCount(query: string): Promise<number> {
+    return await readUsersPageCountDal(this.db, query);
   }
 }

@@ -9,7 +9,7 @@
 # TOOLING
 # ======================================================
 .gitignore
-# biome.json
+biome.json
 devtools
 src/drizzle
 eslint.config.mjs
@@ -22,8 +22,6 @@ eslint.config.mjs
 cypress/screenshots
 cypress/videos
 cypress/downloads
-# vitest.config.ts
-# vitest.setup.ts
 
 # ======================================================
 # DOCUMENTATION & STORAGE
@@ -34,12 +32,12 @@ storage
 # ======================================================
 # NEXT.JS PROJECT CODE
 # ======================================================
-public
+# public
 src/modules/banner
 src/modules/customers
 src/modules/revenues
 src/modules/invoices
-src/modules/users
+# src/modules/users
 
 # ======================================================
 # BUILD / OUTPUT FILES
@@ -61,7 +59,7 @@ tsconfig.tsbuildinfo
 *.sh
 *.txt
 *.yaml
-*.tsx
+# *.tsx
 
 # ======================================================
 # DOCKER

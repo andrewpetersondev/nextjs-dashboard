@@ -10,5 +10,5 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
 export async function readUserAction(id: string): Promise<UserDto | null> {
   const db = getAppDb();
   const service = createUserService(db);
-  return await service.findUserById(toUserId(id));
+  return await service.readUserById(toUserId(id));
 }

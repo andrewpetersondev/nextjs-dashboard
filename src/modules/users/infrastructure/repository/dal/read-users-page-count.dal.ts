@@ -15,7 +15,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
  * @param query - Search query for username or email.
  * @returns Number of pages as a number.
  */
-export async function fetchUsersPagesDal(
+export async function readUsersPageCountDal(
   db: AppDatabase,
   query: string,
 ): Promise<number> {

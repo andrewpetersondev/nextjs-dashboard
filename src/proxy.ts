@@ -37,9 +37,12 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
     .withRequest(requestId);
 
   const path = normalizePath(req.nextUrl.pathname);
+
+  // Option B: Compute mutually exclusive flags
   const isAdminRoute = isAdminRouteHelper(path);
-  const isProtectedRoute = isProtectedRouteHelper(path);
-  const isPublicRoute = isPublicRouteHelper(path);
+  const isProtectedRoute = !isAdminRoute && isProtectedRouteHelper(path);
+  const isPublicRoute =
+    !(isAdminRoute || isProtectedRoute) && isPublicRouteHelper(path);
 
   if (!(isProtectedRoute || isAdminRoute || isPublicRoute)) {
     return NextResponse.next();

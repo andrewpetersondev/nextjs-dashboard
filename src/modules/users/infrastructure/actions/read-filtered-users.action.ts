@@ -12,5 +12,5 @@ export async function readFilteredUsersAction(
 ): Promise<UserDto[]> {
   const db = getAppDb();
   const service = createUserService(db);
-  return await service.findUsers(query, currentPage);
+  return await service.readFilteredUsers(query, currentPage);
 }
