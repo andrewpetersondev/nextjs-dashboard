@@ -5,9 +5,11 @@ improvements and identified gaps.
 
 ---
 
-### **Gap 3: No Explicit Boundary Validation** ✅ FIXED
+### **Gap 3: No Explicit Boundary Validation** ⚠️ PARTIALLY ADDRESSED
 
-**Status:** Fixed. Added `validateAuthUserEntity` calls in `AuthUserRepository`.
+**Status:** Partially addressed. `validateAuthUserEntity` is now called in `AuthUserRepository` after mapping (
+application → domain boundary), but there is still no explicit “final gate” validation immediately before
+persistence/DAL operations (domain → infrastructure).
 
 **Issue:** Data crosses layer boundaries without explicit validation at each boundary.
 
@@ -15,7 +17,7 @@ improvements and identified gaps.
 
 ```
 FormData → LoginRequestDto (validated) → Use Case → Repository → DAL
-```
+``` 
 
 **Missing Validations:**
 
@@ -24,10 +26,10 @@ FormData → LoginRequestDto (validated) → Use Case → Repository → DAL
 - ❌ **Domain → Infrastructure:** No validation before DAL operations
 - ✅ **Infrastructure → Application:** Validated via repository boundary checks
 
-**Recommendation:** Add boundary validators:
+**Current validator (exists):**
 
 ```typescript
-// NEW: application/auth-user/validators/auth-user-entity.validator.ts
+// src/modules/auth/application/auth-user/validators/auth-user-entity.validator.ts
 export function validateAuthUserEntity(
     entity: AuthUserEntity
 ): Result<AuthUserEntity, AppError> {
@@ -39,11 +41,14 @@ export function validateAuthUserEntity(
 }
 ```
 
+**Next step (optional, higher risk):** add explicit validation right before DAL writes/reads in the infrastructure
+boundary.
+
 ---
 
-### **Gap 4: Session Token Flow Not Clear** ⚠️ MEDIUM PRIORITY
+### **Gap 4: Session Token Flow Not Clear** ✅ FIXED
 
-**Issue:** Session token creation involves 3 services but the orchestration isn't obvious.
+**Status:** Fixed. Session token issuance/validation + cookie responsibilities are now documented.
 
 **Current Structure:**
 
@@ -56,26 +61,17 @@ SessionService
       └─ SessionCookieStoreAdapter.set()
 ```
 
-**Problem:**
+**Docs added (current references):**
 
-- 4 levels of indirection
-- Hard to understand what each layer does
-- Difficult to add features like token refresh, blacklisting
-
-**Recommendation:** Add a session flow diagram and simplify:
-
-```
-application/session/
-└── README.md                        # NEW: Document session architecture
-    ├─ Token issuance flow
-    ├─ Token validation flow
-    ├─ Cookie management
-    └─ Security considerations
-```
+- `src/modules/auth/application/session/README.md`
+- `src/modules/auth/notes/flows/session-lifecycle.md`
+- `src/modules/auth/notes/sequence-diagrams.md`
 
 ---
 
-### **Gap 5: Error Handling Path Not Documented** ⚠️ HIGH PRIORITY
+### **Gap 5: Error Handling Path Not Documented** ✅ FIXED
+
+**Status:** Fixed. Error sources, transformation rules, and security considerations are documented.
 
 **Issue:** Errors can originate from 6+ different layers, but the error handling strategy isn't documented.
 
@@ -98,39 +94,25 @@ DAL Error → executeDalResult() → Result<T, AppError>
   → Server Action → toLoginFormResult() → FormResult
 ```
 
-**Missing:**
+**Docs added (current reference):**
 
-- No documentation of which errors can occur at each layer
-- No error recovery strategies documented
-- No error logging strategy documented
-
-**Recommendation:** Create error handling documentation:
-
-```
-src/modules/auth/notes/
-└── error-handling.md                # NEW: Complete error handling guide
-    ├─ Error types by layer
-    ├─ Error transformation rules
-    ├─ Error recovery strategies
-    ├─ Logging requirements
-    └─ Security considerations (don't leak info)
-```
+- `src/modules/auth/notes/flows/error-handling.md`
 
 ---
 
-### **Gap 6: Missing Observability Touchpoints** ⚠️ LOW PRIORITY
+### **Gap 6: Missing Observability Touchpoints** ✅ FIXED
+
+**Status:** Fixed. Performance tracking is now present across the critical path.
 
 **Issue:** Logging exists but performance tracking is inconsistent.
 
-**Current Logging:**
+**Current logging/metrics touchpoints (high level):**
 
-- ✅ Server Action: PerformanceTracker + structured logging
-- ✅ DAL: Operation logging
-- ❌ Use Case: No performance tracking
-- ❌ Repository: No performance tracking
-- ❌ Session Service: No performance tracking
+- ✅ Presentation actions: `PerformanceTracker` + structured logging
+- ✅ Use cases: `PerformanceTracker` in `LoginUseCase` and `EstablishSessionUseCase`
+- ✅ DAL: operation logging
 
-**Recommendation:** Add consistent performance tracking:
+**Note:** Repository-level timing can still be added later if you want finer-grained spans.
 
 ```typescript
 // Use Case example
@@ -156,38 +138,18 @@ export class LoginUseCase {
 
 ---
 
-### **Gap 7: No Integration Test for Complete Flow** ⚠️ HIGH PRIORITY
+### **Gap 7: No Integration Test for Complete Flow** ✅ FIXED
 
-**Issue:** No test that validates the entire login flow from action to database and back.
+**Status:** Fixed. Integration coverage exists for the major auth flows.
 
-**Missing Tests:**
+**Integration tests (current):**
 
-- ❌ End-to-end login flow test
-- ❌ Error propagation test (DB error → UI error)
-- ❌ Session establishment test
-- ❌ Cookie setting test
+- `src/modules/auth/__tests__/integration/error-propagation.test.ts`
+- `src/modules/auth/__tests__/integration/login-flow.test.ts`
+- `src/modules/auth/__tests__/integration/session-rotation.test.ts`
+- `src/modules/auth/__tests__/integration/signup-flow.test.ts`
 
-**Recommendation:** Add integration tests:
-
-```typescript
-// NEW: src/modules/auth/__tests__/integration/login-flow.test.ts
-
-describe("Login Flow Integration", () => {
-    it("should complete full login flow: action → db → session → cookie", async () => {
-        // 1. Setup test database with user
-        // 2. Call loginAction with FormData
-        // 3. Verify database query was made
-        // 4. Verify password was checked
-        // 5. Verify session token was created
-        // 6. Verify cookie was set
-        // 7. Verify redirect occurred
-    });
-
-    it("should propagate DB errors to UI correctly", async () => {
-        // Test error flow
-    });
-});
-```
+**Next useful additions:** cookie assertions (if not already covered) and a regression test for credential enumeration.
 
 ---
 
@@ -197,15 +159,16 @@ describe("Login Flow Integration", () => {
 
 ```
 src/modules/auth/notes/
+├── adr/
 ├── flowcharts.md
-├── sequence-diagrams.md
-└── flows/                           # NEW
-    ├── README.md                    # Overview of all flows
-    ├── login-flow.md                # Detailed login flow (like this doc)
-    ├── signup-flow.md
-    ├── session-lifecycle.md
-    ├── data-transformations.md      # All mapper chains
-    └── error-handling.md            # Error flow documentation
+├── flows/
+│   ├── README.md
+│   ├── data-transformations.md
+│   ├── error-handling.md
+│   ├── login-flow.md
+│   ├── session-lifecycle.md
+│   └── signup-flow.md
+└── sequence-diagrams.md
 ```
 
 ### **Improvement 2: Add Layer README Files**
@@ -213,26 +176,27 @@ src/modules/auth/notes/
 Each major layer should have a README explaining its responsibilities:
 
 ```
-application/
-├── README.md                        # NEW: Application layer overview
+src/modules/auth/application/
+├── README.md
 ├── auth-user/
-│   ├── README.md                    # NEW: Auth user subdomain
-│   ├── commands/
-│   │   └── README.md                # NEW: Command pattern explanation
-│   └── workflows/
-│       └── README.md                # EXISTS: Keep and enhance
-└── session/
-    └── README.md                    # NEW: Session subdomain
+│   └── README.md
+├── session/
+│   └── README.md
+└── shared/
+    └── README.md
 
-infrastructure/
-├── README.md                        # NEW: Infrastructure layer overview
+src/modules/auth/domain/
+└── README.md
+
+src/modules/auth/infrastructure/
+├── README.md
 ├── persistence/
-│   └── README.md                    # NEW: Persistence patterns
+│   └── README.md
 └── session/
-    └── README.md                    # NEW: Session infrastructure
+    └── README.md
 
-presentation/
-└── README.md                        # NEW: Presentation layer overview
+src/modules/auth/presentation/
+└── README.md
 ```
 
 ### **Improvement 3: Add Mapper Registry**
@@ -307,7 +271,7 @@ application/session/mappers/
 
 ```
 application/shared/mappers/
-├── flows/                           # NEW: Group by flow
+├── flows/                           # PROPOSED: Group by flow
 │   ├── login/
 │   │   ├── to-authenticated-user.mapper.ts
 │   │   ├── to-session-principal.mapper.ts
@@ -344,18 +308,21 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Phase 1: Documentation (Immediate - Low Risk)**
 
 1. ✅ **Create flow documentation**
-    - Add `notes/flows/login-flow.md` (based on this analysis)
-    - Add `notes/flows/data-transformations.md`
-    - Add `notes/flows/error-handling.md`
+    - `src/modules/auth/notes/flows/login-flow.md`
+    - `src/modules/auth/notes/flows/data-transformations.md`
+    - `src/modules/auth/notes/flows/error-handling.md`
 
 2. ✅ **Add mapper registry**
-    - Create `application/shared/mappers/mapper-registry.ts`
-    - Document all mapper chains
+    - `src/modules/auth/application/shared/mappers/mapper-registry.ts`
+    - (Optional) `src/modules/auth/application/shared/mappers/mapper-chains.ts`
 
 3. ✅ **Add layer README files**
-    - `application/README.md`
-    - `infrastructure/README.md`
-    - `presentation/README.md`
+    - `src/modules/auth/application/README.md`
+    - `src/modules/auth/domain/README.md`
+    - `src/modules/auth/infrastructure/README.md`
+    - `src/modules/auth/infrastructure/persistence/README.md`
+    - `src/modules/auth/infrastructure/session/README.md`
+    - `src/modules/auth/presentation/README.md`
 
 **Estimated Effort:** 4-6 hours  
 **Risk:** None (documentation only)
@@ -381,9 +348,10 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 ### **Phase 3: Testing (Medium-term - Medium Risk)**
 
 6. ✅ **Add integration tests**
-    - Create `__tests__/integration/login-flow.test.ts`
-    - Test complete flow from action to database
-    - Test error propagation
+    - `src/modules/auth/__tests__/integration/error-propagation.test.ts`
+    - `src/modules/auth/__tests__/integration/login-flow.test.ts`
+    - `src/modules/auth/__tests__/integration/session-rotation.test.ts`
+    - `src/modules/auth/__tests__/integration/signup-flow.test.ts`
 
 7. ✅ **Add mapper tests**
     - Test each mapper in isolation
@@ -421,22 +389,20 @@ Keep current structure but add a `mapper-registry.ts` that documents the flow ch
 
 ### **What Needs Improvement ⚠️**
 
-1. **Flow documentation:** No visual documentation of complete flows
-2. **Mapper visibility:** Hard to trace data transformations across layers
-3. **Error handling docs:** Error flow not documented
-4. **Integration tests:** No tests for complete flows
-5. **Performance tracking:** Inconsistent across layers
-6. **Boundary validation:** No explicit validation at layer boundaries
+1. **Domain → infrastructure validation:** still no explicit “final gate” validation immediately before persistence/DAL
+   operations (beyond existing boundary checks).
+2. **Mapper organization:** optional refactor to group mappers by flow (higher-risk; only if the team agrees the import
+   churn is worth it).
+3. **Finer-grained tracing:** repository-level spans (optional) if you want more detailed timings than
+   action/use-case/DAL.
 
 ### **Priority Improvements**
 
-| Priority   | Improvement              | Effort | Risk   | Impact |
-|------------|--------------------------|--------|--------|--------|
-| **HIGH**   | Add flow documentation   | 4-6h   | None   | High   |
-| **HIGH**   | Add integration tests    | 8-12h  | Medium | High   |
-| **MEDIUM** | Add mapper registry      | 2h     | None   | Medium |
-| **MEDIUM** | Add performance tracking | 2-3h   | Low    | Medium |
-| **LOW**    | Add boundary validators  | 16-24h | High   | Medium |
+| Priority   | Improvement                            | Effort | Risk | Impact |
+|------------|----------------------------------------|--------|------|--------|
+| **HIGH**   | Add domain → infrastructure validators | 16-24h | High | Medium |
+| **MEDIUM** | Add repository-level spans (optional)  | 2-4h   | Low  | Low    |
+| **LOW**    | Consider mapper reorganization         | 16-24h | High | Medium |
 
 ---
 
