@@ -1,6 +1,7 @@
 import "server-only";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
+import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import type { SignupRequestDto } from "@/modules/auth/application/auth-user/schemas/signup-request.schema";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
@@ -63,12 +64,14 @@ export class SignupUseCase {
             return hashResult;
           }
 
-          const createdResultTx = await tx.authUsers.signup({
+          const signupCommand: AuthUserCreateDto = {
             email: input.email,
             password: hashResult.value,
             role: getDefaultRegistrationRole(),
             username: input.username,
-          });
+          };
+
+          const createdResultTx = await tx.authUsers.signup(signupCommand);
 
           if (!createdResultTx.ok) {
             return createdResultTx;
