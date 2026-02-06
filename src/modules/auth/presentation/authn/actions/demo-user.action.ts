@@ -6,7 +6,11 @@ import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
+import {
+  ADMIN_ROLE,
+  USER_ROLE,
+  type UserRole,
+} from "@/shared/validation/user/user-role.schema";
 
 /**
  * Internal helper: creates a demo user for the given role.
@@ -69,33 +73,31 @@ async function createDemoUserInternal(
 }
 
 /**
- * Next.js Server Action for creating a demo user.
- *
- * @remarks
- * This action extracts the user role from the provided {@link FormData} and
- * delegates the user creation process to {@link createDemoUserInternal}.
- * It is intended to be used with the `useActionState` hook in UI components.
+ * Next.js Server Action for creating a demo user with the 'USER' role.
  *
  * @param _prevState - The previous form state (unused but required by `useActionState`).
- * @param formData - The form data containing the 'role' field.
+ * @param _formData - The form data (unused).
  * @returns A promise resolving to a {@link FormResult} containing error details if the process fails.
  * @redirects {ROUTES.dashboard.root} on success.
  */
 export async function demoUserAction(
   _prevState: FormResult<never>,
-  formData: FormData,
+  _formData: FormData,
 ): Promise<FormResult<never>> {
-  const role = formData.get("role") as UserRole | null;
+  return await createDemoUserInternal(USER_ROLE);
+}
 
-  if (!role) {
-    return makeFormError({
-      fieldErrors: {} as DenseFieldErrorMap<string, string>,
-      formData: {},
-      formErrors: ["demo user creation failed: invalid role."],
-      key: "validation",
-      message: "demo user creation failed: invalid role.",
-    });
-  }
-
-  return await createDemoUserInternal(role);
+/**
+ * Next.js Server Action for creating a demo user with the 'ADMIN' role.
+ *
+ * @param _prevState - The previous form state (unused but required by `useActionState`).
+ * @param _formData - The form data (unused).
+ * @returns A promise resolving to a {@link FormResult} containing error details if the process fails.
+ * @redirects {ROUTES.dashboard.root} on success.
+ */
+export async function demoAdminAction(
+  _prevState: FormResult<never>,
+  _formData: FormData,
+): Promise<FormResult<never>> {
+  return await createDemoUserInternal(ADMIN_ROLE);
 }

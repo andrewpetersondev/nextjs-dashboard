@@ -1,6 +1,7 @@
 # Auth Presentation Layer
 
-This layer contains the **user interface and API endpoints** for authentication and session management. It handles user interactions, form submissions, and renders UI components using Next.js Server Actions and React components.
+This layer contains the **user interface and API endpoints** for authentication and session management. It handles user
+interactions, form submissions, and renders UI components using Next.js Server Actions and React components.
 
 ---
 
@@ -208,11 +209,11 @@ Registers new user and establishes session.
 **Success:** Redirect to dashboard  
 **Errors:** Duplicate email/username, validation errors
 
-#### **demoUserAction** (`actions/demo-user.action.ts`)
+#### **demoUserAction** & **demoAdminAction** (`actions/demo-user.action.ts`)
 
-Creates temporary demo user for testing.
+Creates temporary demo user for testing with the corresponding role.
 
-**Input:** User role  
+**Input:** None (Role is determined by the action)  
 **Success:** Redirect to dashboard  
 **Errors:** Demo user creation failed
 
@@ -249,11 +250,11 @@ Page-level containers that wrap forms:
 
 ```typescript
 export function LoginCard() {
-  return (
-    <AuthPageWrapper title="Sign In">
-      <LoginForm />
-    </AuthPageWrapper>
-  );
+    return (
+        <AuthPageWrapper title = "Sign In" >
+            <LoginForm / >
+            </AuthPageWrapper>
+    );
 }
 ```
 

@@ -5,13 +5,12 @@ import {
   DEMO_USER_LABEL,
 } from "@/modules/auth/presentation/constants/auth.tokens";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import {
-  ADMIN_ROLE,
-  USER_ROLE,
-  type UserRole,
-} from "@/shared/validation/user/user-role.schema";
 
 interface AuthFormDemoSectionProps {
+  readonly demoAdminAction: (
+    _prevState: FormResult<never>,
+    formData: FormData,
+  ) => Promise<FormResult<never>>;
   readonly demoAdminText: string;
   readonly demoUserAction: (
     _prevState: FormResult<never>,
@@ -28,19 +27,18 @@ export const AuthFormDemoSection: FC<AuthFormDemoSectionProps> = ({
   demoUserText,
   demoAdminText,
   demoUserAction,
+  demoAdminAction,
 }: AuthFormDemoSectionProps): JSX.Element => (
   <>
     <DemoForm
       action={demoUserAction}
       label={DEMO_USER_LABEL}
       text={demoUserText}
-      userRole={USER_ROLE as UserRole}
     />
     <DemoForm
-      action={demoUserAction}
+      action={demoAdminAction}
       label={DEMO_ADMIN_LABEL}
       text={demoAdminText}
-      userRole={ADMIN_ROLE as UserRole}
     />
   </>
 );

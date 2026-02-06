@@ -3,13 +3,11 @@ import type { FC, JSX } from "react";
 import { useActionState } from "react";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {
   label: string;
   text: string;
-  userRole: UserRole;
   action: (
     _prevState: FormResult<never>,
     formData: FormData,
@@ -22,7 +20,6 @@ interface DemoFormProps {
  */
 export const DemoForm: FC<DemoFormProps> = ({
   text,
-  userRole,
   label,
   action,
 }: DemoFormProps): JSX.Element => {
@@ -35,8 +32,6 @@ export const DemoForm: FC<DemoFormProps> = ({
 
   return (
     <form action={boundAction} aria-label={label}>
-      <input name="role" type="hidden" value={userRole} />
-
       <SubmitButtonMolecule
         className="mt-2"
         data-cy={`demo-user-button-${label}`}

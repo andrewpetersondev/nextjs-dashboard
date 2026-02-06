@@ -1,5 +1,8 @@
 import type { JSX } from "react";
-import { demoUserAction } from "@/modules/auth/presentation/authn/actions/demo-user.action";
+import {
+  demoAdminAction,
+  demoUserAction,
+} from "@/modules/auth/presentation/authn/actions/demo-user.action";
 import { LoginForm } from "@/modules/auth/presentation/authn/components/forms/login-form";
 import { AuthFormDemoSection } from "@/modules/auth/presentation/authn/components/shared/sections/auth-form-demo-section";
 import { AuthFormSocialSection } from "@/modules/auth/presentation/authn/components/shared/sections/auth-form-social-section";
@@ -16,6 +19,7 @@ export function LoginCard({
       <LoginForm action={action} />
       <DividerAtom label={AUTH_DIVIDER_LABEL} />
       <AuthFormDemoSection
+        demoAdminAction={demoAdminAction}
         demoAdminText="Login as Demo Admin"
         demoUserAction={demoUserAction}
         demoUserText="Login as Demo User"
