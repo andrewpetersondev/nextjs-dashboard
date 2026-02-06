@@ -23,12 +23,12 @@ describe("AuthUserRepository.signup final-gate validation", () => {
     const fakeDb = {};
     const fakeLogger: LoggingClientContract = {
       child: () => fakeLogger,
+      debug: vi.fn(),
       error: vi.fn(),
       errorWithDetails: vi.fn(),
       info: vi.fn(),
-      logAt: vi.fn(),
-      logBaseError: vi.fn(),
       operation: vi.fn(),
+      trace: vi.fn(),
       warn: vi.fn(),
       withContext: () => fakeLogger,
       withRequest: () => fakeLogger,
