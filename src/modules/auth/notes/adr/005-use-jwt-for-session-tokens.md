@@ -15,7 +15,8 @@ request.
 We will use JSON Web Tokens (JWT) stored in secure, HTTP-only cookies for session management.
 
 - **Storage**: Tokens are stored in a cookie named `session` (or similar).
-- **Security**: Cookies must be `HttpOnly`, `Secure`, and use `SameSite: Lax` (or `Strict`).
+- **Security**: Cookies must be `HttpOnly`, `Secure`, and use `SameSite: Strict` (current default; consider `Lax` only
+  if you introduce cross-site auth flows and add CSRF protections as needed).
 - **Payload**: Minimal data should be stored in the JWT (e.g., `userId`, `role`, `sid`).
 - **Signing**: Use a strong cryptographic algorithm (e.g., HS256 with a sufficiently long secret).
 - **Rotation**: Sessions should support rotation (refreshing the expiration) to keep users logged in during active use

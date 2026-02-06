@@ -1,6 +1,8 @@
 # Auth Infrastructure Layer
 
-This layer contains the **technical implementations** for authentication and session management. It provides concrete implementations of application contracts, handles external dependencies, and manages technical concerns like database access, cryptography, and JWT operations.
+This layer contains the **technical implementations** for authentication and session management. It provides concrete
+implementations of application contracts, handles external dependencies, and manages technical concerns like database
+access, cryptography, and JWT operations.
 
 ---
 
@@ -26,7 +28,8 @@ The infrastructure layer is the **outermost layer** in Clean Architecture. It:
 - **Handles technical concerns**: Connection pooling, error translation, logging
 - **Provides composition root**: Wires all dependencies together via Dependency Injection
 
-**Key Principle**: Infrastructure depends on application contracts, but application never depends on infrastructure implementations.
+**Key Principle**: Infrastructure depends on application contracts, but application never depends on infrastructure
+implementations.
 
 ---
 
@@ -188,7 +191,8 @@ infrastructure/
 
 ### **Composition Root** (`composition/`)
 
-The composition root is where **all dependencies are wired together**. It's the only place that knows about concrete implementations.
+The composition root is where **all dependencies are wired together**. It's the only place that knows about concrete
+implementations.
 
 **Responsibilities:**
 
@@ -443,7 +447,7 @@ Concrete JWT implementation:
 
 - HTTP-only cookies (prevents XSS)
 - Secure flag (HTTPS only in production)
-- SameSite=Lax (CSRF protection)
+- SameSite=Strict (CSRF protection; current default)
 - Short expiration (7 days)
 - Signature verification on every request
 

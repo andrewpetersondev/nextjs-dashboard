@@ -101,20 +101,13 @@ describe("Signup Flow Integration", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         const payload = getFormErrorPayload<SignupField>(result.error);
-        // It should either be a field error on email or a form error depending on mapper implementation
-        const hasEmailError =
-          payload.fieldErrors?.email && payload.fieldErrors.email.length > 0;
-        const hasFormError = payload.formErrors.length > 0;
-        expect(hasEmailError || hasFormError).toBe(true);
-
-        const errorMessage = hasEmailError
-          ? payload.fieldErrors?.email?.[0]
-          : payload.formErrors[0];
-
-        // The current implementation returns pg_unique_violation or similar if not mapped to a nice message
-        // Let's be more flexible with the error message for now or fix the mapper if needed
-        // biome-ignore lint/performance/useTopLevelRegex: TODO EXTRACT LATER
-        expect(errorMessage?.toLowerCase()).toMatch(/exists|unique|conflict/);
+        // Server Action contract: conflicts must return field-level errors.
+        expect(payload.fieldErrors?.email).toBeDefined();
+        expect(payload.fieldErrors.email.length).toBeGreaterThan(0);
+        expect(payload.fieldErrors.email[0]?.toLowerCase()).toMatch(
+          // biome-ignore lint/performance/useTopLevelRegex: TODO EXTRACT LATER
+          /already|use|exists|unique|conflict/,
+        );
       }
     });
 

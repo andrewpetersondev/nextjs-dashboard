@@ -1,6 +1,7 @@
 # Session Lifecycle Flow
 
-This document describes the complete lifecycle of user sessions in the authentication module, from creation through validation, rotation, and termination.
+This document describes the complete lifecycle of user sessions in the authentication module, from creation through
+validation, rotation, and termination.
 
 ## 🎯 Overview
 
@@ -117,7 +118,7 @@ Sessions in this application use **JWT-based stateless authentication** with the
   name: "session",           // Cookie name
   httpOnly: true,            // Prevents JavaScript access
   secure: true,              // HTTPS only (production)
-  sameSite: "lax",          // CSRF protection
+  sameSite: "strict",       // CSRF protection (current default)
   path: "/",                 // Available site-wide
   maxAge: SESSION_DURATION_SEC  // Session duration in seconds
 }
@@ -222,7 +223,7 @@ const CLOCK_TOLERANCE_SEC = 5;
 ### Possible Outcomes
 
 | Outcome                       | Reason                        | Action                      |
-| ----------------------------- | ----------------------------- | --------------------------- |
+|-------------------------------|-------------------------------|-----------------------------|
 | **Success**                   | Valid session                 | Continue to protected route |
 | **session_not_found**         | No cookie present             | Redirect to login           |
 | **jwt_invalid**               | Signature verification failed | Redirect to login           |

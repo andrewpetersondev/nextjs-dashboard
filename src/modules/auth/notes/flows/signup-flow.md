@@ -1,6 +1,7 @@
 # Signup Flow
 
-Complete documentation of the user registration flow from form submission through database insertion to session establishment.
+Complete documentation of the user registration flow from form submission through database insertion to session
+establishment.
 
 ## 🎯 Overview
 
@@ -85,14 +86,12 @@ Complete documentation of the user registration flow from form submission throug
 - `email`: User's email address
 - `username`: Desired username
 - `password`: Plain text password
-- `role`: User role (optional, defaults to 'user')
 
 **Validation**: SignupRequestSchema (Zod)
 
 - Email format validation
 - Username length and format
 - Password strength requirements
-- Role validation
 
 **Output**: Validated SignupRequestDto or validation errors
 
@@ -113,12 +112,12 @@ Complete documentation of the user registration flow from form submission throug
 ```typescript
 const authResult = await signupUseCase.execute(input);
 if (!authResult.ok) {
-  return authResult; // Propagate error
+    return authResult; // Propagate error
 }
 
 // Automatically establish session for new user
 return await establishSessionForAuthUserWorkflow(authResult, {
-  sessionService,
+    sessionService,
 });
 ```
 
@@ -133,10 +132,29 @@ return await establishSessionForAuthUserWorkflow(authResult, {
 ```typescript
 const hashedResult = await this.hasher.hash(input.password);
 if (!hashedResult.ok) {
-  return hashedResult; // Crypto error
+    return hashedResult; // Crypto error
 }
 
 const hashedPassword = hashedResult.value;
+```
+
+### Step 3.1: Default Role Selection (Domain Policy)
+
+**File**: `domain/auth-user/policies/registration.policy.ts`
+
+The signup request does **not** accept a `role` input. Instead, the role is assigned
+server-side by a domain policy.
+
+**Implementation detail**: `SignupUseCase` calls `getDefaultRegistrationRole()` and
+includes the returned value in the `AuthUserCreateDto` passed to the repository:
+
+```typescript
+const signupCommand: AuthUserCreateDto = {
+  email: input.email,
+  password: hashedPassword,
+  role: getDefaultRegistrationRole(),
+  username: input.username,
+};
 ```
 
 **Hashing Details**:
@@ -156,12 +174,12 @@ const hashedPassword = hashedResult.value;
 
 ```typescript
 await uow.execute(async (repo) => {
-  return await repo.signup({
-    email: input.email,
-    username: input.username,
-    password: hashedPassword,
-    role: input.role,
-  });
+    return await repo.signup({
+        email: input.email,
+        username: input.username,
+        password: hashedPassword,
+        role: input.role,
+    });
 });
 ```
 
@@ -181,14 +199,14 @@ await uow.execute(async (repo) => {
 
 ```typescript
 const [insertedRow] = await db
-  .insert(users)
-  .values({
-    email: input.email,
-    username: input.username,
-    password: input.password, // Already hashed
-    role: input.role,
-  })
-  .returning();
+    .insert(users)
+    .values({
+        email: input.email,
+        username: input.username,
+        password: input.password, // Already hashed
+        role: input.role,
+    })
+    .returning();
 ```
 
 **Constraints Enforced**:
@@ -205,23 +223,16 @@ const [insertedRow] = await db
 
 **Postgres Error 23505 Mapping**:
 
-```typescript
-if (error.code === "23505") {
-  if (error.constraint === "users_email_key") {
-    return makeAppError("email_already_exists", {
-      message: "This email is already registered",
-      metadata: { field: "email" },
-    });
-  }
+At the Server Action boundary, signup conflict errors are surfaced as validation-style
+field errors so the UI can render them deterministically.
 
-  if (error.constraint === "users_username_key") {
-    return makeAppError("username_already_exists", {
-      message: "This username is taken",
-      metadata: { field: "username" },
-    });
-  }
-}
-```
+**Implementation detail**: `toSignupFormResult()` detects Postgres `23505` (`UNIQUE_VIOLATION`) and returns a
+`FormResult<never>` with:
+
+- `key: "validation"`
+- `fieldErrors.email = ["alreadyInUse"]` when the constraint indicates email
+- `fieldErrors.username = ["alreadyInUse"]` when the constraint indicates username
+- fallback: if the field cannot be determined, both are marked
 
 **Security**: Prevents database error leakage while providing useful feedback
 
@@ -235,11 +246,19 @@ if (error.code === "23505") {
 
 ```typescript
 {
-  id: toUserId(row.id),           // string → UserId (branded)
-  email: row.email,                // string
-  username: row.username,          // string
-  password: toHash(row.password),  // string → Hash (branded)
-  role: parseUserRole(row.role),   // string → UserRole enum
+    id: toUserId(row.id),           // string → UserId (branded)
+        email
+:
+    row.email,                // string
+        username
+:
+    row.username,          // string
+        password
+:
+    toHash(row.password),  // string → Hash (branded)
+        role
+:
+    parseUserRole(row.role),   // string → UserRole enum
 }
 ```
 
@@ -255,11 +274,17 @@ if (error.code === "23505") {
 
 ```typescript
 {
-  id: entity.id,        // UserId
-  email: entity.email,  // string
-  username: entity.username,  // string
-  role: entity.role,    // UserRole
-  // password: REMOVED (security boundary)
+    id: entity.id,        // UserId
+        email
+:
+    entity.email,  // string
+        username
+:
+    entity.username,  // string
+        role
+:
+    entity.role,    // UserRole
+    // password: REMOVED (security boundary)
 }
 ```
 
@@ -299,7 +324,7 @@ if (error.code === "23505") {
 ```
 FormData (raw)
   ↓ [SignupRequestSchema validation]
-SignupRequestDto { email, username, password, role }
+SignupRequestDto { email, username, password }
   ↓ [Password hashing]
 AuthUserCreateDto { email, username, password: Hash, role }
   ↓ [Database insertion]
@@ -313,23 +338,27 @@ SessionPrincipalDto { id: UserId, role }
   ↓ [SessionTokenService.issue]
 IssuedTokenDto { token: JWT, expiresAtMs }
   ↓ [SessionCookieStoreAdapter.set]
-HTTP Cookie (session=JWT; HttpOnly; Secure; SameSite=lax)
+HTTP Cookie (session=JWT; HttpOnly; Secure; SameSite=strict)
 ```
 
 ### Error Path
 
 ```
 Postgres Error 23505 (unique_violation)
-  ↓ [pgUniqueViolationToSignupConflictError]
-AppError { key: "email_already_exists" | "username_already_exists" }
   ↓ [toSignupFormResult]
 FormResult {
-  success: false,
-  errors: {
-    email: ["This email is already registered"]
-    // OR
-    username: ["This username is taken"]
-  }
+  ok: false,
+  error: AppError {
+    key: "validation",
+    metadata: {
+      fieldErrors: {
+        email: ["alreadyInUse"],
+        password: [],
+        username: [],
+      },
+      formErrors: [],
+    },
+  },
 }
 ```
 
@@ -373,7 +402,6 @@ FormResult {
 - Email format (RFC 5322)
 - Username: 3-20 characters, alphanumeric + underscore
 - Password: Minimum 8 characters, complexity rules
-- Role: Must be valid UserRole enum value
 
 **SQL Injection Prevention**:
 
@@ -571,16 +599,16 @@ FormResult {
 
 ## 🔄 Comparison with Login Flow
 
-| Aspect           | Signup                          | Login                      |
-| ---------------- | ------------------------------- | -------------------------- |
-| **Entry**        | signup.action.ts                | login.action.ts            |
-| **Validation**   | Email, username, password, role | Email, password            |
-| **Database**     | INSERT new user                 | SELECT existing user       |
-| **Password**     | Hash then store                 | Compare with stored hash   |
-| **Unique Check** | Database constraint             | N/A                        |
-| **Transaction**  | Required (insert)               | Not required (read)        |
-| **Session**      | Establish after creation        | Establish after validation |
-| **Redirect**     | Dashboard                       | Dashboard                  |
+| Aspect           | Signup                    | Login                      |
+|------------------|---------------------------|----------------------------|
+| **Entry**        | signup.action.ts          | login.action.ts            |
+| **Validation**   | Email, username, password | Email, password            |
+| **Database**     | INSERT new user           | SELECT existing user       |
+| **Password**     | Hash then store           | Compare with stored hash   |
+| **Unique Check** | Database constraint       | N/A                        |
+| **Transaction**  | Required (insert)         | Not required (read)        |
+| **Session**      | Establish after creation  | Establish after validation |
+| **Redirect**     | Dashboard                 | Dashboard                  |
 
 ---
 
