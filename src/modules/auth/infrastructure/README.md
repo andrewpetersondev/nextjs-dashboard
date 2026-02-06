@@ -75,18 +75,18 @@ Factories create fully-wired instances:
 
 ```typescript
 export function sessionServiceFactory(
-  logger: LoggingClientContract,
-  requestId: string,
+    logger: LoggingClientContract,
+    requestId: string,
 ): SessionServiceContract {
-  const codec = new SessionTokenCodecAdapter(/* ... */);
-  const tokenService = new SessionTokenService(codec);
-  const store = new SessionCookieStoreAdapter();
+    const codec = new SessionTokenCodecAdapter(/* ... */);
+    const tokenService = new SessionTokenService(codec);
+    const store = new SessionCookieStoreAdapter();
 
-  return new SessionService({
-    logger,
-    sessionStore: store,
-    sessionTokenService: tokenService,
-  });
+    return new SessionService({
+        logger,
+        sessionStore: store,
+        sessionTokenService: tokenService,
+    });
 }
 ```
 
@@ -98,7 +98,7 @@ Repositories encapsulate data access:
 // Repository coordinates DAL calls and mapping
 export class AuthUserRepository {
   async findByEmail(
-    query: AuthUserLookupQueryDto,
+    query: AuthUserLookupQuery,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     const rowResult = await getUserByEmailDal(
       this.db,
@@ -362,7 +362,7 @@ Repositories coordinate DAL calls and map results:
 ```typescript
 export class AuthUserRepository {
   async findByEmail(
-    query: AuthUserLookupQueryDto,
+    query: AuthUserLookupQuery,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     const rowResult = await getUserByEmailDal(
       this.db,
@@ -388,7 +388,7 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
   constructor(private authUsers: AuthUserRepository) {}
 
   findByEmail(
-    query: AuthUserLookupQueryDto,
+    query: AuthUserLookupQuery,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     return this.authUsers.findByEmail(query);
   }
@@ -529,11 +529,11 @@ Test with real database (test container):
 
 ```typescript
 describe("AuthUserRepository", () => {
-  it("should find user by email", async () => {
-    const repo = new AuthUserRepository(testDb, logger, requestId);
-    const result = await repo.findByEmail({ email: "test@example.com" });
-    expect(result.ok).toBe(true);
-  });
+    it("should find user by email", async () => {
+        const repo = new AuthUserRepository(testDb, logger, requestId);
+        const result = await repo.findByEmail({email: "test@example.com"});
+        expect(result.ok).toBe(true);
+    });
 });
 ```
 

@@ -1,8 +1,8 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/session/contracts/session-token-codec.contract";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/session/contracts/session-token-service.contract";
-import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-rotated-token-request.dto";
-import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-token-request.dto";
+import type { IssueRotatedTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-rotated-token.command";
+import type { IssueTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-token.command";
 import type { IssuedTokenDto } from "@/modules/auth/application/session/dtos/responses/issue-token.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import { toSessionTokenClaimsDto } from "@/modules/auth/application/session/mappers/to-session-token-claims-dto.mapper";
@@ -124,7 +124,7 @@ export class SessionTokenService implements SessionTokenServiceContract {
    * @returns A promise resolving to a {@link Result} containing the {@link IssuedTokenDto} (token + expiration) or an {@link AppError}.
    */
   async issue(
-    input: IssueTokenRequestDto,
+    input: IssueTokenCommand,
   ): Promise<Result<IssuedTokenDto, AppError>> {
     const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;
@@ -158,7 +158,7 @@ export class SessionTokenService implements SessionTokenServiceContract {
    * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
    */
   async issueRotated(
-    input: IssueRotatedTokenRequestDto,
+    input: IssueRotatedTokenCommand,
   ): Promise<Result<IssuedTokenDto, AppError>> {
     const nowSec = nowInSeconds();
     const expiresAtSec = nowSec + SESSION_DURATION_SEC;

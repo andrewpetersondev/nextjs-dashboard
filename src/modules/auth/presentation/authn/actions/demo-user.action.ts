@@ -36,7 +36,7 @@ async function createDemoUserInternal(
   });
 
   const sessionResult = await tracker.measure("authentication", () =>
-    auth.workflows.demoUser(role),
+    auth.workflows.demoUser({ role }),
   );
 
   if (!sessionResult.ok) {

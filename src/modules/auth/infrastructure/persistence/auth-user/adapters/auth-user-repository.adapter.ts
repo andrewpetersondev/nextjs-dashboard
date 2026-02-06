@@ -1,7 +1,7 @@
 import "server-only";
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-user-repository.contract";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
-import type { AuthUserLookupQueryDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup-query.dto";
+import type { AuthUserLookupQuery } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup.query";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import type { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -31,7 +31,7 @@ export class AuthUserRepositoryAdapter implements AuthUserRepositoryContract {
    * @returns A promise resolving to a {@link Result} containing the user entity or null.
    */
   findByEmail(
-    query: Readonly<AuthUserLookupQueryDto>,
+    query: Readonly<AuthUserLookupQuery>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     return this.authUsers.findByEmail(query);
   }

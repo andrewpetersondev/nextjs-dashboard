@@ -1,5 +1,5 @@
-import type { IssueRotatedTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-rotated-token-request.dto";
-import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-token-request.dto";
+import type { IssueRotatedTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-rotated-token.command";
+import type { IssueTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-token.command";
 import type { IssuedTokenDto } from "@/modules/auth/application/session/dtos/responses/issue-token.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -25,21 +25,21 @@ export interface SessionTokenServiceContract {
    *
    * Generates a new session ID (sid) and JWT ID (jti).
    *
-   * @param input - The request data for issuing a new token.
+   * @param input - The command for issuing a new token.
    * @returns A Result containing the newly issued token DTO or an AppError.
    */
-  issue(input: IssueTokenRequestDto): Promise<Result<IssuedTokenDto, AppError>>;
+  issue(input: IssueTokenCommand): Promise<Result<IssuedTokenDto, AppError>>;
 
   /**
    * Issues a rotated session token for an existing session.
    *
    * Reuses the provided session ID (sid) and generates a new JWT ID (jti).
    *
-   * @param input - The request data for issuing a rotated token.
+   * @param input - The command for issuing a rotated token.
    * @returns A Result containing the rotated token DTO or an AppError.
    */
   issueRotated(
-    input: IssueRotatedTokenRequestDto,
+    input: IssueRotatedTokenCommand,
   ): Promise<Result<IssuedTokenDto, AppError>>;
 
   /**

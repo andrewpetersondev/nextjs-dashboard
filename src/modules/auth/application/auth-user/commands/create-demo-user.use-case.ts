@@ -2,6 +2,7 @@ import "server-only";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/application/auth-user/contracts/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
+import type { CreateDemoUserCommand } from "@/modules/auth/application/auth-user/dtos/requests/create-demo-user.command";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import { createDemoUserTxHelper } from "@/modules/auth/application/shared/helpers/create-demo-user.tx.helper";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
@@ -10,7 +11,6 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Handles the creation of a temporary demo user for specific roles.
@@ -48,14 +48,17 @@ export class CreateDemoUserUseCase {
   /**
    * Executes the demo user creation logic.
    *
-   * @param role - The role to assign to the new demo user.
+   * @param input - The command containing the role to assign to the new demo user.
    * @returns A Result containing the created user DTO or an AppError.
    *
    * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
    */
-  execute(role: UserRole): Promise<Result<AuthenticatedUserDto, AppError>> {
+  execute(
+    input: Readonly<CreateDemoUserCommand>,
+  ): Promise<Result<AuthenticatedUserDto, AppError>> {
     return safeExecute<AuthenticatedUserDto>(
       async () => {
+        const { role } = input;
         const result = await createDemoUserTxHelper(
           {
             hasher: this.hasher,

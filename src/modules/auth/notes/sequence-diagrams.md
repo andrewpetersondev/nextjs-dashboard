@@ -1,10 +1,12 @@
 # Auth Login Sequence Diagrams
 
-This document illustrates the interactions between components during the authentication process, organized from the user action down to the database level.
+This document illustrates the interactions between components during the authentication process, organized from the user
+action down to the database level.
 
 ## 1. Action Layer: `loginAction`
 
-**Interaction:** The entry point for the login process. It handles user input validation and initiates the login workflow.
+**Interaction:** The entry point for the login process. It handles user input validation and initiates the login
+workflow.
 
 ```mermaid
 sequenceDiagram
@@ -55,7 +57,8 @@ sequenceDiagram
 
 ## 2. Workflow Layer: `loginWorkflow`
 
-**Interaction:** Orchestrates authentication and session establishment. Delegates both success and error cases to a shared sub-workflow.
+**Interaction:** Orchestrates authentication and session establishment. Delegates both success and error cases to a
+shared sub-workflow.
 
 ```mermaid
 sequenceDiagram
@@ -98,7 +101,8 @@ sequenceDiagram
 
 ### 3.1. `LoginUseCase`
 
-**Interaction:** Validates user credentials by looking up the user in the repository and verifying the password hash. Implements anti-enumeration by mapping both not_found and invalid_password to a generic error.
+**Interaction:** Validates user credentials by looking up the user in the repository and verifying the password hash.
+Implements anti-enumeration by mapping both not_found and invalid_password to a generic error.
 
 ```mermaid
 sequenceDiagram
@@ -209,7 +213,7 @@ sequenceDiagram
   participant DAL as getUserByEmailDal
   participant DB as Database
 
-  UC->>PORT: findByEmail(AuthUserLookupQueryDto)
+  UC->>PORT: findByEmail(AuthUserLookupQuery)
 
   PORT->>AD: findByEmail(query)
   AD->>REPO: findByEmail(query)

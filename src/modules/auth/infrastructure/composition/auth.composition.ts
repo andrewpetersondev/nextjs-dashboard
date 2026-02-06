@@ -1,4 +1,5 @@
 import "server-only";
+import type { CreateDemoUserCommand } from "@/modules/auth/application/auth-user/dtos/requests/create-demo-user.command";
 import type { LoginCommand } from "@/modules/auth/application/auth-user/dtos/requests/login.command";
 import type { SignupCommand } from "@/modules/auth/application/auth-user/dtos/requests/signup.command";
 import { createDemoUserWorkflow } from "@/modules/auth/application/auth-user/workflows/create-demo-user.workflow";
@@ -15,7 +16,6 @@ import { getAppDb } from "@/server/db/db.connection";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 type AuthCompositionOverrides = Readonly<{
   logger: LoggingClientContract;
@@ -93,7 +93,7 @@ export type AuthComposition = Readonly<{
 
   workflows: Readonly<{
     demoUser(
-      input: Readonly<UserRole>,
+      input: Readonly<CreateDemoUserCommand>,
     ): ReturnType<typeof createDemoUserWorkflow>;
     login(input: Readonly<LoginCommand>): ReturnType<typeof loginWorkflow>;
     logout(): ReturnType<typeof logoutWorkflow>;

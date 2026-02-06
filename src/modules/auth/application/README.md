@@ -1,6 +1,7 @@
 # Auth Application Layer
 
-This layer contains the **business logic and use cases** for authentication and session management. It orchestrates domain rules and coordinates infrastructure services without depending on implementation details.
+This layer contains the **business logic and use cases** for authentication and session management. It orchestrates
+domain rules and coordinates infrastructure services without depending on implementation details.
 
 ---
 
@@ -19,7 +20,8 @@ This layer contains the **business logic and use cases** for authentication and 
 
 ## Overview
 
-The application layer serves as the **orchestration layer** between the presentation layer (UI/API) and the domain/infrastructure layers. It:
+The application layer serves as the **orchestration layer** between the presentation layer (UI/API) and the
+domain/infrastructure layers. It:
 
 - **Defines use cases**: Encapsulates business operations (login, signup, session management)
 - **Orchestrates workflows**: Coordinates multiple use cases for complex operations
@@ -38,14 +40,14 @@ The application layer defines **contracts** (interfaces) that infrastructure imp
 ```typescript
 // Application defines the contract
 export interface AuthUserRepositoryContract {
-  findByEmail(
-    query: AuthUserLookupQueryDto,
-  ): Promise<Result<AuthUserEntity | null, AppError>>;
+    findByEmail(
+        query: AuthUserLookupQuery,
+    ): Promise<Result<AuthUserEntity | null, AppError>>;
 }
 
 // Infrastructure implements it
 export class AuthUserRepository implements AuthUserRepositoryContract {
-  // Implementation details...
+    // Implementation details...
 }
 ```
 
@@ -61,8 +63,13 @@ Commands (writes) and queries (reads) are separated:
 All use cases return `Result<T, AppError>` instead of throwing exceptions:
 
 ```typescript
-async execute(input: LoginRequestDto): Promise<Result<AuthenticatedUserDto, AppError>> {
-  // Returns Ok(data) or Err(error)
+async
+execute(input
+:
+LoginRequestDto
+):
+Promise < Result < AuthenticatedUserDto, AppError >> {
+    // Returns Ok(data) or Err(error)
 }
 ```
 
@@ -129,18 +136,18 @@ Encapsulate a single business operation. Each use case:
 
 ```typescript
 export class LoginUseCase {
-  async execute(
-    input: LoginRequestDto,
-  ): Promise<Result<AuthenticatedUserDto, AppError>> {
-    return safeExecute(
-      async () => {
-        // 1. Find user by email
-        // 2. Verify password
-        // 3. Return authenticated user DTO
-      },
-      { logger, operation: "login" },
-    );
-  }
+    async execute(
+        input: LoginRequestDto,
+    ): Promise<Result<AuthenticatedUserDto, AppError>> {
+        return safeExecute(
+            async () => {
+                // 1. Find user by email
+                // 2. Verify password
+                // 3. Return authenticated user DTO
+            },
+            {logger, operation: "login"},
+        );
+    }
 }
 ```
 
@@ -150,14 +157,14 @@ Orchestrate multiple use cases for complex operations:
 
 ```typescript
 export async function loginWorkflow(
-  input: LoginRequestDto,
-  deps: { loginUseCase: LoginUseCase; sessionService: SessionServiceContract },
+    input: LoginRequestDto,
+    deps: { loginUseCase: LoginUseCase; sessionService: SessionServiceContract },
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  // 1. Authenticate user (loginUseCase)
-  // 2. Establish session (sessionService)
-  return await establishSessionForAuthUserWorkflow(authResult, {
-    sessionService,
-  });
+    // 1. Authenticate user (loginUseCase)
+    // 2. Establish session (sessionService)
+    return await establishSessionForAuthUserWorkflow(authResult, {
+        sessionService,
+    });
 }
 ```
 
@@ -217,7 +224,7 @@ Cross-cutting concerns:
 ## Workflows vs Use Cases
 
 | Aspect           | Use Case                           | Workflow                                           |
-| ---------------- | ---------------------------------- | -------------------------------------------------- |
+|------------------|------------------------------------|----------------------------------------------------|
 | **Scope**        | Single business operation          | Orchestrates multiple use cases                    |
 | **Dependencies** | Infrastructure contracts           | Use cases + services                               |
 | **Example**      | `LoginUseCase` (authenticate user) | `loginWorkflow` (authenticate + establish session) |
@@ -272,17 +279,17 @@ Test use cases in isolation with mocked dependencies:
 
 ```typescript
 describe("LoginUseCase", () => {
-  it("should return authenticated user on valid credentials", async () => {
-    const mockRepo = { findByEmail: jest.fn().mockResolvedValue(Ok(mockUser)) };
-    const useCase = new LoginUseCase(mockRepo, mockHasher, mockLogger);
+    it("should return authenticated user on valid credentials", async () => {
+        const mockRepo = {findByEmail: jest.fn().mockResolvedValue(Ok(mockUser))};
+        const useCase = new LoginUseCase(mockRepo, mockHasher, mockLogger);
 
-    const result = await useCase.execute({
-      email: "test@example.com",
-      password: "password",
+        const result = await useCase.execute({
+            email: "test@example.com",
+            password: "password",
+        });
+
+        expect(result.ok).toBe(true);
     });
-
-    expect(result.ok).toBe(true);
-  });
 });
 ```
 
@@ -342,16 +349,16 @@ describe("loginWorkflow", () => {
 
 ```typescript
 export class MyUseCase {
-  constructor(private deps: Dependencies) {}
+    constructor(private deps: Dependencies) {}
 
-  execute(input: InputDto): Promise<Result<OutputDto, AppError>> {
-    return safeExecute(
-      async () => {
-        // Business logic here
-      },
-      { logger, operation: "my-operation" },
-    );
-  }
+    execute(input: InputDto): Promise<Result<OutputDto, AppError>> {
+        return safeExecute(
+            async () => {
+                // Business logic here
+            },
+            {logger, operation: "my-operation"},
+        );
+    }
 }
 ```
 
@@ -359,13 +366,13 @@ export class MyUseCase {
 
 ```typescript
 export async function myWorkflow(
-  input: InputDto,
-  deps: { useCase1: UseCase1; service: ServiceContract },
+    input: InputDto,
+    deps: { useCase1: UseCase1; service: ServiceContract },
 ): Promise<Result<OutputDto, AppError>> {
-  const result1 = await deps.useCase1.execute(input);
-  if (!result1.ok) return Err(result1.error);
+    const result1 = await deps.useCase1.execute(input);
+    if (!result1.ok) return Err(result1.error);
 
-  return await deps.service.doSomething(result1.value);
+    return await deps.service.doSomething(result1.value);
 }
 ```
 

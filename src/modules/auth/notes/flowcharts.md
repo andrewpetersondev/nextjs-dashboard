@@ -1,10 +1,12 @@
 # Auth Login Flowcharts
 
-This document details the logic flow for the user authentication process, organized from the entry point (Action) down to the data access layer (DAL).
+This document details the logic flow for the user authentication process, organized from the entry point (Action) down
+to the data access layer (DAL).
 
 ## 1. Action Layer: `loginAction`
 
-**Responsibility:** Next.js Server Action boundary. Handles form validation, performance tracking, and mapping results to UI feedback or redirects.
+**Responsibility:** Next.js Server Action boundary. Handles form validation, performance tracking, and mapping results
+to UI feedback or redirects.
 
 ```mermaid
 flowchart TD
@@ -84,7 +86,8 @@ flowchart TD
 
 ### 3.1. `LoginUseCase`
 
-**Responsibility:** Executes core authentication logic by finding the user and verifying their credentials using a hashing service. Implements anti-enumeration by mapping specific credential failures to a unified error.
+**Responsibility:** Executes core authentication logic by finding the user and verifying their credentials using a
+hashing service. Implements anti-enumeration by mapping specific credential failures to a unified error.
 
 ```mermaid
 flowchart TD
@@ -140,7 +143,8 @@ flowchart TD
 
 ### 3.2. `EstablishSessionUseCase` (via `SessionService`)
 
-**Responsibility:** Handles session lifecycle by issuing a new token via `SessionTokenService` and persisting it via `SessionStore`.
+**Responsibility:** Handles session lifecycle by issuing a new token via `SessionTokenService` and persisting it via
+`SessionStore`.
 
 ```mermaid
 flowchart TD
@@ -177,12 +181,13 @@ flowchart TD
 
 ### 4.1. Repository: `AuthUserRepository`
 
-**Responsibility:** Provides a clean interface for auth-related data persistence, mapping raw database rows to domain entities via contract.
+**Responsibility:** Provides a clean interface for auth-related data persistence, mapping raw database rows to domain
+entities via contract.
 
 ```mermaid
 flowchart TD
 %% Inputs
-  A["Input<br/>AuthUserLookupQueryDto<br/>(email)"] --> B[AuthUserRepository.findByEmail]
+  A["Input<br/>AuthUserLookupQuery<br/>(email)"] --> B[AuthUserRepository.findByEmail]
 
 %% DAL call
 B -->|call| C["getUserByEmailDal<br/>(db, email, logger)"]

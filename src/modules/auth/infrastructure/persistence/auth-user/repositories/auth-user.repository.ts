@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
-import type { AuthUserLookupQueryDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup-query.dto";
+import type { AuthUserLookupQuery } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup.query";
 import { validateAuthUserCreateDto } from "@/modules/auth/application/auth-user/validators/auth-user-create.validator";
 import { validateAuthUserEntity } from "@/modules/auth/application/auth-user/validators/auth-user-entity.validator";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
@@ -64,7 +64,7 @@ export class AuthUserRepository {
    * @returns A promise resolving to a {@link Result} containing the user entity or null.
    */
   async findByEmail(
-    query: Readonly<AuthUserLookupQueryDto>,
+    query: Readonly<AuthUserLookupQuery>,
   ): Promise<Result<AuthUserEntity | null, AppError>> {
     const rowResult = await getUserByEmailDal(
       this.db,

@@ -1,4 +1,4 @@
-import type { IssueTokenRequestDto } from "@/modules/auth/application/session/dtos/requests/issue-token-request.dto";
+import type { IssueTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-token.command";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import { UserIdSchema } from "@/shared/validation/zod/user-id.schema";
 
@@ -7,7 +7,7 @@ import { UserIdSchema } from "@/shared/validation/zod/user-id.schema";
  * Encapsulates the transformation of branded types to transport strings.
  */
 export function toSessionTokenClaimsDto(
-  input: IssueTokenRequestDto,
+  input: IssueTokenCommand,
   params: Readonly<{
     exp: number;
     iat: number;

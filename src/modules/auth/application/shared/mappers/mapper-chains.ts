@@ -96,11 +96,11 @@ export const AUTH_MAPPER_CHAINS = {
       "2. Token generation failure → session_rotation_failed",
     ],
     forward: [
-      "1. Current SessionTokenClaimsDto → IssueRotatedTokenRequestDto",
+      "1. Current SessionTokenClaimsDto → IssueRotatedTokenCommand",
       "   Location: application/session/commands/",
       "   Purpose: Prepare rotation request with current claims",
       "",
-      "2. IssueRotatedTokenRequestDto → IssuedTokenDto",
+      "2. IssueRotatedTokenCommand → IssuedTokenDto",
       "   Location: infrastructure/session/services/",
       "   Purpose: Issue new token with updated expiration",
       "",

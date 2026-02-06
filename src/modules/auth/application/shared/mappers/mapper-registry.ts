@@ -76,6 +76,14 @@ export const MAPPER_REGISTRY = defineMapperRegistry({
     security: "Removes password hash (security boundary)",
   },
 
+  "IssueTokenCommand → SessionTokenClaimsDto": {
+    file: "application/session/mappers/to-session-token-claims-dto.mapper.ts",
+    flows: ["login", "signup"],
+    layer: "application → application",
+    purpose: "Maps token issuance command to claims DTO",
+    security: "Encapsulates branded type transformation",
+  },
+
   // ============================================================================
   // Infrastructure → Application (JWT)
   // ============================================================================
@@ -110,14 +118,6 @@ export const MAPPER_REGISTRY = defineMapperRegistry({
     layer: "infrastructure → application",
     purpose: "Converts Postgres unique violation to signup conflict error",
     security: "Prevents database error leakage",
-  },
-
-  "SessionTokenClaimsDto → SessionTokenClaimsDto": {
-    file: "application/session/mappers/to-session-token-claims-dto.mapper.ts",
-    flows: ["sessionValidation"],
-    layer: "application → application",
-    purpose: "Maps session token claims to DTO",
-    security: "Validates and normalizes token claims",
   },
 
   "SignupRequestDto → SignupCommand": {

@@ -2,7 +2,8 @@
 
 ## Overview
 
-Successfully decoupled JWT claims from application and domain logic by simplifying the JWT payload to contain only standard claims and minimal cached data, while removing redundant `sessionStart` field.
+Successfully decoupled JWT claims from application and domain logic by simplifying the JWT payload to contain only
+standard claims and minimal cached data, while removing redundant `sessionStart` field.
 
 ## Key Changes
 
@@ -11,14 +12,15 @@ Successfully decoupled JWT claims from application and domain logic by simplifyi
 **File**: `src/modules/auth/infrastructure/serialization/session-jwt.claims.ts`
 
 - **Standard JWT claims**:
-  - `sub` (subject): User ID as UUID string
-  - `iat` (issued-at): Token issue time in seconds
-  - `exp` (expiration): Token expiration time in seconds
+    - `sub` (subject): User ID as UUID string
+    - `iat` (issued-at): Token issue time in seconds
+    - `exp` (expiration): Token expiration time in seconds
 
 - **Performance optimization**:
-  - `role`: User role (cached as string for performance, avoiding DB lookups)
+    - `role`: User role (cached as string for performance, avoiding DB lookups)
 
-**Key improvement**: Role is treated as an opaque string at the infrastructure layer, maintaining decoupling while enabling performance optimization.
+**Key improvement**: Role is treated as an opaque string at the infrastructure layer, maintaining decoupling while
+enabling performance optimization.
 
 ### 2. Application-Layer Type Conversion
 
@@ -47,7 +49,7 @@ Created `toSessionTokenClaims()` mapper that:
 Eliminated the redundant `sessionStart` field from:
 
 - `SessionEntity`
-- `IssueTokenRequestDto`
+- `IssueTokenCommand`
 - `UnbrandedIssueTokenRequestDto`
 - JWT claims
 
@@ -219,7 +221,8 @@ Modified the following to work with new structure:
 
 ## Conclusion
 
-The JWT claims structure is now properly decoupled from application logic while maintaining pragmatic performance optimizations. The architecture clearly separates:
+The JWT claims structure is now properly decoupled from application logic while maintaining pragmatic performance
+optimizations. The architecture clearly separates:
 
 - **Infrastructure concerns**: JWT encoding/decoding with standard claims
 - **Application concerns**: Business logic with strongly-typed data
