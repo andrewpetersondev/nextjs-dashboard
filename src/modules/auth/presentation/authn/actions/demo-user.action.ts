@@ -1,12 +1,12 @@
 "use server";
 import { redirect } from "next/navigation";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Internal helper: creates a demo user for the given role.

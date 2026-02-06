@@ -4,7 +4,7 @@ import { users } from "@/server/db/schema/users";
 import {
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
+} from "@/shared/validation/user/user-role.schema";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 

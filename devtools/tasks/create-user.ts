@@ -3,7 +3,7 @@ import type { Hash } from "@/shared/branding/brands";
 import {
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
+} from "@/shared/validation/user/user-role.schema";
 import { nodeDb } from "../cli/node-db";
 import { hashPassword } from "../seed-support/utils";
 

@@ -10,7 +10,6 @@ import {
 } from "@/modules/users/domain/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
@@ -23,6 +22,7 @@ import {
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { normalizeUserRole } from "@/shared/validation/user/user-role.parser";
 
 const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
   typeof v === "string" ? v : undefined;

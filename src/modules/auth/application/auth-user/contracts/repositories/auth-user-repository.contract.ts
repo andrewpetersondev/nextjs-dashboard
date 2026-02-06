@@ -1,9 +1,9 @@
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AuthUserLookupQueryDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup-query.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Application-layer repository contract for user authentication persistence.

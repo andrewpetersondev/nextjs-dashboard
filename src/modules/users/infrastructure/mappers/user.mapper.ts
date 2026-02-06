@@ -4,7 +4,7 @@ import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
 import type { UserRow } from "@/server/db/schema/users";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { parseUserRole } from "@/shared/domain/user/user-role.parser";
+import { parseUserRole } from "@/shared/validation/user/user-role.parser";
 
 /**
  * Maps a UserEntity to a UserDto for transport to the client/UI/API.

@@ -4,12 +4,12 @@ import {
   DEMO_ADMIN_LABEL,
   DEMO_USER_LABEL,
 } from "@/modules/auth/presentation/constants/auth.tokens";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/validation/user/user-role.schema";
 
 interface AuthFormDemoSectionProps {
   readonly demoAdminText: string;

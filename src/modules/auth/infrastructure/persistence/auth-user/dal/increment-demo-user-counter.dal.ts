@@ -1,7 +1,6 @@
 import "server-only";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -10,6 +9,7 @@ import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Increments and retrieves the demo user counter for a given role.

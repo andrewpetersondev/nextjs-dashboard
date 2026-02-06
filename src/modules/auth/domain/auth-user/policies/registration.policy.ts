@@ -3,7 +3,7 @@ import { DEMO_IDENTITY_CONFIG } from "@/modules/auth/domain/shared/constants/dem
 import {
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
+} from "@/shared/validation/user/user-role.schema";
 
 /**
  * Domain Policy: Default Registration Role.

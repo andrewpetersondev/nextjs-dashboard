@@ -1,11 +1,11 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { useId, useMemo } from "react";
+import type { FieldError } from "@/shared/forms/core/types/field-error.value";
 import {
   USER_ROLES,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
-import type { FieldError } from "@/shared/forms/core/types/field-error.value";
+} from "@/shared/validation/user/user-role.schema";
 import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 

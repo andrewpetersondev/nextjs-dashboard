@@ -5,14 +5,14 @@ import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.const
 import { readInvoicesSummaryAction } from "@/modules/invoices/infrastructure/actions/read-invoices-summary.action";
 import { readLatestInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-latest-invoices.action";
 import { getAppDb } from "@/server/db/db.connection";
-import { normalizeUserRole } from "@/shared/domain/user/user-role.parser";
+import { formatCurrency } from "@/shared/utilities/money/convert";
+import { normalizeUserRole } from "@/shared/validation/user/user-role.parser";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
-import { formatCurrency } from "@/shared/utilities/money/convert";
+} from "@/shared/validation/user/user-role.schema";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";

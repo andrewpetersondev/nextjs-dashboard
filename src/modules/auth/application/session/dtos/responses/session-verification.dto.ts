@@ -1,4 +1,4 @@
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Represents the result of a session verification check.

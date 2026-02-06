@@ -6,11 +6,11 @@ import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/
 import { createDemoUserTxHelper } from "@/modules/auth/application/shared/helpers/create-demo-user.tx.helper";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import type { Result } from "@/shared/results/result.types";
 import { safeExecute } from "@/shared/results/safe-execute";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Handles the creation of a temporary demo user for specific roles.

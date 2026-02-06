@@ -10,11 +10,11 @@ import { incrementDemoUserCounterDal } from "@/modules/auth/infrastructure/persi
 import { insertUserDal } from "@/modules/auth/infrastructure/persistence/auth-user/dal/insert-user.dal";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.

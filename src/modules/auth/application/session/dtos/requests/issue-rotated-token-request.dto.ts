@@ -1,5 +1,5 @@
 import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Request to issue a rotated session token.

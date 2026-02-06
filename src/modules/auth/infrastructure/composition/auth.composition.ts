@@ -12,10 +12,10 @@ import { loginUseCaseFactory } from "@/modules/auth/infrastructure/composition/f
 import { signupUseCaseFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/signup-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
 type AuthCompositionOverrides = Readonly<{
   logger: LoggingClientContract;

@@ -1,9 +1,9 @@
 "use client";
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
-import type { UserRole } from "@/shared/domain/user/user-role.schema";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import type { UserRole } from "@/shared/validation/user/user-role.schema";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {

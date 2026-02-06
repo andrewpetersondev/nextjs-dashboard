@@ -1,7 +1,7 @@
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { parseUserRole } from "@/shared/domain/user/user-role.parser";
+import { parseUserRole } from "@/shared/validation/user/user-role.parser";
 
 /**
  * Maps a persisted authentication user entity to a safe authenticated-user DTO.

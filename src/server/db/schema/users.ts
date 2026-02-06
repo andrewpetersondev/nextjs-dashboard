@@ -14,7 +14,7 @@ import {
   USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
+} from "@/shared/validation/user/user-role.schema";
 import { sessions } from "./sessions";
 
 export const roleEnum = pgEnum("role", USER_ROLES);

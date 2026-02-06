@@ -9,11 +9,11 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
+import { ROUTES } from "@/shared/routes/routes";
 import {
   ADMIN_ROLE,
   type UserRole,
-} from "@/shared/domain/user/user-role.schema";
-import { ROUTES } from "@/shared/routes/routes";
+} from "@/shared/validation/user/user-role.schema";
 import { cn } from "@/ui/utils/cn";
 
 /** Navigation link paths */
