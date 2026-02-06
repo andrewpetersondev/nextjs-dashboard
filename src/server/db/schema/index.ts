@@ -2,7 +2,6 @@ import { customers } from "./customers";
 import { demoUserCounters } from "./demo-users";
 import { invoices } from "./invoices";
 import { revenues } from "./revenues";
-import { sessions } from "./sessions";
 import { users } from "./users";
 
 // biome-ignore lint/performance/noBarrelFile: needed for drizzle schema
@@ -33,18 +32,11 @@ export {
   revenuesRelations,
 } from "./revenues";
 export {
-  type NewSessionRow,
-  type SessionRow,
-  sessions,
-  sessionsRelations,
-} from "./sessions";
-export {
   type AuthUserCredentialsRow,
   type NewUserRow,
   roleEnum,
   type UserRow,
   users,
-  usersRelations,
 } from "./users";
 
 // A single schema object that can be passed to drizzle()
@@ -53,6 +45,5 @@ export const schema = {
   demoUserCounters,
   invoices,
   revenues,
-  sessions,
   users,
 };

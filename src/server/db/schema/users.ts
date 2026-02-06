@@ -7,7 +7,6 @@
  * - Indexes are added for common joins/filters.
  */
 
-import { relations } from "drizzle-orm";
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import type { Hash, UserId } from "@/shared/branding/brands";
 import {
@@ -15,7 +14,6 @@ import {
   USER_ROLES,
   type UserRole,
 } from "@/shared/validation/user/user-role.schema";
-import { sessions } from "./sessions";
 
 export const roleEnum = pgEnum("role", USER_ROLES);
 
@@ -30,10 +28,6 @@ export const users = pgTable("users", {
     .default("cantTouchThis"),
   username: varchar("username", { length: 50 }).notNull().unique(),
 });
-
-export const usersRelations = relations(users, ({ many }) => ({
-  sessions: many(sessions),
-}));
 
 /**
  * Type representing a row returned from the users table when performing a select query.

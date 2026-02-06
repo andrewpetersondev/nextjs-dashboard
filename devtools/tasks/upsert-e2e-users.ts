@@ -1,5 +1,4 @@
 import { eq } from "drizzle-orm";
-import { sessions } from "@/server/db/schema/sessions";
 import { users } from "@/server/db/schema/users";
 import {
   USER_ROLE,
@@ -53,8 +52,6 @@ export async function upsertE2eUser(user: {
         .update(users)
         .set({ password: hashed, role, username })
         .where(eq(users.id, userId));
-
-      await tx.delete(sessions).where(eq(sessions.userId, userId));
     } else {
       const inserted = await tx
         .insert(users)
@@ -64,9 +61,6 @@ export async function upsertE2eUser(user: {
       if (inserted.length === 0 || !inserted[0]?.id) {
         throw new Error("Failed to insert E2E user");
       }
-
-      const userId = inserted[0].id;
-      await tx.delete(sessions).where(eq(sessions.userId, userId));
     }
   });
 }

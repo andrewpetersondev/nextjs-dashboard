@@ -29,6 +29,13 @@
       "when": 1767009740038,
       "tag": "0003_clumsy_thaddeus_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770380915535,
+      "tag": "0004_supreme_sphinx",
+      "breakpoints": true
     }
   ]
 }

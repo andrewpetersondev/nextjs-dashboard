@@ -29,6 +29,13 @@
       "when": 1767009717974,
       "tag": "0003_demonic_azazel",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770380903932,
+      "tag": "0004_round_anthem",
+      "breakpoints": true
     }
   ]
 }
