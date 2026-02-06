@@ -44,11 +44,11 @@ describe("Session Rotation Integration", () => {
     const claims = {
       exp,
       iat,
-      jti: "token-123",
+      jti: "00000000-0000-4000-8000-000000000001",
       nbf: iat,
       role: "USER",
-      sid: "session-123",
-      sub: "user-123",
+      sid: "00000000-0000-4000-8000-000000000002",
+      sub: "00000000-0000-4000-8000-000000000003",
     };
 
     const result = await codec.encode(claims);
