@@ -4,12 +4,12 @@ import type { PasswordGeneratorContract } from "@/modules/auth/application/auth-
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
-import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/application/shared/mappers/flows/signup/pg-unique-violation-to-signup-conflict-error.mapper";
 import {
   generateDemoUserIdentity,
   makeInvalidDemoCounterFailure,
   validateDemoUserCounter,
 } from "@/modules/auth/domain/auth-user/policies/registration.policy";
+import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
@@ -17,6 +17,7 @@ import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 import type { UserRole } from "@/shared/validation/user/user-role.schema";
 
+// TODO: why do i need this pattern? why is it in application?
 export async function createDemoUserTxHelper(
   deps: Readonly<{
     uow: AuthUnitOfWorkContract;

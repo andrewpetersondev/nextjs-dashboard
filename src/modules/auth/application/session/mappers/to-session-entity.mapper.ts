@@ -1,7 +1,7 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
-import { UserIdSchema } from "@/modules/auth/application/session/schemas/session-token-claims.schema";
 import type { SessionEntity } from "@/modules/auth/domain/session/entities/session.entity";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
+import { UserIdSchema } from "@/shared/validation/zod/user-id.schema";
 
 /**
  * Maps session token claims to a session domain entity.

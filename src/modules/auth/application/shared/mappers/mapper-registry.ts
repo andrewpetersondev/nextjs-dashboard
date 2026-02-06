@@ -25,19 +25,19 @@ const defineMapperRegistry = <T extends Record<string, MapperRegistryInfo>>(
 
 export const MAPPER_REGISTRY = defineMapperRegistry({
   "AppError → GenericAuthError": {
-    file: "application/shared/mappers/flows/login/map-generic-auth.error.ts",
+    file: "presentation/authn/mappers/map-generic-auth.error.ts",
     flows: ["login", "signup"],
-    layer: "application → presentation",
+    layer: "presentation → presentation",
     purpose: "Maps generic authentication errors",
     security: "Normalizes error responses",
   },
 
   // ============================================================================
-  // Application → Presentation (Error Mapping)
+  // Presentation Mappers (Application → Presentation)
   // ============================================================================
 
   "AppError → LoginFormResult": {
-    file: "application/shared/mappers/flows/login/to-login-form-result.mapper.ts",
+    file: "presentation/authn/mappers/to-login-form-result.mapper.ts",
     flows: ["login"],
     layer: "application → presentation",
     purpose: "Converts domain errors to UI-friendly login form errors",
@@ -45,7 +45,7 @@ export const MAPPER_REGISTRY = defineMapperRegistry({
   },
 
   "AppError → SignupFormResult": {
-    file: "application/shared/mappers/flows/signup/to-signup-form-result.mapper.ts",
+    file: "presentation/authn/mappers/to-signup-form-result.mapper.ts",
     flows: ["signup"],
     layer: "application → presentation",
     purpose: "Converts domain errors to UI-friendly signup form errors",
@@ -89,11 +89,23 @@ export const MAPPER_REGISTRY = defineMapperRegistry({
   },
 
   // ============================================================================
+  // Presentation Adapters (Presentation → Application)
+  // ============================================================================
+
+  "LoginRequestDto → LoginCommand": {
+    file: "presentation/authn/adapters/to-login-command.adapter.ts",
+    flows: ["login"],
+    layer: "presentation → application",
+    purpose: "Adapts validated login form data to application command",
+    security: "Boundary between UI and application core",
+  },
+
+  // ============================================================================
   // Infrastructure → Application (Error Mapping)
   // ============================================================================
 
   "PostgresError → SignupConflictError": {
-    file: "application/shared/mappers/flows/signup/pg-unique-violation-to-signup-conflict-error.mapper.ts",
+    file: "infrastructure/persistence/auth-user/mappers/pg-unique-violation-to-signup-conflict-error.mapper.ts",
     flows: ["signup"],
     layer: "infrastructure → application",
     purpose: "Converts Postgres unique violation to signup conflict error",
@@ -106,6 +118,14 @@ export const MAPPER_REGISTRY = defineMapperRegistry({
     layer: "application → application",
     purpose: "Maps session token claims to DTO",
     security: "Validates and normalizes token claims",
+  },
+
+  "SignupRequestDto → SignupCommand": {
+    file: "presentation/authn/adapters/to-signup-command.adapter.ts",
+    flows: ["signup"],
+    layer: "presentation → application",
+    purpose: "Adapts validated signup form data to application command",
+    security: "Boundary between UI and application core",
   },
   // ============================================================================
   // Infrastructure → Domain
