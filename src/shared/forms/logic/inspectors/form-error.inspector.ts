@@ -1,11 +1,23 @@
+import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
 import type {
   DenseFieldErrorMap,
   FormErrors,
+  FormValidationMetadata,
   SparseFieldValueMap,
 } from "@/shared/forms/core/types/field-error.value";
 import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
+
+// Helper internal to the inspector
+function hasFormMetadata<T extends string>(
+  error: AppError,
+): error is AppError & { readonly metadata: FormValidationMetadata<T> } {
+  return (
+    error.key === APP_ERROR_KEYS.validation ||
+    error.key === APP_ERROR_KEYS.conflict
+  );
+}
 
 /**
  * Extracts dense field errors from an AppError.
@@ -20,7 +32,7 @@ import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto
 export const extractFieldErrors = <T extends string>(
   error: AppError,
 ): DenseFieldErrorMap<T, string> | undefined => {
-  if (isFormValidationError<T>(error)) {
+  if (hasFormMetadata<T>(error)) {
     return error.metadata.fieldErrors;
   }
 
