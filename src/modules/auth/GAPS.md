@@ -325,3 +325,158 @@ login)?
 
 If you want, I can propose an exact, minimal set of changes (rate limiter placement + log redaction + signup error
 strategy) without touching any deeper domain code.
+
+---
+
+### Demo-focused summary for `src/modules/auth/GAPS.md`
+
+You said to skip security controls. So below is framed as **product/demo gaps, correctness gaps, and maintainability
+gaps** (some items still overlap with security, but I’m not recommending “security programs”, just concrete code-level
+improvements).
+
+### Concrete gaps (grouped, with file references)
+
+#### 1) Cookie-only sessions have intentional feature limitations
+
+- **No server-side session state** means you can’t do:
+    - “Log out all devices”
+    - “Invalidate all sessions after password change”
+    - “Force logout” for a user
+    - Detect/avoid replay of older tokens after “rotation”
+- **Where this is baked in:**
+    - Token issuance/rotation: `src/modules/auth/infrastructure/session/services/session-token.service.ts` (`issue`
+      lines `126–152`, `issueRotated` lines `160–188`)
+    - Cookie storage: `src/modules/auth/infrastructure/session/adapters/session-cookie-store.adapter.ts`
+
+#### 2) Session lifetime knobs exist, but the “absolute lifetime” knob is not obviously enforced
+
+- You define:
+    - `SESSION_DURATION_SEC = 900` (15m)
+    - `SESSION_REFRESH_THRESHOLD_SEC = 120` (2m)
+    - `MAX_ABSOLUTE_SESSION_SEC = 2_592_000` (30d)
+- **Gap:** From what’s shown, `MAX_ABSOLUTE_SESSION_SEC` is not referenced by `SessionTokenService` (it always sets
+  `exp = now + SESSION_DURATION_SEC`). If you intended a true “absolute session lifetime”, it needs explicit enforcement
+  somewhere (usually by anchoring an `auth_time`/`session_start` claim and capping refresh).
+- **Where:** `src/modules/auth/domain/shared/constants/session-config.constants.ts` lines `4–11`, and
+  `src/modules/auth/infrastructure/session/services/session-token.service.ts` line `130`/`164`.
+
+#### 3) Signup error handling strategy is inconsistent with login
+
+- Login has a dedicated mapper for `invalid_credentials` that always returns the same field errors/message.
+    - `src/modules/auth/application/shared/mappers/flows/login/to-login-form-result.mapper.ts` lines `59–68`.
+- Signup explicitly does *not* do the same unification and just maps generically.
+    - `src/modules/auth/application/shared/mappers/flows/signup/to-signup-form-result.mapper.ts` lines `14–17`, `25–30`.
+- **Gap (demo/product):** This creates different UX behavior and makes it harder to keep messaging consistent across
+  flows.
+
+#### 4) Input normalization is split across layers and incomplete
+
+- DAL lookup is exact equality by whatever `email` string is passed (`eq(users.email, email)`).
+    - `src/modules/auth/infrastructure/persistence/auth-user/dal/get-user-by-email.dal.ts` lines `28–33`.
+- You already lowercase in the Zod schema (from earlier review), but you don’t consistently `trim()`.
+- **Gap (correctness/demo):** subtle user-facing issues like “can’t log in with copied email that includes whitespace”.
+
+#### 5) Logging payloads are very PII-heavy (even for a demo)
+
+- `signupAction` logs `{ email, ip, username }` on failure and `{ email, ip, role, userId }` on success.
+    - `src/modules/auth/presentation/authn/actions/signup.action.ts` lines `92–101` and `108–113`.
+- `loginAction` logs `{ email, ip }` on failures and success.
+    - `src/modules/auth/presentation/authn/actions/login.action.ts` lines `91–96` and `103–108`.
+- DAL logs `email` in not-found cases.
+    - `src/modules/auth/infrastructure/persistence/auth-user/dal/get-user-by-email.dal.ts` lines `34–39`.
+- **Gap (demo/ops):** logs get noisy, harder to share screenshots/log dumps, and harder to keep consistent privacy
+  posture.
+
+### Prioritized fixes (demo/product + maintainability first)
+
+1. **Decide what “session rotation” and “absolute session lifetime” should mean in the demo**
+    - Either explicitly document “cookie-only JWT; no absolute lifetime enforcement”
+    - Or implement minimal absolute-lifetime enforcement via an anchored claim.
+2. **Normalize inputs consistently**
+    - Add `trim()` alongside `toLowerCase()` for email
+    - Add `trim()` for username
+    - Consider enforcing normalization at persistence boundary too.
+3. **Unify signup and login error mapping conventions**
+    - Either keep both “generic” or both “explicit, friendly” but consistent.
+4. **Reduce PII in logs (even in demo mode)**
+    - Standardize `operationIdentifiers` to prefer `{ requestId, userId }` over `{ email, username }`.
+5. **Document cookie-only session tradeoffs explicitly in `GAPS.md`**
+    - So future you doesn’t hunt for “why can’t we revoke sessions?”.
+
+### Suggested patches (actionable, file-by-file)
+
+These are phrased as “diff intents” you can apply when you’re ready.
+
+#### A) Input normalization
+
+- **Patch:** update `LoginRequestSchema` and `SignupRequestSchema` to use
+  `email: z.string().trim().email().toLowerCase()` and `username: z.string().trim().min(3).max(20)`.
+- **Files:**
+    - `src/modules/auth/application/auth-user/schemas/login-request.schema.ts`
+    - `src/modules/auth/application/auth-user/schemas/signup-request.schema.ts`
+
+#### B) Absolute session lifetime enforcement (if you want it to be real)
+
+- **Patch option 1 (documentation-only):** add a note in `GAPS.md` that `MAX_ABSOLUTE_SESSION_SEC` is currently a
+  constant without enforcement.
+- **Patch option 2 (code):**
+    - Add a claim like `sessionStart` (or reuse `iat` as “session start” only if you never rotate `iat`), and when
+      rotating, cap `exp` so that `exp <= sessionStart + MAX_ABSOLUTE_SESSION_SEC`.
+    - This requires adjusting claim mappers/schema used by `SessionTokenService`.
+- **Files:**
+    - `src/modules/auth/domain/shared/constants/session-config.constants.ts`
+    - `src/modules/auth/infrastructure/session/services/session-token.service.ts`
+    - plus the session claims DTO/schema/mappers (not in the attached set, but referenced by `SessionTokenService`).
+
+#### C) Consistent error mapping between login and signup
+
+- **Patch:** introduce a signup-specific mapper similar to `mapLoginInvalidCredentialsError` for common signup failures
+  you care about (e.g., “email already used”) *or* intentionally unify all signup failures into one generic message for
+  demo simplicity.
+- **Files:**
+    - `src/modules/auth/application/shared/mappers/flows/signup/to-signup-form-result.mapper.ts`
+    - `src/modules/auth/application/shared/mappers/flows/login/map-generic-auth.error` (if you want shared behavior)
+
+#### D) Logging cleanup for demo friendliness
+
+- **Patch:** in `loginAction`/`signupAction`:
+    - remove `email`/`username` from `operationIdentifiers` on failure logs
+    - keep `requestId` and (on success) `userId`
+- **Files:**
+    - `src/modules/auth/presentation/authn/actions/login.action.ts`
+    - `src/modules/auth/presentation/authn/actions/signup.action.ts`
+    - optionally: `src/modules/auth/infrastructure/persistence/auth-user/dal/get-user-by-email.dal.ts`
+
+### Drop-in text you can paste into `GAPS.md`
+
+```md
+#### Cookie-only sessions: feature limitations
+
+- Sessions are stored only as a signed JWT in a cookie (no server-side session state).
+- Tradeoffs:
+    - No “log out all devices”
+    - No forced session invalidation after password change
+    - Rotation can mint a new token but cannot prevent replay of older tokens without tracking state server-side
+
+#### Session config constants vs enforcement
+
+- `MAX_ABSOLUTE_SESSION_SEC` exists but is not obviously enforced by the current token issuance/rotation logic.
+- `SessionTokenService` always sets `exp = now + SESSION_DURATION_SEC`.
+
+#### Input normalization
+
+- Email/usernames should be consistently normalized (e.g., `trim()` + case policy) to avoid login/signup edge cases.
+
+#### Presentation-layer consistency
+
+- Login has a dedicated unified error message path for `invalid_credentials`.
+- Signup maps errors generically; decide whether to keep this difference or standardize.
+
+#### Logging payload size/PII
+
+- Server actions and DAL include raw emails/usernames in logs; consider reducing this for demo friendliness.
+```
+
+If you want, paste your current `mapGenericAuthError` implementation and I’ll tailor the “error mapping consistency”
+section to exactly what it outputs today.
+
