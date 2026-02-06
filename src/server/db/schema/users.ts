@@ -46,3 +46,12 @@ export type UserRow = typeof users.$inferSelect;
  * Use this when creating or inserting new users.
  */
 export type NewUserRow = typeof users.$inferInsert;
+
+/**
+ * Projection used by auth flows (login) that need sensitive fields (password hash)
+ * but do not require the full `users` row.
+ */
+export type AuthUserCredentialsRow = Pick<
+  UserRow,
+  "email" | "id" | "password" | "role" | "username"
+>;

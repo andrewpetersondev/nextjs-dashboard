@@ -39,6 +39,7 @@ export {
   sessionsRelations,
 } from "./sessions";
 export {
+  type AuthUserCredentialsRow,
   type NewUserRow,
   roleEnum,
   type UserRow,
