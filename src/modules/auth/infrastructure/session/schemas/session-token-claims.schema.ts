@@ -1,6 +1,4 @@
 import { z } from "zod";
-import type { UserId } from "@/shared/branding/brands";
-import { toUserId } from "@/shared/branding/converters/id-converters";
 import { UserRoleEnum } from "@/shared/validation/user/user-role.schema";
 
 /**
@@ -56,14 +54,6 @@ export const SidSchema = z.uuid();
  * Must be a valid UUID string representing the user identifier.
  */
 export const SubSchema = z.uuid();
-
-/**
- * UserId boundary schema (UUID string ⇄ branded UserId).
- */
-export const UserIdSchema = z.codec(z.uuid(), z.custom<UserId>(), {
-  decode: (id: string) => toUserId(id),
-  encode: (userId: UserId) => String(userId),
-});
 
 /**
  * Validates the raw session token payload (e.g., JWT claims) after verification.
