@@ -22,6 +22,7 @@ export const users = pgTable("users", {
   emailVerified: timestamp("email_verified", { mode: "date" }),
   id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
   password: varchar("password", { length: 255 }).notNull().$type<Hash>(),
+  // TODO: THIS SETS A DEFAULT WHICH IS DISCOURAGED
   role: roleEnum("role").default(USER_ROLE).notNull().$type<UserRole>(),
   sensitiveData: varchar("sensitive_data", { length: 255 })
     .notNull()
