@@ -1,10 +1,7 @@
 import "server-only";
-
 import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
 import type { UserRow } from "@/server/db/schema/users";
-import { toUserId } from "@/shared/branding/converters/id-converters";
-import { parseUserRole } from "@/shared/validation/user/user-role.parser";
 
 /**
  * Maps a UserEntity to a UserDto for transport to the client/UI/API.
@@ -15,7 +12,7 @@ export function userEntityToDto(entity: UserEntity): UserDto {
   return {
     email: String(entity.email),
     id: String(entity.id),
-    role: parseUserRole(entity.role) as UserDto["role"],
+    role: entity.role,
     username: String(entity.username),
   };
 }
@@ -27,15 +24,24 @@ export function userEntityToDto(entity: UserEntity): UserDto {
  * @returns The corresponding UserEntity.
  */
 export function toUserEntity(row: UserRow): UserEntity {
-  if (!(row.id && row.email && row.password && row.role && row.username)) {
+  if (
+    !(
+      row.id &&
+      row.email &&
+      row.password &&
+      row.role &&
+      row.sensitiveData &&
+      row.username
+    )
+  ) {
     throw new Error("Missing required user row fields");
   }
   return {
     email: row.email,
-    id: toUserId(row.id),
+    id: row.id,
     password: row.password,
-    role: parseUserRole(row.role),
-    sensitiveData: row.sensitiveData ?? undefined,
+    role: row.role,
+    sensitiveData: row.sensitiveData,
     username: row.username,
   };
 }

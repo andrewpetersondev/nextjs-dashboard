@@ -5,21 +5,29 @@ import type {
 } from "@/modules/users/domain/user.entity";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { Result } from "@/shared/results/result.types";
 
 export interface UserRepositoryContract<Trepo = unknown> {
+  create(input: CreateUserProps): Promise<Result<UserEntity | null, AppError>>;
+
+  delete(id: UserId): Promise<Result<UserEntity | null, AppError>>;
+
+  readById(id: UserId): Promise<Result<UserEntity | null, AppError>>;
+
+  readFilteredUsers(
+    query: string,
+    page: number,
+  ): Promise<Result<UserEntity[], AppError>>;
+
+  readPageCount(query: string): Promise<Result<number, AppError>>;
+
+  update(
+    id: UserId,
+    patch: UserPersistencePatch,
+  ): Promise<Result<UserEntity | null, AppError>>;
+
   withTransaction<Tresult>(
     fn: (txRepo: UserRepositoryContract<Trepo>) => Promise<Tresult>,
   ): Promise<Tresult>;
-
-  create(input: CreateUserProps): Promise<UserEntity | null>;
-
-  update(id: UserId, patch: UserPersistencePatch): Promise<UserEntity | null>;
-
-  delete(id: UserId): Promise<UserEntity | null>;
-
-  readById(id: UserId): Promise<UserEntity | null>;
-
-  readFilteredUsers(query: string, page: number): Promise<UserEntity[]>;
-
-  readPageCount(query: string): Promise<number>;
 }

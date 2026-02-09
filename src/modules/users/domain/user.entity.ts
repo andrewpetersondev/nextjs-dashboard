@@ -12,7 +12,7 @@ export interface UserEntity {
   readonly id: UserId;
   readonly password: Hash;
   readonly role: UserRole;
-  readonly sensitiveData?: string;
+  readonly sensitiveData: string;
   readonly username: string;
 }
 
