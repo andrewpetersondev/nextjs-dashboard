@@ -4,20 +4,11 @@ import type {
   DenseFieldErrorMap,
   ValidationErrors,
 } from "@/shared/forms/core/types/field-error.value";
+import type { ZodErrorLike } from "@/shared/forms/core/types/validation.types";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
 } from "@/shared/forms/logic/mappers/field-error-map.mapper";
-
-/**
- * Loose shape matching a ZodError for flattening.
- */
-export type ZodErrorLike = {
-  readonly issues: readonly {
-    readonly path: readonly (string | number | symbol)[];
-    readonly message: string;
-  }[];
-};
 
 /**
  * Adapts a ZodError (foreign) into a canonical representation of field and form errors.

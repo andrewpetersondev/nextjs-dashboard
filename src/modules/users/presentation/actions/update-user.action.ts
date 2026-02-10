@@ -21,7 +21,7 @@ import {
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
-import { validateForm } from "@/shared/forms/server/validate-form.logic";
+import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routes/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;

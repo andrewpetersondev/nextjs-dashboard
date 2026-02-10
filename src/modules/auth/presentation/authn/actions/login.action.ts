@@ -12,7 +12,7 @@ import {
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { validateForm } from "@/shared/forms/server/validate-form.logic";
+import { validateForm } from "@/shared/forms/server/validate-form";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 

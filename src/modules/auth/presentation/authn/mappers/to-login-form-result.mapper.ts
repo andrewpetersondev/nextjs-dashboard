@@ -2,9 +2,9 @@ import { mapGenericAuthError } from "@/modules/auth/presentation/authn/mappers/m
 import { LOGIN_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { toFormErrorPayload } from "@/shared/forms/adapters/form-error.adapter";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
+import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 const LOGIN_CREDENTIALS_ERROR_MESSAGE =
   "Invalid credentials. Please try again.";

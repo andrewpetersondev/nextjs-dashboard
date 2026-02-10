@@ -21,7 +21,7 @@ import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value"
 import type { FieldError } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
-import { FormActionRow } from "@/shared/forms/ui/components/layout/form-action-row";
+import { FormActionRow } from "@/shared/forms/presentation/components/layout/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";

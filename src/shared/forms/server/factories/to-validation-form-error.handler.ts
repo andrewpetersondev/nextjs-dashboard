@@ -1,5 +1,4 @@
 import "server-only";
-import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
 import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
 import type {
   SparseFieldValueMap,
@@ -8,6 +7,7 @@ import type {
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
+import { fromZodError } from "@/shared/forms/server/mappers/zod-error.mapper";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isZodErrorInstance,

@@ -2,7 +2,7 @@ import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { FieldError } from "@/shared/forms/core/types/field-error.value";
-import { ErrorMessage } from "@/shared/forms/ui/components/fields/error-message";
+import { ErrorMessage } from "@/shared/forms/presentation/components/fields/error-message";
 import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 
 /**
