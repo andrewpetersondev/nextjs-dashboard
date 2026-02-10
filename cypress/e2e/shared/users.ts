@@ -2,7 +2,7 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
-import {USER_ROLE, type UserRole} from "../../../src/shared/validation/user/user-role.schema";
+import {USER_ROLE, type UserRole} from "../../../src/shared/validation/user/user-role.constants";
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
 /**

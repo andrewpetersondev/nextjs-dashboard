@@ -15,7 +15,7 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
+import type { UserRole } from "@/shared/validation/user/user-role.constants";
 
 // TODO: why do i need this pattern? why is it in application?
 export async function createDemoUserTxHelper(

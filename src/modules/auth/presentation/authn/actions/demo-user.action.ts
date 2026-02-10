@@ -10,7 +10,7 @@ import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/validation/user/user-role.schema";
+} from "@/shared/validation/user/user-role.constants";
 
 /**
  * Internal helper: creates a demo user for the given role.

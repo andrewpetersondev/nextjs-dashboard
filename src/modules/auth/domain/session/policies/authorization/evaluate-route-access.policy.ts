@@ -6,8 +6,10 @@ import {
   AUTH_ROUTE_TYPES,
   type AuthRouteType,
 } from "@/modules/auth/domain/shared/constants/auth-route.constants";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
-import { ADMIN_ROLE } from "@/shared/validation/user/user-role.schema";
+import {
+  ADMIN_ROLE,
+  type UserRole,
+} from "@/shared/validation/user/user-role.constants";
 
 /**
  * Result of the route access evaluation (domain-level: authorization only).

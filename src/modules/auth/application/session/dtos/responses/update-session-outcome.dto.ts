@@ -3,7 +3,7 @@ import type {
   TimeDeltaSeconds,
 } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/validation/user/user-role.schema";
+import type { UserRole } from "@/shared/validation/user/user-role.constants";
 
 /**
  * Centralized reason literals to avoid magic strings across DTOs, builders, and use cases.

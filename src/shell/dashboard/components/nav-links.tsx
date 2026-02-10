@@ -13,7 +13,7 @@ import { ROUTES } from "@/shared/routes/routes";
 import {
   ADMIN_ROLE,
   type UserRole,
-} from "@/shared/validation/user/user-role.schema";
+} from "@/shared/validation/user/user-role.constants";
 import { cn } from "@/ui/utils/cn";
 
 /** Navigation link paths */

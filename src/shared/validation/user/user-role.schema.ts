@@ -1,22 +1,14 @@
 import { z } from "zod";
+import { USER_ROLES } from "@/shared/validation/user/user-role.constants";
 
-// TODO: EXTRACT USER_ROLES, UserRole, ADMIN_ROLE, GUEST_ROLE, USER_ROLE TO user-role.constants.ts
-export const USER_ROLES = ["ADMIN", "GUEST", "USER"] as const;
-
-export type UserRole = (typeof USER_ROLES)[number];
-
-export const ADMIN_ROLE = "ADMIN";
-export const GUEST_ROLE = "GUEST";
-export const USER_ROLE = "USER";
-
-// biome-ignore lint/nursery/useExplicitType: <fix later>
+// biome-ignore lint/nursery/useExplicitType: Zod does not make this easy
 export const UserRoleEnum = z.enum(USER_ROLES);
 
 /**
  * Role schema: trims, uppercases, and validates against allowed roles.
  * Uses pipe to ensure validation runs on the normalized value.
  */
-// biome-ignore lint/nursery/useExplicitType: <fix later>
+// biome-ignore lint/nursery/useExplicitType: Zod does not make this easy
 export const UserRoleFormSchema = z
   .string()
   .trim()

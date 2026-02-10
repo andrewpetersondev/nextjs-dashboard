@@ -1,4 +1,4 @@
-import {USER_ROLE} from "../../../src/shared/validation/user/user-role.schema";
+import {USER_ROLE} from "../../../src/shared/validation/user/user-role.constants";
 import { DASHBOARD_PATH } from "../shared/paths";
 import { TEN_SECONDS } from "../shared/times";
 import { DEMO_USER } from "../shared/users";

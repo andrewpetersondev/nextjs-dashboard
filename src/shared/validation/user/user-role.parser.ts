@@ -7,7 +7,7 @@ import {
   GUEST_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/shared/validation/user/user-role.schema";
+} from "@/shared/validation/user/user-role.constants";
 
 /**
  * Type guard to check if a value is a valid UserRole.

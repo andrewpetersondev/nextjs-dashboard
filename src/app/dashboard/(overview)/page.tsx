@@ -6,13 +6,13 @@ import { readInvoicesSummaryAction } from "@/modules/invoices/infrastructure/act
 import { readLatestInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-latest-invoices.action";
 import { getAppDb } from "@/server/db/db.connection";
 import { formatCurrency } from "@/shared/utilities/money/convert";
-import { normalizeUserRole } from "@/shared/validation/user/user-role.parser";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/validation/user/user-role.schema";
+} from "@/shared/validation/user/user-role.constants";
+import { normalizeUserRole } from "@/shared/validation/user/user-role.parser";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";
