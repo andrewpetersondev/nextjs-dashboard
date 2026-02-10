@@ -1,4 +1,3 @@
-import { isDev } from "@/shared/config/env-shared";
 import {
   type AppErrorKey,
   getAppErrorDefinition,
@@ -11,7 +10,7 @@ import type {
 } from "@/shared/errors/core/app-error.types";
 import type { AppErrorMetadata } from "@/shared/errors/metadata/error-metadata.value";
 import {
-  deepFreezeDev,
+  deepFreeze,
   validateAndMaybeSanitizeMetadata,
 } from "@/shared/errors/utils/app-error-entity.utils";
 
@@ -48,16 +47,19 @@ export class AppError<
     this.severity = meta.severity;
 
     const processedMetadata = validateAndMaybeSanitizeMetadata(key, metadata);
-    this.metadata = isDev()
-      ? deepFreezeDev(processedMetadata)
-      : Object.freeze(processedMetadata);
 
-    if (!isDev()) {
-      try {
-        Object.freeze(this);
-      } catch {
-        /* silent */
-      }
+    this.metadata = deepFreeze(processedMetadata);
+
+    try {
+      Object.freeze(this.metadata);
+    } catch {
+      /* silent */
+    }
+
+    try {
+      Object.freeze(this);
+    } catch {
+      /* silent */
     }
   }
 

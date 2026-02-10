@@ -1,4 +1,3 @@
-import { isDev } from "@/shared/config/env-shared";
 import {
   type AppErrorKey,
   getMetadataSchemaForKey,
@@ -14,14 +13,7 @@ function validateMetadataByCode<T extends AppErrorMetadata>(
     const schema = getMetadataSchemaForKey(code);
     return schema.parse(metadata) as T;
   } catch (err) {
-    // In dev, fail fast on metadata validation
-    if (isDev()) {
-      console.error(`Metadata validation failed for code "${code}":`, err);
-      throw new Error(
-        `Invalid metadata for error code "${code}": ${err instanceof Error ? err.message : String(err)}`,
-      );
-    }
-    // In prod, log but return the metadata as-is to avoid crashing
+    console.error(`Metadata validation failed for code "${code}":`, err);
     return metadata;
   }
 }
@@ -30,15 +22,12 @@ export function validateAndMaybeSanitizeMetadata<T extends AppErrorMetadata>(
   code: AppErrorKey,
   ctx: T,
 ): T {
-  // First validate the shape
   const validated = validateMetadataByCode(code, ctx);
 
-  // Then sanitize non-serializable values
   const source = validated as Record<string, unknown>;
   const out: Record<string, unknown> = {};
 
-  // Avoid unnecessary sorting if not in dev (sorting helps with stable log outputs/diffs)
-  const keys = isDev() ? Object.keys(source).sort() : Object.keys(source);
+  const keys = Object.keys(source).sort();
 
   for (const key of keys) {
     out[key] = redactNonSerializable(source[key]);
@@ -46,13 +35,13 @@ export function validateAndMaybeSanitizeMetadata<T extends AppErrorMetadata>(
   return out as T;
 }
 
-export function deepFreezeDev<T>(obj: T): T {
-  if (
-    !isDev() ||
-    obj === null ||
-    typeof obj !== "object" ||
-    Object.isFrozen(obj)
-  ) {
+/**
+ * Deep-freezes an object graph best-effort.
+ * @remarks
+ * This is intentionally environment-agnostic to keep the errors layer independent of config/env.
+ */
+export function deepFreeze<T>(obj: T): T {
+  if (obj === null || typeof obj !== "object" || Object.isFrozen(obj)) {
     return obj;
   }
   const seen = new WeakSet<object>();

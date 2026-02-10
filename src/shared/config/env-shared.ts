@@ -1,12 +1,6 @@
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
 /** biome-ignore-all lint/style/noProcessEnv: <env config file> */
 
-/**
- * @file Shared environment utilities
- * - Canonical handling of NODE_ENV, DATABASE_ENV, LOG_LEVEL
- * - Safe for universal import (client/server)
- */
-
 import { getPublicNodeEnvResult } from "@/shared/config/env-public";
 import {
   type DatabaseEnvironment,
