@@ -1,7 +1,7 @@
 import "server-only";
 import { UserService } from "@/modules/users/application/services/user.service";
-import { UserRepositoryAdapter } from "@/modules/users/infrastructure/repository/adapters/user-repository.adapter";
 import { UserRepositoryImpl } from "@/modules/users/infrastructure/repository/user.repository";
+import { UserRepositoryAdapter } from "@/modules/users/infrastructure/repository/user-repository.adapter";
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { logger } from "@/shared/logging/infrastructure/logging.client";

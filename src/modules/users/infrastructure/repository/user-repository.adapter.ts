@@ -18,6 +18,7 @@ export class UserRepositoryAdapter
   constructor(repo: UserRepositoryImpl) {
     this.repo = repo;
   }
+
   create(input: CreateUserProps): Promise<Result<UserEntity | null, AppError>> {
     return this.repo.create(input);
   }

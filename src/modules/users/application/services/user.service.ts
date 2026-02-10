@@ -7,7 +7,7 @@ import type {
   CreateUserData,
   EditUserData,
 } from "@/modules/users/domain/schemas/user.schema";
-import { userEntityToDto } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
+import { userEntityToDto } from "@/modules/users/infrastructure/mappers/user-entity-to-dto.mapper";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
