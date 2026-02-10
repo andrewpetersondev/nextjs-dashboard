@@ -1,6 +1,7 @@
 import "server-only";
 import type {
   CreateUserProps,
+  UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import { createUserDal } from "@/modules/users/infrastructure/repository/dal/create-user.dal";
@@ -9,7 +10,6 @@ import { readFilteredUsersDal } from "@/modules/users/infrastructure/repository/
 import { readUserDal } from "@/modules/users/infrastructure/repository/dal/read-user.dal";
 import { readUsersPageCountDal } from "@/modules/users/infrastructure/repository/dal/read-users-page-count.dal";
 import { updateUserDal } from "@/modules/users/infrastructure/repository/dal/update-user.dal";
-import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -49,7 +49,7 @@ export class UserRepositoryImpl {
 
   async update(
     id: UserId,
-    patch: UserPersistencePatch,
+    patch: UpdateUserProps,
   ): Promise<Result<UserEntity | null, AppError>> {
     return await updateUserDal(this.db, id, patch);
   }

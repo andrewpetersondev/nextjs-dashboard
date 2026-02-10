@@ -2,10 +2,10 @@ import "server-only";
 import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
 import type {
   CreateUserProps,
+  UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import type { UserRepositoryImpl } from "@/modules/users/infrastructure/repository/user.repository";
-import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -44,7 +44,7 @@ export class UserRepositoryAdapter
 
   update(
     id: UserId,
-    patch: UserPersistencePatch,
+    patch: UpdateUserProps,
   ): Promise<Result<UserEntity | null, AppError>> {
     return this.repo.update(id, patch);
   }

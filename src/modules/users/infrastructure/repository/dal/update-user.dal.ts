@@ -1,8 +1,10 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
+import type {
+  UpdateUserProps,
+  UserEntity,
+} from "@/modules/users/domain/entities/user.entity";
 import { toUserEntity } from "@/modules/users/infrastructure/mappers/to-user-entity.mapper";
-import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
@@ -24,7 +26,7 @@ import type { Result } from "@/shared/results/result.types";
 export async function updateUserDal(
   db: AppDatabase,
   id: UserId,
-  patch: UserPersistencePatch,
+  patch: UpdateUserProps,
 ): Promise<Result<UserEntity | null, AppError>> {
   // Defensive: No update if patch is empty
   if (Object.keys(patch).length === 0) {

@@ -2,13 +2,15 @@ import "server-only";
 import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
-import type { CreateUserProps } from "@/modules/users/domain/entities/user.entity";
+import type {
+  CreateUserProps,
+  UpdateUserProps,
+} from "@/modules/users/domain/entities/user.entity";
 import type {
   CreateUserData,
   EditUserData,
 } from "@/modules/users/domain/schemas/user.schema";
-import { userEntityToDto } from "@/modules/users/infrastructure/mappers/user-entity-to-dto.mapper";
-import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
+import { toUserDto } from "@/modules/users/infrastructure/mappers/to-user-dto.mapper";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
@@ -64,7 +66,7 @@ export class UserService {
         logging: { email: input.email, username: input.username },
       });
 
-      return Ok(userEntityToDto(user));
+      return Ok(toUserDto(user));
     } catch (err) {
       const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("User creation failed", {
@@ -98,7 +100,7 @@ export class UserService {
         logging: { userId: id },
       });
 
-      return Ok(userEntityToDto(deleted));
+      return Ok(toUserDto(deleted));
     } catch (err) {
       const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("User deletion failed", {
@@ -120,7 +122,7 @@ export class UserService {
         return result;
       }
 
-      return Ok(result.value.map(userEntityToDto));
+      return Ok(result.value.map(toUserDto));
     } catch (err) {
       const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("Failed to fetch filtered users", {
@@ -140,7 +142,7 @@ export class UserService {
       }
 
       const user = result.value;
-      return Ok(user ? userEntityToDto(user) : null);
+      return Ok(user ? toUserDto(user) : null);
     } catch (err) {
       const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error(USER_ERROR_MESSAGES.readFailed, {
@@ -169,7 +171,7 @@ export class UserService {
     patch: EditUserData,
   ): Promise<Result<UserDto, AppError>> {
     try {
-      let finalPatch: UserPersistencePatch;
+      let finalPatch: UpdateUserProps;
 
       if (patch.password) {
         const hashedPassword = await this.hasher.hash(patch.password);
@@ -178,7 +180,7 @@ export class UserService {
           password: hashedPassword,
         };
       } else {
-        finalPatch = { ...patch } as UserPersistencePatch;
+        finalPatch = { ...patch } as UpdateUserProps;
       }
 
       const result = await this.repo.update(id, finalPatch);
@@ -202,7 +204,7 @@ export class UserService {
         logging: { userId: id },
       });
 
-      return Ok(userEntityToDto(updated));
+      return Ok(toUserDto(updated));
     } catch (err) {
       const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("User update failed", {

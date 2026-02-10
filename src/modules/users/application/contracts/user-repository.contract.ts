@@ -1,9 +1,9 @@
 import "server-only";
 import type {
   CreateUserProps,
+  UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
-import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
@@ -24,7 +24,7 @@ export interface UserRepositoryContract<Trepo = unknown> {
 
   update(
     id: UserId,
-    patch: UserPersistencePatch,
+    patch: UpdateUserProps,
   ): Promise<Result<UserEntity | null, AppError>>;
 
   withTransaction<Tresult>(

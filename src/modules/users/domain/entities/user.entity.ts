@@ -26,3 +26,10 @@ export interface CreateUserProps {
   readonly role: UserRole;
   readonly username: string;
 }
+
+export type UpdateUserProps = {
+  email?: string;
+  password?: Hash;
+  role?: UserRole;
+  username?: string;
+};
