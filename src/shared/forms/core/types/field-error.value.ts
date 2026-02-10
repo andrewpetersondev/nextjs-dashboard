@@ -18,11 +18,6 @@ export type FieldError<T = string> = NonEmptyArray<T>;
 export type FormErrors = readonly string[];
 
 /**
- * An empty, frozen array of form errors.
- */
-export const EMPTY_FORM_ERRORS: FormErrors = Object.freeze([]);
-
-/**
  * Combined form validation errors including field and form-level errors.
  *
  * @typeParam T - Field name literal union.

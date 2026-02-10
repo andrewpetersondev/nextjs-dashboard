@@ -6,7 +6,7 @@ import type {
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/logic/factories/field-error-map.factory";
+} from "@/shared/forms/logic/mappers/field-error-map.factory";
 
 /**
  * Loose shape matching a ZodError for flattening.

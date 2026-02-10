@@ -11,12 +11,12 @@ import { createUserService } from "@/modules/users/infrastructure/factories/user
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.factory";
 import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { toUserRole } from "@/shared/validation/user/user-role.parser";
 

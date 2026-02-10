@@ -18,13 +18,13 @@ import {
 import { AppError } from "@/shared/errors/core/app-error.entity";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
-  selectSparseFieldErrors,
-  toDenseFieldErrorMap,
-} from "@/shared/forms/logic/factories/field-error-map.factory";
-import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
+import {
+  selectSparseFieldErrors,
+  toDenseFieldErrorMap,
+} from "@/shared/forms/logic/mappers/field-error-map.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

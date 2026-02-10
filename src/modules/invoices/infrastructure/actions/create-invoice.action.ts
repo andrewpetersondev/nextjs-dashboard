@@ -19,18 +19,18 @@ import {
 import { isAppError } from "@/shared/errors/utils/is-app-error";
 import { resolveRawFieldPayload } from "@/shared/forms/adapters/form-data.adapter";
 import { toDenseFieldErrorMapFromZod } from "@/shared/forms/adapters/zod-error.adapter";
-import { isZodErrorInstance } from "@/shared/forms/core/guards/zod.guard";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
-import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
+import { isZodErrorInstance } from "@/shared/validation/zod/zod.guard";
 
 // biome-ignore lint/nursery/useExplicitType: fix
-const allowed = extractSchemaFieldNames(CreateInvoiceSchema);
+const allowed = toSchemaKeys(CreateInvoiceSchema);
 
 /**
  * Server action for creating a new invoice.

@@ -1,17 +1,17 @@
 import { fromZodError } from "@/shared/forms/adapters/zod-error.adapter";
+import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
+import type {
+  SparseFieldValueMap,
+  ValidationErrors,
+} from "@/shared/forms/core/types/field-error.value";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.factory";
+import { logger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/forms/core/guards/zod.guard";
-import {
-  EMPTY_FORM_ERRORS,
-  type SparseFieldValueMap,
-  type ValidationErrors,
-} from "@/shared/forms/core/types/field-error.value";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+} from "@/shared/validation/zod/zod.guard";
 
 /**
  * Maps an unknown error to a canonical ValidationErrors shape.

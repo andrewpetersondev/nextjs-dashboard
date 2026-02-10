@@ -13,7 +13,7 @@ import type {
   SparseFieldErrorMap,
 } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { toDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
+import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.factory";
 import { Err } from "@/shared/results/result";
 
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;

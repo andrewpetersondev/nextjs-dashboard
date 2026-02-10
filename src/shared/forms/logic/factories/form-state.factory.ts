@@ -1,12 +1,10 @@
-import type { z } from "zod";
+import type { ZodObject, ZodRawShape } from "zod";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import {
-  type DenseFieldErrorMap,
-  EMPTY_FORM_ERRORS,
-} from "@/shared/forms/core/types/field-error.value";
+import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
-import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.factory";
 import { Err } from "@/shared/results/result";
 
 /**
@@ -38,8 +36,8 @@ export function makeInitialFormState<T extends string>(
  * Extracts field names automatically from the schema shape.
  */
 export function makeInitialFormStateFromSchema<
-  S extends z.ZodObject<z.ZodRawShape>,
+  S extends ZodObject<ZodRawShape>,
 >(schema: S): FormResult<never> {
-  const fields = extractSchemaFieldNames(schema);
+  const fields = toSchemaKeys(schema);
   return makeInitialFormState(fields);
 }
