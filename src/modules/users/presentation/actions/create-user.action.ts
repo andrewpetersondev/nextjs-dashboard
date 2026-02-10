@@ -4,77 +4,72 @@ import {
   USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/constants/user.constants";
 import {
-  type CreateUserFormInput,
+  type CreateUserData,
   CreateUserFormSchema,
 } from "@/modules/users/domain/schemas/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import {
-  makeEmptyDenseFieldErrorMap,
-  selectSparseFieldErrors,
-  toDenseFieldErrorMap,
-} from "@/shared/forms/logic/factories/field-error-map.factory";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/factories/field-error-map.factory";
 import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
-import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { normalizeUserRole } from "@/shared/validation/user/user-role.parser";
-
-const toOptionalString = (v: FormDataEntryValue | null): string | undefined =>
-  typeof v === "string" ? v : undefined;
-
-function pickCreateUserFormData(
-  formData: FormData,
-): Partial<CreateUserFormInput> {
-  return {
-    email: toOptionalString(formData.get("email")),
-    password: toOptionalString(formData.get("password")),
-    role: toOptionalString(formData.get("role")),
-    username: toOptionalString(formData.get("username")),
-  };
-}
+import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { validateForm } from "@/shared/forms/server/validate-form.logic";
+import { toUserRole } from "@/shared/validation/user/user-role.parser";
 
 /**
  * Creates a new user (admin only).
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix
 export async function createUserAction(
   _prevState: FormResult<unknown>,
   formData: FormData,
 ): Promise<FormResult<unknown>> {
   const db = getAppDb();
-  const allowed = extractSchemaFieldNames(CreateUserFormSchema);
+
+  const allowed = resolveCanonicalFieldNames<
+    CreateUserData,
+    keyof CreateUserData & string
+  >(CreateUserFormSchema);
 
   try {
-    const raw = pickCreateUserFormData(formData);
-    const parsed = CreateUserFormSchema.safeParse({
-      email: raw.email,
-      password: raw.password,
-      role: normalizeUserRole(raw.role),
-      username: raw.username,
+    const validation = await validateForm<
+      CreateUserData,
+      keyof CreateUserData & string
+    >(formData, CreateUserFormSchema, allowed, {
+      messages: { failureMessage: USER_ERROR_MESSAGES.validationFailed },
     });
 
-    if (!parsed.success) {
+    if (!validation.ok) {
+      return validation;
+    }
+
+    const { data } = validation.value;
+
+    // Map role string to UserRole using the suggested parser
+    const roleResult = toUserRole(data.role);
+
+    if (!roleResult.ok) {
       return makeFormError({
-        fieldErrors: toDenseFieldErrorMap(
-          selectSparseFieldErrors(parsed.error.flatten().fieldErrors, allowed),
-          allowed,
-        ),
+        fieldErrors: makeEmptyDenseFieldErrorMap(allowed),
         formData: {} as Readonly<
           Partial<Record<(typeof allowed)[number], string>>
         >,
         formErrors: [],
         key: APP_ERROR_KEYS.validation,
-        message: USER_ERROR_MESSAGES.validationFailed,
+        message: roleResult.error.message,
       });
     }
 
-    const { username, email, password, role } = parsed.data;
+    const role = roleResult.value;
+
+    const { username, email, password } = data;
 
     const service = createUserService(db);
+
     const result = await service.createUser({
       email,
       password,
@@ -98,7 +93,7 @@ export async function createUserAction(
   } catch (_error: unknown) {
     // Catch generic unexpected errors not caught by service
     return makeFormError({
-      fieldErrors: toDenseFieldErrorMap({}, allowed),
+      fieldErrors: makeEmptyDenseFieldErrorMap(allowed),
       formData: {} as Readonly<
         Partial<Record<(typeof allowed)[number], string>>
       >,

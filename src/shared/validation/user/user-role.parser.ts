@@ -40,17 +40,6 @@ export function toUserRole(role: unknown): Result<UserRole, AppError> {
 }
 
 /**
- * Throwing wrapper for call sites that expect exceptions on invalid input.
- */
-export function parseUserRole(role: unknown): UserRole {
-  const r = toUserRole(role);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
-}
-
-/**
  * Validates and returns a user role, defaulting to guest if invalid.
  *
  * @param role - The role to validate.
