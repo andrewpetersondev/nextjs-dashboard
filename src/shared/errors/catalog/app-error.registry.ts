@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { ZodType, z } from "zod";
 import {
   APP_ERROR_LAYER,
   APP_ERROR_SEVERITY,
@@ -152,3 +152,7 @@ export function getAppErrorDefinition(
 export type AppErrorMetadataValueByKey = {
   [K in AppErrorKey]: z.infer<(typeof APP_ERROR_REGISTRY)[K]["metadataSchema"]>;
 };
+
+export function getMetadataSchemaForKey(key: AppErrorKey): ZodType {
+  return APP_ERROR_REGISTRY[key].metadataSchema;
+}

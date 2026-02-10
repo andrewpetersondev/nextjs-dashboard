@@ -1,9 +1,4 @@
 import { z } from "zod";
-import {
-  type AppErrorKey,
-  type AppErrorMetadataValueByKey,
-  getAppErrorDefinition,
-} from "@/shared/errors/catalog/app-error.registry";
 import type { PgErrorMetadata } from "@/shared/errors/server/adapters/postgres/db-error.types";
 
 export type ValidationErrorMetadata = Readonly<{
@@ -87,11 +82,14 @@ export const UnexpectedErrorMetadataSchema = z
   .object({})
   .passthrough() as z.ZodType<UnexpectedErrorMetadata>;
 
-export type AppErrorMetadata = AppErrorMetadataValueByKey[AppErrorKey];
-
-export function getMetadataSchemaForKey(key: AppErrorKey): z.ZodType {
-  return getAppErrorDefinition(key).metadataSchema;
-}
+export type AppErrorMetadata =
+  | ValidationErrorMetadata
+  | InfrastructureErrorMetadata
+  | ConflictErrorMetadata
+  | IntegrityErrorMetadata
+  | UnknownErrorMetadata
+  | UnexpectedErrorMetadata
+  | PgErrorMetadata;
 
 export function isValidationMetadata(
   metadata: AppErrorMetadata,
