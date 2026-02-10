@@ -5,72 +5,72 @@ import type { Result } from "@/shared/results/result.types";
 /**
  * Applies async function to successful value and flattens resulting Result.
  *
- * @typeParam T - Input value type.
- * @typeParam T2 - Resulting value type.
- * @typeParam E - Initial error type.
- * @typeParam E2 - Error type from function.
+ * @typeParam TValue - Input value type.
+ * @typeParam TNextValue - Resulting value type.
+ * @typeParam TError - Initial error type.
+ * @typeParam TNextError - Error type from function.
  * @param fn - Async function transforming value into Result.
- * @returns Promise of Result with transformed value or errors.
+ * @returns A function that accepts a Result and returns a Promise resolving to Result with transformed value or errors.
+ * @example
+ * const flatter = flatMapAsync(async (v: number) => Ok(v * 2));
+ * const res = await flatter(Ok(5)); // Ok(10)
  */
-export const flatMapAsync =
-  /* @__PURE__ */
-    <T, T2, E extends AppError, E2 extends AppError>(
-      fn: (v: T) => Promise<Result<T2, E2>>,
-    ) =>
-    /* @__PURE__ */
-    async (r: Result<T, E>): Promise<Result<T2, E | E2>> =>
-      r.ok ? await fn(r.value) : r;
-
-/**
- * Transforms Result asynchronously, preserving original errors.
- *
- * @typeParam T - Input value type.
- * @typeParam T2 - Transformed value type.
- * @typeParam E - Original error type.
- * @typeParam E2 - New error type from transformation.
- * @param fn - Takes value and returns Promise of transformed Result.
- * @returns Function processing Result and returning Promise of transformed Result.
- */
-export const flatMapAsyncPreserveErr =
-  /* @__PURE__ */
-  <T, T2, E extends AppError, E2 extends AppError>(
-    fn: (v: T) => Promise<Result<T2, E2>>,
-  ) => {
-    /* @__PURE__ */
-    return async (r: Result<T, E>): Promise<Result<T2, E | E2>> => {
-      if (!r.ok) {
-        return r;
-      }
-      return await fn(r.value);
-    };
-  };
+export function flatMapAsync<
+  TValue,
+  TNextValue,
+  TError extends AppError,
+  TNextError extends AppError,
+>(
+  fn: (v: TValue) => Promise<Result<TNextValue, TNextError>>,
+): (
+  r: Result<TValue, TError>,
+) => Promise<Result<TNextValue, TError | TNextError>> {
+  return /* @__PURE__ */ (
+    r: Result<TValue, TError>,
+  ): Promise<Result<TNextValue, TError | TNextError>> =>
+    r.ok ? fn(r.value) : Promise.resolve(r);
+}
 
 /**
  * Safely applies async transformation to Result value with error handling.
  *
- * @typeParam T - Input value type.
- * @typeParam T2 - Transformed value type.
- * @typeParam E - Existing error type.
- * @typeParam E2 - Error type from async function.
- * @typeParam E3 - Error type from error mapper.
+ * @typeParam TValue - Input value type.
+ * @typeParam TNextValue - Transformed value type.
+ * @typeParam TError - Existing error type.
+ * @typeParam TNextError - Error type from async function.
+ * @typeParam TSideError - Error type from error mapper.
  * @param fn - Async function transforming Result value.
- * @param mapError - Maps unknown errors to E3.
- * @returns Promise resolving to new Result with transformed or error value.
+ * @param mapError - Maps unknown errors to TSideError.
+ * @returns A function that accepts a Result and returns a Promise resolving to new Result with transformed or error value.
+ * @example
+ * const flatter = flatMapAsyncSafe(
+ *   async (v: number) => Ok(v * 2),
+ *   (e) => makeUnexpectedError(e, { message: 'Flat map failed' })
+ * );
+ * const res = await flatter(Ok(5)); // Ok(10)
  */
-export const flatMapAsyncSafe =
-  /* @__PURE__ */
-    <T, T2, E extends AppError, E2 extends AppError, E3 extends AppError>(
-      fn: (v: T) => Promise<Result<T2, E2>>,
-      mapError: (e: unknown) => E3,
-    ) =>
-    /* @__PURE__ */
-    async (r: Result<T, E>): Promise<Result<T2, E | E2 | E3>> => {
-      if (!r.ok) {
-        return r;
-      }
-      try {
-        return await fn(r.value);
-      } catch (e) {
-        return Err(mapError(e));
-      }
-    };
+export function flatMapAsyncSafe<
+  TValue,
+  TNextValue,
+  TError extends AppError,
+  TNextError extends AppError,
+  TSideError extends AppError,
+>(
+  fn: (v: TValue) => Promise<Result<TNextValue, TNextError>>,
+  mapError: (e: unknown) => TSideError,
+): (
+  r: Result<TValue, TError>,
+) => Promise<Result<TNextValue, TError | TNextError | TSideError>> {
+  return /* @__PURE__ */ async (
+    r: Result<TValue, TError>,
+  ): Promise<Result<TNextValue, TError | TNextError | TSideError>> => {
+    if (!r.ok) {
+      return r;
+    }
+    try {
+      return await fn(r.value);
+    } catch (e) {
+      return Err(mapError(e));
+    }
+  };
+}

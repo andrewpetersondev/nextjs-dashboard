@@ -5,16 +5,21 @@ import type { Result } from "@/shared/results/result.types";
 /**
  * Executes an async function and wraps the result.
  *
- * @typeParam T - Success value type.
- * @typeParam E - Error type extending AppError.
+ * @typeParam TValue - Success value type.
+ * @typeParam TError - Error type extending AppError.
  * @param fn - Async function to execute.
  * @param mapError - Maps unknown errors to error type.
  * @returns Promise resolving to Result with value or error.
+ * @example
+ * const res = await tryCatchAsync(
+ *   async () => await fetchData(),
+ *   (e) => ({ code: 'FETCH_ERROR', message: String(e) })
+ * );
  */
-export async function fromPromiseThunk<T, E extends AppError>(
-  fn: () => Promise<T>,
-  mapError: (e: unknown) => E,
-): Promise<Result<T, E>> {
+export async function tryCatchAsync<TValue, TError extends AppError>(
+  fn: () => Promise<TValue>,
+  mapError: (e: unknown) => TError,
+): Promise<Result<TValue, TError>> {
   try {
     return Ok(await fn());
   } catch (e) {
@@ -23,50 +28,25 @@ export async function fromPromiseThunk<T, E extends AppError>(
 }
 
 /**
- * Alias for `fromPromiseThunk`.
- *
- * @typeParam T - Success value type.
- * @typeParam E - Error type extending AppError.
- * @param fn - Async function to execute.
- * @param mapError - Maps unknown errors to error type.
- * @returns Promise resolving to Result with value or error.
- */
-export const tryCatchAsync: typeof fromPromiseThunk = fromPromiseThunk;
-
-export const fromAsyncThunk = /* @__PURE__ */ <T, E extends AppError>(
-  fn: () => Promise<T>,
-  mapError: (e: unknown) => E,
-): Promise<Result<T, E>> => fromPromiseThunk(fn, mapError);
-
-/**
- * Converts a promise into a Result, mapping errors.
- *
- * @typeParam T - Resolved value type.
- * @typeParam E - Mapped error type extending AppError.
- * @param p - Promise to convert.
- * @param mapError - Maps unknown errors to custom type.
- * @returns Result with resolved value or mapped error.
- */
-export async function fromPromise<T, E extends AppError>(
-  p: Promise<T>,
-  mapError: (e: unknown) => E,
-): Promise<Result<T, E>> {
-  try {
-    return Ok(await p);
-  } catch (e) {
-    return Err(mapError(e));
-  }
-}
-
-/**
  * Converts Result to Promise. Resolves with value if ok, rejects with error otherwise.
  *
- * @typeParam T - Success value type.
- * @typeParam E - Error type extending AppError.
+ * @typeParam TValue - Success value type.
+ * @typeParam TError - Error type extending AppError.
  * @param r - Result to transform.
  * @returns Promise resolving to value or rejecting with error.
  * @throws Throws error if result is not ok.
+ * @example
+ * const value = await toPromiseOrThrow(Ok(42)); // 42
  */
-export const toPromiseOrThrow = <T, E extends AppError>(
-  r: Result<T, E>,
-): Promise<T> => (r.ok ? Promise.resolve(r.value) : Promise.reject(r.error));
+export function toPromiseOrThrow<TValue, TError extends AppError>(
+  r: Result<TValue, TError>,
+): Promise<TValue> {
+  if (r.ok) {
+    return Promise.resolve(r.value);
+  }
+
+  // Ensure rejection with an Error instance (AppError extends Error)
+  return Promise.reject(
+    r.error instanceof Error ? r.error : new Error(String(r.error)),
+  );
+}

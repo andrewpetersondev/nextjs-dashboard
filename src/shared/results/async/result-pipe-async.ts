@@ -1,81 +1,106 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <safe because of overloads> */
-
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { Result } from "@/shared/results/result.types";
 
 /**
- * Step function transforming Result<Ti, Ei> → Result<To, Eo>.
+ * Step function transforming Result<TValue, TError> → Result<TNextValue, TNextError>.
  */
-type PipeStep<Ti, To, Ei extends AppError, Eo extends AppError> = (
-  r: Result<Ti, Ei>,
-) => Result<To, Eo> | Promise<Result<To, Eo>>;
-
-export async function pipeAsync<E extends AppError, E2 extends AppError, T, T2>(
-  seed: Result<T, E>,
-  step1: PipeStep<T, T2, E, E2>,
-): Promise<Result<T2, E | E2>>;
+type PipeStep<
+  TValue,
+  TNextValue,
+  TError extends AppError,
+  TNextError extends AppError,
+> = (
+  r: Result<TValue, TError>,
+) => Result<TNextValue, TNextError> | Promise<Result<TNextValue, TNextError>>;
 
 export async function pipeAsync<
-  E extends AppError,
-  E2 extends AppError,
-  E3 extends AppError,
-  T,
-  T2,
-  T3,
+  TValue,
+  TNextValue,
+  TError extends AppError,
+  TNextError extends AppError,
 >(
-  seed: Result<T, E>,
-  step1: PipeStep<T, T2, E, E2>,
-  step2: PipeStep<T2, T3, E | E2, E3>,
-): Promise<Result<T3, E | E2 | E3>>;
+  seed: Result<TValue, TError>,
+  step1: PipeStep<TValue, TNextValue, TError, TNextError>,
+): Promise<Result<TNextValue, TError | TNextError>>;
 
 export async function pipeAsync<
-  E extends AppError,
-  E2 extends AppError,
-  E3 extends AppError,
-  E4 extends AppError,
-  T,
-  T2,
-  T3,
-  T4,
+  TValue,
+  TValue2,
+  TValue3,
+  TError extends AppError,
+  TError2 extends AppError,
+  TError3 extends AppError,
 >(
-  seed: Result<T, E>,
-  step1: PipeStep<T, T2, E, E2>,
-  step2: PipeStep<T2, T3, E | E2, E3>,
-  step3: PipeStep<T3, T4, E | E2 | E3, E4>,
-): Promise<Result<T4, E | E2 | E3 | E4>>;
+  seed: Result<TValue, TError>,
+  step1: PipeStep<TValue, TValue2, TError, TError2>,
+  step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
+): Promise<Result<TValue3, TError | TError2 | TError3>>;
 
 export async function pipeAsync<
-  E extends AppError,
-  E2 extends AppError,
-  E3 extends AppError,
-  E4 extends AppError,
-  E5 extends AppError,
-  T,
-  T2,
-  T3,
-  T4,
-  T5,
+  TValue,
+  TValue2,
+  TValue3,
+  TValue4,
+  TError extends AppError,
+  TError2 extends AppError,
+  TError3 extends AppError,
+  TError4 extends AppError,
+>(
+  seed: Result<TValue, TError>,
+  step1: PipeStep<TValue, TValue2, TError, TError2>,
+  step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
+  step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
+): Promise<Result<TValue4, TError | TError2 | TError3 | TError4>>;
+
+export async function pipeAsync<
+  TValue,
+  TValue2,
+  TValue3,
+  TValue4,
+  TValue5,
+  TError extends AppError,
+  TError2 extends AppError,
+  TError3 extends AppError,
+  TError4 extends AppError,
+  TError5 extends AppError,
   // biome-ignore lint/nursery/useMaxParams: <multistep pipe requires more params>
 >(
-  seed: Result<T, E>,
-  step1: PipeStep<T, T2, E, E2>,
-  step2: PipeStep<T2, T3, E | E2, E3>,
-  step3: PipeStep<T3, T4, E | E2 | E3, E4>,
-  step4: PipeStep<T4, T5, E | E2 | E3 | E4, E5>,
-): Promise<Result<T5, E | E2 | E3 | E4 | E5>>;
+  seed: Result<TValue, TError>,
+  step1: PipeStep<TValue, TValue2, TError, TError2>,
+  step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
+  step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
+  step4: PipeStep<
+    TValue4,
+    TValue5,
+    TError | TError2 | TError3 | TError4,
+    TError5
+  >,
+): Promise<Result<TValue5, TError | TError2 | TError3 | TError4 | TError5>>;
 
 export async function pipeAsync<E extends AppError>(
+  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
   seed: Result<any, E>,
+  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
   ...steps: readonly PipeStep<any, any, any, any>[]
+  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
 ): Promise<Result<any, E>> {
+  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
   let current: Result<any, E> = seed;
 
   for (const step of steps) {
     if (!current.ok) {
       break;
     }
-    // biome-ignore lint/performance/noAwaitInLoops: <temporary>
-    current = await step(current);
+    try {
+      // biome-ignore lint/performance/noAwaitInLoops: sequential execution is intended
+      current = await step(current);
+    } catch (e) {
+      // If a step throws or rejects instead of returning a Result,
+      // we treat it as an unhandled error.
+      // Note: In a production app, we'd ideally use a proper error factory here.
+      // biome-ignore lint/complexity/noUselessCatch: keep for now
+      throw e;
+    }
   }
 
   return current;

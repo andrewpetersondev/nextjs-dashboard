@@ -5,95 +5,125 @@ import type { Result } from "@/shared/results/result.types";
 /**
  * Executes async function if Result is successful.
  *
- * @typeParam T - Successful result value type.
- * @typeParam E - Error type, defaults to AppError.
+ * @typeParam TValue - Successful result value type.
+ * @typeParam TError - Error type extending AppError.
  * @param fn - Async function to execute with value.
- * @returns Promise resolving to same Result.
+ * @returns A function that accepts a Result and returns a Promise resolving to same Result.
+ * @example
+ * const tapper = tapOkAsync(async (v) => console.log(v));
+ * const res = await tapper(Ok(42)); // Ok(42)
  */
-export const tapOkAsync =
-  /* @__PURE__ */
-    <T, E extends AppError>(fn: (v: T) => Promise<void>) =>
-    /* @__PURE__ */
-    async (r: Result<T, E>): Promise<Result<T, E>> => {
-      if (r.ok) {
-        await fn(r.value);
-      }
-      return r;
-    };
+export function tapOkAsync<TValue, TError extends AppError>(
+  fn: (v: TValue) => Promise<void>,
+): (r: Result<TValue, TError>) => Promise<Result<TValue, TError>> {
+  return /* @__PURE__ */ (
+    r: Result<TValue, TError>,
+  ): Promise<Result<TValue, TError>> => {
+    if (r.ok) {
+      return fn(r.value).then(() => r);
+    }
+    return Promise.resolve(r);
+  };
+}
 
 /**
  * Safely executes async operation on Result, mapping thrown errors.
  *
- * @typeParam T - Successful value type.
- * @typeParam E - Original error type.
- * @typeParam E2 - Mapped side error type.
+ * @typeParam TValue - Successful value type.
+ * @typeParam TError - Original error type.
+ * @typeParam TSideError - Mapped side error type.
  * @param fn - Async function to execute if successful.
- * @param mapError - Maps thrown errors to E2.
- * @returns New Result retaining value or wrapping error.
+ * @param mapError - Maps thrown errors to TSideError.
+ * @returns A function that accepts a Result and returns a Promise resolving to same Result or wrapping error.
+ * @example
+ * const tapper = tapOkAsyncSafe(
+ *   async (v) => { throw new Error('fail'); },
+ *   (e) => makeUnexpectedError(e, { message: 'Tap failed' })
+ * );
+ * const res = await tapper(Ok(42)); // Err(AppError)
  */
-export const tapOkAsyncSafe =
-  /* @__PURE__ */
-    <T, E extends AppError, E2 extends AppError>(
-      fn: (v: T) => Promise<void>,
-      mapError: (e: unknown) => E2,
-    ) =>
-    /* @__PURE__ */
-    async (r: Result<T, E>): Promise<Result<T, E | E2>> => {
-      if (!r.ok) {
-        return r;
-      }
-      try {
-        await fn(r.value);
-        return r;
-      } catch (e) {
-        return Err(mapError(e));
-      }
-    };
+export function tapOkAsyncSafe<
+  TValue,
+  TError extends AppError,
+  TSideError extends AppError,
+>(
+  fn: (v: TValue) => Promise<void>,
+  mapError: (e: unknown) => TSideError,
+): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>> {
+  return /* @__PURE__ */ async (
+    r: Result<TValue, TError>,
+  ): Promise<Result<TValue, TError | TSideError>> => {
+    if (!r.ok) {
+      return r;
+    }
+    try {
+      await fn(r.value);
+      return r;
+    } catch (e) {
+      return Err(mapError(e));
+    }
+  };
+}
 
 /**
  * Handles Result error case asynchronously by executing function.
  *
- * @typeParam T - Successful result value type.
- * @typeParam E - Error type extending AppError.
+ * @typeParam TValue - Successful result value type.
+ * @typeParam TError - Error type extending AppError.
  * @param fn - Async function to process error.
- * @returns Promise resolving to unchanged Result.
+ * @returns A function that accepts a Result and returns a Promise resolving to unchanged Result.
+ * @example
+ * const tapper = tapErrorAsync(async (e) => console.error(e));
+ * const res = await tapper(Err(err)); // Err(err)
  */
-export const tapErrorAsync =
-  /* @__PURE__ */
-    <T, E extends AppError>(fn: (e: E) => Promise<void>) =>
-    /* @__PURE__ */
-    async (r: Result<T, E>): Promise<Result<T, E>> => {
-      if (!r.ok) {
-        await fn(r.error);
-      }
-      return r;
-    };
+export function tapErrorAsync<TValue, TError extends AppError>(
+  fn: (e: TError) => Promise<void>,
+): (r: Result<TValue, TError>) => Promise<Result<TValue, TError>> {
+  return /* @__PURE__ */ (
+    r: Result<TValue, TError>,
+  ): Promise<Result<TValue, TError>> => {
+    if (!r.ok) {
+      return fn(r.error).then(() => r);
+    }
+    return Promise.resolve(r);
+  };
+}
 
 /**
- * Handles Result errors by invoking async error handler.
+ * Handles Result errors by invoking async error handler safely.
  *
- * @typeParam T - Successful result value type.
- * @typeParam E - Expected error type.
- * @typeParam E2 - Side error type.
+ * @typeParam TValue - Successful result value type.
+ * @typeParam TError - Expected error type.
+ * @typeParam TSideError - Side error type.
  * @param fn - Async function to handle error.
  * @param mapError - Transforms unknown errors.
- * @returns Result with original value or transformed error.
+ * @returns A function that accepts a Result and returns a Promise resolving to Result with original value or transformed error.
+ * @example
+ * const tapper = tapErrorAsyncSafe(
+ *   async (e) => { throw new Error('fail'); },
+ *   (err) => makeUnexpectedError(err, { message: 'Error tap failed' })
+ * );
+ * const res = await tapper(Err(someError)); // Err(AppError)
  */
-export const tapErrorAsyncSafe =
-  /* @__PURE__ */
-    <T, E extends AppError, E2 extends AppError>(
-      fn: (e: E) => Promise<void>,
-      mapError: (e: unknown) => E2,
-    ) =>
-    /* @__PURE__ */
-    async (r: Result<T, E>): Promise<Result<T, E | E2>> => {
-      if (r.ok) {
-        return r;
-      }
-      try {
-        await fn(r.error);
-        return r;
-      } catch (e) {
-        return Err(mapError(e));
-      }
-    };
+export function tapErrorAsyncSafe<
+  TValue,
+  TError extends AppError,
+  TSideError extends AppError,
+>(
+  fn: (e: TError) => Promise<void>,
+  mapError: (e: unknown) => TSideError,
+): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>> {
+  return /* @__PURE__ */ async (
+    r: Result<TValue, TError>,
+  ): Promise<Result<TValue, TError | TSideError>> => {
+    if (r.ok) {
+      return r;
+    }
+    try {
+      await fn(r.error);
+      return r;
+    } catch (e) {
+      return Err(mapError(e));
+    }
+  };
+}
