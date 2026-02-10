@@ -34,10 +34,8 @@ storage
 # ======================================================
 # public
 src/modules/banner
-src/modules/customers
 src/modules/revenues
 src/modules/invoices
-# src/modules/users
 
 # ======================================================
 # BUILD / OUTPUT FILES
