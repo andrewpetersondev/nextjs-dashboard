@@ -32,7 +32,7 @@ export function mapToValidationErrors<T extends string>(
 /**
  * Internal helper to log and wrap validation errors.
  */
-export function toValidationFormErrorAdapter<Tfieldnames extends string>(
+export function formValidationErrorFactory<Tfieldnames extends string>(
   error: unknown,
   loggerContext: string,
   {

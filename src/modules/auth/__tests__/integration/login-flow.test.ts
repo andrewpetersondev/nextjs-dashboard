@@ -6,7 +6,7 @@ import type { LoginField } from "@/modules/auth/presentation/authn/transports/lo
 import { getAppDb } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { getFormErrorPayload } from "@/shared/forms/logic/inspectors/form-error.inspector";
+import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 /**
  * Integration tests for the complete login flow.
@@ -109,7 +109,7 @@ describe("Login Flow Integration", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        const payload = getFormErrorPayload<LoginField>(result.error);
+        const payload = formErrorPayloadMapper<LoginField>(result.error);
         expect(payload.fieldErrors?.email).toBeDefined();
       }
     });
@@ -137,7 +137,7 @@ describe("Login Flow Integration", () => {
 
         expect(result.ok, `Expected failure for ${c.name}`).toBe(false);
         if (!result.ok) {
-          const payload = getFormErrorPayload<LoginField>(result.error);
+          const payload = formErrorPayloadMapper<LoginField>(result.error);
           const message = payload.formErrors[0] || payload.message;
           expect(message).toContain("Invalid credentials");
           messages.push(message);
@@ -160,7 +160,7 @@ describe("Login Flow Integration", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        const payload = getFormErrorPayload<LoginField>(result.error);
+        const payload = formErrorPayloadMapper<LoginField>(result.error);
         expect(payload.formErrors).toBeDefined();
       }
 

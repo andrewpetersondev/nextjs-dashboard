@@ -4,7 +4,7 @@ import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.a
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { getFormErrorPayload } from "@/shared/forms/logic/inspectors/form-error.inspector";
+import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: how can i fix this?
 describe("Auth Error Propagation Integration", () => {
@@ -40,7 +40,7 @@ describe("Auth Error Propagation Integration", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        const payload = getFormErrorPayload(result.error);
+        const payload = formErrorPayloadMapper(result.error);
         expect(payload.formErrors.length).toBeGreaterThan(0);
         // It's wrapped in safeExecute which maps to 'unexpected'
         expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
@@ -74,7 +74,7 @@ describe("Auth Error Propagation Integration", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         expect(result.error.key).toBe(APP_ERROR_KEYS.conflict);
-        const payload = getFormErrorPayload(result.error);
+        const payload = formErrorPayloadMapper(result.error);
         expect(payload.formErrors.length).toBeGreaterThan(0);
         const firstFormError = payload.formErrors[0];
         expect(firstFormError).toBeDefined();
@@ -107,7 +107,7 @@ describe("Auth Error Propagation Integration", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
-        const payload = getFormErrorPayload(result.error);
+        const payload = formErrorPayloadMapper(result.error);
         // Be flexible with message content as it might be 'CPU exhausted' or a wrapped message
         expect(payload.message.toLowerCase()).toMatch(
           // biome-ignore lint/performance/useTopLevelRegex: TODO extract later
@@ -160,7 +160,7 @@ describe("Auth Error Propagation Integration", () => {
       expect(result.ok).toBe(false);
       if (!result.ok) {
         // It should be wrapped in safeExecute in LoginWorkflow or EstablishSessionUseCase
-        const payload = getFormErrorPayload(result.error);
+        const payload = formErrorPayloadMapper(result.error);
         expect(payload.message).toContain("unexpected error occurred");
       }
 

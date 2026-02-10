@@ -7,7 +7,7 @@ import { toHash } from "@/server/crypto/hashing/hashing.value";
 import { getAppDb } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { getFormErrorPayload } from "@/shared/forms/logic/inspectors/form-error.inspector";
+import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 /**
  * Integration tests for the complete signup flow.
@@ -78,7 +78,7 @@ describe("Signup Flow Integration", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        const payload = getFormErrorPayload<SignupField>(result.error);
+        const payload = formErrorPayloadMapper<SignupField>(result.error);
         expect(payload.fieldErrors?.email).toBeDefined();
         expect(payload.fieldErrors?.password).toBeDefined();
         expect(payload.fieldErrors?.username).toBeDefined();
@@ -101,7 +101,7 @@ describe("Signup Flow Integration", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        const payload = getFormErrorPayload<SignupField>(result.error);
+        const payload = formErrorPayloadMapper<SignupField>(result.error);
         // Server Action contract: conflicts must return field-level errors.
         expect(payload.fieldErrors?.email).toBeDefined();
         expect(payload.fieldErrors.email.length).toBeGreaterThan(0);
@@ -130,7 +130,7 @@ describe("Signup Flow Integration", () => {
 
       expect(result.ok).toBe(false);
       if (!result.ok) {
-        const payload = getFormErrorPayload<SignupField>(result.error);
+        const payload = formErrorPayloadMapper<SignupField>(result.error);
         expect(payload.formErrors).toBeDefined();
         expect(payload.formErrors.length).toBeGreaterThan(0);
         // We accept pg_unique_violation too because state might be polluted
