@@ -26,7 +26,7 @@ export async function safeExecute<T>(
   } catch (err: unknown) {
     const error = makeUnexpectedError(err, {
       message: options.message,
-      metadata: { operation: options.operation },
+      overrideMetadata: { operation: options.operation },
     });
 
     options.logger.errorWithDetails(options.message, error, {

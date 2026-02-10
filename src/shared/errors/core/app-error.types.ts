@@ -22,7 +22,7 @@ export const APP_ERROR_LAYER = {
 export type AppErrorLayer =
   (typeof APP_ERROR_LAYER)[keyof typeof APP_ERROR_LAYER];
 
-export type AppErrorSchema = Readonly<{
+export type AppErrorDefinition = Readonly<{
   description: string;
   layer: AppErrorLayer;
   // TODO: REMOVE RETRYABLE PROPERTY
@@ -41,18 +41,18 @@ export type AppErrorParams<T extends AppErrorMetadata = AppErrorMetadata> =
 export type UnexpectedErrorParams<
   T extends AppErrorMetadata = AppErrorMetadata,
 > = Omit<AppErrorParams<T>, "cause" | "key" | "metadata"> & {
-  readonly metadata?: T;
+  readonly overrideMetadata?: T;
 };
 
-export type AppErrorCoreMetadata = Readonly<
-  AppErrorSchema & {
+export type AppErrorCoreDescriptor = Readonly<
+  AppErrorDefinition & {
     readonly key: AppErrorKey;
   }
 >;
 
 export type AppErrorJsonDto<T extends AppErrorMetadata = AppErrorMetadata> =
   Readonly<
-    AppErrorCoreMetadata & {
+    AppErrorCoreDescriptor & {
       readonly _isAppError: true;
       readonly message: string;
       readonly metadata: T;

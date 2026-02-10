@@ -1,7 +1,7 @@
 import { isDev } from "@/shared/config/env-shared";
 import {
   type AppErrorKey,
-  getAppErrorCodeMeta,
+  getAppErrorDefinition,
 } from "@/shared/errors/catalog/app-error.registry";
 import type {
   AppErrorJsonDto,
@@ -25,7 +25,7 @@ export class AppError<
   T extends AppErrorMetadata = AppErrorMetadata,
 > extends Error {
   readonly cause: AppError | Error | string;
-  readonly description: string;
+  readonly definitionDescription: string;
   readonly key: AppErrorKey;
   readonly layer: AppErrorLayer;
   readonly message: string;
@@ -35,12 +35,12 @@ export class AppError<
 
   constructor(params: AppErrorParams<T>) {
     const { cause, key, message, metadata } = params;
-    const meta = getAppErrorCodeMeta(key);
+    const meta = getAppErrorDefinition(key);
     super(message, cause instanceof Error ? { cause } : undefined);
 
     this.name = this.constructor.name;
     this.cause = cause;
-    this.description = meta.description;
+    this.definitionDescription = meta.description;
     this.key = key;
     this.layer = meta.layer;
     this.message = message;
@@ -64,10 +64,10 @@ export class AppError<
   /**
    * Returns a plain object representation for manual serialization.
    */
-  toJson(): AppErrorJsonDto<T> {
+  toDto(): AppErrorJsonDto<T> {
     return {
       _isAppError: true,
-      description: this.description,
+      description: this.definitionDescription,
       key: this.key,
       layer: this.layer,
       message: this.message,
@@ -110,7 +110,7 @@ export function isAppError(val: unknown): val is AppError {
  * @param val - The value to check.
  * @returns `true` if `val` matches the shape of an `AppErrorJsonDto`, otherwise `false`.
  */
-export function isAppErrorJson(val: unknown): val is AppErrorJsonDto {
+export function isAppErrorDto(val: unknown): val is AppErrorJsonDto {
   if (typeof val !== "object" || val === null) {
     return false;
   }

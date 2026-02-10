@@ -83,7 +83,7 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
       return Err(
         makeUnexpectedError(error, {
           message: "jwt.sign.failed",
-          metadata: { expiresAtSec: claims.exp },
+          overrideMetadata: { expiresAtSec: claims.exp },
         }),
       );
     }
@@ -112,7 +112,7 @@ export class JoseSessionJwtCryptoService implements SessionJwtCryptoStrategy {
       return Err(
         makeUnexpectedError(error, {
           message: "jwt.verify.failed",
-          metadata: {},
+          overrideMetadata: {},
         }),
       );
     }

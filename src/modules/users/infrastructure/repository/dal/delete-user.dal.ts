@@ -7,7 +7,7 @@ import { users } from "@/server/db/schema/users";
 import type { UserId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
+import { normalizeUnknownError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
@@ -42,6 +42,6 @@ export async function deleteUserDal(
       error,
       userId,
     });
-    return Err(normalizeUnknownToAppError(error, APP_ERROR_KEYS.database));
+    return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
   }
 }

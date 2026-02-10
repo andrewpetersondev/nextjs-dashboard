@@ -2,7 +2,7 @@ import { AppError } from "@/shared/errors/core/app-error.entity";
 import type { UnexpectedErrorMetadata } from "@/shared/errors/metadata/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
-export function buildUnknownValueMetadata(
+export function buildUnknownErrorMetadata(
   value: unknown,
   extra: Record<string, unknown> = {},
 ): UnexpectedErrorMetadata {
@@ -32,7 +32,7 @@ export function safeStringifyUnknown(value: unknown): string {
   }
 }
 
-export function toCauseUnion(value: unknown): AppError | Error | string {
+export function normalizeCause(value: unknown): AppError | Error | string {
   if (value instanceof AppError || value instanceof Error) {
     return value;
   }

@@ -46,7 +46,7 @@ export async function findRevenueByPeriodDal(
   if (!result) {
     throw makeUnexpectedError("", {
       message: "Failed to convert revenue record",
-      metadata: { table: "revenues" },
+      overrideMetadata: { table: "revenues" },
     });
   }
   return result;

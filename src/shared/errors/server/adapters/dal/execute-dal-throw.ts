@@ -28,7 +28,7 @@ export async function executeDalThrow<T>(
   } catch (err: unknown) {
     const error = makeUnexpectedError(err, {
       message: `Unexpected DAL failure in ${context.operation}`,
-      metadata: {},
+      overrideMetadata: {},
     });
 
     logger.operation("error", `${context.operation}.failed`, {

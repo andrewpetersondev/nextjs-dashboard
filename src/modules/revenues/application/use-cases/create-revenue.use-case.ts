@@ -30,7 +30,7 @@ export class CreateRevenueUseCase {
     if (!created) {
       throw makeUnexpectedError("", {
         message: "Failed to create a revenue record",
-        metadata: {},
+        overrideMetadata: {},
       });
     }
     return created;

@@ -1,7 +1,7 @@
 import {
   APP_ERROR_KEYS,
   type AppErrorKey,
-  type AppErrorMetadataValueByCode,
+  type AppErrorMetadataValueByKey,
 } from "@/shared/errors/catalog/app-error.registry";
 import { AppError } from "@/shared/errors/core/app-error.entity";
 import type {
@@ -9,9 +9,9 @@ import type {
   UnexpectedErrorParams,
 } from "@/shared/errors/core/app-error.types";
 import {
-  buildUnknownValueMetadata,
+  buildUnknownErrorMetadata,
+  normalizeCause,
   safeStringifyUnknown,
-  toCauseUnion,
 } from "@/shared/errors/factories/app-error-factory.utils";
 import type { UnexpectedErrorMetadata } from "@/shared/errors/metadata/error-metadata.value";
 
@@ -21,9 +21,9 @@ import type { UnexpectedErrorMetadata } from "@/shared/errors/metadata/error-met
  */
 export function makeAppError<Key extends AppErrorKey>(
   key: Key,
-  params: Omit<AppErrorParams<AppErrorMetadataValueByCode[Key]>, "key">,
-): AppError<AppErrorMetadataValueByCode[Key]> {
-  return new AppError<AppErrorMetadataValueByCode[Key]>({
+  params: Omit<AppErrorParams<AppErrorMetadataValueByKey[Key]>, "key">,
+): AppError<AppErrorMetadataValueByKey[Key]> {
+  return new AppError<AppErrorMetadataValueByKey[Key]>({
     ...params,
     key,
   });
@@ -32,50 +32,49 @@ export function makeAppError<Key extends AppErrorKey>(
 /**
  * Normalizes any unknown thrown value into a structured AppError.
  */
-export function normalizeUnknownToAppError<Key extends AppErrorKey>(
+export function normalizeUnknownError<Key extends AppErrorKey>(
   error: unknown,
   fallbackKey: Key,
-): AppError<AppErrorMetadataValueByCode[Key]> {
+): AppError<AppErrorMetadataValueByKey[Key]> {
   if (error instanceof AppError) {
-    return error as AppError<AppErrorMetadataValueByCode[Key]>;
+    return error as AppError<AppErrorMetadataValueByKey[Key]>;
   }
-  const cause = toCauseUnion(error);
+  const cause = normalizeCause(error);
   if (cause instanceof Error) {
     return makeAppError(fallbackKey, {
       cause,
       message: cause.message,
-      metadata: {} as AppErrorMetadataValueByCode[Key],
+      metadata: {} as AppErrorMetadataValueByKey[Key],
     });
   }
   return makeAppError(fallbackKey, {
     cause,
     message: safeStringifyUnknown(error),
-    metadata: buildUnknownValueMetadata(
+    metadata: buildUnknownErrorMetadata(
       error,
-    ) as AppErrorMetadataValueByCode[Key],
+    ) as AppErrorMetadataValueByKey[Key],
   });
 }
 
 /**
  * Standard factory for unexpected (bug) errors.
  * It normalizes the 'error' (the trigger) and attaches it as the cause.
+ * @remarks
+ * params.metadata overrides normalized metadata for the same keys
  */
 export function makeUnexpectedError(
   error: unknown,
   params: UnexpectedErrorParams<UnexpectedErrorMetadata>,
 ): AppError<UnexpectedErrorMetadata> {
-  const cause = toCauseUnion(error);
-  const normalized = normalizeUnknownToAppError(
-    error,
-    APP_ERROR_KEYS.unexpected,
-  );
+  const cause = normalizeCause(error);
+  const normalized = normalizeUnknownError(error, APP_ERROR_KEYS.unexpected);
 
   return makeAppError(APP_ERROR_KEYS.unexpected, {
     cause,
     message: params.message,
     metadata: {
       ...normalized.metadata,
-      ...params.metadata,
+      ...params.overrideMetadata,
     },
   });
 }

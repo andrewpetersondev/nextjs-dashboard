@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
   type AppErrorKey,
-  type AppErrorMetadataValueByCode,
-  getAppErrorCodeMeta,
+  type AppErrorMetadataValueByKey,
+  getAppErrorDefinition,
 } from "@/shared/errors/catalog/app-error.registry";
 import type { PgErrorMetadata } from "@/shared/errors/server/adapters/postgres/db-error.types";
 
@@ -40,8 +40,7 @@ export const InfrastructureErrorMetadataSchema = z
   })
   .passthrough() as z.ZodType<InfrastructureErrorMetadata>;
 
-// biome-ignore lint/nursery/useExplicitType: fix
-export const PgErrorMetadataSchema = z
+export const PgErrorMetadataSchema: z.ZodType<PgErrorMetadata> = z
   .object({
     column: z.string().optional(),
     constraint: z.string().optional(),
@@ -67,6 +66,7 @@ export type IntegrityErrorMetadata = Readonly<PgErrorMetadata>;
 export const IntegrityErrorMetadataSchema =
   PgErrorMetadataSchema as z.ZodType<IntegrityErrorMetadata>;
 
+// TODO: CONSIDER CONSOLIDATING WITH UNEXPECTEDERRORMETADATA
 export type UnknownErrorMetadata = Readonly<
   Record<string, unknown> & {
     readonly policy?: string;
@@ -87,10 +87,10 @@ export const UnexpectedErrorMetadataSchema = z
   .object({})
   .passthrough() as z.ZodType<UnexpectedErrorMetadata>;
 
-export type AppErrorMetadata = AppErrorMetadataValueByCode[AppErrorKey];
+export type AppErrorMetadata = AppErrorMetadataValueByKey[AppErrorKey];
 
-export function getMetadataSchemaForCode(code: AppErrorKey): z.ZodType {
-  return getAppErrorCodeMeta(code).metadataSchema;
+export function getMetadataSchemaForKey(key: AppErrorKey): z.ZodType {
+  return getAppErrorDefinition(key).metadataSchema;
 }
 
 export function isValidationMetadata(

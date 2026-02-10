@@ -54,7 +54,7 @@ export async function updateRevenueDal(
   if (!data) {
     throw makeUnexpectedError("", {
       message: "Failed to update revenue record",
-      metadata: {},
+      overrideMetadata: {},
     });
   }
 
@@ -62,7 +62,7 @@ export async function updateRevenueDal(
   if (!result) {
     throw makeUnexpectedError("", {
       message: "Failed to convert updated revenue record",
-      metadata: { table: "revenues" },
+      overrideMetadata: { table: "revenues" },
     });
   }
   return result;

@@ -2,7 +2,7 @@ import type { z } from "zod";
 import {
   APP_ERROR_LAYER,
   APP_ERROR_SEVERITY,
-  type AppErrorSchema,
+  type AppErrorDefinition,
 } from "@/shared/errors/core/app-error.types";
 import {
   ConflictErrorMetadataSchema,
@@ -35,10 +35,7 @@ export const APP_ERROR_KEYS = {
 
 export type AppErrorKey = keyof typeof APP_ERROR_KEYS;
 
-/**
- * Metadata associated with an error definition in the registry.
- */
-export type AppErrorDefinition = AppErrorSchema & {
+export type AppErrorRegistryEntry = AppErrorDefinition & {
   readonly metadataSchema: z.ZodType;
 };
 
@@ -47,7 +44,7 @@ export type AppErrorDefinition = AppErrorSchema & {
  * Maps each AppErrorKey to its architectural layer, severity, and validation schema.
  */
 // biome-ignore lint/nursery/useExplicitType: fix
-export const APP_ERROR_DEFINITIONS = {
+export const APP_ERROR_REGISTRY = {
   [APP_ERROR_KEYS.conflict]: {
     description: "Resource state conflict",
     layer: APP_ERROR_LAYER.API,
@@ -139,19 +136,19 @@ export const APP_ERROR_DEFINITIONS = {
     retryable: false,
     severity: APP_ERROR_SEVERITY.WARN,
   },
-} as const satisfies Record<AppErrorKey, AppErrorDefinition>;
+} as const satisfies Record<AppErrorKey, AppErrorRegistryEntry>;
 
-export type AppErrorMeta = (typeof APP_ERROR_DEFINITIONS)[AppErrorKey];
+export type AppErrorDefinitionByKey = (typeof APP_ERROR_REGISTRY)[AppErrorKey];
 
-export function getAppErrorCodeMeta(code: AppErrorKey): AppErrorMeta {
-  return APP_ERROR_DEFINITIONS[code];
+export function getAppErrorDefinition(
+  key: AppErrorKey,
+): AppErrorDefinitionByKey {
+  return APP_ERROR_REGISTRY[key];
 }
 
 /**
  * Automatically derived mapping of Metadata types by Error Key.
  */
-export type AppErrorMetadataValueByCode = {
-  [K in AppErrorKey]: z.infer<
-    (typeof APP_ERROR_DEFINITIONS)[K]["metadataSchema"]
-  >;
+export type AppErrorMetadataValueByKey = {
+  [K in AppErrorKey]: z.infer<(typeof APP_ERROR_REGISTRY)[K]["metadataSchema"]>;
 };

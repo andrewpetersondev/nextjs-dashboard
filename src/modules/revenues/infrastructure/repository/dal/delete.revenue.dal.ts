@@ -36,7 +36,7 @@ export async function deleteRevenueDal(
   if (!result) {
     throw makeUnexpectedError("", {
       message: "Failed to delete revenue record",
-      metadata: { table: "revenues" },
+      overrideMetadata: { table: "revenues" },
     });
   }
 }

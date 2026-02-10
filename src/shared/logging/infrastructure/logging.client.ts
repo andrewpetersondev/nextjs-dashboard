@@ -124,7 +124,7 @@ export class LoggingClient
   // TODO: INDICATES A POSSIBLE ISSUE
   // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
   private buildErrorPayload(error: AppError<any>): BaseErrorLogPayload {
-    const baseJson = error.toJson();
+    const baseJson = error.toDto();
     const diagnosticId = this.extractDiagnosticId(error.metadata);
 
     const isValidation =

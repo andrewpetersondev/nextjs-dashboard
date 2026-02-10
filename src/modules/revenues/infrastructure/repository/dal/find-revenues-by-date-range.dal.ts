@@ -48,7 +48,7 @@ export async function findRevenuesByDateRangeDal(
   if (!revenueRows) {
     throw makeUnexpectedError("", {
       message: "Failed to retrieve revenue records",
-      metadata: { table: "revenues" },
+      overrideMetadata: { table: "revenues" },
     });
   }
 

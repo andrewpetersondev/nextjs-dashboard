@@ -41,7 +41,7 @@ export async function readRevenueDal(
   if (!data) {
     throw makeUnexpectedError("", {
       message: "Revenue record not found",
-      metadata: {},
+      overrideMetadata: {},
     });
   }
 
@@ -49,7 +49,7 @@ export async function readRevenueDal(
   if (!result) {
     throw makeUnexpectedError("", {
       message: "Failed to convert revenue record",
-      metadata: { table: "revenues" },
+      overrideMetadata: { table: "revenues" },
     });
   }
   return result;

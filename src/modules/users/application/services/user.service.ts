@@ -15,7 +15,7 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { UserId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
+import { normalizeUnknownError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
@@ -56,7 +56,7 @@ export class UserService {
 
       if (!user) {
         return Err(
-          normalizeUnknownToAppError(
+          normalizeUnknownError(
             new Error(USER_ERROR_MESSAGES.createFailed),
             APP_ERROR_KEYS.database,
           ),
@@ -69,7 +69,7 @@ export class UserService {
 
       return Ok(toUserDto(user));
     } catch (err) {
-      const error = normalizeUnknownToAppError(err, APP_ERROR_KEYS.unexpected);
+      const error = normalizeUnknownError(err, APP_ERROR_KEYS.unexpected);
       this.logger.error("User creation failed", {
         error,
         logging: { email: input.email },
@@ -90,7 +90,7 @@ export class UserService {
 
       if (!deleted) {
         return Err(
-          normalizeUnknownToAppError(
+          normalizeUnknownError(
             new Error(USER_ERROR_MESSAGES.notFoundOrDeleteFailed),
             APP_ERROR_KEYS.not_found,
           ),
@@ -103,7 +103,7 @@ export class UserService {
 
       return Ok(toUserDto(deleted));
     } catch (err) {
-      const error = normalizeUnknownToAppError(err, APP_ERROR_KEYS.unexpected);
+      const error = normalizeUnknownError(err, APP_ERROR_KEYS.unexpected);
       this.logger.error("User deletion failed", {
         error,
         logging: { userId: id },
@@ -125,7 +125,7 @@ export class UserService {
 
       return Ok(result.value.map(toUserDto));
     } catch (err) {
-      const error = normalizeUnknownToAppError(err, APP_ERROR_KEYS.unexpected);
+      const error = normalizeUnknownError(err, APP_ERROR_KEYS.unexpected);
       this.logger.error("Failed to fetch filtered users", {
         error,
         logging: { page, query },
@@ -145,7 +145,7 @@ export class UserService {
       const user = result.value;
       return Ok(user ? toUserDto(user) : null);
     } catch (err) {
-      const error = normalizeUnknownToAppError(err, APP_ERROR_KEYS.unexpected);
+      const error = normalizeUnknownError(err, APP_ERROR_KEYS.unexpected);
       this.logger.error(USER_ERROR_MESSAGES.readFailed, {
         error,
         logging: { userId: id },
@@ -158,7 +158,7 @@ export class UserService {
     try {
       return await this.repo.readPageCount(query);
     } catch (err) {
-      const error = normalizeUnknownToAppError(err, APP_ERROR_KEYS.unexpected);
+      const error = normalizeUnknownError(err, APP_ERROR_KEYS.unexpected);
       this.logger.error("Failed to count users", {
         error,
         logging: { query },
@@ -194,7 +194,7 @@ export class UserService {
 
       if (!updated) {
         return Err(
-          normalizeUnknownToAppError(
+          normalizeUnknownError(
             new Error(USER_ERROR_MESSAGES.updateFailed),
             APP_ERROR_KEYS.database,
           ),
@@ -207,7 +207,7 @@ export class UserService {
 
       return Ok(toUserDto(updated));
     } catch (err) {
-      const error = normalizeUnknownToAppError(err, APP_ERROR_KEYS.unexpected);
+      const error = normalizeUnknownError(err, APP_ERROR_KEYS.unexpected);
       this.logger.error("User update failed", {
         error,
         logging: { userId: id },

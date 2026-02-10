@@ -2,7 +2,7 @@ import { isDev } from "@/shared/config/env-shared";
 import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import {
   type AppErrorMetadata,
-  getMetadataSchemaForCode,
+  getMetadataSchemaForKey,
 } from "@/shared/errors/metadata/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
@@ -11,7 +11,7 @@ function validateMetadataByCode<T extends AppErrorMetadata>(
   metadata: T,
 ): T {
   try {
-    const schema = getMetadataSchemaForCode(code);
+    const schema = getMetadataSchemaForKey(code);
     return schema.parse(metadata) as T;
   } catch (err) {
     // In dev, fail fast on metadata validation

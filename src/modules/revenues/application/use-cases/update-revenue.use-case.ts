@@ -34,7 +34,7 @@ export class UpdateRevenueUseCase {
     if (!updated) {
       throw makeUnexpectedError("", {
         message: `Failed to update revenue with ID ${id}`,
-        metadata: { table: "revenues" },
+        overrideMetadata: { table: "revenues" },
       });
     }
     return updated;

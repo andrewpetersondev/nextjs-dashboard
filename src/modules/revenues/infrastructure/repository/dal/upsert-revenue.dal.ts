@@ -65,14 +65,14 @@ export async function upsertRevenueDal(
     if (!data) {
       throw makeUnexpectedError("", {
         message: "Failed to upsert revenue record",
-        metadata: { table: "revenues" },
+        overrideMetadata: { table: "revenues" },
       });
     }
     const result: RevenueEntity = mapRevenueRowToEntity(data);
     if (!result) {
       throw makeUnexpectedError("", {
         message: "Failed to convert revenue record",
-        metadata: { table: "revenues" },
+        overrideMetadata: { table: "revenues" },
       });
     }
     return result;
