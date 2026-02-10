@@ -3,26 +3,6 @@ import { Err, Ok } from "@/shared/results/result";
 import type { ErrType, OkType, Result } from "@/shared/results/result.types";
 
 /**
- * Iterates over `source`, yielding values from successful results until an error is encountered.
- *
- * @typeParam T - The type of successful values in the results.
- * @typeParam E - The type of the error, extending `AppError`.
- * @param source - An iterable of `Result<T, E>` to process.
- * @returns A generator that yields `T` values and returns `Result<void, E>`.
- */
-export function* iterateOk<T, E extends AppError>(
-  source: Iterable<Result<T, E>>,
-): Generator<T, Result<void, E>, unknown> {
-  for (const r of source) {
-    if (!r.ok) {
-      return r;
-    }
-    yield r.value;
-  }
-  return Ok<void>(undefined);
-}
-
-/**
  * Collects all successful results from the provided array, returning a combined `Result`.
  *
  * @typeParam T - The type of the successful value in the `Result`.
@@ -30,9 +10,9 @@ export function* iterateOk<T, E extends AppError>(
  * @param results - An array of `Result` objects to process.
  * @returns A `Result` containing an array of all successful values (`Ok`) or the first encountered error (`Err`).
  */
-export const collectAll = /* @__PURE__ */ <T, E extends AppError>(
+export function collectAll<T, E extends AppError>(
   results: readonly Result<T, E>[],
-): Result<readonly T[], E> => {
+): Result<readonly T[], E> {
   const acc: T[] = [];
   for (const r of results) {
     if (!r.ok) {
@@ -41,7 +21,8 @@ export const collectAll = /* @__PURE__ */ <T, E extends AppError>(
     acc.push(r.value);
   }
   return Ok(acc as readonly T[]);
-};
+}
+
 /**
  * Collects all successful values from `source` into a readonly array, or returns the first error encountered.
  *
@@ -50,9 +31,9 @@ export const collectAll = /* @__PURE__ */ <T, E extends AppError>(
  * @param source - An iterable of `Result<T, E>` to collect.
  * @returns `Ok` with a readonly array of all collected values or the first encountered `Err`.
  */
-export const collectAllLazy = /* @__PURE__ */ <T, E extends AppError>(
+export function collectAllLazy<T, E extends AppError>(
   source: Iterable<Result<T, E>>,
-): Result<readonly T[], E> => {
+): Result<readonly T[], E> {
   const acc: T[] = [];
   for (const r of source) {
     if (!r.ok) {
@@ -61,7 +42,7 @@ export const collectAllLazy = /* @__PURE__ */ <T, E extends AppError>(
     acc.push(r.value);
   }
   return Ok(acc as readonly T[]);
-};
+}
 
 /**
  * Gathers a tuple of `Result` values into a single `Result`, returning all `Ok` values
@@ -121,17 +102,39 @@ export function collectTupleHetero<
  * @param onEmpty - A callback that produces a fallback error when no successful result is found.
  * @returns The first `Result` with `ok: true`, or a fallback `Err` produced by `onEmpty`.
  */
-export const firstOkOrElse =
-  /* @__PURE__ */
-    <T, E extends AppError>(onEmpty: () => E) =>
-    /* @__PURE__ */
-    (results: readonly Result<T, E>[]): Result<T, E> => {
-      let lastErr: Result<never, E> | null = null;
-      for (const r of results) {
-        if (r.ok) {
-          return r;
-        }
-        lastErr = r as Result<never, E>;
+export function firstOkOrElse<T, E extends AppError>(
+  onEmpty: () => E,
+): (results: readonly Result<T, E>[]) => Result<T, E> {
+  return function firstOkOrElseInner(
+    results: readonly Result<T, E>[],
+  ): Result<T, E> {
+    let lastErr: Result<never, E> | null = null;
+    for (const r of results) {
+      if (r.ok) {
+        return r;
       }
-      return lastErr ?? Err(onEmpty());
-    };
+      lastErr = r as Result<never, E>;
+    }
+    return lastErr ?? Err(onEmpty());
+  };
+}
+
+/**
+ * Iterates over `source`, yielding values from successful results until an error is encountered.
+ *
+ * @typeParam T - The type of successful values in the results.
+ * @typeParam E - The type of the error, extending `AppError`.
+ * @param source - An iterable of `Result<T, E>` to process.
+ * @returns A generator that yields `T` values and returns `Result<void, E>`.
+ */
+export function* iterateOk<T, E extends AppError>(
+  source: Iterable<Result<T, E>>,
+): Generator<T, Result<void, E>, unknown> {
+  for (const r of source) {
+    if (!r.ok) {
+      return r;
+    }
+    yield r.value;
+  }
+  return Ok<void>(undefined);
+}

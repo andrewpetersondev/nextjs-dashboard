@@ -1,11 +1,6 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/results/result";
-import type {
-  MapBoth,
-  MapErr,
-  MapOk,
-  Result,
-} from "@/shared/results/result.types";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Transforms the value of an `Ok` result using the provided function, maintaining the `Err` state otherwise.
@@ -16,14 +11,13 @@ import type {
  * @param fn - A function to apply to the `Ok` result's value.
  * @returns A function that maps a `Result<T, E>` to `Result<U, E>`.
  */
-export const map: MapOk =
-  /* @__PURE__ */
-  // biome-ignore lint/nursery/useExplicitType: fix
-    (fn) =>
-    /* @__PURE__ */
-    // biome-ignore lint/nursery/useExplicitType: fix
-    (r) =>
-      r.ok ? Ok(fn(r.value)) : r;
+export function map<T, U, E extends AppError>(
+  fn: (v: T) => U,
+): (r: Result<T, E>) => Result<U, E> {
+  return function mapOk(r: Result<T, E>): Result<U, E> {
+    return r.ok ? Ok(fn(r.value)) : r;
+  };
+}
 
 /**
  * Maps an error value using the provided function if the result is an error.
@@ -34,14 +28,13 @@ export const map: MapOk =
  * @param fn - A function that transforms the error value.
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E2>`.
  */
-export const mapErr: MapErr =
-  /* @__PURE__ */
-  // biome-ignore lint/nursery/useExplicitType: fix
-    (fn) =>
-    /* @__PURE__ */
-    // biome-ignore lint/nursery/useExplicitType: fix
-    (r) =>
-      r.ok ? r : Err(fn(r.error));
+export function mapErr<T, E1 extends AppError, E2 extends AppError>(
+  fn: (e: E1) => E2,
+): (r: Result<T, E1>) => Result<T, E2> {
+  return function mapErrInner(r: Result<T, E1>): Result<T, E2> {
+    return r.ok ? r : Err(fn(r.error));
+  };
+}
 
 /**
  * Transforms both the success (`Ok`) and error (`Err`) states of a result.
@@ -54,14 +47,14 @@ export const mapErr: MapErr =
  * @param onErr - Function to map the error (`Err`) value.
  * @returns A function that takes a result and transforms it using the provided mappings.
  */
-export const mapBoth: MapBoth =
-  /* @__PURE__ */
-  // biome-ignore lint/nursery/useExplicitType: fix
-    (onOk, onErr) =>
-    /* @__PURE__ */
-    // biome-ignore lint/nursery/useExplicitType: fix
-    (r) =>
-      r.ok ? Ok(onOk(r.value)) : Err(onErr(r.error));
+export function mapBoth<T, U, E1 extends AppError, E2 extends AppError>(
+  onOk: (v: T) => U,
+  onErr: (e: E1) => E2,
+): (r: Result<T, E1>) => Result<U, E2> {
+  return function mapBothInner(r: Result<T, E1>): Result<U, E2> {
+    return r.ok ? Ok(onOk(r.value)) : Err(onErr(r.error));
+  };
+}
 
 /**
  * Maps an error of type `E1` to a new error of type `E2` within a `Result`.
@@ -72,12 +65,13 @@ export const mapBoth: MapBoth =
  * @param fn - A function transforming `E1` into `E2`.
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E1 | E2>`.
  */
-export const mapErrUnion =
-  /* @__PURE__ */
-    <T, E1 extends AppError, E2 extends AppError>(fn: (e: E1) => E2) =>
-    /* @__PURE__ */
-    (r: Result<T, E1>): Result<T, E1 | E2> =>
-      r.ok ? r : Err(fn(r.error));
+export function mapErrUnion<T, E1 extends AppError, E2 extends AppError>(
+  fn: (e: E1) => E2,
+): (r: Result<T, E1>) => Result<T, E1 | E2> {
+  return function mapErrUnionInner(r: Result<T, E1>): Result<T, E1 | E2> {
+    return r.ok ? r : Err(fn(r.error));
+  };
+}
 
 /**
  * Maps an error from a `Result` type to a new error type while preserving the original error instance
@@ -89,17 +83,17 @@ export const mapErrUnion =
  * @param fn - A transformation function to map the error from `E1` to `E2`.
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E1 | E2>`, preserving the original `Err` object when unchanged.
  */
-export const mapErrPreserve =
-  /* @__PURE__ */
-    <T, E1 extends AppError, E2 extends AppError>(fn: (e: E1) => E2) =>
-    /* @__PURE__ */
-    (r: Result<T, E1>): Result<T, E1 | E2> => {
-      if (r.ok) {
-        return r;
-      }
-      const mapped = fn(r.error);
-      return Object.is(mapped, r.error) ? r : Err(mapped);
-    };
+export function mapErrPreserve<T, E1 extends AppError, E2 extends AppError>(
+  fn: (e: E1) => E2,
+): (r: Result<T, E1>) => Result<T, E1 | E2> {
+  return function mapErrPreserveInner(r: Result<T, E1>): Result<T, E1 | E2> {
+    if (r.ok) {
+      return r;
+    }
+    const mapped = fn(r.error);
+    return Object.is(mapped, r.error) ? r : Err(mapped);
+  };
+}
 
 /**
  * Executes a provided function if the `Result` is successful (`ok`), passing its value.
@@ -110,15 +104,16 @@ export const mapErrPreserve =
  * @param fn - Function invoked with the success value for side effects.
  * @returns A function that accepts a `Result<Tv, Te>` and returns the same `Result`.
  */
-export const tap =
-  /* @__PURE__ */
-    <Tv, Te extends AppError>(fn: (v: Tv) => void) =>
-    (r: Result<Tv, Te>): Result<Tv, Te> => {
-      if (r.ok) {
-        fn(r.value);
-      }
-      return r;
-    };
+export function tap<Tv, Te extends AppError>(
+  fn: (v: Tv) => void,
+): (r: Result<Tv, Te>) => Result<Tv, Te> {
+  return function tapInner(r: Result<Tv, Te>): Result<Tv, Te> {
+    if (r.ok) {
+      fn(r.value);
+    }
+    return r;
+  };
+}
 
 /**
  * Applies a side-effect function to the error of a `Result` if it is not ok.
@@ -129,15 +124,16 @@ export const tap =
  * @param fn - Function invoked with the error for side effects.
  * @returns A function that accepts a `Result<Tv, Te>` and returns the same `Result`.
  */
-export const tapErr =
-  /* @__PURE__ */
-    <Tv, Te extends AppError>(fn: (e: Te) => void) =>
-    (r: Result<Tv, Te>): Result<Tv, Te> => {
-      if (!r.ok) {
-        fn(r.error);
-      }
-      return r;
-    };
+export function tapErr<Tv, Te extends AppError>(
+  fn: (e: Te) => void,
+): (r: Result<Tv, Te>) => Result<Tv, Te> {
+  return function tapErrInner(r: Result<Tv, Te>): Result<Tv, Te> {
+    if (!r.ok) {
+      fn(r.error);
+    }
+    return r;
+  };
+}
 
 /**
  * Safely applies a given side-effect function to the success value of a `Result`.
@@ -154,7 +150,7 @@ export function tapSafe<Tv, Te extends AppError, Ts extends AppError>(
   fn: (v: Tv) => void,
   mapError: (e: unknown) => Ts,
 ): (r: Result<Tv, Te>) => Result<Tv, Te | Ts> {
-  return /* @__PURE__ */ (r: Result<Tv, Te>): Result<Tv, Te | Ts> => {
+  return function tapSafeInner(r: Result<Tv, Te>): Result<Tv, Te | Ts> {
     if (r.ok) {
       try {
         fn(r.value);
@@ -182,7 +178,7 @@ export function tapErrSafe<Tv, Te extends AppError, Ts extends AppError>(
   fn: (e: Te) => void,
   mapError: (e: unknown) => Ts,
 ): (r: Result<Tv, Te>) => Result<Tv, Te | Ts> {
-  return /* @__PURE__ */ (r: Result<Tv, Te>): Result<Tv, Te | Ts> => {
+  return function tapErrSafeInner(r: Result<Tv, Te>): Result<Tv, Te | Ts> {
     if (!r.ok) {
       try {
         fn(r.error);
@@ -207,14 +203,13 @@ export function tapErrSafe<Tv, Te extends AppError, Ts extends AppError>(
  * @returns A function that accepts a `Result<T, E>` and returns a `Result<U, E | F>`,
  *          producing the transformed `Ok` value or propagating the first encountered `Err`.
  */
-export const flatMap =
-  /* @__PURE__ */
-    <T, U, E extends AppError, F extends AppError>(
-      fn: (v: T) => Result<U, F>,
-    ) =>
-    /* @__PURE__ */
-    (r: Result<T, E>): Result<U, E | F> =>
-      r.ok ? fn(r.value) : r;
+export function flatMap<T, U, E extends AppError, F extends AppError>(
+  fn: (v: T) => Result<U, F>,
+): (r: Result<T, E>) => Result<U, E | F> {
+  return function flatMapInner(r: Result<T, E>): Result<U, E | F> {
+    return r.ok ? fn(r.value) : r;
+  };
+}
 
 /**
  * Extracts the value from a successful `Result` or throws the associated error if unsuccessful.
@@ -225,12 +220,12 @@ export const flatMap =
  * @returns The contained value of type `T` when `r.ok` is true.
  * @throws The error of type `E` when `r.ok` is false.
  */
-export const unwrapOrThrow = <T, E extends AppError>(r: Result<T, E>): T => {
+export function unwrapOrThrow<T, E extends AppError>(r: Result<T, E>): T {
   if (r.ok) {
     return r.value;
   }
   throw r.error;
-};
+}
 
 /**
  * Returns the value from a `Result` if `ok`, otherwise returns the provided fallback.
@@ -240,12 +235,13 @@ export const unwrapOrThrow = <T, E extends AppError>(r: Result<T, E>): T => {
  * @param fallback - The default value to return if the `Result` is not `ok`.
  * @returns A function that accepts a `Result<T, E>` and returns `T` or the `fallback`.
  */
-export const unwrapOr =
-  /* @__PURE__ */
-    <T, E extends AppError>(fallback: T) =>
-    /* @__PURE__ */
-    (r: Result<T, E>): T =>
-      r.ok ? r.value : fallback;
+export function unwrapOr<T, E extends AppError>(
+  fallback: T,
+): (r: Result<T, E>) => T {
+  return function unwrapOrInner(r: Result<T, E>): T {
+    return r.ok ? r.value : fallback;
+  };
+}
 
 /**
  * Returns the value of a successful `Result` or computes a fallback value using the provided function.
@@ -255,12 +251,13 @@ export const unwrapOr =
  * @param fallback - A function that computes a fallback value from the error `E`.
  * @returns A function that accepts a `Result<T, E>` and returns `T` either from the result or computed via `fallback`.
  */
-export const unwrapOrElse =
-  /* @__PURE__ */
-    <T, E extends AppError>(fallback: (e: E) => T) =>
-    /* @__PURE__ */
-    (r: Result<T, E>): T =>
-      r.ok ? r.value : fallback(r.error);
+export function unwrapOrElse<T, E extends AppError>(
+  fallback: (e: E) => T,
+): (r: Result<T, E>) => T {
+  return function unwrapOrElseInner(r: Result<T, E>): T {
+    return r.ok ? r.value : fallback(r.error);
+  };
+}
 
 /**
  * Matches a `Result` and applies the appropriate callback based on its state.
@@ -273,11 +270,13 @@ export const unwrapOrElse =
  * @param onErr - Callback invoked with the error when `r` is `Err`.
  * @returns The return value of either `onOk` or `onErr`.
  */
-export const match = /* @__PURE__ */ <T, E extends AppError, O>(
+export function match<T, E extends AppError, O>(
   r: Result<T, E>,
   onOk: (v: T) => O,
   onErr: (e: E) => O,
-): O => (r.ok ? onOk(r.value) : onErr(r.error));
+): O {
+  return r.ok ? onOk(r.value) : onErr(r.error);
+}
 
 /**
  * Exhaustive match that returns a constant output based on the `Result` state.
@@ -289,8 +288,11 @@ export const match = /* @__PURE__ */ <T, E extends AppError, O>(
  * @param onErr - Constant value to return when `r` is `Err`.
  * @returns A function that accepts a `Result<T, E>` and returns either `onOk` or `onErr`.
  */
-export const matchTo =
-  /* @__PURE__ */
-    <T, E extends AppError, O>(onOk: O, onErr: O) =>
-    (r: Result<T, E>): O =>
-      r.ok ? onOk : onErr;
+export function matchTo<T, E extends AppError, O>(
+  onOk: O,
+  onErr: O,
+): (r: Result<T, E>) => O {
+  return function matchToInner(r: Result<T, E>): O {
+    return r.ok ? onOk : onErr;
+  };
+}
