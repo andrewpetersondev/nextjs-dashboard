@@ -75,6 +75,95 @@ export class UserService {
     }
   }
 
+  async deleteUser(id: UserId): Promise<Result<UserDto, AppError>> {
+    try {
+      const result = await this.repo.delete(id);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      const deleted = result.value;
+
+      if (!deleted) {
+        return Err(
+          normalizeUnknownToAppError(
+            new Error(USER_ERROR_MESSAGES.notFoundOrDeleteFailed),
+            "not_found",
+          ),
+        );
+      }
+
+      this.logger.info("User deleted successfully", {
+        logging: { userId: id },
+      });
+
+      return Ok(userEntityToDto(deleted));
+    } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
+      this.logger.error("User deletion failed", {
+        error,
+        logging: { userId: id },
+      });
+      return Err(error);
+    }
+  }
+
+  async readFilteredUsers(
+    query: string,
+    page: number,
+  ): Promise<Result<UserDto[], AppError>> {
+    try {
+      const result = await this.repo.readFilteredUsers(query, page);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      return Ok(result.value.map(userEntityToDto));
+    } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
+      this.logger.error("Failed to fetch filtered users", {
+        error,
+        logging: { page, query },
+      });
+      return Err(error);
+    }
+  }
+
+  async readUserById(id: UserId): Promise<Result<UserDto | null, AppError>> {
+    try {
+      const result = await this.repo.readById(id);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      const user = result.value;
+      return Ok(user ? userEntityToDto(user) : null);
+    } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
+      this.logger.error(USER_ERROR_MESSAGES.readFailed, {
+        error,
+        logging: { userId: id },
+      });
+      return Err(error);
+    }
+  }
+
+  async readUserPageCount(query: string): Promise<Result<number, AppError>> {
+    try {
+      return await this.repo.readPageCount(query);
+    } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
+      this.logger.error("Failed to count users", {
+        error,
+        logging: { query },
+      });
+      return Err(error);
+    }
+  }
+
   async updateUser(
     id: UserId,
     patch: EditUserData,
@@ -119,95 +208,6 @@ export class UserService {
       this.logger.error("User update failed", {
         error,
         logging: { userId: id },
-      });
-      return Err(error);
-    }
-  }
-
-  async deleteUser(id: UserId): Promise<Result<UserDto, AppError>> {
-    try {
-      const result = await this.repo.delete(id);
-
-      if (!result.ok) {
-        return result;
-      }
-
-      const deleted = result.value;
-
-      if (!deleted) {
-        return Err(
-          normalizeUnknownToAppError(
-            new Error(USER_ERROR_MESSAGES.notFoundOrDeleteFailed),
-            "not_found",
-          ),
-        );
-      }
-
-      this.logger.info("User deleted successfully", {
-        logging: { userId: id },
-      });
-
-      return Ok(userEntityToDto(deleted));
-    } catch (err) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-      this.logger.error("User deletion failed", {
-        error,
-        logging: { userId: id },
-      });
-      return Err(error);
-    }
-  }
-
-  async readUserById(id: UserId): Promise<Result<UserDto | null, AppError>> {
-    try {
-      const result = await this.repo.readById(id);
-
-      if (!result.ok) {
-        return result;
-      }
-
-      const user = result.value;
-      return Ok(user ? userEntityToDto(user) : null);
-    } catch (err) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-      this.logger.error(USER_ERROR_MESSAGES.readFailed, {
-        error,
-        logging: { userId: id },
-      });
-      return Err(error);
-    }
-  }
-
-  async readFilteredUsers(
-    query: string,
-    page: number,
-  ): Promise<Result<UserDto[], AppError>> {
-    try {
-      const result = await this.repo.readFilteredUsers(query, page);
-
-      if (!result.ok) {
-        return result;
-      }
-
-      return Ok(result.value.map(userEntityToDto));
-    } catch (err) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-      this.logger.error("Failed to fetch filtered users", {
-        error,
-        logging: { page, query },
-      });
-      return Err(error);
-    }
-  }
-
-  async readUserPageCount(query: string): Promise<Result<number, AppError>> {
-    try {
-      return await this.repo.readPageCount(query);
-    } catch (err) {
-      const error = normalizeUnknownToAppError(err, "unexpected");
-      this.logger.error("Failed to count users", {
-        error,
-        logging: { query },
       });
       return Err(error);
     }

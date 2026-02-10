@@ -22,34 +22,10 @@ export class UserRepositoryImpl {
     this.db = db;
   }
 
-  async withTransaction<T>(
-    fn: (txRepo: UserRepositoryImpl) => Promise<T>,
-  ): Promise<T> {
-    const dbWithTx = this.db as AppDatabase & {
-      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
-    };
-
-    if (typeof dbWithTx.transaction !== "function") {
-      throw new Error("Database does not support transactions");
-    }
-
-    return await dbWithTx.transaction(async (tx: AppDatabase) => {
-      const txRepo = new UserRepositoryImpl(tx);
-      return await fn(txRepo);
-    });
-  }
-
   async create(
     input: CreateUserProps,
   ): Promise<Result<UserEntity | null, AppError>> {
     return await createUserDal(this.db, input);
-  }
-
-  async update(
-    id: UserId,
-    patch: UserPersistencePatch,
-  ): Promise<Result<UserEntity | null, AppError>> {
-    return await updateUserDal(this.db, id, patch);
   }
 
   async delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
@@ -69,5 +45,29 @@ export class UserRepositoryImpl {
 
   async readPageCount(query: string): Promise<Result<number, AppError>> {
     return await readUsersPageCountDal(this.db, query);
+  }
+
+  async update(
+    id: UserId,
+    patch: UserPersistencePatch,
+  ): Promise<Result<UserEntity | null, AppError>> {
+    return await updateUserDal(this.db, id, patch);
+  }
+
+  async withTransaction<T>(
+    fn: (txRepo: UserRepositoryImpl) => Promise<T>,
+  ): Promise<T> {
+    const dbWithTx = this.db as AppDatabase & {
+      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
+    };
+
+    if (typeof dbWithTx.transaction !== "function") {
+      throw new Error("Database does not support transactions");
+    }
+
+    return await dbWithTx.transaction(async (tx: AppDatabase) => {
+      const txRepo = new UserRepositoryImpl(tx);
+      return await fn(txRepo);
+    });
   }
 }

@@ -18,25 +18,8 @@ export class UserRepositoryAdapter
   constructor(repo: UserRepositoryImpl) {
     this.repo = repo;
   }
-
-  withTransaction<T>(
-    fn: (txRepo: UserRepositoryContract<UserRepositoryImpl>) => Promise<T>,
-  ): Promise<T> {
-    return this.repo.withTransaction(async (txRepo) => {
-      const txAdapter = new UserRepositoryAdapter(txRepo);
-      return await fn(txAdapter);
-    });
-  }
-
   create(input: CreateUserProps): Promise<Result<UserEntity | null, AppError>> {
     return this.repo.create(input);
-  }
-
-  update(
-    id: UserId,
-    patch: UserPersistencePatch,
-  ): Promise<Result<UserEntity | null, AppError>> {
-    return this.repo.update(id, patch);
   }
 
   delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
@@ -56,5 +39,21 @@ export class UserRepositoryAdapter
 
   readPageCount(query: string): Promise<Result<number, AppError>> {
     return this.repo.readPageCount(query);
+  }
+
+  update(
+    id: UserId,
+    patch: UserPersistencePatch,
+  ): Promise<Result<UserEntity | null, AppError>> {
+    return this.repo.update(id, patch);
+  }
+
+  withTransaction<T>(
+    fn: (txRepo: UserRepositoryContract<UserRepositoryImpl>) => Promise<T>,
+  ): Promise<T> {
+    return this.repo.withTransaction(async (txRepo) => {
+      const txAdapter = new UserRepositoryAdapter(txRepo);
+      return await fn(txAdapter);
+    });
   }
 }
