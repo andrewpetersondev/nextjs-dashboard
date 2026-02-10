@@ -43,7 +43,13 @@ export class UserService {
         username: input.username,
       };
 
-      const user = await this.repo.create(creationParams);
+      const result = await this.repo.create(creationParams);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      const user = result.value;
 
       if (!user) {
         return Err(
@@ -86,7 +92,13 @@ export class UserService {
         finalPatch = { ...patch } as UserPersistencePatch;
       }
 
-      const updated = await this.repo.update(id, finalPatch);
+      const result = await this.repo.update(id, finalPatch);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      const updated = result.value;
 
       if (!updated) {
         return Err(
@@ -114,7 +126,13 @@ export class UserService {
 
   async deleteUser(id: UserId): Promise<Result<UserDto, AppError>> {
     try {
-      const deleted = await this.repo.delete(id);
+      const result = await this.repo.delete(id);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      const deleted = result.value;
 
       if (!deleted) {
         return Err(
@@ -140,41 +158,58 @@ export class UserService {
     }
   }
 
-  async readUserById(id: UserId): Promise<UserDto | null> {
+  async readUserById(id: UserId): Promise<Result<UserDto | null, AppError>> {
     try {
-      const user = await this.repo.readById(id);
-      return user ? userEntityToDto(user) : null;
+      const result = await this.repo.readById(id);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      const user = result.value;
+      return Ok(user ? userEntityToDto(user) : null);
     } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error(USER_ERROR_MESSAGES.readFailed, {
-        error: err,
+        error,
         logging: { userId: id },
       });
-      return null;
+      return Err(error);
     }
   }
 
-  async readFilteredUsers(query: string, page: number): Promise<UserDto[]> {
+  async readFilteredUsers(
+    query: string,
+    page: number,
+  ): Promise<Result<UserDto[], AppError>> {
     try {
-      const users = await this.repo.readFilteredUsers(query, page);
-      return users.map(userEntityToDto);
+      const result = await this.repo.readFilteredUsers(query, page);
+
+      if (!result.ok) {
+        return result;
+      }
+
+      return Ok(result.value.map(userEntityToDto));
     } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("Failed to fetch filtered users", {
-        error: err,
+        error,
         logging: { page, query },
       });
-      return [];
+      return Err(error);
     }
   }
 
-  async readUserPageCount(query: string): Promise<number> {
+  async readUserPageCount(query: string): Promise<Result<number, AppError>> {
     try {
       return await this.repo.readPageCount(query);
     } catch (err) {
+      const error = normalizeUnknownToAppError(err, "unexpected");
       this.logger.error("Failed to count users", {
-        error: err,
+        error,
         logging: { query },
       });
-      return 0;
+      return Err(error);
     }
   }
 }

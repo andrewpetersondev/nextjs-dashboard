@@ -1,5 +1,4 @@
 import "server-only";
-
 import { asc, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
 import type { UserEntity } from "@/modules/users/domain/user.entity";
@@ -7,8 +6,11 @@ import { toUserEntity } from "@/modules/users/infrastructure/adapters/mappers/us
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Fetches filtered users for a specific page.
@@ -22,7 +24,7 @@ export async function readFilteredUsersDal(
   db: AppDatabase,
   query: string,
   currentPage: number,
-): Promise<UserEntity[]> {
+): Promise<Result<UserEntity[], AppError>> {
   // Calculate offset using constant for items per page
   const offset = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
   try {
@@ -41,7 +43,7 @@ export async function readFilteredUsersDal(
       .offset(offset);
 
     // Map each raw row to UserEntity
-    return userRows.map((row) => toUserEntity(row));
+    return Ok(userRows.map((row) => toUserEntity(row)));
   } catch (error) {
     logger.error("Failed to fetch filtered users", {
       context: "fetchFilteredUsers",
@@ -49,10 +51,6 @@ export async function readFilteredUsersDal(
       error,
       query,
     });
-    throw makeAppError(APP_ERROR_KEYS.database, {
-      cause: "",
-      message: "Failed to fetch filtered users.",
-      metadata: {},
-    });
+    return Err(normalizeUnknownToAppError(error, APP_ERROR_KEYS.database));
   }
 }

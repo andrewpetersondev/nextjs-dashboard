@@ -1,5 +1,4 @@
 import "server-only";
-
 import type {
   CreateUserProps,
   UserEntity,
@@ -8,8 +7,11 @@ import { toUserEntity } from "@/modules/users/infrastructure/adapters/mappers/us
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { normalizeUnknownToAppError } from "@/shared/errors/factories/app-error.factory";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { Err, Ok } from "@/shared/results/result";
+import type { Result } from "@/shared/results/result.types";
 
 /**
  * Inserts a new user record into the database.
@@ -20,7 +22,7 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
 export async function createUserDal(
   db: AppDatabase,
   params: CreateUserProps,
-): Promise<UserEntity | null> {
+): Promise<Result<UserEntity | null, AppError>> {
   const { username, email, password, role } = params;
 
   try {
@@ -34,7 +36,7 @@ export async function createUserDal(
     };
 
     const [userRow] = await db.insert(users).values(newUser).returning();
-    return userRow ? toUserEntity(userRow) : null;
+    return Ok(userRow ? toUserEntity(userRow) : null);
   } catch (error) {
     logger.error("Failed to create a user in the database.", {
       context: "createUserDal",
@@ -43,10 +45,6 @@ export async function createUserDal(
       role,
       username,
     });
-    throw makeAppError(APP_ERROR_KEYS.database, {
-      cause: "",
-      message: "Failed to create a user in the database.",
-      metadata: {},
-    });
+    return Err(normalizeUnknownToAppError(error, APP_ERROR_KEYS.database));
   }
 }

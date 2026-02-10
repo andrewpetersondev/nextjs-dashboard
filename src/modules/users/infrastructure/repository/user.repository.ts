@@ -1,5 +1,4 @@
 import "server-only";
-
 import type {
   CreateUserProps,
   UserEntity,
@@ -13,6 +12,8 @@ import { updateUserDal } from "@/modules/users/infrastructure/repository/dal/upd
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { UserId } from "@/shared/branding/brands";
+import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { Result } from "@/shared/results/result.types";
 
 export class UserRepositoryImpl {
   protected readonly db: AppDatabase;
@@ -38,30 +39,35 @@ export class UserRepositoryImpl {
     });
   }
 
-  async create(input: CreateUserProps): Promise<UserEntity | null> {
+  async create(
+    input: CreateUserProps,
+  ): Promise<Result<UserEntity | null, AppError>> {
     return await createUserDal(this.db, input);
   }
 
   async update(
     id: UserId,
     patch: UserPersistencePatch,
-  ): Promise<UserEntity | null> {
+  ): Promise<Result<UserEntity | null, AppError>> {
     return await updateUserDal(this.db, id, patch);
   }
 
-  async delete(id: UserId): Promise<UserEntity | null> {
+  async delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
     return await deleteUserDal(this.db, id);
   }
 
-  async readById(id: UserId): Promise<UserEntity | null> {
+  async readById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
     return await readUserDal(this.db, id);
   }
 
-  async readFilteredUsers(query: string, page: number): Promise<UserEntity[]> {
+  async readFilteredUsers(
+    query: string,
+    page: number,
+  ): Promise<Result<UserEntity[], AppError>> {
     return await readFilteredUsersDal(this.db, query, page);
   }
 
-  async readPageCount(query: string): Promise<number> {
+  async readPageCount(query: string): Promise<Result<number, AppError>> {
     return await readUsersPageCountDal(this.db, query);
   }
 }

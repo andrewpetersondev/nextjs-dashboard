@@ -3,6 +3,7 @@ import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
+import { toNullable } from "@/shared/results/result";
 
 /**
  * Fetches a user by plain string id for UI consumption.
@@ -10,5 +11,6 @@ import { toUserId } from "@/shared/branding/converters/id-converters";
 export async function readUserAction(id: string): Promise<UserDto | null> {
   const db = getAppDb();
   const service = createUserService(db);
-  return await service.readUserById(toUserId(id));
+  const result = await service.readUserById(toUserId(id));
+  return toNullable(result);
 }

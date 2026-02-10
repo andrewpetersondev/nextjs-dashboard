@@ -2,6 +2,7 @@
 import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
+import { toNullable } from "@/shared/results/result";
 
 /**
  * Server action to fetch filtered users for the users table.
@@ -12,5 +13,6 @@ export async function readFilteredUsersAction(
 ): Promise<UserDto[]> {
   const db = getAppDb();
   const service = createUserService(db);
-  return await service.readFilteredUsers(query, currentPage);
+  const result = await service.readFilteredUsers(query, currentPage);
+  return toNullable(result) ?? [];
 }

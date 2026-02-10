@@ -1,5 +1,4 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import {
@@ -139,10 +138,13 @@ export async function updateUserAction(
     const service = createUserService(db);
 
     // Read existing user via service
-    const existing = await service.readUserById(idRes.value);
-    if (!existing) {
+    const existingRes = await service.readUserById(idRes.value);
+    // biome-ignore lint/complexity/useSimplifiedLogicExpression: fix later
+    if (!existingRes.ok || !existingRes.value) {
       return notFoundResult(fields);
     }
+
+    const existing = existingRes.value;
 
     // Build typed patch
     const patch = buildPatch(
