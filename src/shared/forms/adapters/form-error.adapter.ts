@@ -6,7 +6,7 @@ import {
   extractFieldValues,
   extractFormErrors,
 } from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.factory";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
 
 /**
  * Adapts a canonical AppError into a shape the Form UI can consume.

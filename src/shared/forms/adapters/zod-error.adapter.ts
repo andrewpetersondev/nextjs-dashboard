@@ -1,3 +1,4 @@
+import "server-only";
 import { z } from "zod";
 import type {
   DenseFieldErrorMap,
@@ -6,7 +7,7 @@ import type {
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/logic/mappers/field-error-map.factory";
+} from "@/shared/forms/logic/mappers/field-error-map.mapper";
 
 /**
  * Loose shape matching a ZodError for flattening.

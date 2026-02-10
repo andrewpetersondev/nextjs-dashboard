@@ -1,3 +1,4 @@
+import "server-only";
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-error.value";
 
 /**

@@ -24,7 +24,7 @@ import {
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
-} from "@/shared/forms/logic/mappers/field-error-map.factory";
+} from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 

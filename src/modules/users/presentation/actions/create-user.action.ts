@@ -16,7 +16,8 @@ import {
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.factory";
+
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
 import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { toUserRole } from "@/shared/validation/user/user-role.parser";
 
