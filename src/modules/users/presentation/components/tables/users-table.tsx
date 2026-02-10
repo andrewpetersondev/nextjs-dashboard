@@ -1,10 +1,8 @@
 import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import { readFilteredUsersAction } from "@/modules/users/presentation/actions/read-filtered-users.action";
-import {
-  DeleteUserButton,
-  UpdateUserLink,
-} from "@/modules/users/presentation/components/user-action-buttons";
+import { UpdateUserLink } from "@/modules/users/presentation/components/user-action-buttons";
+import { DeleteUserFormButton } from "@/modules/users/presentation/forms/delete-user-form.button";
 
 /**
  * UsersTable component.
@@ -41,7 +39,7 @@ export async function UsersTable({
             <div className="flex w-full items-center justify-between pt-4">
               <div className="flex justify-end gap-2">
                 <UpdateUserLink id={user.id} />
-                <DeleteUserButton id={user.id} />
+                <DeleteUserFormButton id={user.id} />
               </div>
             </div>
           </div>

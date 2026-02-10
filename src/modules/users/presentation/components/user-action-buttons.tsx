@@ -1,7 +1,6 @@
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, PlusIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { deleteUserFormAction } from "@/modules/users/presentation/actions/delete-user-form.action";
 
 /**
  * Renders a button that links to the user creation page.
@@ -38,28 +37,5 @@ export function UpdateUserLink({ id }: { id: string }): JSX.Element {
       <span className="sr-only">Update</span>
       <PencilIcon className="w-5" />
     </Link>
-  );
-}
-
-/**
- * Renders a form with a delete button that triggers user deletion.
- * @param {Object} props - Component properties
- * @param {string} props.id - The ID of the user to be deleted
- * @returns {JSX.Element} A form with a submit button styled with a delete icon
- */
-export function DeleteUserButton({ id }: { id: string }): JSX.Element {
-  return (
-    <form action={deleteUserFormAction}>
-      {/* Hidden input for userId */}
-      <input name="id" type="hidden" value={id} />
-      <button
-        className="rounded-md border p-2 hover:bg-bg-hover"
-        data-cy="delete-item-button"
-        type="submit"
-      >
-        <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
-      </button>
-    </form>
   );
 }
