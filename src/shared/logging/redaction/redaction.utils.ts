@@ -7,8 +7,7 @@ import {
   PARTIAL_MASK_VISIBLE_START_CHARS,
 } from "@/shared/logging/redaction/redaction.constants";
 
-// biome-ignore lint/nursery/useExplicitType: fix
-let SeenCache = new WeakMap<object, unknown>();
+let SeenCache: WeakMap<object, unknown> = new WeakMap<object, unknown>();
 
 /**
  * Builds the sensitive key set (case-insensitive).
@@ -117,5 +116,5 @@ export function deepCloneWithRedaction(
 
 // Clear cache periodically or expose as utility
 export function clearRedactionCache(): void {
-  SeenCache = new WeakMap();
+  SeenCache = new WeakMap<object, unknown>();
 }
