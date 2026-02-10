@@ -6,7 +6,7 @@ type StaticPath = `/${string}`;
 type DynamicBuilder = (...args: string[]) => StaticPath;
 
 // Reusable regex/constants
-const TRAILING_SLASH_REGEX = /\/+$/;
+const TRAILING_SLASH_REGEX: RegExp = /\/+$/;
 
 type RoutesShape = Readonly<{
   auth: Readonly<{
@@ -50,14 +50,11 @@ export const ROUTES: RoutesShape = {
 
 // Middleware/shared guards
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
-export const PROTECTED_PREFIX = ROUTES.dashboard.root;
+export const PROTECTED_PREFIX: StaticPath = ROUTES.dashboard.root;
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
-export const ADMIN_PREFIX = ROUTES.dashboard.users;
+export const ADMIN_PREFIX: StaticPath = ROUTES.dashboard.users;
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
-export const PUBLIC_ROUTES = new Set<string>([
+export const PUBLIC_ROUTES: ReadonlySet<StaticPath> = new Set<StaticPath>([
   ROUTES.auth.login,
   ROUTES.auth.signup,
   ROUTES.root,

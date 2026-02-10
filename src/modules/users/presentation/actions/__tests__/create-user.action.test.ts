@@ -7,6 +7,7 @@ import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import {
   makeFormError,
   makeFormOk,
@@ -17,7 +18,7 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 import { Err, Ok } from "@/shared/results/result";
 import { createUserAction } from "../create-user.action";
 
-vi.mock("@/shared/forms/server/validate-form.logic");
+vi.mock("@/shared/forms/server/validate-form");
 vi.mock("@/modules/users/infrastructure/factories/user-service.factory");
 vi.mock("@/server/db/db.connection");
 vi.mock(
@@ -97,10 +98,15 @@ describe("createUserAction", () => {
     };
 
     (validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
-    const serviceError = {
-      key: APP_ERROR_KEYS.validation,
+    const serviceError = makeAppError(APP_ERROR_KEYS.validation, {
+      cause: "",
       message: "Email already exists",
-    };
+      metadata: {
+        fieldErrors: makeEmptyDenseFieldErrorMap(mockFields),
+        formData: {},
+        formErrors: [],
+      },
+    });
     mockService.createUser.mockResolvedValue(Err(serviceError));
 
     const result = await createUserAction(prevState, formData);
