@@ -10,13 +10,13 @@
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import type { Hash, UserId } from "@/shared/branding/brands";
 import {
-  USER_ROLE,
+  DEFAULT_USER_ROLE,
   USER_ROLES,
   type UserRole,
 } from "@/shared/validation/user/user-role.constants";
 
-// biome-ignore lint/nursery/useExplicitType: fix
-export const roleEnum = pgEnum("role", USER_ROLES);
+// biome-ignore lint/nursery/useExplicitType: not easy to fix
+export const userRolePgEnum = pgEnum("role", USER_ROLES);
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const users = pgTable("users", {
@@ -25,7 +25,10 @@ export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
   password: varchar("password", { length: 255 }).notNull().$type<Hash>(),
   // TODO: THIS SETS A DEFAULT WHICH IS DISCOURAGED
-  role: roleEnum("role").default(USER_ROLE).notNull().$type<UserRole>(),
+  role: userRolePgEnum("role")
+    .default(DEFAULT_USER_ROLE)
+    .notNull()
+    .$type<UserRole>(),
   sensitiveData: varchar("sensitive_data", { length: 255 })
     .notNull()
     .default("cantTouchThis"),

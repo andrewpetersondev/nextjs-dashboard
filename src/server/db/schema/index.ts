@@ -36,8 +36,8 @@ export {
 export {
   type AuthUserCredentialsRow,
   type NewUserRow,
-  roleEnum,
   type UserRow,
+  userRolePgEnum,
   users,
 } from "./users";
 

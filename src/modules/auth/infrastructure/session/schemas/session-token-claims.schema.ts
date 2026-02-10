@@ -1,5 +1,5 @@
 import { type ZodNumber, type ZodUUID, z } from "zod";
-import { UserRoleEnum } from "@/shared/validation/user/user-role.schema";
+import { UserRoleEnumSchema } from "@/shared/validation/user/user-role.schema";
 
 /**
  * Issued At (iat) claim schema.
@@ -64,7 +64,7 @@ export const SessionTokenClaimsSchema = z.object({
   iat: IatSchema,
   jti: JtiSchema,
   nbf: NbfSchema,
-  role: UserRoleEnum,
+  role: UserRoleEnumSchema,
   sid: SidSchema,
   sub: SubSchema,
 });
