@@ -23,11 +23,11 @@ import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
 import { FormActionRow } from "@/shared/forms/presentation/components/layout/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
+import { TYPING_MS } from "@/shared/tokens/timings.tokens";
 import { H1 } from "@/ui/atoms/headings";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
-import { TYPING_MS } from "@/ui/styles/timings.tokens";
 
 type EditUserFieldErrors = Partial<
   Record<"email" | "password" | "role" | "username", FieldError>

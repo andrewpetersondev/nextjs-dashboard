@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
+import { ALERT_AUTO_HIDE_MS } from "@/shared/tokens/timings.tokens";
 
 /**
  * Hook to manage the visibility of a form message (success or error).

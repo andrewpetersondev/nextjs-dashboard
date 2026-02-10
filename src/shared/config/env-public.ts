@@ -1,6 +1,3 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
-/** biome-ignore-all lint/style/noProcessEnv: <env config file> */
-
 /**
  * @file Public environment configuration for Next.js build-time/client-exposed vars
  * - Validates and exposes non-sensitive values

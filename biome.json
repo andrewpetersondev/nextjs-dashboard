@@ -251,7 +251,8 @@
                       "@/app/**",
                       "@/modules/**",
                       "@/server/**",
-                      "@/shell/**"
+                      "@/shell/**",
+                      "@/ui/**"
                     ],
                     "message": "src/shared must not import from higher-level application modules."
                   }
@@ -367,7 +368,7 @@
                 "patterns": [
                   {
                     "group": ["@/server/db/schema/**"],
-                    "message": "Client/UI code must not import DB schema files. Use DTOs or shared types."
+                    "message": "Client/UI code must not import DB schema files. Use types safe for client viewing."
                   }
                 ]
               }
@@ -377,7 +378,11 @@
       }
     },
     {
-      "includes": ["src/server/**/*.{ts,tsx}"],
+      "includes": [
+        "src/server/**/*.{ts,tsx}",
+        "src/shared/config/**/*.ts",
+        "src/server/config/**/*.ts"
+      ],
       "linter": {
         "rules": {
           "correctness": {

@@ -1,6 +1,3 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
-/** biome-ignore-all lint/style/noProcessEnv: <env config file> */
-
 import { getPublicNodeEnvResult } from "@/shared/config/env-public";
 import {
   type DatabaseEnvironment,

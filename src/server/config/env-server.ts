@@ -1,6 +1,3 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <env config file> */
-/** biome-ignore-all lint/style/noProcessEnv: <env config file> */
-
 /**
  * @file Server-only environment configuration for Next.js runtime
  * - Validates and exposes secrets
@@ -53,7 +50,5 @@ const env = parseServerEnv();
 export const AUTH_BCRYPT_SALT_ROUNDS: number = env.authBcryptSaltRounds;
 export const DATABASE_URL: string = env.databaseUrl;
 export const SESSION_SECRET: string = env.sessionSecret;
-// biome-ignore lint/nursery/useExplicitType: fix
-export const SESSION_ISSUER = env.sessionIssuer;
-// biome-ignore lint/nursery/useExplicitType: fix
-export const SESSION_AUDIENCE = env.sessionAudience;
+export const SESSION_ISSUER: "my-app" = env.sessionIssuer;
+export const SESSION_AUDIENCE: "web" = env.sessionAudience;
