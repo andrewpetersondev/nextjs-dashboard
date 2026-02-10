@@ -1,4 +1,8 @@
-import { type NextRequest, NextResponse } from "next/server";
+import {
+  type MiddlewareConfig,
+  type NextRequest,
+  NextResponse,
+} from "next/server";
 import { authorizeRequestHelper } from "@/modules/auth/application/shared/helpers/authorize-request.helper";
 import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-token-service.factory";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
@@ -81,9 +85,8 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
   return NextResponse.next();
 }
 
-// Routes Middleware should not run on
-// biome-ignore lint/nursery/useExplicitType: fix
-export const config = {
+/** Routes Middleware should not run on */
+export const config: MiddlewareConfig = {
   // Exclude APIs, Next internals, data routes, and any path with a file extension.
   // Must be a static literal for Next.js to statically analyze.
   matcher: ["/((?!_next/static|_next/image|_next/data|.*\\..*$).*)"],

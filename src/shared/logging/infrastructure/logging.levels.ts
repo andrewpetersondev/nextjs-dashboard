@@ -35,14 +35,13 @@ export function getEffectiveLogLevel(): LogLevel {
  * @property warn  - Low risk (recoverable issues)
  * @property error - Lowest risk (usually safe to expose)
  */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const logLevelPriority = {
+export const logLevelPriority: Readonly<Record<LogLevel, number>> = {
   debug: 40,
   error: 10,
   info: 30,
   trace: 50,
   warn: 20,
-} as const satisfies Record<LogLevel, number>;
+};
 
 /**
  * Cached console methods for minimal overhead.
