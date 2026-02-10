@@ -21,7 +21,7 @@ export const calculationSourceEnum = pgEnum(
   REVENUE_SOURCES,
 );
 
-// biome-ignore lint/nursery/useExplicitType: fix
+// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const revenues = pgTable(
   "revenues",
   {

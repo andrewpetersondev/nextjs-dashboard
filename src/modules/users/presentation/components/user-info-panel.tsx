@@ -1,7 +1,7 @@
+import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 
-// biome-ignore lint/nursery/useExplicitType: fix
-export function UserInfoPanel({ user }: { user: UserDto }) {
+export function UserInfoPanel({ user }: { user: UserDto }): JSX.Element {
   return (
     <div className="mb-6 rounded-lg border bg-muted p-4">
       <div className="mb-1 font-semibold text-primary">Current Information</div>

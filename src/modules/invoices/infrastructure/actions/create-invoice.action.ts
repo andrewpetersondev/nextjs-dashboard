@@ -1,11 +1,11 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/application/utils/error-messages";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";
 import {
+  CREATE_INVOICE_FIELDS_LIST,
   type CreateInvoiceFieldNames,
   type CreateInvoicePayload,
   CreateInvoiceSchema,
@@ -22,15 +22,11 @@ import {
   makeFormError,
   makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
-import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { toDenseFieldErrorMapFromZod } from "@/shared/forms/server/mappers/zod-error.mapper";
 import { resolveRawFieldPayload } from "@/shared/forms/server/utils/form-data.utils";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 import { isZodErrorInstance } from "@/shared/validation/zod/zod.guard";
-
-// biome-ignore lint/nursery/useExplicitType: fix
-const allowed = toSchemaKeys(CreateInvoiceSchema);
 
 /**
  * Server action for creating a new invoice.
@@ -41,12 +37,15 @@ export async function createInvoiceAction(
   formData: FormData,
 ): Promise<FormResult<CreateInvoicePayload>> {
   // 1. Parse Input: Leverage infrastructure for consistent extraction
-  const rawInput = resolveRawFieldPayload(formData, allowed);
+  const rawInput = resolveRawFieldPayload(formData, CREATE_INVOICE_FIELDS_LIST);
   const parsed = CreateInvoiceSchema.safeParse(rawInput);
 
   if (!parsed.success) {
     return makeFormError<CreateInvoiceFieldNames>({
-      fieldErrors: toDenseFieldErrorMapFromZod(parsed.error, allowed),
+      fieldErrors: toDenseFieldErrorMapFromZod(
+        parsed.error,
+        CREATE_INVOICE_FIELDS_LIST,
+      ),
       formData: rawInput,
       formErrors: [],
       key: "validation",
@@ -103,7 +102,7 @@ export async function createInvoiceAction(
 
     return makeFormError<CreateInvoiceFieldNames>({
       fieldErrors: isZodErrorInstance(error)
-        ? toDenseFieldErrorMapFromZod(error, allowed)
+        ? toDenseFieldErrorMapFromZod(error, CREATE_INVOICE_FIELDS_LIST)
         : ({} as Readonly<Record<CreateInvoiceFieldNames, readonly string[]>>),
       formData: {},
       formErrors: [],

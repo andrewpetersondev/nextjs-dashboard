@@ -1,5 +1,6 @@
 import { type ZodString, type ZodUUID, z } from "zod";
 import { INVOICE_STATUSES } from "@/modules/invoices/domain/statuses/invoice.statuses";
+import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 
 const MAX_INVOICE_AMOUNT_USD = 10_000; // $10,000
 const MIN_SENSITIVE_DATA_LENGTH = 2;
@@ -59,3 +60,6 @@ export type UpdateInvoiceFieldNames = keyof UpdateInvoiceInput;
 export type EditInvoiceViewModel = z.output<typeof CreateInvoiceSchema> & {
   id: string;
 };
+
+// biome-ignore lint/nursery/useExplicitType: fix
+export const CREATE_INVOICE_FIELDS_LIST = toSchemaKeys(CreateInvoiceSchema);

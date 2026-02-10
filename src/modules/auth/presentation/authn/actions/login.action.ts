@@ -16,9 +16,6 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
-// biome-ignore lint/nursery/useExplicitType: fix
-const fields = LOGIN_FIELDS_LIST;
-
 /**
  * Next.js Server Action for user authentication (login).
  *
@@ -56,7 +53,7 @@ export async function loginAction(
   });
 
   const validated = await tracker.measure("validation", () =>
-    validateForm(formData, LoginFormSchema, fields),
+    validateForm(formData, LoginFormSchema, LOGIN_FIELDS_LIST),
   );
 
   if (!validated.ok) {

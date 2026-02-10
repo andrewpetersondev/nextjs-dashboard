@@ -86,8 +86,7 @@ export class PerformanceTracker {
    *
    * @returns Record of metric keys to numbers or booleans.
    */
-  // biome-ignore lint/nursery/useExplicitType: fix
-  getMetrics() {
+  getMetrics(): Record<string, number | boolean> {
     const simplified = Object.entries(this.metrics).reduce(
       (acc, [key, value]) => {
         acc[key] = value.duration;

@@ -31,8 +31,7 @@ export async function fromPromiseThunk<T, E extends AppError>(
  * @param mapError - Maps unknown errors to error type.
  * @returns Promise resolving to Result with value or error.
  */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const tryCatchAsync = fromPromiseThunk;
+export const tryCatchAsync: typeof fromPromiseThunk = fromPromiseThunk;
 
 export const fromAsyncThunk = /* @__PURE__ */ <T, E extends AppError>(
   fn: () => Promise<T>,

@@ -5,7 +5,7 @@ import {
   type UserRole,
 } from "@/shared/validation/user/user-role.schema";
 
-// biome-ignore lint/nursery/useExplicitType: fix
+// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const demoUserCounters = pgTable("demo_user_counters", {
   count: integer("count").notNull().default(0),
   id: serial("id").primaryKey(),

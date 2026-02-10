@@ -43,7 +43,9 @@ async function makeAuthCompositionInternal(
   const loginUseCase = loginUseCaseFactory(db, baseLogger, requestId);
 
   const uow = authUnitOfWorkFactory(db, baseLogger, requestId);
+
   const signupUseCase = signupUseCaseFactory(uow, baseLogger);
+
   const demoUserUseCase = demoUserUseCaseFactory(uow, baseLogger);
 
   return {
@@ -61,17 +63,15 @@ async function makeAuthCompositionInternal(
       sessionService,
     },
     workflows: {
-      // biome-ignore lint/nursery/useExplicitType: fix
-      demoUser: (input) =>
+      demoUser: (input: Readonly<CreateDemoUserCommand>) =>
         createDemoUserWorkflow(input, {
           demoUserUseCase,
           sessionService,
         }),
-      // biome-ignore lint/nursery/useExplicitType: fix
-      login: (input) => loginWorkflow(input, { loginUseCase, sessionService }),
+      login: (input: Readonly<LoginCommand>) =>
+        loginWorkflow(input, { loginUseCase, sessionService }),
       logout: () => logoutWorkflow({ sessionService }),
-      // biome-ignore lint/nursery/useExplicitType: fix
-      signup: (input) =>
+      signup: (input: Readonly<SignupCommand>) =>
         signupWorkflow(input, { sessionService, signupUseCase }),
     },
   } as const;

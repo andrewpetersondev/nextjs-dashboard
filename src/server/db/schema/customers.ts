@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import type { CustomerId } from "@/shared/branding/brands";
 
-// biome-ignore lint/nursery/useExplicitType: fix
+// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const customers = pgTable("customers", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   id: uuid("id").defaultRandom().primaryKey().$type<CustomerId>(),

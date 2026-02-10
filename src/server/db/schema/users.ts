@@ -18,7 +18,7 @@ import {
 // biome-ignore lint/nursery/useExplicitType: fix
 export const roleEnum = pgEnum("role", USER_ROLES);
 
-// biome-ignore lint/nursery/useExplicitType: fix
+// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),
