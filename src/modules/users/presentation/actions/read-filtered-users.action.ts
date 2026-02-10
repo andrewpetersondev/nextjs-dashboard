@@ -1,5 +1,5 @@
 "use server";
-import type { UserDto } from "@/modules/users/application/dto/user.dto";
+import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toNullable } from "@/shared/results/result";

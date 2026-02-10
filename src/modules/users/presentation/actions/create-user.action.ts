@@ -2,11 +2,11 @@
 import {
   USER_ERROR_MESSAGES,
   USER_SUCCESS_MESSAGES,
-} from "@/modules/users/domain/user.constants";
+} from "@/modules/users/domain/constants/user.constants";
 import {
   type CreateUserFormInput,
   CreateUserFormSchema,
-} from "@/modules/users/domain/user.schema";
+} from "@/modules/users/domain/schemas/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, type Mocked, vi } from "vitest";
-import type { UserRepositoryContract } from "@/modules/users/application/contract/user-repository.contract";
+import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
 import { UserService } from "@/modules/users/application/services/user.service";
-import type { UserEntity } from "@/modules/users/domain/user.entity";
+import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { Hash } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";

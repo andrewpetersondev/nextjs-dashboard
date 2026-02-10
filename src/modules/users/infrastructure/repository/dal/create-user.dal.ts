@@ -2,7 +2,7 @@ import "server-only";
 import type {
   CreateUserProps,
   UserEntity,
-} from "@/modules/users/domain/user.entity";
+} from "@/modules/users/domain/entities/user.entity";
 import { toUserEntity } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, users } from "@/server/db/schema/users";

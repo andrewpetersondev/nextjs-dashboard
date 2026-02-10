@@ -2,7 +2,7 @@ import "server-only";
 import type {
   CreateUserProps,
   UserEntity,
-} from "@/modules/users/domain/user.entity";
+} from "@/modules/users/domain/entities/user.entity";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/errors/core/app-error.entity";

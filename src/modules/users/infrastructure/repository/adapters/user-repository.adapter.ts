@@ -1,9 +1,9 @@
 import "server-only";
-import type { UserRepositoryContract } from "@/modules/users/application/contract/user-repository.contract";
+import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
 import type {
   CreateUserProps,
   UserEntity,
-} from "@/modules/users/domain/user.entity";
+} from "@/modules/users/domain/entities/user.entity";
 import type { UserRepositoryImpl } from "@/modules/users/infrastructure/repository/user.repository";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { UserId } from "@/shared/branding/brands";

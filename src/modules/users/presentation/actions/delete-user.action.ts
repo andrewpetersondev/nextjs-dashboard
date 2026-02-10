@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.constants";
+import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";

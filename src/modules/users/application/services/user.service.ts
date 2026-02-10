@@ -1,12 +1,12 @@
 import "server-only";
-import type { UserRepositoryContract } from "@/modules/users/application/contract/user-repository.contract";
-import type { UserDto } from "@/modules/users/application/dto/user.dto";
-import { USER_ERROR_MESSAGES } from "@/modules/users/domain/user.constants";
-import type { CreateUserProps } from "@/modules/users/domain/user.entity";
+import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
+import type { UserDto } from "@/modules/users/application/dtos/user.dto";
+import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
+import type { CreateUserProps } from "@/modules/users/domain/entities/user.entity";
 import type {
   CreateUserData,
   EditUserData,
-} from "@/modules/users/domain/user.schema";
+} from "@/modules/users/domain/schemas/user.schema";
 import { userEntityToDto } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";

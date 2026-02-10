@@ -2,7 +2,7 @@ import "server-only";
 import type {
   CreateUserProps,
   UserEntity,
-} from "@/modules/users/domain/user.entity";
+} from "@/modules/users/domain/entities/user.entity";
 import { createUserDal } from "@/modules/users/infrastructure/repository/dal/create-user.dal";
 import { deleteUserDal } from "@/modules/users/infrastructure/repository/dal/delete-user.dal";
 import { readFilteredUsersDal } from "@/modules/users/infrastructure/repository/dal/read-filtered-users.dal";

@@ -1,6 +1,6 @@
 import "server-only";
 import { eq } from "drizzle-orm";
-import type { UserEntity } from "@/modules/users/domain/user.entity";
+import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { toUserEntity } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
 import type { UserPersistencePatch } from "@/modules/users/infrastructure/repository/user.repository.types";
 import type { AppDatabase } from "@/server/db/db.connection";

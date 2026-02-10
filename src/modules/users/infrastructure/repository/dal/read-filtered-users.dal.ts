@@ -1,7 +1,7 @@
 import "server-only";
 import { asc, ilike, or } from "drizzle-orm";
-import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/user.constants";
-import type { UserEntity } from "@/modules/users/domain/user.entity";
+import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/constants/user.constants";
+import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { toUserEntity } from "@/modules/users/infrastructure/adapters/mappers/user.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";

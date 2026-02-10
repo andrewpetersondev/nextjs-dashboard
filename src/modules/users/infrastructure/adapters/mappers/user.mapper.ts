@@ -1,6 +1,6 @@
 import "server-only";
-import type { UserDto } from "@/modules/users/application/dto/user.dto";
-import type { UserEntity } from "@/modules/users/domain/user.entity";
+import type { UserDto } from "@/modules/users/application/dtos/user.dto";
+import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import type { UserRow } from "@/server/db/schema/users";
 
 /**
