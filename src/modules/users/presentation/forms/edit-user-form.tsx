@@ -1,5 +1,4 @@
 "use client";
-
 import {
   AtSymbolIcon,
   LockClosedIcon,
@@ -15,7 +14,7 @@ import {
 } from "react";
 import type { UserDto } from "@/modules/users/application/dto/user.dto";
 import { EditUserFormSchema } from "@/modules/users/domain/user.schema";
-import { updateUserAction } from "@/modules/users/infrastructure/actions/update-user.action";
+import { updateUserAction } from "@/modules/users/presentation/actions/update-user.action";
 import { UserInfoPanel } from "@/modules/users/presentation/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
 import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value";

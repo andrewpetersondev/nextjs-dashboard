@@ -1,5 +1,5 @@
 "use server";
-import { deleteUserAction } from "@/modules/users/infrastructure/actions/delete-user.action";
+import { deleteUserAction } from "@/modules/users/presentation/actions/delete-user.action";
 
 /**
  * Deletes a user by ID from FormData.

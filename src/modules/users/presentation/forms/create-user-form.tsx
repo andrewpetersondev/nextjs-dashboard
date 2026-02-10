@@ -1,5 +1,4 @@
 "use client";
-
 import {
   AtSymbolIcon,
   LockClosedIcon,
@@ -7,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
 import { CreateUserFormSchema } from "@/modules/users/domain/user.schema";
-import { createUserAction } from "@/modules/users/infrastructure/actions/create-user.action";
+import { createUserAction } from "@/modules/users/presentation/actions/create-user.action";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";

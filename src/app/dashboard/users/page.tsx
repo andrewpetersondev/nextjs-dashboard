@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
 import { InvoicesSearchSkeleton } from "@/modules/invoices/presentation/components/invoices.skeletons";
-import { readUsersPageCountAction } from "@/modules/users/infrastructure/actions/read-users-page-count.action";
+import { readUsersPageCountAction } from "@/modules/users/presentation/actions/read-users-page-count.action";
 import { UsersTable } from "@/modules/users/presentation/components/tables/users-table";
 import { CreateUserLink } from "@/modules/users/presentation/components/user-action-buttons";
 import { H1 } from "@/ui/atoms/headings";
