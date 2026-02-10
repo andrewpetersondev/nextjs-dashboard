@@ -107,8 +107,6 @@ export const toNullable = /* @__PURE__ */ <TValue, TError extends AppError>(
 /**
  * Construct a `Result<boolean, TError>` from a boolean condition.
  *
- * Preserves the original boolean when the condition is `true`.
- *
  * @typeParam TError - The error type, constrained to `AppError`.
  * @param condition - The boolean condition to evaluate.
  * @param onFalse - A thunk that produces the `TError` error when `condition` is `false`.
