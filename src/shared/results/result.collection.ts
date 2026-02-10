@@ -5,16 +5,10 @@ import type { ErrType, OkType, Result } from "@/shared/results/result.types";
 /**
  * Iterates over `source`, yielding values from successful results until an error is encountered.
  *
- * The generator yields each success value as it is encountered. If an `Err` is seen,
- * iteration stops and the generator returns that `Err`. If the iterable completes
- * without errors, the generator returns `Ok<void>(undefined)`.
- *
  * @typeParam T - The type of successful values in the results.
  * @typeParam E - The type of the error, extending `AppError`.
  * @param source - An iterable of `Result<T, E>` to process.
- * @returns A generator that yields `T` values and returns `Result<void, E>`:
- * - returns `Err(error)` if an error result is encountered,
- * - returns `Ok<void>(undefined)` when iteration completes successfully.
+ * @returns A generator that yields `T` values and returns `Result<void, E>`.
  */
 export function* iterateOk<T, E extends AppError>(
   source: Iterable<Result<T, E>>,
@@ -48,18 +42,13 @@ export const collectAll = /* @__PURE__ */ <T, E extends AppError>(
   }
   return Ok(acc as readonly T[]);
 };
-
 /**
  * Collects all successful values from `source` into a readonly array, or returns the first error encountered.
- *
- * Iterates over the provided iterable and accumulates `value` from each `Ok`.
- * If any `Result` is `Err`, the function returns that `Err` immediately without processing further elements.
  *
  * @typeParam T - The type of the values contained in successful results.
  * @typeParam E - The type of the error, extending `AppError`.
  * @param source - An iterable of `Result<T, E>` to collect.
- * @returns `Ok` with a readonly array of all collected values when all results are successful,
- * or the first encountered `Err`.
+ * @returns `Ok` with a readonly array of all collected values or the first encountered `Err`.
  */
 export const collectAllLazy = /* @__PURE__ */ <T, E extends AppError>(
   source: Iterable<Result<T, E>>,
@@ -82,9 +71,6 @@ export const collectAllLazy = /* @__PURE__ */ <T, E extends AppError>(
  * @typeParam Tt - The tuple type of `Result` objects to process.
  * @param results - A variadic list of `Result` objects to combine.
  * @returns A `Result` containing a readonly tuple of all `Ok` values or the first `Err`.
- * @example
- * const res = collectTuple(Ok(1), Ok(2), Err({ code: 'E', message: 'Fail' }));
- * // => Err<{ code: 'E', message: string }>
  */
 export function collectTuple<
   E extends AppError,
@@ -105,7 +91,7 @@ export function collectTuple<
  * or returns the first error encountered.
  *
  * @typeParam Tt - The tuple type of heterogeneous `Result` objects to process.
- * @param results - A variadic list of `Result` objects to combine. Errors are constrained to `AppError`.
+ * @param results - A variadic list of `Result` objects to combine.
  * @returns A `Result` containing either a readonly tuple of all successful values or the first occurred `Err`.
  */
 export function collectTupleHetero<
@@ -134,10 +120,6 @@ export function collectTupleHetero<
  * @typeParam E - The type of the error in a failed `Result`, constrained to `AppError`.
  * @param onEmpty - A callback that produces a fallback error when no successful result is found.
  * @returns The first `Result` with `ok: true`, or a fallback `Err` produced by `onEmpty`.
- * @example
- * const pick = firstOkOrElse(() => ({ code: 'EMPTY', message: 'No results' }));
- * const res = pick([Err({ code: 'E', message: 'fail' }), Ok(5)]);
- * // => Ok(5)
  */
 export const firstOkOrElse =
   /* @__PURE__ */

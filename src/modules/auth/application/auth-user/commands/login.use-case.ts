@@ -10,9 +10,9 @@ import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mapper
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
+import { safeExecute } from "@/shared/results/integrations/safe-execute";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * Authenticates a user by validating their credentials against stored records.

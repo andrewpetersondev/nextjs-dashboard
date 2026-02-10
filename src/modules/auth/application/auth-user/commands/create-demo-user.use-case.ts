@@ -9,8 +9,8 @@ import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/a
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { safeExecute } from "@/shared/results/integrations/safe-execute";
 import type { Result } from "@/shared/results/result.types";
-import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * Handles the creation of a temporary demo user for specific roles.

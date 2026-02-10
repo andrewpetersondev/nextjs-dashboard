@@ -10,9 +10,9 @@ import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mapper
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/auth-user/policies/registration.policy";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { safeExecute } from "@/shared/results/integrations/safe-execute";
 import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * Handles the creation of a new user account.

@@ -17,9 +17,9 @@ import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.
 import { nowInSeconds } from "@/shared/constants/time.constants";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { safeExecute } from "@/shared/results/integrations/safe-execute";
 import { Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-import { safeExecute } from "@/shared/results/safe-execute";
 
 /**
  * Reads and decodes the current session.

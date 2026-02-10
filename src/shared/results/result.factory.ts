@@ -10,8 +10,6 @@ import type { Result } from "@/shared/results/result.types";
  * @param fn - The function to execute.
  * @param mapError - A callback that maps any thrown value to a `Te` error.
  * @returns A `Result<Tv, Te>` which is `Ok` with the function return value or `Err` with the mapped error.
- * @example
- * const res = tryCatch(() => compute(), (e) => ({ code: 'ERR', message: String(e) }));
  */
 export function tryCatch<Tv, Te extends AppError>(
   fn: () => Tv,
@@ -32,8 +30,6 @@ export function tryCatch<Tv, Te extends AppError>(
  * @param v - The value that may be `null` or `undefined`.
  * @param onNull - A callback that produces a `Te` error when `v` is `null` or `undefined`.
  * @returns `Ok(v)` when `v` is non-null/undefined, otherwise `Err(onNull())`.
- * @example
- * const res = fromNullable(value, () => ({ code: 'MISSING', message: 'value missing' }));
  */
 export function fromNullable<Tv, Te extends AppError>(
   v: Tv | null | undefined,
@@ -71,8 +67,6 @@ export function fromPredicate<Tv, Te extends AppError>(
  * @param guard - A type guard that asserts `value` is `To`.
  * @param onFail - A function that produces a `Te` error when the guard fails.
  * @returns `Ok(value)` typed as `To` when the guard passes, otherwise `Err(onFail(value))`.
- * @example
- * const res = fromGuard<unknown, string, AppError>(val, (v): v is string => typeof v === 'string', v => ({ code: 'TYPE', message: 'not a string' }));
  */
 export function fromGuard<Ti, To extends Ti, Te extends AppError>(
   value: Ti,
@@ -89,12 +83,30 @@ export function fromGuard<Ti, To extends Ti, Te extends AppError>(
  * @param condition - The boolean condition to evaluate.
  * @param onFalse - A thunk that produces the `TError` error when `condition` is `false`.
  * @returns `Ok(true)` when `condition` is `true`, otherwise `Err(onFalse())`.
- * @example
- * const result = fromCondition(isValid, () => ({ code: 'INVALID', message: 'Not valid' }));
  */
 export function fromCondition<TError extends AppError>(
   condition: boolean,
   onFalse: () => TError,
 ): Result<boolean, TError> {
   return condition ? Ok(true) : Err(onFalse());
+}
+
+/**
+ * Executes an async function and wraps the result.
+ *
+ * @typeParam TValue - Success value type.
+ * @typeParam TError - Error type extending AppError.
+ * @param fn - Async function to execute.
+ * @param mapError - Maps unknown errors to error type.
+ * @returns Promise resolving to Result with value or error.
+ */
+export async function tryCatchAsync<TValue, TError extends AppError>(
+  fn: () => Promise<TValue>,
+  mapError: (e: unknown) => TError,
+): Promise<Result<TValue, TError>> {
+  try {
+    return Ok(await fn());
+  } catch (e) {
+    return Err(mapError(e));
+  }
 }
