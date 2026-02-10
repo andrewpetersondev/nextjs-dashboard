@@ -2,7 +2,7 @@ import { UserCircleIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
-import type { FieldError } from "@/shared/forms/core/types/field-error.value";
+import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 

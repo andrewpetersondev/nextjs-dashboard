@@ -1,5 +1,4 @@
 "use client";
-
 import { type JSX, useActionState, useId } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import {
@@ -17,7 +16,7 @@ import { SensitiveData } from "@/modules/invoices/presentation/components/forms/
 import type {
   DenseFieldErrorMap,
   FieldError,
-} from "@/shared/forms/core/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

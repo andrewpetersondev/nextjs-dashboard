@@ -4,10 +4,10 @@ import { isFormValidationError } from "@/shared/forms/core/guards/form-result.gu
 import type {
   DenseFieldErrorMap,
   FormErrors,
-  FormValidationMetadata,
-  SparseFieldValueMap,
-} from "@/shared/forms/core/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
+import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
 
 // Helper internal to the inspector
 function hasFormMetadata<T extends string>(

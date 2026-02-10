@@ -13,8 +13,8 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "@/modules/revenues/domain/revenue.types";
+import { invoices } from "@/server/db/schema/invoices";
 import type { Period, RevenueId } from "@/shared/branding/brands";
-import { invoices } from "./invoices";
 
 // biome-ignore lint/nursery/useExplicitType: fix
 export const calculationSourceEnum = pgEnum(

@@ -11,7 +11,7 @@ import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
 import type {
   FieldError,
   SparseFieldErrorMap,
-} from "@/shared/forms/core/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { Err } from "@/shared/results/result";

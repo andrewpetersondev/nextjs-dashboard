@@ -1,6 +1,6 @@
 import { KeyIcon } from "@heroicons/react/24/outline";
 import { type JSX, useId } from "react";
-import type { FieldError } from "@/shared/forms/core/types/field-error.value";
+import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 

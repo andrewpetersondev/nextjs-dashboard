@@ -1,4 +1,4 @@
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-error.value";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 
 /**
  * Input options for form validation.

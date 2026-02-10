@@ -1,7 +1,7 @@
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { FormValidationMetadata } from "@/shared/forms/core/types/field-error.value";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
 
 /**
  * Type guard: checks if the form result is an error.

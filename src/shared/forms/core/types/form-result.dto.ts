@@ -2,8 +2,8 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type {
   DenseFieldErrorMap,
   FormErrors,
-  SparseFieldValueMap,
-} from "@/shared/forms/core/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 import type { Result } from "@/shared/results/result.types";
 
 /**

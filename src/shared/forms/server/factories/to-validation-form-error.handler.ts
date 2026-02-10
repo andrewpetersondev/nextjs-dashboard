@@ -1,12 +1,10 @@
 import "server-only";
 import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
-import type {
-  SparseFieldValueMap,
-  ValidationErrors,
-} from "@/shared/forms/core/types/field-error.value";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type { ValidationErrors } from "@/shared/forms/core/types/validation.types";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { fromZodError } from "@/shared/forms/server/mappers/zod-error.mapper";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import {

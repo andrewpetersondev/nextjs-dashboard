@@ -1,10 +1,10 @@
 import type { ZodObject, ZodRawShape } from "zod";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { Err } from "@/shared/results/result";
 
 /**

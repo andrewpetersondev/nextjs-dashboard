@@ -1,10 +1,10 @@
 import "server-only";
 import { z } from "zod";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type {
-  DenseFieldErrorMap,
   ValidationErrors,
-} from "@/shared/forms/core/types/field-error.value";
-import type { ZodErrorLike } from "@/shared/forms/core/types/validation.types";
+  ZodErrorLike,
+} from "@/shared/forms/core/types/validation.types";
 import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,

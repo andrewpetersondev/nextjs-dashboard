@@ -1,5 +1,6 @@
 import "server-only";
 import type { z } from "zod";
+import { FORM_MESSAGES } from "@/shared/forms/core/constants";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationOptions } from "@/shared/forms/core/types/form-validation.dto";
 import { makeFormOk } from "@/shared/forms/logic/factories/form-result.factory";
@@ -33,7 +34,10 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
   const {
     fields: explicitFields,
     loggerContext = "FormValidation",
-    messages: { failureMessage = "", successMessage = "" } = {},
+    messages: {
+      failureMessage = FORM_MESSAGES.failure,
+      successMessage = FORM_MESSAGES.success,
+    } = {},
     raw: explicitRaw,
   } = options;
 

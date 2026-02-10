@@ -3,13 +3,13 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import type {
   DenseFieldErrorMap,
   FormErrors,
-  FormValidationMetadata,
-  SparseFieldValueMap,
-} from "@/shared/forms/core/types/field-error.value";
+} from "@/shared/forms/core/types/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 import type {
   FormResult,
   FormSuccessPayload,
 } from "@/shared/forms/core/types/form-result.dto";
+import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
 import { Err, Ok } from "@/shared/results/result";
 
 /**

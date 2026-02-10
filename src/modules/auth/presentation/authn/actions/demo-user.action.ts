@@ -1,7 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";

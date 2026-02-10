@@ -18,7 +18,7 @@ import { updateUserAction } from "@/modules/users/presentation/actions/update-us
 import { UserInfoPanel } from "@/modules/users/presentation/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
 import { isValidationMetadata } from "@/shared/errors/core/error-metadata.value";
-import type { FieldError } from "@/shared/forms/core/types/field-error.value";
+import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
 import { FormActionRow } from "@/shared/forms/presentation/components/layout/form-action-row";

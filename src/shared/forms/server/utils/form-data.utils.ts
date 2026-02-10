@@ -1,5 +1,5 @@
 import "server-only";
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-error.value";
+import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 
 /**
  * Extracts specified fields and their values from a FormData object.

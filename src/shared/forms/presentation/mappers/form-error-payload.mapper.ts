@@ -1,12 +1,12 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.value";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
 import {
   extractFieldErrors,
   extractFieldValues,
   extractFormErrors,
 } from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/make-empty-dense-field-error.map";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 
 /**
  * Adapts a canonical AppError into a shape the Form UI can consume.

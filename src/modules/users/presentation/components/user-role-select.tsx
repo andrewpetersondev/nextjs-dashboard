@@ -1,7 +1,7 @@
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
 import { useId, useMemo } from "react";
-import type { FieldError } from "@/shared/forms/core/types/field-error.value";
+import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import {
   USER_ROLES,
   type UserRole,

@@ -1,4 +1,4 @@
-import type { NonEmptyArray } from "@/shared/forms/core/types/field-error.value";
+import type { NonEmptyArray } from "@/shared/forms/core/types/array.types";
 
 /**
  * Type guard: determines if value is a non-empty readonly array.
