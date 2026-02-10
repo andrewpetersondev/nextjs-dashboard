@@ -4,10 +4,10 @@ import { SIGNUP_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { isPgMetadata } from "@/shared/errors/core/error-metadata.value";
-import { getPgConstraintFromAppError } from "@/shared/errors/core/get-pg-constraint-from-app-error";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { isPgMetadata } from "@/shared/errors/metadata/error-metadata.value";
 import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
+import { getPgConstraintFromAppError } from "@/shared/errors/server/adapters/postgres/utils";
 import type {
   FieldError,
   SparseFieldErrorMap,

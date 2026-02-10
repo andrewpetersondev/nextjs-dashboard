@@ -3,7 +3,7 @@ import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
 import {
   type AppErrorMetadata,
   getMetadataSchemaForCode,
-} from "@/shared/errors/core/error-metadata.value";
+} from "@/shared/errors/metadata/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
 function validateMetadataByCode<T extends AppErrorMetadata>(

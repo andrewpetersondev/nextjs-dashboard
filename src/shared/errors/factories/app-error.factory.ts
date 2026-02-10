@@ -7,13 +7,13 @@ import { AppError } from "@/shared/errors/core/app-error.entity";
 import type {
   AppErrorParams,
   UnexpectedErrorParams,
-} from "@/shared/errors/core/app-error.params";
-import type { UnexpectedErrorMetadata } from "@/shared/errors/core/error-metadata.value";
+} from "@/shared/errors/core/app-error.types";
 import {
   buildUnknownValueMetadata,
   safeStringifyUnknown,
   toCauseUnion,
 } from "@/shared/errors/factories/app-error-factory.utils";
+import type { UnexpectedErrorMetadata } from "@/shared/errors/metadata/error-metadata.value";
 
 /**
  * Primary factory for creating structured application errors.

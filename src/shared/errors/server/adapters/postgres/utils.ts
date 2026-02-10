@@ -1,5 +1,5 @@
 import { AppError } from "@/shared/errors/core/app-error.entity";
-import { isPgMetadata } from "@/shared/errors/core/error-metadata.value";
+import { isPgMetadata } from "@/shared/errors/metadata/error-metadata.value";
 
 /**
  * Walks an {@link AppError} cause chain and returns the first Postgres `constraint`

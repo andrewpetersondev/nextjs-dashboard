@@ -1,5 +1,5 @@
 import { AppError } from "@/shared/errors/core/app-error.entity";
-import type { UnexpectedErrorMetadata } from "@/shared/errors/core/error-metadata.value";
+import type { UnexpectedErrorMetadata } from "@/shared/errors/metadata/error-metadata.value";
 import { redactNonSerializable } from "@/shared/errors/utils/serialization";
 
 export function buildUnknownValueMetadata(

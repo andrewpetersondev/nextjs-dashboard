@@ -1,9 +1,11 @@
 import "server-only";
 
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import {
+  type AppError,
+  isAppError,
+} from "@/shared/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/errors/factories/app-error.factory";
 import { toPgError } from "@/shared/errors/server/adapters/postgres/to-pg-error";
-import { isAppError } from "@/shared/errors/utils/is-app-error";
 
 function normalizePgCause(err: unknown): AppError | Error | string {
   if (isAppError(err) || err instanceof Error || typeof err === "string") {

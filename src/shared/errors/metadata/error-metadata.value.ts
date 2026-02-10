@@ -4,7 +4,7 @@ import {
   type AppErrorMetadataValueByCode,
   getAppErrorCodeMeta,
 } from "@/shared/errors/catalog/app-error.registry";
-import type { PgErrorMetadata } from "@/shared/errors/core/db-error.metadata";
+import type { PgErrorMetadata } from "@/shared/errors/server/adapters/postgres/db-error.types";
 
 export type ValidationErrorMetadata = Readonly<{
   readonly field?: string;

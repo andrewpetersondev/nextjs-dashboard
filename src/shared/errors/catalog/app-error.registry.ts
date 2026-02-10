@@ -1,7 +1,9 @@
 import type { z } from "zod";
-import { APP_ERROR_LAYER } from "@/shared/errors/core/app-error.layers";
-import type { AppErrorSchema } from "@/shared/errors/core/app-error.schema";
-import { APP_ERROR_SEVERITY } from "@/shared/errors/core/app-error.severity";
+import {
+  APP_ERROR_LAYER,
+  APP_ERROR_SEVERITY,
+  type AppErrorSchema,
+} from "@/shared/errors/core/app-error.types";
 import {
   ConflictErrorMetadataSchema,
   InfrastructureErrorMetadataSchema,
@@ -9,7 +11,7 @@ import {
   UnexpectedErrorMetadataSchema,
   UnknownErrorMetadataSchema,
   ValidationErrorMetadataSchema,
-} from "@/shared/errors/core/error-metadata.value";
+} from "@/shared/errors/metadata/error-metadata.value";
 
 /**
  * Registry of all available Application Error Keys.

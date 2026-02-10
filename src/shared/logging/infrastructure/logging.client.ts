@@ -1,6 +1,8 @@
 import type { LogLevel } from "@/shared/config/env-schemas";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { isAppError } from "@/shared/errors/utils/is-app-error";
+import {
+  type AppError,
+  isAppError,
+} from "@/shared/errors/core/app-error.entity";
 import type {
   BaseErrorLogPayload,
   LogBaseErrorOptions,
