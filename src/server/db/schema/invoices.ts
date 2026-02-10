@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   bigint,
   check,
@@ -64,19 +64,6 @@ export const invoices = pgTable(
     ];
   },
 );
-
-// biome-ignore lint/nursery/useExplicitType: fix
-export const invoicesRelations = relations(invoices, ({ one }) => ({
-  customer: one(customers, {
-    fields: [invoices.customerId],
-    references: [customers.id],
-  }),
-  // Link invoice to its revenue month via first-of-month date
-  revenue: one(revenues, {
-    fields: [invoices.revenuePeriod], // invoices.revenue_period (DATE)
-    references: [revenues.period], // revenues.period (DATE, unique, first-of-month)
-  }),
-}));
 
 export type InvoiceRow = typeof invoices.$inferSelect;
 export type NewInvoiceRow = typeof invoices.$inferInsert;

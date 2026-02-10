@@ -1,6 +1,4 @@
-import { relations } from "drizzle-orm";
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
-import { invoices } from "@/server/db/schema/invoices";
 import type { CustomerId } from "@/shared/branding/brands";
 
 // biome-ignore lint/nursery/useExplicitType: fix
@@ -13,11 +11,6 @@ export const customers = pgTable("customers", {
     .notNull()
     .default("cantTouchThis"),
 });
-
-// biome-ignore lint/nursery/useExplicitType: fix
-export const customersRelations = relations(customers, ({ many }) => ({
-  invoices: many(invoices),
-}));
 
 export type CustomerRow = typeof customers.$inferSelect;
 export type NewCustomerRow = typeof customers.$inferInsert;

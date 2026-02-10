@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   bigint,
   check,
@@ -13,7 +13,6 @@ import {
   REVENUE_SOURCES,
   type RevenueSource,
 } from "@/modules/revenues/domain/revenue.types";
-import { invoices } from "@/server/db/schema/invoices";
 import type { Period, RevenueId } from "@/shared/branding/brands";
 
 // biome-ignore lint/nursery/useExplicitType: fix
@@ -77,11 +76,6 @@ export const revenues = pgTable(
     ),
   ],
 );
-
-// biome-ignore lint/nursery/useExplicitType: fix
-export const revenuesRelations = relations(revenues, ({ many }) => ({
-  invoices: many(invoices),
-}));
 
 export type RevenueRow = typeof revenues.$inferSelect;
 export type NewRevenueRow = typeof revenues.$inferInsert;

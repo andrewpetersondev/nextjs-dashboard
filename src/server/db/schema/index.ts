@@ -4,23 +4,26 @@ import { invoices } from "./invoices";
 import { revenues } from "./revenues";
 import { users } from "./users";
 
-// biome-ignore lint/performance/noBarrelFile: needed for drizzle schema
+// biome-ignore lint/performance/noBarrelFile: ok for now
+export {
+  customersRelations,
+  demoUserCountersRelations,
+  invoicesRelations,
+  revenuesRelations,
+} from "@/server/db/schema/relations";
 export {
   type CustomerRow,
   customers,
-  customersRelations,
   type NewCustomerRow,
 } from "./customers";
 export {
   type DemoUserCounterRow,
   demoUserCounters,
-  demoUserCountersRelations,
   type NewDemoUserCounterRow,
 } from "./demo-users";
 export {
   type InvoiceRow,
   invoices,
-  invoicesRelations,
   type NewInvoiceRow,
   statusEnum,
 } from "./invoices";
@@ -29,7 +32,6 @@ export {
   type NewRevenueRow,
   type RevenueRow,
   revenues,
-  revenuesRelations,
 } from "./revenues";
 export {
   type AuthUserCredentialsRow,
