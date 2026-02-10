@@ -1,5 +1,28 @@
 import type { AppError } from "@/shared/errors/core/app-error.entity";
 
+// TODO: Helper robustness: the simplest and most resilient way to extract the union’s types is to tie helpers
+//  directly to the tagged members, not to loose object shapes.
+
+/**
+ * Extracts the error type from a `Result` type.
+ *
+ * @typeParam TResult - The `Result` type to inspect.
+ * @example
+ * type MyError = ErrType<Result<number, AppError>>;
+ */
+export type ErrType<TResult> =
+  TResult extends ErrResult<infer TError> ? TError : never;
+
+/**
+ * Extracts the success type from a `Result` type.
+ *
+ * @typeParam TResult - The `Result` type to inspect.
+ * @example
+ * type MyValue = OkType<Result<string, AppError>>;
+ */
+export type OkType<TResult> =
+  TResult extends OkResult<infer TValue> ? TValue : never;
+
 /**
  * Represents a failed Result.
  *
@@ -14,20 +37,6 @@ export type ErrResult<TError extends AppError> = {
 };
 
 /**
- * Extracts the error type from a `Result` type.
- *
- * @typeParam TResult - The `Result` type to inspect.
- * @example
- * type MyError = ErrType<Result<number, AppError>>;
- */
-export type ErrType<TResult> = TResult extends {
-  ok: false;
-  error: infer TError;
-}
-  ? TError
-  : never;
-
-/**
  * Represents a successful Result.
  *
  * @typeParam TValue - The success value type.
@@ -35,17 +44,6 @@ export type ErrType<TResult> = TResult extends {
  * const result: OkResult<number> = { ok: true, value: 42 };
  */
 export type OkResult<TValue> = { readonly ok: true; readonly value: TValue };
-
-/**
- * Extracts the success type from a `Result` type.
- *
- * @typeParam TResult - The `Result` type to inspect.
- * @example
- * type MyValue = OkType<Result<string, AppError>>;
- */
-export type OkType<TResult> = TResult extends { ok: true; value: infer TValue }
-  ? TValue
-  : never;
 
 /**
  * Discriminated union for operation results.

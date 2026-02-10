@@ -1,4 +1,7 @@
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import {
+  type AppError,
+  isAppError,
+} from "@/shared/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err } from "@/shared/results/result";
@@ -16,6 +19,9 @@ export type SafeExecuteOptions = {
 /**
  * Executes an asynchronous operation safely, wrapping it in a Result.
  * Automatically catches unknown errors, logs them, and normalizes them to an 'unexpected' AppError.
+ *
+ * If the caught error is already an AppError, it is logged and returned directly without
+ * being wrapped in an 'unexpected' error.
  */
 export async function safeExecute<T>(
   thunk: () => Promise<Result<T, AppError>>,
@@ -24,10 +30,12 @@ export async function safeExecute<T>(
   try {
     return await thunk();
   } catch (err: unknown) {
-    const error = makeUnexpectedError(err, {
-      message: options.message,
-      overrideMetadata: { operation: options.operation },
-    });
+    const error = isAppError(err)
+      ? err
+      : makeUnexpectedError(err, {
+          message: options.message,
+          overrideMetadata: { operation: options.operation },
+        });
 
     options.logger.errorWithDetails(options.message, error, {
       operation: options.operation,

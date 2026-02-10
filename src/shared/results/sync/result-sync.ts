@@ -35,11 +35,13 @@ export function tryCatch<Tv, Te extends AppError>(
  * @example
  * const res = fromNullable(value, () => ({ code: 'MISSING', message: 'value missing' }));
  */
-export const fromNullable = <Tv, Te extends AppError>(
+export function fromNullable<Tv, Te extends AppError>(
   v: Tv | null | undefined,
   onNull: () => Te,
-  // biome-ignore lint/nursery/noEqualsToNull: fix
-): Result<Tv, Te> => (v == null ? Err(onNull()) : Ok(v));
+): Result<Tv, Te> {
+  // biome-ignore lint/nursery/noEqualsToNull: TODO FIX ME
+  return v == null ? Err(onNull()) : Ok(v);
+}
 
 /**
  * Builds a `Result` by testing a value against a predicate.
@@ -51,11 +53,13 @@ export const fromNullable = <Tv, Te extends AppError>(
  * @param onFail - A function that produces a `Te` error when the predicate returns `false`.
  * @returns `Ok(value)` if `predicate(value)` is `true`, otherwise `Err(onFail(value))`.
  */
-export const fromPredicate = <Tv, Te extends AppError>(
+export function fromPredicate<Tv, Te extends AppError>(
   value: Tv,
   predicate: (v: Tv) => boolean,
   onFail: (v: Tv) => Te,
-): Result<Tv, Te> => (predicate(value) ? Ok(value) : Err(onFail(value)));
+): Result<Tv, Te> {
+  return predicate(value) ? Ok(value) : Err(onFail(value));
+}
 
 /**
  * Guard-based variant of `fromPredicate` that narrows the value type when the guard passes.
@@ -70,12 +74,27 @@ export const fromPredicate = <Tv, Te extends AppError>(
  * @example
  * const res = fromGuard<unknown, string, AppError>(val, (v): v is string => typeof v === 'string', v => ({ code: 'TYPE', message: 'not a string' }));
  */
-export const fromGuard = /* @__PURE__ */ <
-  Ti,
-  To extends Ti,
-  Te extends AppError,
->(
+export function fromGuard<Ti, To extends Ti, Te extends AppError>(
   value: Ti,
   guard: (v: Ti) => v is To,
   onFail: (v: Ti) => Te,
-): Result<To, Te> => (guard(value) ? Ok(value) : Err(onFail(value)));
+): Result<To, Te> {
+  return guard(value) ? Ok(value) : Err(onFail(value));
+}
+
+/**
+ * Construct a `Result<boolean, TError>` from a boolean condition.
+ *
+ * @typeParam TError - The error type, constrained to `AppError`.
+ * @param condition - The boolean condition to evaluate.
+ * @param onFalse - A thunk that produces the `TError` error when `condition` is `false`.
+ * @returns `Ok(true)` when `condition` is `true`, otherwise `Err(onFalse())`.
+ * @example
+ * const result = fromCondition(isValid, () => ({ code: 'INVALID', message: 'Not valid' }));
+ */
+export function fromCondition<TError extends AppError>(
+  condition: boolean,
+  onFalse: () => TError,
+): Result<boolean, TError> {
+  return condition ? Ok(true) : Err(onFalse());
+}
