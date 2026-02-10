@@ -24,6 +24,7 @@ import { H1 } from "@/ui/atoms/headings";
 import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 const INITIAL_STATE = makeInitialFormState<CreateInvoiceFieldNames>(
   Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],
 );

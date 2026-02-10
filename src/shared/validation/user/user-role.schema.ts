@@ -9,12 +9,14 @@ export const ADMIN_ROLE = "ADMIN";
 export const GUEST_ROLE = "GUEST";
 export const USER_ROLE = "USER";
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const UserRoleEnum = z.enum(USER_ROLES);
 
 /**
  * Role schema: trims, uppercases, and validates against allowed roles.
  * Uses pipe to ensure validation runs on the normalized value.
  */
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const UserRoleFormSchema = z
   .string()
   .trim()

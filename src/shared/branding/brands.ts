@@ -3,32 +3,32 @@ import type { Brand } from "@/shared/branding/brand";
 /**
  * Brand symbol for customer identifiers.
  */
-export const CUSTOMER_ID_BRAND = Symbol("CustomerId");
+export const CUSTOMER_ID_BRAND: unique symbol = Symbol("CustomerId");
 
 /**
  * Brand symbol for invoice identifiers.
  */
-export const INVOICE_ID_BRAND = Symbol("InvoiceId");
+export const INVOICE_ID_BRAND: unique symbol = Symbol("InvoiceId");
 
 /**
  * Brand symbol for period (first day of month) timestamps.
  */
-export const PERIOD_BRAND = Symbol("Period");
+export const PERIOD_BRAND: unique symbol = Symbol("Period");
 
 /**
  * Brand symbol for revenue identifiers.
  */
-export const REVENUE_ID_BRAND = Symbol("RevenueId");
+export const REVENUE_ID_BRAND: unique symbol = Symbol("RevenueId");
 
 /**
  * Brand symbol for session identifiers.
  */
-export const SESSION_ID_BRAND = Symbol("SessionId");
+export const SESSION_ID_BRAND: unique symbol = Symbol("SessionId");
 
 /**
  * Brand symbol for user identifiers.
  */
-export const USER_ID_BRAND = Symbol("UserId");
+export const USER_ID_BRAND: unique symbol = Symbol("UserId");
 
 /**
  * Branded customer identifier (UUID string).

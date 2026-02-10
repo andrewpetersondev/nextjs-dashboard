@@ -4,6 +4,7 @@ import { getDatabaseEnv } from "@/shared/config/env-shared";
 import { ToolingEnvShape } from "./env-cli.schema";
 
 // Build a normalized object from process.env (use UPPER_SNAKE names)
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 const envToValidate = {
   cypressBaseUrl: process.env.CYPRESS_BASE_URL,
   databaseEnv: process.env.DATABASE_ENV ?? getDatabaseEnv(),
@@ -11,6 +12,7 @@ const envToValidate = {
   sessionSecret: process.env.SESSION_SECRET,
 };
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 const parsed = ToolingEnvShape.safeParse(envToValidate);
 if (!parsed.success) {
   const details = parsed.error.flatten().fieldErrors;
@@ -23,7 +25,8 @@ if (!parsed.success) {
   );
 }
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const DATABASE_ENV = parsed.data.databaseEnv;
-export const DATABASE_URL = parsed.data.databaseUrl;
-export const CYPRESS_BASE_URL = parsed.data.cypressBaseUrl;
-export const SESSION_SECRET = parsed.data.sessionSecret;
+export const DATABASE_URL: string = parsed.data.databaseUrl;
+export const CYPRESS_BASE_URL: string = parsed.data.cypressBaseUrl;
+export const SESSION_SECRET: string = parsed.data.sessionSecret;

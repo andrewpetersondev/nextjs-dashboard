@@ -8,6 +8,7 @@ import { UsernameSchema } from "@/shared/validation/zod/username.schema";
  *
  * Extends credentials with normalized username.
  */
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const SignupFormSchema = AuthCredentialsSchema.safeExtend({
   username: UsernameSchema,
 });
@@ -15,4 +16,5 @@ export const SignupFormSchema = AuthCredentialsSchema.safeExtend({
 /** The validated data used by the Workflow and Services */
 export type SignupRequestDto = z.output<typeof SignupFormSchema>;
 
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupFormSchema);

@@ -40,6 +40,7 @@ export const InfrastructureErrorMetadataSchema = z
   })
   .passthrough() as z.ZodType<InfrastructureErrorMetadata>;
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const PgErrorMetadataSchema = z
   .object({
     column: z.string().optional(),

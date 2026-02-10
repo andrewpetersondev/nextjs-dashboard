@@ -8,8 +8,8 @@ import { toNullable } from "@/shared/results/result";
  * Server action to fetch filtered users for the users table.
  */
 export async function readFilteredUsersAction(
-  query = "",
-  currentPage = 1,
+  query: string = "",
+  currentPage: number = 1,
 ): Promise<UserDto[]> {
   const db = getAppDb();
   const service = createUserService(db);

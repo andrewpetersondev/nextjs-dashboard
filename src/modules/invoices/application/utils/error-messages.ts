@@ -6,6 +6,7 @@ import {
 import { translator } from "@/modules/invoices/domain/i18n/translator";
 import { AppError } from "@/shared/errors/core/app-error.entity";
 
+// biome-ignore lint/nursery/useExplicitType: fix later
 const KNOWN_INVOICE_MESSAGE_IDS = new Set<string>(Object.values(INVOICE_MSG));
 
 function isKnownInvoiceMessageId(value: unknown): value is InvoiceMessageId {

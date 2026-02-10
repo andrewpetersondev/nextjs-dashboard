@@ -12,6 +12,7 @@ import {
  *
  * Normalizes first (trim + lowercase), then enforces policy on the canonical value.
  */
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const UsernameSchema = z
   .string()
   .transform(normalizeUsername)

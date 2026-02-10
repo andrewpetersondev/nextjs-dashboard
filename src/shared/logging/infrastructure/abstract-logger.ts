@@ -19,7 +19,7 @@ import {
  * Get process ID if available (server-side only).
  * Returns undefined in browser environments.
  */
-const processId = getProcessId();
+const processId: number | undefined = getProcessId();
 
 /**
  * Static context applied to all logs from this process.
@@ -31,6 +31,7 @@ let processMetadata: Record<string, unknown> = {};
  * Redactor for log payloads, built on the core redaction system.
  * Configured with strict defaults to avoid drift.
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 const redactLogData = createRedactor({
   extraKeys: [],
   mask: DEFAULT_MASK,

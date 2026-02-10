@@ -11,6 +11,7 @@ export type OauthProvider = "google" | "github";
 /**
  * Mapping of OAuth providers to their respective authentication initiation endpoints.
  */
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const AUTH_ENDPOINTS = {
   /** GitHub OAuth initiation endpoint. */
   github: "/api/auth/github",

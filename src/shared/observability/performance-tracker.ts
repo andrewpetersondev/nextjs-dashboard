@@ -86,6 +86,7 @@ export class PerformanceTracker {
    *
    * @returns Record of metric keys to numbers or booleans.
    */
+  // biome-ignore lint/nursery/useExplicitType: fix
   getMetrics() {
     const simplified = Object.entries(this.metrics).reduce(
       (acc, [key, value]) => {
@@ -134,7 +135,7 @@ export class PerformanceTracker {
    *
    * @returns Total duration in milliseconds.
    */
-  getTotalDuration() {
+  getTotalDuration(): number {
     return performance.now() - this.startTime;
   }
 }

@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { getAppDb } from "@/server/db/db.connection";
 import { schema } from "@/server/db/schema";
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export async function GET() {
   try {
     await reset(getAppDb(), schema);

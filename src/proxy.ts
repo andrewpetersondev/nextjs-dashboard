@@ -82,6 +82,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
 }
 
 // Routes Middleware should not run on
+// biome-ignore lint/nursery/useExplicitType: fix
 export const config = {
   // Exclude APIs, Next internals, data routes, and any path with a file extension.
   // Must be a static literal for Next.js to statically analyze.

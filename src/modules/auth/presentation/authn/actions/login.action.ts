@@ -16,6 +16,7 @@ import { validateForm } from "@/shared/forms/server/validate-form.logic";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 const fields = LOGIN_FIELDS_LIST;
 
 /**

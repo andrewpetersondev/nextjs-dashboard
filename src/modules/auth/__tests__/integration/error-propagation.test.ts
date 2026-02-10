@@ -12,6 +12,7 @@ describe("Auth Error Propagation Integration", () => {
     vi.clearAllMocks();
   });
 
+  // biome-ignore lint/nursery/useExplicitType: <fix later>
   const createFormData = (
     email = "test@example.com",
     password = "Password123!",

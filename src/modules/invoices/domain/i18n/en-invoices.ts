@@ -4,6 +4,7 @@ import {
 } from "@/modules/invoices/domain/i18n/invoice-messages";
 
 // Single-locale dictionary (en) with compile-time completeness check
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const enInvoices = {
   [INVOICE_MSG.amountRequired]: "Amount is required.",
   [INVOICE_MSG.createFailed]: "Failed to create invoice.",

@@ -4,6 +4,7 @@ import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
 /**
  * Validates and converts a value to a RevenueSource.
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const toRevenueSource = createEnumValidator(
   "RevenueSource",
   REVENUE_SOURCES,

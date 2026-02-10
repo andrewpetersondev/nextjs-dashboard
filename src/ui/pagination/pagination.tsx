@@ -17,7 +17,7 @@ function PaginationNumber({
   isActive: boolean;
   page: number | string;
   position?: "first" | "last" | "middle" | "single";
-}) {
+}): JSX.Element {
   const className = cn(
     "flex h-10 w-10 items-center justify-center text-sm border",
     {
@@ -46,7 +46,7 @@ function PaginationArrow({
   direction: "left" | "right";
   href: string;
   isDisabled?: boolean;
-}) {
+}): JSX.Element {
   const className = cn(
     "flex h-10 w-10 items-center justify-center rounded-md border",
     {
@@ -82,7 +82,7 @@ export function Pagination({
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
 
-  const createPageUrl = (pageNumber: number | string) => {
+  const createPageUrl = (pageNumber: number | string): string => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
     return `${pathname}?${params.toString()}`;

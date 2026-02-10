@@ -87,6 +87,7 @@ const createIdFactory = <S extends symbol, B>(brand: S, label: string) => {
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded CustomerId or an AppError
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const createCustomerId = createIdFactory<
   typeof CUSTOMER_ID_BRAND,
   CustomerId
@@ -98,6 +99,7 @@ export const createCustomerId = createIdFactory<
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded InvoiceId or an AppError
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const createInvoiceId = createIdFactory<
   typeof INVOICE_ID_BRAND,
   InvoiceId
@@ -109,6 +111,7 @@ export const createInvoiceId = createIdFactory<
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded RevenueId or an AppError
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const createRevenueId = createIdFactory<
   typeof REVENUE_ID_BRAND,
   RevenueId
@@ -120,6 +123,7 @@ export const createRevenueId = createIdFactory<
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded SessionId or an AppError
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const createSessionId = createIdFactory<
   typeof SESSION_ID_BRAND,
   SessionId
@@ -131,6 +135,7 @@ export const createSessionId = createIdFactory<
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded UserId or an AppError
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const createUserId = createIdFactory<typeof USER_ID_BRAND, UserId>(
   USER_ID_BRAND,
   "UserId",

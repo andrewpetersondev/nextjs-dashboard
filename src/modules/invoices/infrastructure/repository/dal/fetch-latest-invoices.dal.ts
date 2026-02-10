@@ -16,7 +16,7 @@ import { makeAppError } from "@/shared/errors/factories/app-error.factory";
  */
 export async function fetchLatestInvoicesDal(
   db: AppDatabase,
-  limit = 5,
+  limit: number = 5,
 ): Promise<InvoiceListFilter[]> {
   const data: InvoiceListFilter[] = await db
     .select({

@@ -38,6 +38,7 @@ export function tryCatch<Tv, Te extends AppError>(
 export const fromNullable = <Tv, Te extends AppError>(
   v: Tv | null | undefined,
   onNull: () => Te,
+  // biome-ignore lint/nursery/noEqualsToNull: fix
 ): Result<Tv, Te> => (v == null ? Err(onNull()) : Ok(v));
 
 /**

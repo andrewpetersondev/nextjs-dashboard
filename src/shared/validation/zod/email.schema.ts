@@ -11,6 +11,7 @@ import { normalizeEmail } from "@/shared/validation/normalizers/identity.normali
  *
  * Normalizes first (trim + lowercase), then validates the canonical value.
  */
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const EmailSchema = z
   .string()
   .transform(normalizeEmail)

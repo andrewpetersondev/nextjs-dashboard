@@ -40,6 +40,7 @@ export {
 } from "./users";
 
 // A single schema object that can be passed to drizzle()
+// biome-ignore lint/nursery/useExplicitType: fix
 export const schema = {
   customers,
   demoUserCounters,

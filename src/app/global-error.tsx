@@ -1,5 +1,6 @@
 "use client";
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export default function GlobalError({
   error,
   reset,

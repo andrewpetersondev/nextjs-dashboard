@@ -69,4 +69,4 @@ export const PG_ERROR_MAP: Record<PgCode, PgErrorDefinition> = {
 /**
  * High-performance lookup mapping PG codes to application error metadata.
  */
-export const PG_CODE_TO_META = PG_ERROR_MAP;
+export const PG_CODE_TO_META: Record<PgCode, PgErrorDefinition> = PG_ERROR_MAP;

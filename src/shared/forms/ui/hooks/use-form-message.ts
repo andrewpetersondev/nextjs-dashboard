@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { ALERT_AUTO_HIDE_MS } from "@/ui/styles/timings.tokens";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export function useFormMessage<T>(state: FormResult<T>) {
   const [showAlert, setShowAlert] = useState(false);
   const message = state.ok ? state.value.message : state.error.message;
@@ -13,6 +14,7 @@ export function useFormMessage<T>(state: FormResult<T>) {
     }
     setShowAlert(true);
     const timer = setTimeout(() => setShowAlert(false), ALERT_AUTO_HIDE_MS);
+    // biome-ignore lint/nursery/useExplicitType: fix
     return () => clearTimeout(timer);
   }, [message]);
 

@@ -23,6 +23,7 @@ describe("Login Flow Integration", () => {
   let testUserId: string;
 
   // Helpers
+  // biome-ignore lint/nursery/useExplicitType: <fix later>
   const createLoginFormData = (
     email = TEST_EMAIL,
     password = TEST_PASSWORD,
@@ -33,6 +34,7 @@ describe("Login Flow Integration", () => {
     return formData;
   };
 
+  // biome-ignore lint/nursery/useExplicitType: <fix later>
   const expectRedirectTo = async (
     // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
     action: Promise<any>,

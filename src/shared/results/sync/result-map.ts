@@ -30,8 +30,10 @@ export type MapOk = <T, U, E extends AppError>(
  */
 export const mapOk: MapOk =
   /* @__PURE__ */
+  // biome-ignore lint/nursery/useExplicitType: fix
     (fn) =>
     /* @__PURE__ */
+    // biome-ignore lint/nursery/useExplicitType: fix
     (r) =>
       r.ok ? Ok(fn(r.value)) : r;
 
@@ -61,8 +63,10 @@ export type MapError = <T, E1 extends AppError, E2 extends AppError>(
  */
 export const mapError: MapError =
   /* @__PURE__ */
+  // biome-ignore lint/nursery/useExplicitType: fix
     (fn) =>
     /* @__PURE__ */
+    // biome-ignore lint/nursery/useExplicitType: fix
     (r) =>
       r.ok ? r : Err(fn(r.error));
 
@@ -107,6 +111,7 @@ export const mapErrorPreserve =
 /**
  * Alias for `mapErrorPreserve`.
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const mapErrorUnionPreserve = mapErrorPreserve;
 
 /**
@@ -143,7 +148,9 @@ export type MapBoth = <T, U, E1 extends AppError, E2 extends AppError>(
  */
 export const mapBoth: MapBoth =
   /* @__PURE__ */
+  // biome-ignore lint/nursery/useExplicitType: fix
     (onOk, onErr) =>
     /* @__PURE__ */
+    // biome-ignore lint/nursery/useExplicitType: fix
     (r) =>
       r.ok ? Ok(onOk(r.value)) : Err(onErr(r.error));

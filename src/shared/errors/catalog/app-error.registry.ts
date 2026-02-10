@@ -44,6 +44,7 @@ export type AppErrorDefinition = AppErrorSchema & {
  * Single source of truth for Error Definitions and their Metadata Schemas.
  * Maps each AppErrorKey to its architectural layer, severity, and validation schema.
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const APP_ERROR_DEFINITIONS = {
   [APP_ERROR_KEYS.conflict]: {
     description: "Resource state conflict",

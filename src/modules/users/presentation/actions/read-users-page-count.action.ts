@@ -6,7 +6,9 @@ import { toNullable } from "@/shared/results/result";
 /**
  * Server action to fetch the total number of user pages.
  */
-export async function readUsersPageCountAction(query = ""): Promise<number> {
+export async function readUsersPageCountAction(
+  query: string = "",
+): Promise<number> {
   const db = getAppDb();
   const service = createUserService(db);
   const result = await service.readUserPageCount(query);

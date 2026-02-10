@@ -55,6 +55,7 @@ export async function incrementDemoUserCounterDal(
       );
     }
 
+    // biome-ignore lint/nursery/noEqualsToNull: fix
     if (counterRow.id == null) {
       logger.operation("error", "Invalid counter row returned: missing id", {
         error: new Error("missing_id"),

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { type ZodString, z } from "zod";
 import {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MAX_LENGTH_ERROR,
@@ -17,7 +17,7 @@ import {
  *
  * Trims; enforces length and requires letter, number, and special char.
  */
-export const PasswordSchema = z
+export const PasswordSchema: ZodString = z
   .string()
   .min(PASSWORD_MIN_LENGTH, {
     error: PASSWORD_MIN_LENGTH_ERROR,

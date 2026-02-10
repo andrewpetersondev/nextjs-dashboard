@@ -1,34 +1,38 @@
-import { z } from "zod";
+import { type ZodString, type ZodUUID, z } from "zod";
 import { INVOICE_STATUSES } from "@/modules/invoices/domain/statuses/invoice.statuses";
 
 const MAX_INVOICE_AMOUNT_USD = 10_000; // $10,000
 const MIN_SENSITIVE_DATA_LENGTH = 2;
 const MAX_SENSITIVE_DATA_LENGTH = 100;
 
+// biome-ignore lint/nursery/useExplicitType: fix
 const amountCodec = z.codec(
   z.string(),
   z.number().positive().max(MAX_INVOICE_AMOUNT_USD),
   {
-    decode: (val) => Number(val),
-    encode: (val) => val.toString(),
+    decode: (val: string) => Number(val),
+    encode: (val: number) => val.toString(),
   },
 );
 
+// biome-ignore lint/nursery/useExplicitType: fix
 const isoDateCodec = z.codec(z.string(), z.iso.date(), {
-  decode: (value) => value,
-  encode: (value) => value.toString(),
+  decode: (value: string) => value,
+  encode: (value: string) => value.toString(),
 });
 
-const sensitiveDataSchema = z
+const sensitiveDataSchema: ZodString = z
   .string()
   .min(MIN_SENSITIVE_DATA_LENGTH)
   .max(MAX_SENSITIVE_DATA_LENGTH)
   .trim();
 
+// biome-ignore lint/nursery/useExplicitType: fix
 const invoiceStatusSchema = z.enum(INVOICE_STATUSES);
 
-const customerIdSchema = z.uuid();
+const customerIdSchema: ZodUUID = z.uuid();
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const InvoiceBaseSchema = z.object({
   amount: amountCodec,
   customerId: customerIdSchema,
@@ -37,8 +41,10 @@ export const InvoiceBaseSchema = z.object({
   status: invoiceStatusSchema,
 });
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const CreateInvoiceSchema = InvoiceBaseSchema;
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
 
 export type CreateInvoiceInput = z.input<typeof CreateInvoiceSchema>;

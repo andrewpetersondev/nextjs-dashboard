@@ -13,7 +13,7 @@ export const ErrorMessage: FC<ErrorMessageProps> = ({
   error,
   id,
   label,
-}) => {
+}: ErrorMessageProps) => {
   // With FormFieldError being a non-empty array, if error is provided it must have items.
   if (!error) {
     return null;

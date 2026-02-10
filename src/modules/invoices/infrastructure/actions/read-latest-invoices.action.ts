@@ -4,7 +4,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
 
 export async function readLatestInvoicesAction(
   db: AppDatabase,
-  limit = 5,
+  limit: number = 5,
 ): Promise<InvoiceListFilter[]> {
   return await fetchLatestInvoicesDal(db, limit);
 }

@@ -17,8 +17,10 @@ import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
 import { customers } from "./customers";
 import { revenues } from "./revenues";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const invoices = pgTable(
   "invoices",
   {
@@ -63,6 +65,7 @@ export const invoices = pgTable(
   },
 );
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const invoicesRelations = relations(invoices, ({ one }) => ({
   customer: one(customers, {
     fields: [invoices.customerId],

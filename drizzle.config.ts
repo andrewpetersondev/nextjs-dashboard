@@ -6,7 +6,7 @@ console.log("drizzle.config.ts ...");
 
 // TODO: IMPORT THE ENV VARIABLES FROM ENV-TOOLING OR SHOULD I JUST ALLOW USING PROCESS FOR CLI
 
-const url = process.env.DATABASE_URL;
+const url: string | undefined = process.env.DATABASE_URL;
 
 console.log("DATABASE_URL:", url);
 
@@ -15,7 +15,7 @@ if (!url) {
 }
 
 // Determine environment for migrations folder
-const env = (
+const env: string = (
   process.env.DATABASE_ENV ??
   process.env.NODE_ENV ??
   "development"
@@ -23,6 +23,7 @@ const env = (
 console.log("env:", env);
 
 // biome-ignore lint/style/noNestedTernary: <easy to follow>
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 const scope = env === "test" ? "test" : env === "production" ? "prod" : "dev";
 console.log("scope:", scope);
 

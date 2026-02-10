@@ -49,8 +49,14 @@ export const ROUTES: RoutesShape = {
 } as const;
 
 // Middleware/shared guards
+
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const PROTECTED_PREFIX = ROUTES.dashboard.root;
+
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const ADMIN_PREFIX = ROUTES.dashboard.users;
+
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const PUBLIC_ROUTES = new Set<string>([
   ROUTES.auth.login,
   ROUTES.auth.signup,

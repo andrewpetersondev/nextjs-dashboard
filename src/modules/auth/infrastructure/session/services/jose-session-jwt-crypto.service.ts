@@ -15,7 +15,7 @@ import type { LoggingClientContract } from "@/shared/logging/core/logging-client
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
 
-const encoder = new TextEncoder();
+const encoder: TextEncoder = new TextEncoder();
 
 /**
  * Jose-specific implementation of JWT signing and verification.

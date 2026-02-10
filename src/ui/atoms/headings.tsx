@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/nursery/useExplicitType: <fix later> */
 import React from "react";
 import { tektur } from "@/ui/styles/fonts";
 import { cn } from "@/ui/utils/cn";

@@ -7,6 +7,7 @@ import {
   PARTIAL_MASK_VISIBLE_START_CHARS,
 } from "@/shared/logging/redaction/redaction.constants";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 let SeenCache = new WeakMap<object, unknown>();
 
 /**

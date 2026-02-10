@@ -29,6 +29,7 @@ import { extractSchemaFieldNames } from "@/shared/forms/logic/inspectors/zod-sch
 import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 const allowed = extractSchemaFieldNames(CreateInvoiceSchema);
 
 /**

@@ -11,7 +11,9 @@ import { logger } from "@/shared/logging/infrastructure/logging.client";
  * @param query - Search query string
  * @returns Promise<number> - Total number of pages
  */
-export async function readInvoicesPagesAction(query = ""): Promise<number> {
+export async function readInvoicesPagesAction(
+  query: string = "",
+): Promise<number> {
   try {
     const db = getAppDb();
     const sanitizedQuery = query.trim();

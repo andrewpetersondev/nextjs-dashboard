@@ -19,6 +19,7 @@ describe("Signup Flow Integration", () => {
   const TEST_USERNAME = "signuptestuser";
 
   // Helpers
+  // biome-ignore lint/nursery/useExplicitType: <fix later>
   const createSignupFormData = (
     email = TEST_EMAIL,
     password = TEST_PASSWORD,

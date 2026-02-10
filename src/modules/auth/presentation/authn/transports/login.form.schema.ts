@@ -8,6 +8,7 @@ import { PasswordSchema } from "@/shared/validation/zod/password.schema";
  *
  * Base for login/signup flows.
  */
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const AuthCredentialsSchema = z.strictObject({
   email: EmailSchema,
   password: PasswordSchema,
@@ -18,9 +19,11 @@ export const AuthCredentialsSchema = z.strictObject({
  *
  * Alias of AuthCredentialsSchema.
  */
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const LoginFormSchema = AuthCredentialsSchema;
 
 /** The validated data used by the Workflow and Services */
 export type LoginRequestDto = z.output<typeof LoginFormSchema>;
 
+// biome-ignore lint/nursery/useExplicitType: fix later
 export const LOGIN_FIELDS_LIST = toSchemaKeys(LoginFormSchema);

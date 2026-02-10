@@ -16,11 +16,13 @@ import {
 import type { Period, RevenueId } from "@/shared/branding/brands";
 import { invoices } from "./invoices";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const calculationSourceEnum = pgEnum(
   "calculation_source",
   REVENUE_SOURCES,
 );
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const revenues = pgTable(
   "revenues",
   {
@@ -76,6 +78,7 @@ export const revenues = pgTable(
   ],
 );
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const revenuesRelations = relations(revenues, ({ many }) => ({
   invoices: many(invoices),
 }));

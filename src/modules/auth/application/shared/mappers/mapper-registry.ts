@@ -23,6 +23,7 @@ const defineMapperRegistry = <T extends Record<string, MapperRegistryInfo>>(
   registry: T,
 ): T => registry;
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const MAPPER_REGISTRY = defineMapperRegistry({
   "AppError → GenericAuthError": {
     file: "presentation/authn/mappers/map-generic-auth.error.ts",

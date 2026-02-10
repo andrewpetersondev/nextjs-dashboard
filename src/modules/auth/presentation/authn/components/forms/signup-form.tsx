@@ -21,7 +21,8 @@ import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
-const INITIAL_STATE = makeInitialFormState<SignupField>(SIGNUP_FIELDS_LIST);
+const INITIAL_STATE: FormResult<never> =
+  makeInitialFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 /**
  * SignupForm component for user registration.

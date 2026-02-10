@@ -61,13 +61,16 @@ async function makeAuthCompositionInternal(
       sessionService,
     },
     workflows: {
+      // biome-ignore lint/nursery/useExplicitType: fix
       demoUser: (input) =>
         createDemoUserWorkflow(input, {
           demoUserUseCase,
           sessionService,
         }),
+      // biome-ignore lint/nursery/useExplicitType: fix
       login: (input) => loginWorkflow(input, { loginUseCase, sessionService }),
       logout: () => logoutWorkflow({ sessionService }),
+      // biome-ignore lint/nursery/useExplicitType: fix
       signup: (input) =>
         signupWorkflow(input, { sessionService, signupUseCase }),
     },

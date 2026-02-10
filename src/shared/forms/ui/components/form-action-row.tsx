@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
 interface FormActionRowProps {
   cancelHref: string;
@@ -13,7 +13,7 @@ export function FormActionRow({
   cancelLabel = "Cancel",
   children,
   className = "",
-}: FormActionRowProps) {
+}: FormActionRowProps): JSX.Element {
   return (
     <div className={`mt-6 flex justify-end gap-4 ${className}`}>
       <Link

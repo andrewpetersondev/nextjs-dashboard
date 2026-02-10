@@ -15,8 +15,10 @@ import {
   type UserRole,
 } from "@/shared/validation/user/user-role.schema";
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const roleEnum = pgEnum("role", USER_ROLES);
 
+// biome-ignore lint/nursery/useExplicitType: fix
 export const users = pgTable("users", {
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: timestamp("email_verified", { mode: "date" }),

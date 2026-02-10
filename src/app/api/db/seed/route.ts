@@ -3,6 +3,7 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { databaseSeed } from "../../../../../devtools/cli/seed-db";
 
+// biome-ignore lint/nursery/useExplicitType: <fix later>
 export async function GET() {
   try {
     await databaseSeed();

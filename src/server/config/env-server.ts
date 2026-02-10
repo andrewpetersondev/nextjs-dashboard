@@ -14,6 +14,7 @@ import { mapEnvVars } from "@/shared/config/env-utils";
 
 let cachedServerEnv: Readonly<z.infer<typeof ServerEnvSchema>> | undefined;
 
+// biome-ignore lint/nursery/useExplicitType: fix
 function parseServerEnv() {
   if (cachedServerEnv) {
     return cachedServerEnv;
@@ -46,10 +47,13 @@ function parseServerEnv() {
 }
 
 /** Export validated server-only variables */
+// biome-ignore lint/nursery/useExplicitType: fix
 const env = parseServerEnv();
 
-export const AUTH_BCRYPT_SALT_ROUNDS = env.authBcryptSaltRounds;
-export const DATABASE_URL = env.databaseUrl;
-export const SESSION_SECRET = env.sessionSecret;
+export const AUTH_BCRYPT_SALT_ROUNDS: number = env.authBcryptSaltRounds;
+export const DATABASE_URL: string = env.databaseUrl;
+export const SESSION_SECRET: string = env.sessionSecret;
+// biome-ignore lint/nursery/useExplicitType: fix
 export const SESSION_ISSUER = env.sessionIssuer;
+// biome-ignore lint/nursery/useExplicitType: fix
 export const SESSION_AUDIENCE = env.sessionAudience;

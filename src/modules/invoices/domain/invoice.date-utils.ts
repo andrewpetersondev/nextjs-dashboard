@@ -17,7 +17,7 @@ export function getCurrentIsoDate(): string {
  */
 export function formatInvoiceDateLocalized(
   dateStr: string,
-  locale = "en-US",
+  locale: string = "en-US",
 ): string {
   const date: Date = new Date(dateStr);
   const options: Intl.DateTimeFormatOptions = {

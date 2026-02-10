@@ -4,6 +4,7 @@ import "server-only";
  * Registry of Postgres-specific error conditions.
  * Enforces 'pg_' prefix for all keys and values to maintain domain separation.
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const PG_CONDITIONS = {
   pg_check_violation: "pg_check_violation",
   pg_exclusion_violation: "pg_exclusion_violation",

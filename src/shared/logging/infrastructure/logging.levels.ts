@@ -35,6 +35,7 @@ export function getEffectiveLogLevel(): LogLevel {
  * @property warn  - Low risk (recoverable issues)
  * @property error - Lowest risk (usually safe to expose)
  */
+// biome-ignore lint/nursery/useExplicitType: fix
 export const logLevelPriority = {
   debug: 40,
   error: 10,

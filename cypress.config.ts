@@ -1,3 +1,4 @@
+// biome-ignore-all lint/nursery/useExplicitType: fix later
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 import type { Hash } from "@/shared/branding/brands";
