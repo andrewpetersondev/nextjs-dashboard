@@ -1,14 +1,14 @@
 import "server-only";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { normalizePgError } from "@/shared/errors/server/adapters/postgres/normalize-pg-error";
-import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { normalizePgError } from "@/shared/core/errors/server/adapters/postgres/normalize-pg-error";
+import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**

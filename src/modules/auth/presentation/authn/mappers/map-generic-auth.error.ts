@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";

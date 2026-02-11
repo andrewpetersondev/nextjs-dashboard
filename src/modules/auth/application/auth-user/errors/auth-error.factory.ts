@@ -1,7 +1,7 @@
 import { AUTH_OPERATIONS } from "@/modules/auth/application/shared/logging/auth-logging.constants";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Authentication failure reasons used internally for logging/debugging.

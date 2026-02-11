@@ -1,9 +1,9 @@
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Validates an AuthUserCreateDto to ensure it satisfies the minimum invariants

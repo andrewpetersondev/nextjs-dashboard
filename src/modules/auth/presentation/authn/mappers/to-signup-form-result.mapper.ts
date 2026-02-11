@@ -2,19 +2,19 @@ import "server-only";
 import { mapGenericAuthError } from "@/modules/auth/presentation/authn/mappers/map-generic-auth.error";
 import { SIGNUP_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { isPgMetadata } from "@/shared/errors/metadata/error-metadata.value";
-import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
-import { getPgConstraintFromAppError } from "@/shared/errors/server/adapters/postgres/utils";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { isPgMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
+import { getPgConstraintFromAppError } from "@/shared/core/errors/server/adapters/postgres/utils";
+import { Err } from "@/shared/core/results/result";
 import type {
   FieldError,
   SparseFieldErrorMap,
 } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
-import { Err } from "@/shared/results/result";
 
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;
 

@@ -7,10 +7,10 @@ import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/
 import { createDemoUserTxHelper } from "@/modules/auth/application/shared/helpers/create-demo-user.tx.helper";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { safeExecute } from "@/shared/results/integrations/safe-execute";
-import type { Result } from "@/shared/results/result.types";
 
 /**
  * Handles the creation of a temporary demo user for specific roles.

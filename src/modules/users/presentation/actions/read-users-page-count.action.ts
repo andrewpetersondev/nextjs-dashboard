@@ -1,7 +1,7 @@
 "use server";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { unwrapOrNull } from "@/shared/results/result";
+import { unwrapOrNull } from "@/shared/core/results/result";
 
 /**
  * Server action to fetch the total number of user pages.

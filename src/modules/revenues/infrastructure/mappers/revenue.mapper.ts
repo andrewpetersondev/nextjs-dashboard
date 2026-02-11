@@ -13,8 +13,8 @@ import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Validates a revenue row from the database.

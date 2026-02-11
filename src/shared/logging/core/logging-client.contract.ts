@@ -1,4 +1,4 @@
-import type { LogLevel } from "@/shared/config/env-schemas";
+import type { LogLevel } from "@/shared/core/config/env-schemas";
 import type {
   LogEventContext,
   LogOperationData,

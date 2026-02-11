@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isAppError } from "@/shared/errors/core/app-error.entity";
+import { isAppError } from "@/shared/core/errors/core/app-error.entity";
 import type {
   FormResult,
   FormSuccessPayload,

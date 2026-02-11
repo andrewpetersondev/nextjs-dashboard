@@ -6,11 +6,11 @@ import type {
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueId } from "@/shared/branding/brands";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/core/errors/factories/app-error.factory";
 
 export class UpdateRevenueUseCase {
   private readonly repository: RevenueRepositoryContract;

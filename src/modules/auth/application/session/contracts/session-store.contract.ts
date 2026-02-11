@@ -1,5 +1,5 @@
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Domain-specific contract for persisting and retrieving the raw session token.

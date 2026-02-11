@@ -1,5 +1,5 @@
 import "server-only";
-import { millisecondsToSeconds } from "@/shared/constants/time.constants";
+import { millisecondsToSeconds } from "@/shared/time/time.constants";
 
 /**
  * Converts an absolute expiration time in milliseconds to cookie `maxAge` in seconds.

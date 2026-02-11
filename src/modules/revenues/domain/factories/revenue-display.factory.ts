@@ -7,8 +7,8 @@ import {
   MIN_REVENUE_YEAR,
   MONTH_ORDER,
 } from "@/modules/revenues/domain/revenue.constants";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Maps RevenueEntity to RevenueDisplayEntity with computed display fields.

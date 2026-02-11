@@ -4,8 +4,8 @@ import type { CreateDemoUserCommand } from "@/modules/auth/application/auth-user
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
 import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { establishSessionForAuthUserWorkflow } from "@/modules/auth/application/session/workflows/establish-session-for-auth-user.workflow";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Orchestrates the creation of a demo user and session.

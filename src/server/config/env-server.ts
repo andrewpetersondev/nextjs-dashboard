@@ -6,8 +6,8 @@
 
 import "server-only";
 import type { z } from "zod";
-import { ServerEnvSchema } from "@/shared/config/env-schemas";
-import { mapEnvVars } from "@/shared/config/env-utils";
+import { ServerEnvSchema } from "@/shared/core/config/env-schemas";
+import { mapEnvVars } from "@/shared/core/config/env-utils";
 
 let cachedServerEnv: Readonly<z.infer<typeof ServerEnvSchema>> | undefined;
 

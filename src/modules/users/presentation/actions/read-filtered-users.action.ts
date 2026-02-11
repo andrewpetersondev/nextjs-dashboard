@@ -2,7 +2,7 @@
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { unwrapOrNull } from "@/shared/results/result";
+import { unwrapOrNull } from "@/shared/core/results/result";
 
 /**
  * Server action to fetch filtered users for the users table.

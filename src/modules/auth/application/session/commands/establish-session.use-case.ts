@@ -9,12 +9,12 @@ import {
   AUTH_USE_CASE_NAMES,
 } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { PerformanceTracker } from "@/shared/observability/performance-tracker";
-import { safeExecute } from "@/shared/results/integrations/safe-execute";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 
 /**
  * Establishes a new session for a user.

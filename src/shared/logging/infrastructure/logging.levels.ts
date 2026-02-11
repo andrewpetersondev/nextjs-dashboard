@@ -1,5 +1,5 @@
-import { getPublicLogLevel } from "@/shared/config/env-public";
-import type { LogLevel } from "@/shared/config/env-schemas";
+import { getPublicLogLevel } from "@/shared/core/config/env-public";
+import type { LogLevel } from "@/shared/core/config/env-schemas";
 
 let cachedLogLevel: LogLevel | null = null;
 let cachedPriority: number | null = null;

@@ -11,9 +11,9 @@ import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session
 import { ReadSessionUseCase } from "@/modules/auth/application/session/queries/read-session.use-case";
 import { RequireSessionUseCase } from "@/modules/auth/application/session/queries/require-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Concrete implementation of the SessionServiceContract.

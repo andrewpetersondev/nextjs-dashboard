@@ -1,5 +1,6 @@
-import type { AppErrorKey } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import type { AppErrorKey } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/results/result";
 import type {
   DenseFieldErrorMap,
   FormErrors,
@@ -10,7 +11,6 @@ import type {
   FormSuccessPayload,
 } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
-import { Err, Ok } from "@/shared/results/result";
 
 /**
  * Parameters for creating a form error result.

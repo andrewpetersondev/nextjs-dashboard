@@ -3,8 +3,8 @@ import type { SessionPrincipalDto } from "@/modules/auth/application/session/dto
 import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/responses/session-verification.dto";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Contract defining session operations available to the application layer.

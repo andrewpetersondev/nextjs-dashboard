@@ -1,11 +1,11 @@
 import type { ZodObject, ZodRawShape } from "zod";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { Err } from "@/shared/core/results/result";
 import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
-import { Err } from "@/shared/results/result";
 
 /**
  * Creates the initial form state with empty field errors.

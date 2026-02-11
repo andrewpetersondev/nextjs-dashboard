@@ -1,6 +1,6 @@
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Port for token serialization/deserialization.

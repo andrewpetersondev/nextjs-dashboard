@@ -4,11 +4,11 @@ import { getSessionCookieOptionsConfig } from "@/modules/auth/infrastructure/ses
 import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructure/session/helpers/to-session-cookie-max-age-seconds.helper";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeUnexpectedError } from "@/shared/errors/factories/app-error.factory";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeUnexpectedError } from "@/shared/core/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 
 /**
  * Adapter that implements session storage using browser cookies.

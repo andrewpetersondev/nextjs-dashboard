@@ -23,12 +23,12 @@ import {
   requiresTermination,
 } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
-import { nowInSeconds } from "@/shared/constants/time.constants";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { safeExecute } from "@/shared/results/integrations/safe-execute";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
+import { nowInSeconds } from "@/shared/time/time.constants";
 
 /**
  * Performs rotation of a valid session.

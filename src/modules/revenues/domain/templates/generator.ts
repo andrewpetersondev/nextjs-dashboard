@@ -4,8 +4,8 @@ import {
   createMonthTemplateFromIndex,
   getIntervalCount,
 } from "@/modules/revenues/domain/time/range";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Generates a template for the rolling period based on the start date and period type.

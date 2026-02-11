@@ -3,7 +3,7 @@ import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { unwrapOrNull } from "@/shared/results/result";
+import { unwrapOrNull } from "@/shared/core/results/result";
 
 /**
  * Fetches a user by plain string id for UI consumption.

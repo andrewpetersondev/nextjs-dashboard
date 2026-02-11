@@ -15,9 +15,9 @@ import {
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Maps branded Entity to plain DTO.

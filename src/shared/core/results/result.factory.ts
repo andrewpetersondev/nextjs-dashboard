@@ -1,0 +1,112 @@
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
+
+/**
+ * Executes a synchronous function and converts thrown values into a mapped `Err`.
+ *
+ * @typeParam Tv - The return value type of the function.
+ * @typeParam Te - The error type produced by `mapError`, must extend `AppError`.
+ * @param fn - The function to execute.
+ * @param mapError - A callback that maps any thrown value to a `Te` error.
+ * @returns A `Result<Tv, Te>` which is `Ok` with the function return value or `Err` with the mapped error.
+ */
+export function tryCatch<Tv, Te extends AppError>(
+  fn: () => Tv,
+  mapError: (e: unknown) => Te,
+): Result<Tv, Te> {
+  try {
+    return Ok(fn());
+  } catch (e) {
+    return Err(mapError(e));
+  }
+}
+
+/**
+ * Constructs a `Result` from a nullable value.
+ *
+ * @typeParam Tv - The expected non-null value type.
+ * @typeParam Te - The error type produced by `onNull`, must extend `AppError`.
+ * @param v - The value that may be `null` or `undefined`.
+ * @param onNull - A callback that produces a `Te` error when `v` is `null` or `undefined`.
+ * @returns `Ok(v)` when `v` is non-null/undefined, otherwise `Err(onNull())`.
+ */
+export function fromNullable<Tv, Te extends AppError>(
+  v: Tv | null | undefined,
+  onNull: () => Te,
+): Result<Tv, Te> {
+  // biome-ignore lint/nursery/noEqualsToNull: TODO FIX ME
+  return v == null ? Err(onNull()) : Ok(v);
+}
+
+/**
+ * Builds a `Result` by testing a value against a predicate.
+ *
+ * @typeParam Tv - The input value type.
+ * @typeParam Te - The error type produced by `onFail`, must extend `AppError`.
+ * @param value - The value to validate with `predicate`.
+ * @param predicate - A function that returns `true` when the value satisfies the condition.
+ * @param onFail - A function that produces a `Te` error when the predicate returns `false`.
+ * @returns `Ok(value)` if `predicate(value)` is `true`, otherwise `Err(onFail(value))`.
+ */
+export function fromPredicate<Tv, Te extends AppError>(
+  value: Tv,
+  predicate: (v: Tv) => boolean,
+  onFail: (v: Tv) => Te,
+): Result<Tv, Te> {
+  return predicate(value) ? Ok(value) : Err(onFail(value));
+}
+
+/**
+ * Guard-based variant of `fromPredicate` that narrows the value type when the guard passes.
+ *
+ * @typeParam Ti - The input value type.
+ * @typeParam To - The narrowed output type when `guard` returns `true`; must extend `Ti`.
+ * @typeParam Te - The error type produced by `onFail`, must extend `AppError`.
+ * @param value - The value to test with the type guard.
+ * @param guard - A type guard that asserts `value` is `To`.
+ * @param onFail - A function that produces a `Te` error when the guard fails.
+ * @returns `Ok(value)` typed as `To` when the guard passes, otherwise `Err(onFail(value))`.
+ */
+export function fromGuard<Ti, To extends Ti, Te extends AppError>(
+  value: Ti,
+  guard: (v: Ti) => v is To,
+  onFail: (v: Ti) => Te,
+): Result<To, Te> {
+  return guard(value) ? Ok(value) : Err(onFail(value));
+}
+
+/**
+ * Construct a `Result<boolean, TError>` from a boolean condition.
+ *
+ * @typeParam TError - The error type, constrained to `AppError`.
+ * @param condition - The boolean condition to evaluate.
+ * @param onFalse - A thunk that produces the `TError` error when `condition` is `false`.
+ * @returns `Ok(true)` when `condition` is `true`, otherwise `Err(onFalse())`.
+ */
+export function fromCondition<TError extends AppError>(
+  condition: boolean,
+  onFalse: () => TError,
+): Result<boolean, TError> {
+  return condition ? Ok(true) : Err(onFalse());
+}
+
+/**
+ * Executes an async function and wraps the result.
+ *
+ * @typeParam TValue - Success value type.
+ * @typeParam TError - Error type extending AppError.
+ * @param fn - Async function to execute.
+ * @param mapError - Maps unknown errors to error type.
+ * @returns Promise resolving to Result with value or error.
+ */
+export async function tryCatchAsync<TValue, TError extends AppError>(
+  fn: () => Promise<TValue>,
+  mapError: (e: unknown) => TError,
+): Promise<Result<TValue, TError>> {
+  try {
+    return Ok(await fn());
+  } catch (e) {
+    return Err(mapError(e));
+  }
+}

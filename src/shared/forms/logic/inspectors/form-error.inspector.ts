@@ -1,5 +1,5 @@
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
 import type {
   DenseFieldErrorMap,

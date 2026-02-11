@@ -380,7 +380,7 @@
     {
       "includes": [
         "src/server/**/*.{ts,tsx}",
-        "src/shared/config/**/*.ts",
+        "src/shared/core/config/**/*.ts",
         "src/server/config/**/*.ts"
       ],
       "linter": {

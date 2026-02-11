@@ -9,7 +9,7 @@ import {
 } from "next/navigation";
 import { type ChangeEvent, type JSX, useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { DEBOUNCE_MS } from "@/shared/tokens/timings.tokens";
+import { DEBOUNCE_MS } from "@/shared/time/timings.tokens";
 import { LabelAtom } from "@/ui/atoms/label.atom";
 import { cn } from "@/ui/utils/cn";
 

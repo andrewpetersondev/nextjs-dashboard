@@ -5,11 +5,11 @@ import { deleteSessionCookieAndLogHelper } from "@/modules/auth/application/shar
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { safeExecute } from "@/shared/results/integrations/safe-execute";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 
 /**
  * Terminates an active session.

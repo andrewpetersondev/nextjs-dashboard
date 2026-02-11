@@ -3,10 +3,10 @@ import type { SessionStoreContract } from "@/modules/auth/application/session/co
 import type { SessionTokenServiceContract } from "@/modules/auth/application/session/contracts/session-token-service.contract";
 import type { ReadSessionTokenOutcomeDto } from "@/modules/auth/application/session/dtos/responses/read-session-token-outcome.dto";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/shared/helpers/session-cleanup.helper";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 
 async function tryCleanupInvalidToken(
   params: Readonly<{

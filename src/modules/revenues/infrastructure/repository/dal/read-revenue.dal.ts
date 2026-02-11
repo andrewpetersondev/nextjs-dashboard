@@ -6,11 +6,11 @@ import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { RevenueId } from "@/shared/branding/brands";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Reads a revenue record by ID.

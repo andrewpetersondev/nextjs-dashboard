@@ -10,12 +10,12 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import { logger } from "@/shared/logging/infrastructure/logging.client";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 import { ROUTES } from "@/shared/routes/routes";
 
 /**

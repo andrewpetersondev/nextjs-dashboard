@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ALERT_AUTO_HIDE_MS } from "@/shared/tokens/timings.tokens";
+import { ALERT_AUTO_HIDE_MS } from "@/shared/time/timings.tokens";
 
 export function useAutoHideAlert(message: string): boolean {
   const [showAlert, setShowAlert] = useState(false);

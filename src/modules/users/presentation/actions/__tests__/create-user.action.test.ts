@@ -6,8 +6,9 @@ import {
 import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/results/result";
 import {
   makeFormError,
   makeFormOk,
@@ -15,7 +16,6 @@ import {
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { validateForm } from "@/shared/forms/server/validate-form";
-import { Err, Ok } from "@/shared/results/result";
 import { createUserAction } from "../create-user.action";
 
 vi.mock("@/shared/forms/server/validate-form");

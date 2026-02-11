@@ -1,6 +1,6 @@
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/session/types/session-jwt-claims.transport";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Strategy for JWT signing and verification.

@@ -2,9 +2,9 @@ import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/session/contracts/session-token-codec.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/strategies/session-jwt-crypto.strategy";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Adapter for encoding and decoding session JWTs.

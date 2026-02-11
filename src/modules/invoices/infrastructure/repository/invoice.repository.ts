@@ -13,7 +13,7 @@ import { deleteInvoiceDal } from "@/modules/invoices/infrastructure/repository/d
 import { readInvoiceDal } from "@/modules/invoices/infrastructure/repository/dal/read-invoice.dal";
 import { updateInvoiceDal } from "@/modules/invoices/infrastructure/repository/dal/update-invoice.dal";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Repository for managing invoice data.

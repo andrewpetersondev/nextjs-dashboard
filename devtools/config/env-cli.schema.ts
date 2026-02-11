@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DatabaseEnvironmentSchema } from "@/shared/config/env-schemas";
+import { DatabaseEnvironmentSchema } from "@/shared/core/config/env-schemas";
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const ToolingEnvShape = z.object({

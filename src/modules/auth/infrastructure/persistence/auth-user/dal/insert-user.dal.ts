@@ -2,13 +2,13 @@ import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, type UserRow, users } from "@/server/db/schema";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { executeDalResult } from "@/shared/errors/server/adapters/dal/execute-dal-result";
-import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { executeDalResult } from "@/shared/core/errors/server/adapters/dal/execute-dal-result";
+import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import type { Result } from "@/shared/results/result.types";
 
 /**
  * Inserts a new user record for signup flow with a pre-hashed password.

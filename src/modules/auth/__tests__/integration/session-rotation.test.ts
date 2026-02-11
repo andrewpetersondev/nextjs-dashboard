@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UPDATE_SESSION_OUTCOME_REASON } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { Ok } from "@/shared/results/result";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { Ok } from "@/shared/core/results/result";
 
 // Mock env-server before other imports that might use it
 vi.mock("@/server/config/env-server", () => ({

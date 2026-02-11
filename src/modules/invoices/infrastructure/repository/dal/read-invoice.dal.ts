@@ -7,7 +7,7 @@ import { rawDbToInvoiceEntity } from "@/modules/invoices/infrastructure/adapters
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
 import type { InvoiceId } from "@/shared/branding/brands";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Reads an invoice by ID.

@@ -10,10 +10,10 @@ import { insertUserDal } from "@/modules/auth/infrastructure/persistence/auth-us
 import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { Err, Ok } from "@/shared/core/results/result";
+import type { Result } from "@/shared/core/results/result.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { Err, Ok } from "@/shared/results/result";
-import type { Result } from "@/shared/results/result.types";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**

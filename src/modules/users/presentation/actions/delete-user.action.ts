@@ -5,7 +5,7 @@ import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.const
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { toUserId } from "@/shared/branding/converters/id-converters";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { ROUTES } from "@/shared/routes/routes";

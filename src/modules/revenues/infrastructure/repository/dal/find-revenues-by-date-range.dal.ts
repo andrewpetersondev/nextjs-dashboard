@@ -7,11 +7,11 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
-} from "@/shared/errors/factories/app-error.factory";
+} from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Finds revenue records within a date range.

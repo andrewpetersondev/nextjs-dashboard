@@ -4,7 +4,7 @@ import {
   BANNER_DISMISSED_MAX_AGE_S,
 } from "@/modules/banner/domain/banner.constants";
 import { createCookieService } from "@/server/cookies/cookie.factory";
-import { isProd } from "@/shared/config/env-shared";
+import { isProd } from "@/shared/core/config/env-shared";
 
 const BANNER_COOKIE_HTTPONLY = false as const;
 const BANNER_COOKIE_PATH = "/" as const;

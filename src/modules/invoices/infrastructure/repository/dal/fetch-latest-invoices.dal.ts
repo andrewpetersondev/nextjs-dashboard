@@ -5,7 +5,7 @@ import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types"
 import type { AppDatabase } from "@/server/db/db.connection";
 import { customers } from "@/server/db/schema/customers";
 import { invoices } from "@/server/db/schema/invoices";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Fetches the latest invoices with customer information.

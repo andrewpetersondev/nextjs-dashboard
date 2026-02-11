@@ -10,8 +10,8 @@ import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/gene
 import { toIntervalDuration } from "@/modules/revenues/domain/time/interval-duration.mapper";
 import { calculateDateRange } from "@/modules/revenues/domain/time/range";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**
  * Private helper to compute the validated template.

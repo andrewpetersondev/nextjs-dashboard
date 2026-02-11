@@ -1,8 +1,8 @@
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
-import { isPgMetadata } from "@/shared/errors/metadata/error-metadata.value";
-import { PG_CODES } from "@/shared/errors/server/adapters/postgres/pg-codes";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { isPgMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
 
 /**
  * Maps a Postgres unique violation error to a domain-specific signup conflict error.

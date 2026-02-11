@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
 import {

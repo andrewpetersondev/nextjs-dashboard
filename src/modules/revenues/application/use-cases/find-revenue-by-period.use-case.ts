@@ -3,8 +3,8 @@ import "server-only";
 import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { Period } from "@/shared/branding/brands";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 export class FindRevenueByPeriodUseCase {
   private readonly repository: RevenueRepositoryContract;

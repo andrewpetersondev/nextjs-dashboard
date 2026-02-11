@@ -1,6 +1,6 @@
-import { isPublicProd } from "@/shared/config/env-public";
-import type { LogLevel } from "@/shared/config/env-schemas";
-import { getProcessId } from "@/shared/config/env-utils";
+import { isPublicProd } from "@/shared/core/config/env-public";
+import type { LogLevel } from "@/shared/core/config/env-schemas";
+import { getProcessId } from "@/shared/core/config/env-utils";
 import type { LogEntry } from "@/shared/logging/core/logger.types";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import {

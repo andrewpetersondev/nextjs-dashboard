@@ -4,7 +4,7 @@ import {
   type InvoiceMessageId,
 } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";
-import { AppError } from "@/shared/errors/core/app-error.entity";
+import { AppError } from "@/shared/core/errors/core/app-error.entity";
 
 // biome-ignore lint/nursery/useExplicitType: fix later
 const KNOWN_INVOICE_MESSAGE_IDS = new Set<string>(Object.values(INVOICE_MSG));

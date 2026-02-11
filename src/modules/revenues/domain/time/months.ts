@@ -6,8 +6,8 @@ import {
   MONTH_ORDER,
   type MonthName,
 } from "@/modules/revenues/domain/revenue.constants";
-import { APP_ERROR_KEYS } from "@/shared/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 export function monthAbbreviationFromNumber(monthNumber: number): MonthName {
   const abbr = MONTH_ORDER[monthNumber - 1];

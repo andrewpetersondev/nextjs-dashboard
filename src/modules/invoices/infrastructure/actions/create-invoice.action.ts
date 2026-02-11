@@ -16,7 +16,7 @@ import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
 } from "@/server/events/invoice/invoice-event.types";
-import { isAppError } from "@/shared/errors/core/app-error.entity";
+import { isAppError } from "@/shared/core/errors/core/app-error.entity";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
   makeFormError,

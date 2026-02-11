@@ -2,8 +2,8 @@ import type { IssueRotatedTokenCommand } from "@/modules/auth/application/sessio
 import type { IssueTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-token.command";
 import type { IssuedTokenDto } from "@/modules/auth/application/session/dtos/responses/issue-token.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 /**
  * Application contract for session token operations.

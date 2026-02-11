@@ -5,7 +5,7 @@ import {
   SESSION_COOKIE_PATH,
   SESSION_COOKIE_SAMESITE,
 } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
-import { isProd } from "@/shared/config/env-shared";
+import { isProd } from "@/shared/core/config/env-shared";
 
 /**
  * Retrieves the session cookie options configuration.

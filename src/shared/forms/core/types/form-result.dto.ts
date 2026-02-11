@@ -1,10 +1,10 @@
-import type { AppError } from "@/shared/errors/core/app-error.entity";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 import type {
   DenseFieldErrorMap,
   FormErrors,
 } from "@/shared/forms/core/types/field-error.types";
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
-import type { Result } from "@/shared/results/result.types";
 
 /**
  * Represents a successful form submission payload.

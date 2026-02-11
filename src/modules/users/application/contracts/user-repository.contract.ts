@@ -5,8 +5,8 @@ import type {
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/shared/branding/brands";
-import type { AppError } from "@/shared/errors/core/app-error.entity";
-import type { Result } from "@/shared/results/result.types";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { Result } from "@/shared/core/results/result.types";
 
 export interface UserRepositoryContract<Trepo = unknown> {
   create(input: CreateUserProps): Promise<Result<UserEntity | null, AppError>>;
