@@ -1,13 +1,13 @@
-import { CIRCULAR_REF_PLACEHOLDER } from "@/shared/logging/redaction/redaction.constants";
+import { CIRCULAR_REF_PLACEHOLDER } from "@/shared/telemetry/logging/redaction/redaction.constants";
 import type {
   ArrayRedactOptions,
   InternalConfig,
   ObjectRedactOptions,
-} from "@/shared/logging/redaction/redaction.types";
+} from "@/shared/telemetry/logging/redaction/redaction.types";
 import {
   applyMask,
   isSensitiveKey,
-} from "@/shared/logging/redaction/redaction.utils";
+} from "@/shared/telemetry/logging/redaction/redaction.utils";
 
 /**
  * Redact a primitive or return as-is.

@@ -8,7 +8,7 @@ import type {
 import { normalizePgError } from "@/shared/core/errors/server/adapters/postgres/normalize-pg-error";
 import { Err, Ok } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Executes a DAL thunk and returns `Result` for expected database failures.

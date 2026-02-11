@@ -7,7 +7,7 @@ import {
   SESSION_ISSUER,
   SESSION_SECRET,
 } from "@/server/config/env-server";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Factory for creating the session token codec.

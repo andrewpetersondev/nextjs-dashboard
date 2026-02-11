@@ -2,7 +2,7 @@ import type { LogLevel } from "@/shared/core/config/env-schemas";
 import type {
   LogEventContext,
   LogOperationData,
-} from "@/shared/logging/core/logger.types";
+} from "@/shared/telemetry/logging/core/logger.types";
 
 /**
  * Primary boundary for logging infrastructure.

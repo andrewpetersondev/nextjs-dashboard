@@ -5,7 +5,7 @@ import { GetRollingYearRevenuesUseCase } from "@/modules/revenues/application/us
 import type { RevenueStatistics } from "@/modules/revenues/domain/revenue.types";
 import { computeStatistics } from "@/modules/revenues/domain/statistics/calculator";
 import { createEmptyStatistics } from "@/modules/revenues/domain/statistics/factory";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 export class GetRevenueStatisticsUseCase {
   private readonly repository: RevenueRepositoryContract;

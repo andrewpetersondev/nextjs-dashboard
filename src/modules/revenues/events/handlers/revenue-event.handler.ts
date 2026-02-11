@@ -7,7 +7,7 @@ import { processInvoiceUpdated } from "@/modules/revenues/events/updated-invoice
 import { EventBus } from "@/server/events/event-bus";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Handles invoice events and updates revenue records accordingly.

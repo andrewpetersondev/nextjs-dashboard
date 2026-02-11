@@ -4,7 +4,7 @@ import { UserRepositoryImpl } from "@/modules/users/infrastructure/repository/us
 import { UserRepositoryAdapter } from "@/modules/users/infrastructure/repository/user-repository.adapter";
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 export function createUserService(db: AppDatabase): UserService {
   const repoImpl = new UserRepositoryImpl(db);

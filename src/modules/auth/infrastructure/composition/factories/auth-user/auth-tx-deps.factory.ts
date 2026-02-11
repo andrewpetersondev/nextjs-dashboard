@@ -3,7 +3,7 @@ import type { AuthTxDeps } from "@/modules/auth/application/auth-user/contracts/
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/auth-user/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Factory type for creating transaction-scoped auth dependencies.

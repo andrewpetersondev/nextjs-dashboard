@@ -9,10 +9,10 @@ import type {
   LogEventContext,
   LogOperationData,
   SerializedError,
-} from "@/shared/logging/core/logger.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { AbstractLogger } from "@/shared/logging/infrastructure/abstract-logger";
-import { toSafeErrorShape } from "@/shared/logging/infrastructure/logging.mappers";
+} from "@/shared/telemetry/logging/core/logger.types";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
+import { AbstractLogger } from "@/shared/telemetry/logging/infrastructure/abstract-logger";
+import { toSafeErrorShape } from "@/shared/telemetry/logging/infrastructure/logging.mappers";
 
 /**
  * Sensitivity-aware structured logger implementation.

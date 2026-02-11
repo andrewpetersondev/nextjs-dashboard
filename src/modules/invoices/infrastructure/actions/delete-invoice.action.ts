@@ -15,8 +15,8 @@ import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Server action to delete an invoice by string ID.

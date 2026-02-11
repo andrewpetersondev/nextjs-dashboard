@@ -8,8 +8,8 @@ import {
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
 } from "@/shared/http/http-headers";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 const REFRESH_INTERVAL_MS = 60_000;
 const KICKOFF_TIMEOUT_MS = 1500;

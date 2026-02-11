@@ -1,14 +1,14 @@
-import { DEFAULT_SENSITIVE_KEYS } from "@/shared/logging/redaction/redaction.constants";
+import { DEFAULT_SENSITIVE_KEYS } from "@/shared/telemetry/logging/redaction/redaction.constants";
 import {
   handleArray,
   handleObject,
   handlePrimitive,
-} from "@/shared/logging/redaction/redaction.handlers";
+} from "@/shared/telemetry/logging/redaction/redaction.handlers";
 import type {
   InternalConfig,
   RedactOptions,
-} from "@/shared/logging/redaction/redaction.types";
-import { buildSensitiveSet } from "@/shared/logging/redaction/redaction.utils";
+} from "@/shared/telemetry/logging/redaction/redaction.types";
+import { buildSensitiveSet } from "@/shared/telemetry/logging/redaction/redaction.utils";
 
 type Visitor = (value: unknown, depth: number, keyHint?: string) => unknown;
 

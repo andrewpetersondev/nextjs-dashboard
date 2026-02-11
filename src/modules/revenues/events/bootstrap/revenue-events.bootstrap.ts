@@ -4,7 +4,7 @@ import { RevenueApplicationService } from "@/modules/revenues/application/servic
 import { RevenueEventHandler } from "@/modules/revenues/events/handlers/revenue-event.handler";
 import { RevenueRepository } from "@/modules/revenues/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server/db/db.connection";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 declare global {
   var __revenueEventHandler: RevenueEventHandler | undefined;

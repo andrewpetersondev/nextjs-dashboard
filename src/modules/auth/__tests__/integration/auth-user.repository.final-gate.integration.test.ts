@@ -4,7 +4,7 @@ import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dto
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
 import { getAppDb } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Integration test to prove the “final gate” validation is enforced at the

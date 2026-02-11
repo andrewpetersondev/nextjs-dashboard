@@ -13,8 +13,8 @@ import type { SignupField } from "@/modules/auth/presentation/authn/transports/s
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form";
-import { PerformanceTracker } from "@/shared/observability/performance-tracker";
 import { ROUTES } from "@/shared/routes/routes";
+import { PerformanceTracker } from "@/shared/telemetry/observability/performance-tracker";
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const fields = SIGNUP_FIELDS_LIST;

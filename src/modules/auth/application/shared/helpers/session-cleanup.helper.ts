@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/session/contracts/session-store.contract";
 import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/shared/logging/auth-logging.constants";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Best-effort cleanup for invalid session tokens.

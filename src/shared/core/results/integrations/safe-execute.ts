@@ -5,7 +5,7 @@ import {
 import { makeUnexpectedError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Options for safe execution of an operation.

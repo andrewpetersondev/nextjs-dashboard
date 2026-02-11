@@ -24,8 +24,8 @@ import {
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { toDenseFieldErrorMapFromZod } from "@/shared/forms/server/mappers/zod-error.mapper";
 import { resolveRawFieldPayload } from "@/shared/forms/server/utils/form-data.utils";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
 import { ROUTES } from "@/shared/routes/routes";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 import { isZodErrorInstance } from "@/shared/validation/zod/zod.guard";
 
 /**

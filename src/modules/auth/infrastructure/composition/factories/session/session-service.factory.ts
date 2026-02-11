@@ -4,7 +4,7 @@ import type { SessionServiceContract } from "@/modules/auth/application/session/
 import { sessionCookieStoreFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-cookie-store.factory";
 import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-token-service.factory";
 import { SessionService } from "@/modules/auth/infrastructure/session/services/session.service";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Factory for creating the session service.

@@ -5,7 +5,7 @@ import { passwordHasherFactory } from "@/modules/auth/infrastructure/composition
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/auth-user/adapters/auth-user-repository.adapter";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Factory for creating the LoginUseCase.

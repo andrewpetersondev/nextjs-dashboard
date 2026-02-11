@@ -11,7 +11,7 @@ import {
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
 } from "@/shared/http/http-headers";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
+import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 function applyNoStoreHeaders(res: NextResponse): NextResponse {
   res.headers.set(HEADER_CACHE_CONTROL, CACHE_CONTROL_NO_STORE);

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 vi.mock(
   "@/modules/auth/infrastructure/persistence/auth-user/dal/insert-user.dal",

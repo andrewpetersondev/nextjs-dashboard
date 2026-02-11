@@ -3,7 +3,7 @@ import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/shared/logging/aut
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Persists a session token and logs the operation success.

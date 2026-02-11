@@ -5,7 +5,7 @@ import type {
   DalContextLite,
   ExecuteDalCoreOptions,
 } from "@/shared/core/errors/server/adapters/dal/dal-context.schema";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Executes a DAL thunk and throws for unexpected failures (invariants).

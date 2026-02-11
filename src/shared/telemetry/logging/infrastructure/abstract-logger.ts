@@ -1,19 +1,19 @@
 import { isPublicProd } from "@/shared/core/config/env-public";
 import type { LogLevel } from "@/shared/core/config/env-schemas";
 import { getProcessId } from "@/shared/core/config/env-utils";
-import type { LogEntry } from "@/shared/logging/core/logger.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LogEntry } from "@/shared/telemetry/logging/core/logger.types";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import {
   consoleMethod,
   currentLogLevelPriority,
   logLevelPriority,
-} from "@/shared/logging/infrastructure/logging.levels";
-import { toSafeErrorShape } from "@/shared/logging/infrastructure/logging.mappers";
-import { createRedactor } from "@/shared/logging/redaction/redaction";
+} from "@/shared/telemetry/logging/infrastructure/logging.levels";
+import { toSafeErrorShape } from "@/shared/telemetry/logging/infrastructure/logging.mappers";
+import { createRedactor } from "@/shared/telemetry/logging/redaction/redaction";
 import {
   DEFAULT_MASK,
   DEFAULT_MAX_DEPTH,
-} from "@/shared/logging/redaction/redaction.constants";
+} from "@/shared/telemetry/logging/redaction/redaction.constants";
 
 /**
  * Get process ID if available (server-side only).

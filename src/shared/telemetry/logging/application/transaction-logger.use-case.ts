@@ -1,7 +1,7 @@
 import "server-only";
 
-import type { TransactionLoggingContext } from "@/shared/logging/application/transaction-logging-context.tokens";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { TransactionLoggingContext } from "@/shared/telemetry/logging/application/transaction-logging-context.tokens";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Configuration for the transaction lifecycle logger.

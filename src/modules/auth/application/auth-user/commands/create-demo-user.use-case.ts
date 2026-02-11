@@ -10,7 +10,7 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/l
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
 import type { Result } from "@/shared/core/results/result.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Handles the creation of a temporary demo user for specific roles.

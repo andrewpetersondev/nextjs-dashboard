@@ -6,7 +6,6 @@ import {
 import { authorizeRequestHelper } from "@/modules/auth/application/shared/helpers/authorize-request.helper";
 import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-token-service.factory";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
 import {
   isAdminRoute as isAdminRouteHelper,
   isProtectedRoute as isProtectedRouteHelper,
@@ -14,6 +13,7 @@ import {
   normalizePath,
   ROUTES,
 } from "@/shared/routes/routes";
+import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 export default async function proxy(req: NextRequest): Promise<NextResponse> {
   /**

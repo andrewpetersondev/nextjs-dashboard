@@ -1,7 +1,7 @@
 import "server-only";
-import { TransactionLogger as SharedTransactionLogger } from "@/shared/logging/application/transaction-logger.use-case";
-import { TRANSACTION_LOGGING_CONTEXT } from "@/shared/logging/application/transaction-logging-context.tokens";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import { TransactionLogger as SharedTransactionLogger } from "@/shared/telemetry/logging/application/transaction-logger.use-case";
+import { TRANSACTION_LOGGING_CONTEXT } from "@/shared/telemetry/logging/application/transaction-logging-context.tokens";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Auth-flavored transaction logger.

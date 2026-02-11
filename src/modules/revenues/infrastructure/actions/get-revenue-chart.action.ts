@@ -7,7 +7,7 @@ import {
 } from "@/modules/revenues/infrastructure/mappers/revenue-dto.mapper";
 import { RevenueRepository } from "@/modules/revenues/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server/db/db.connection";
-import { logger } from "@/shared/logging/infrastructure/logging.client";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Standard discriminated union type for revenue operation results.

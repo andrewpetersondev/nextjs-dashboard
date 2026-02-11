@@ -6,7 +6,7 @@ import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-use
 import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/auth-tx-deps.factory";
 import { AuthTransactionLogger } from "@/modules/auth/infrastructure/logging/auth-transaction.logger";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Adapter implementing the Unit of Work pattern for the Auth module.

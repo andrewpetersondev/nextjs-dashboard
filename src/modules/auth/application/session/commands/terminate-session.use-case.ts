@@ -9,7 +9,7 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
 import { Err, Ok } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Terminates an active session.

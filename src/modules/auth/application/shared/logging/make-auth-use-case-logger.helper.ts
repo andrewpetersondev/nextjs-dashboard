@@ -1,5 +1,5 @@
 import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/shared/logging/auth-logging.constants";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Standardizes logger creation for auth use cases to prevent naming drift.

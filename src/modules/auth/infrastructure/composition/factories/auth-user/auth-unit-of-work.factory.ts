@@ -3,7 +3,7 @@ import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-use
 import { authTxDepsFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/auth-tx-deps.factory";
 import { AuthUnitOfWorkAdapter } from "@/modules/auth/infrastructure/persistence/auth-user/adapters/auth-unit-of-work.adapter";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
  * Factory for creating the auth Unit of Work.

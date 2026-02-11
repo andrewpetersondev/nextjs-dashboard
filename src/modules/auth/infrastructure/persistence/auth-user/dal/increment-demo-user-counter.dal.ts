@@ -8,7 +8,7 @@ import { normalizePgError } from "@/shared/core/errors/server/adapters/postgres/
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
 import { Err, Ok } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**

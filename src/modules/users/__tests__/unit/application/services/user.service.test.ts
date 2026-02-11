@@ -6,7 +6,7 @@ import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import type { Hash } from "@/shared/branding/brands";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("UserService", () => {

@@ -14,8 +14,8 @@ import { signupUseCaseFactory } from "@/modules/auth/infrastructure/composition/
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { getRequestMetadata } from "@/shared/http/request-metadata";
-import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
-import { logger as defaultLogger } from "@/shared/logging/infrastructure/logging.client";
+import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
+import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 type AuthCompositionOverrides = Readonly<{
   logger: LoggingClientContract;
