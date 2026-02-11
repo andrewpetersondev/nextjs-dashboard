@@ -3,7 +3,7 @@ import { userRolePgEnum } from "@/server/db/schema/users";
 import {
   GUEST_ROLE,
   type UserRole,
-} from "@/shared/validation/user/user-role.constants";
+} from "@/shared/validation/user-role/user-role.constants";
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const demoUserCounters = pgTable("demo_user_counters", {

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { EmailSchema } from "@/shared/validation/zod/email.schema";
-import { PasswordSchema } from "@/shared/validation/zod/password.schema";
+import { EmailSchema } from "@/shared/validation/email/email.schema";
+import { PasswordSchema } from "@/shared/validation/password/password.schema";
 
 /**
  * Object schema for email/password credentials.

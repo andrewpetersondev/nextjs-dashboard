@@ -1,5 +1,5 @@
 import type { UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/validation/user/user-role.constants";
+import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 // TODO:  why does this shape have no properties that are specific to sessions, cookies, or tokens?
 

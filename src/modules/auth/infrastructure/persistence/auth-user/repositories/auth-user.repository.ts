@@ -14,7 +14,7 @@ import type { AppError } from "@/shared/errors/core/app-error.entity";
 import type { LoggingClientContract } from "@/shared/logging/core/logging-client.contract";
 import { Err, Ok } from "@/shared/results/result";
 import type { Result } from "@/shared/results/result.types";
-import type { UserRole } from "@/shared/validation/user/user-role.constants";
+import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.

@@ -3,8 +3,8 @@ import {
   EMAIL_ERROR,
   EMAIL_MAX_LENGTH,
   EMAIL_MAX_LENGTH_ERROR,
-} from "@/shared/validation/email-policy";
-import { normalizeEmail } from "@/shared/validation/normalizers/identity.normalizers";
+} from "@/shared/validation/email/email-policy";
+import { normalizeEmail } from "@/shared/validation/email/normalize.email";
 
 /**
  * Validate and normalize an email.

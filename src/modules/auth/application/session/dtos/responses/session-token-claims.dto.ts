@@ -1,4 +1,4 @@
-import type { UserRole } from "@/shared/validation/user/user-role.constants";
+import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Application-layer session token claims.

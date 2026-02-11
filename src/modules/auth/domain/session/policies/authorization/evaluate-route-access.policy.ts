@@ -9,7 +9,7 @@ import {
 import {
   ADMIN_ROLE,
   type UserRole,
-} from "@/shared/validation/user/user-role.constants";
+} from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Result of the route access evaluation (domain-level: authorization only).

@@ -11,8 +11,8 @@ import {
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/validation/user/user-role.constants";
-import { normalizeUserRole } from "@/shared/validation/user/user-role.parser";
+} from "@/shared/validation/user-role/user-role.constants";
+import { normalizeUserRole } from "@/shared/validation/user-role/user-role.parser";
 import { Dashboard } from "@/shell/dashboard/components/dashboard";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";

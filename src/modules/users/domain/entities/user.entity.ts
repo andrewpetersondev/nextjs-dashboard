@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { Hash, UserId } from "@/shared/branding/brands";
-import type { UserRole } from "@/shared/validation/user/user-role.constants";
+import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Domain Type

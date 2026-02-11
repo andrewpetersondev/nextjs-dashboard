@@ -5,7 +5,7 @@ import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import {
   USER_ROLES,
   type UserRole,
-} from "@/shared/validation/user/user-role.constants";
+} from "@/shared/validation/user-role/user-role.constants";
 import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 

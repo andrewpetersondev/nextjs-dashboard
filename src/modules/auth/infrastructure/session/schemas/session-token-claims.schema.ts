@@ -1,5 +1,5 @@
 import { type ZodNumber, type ZodUUID, z } from "zod";
-import { UserRoleEnumSchema } from "@/shared/validation/user/user-role.schema";
+import { UserRoleEnumSchema } from "@/shared/validation/user-role/user-role.schema";
 
 /**
  * Issued At (iat) claim schema.

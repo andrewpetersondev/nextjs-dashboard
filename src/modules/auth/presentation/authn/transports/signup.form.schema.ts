@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { AuthCredentialsSchema } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { UsernameSchema } from "@/shared/validation/zod/username.schema";
+import { UsernameSchema } from "@/shared/validation/username/username.schema";
 
 /**
  * Object schema for signup form.

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/shared/validation/user/user-role.constants";
+import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Represents the result of a session verification check.

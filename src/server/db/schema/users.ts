@@ -13,7 +13,7 @@ import {
   DEFAULT_USER_ROLE,
   USER_ROLES,
   type UserRole,
-} from "@/shared/validation/user/user-role.constants";
+} from "@/shared/validation/user-role/user-role.constants";
 
 // biome-ignore lint/nursery/useExplicitType: not easy to fix
 export const userRolePgEnum = pgEnum("role", USER_ROLES);

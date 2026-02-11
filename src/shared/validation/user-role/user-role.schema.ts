@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { USER_ROLES } from "@/shared/validation/user/user-role.constants";
+import { USER_ROLES } from "@/shared/validation/user-role/user-role.constants";
 
 // biome-ignore lint/nursery/useExplicitType: Zod does not make this easy
 export const UserRoleEnumSchema = z.enum(USER_ROLES);

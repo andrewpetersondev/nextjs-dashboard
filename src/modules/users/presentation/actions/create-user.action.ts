@@ -18,7 +18,7 @@ import {
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { validateForm } from "@/shared/forms/server/validate-form";
-import { toUserRole } from "@/shared/validation/user/user-role.parser";
+import { toUserRole } from "@/shared/validation/user-role/user-role.parser";
 
 /**
  * Creates a new user (admin only).
