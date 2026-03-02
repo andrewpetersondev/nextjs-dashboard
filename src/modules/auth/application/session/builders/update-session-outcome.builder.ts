@@ -14,7 +14,7 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
 type UpdateSessionNotRotatedParams = Readonly<
   | {

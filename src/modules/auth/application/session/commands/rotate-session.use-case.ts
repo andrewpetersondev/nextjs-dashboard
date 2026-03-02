@@ -24,9 +24,9 @@ import {
 } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { safeExecute } from "@/shared/core/result/integrations/safe-execute";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
+import { safeExecute } from "@/shared/core/result/safe-execute";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import { nowInSeconds } from "@/shared/time/time.constants";
 

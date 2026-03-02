@@ -11,17 +11,14 @@ import type {
   SerializedError,
 } from "@/shared/telemetry/logging/core/logger.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
-import { AbstractLogger } from "@/shared/telemetry/logging/infrastructure/abstract-logger";
+import { BaseLogger } from "@/shared/telemetry/logging/infrastructure/base-logger";
 import { toSafeErrorShape } from "@/shared/telemetry/logging/infrastructure/logging.mappers";
 
 /**
  * Sensitivity-aware structured logger implementation.
  * Handles AppError serialization and operational metadata injection.
  */
-export class LoggingClient
-  extends AbstractLogger
-  implements LoggingClientContract
-{
+export class LoggingClient extends BaseLogger implements LoggingClientContract {
   /**
    * @inheritdoc
    */

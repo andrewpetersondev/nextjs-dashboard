@@ -2,13 +2,13 @@ import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import type { invoices } from "@/server/db/schema/invoices";
-import type { Period } from "@/shared/primitives/period/period.brand";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/validation/user-role/user-role.constants";
+} from "@/shared/policies/user-role/user-role.constants";
+import type { Period } from "@/shared/primitives/period/period.brand";
 import { SEED_CONFIG } from "./constants";
 import { type NewInvoice, periods } from "./seed-shared";
 import {

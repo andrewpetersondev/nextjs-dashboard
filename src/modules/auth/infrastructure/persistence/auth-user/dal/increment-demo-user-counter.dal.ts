@@ -9,8 +9,8 @@ import { normalizePgError } from "@/shared/core/errors/server/adapters/postgres/
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error.constants";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Increments and retrieves the demo user counter for a given role.

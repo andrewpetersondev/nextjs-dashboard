@@ -1,5 +1,5 @@
 import type { ZodObject, ZodRawShape, z } from "zod";
-import { isZodObjectSchema } from "@/shared/validation/zod/zod.guard";
+import { isZodObjectSchema } from "@/shared/policies/zod/zod.guard";
 
 /**
  * Resolves the canonical array of field names for a Zod schema.

@@ -4,13 +4,13 @@ import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/a
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { ROUTES } from "@/shared/routing/routes";
-import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 import {
   ADMIN_ROLE,
   USER_ROLE,
   type UserRole,
-} from "@/shared/validation/user-role/user-role.constants";
+} from "@/shared/policies/user-role/user-role.constants";
+import { ROUTES } from "@/shared/routing/routes";
+import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 
 /**
  * Internal helper: creates a demo user for the given role.

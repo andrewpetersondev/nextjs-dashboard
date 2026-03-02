@@ -4,8 +4,8 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
-import { EmailSchema } from "@/shared/validation/email/email.schema";
-import { UsernameSchema } from "@/shared/validation/username/username.schema";
+import { EmailSchema } from "@/shared/policies/email/email.schema";
+import { UsernameSchema } from "@/shared/policies/username/username.schema";
 
 /**
  * Validates an AuthUserEntity to ensure it satisfies domain invariants.

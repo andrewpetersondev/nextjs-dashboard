@@ -1,11 +1,11 @@
 import { z } from "zod";
-import { normalizeUsername } from "@/shared/validation/username/normalize.username";
+import { normalizeUsername } from "@/shared/policies/username/normalize.username";
 import {
   USERNAME_MAX_LENGTH,
   USERNAME_MAX_LENGTH_ERROR,
   USERNAME_MIN_LENGTH,
   USERNAME_MIN_LENGTH_ERROR,
-} from "@/shared/validation/username/username-policy";
+} from "@/shared/policies/username/username-policy";
 
 /**
  * Validate and normalize a username.

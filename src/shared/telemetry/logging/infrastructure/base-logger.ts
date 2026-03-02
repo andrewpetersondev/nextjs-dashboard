@@ -39,7 +39,7 @@ const redactLogData = createRedactor({
   partialMask: true,
 });
 
-export abstract class AbstractLogger {
+export abstract class BaseLogger {
   protected readonly bindings: Record<string, unknown>;
   protected readonly loggerContext?: string;
   protected readonly loggerRequestId?: string;

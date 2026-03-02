@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { EmailSchema } from "@/shared/validation/email/email.schema";
-import { PasswordSchema } from "@/shared/validation/password/password.schema";
-import { UserRoleFormSchema } from "@/shared/validation/user-role/user-role.schema";
-import { UsernameSchema } from "@/shared/validation/username/username.schema";
+import { EmailSchema } from "@/shared/policies/email/email.schema";
+import { PasswordSchema } from "@/shared/policies/password/password.schema";
+import { UserRoleFormSchema } from "@/shared/policies/user-role/user-role.schema";
+import { UsernameSchema } from "@/shared/policies/username/username.schema";
 
 // biome-ignore lint/nursery/useExplicitType: fix later
 const toUndefinedIfEmptyString = (v: unknown) =>

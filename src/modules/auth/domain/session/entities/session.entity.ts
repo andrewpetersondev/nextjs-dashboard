@@ -8,7 +8,7 @@ import {
   calculateTimeLeftSec,
 } from "@/modules/auth/domain/session/value-objects/time.value";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
 /**
  * Represents the core session data as a domain entity.

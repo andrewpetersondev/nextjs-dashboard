@@ -3,7 +3,7 @@
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
 
 export default defineConfig({

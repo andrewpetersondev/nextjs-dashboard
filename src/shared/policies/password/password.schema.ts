@@ -10,7 +10,7 @@ import {
   PASSWORD_RULE_REGEX_ERROR_LETTER,
   PASSWORD_RULE_REGEX_ERROR_NUMBER,
   PASSWORD_RULE_REGEX_ERROR_SPECIAL_CHARACTER,
-} from "@/shared/validation/password/password-policy";
+} from "@/shared/policies/password/password-policy";
 
 /**
  * Validate a password with strength rules.

@@ -9,9 +9,9 @@ import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/l
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
 import { getDefaultRegistrationRole } from "@/modules/auth/domain/auth-user/policies/registration.policy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { safeExecute } from "@/shared/core/result/integrations/safe-execute";
 import { Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
+import { safeExecute } from "@/shared/core/result/safe-execute";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

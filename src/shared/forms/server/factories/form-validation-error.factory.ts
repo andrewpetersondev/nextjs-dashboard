@@ -6,11 +6,11 @@ import type { ValidationErrors } from "@/shared/forms/core/types/validation.type
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { fromZodError } from "@/shared/forms/server/mappers/zod-error.mapper";
-import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 import {
   isZodErrorInstance,
   isZodErrorLikeShape,
-} from "@/shared/validation/zod/zod.guard";
+} from "@/shared/policies/zod/zod.guard";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Maps an unknown error to a canonical ValidationErrors shape.

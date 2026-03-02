@@ -1,5 +1,5 @@
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
 /**
  * Command to issue a rotated session token.

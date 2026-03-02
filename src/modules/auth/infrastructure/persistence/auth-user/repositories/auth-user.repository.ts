@@ -13,8 +13,8 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
  * Concrete infrastructure repository for auth-related user persistence.

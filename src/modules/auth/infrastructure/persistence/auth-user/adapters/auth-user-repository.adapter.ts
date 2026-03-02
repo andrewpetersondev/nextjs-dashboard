@@ -6,7 +6,7 @@ import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/au
 import type { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
 /**
  * Adapter that exposes an infrastructure {@link AuthUserRepository} through the

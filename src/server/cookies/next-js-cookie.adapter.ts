@@ -8,7 +8,7 @@ import type { CookieContract } from "@/server/cookies/cookie.contract";
 /**
  * Adapter for Next.js cookies.
  */
-export class NextCookieAdapter implements CookieContract {
+export class NextJsCookieAdapter implements CookieContract {
   async delete(name: string): Promise<void> {
     const cookieStore = await cookies();
     cookieStore.delete(name);

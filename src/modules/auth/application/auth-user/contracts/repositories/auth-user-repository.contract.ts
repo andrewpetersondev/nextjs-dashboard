@@ -3,7 +3,7 @@ import type { AuthUserLookupQuery } from "@/modules/auth/application/auth-user/d
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
-import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
+import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
 /**
  * Application-layer repository contract for user authentication persistence.
