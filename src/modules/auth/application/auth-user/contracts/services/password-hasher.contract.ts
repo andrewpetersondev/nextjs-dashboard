@@ -1,4 +1,4 @@
-import type { Hash } from "@/server/crypto/hashing/hashing.brand";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 

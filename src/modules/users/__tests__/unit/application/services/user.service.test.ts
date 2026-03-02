@@ -3,8 +3,8 @@ import type { UserRepositoryContract } from "@/modules/users/application/contrac
 import { UserService } from "@/modules/users/application/services/user.service";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
-import type { Hash } from "@/server/crypto/hashing/hashing.brand";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 

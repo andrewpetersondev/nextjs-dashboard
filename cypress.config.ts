@@ -1,6 +1,6 @@
 // biome-ignore-all lint/nursery/useExplicitType: fix later
 
-import type {Hash} from "@/server/crypto/hashing/hashing.brand";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";

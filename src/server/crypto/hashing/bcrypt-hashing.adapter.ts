@@ -1,8 +1,7 @@
 import "server-only";
 import bcryptjs from "bcryptjs";
-import type { Hash } from "@/server/crypto/hashing/hashing.brand";
 import type { HashingContract } from "@/server/crypto/hashing/hashing.contract";
-import { toHash } from "@/server/crypto/hashing/hashing.value";
+import { type Hash, toHash } from "@/server/crypto/hashing/hashing.value";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 const SALT_ROUNDS = 10 as const;
