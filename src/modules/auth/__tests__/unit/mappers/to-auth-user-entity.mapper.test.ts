@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
-import type { UserRow } from "@/server/db/schema";
+import type { UserRow } from "@/server/db/schema/users";
 
 /**
  * Unit tests for toAuthUserEntity mapper.

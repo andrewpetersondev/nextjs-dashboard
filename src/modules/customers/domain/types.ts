@@ -1,5 +1,5 @@
 import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
-import type { CustomerRow } from "@/server/db/schema";
+import type { CustomerRow } from "@/server/db/schema/customers";
 
 /**
  * Customer field for select options.

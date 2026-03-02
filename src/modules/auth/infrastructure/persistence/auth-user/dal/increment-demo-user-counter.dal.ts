@@ -5,7 +5,6 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { normalizePgError } from "@/shared/core/errors/server/adapters/postgres/normalize-pg-error";
-
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error.constants";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";

@@ -1,6 +1,6 @@
 import "server-only";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
-import type { UserRow } from "@/server/db/schema";
+import type { UserRow } from "@/server/db/schema/users";
 
 /**
  * Maps a raw database user row to the {@link AuthUserEntity}.

@@ -29,8 +29,8 @@ import {
   type NodePgClient,
   type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+import type { schema as appSchema } from "@/server/db/schema/schema.aggregate";
 import { DATABASE_URL } from "../../shared/core/config/server/env-server";
-import type { schema as appSchema } from "./schema";
 
 let appDbSingleton: AppDatabase | null = null;
 
