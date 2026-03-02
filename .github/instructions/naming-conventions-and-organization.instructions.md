@@ -10,24 +10,23 @@ Standardized naming to ensure predictability, discoverability, and easy refactor
 - ✅ `LoginRequestDto` in `login-request.dto.ts`
 
 3. **Consumer-Centric Naming**: Use Cases depend on "Contracts".
-
-- Avoid tech-leaky words like "Adapter" or "Pg" in Application layer dependency names.
+    - Avoid tech-leaky words like "Adapter" or "Pg" in Application layer dependency names.
 
 - ✅ `sessionService: SessionServiceContract`
 
 4. **Contract Location**:
-
-- Side-effect contracts (Repositories/Services) live in `application/contracts/`.
-- Domain remains 100% side-effect free logic.
+    - Side-effect contracts (Repositories/Services) live in `application/contracts/`.
+    - Domain remains 100% side-effect free logic.
 
 5. **Port vs Infrastructure Seam (Anti-Drift Rule)**:
-
-- Use `*.contract.ts` / `*Contract` **only** for **Ports** that are imported by `domain/**` or `application/**`.
-- If an interface/type is used **only inside** `infrastructure/**`, it is **not** a Port. Prefer an explicit Infrastructure seam name like:
-  - `*.strategy.ts` / `*Strategy`
-  - `*.provider.ts` / `*Provider`
-  - `*.client.ts` / `*Client`
-- Heuristic: if the only references are Infrastructure files (e.g., an Infrastructure adapter + an Infrastructure service), naming it `*Contract` is misleading and will cause “naming drift”.
+    - Use `*.contract.ts` / `*Contract` **only** for **Ports** that are imported by `domain/**` or `application/**`.
+    - If an interface/type is used **only inside** `infrastructure/**`, it is **not** a Port. Prefer an explicit
+      Infrastructure seam name like:
+        - `*.strategy.ts` / `*Strategy`
+        - `*.provider.ts` / `*Provider`
+        - `*.client.ts` / `*Client`
+    - Heuristic: if the only references are Infrastructure files (e.g., an Infrastructure adapter + an Infrastructure
+      service), naming it `*Contract` is misleading and will cause “naming drift”.
 
 ---
 
@@ -38,7 +37,7 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 ### Suffix Reference Table
 
 | Suffix           | Meaning                                     | Layer/Boundary         | Example Type Name           | Example File Name                 |
-| :--------------- | :------------------------------------------ | :--------------------- | :-------------------------- | :-------------------------------- |
+|:-----------------|:--------------------------------------------|:-----------------------|:----------------------------|:----------------------------------|
 | `.entity.ts`     | Domain object with identity                 | Domain                 | `UserEntity`                | `user.entity.ts`                  |
 | `.value.ts`      | Value object / Branded primitive            | Domain / Shared        | `Email`, `UserId`           | `email.value.ts`                  |
 | `.policy.ts`     | Pure business rules/logic (no side effects) | Domain                 | N/A (exports functions)     | `password-validation.policy.ts`   |
@@ -63,11 +62,35 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ### Hard Rules
 
-- **No `*.types.ts` files** — Always use a specific suffix that reveals the type's role
-- **Suffix redundancy required** — Type name and file name should both include the suffix
-  - ✅ `LoginRequestDto` in `login-request.dto.ts`
-  - ❌ `LoginRequest` in `login-request.dto.ts` (missing suffix in type name)
-  - ❌ `LoginRequestDto` in `login-request.ts` (missing suffix in file name)
+- **Avoid generic suffixes when a boundary-specific suffix is accurate**
+    - Prefer `.dto.ts`, `.schema.ts`, `.contract.ts`, `.constants.ts`, `.tokens.ts`, etc. when they reflect the file’s
+      role.
+
+- **`*.types.ts` is allowed, but only under strict constraints (Anti-Dumping-Ground Rule)**  
+  Use `*.types.ts` only when the file is a **type-only companion module** that does *not* represent a boundary object.
+
+  **Allowed for `*.types.ts`:**
+    - The file exports **only** `type` / `interface` declarations (no runtime exports).
+    - The types are **structural** or **utility** in nature (e.g., helper generics, internal shapes, reusable type-level
+      helpers).
+    - The file is **dependency-light**:
+        - It may import other **type-only** modules.
+        - It must not import runtime modules (anything that would generate JS).
+    - The file should be **narrowly scoped**:
+        - Prefer placing them under a `types/` folder (e.g., `forms/core/types/...`).
+
+  **Not allowed for `*.types.ts`:**
+    - DTOs, transports, views, schemas, ports/contracts.
+    - “Everything type-related for this feature/capability” mega-files.
+    - Runtime values (constants, functions, classes).
+
+  **If you’re tempted to put runtime exports in a `*.types.ts` file, it’s a sign the file name is wrong.**
+
+- **Suffix redundancy required for boundary objects**
+    - ✅ `LoginRequestDto` in `login-request.dto.ts`
+    - ✅ `PasswordHasherContract` in `password-hasher.contract.ts`
+    - ❌ `LoginRequest` in `login-request.dto.ts` (missing suffix in type name)
+    - ❌ `LoginRequestDto` in `login-request.ts` (missing suffix in file name)
 
 ---
 
@@ -89,18 +112,18 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ### Intentional vs Generic Naming
 
-| Context                    | ✅ Good (Intentional)  | ❌ Bad (Generic) | Why                           |
-| :------------------------- | :--------------------- | :--------------- | :---------------------------- |
-| Login input                | `LoginRequestDto`      | `UserDto`        | Reveals it's for login        |
-| Authenticated user output  | `AuthenticatedUserDto` | `UserDto`        | Shows it excludes password    |
-| User lookup query          | `UserLookupQueryDto`   | `UserQueryDto`   | Specific to lookup operation  |
-| Session principal identity | `SessionPrincipalDto`  | `UserDto`        | Minimal identity for sessions |
-| Public user profile        | `PublicUserProfileDto` | `UserDto`        | Public-facing subset          |
+| Context                    | ✅ Good (Intentional)   | ❌ Bad (Generic) | Why                           |
+|:---------------------------|:-----------------------|:----------------|:------------------------------|
+| Login input                | `LoginRequestDto`      | `UserDto`       | Reveals it's for login        |
+| Authenticated user output  | `AuthenticatedUserDto` | `UserDto`       | Shows it excludes password    |
+| User lookup query          | `UserLookupQueryDto`   | `UserQueryDto`  | Specific to lookup operation  |
+| Session principal identity | `SessionPrincipalDto`  | `UserDto`       | Minimal identity for sessions |
+| Public user profile        | `PublicUserProfileDto` | `UserDto`       | Public-facing subset          |
 
 ### DTO Naming Patterns
 
 | Pattern                    | Usage                                         | Example                |
-| :------------------------- | :-------------------------------------------- | :--------------------- |
+|:---------------------------|:----------------------------------------------|:-----------------------|
 | `{Action}RequestDto`       | Input to a use case                           | `LoginRequestDto`      |
 | `{Action}ResponseDto`      | Output from a use case (when specific needed) | `LoginResponseDto`     |
 | `{Context}{Entity}Dto`     | Entity subset for specific context            | `AuthenticatedUserDto` |
@@ -126,7 +149,7 @@ Mappers convert data between architectural boundaries. Placement depends on **wh
 ### Mapper Placement Rules
 
 | Conversion              | Layer          | Location                         | Naming Pattern                     | Example                           |
-| :---------------------- | :------------- | :------------------------------- | :--------------------------------- | :-------------------------------- |
+|:------------------------|:---------------|:---------------------------------|:-----------------------------------|:----------------------------------|
 | Transport → DTO         | Presentation   | Inline in actions (rarely files) | N/A                                | `extractFormData(formData)`       |
 | DTO → Entity            | Application    | `application/mappers/`           | `to-{entity}.mapper.ts`            | `to-user-entity.mapper.ts`        |
 | Entity → DTO            | Application    | `application/mappers/`           | `to-{dto}.mapper.ts`               | `to-authenticated-user.mapper.ts` |
@@ -142,23 +165,24 @@ Follow the standard verb vocabulary (see below).
 ```typescript
 // ✅ Good: Clear transformation direction
 export function toUserEntity(dto: CreateUserDto): UserEntity {
-  // ...
-}
-export function toAuthenticatedUserDto(
-  entity: UserEntity,
-): AuthenticatedUserDto {
-  // ...
-}
-export function toUserRow(entity: UserEntity): InsertUser {
-  // ...
+    // ...
 }
 
-// ❌ Bad: Ambiguous or verbose
-export function mapUser(dto: CreateUserDto): UserEntity {
-  // ...
+export function toAuthenticatedUserDto(
+    entity: UserEntity,
+): AuthenticatedUserDto {
+    // ...
 }
-export function convertDtoToEntity(dto: CreateUserDto): UserEntity {
-  // ...
+
+export function toUserRow(entity: UserEntity): InsertUser {
+    // ...
+}
+```
+
+```typescript
+// ❌ Bad: Ambiguous
+export function mapUser(dto: CreateUserDto): UserEntity {
+    // ...
 }
 ```
 
@@ -171,23 +195,24 @@ export function convertDtoToEntity(dto: CreateUserDto): UserEntity {
 ```typescript
 // ✅ Good: Belongs in domain/policies/ (encodes business rule: "omit password")
 export function toAuthenticatedUserDto(
-  entity: AuthUserEntity,
+    entity: AuthUserEntity,
 ): AuthenticatedUserDto {
-  const { password, ...safe } = entity;
-  return safe; // Business rule: never expose password
+    const {password, ...safe} = entity;
+    return safe; // Business rule: never expose password
 }
 
 // ❌ Bad: Belongs in infrastructure/mappers/ (structural only)
 export function toUserEntity(row: UserRow): UserEntity {
-  return {
-    id: toUserId(row.id),
-    email: row.email,
-    username: row.username,
-  };
+    return {
+        id: toUserId(row.id),
+        email: row.email,
+        username: row.username,
+    };
 }
 ```
 
-**Guideline**: If the mapper could change based on business requirements (e.g., "also omit email for guests"), it's a policy. If it's purely structural, it's a mapper.
+**Guideline**: If the mapper could change based on business requirements (e.g., "also omit email for guests"), it's a
+policy. If it's purely structural, it's a mapper.
 
 ---
 
@@ -198,7 +223,7 @@ Policies contain pure business logic with no side effects.
 ### File Naming Patterns
 
 | Pattern                       | Usage                                       | Example                                |
-| :---------------------------- | :------------------------------------------ | :------------------------------------- |
+|:------------------------------|:--------------------------------------------|:---------------------------------------|
 | `{domain-concept}.policy.ts`  | Multiple related rules for a domain concept | `password.policy.ts`                   |
 | `{specific-rule}.policy.ts`   | Single-purpose, standalone policy           | `validate-password-strength.policy.ts` |
 | `{action}-{entity}.policy.ts` | Policy governing a specific action          | `evaluate-session-lifecycle.policy.ts` |
@@ -206,33 +231,35 @@ Policies contain pure business logic with no side effects.
 ### Recommendation
 
 - **Multi-function files**: Use domain concept naming (`session.policy.ts`, `authorization.policy.ts`)
-  - Group related rules together
-  - Easier to discover all rules for a concept
+    - Group related rules together
+    - Easier to discover all rules for a concept
 
 - **Single-function files**: Use specific rule naming when:
-  - The policy is complex enough to warrant its own file
-  - It's referenced across multiple other policies
-  - You want to highlight its importance in the architecture
+    - The policy is complex enough to warrant its own file
+    - It's referenced across multiple other policies
+    - You want to highlight its importance in the architecture
 
 ```typescript
 // ✅ Good: Multiple related rules grouped by concept
 // password.policy.ts
 export function validatePasswordStrength(password: string): boolean {
-  // ...
+    // ...
 }
+
 export function requiresPasswordChange(lastChanged: Date): boolean {
-  // ...
+    // ...
 }
+
 export function makeRandomPassword(length: number): string {
-  // ...
+    // ...
 }
 
 // ✅ Also Good: Single important rule with clear name
 // evaluate-session-lifecycle.policy.ts
 export function evaluateSessionLifecyclePolicy(
-  session: SessionEntity,
+    session: SessionEntity,
 ): Decision {
-  // ...
+    // ...
 }
 ```
 
@@ -245,7 +272,7 @@ Reduce synonym drift by sticking to these standard verbs.
 ### Standard Verb Table
 
 | Verb             | Usage                                           | Returns            | Side Effects | Example                     |
-| :--------------- | :---------------------------------------------- | :----------------- | :----------- | :-------------------------- |
+|:-----------------|:------------------------------------------------|:-------------------|:-------------|:----------------------------|
 | `toX`            | Pure mapping/transformation                     | Transformed value  | None         | `toUserDto(entity)`         |
 | `fromX`          | Reverse transformation (when `to` is ambiguous) | Transformed value  | None         | `fromJson(string)`          |
 | `normalizeX`     | Convert foreign/unsafe input to canonical shape | Normalized value   | None         | `normalizePgError(err)`     |
@@ -267,8 +294,8 @@ Reduce synonym drift by sticking to these standard verbs.
 
 ### Verbs to Avoid
 
-| ❌ Avoid     | ✅ Use Instead | Reason              |
-| :----------- | :------------- | :------------------ |
+| ❌ Avoid      | ✅ Use Instead  | Reason              |
+|:-------------|:---------------|:--------------------|
 | `mapX`       | `toX`          | Ambiguous direction |
 | `convertX`   | `toX`          | Verbose             |
 | `transformX` | `toX`          | Verbose             |
@@ -282,36 +309,44 @@ Reduce synonym drift by sticking to these standard verbs.
 ```typescript
 // ✅ Good: Clear, standard verbs
 export function toUserDto(entity: UserEntity): UserDto {
-  // ...
+    // ...
 }
+
 export function isAuthenticated(user: UserEntity | null): boolean {
-  // ...
+    // ...
 }
+
 export function canDeletePost(user: UserEntity, post: PostEntity): boolean {
-  // ...
+    // ...
 }
+
 export function makeAppError(key: string, metadata?: Metadata): AppError {
-  // ...
+    // ...
 }
+
 export function evaluateSessionLifecycle(session: SessionEntity): Decision {
-  // ...
+    // ...
 }
+
 export function normalizeDbError(error: unknown): AppError {
-  // ...
+    // ...
 }
 
 // ❌ Bad: Non-standard or vague verbs
 export function mapUserToDto(entity: UserEntity): UserDto {
-  // ...
+    // ...
 }
+
 export function convertUserEntity(entity: UserEntity): UserDto {
-  // ...
+    // ...
 }
+
 export function processSession(session: SessionEntity): Decision {
-  // ...
+    // ...
 }
+
 export function handleError(error: unknown): AppError {
-  // ...
+    // ...
 }
 ```
 
@@ -337,15 +372,17 @@ export function handleError(error: unknown): AppError {
 // ✅ Good: Generic contract (reusable across modules)
 // password-hasher.contract.ts
 export interface PasswordHasherContract {
-  hash(password: string): Promise<Hash>;
-  compare(password: string, hash: Hash): Promise<boolean>;
+    hash(password: string): Promise<Hash>;
+
+    compare(password: string, hash: Hash): Promise<boolean>;
 }
 
 // ✅ Good: Domain-specific contract (single module)
 // session-token-service.contract.ts
 export interface SessionTokenServiceContract {
-  issue(request: IssueTokenRequest): Promise<Result<IssueTokenDto, AppError>>;
-  decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
+    issue(request: IssueTokenRequest): Promise<Result<IssueTokenDto, AppError>>;
+
+    decode(token: string): Promise<Result<SessionTokenClaims, AppError>>;
 }
 ```
 
@@ -353,7 +390,8 @@ export interface SessionTokenServiceContract {
 
 **Location**: `infrastructure/**/strategies/` (or another clearly Infrastructure-only folder)
 
-**Meaning**: A Strategy is an **internal Infrastructure seam** used to swap technical mechanisms (libraries, algorithms) without claiming to be an Application/Domain Port.
+**Meaning**: A Strategy is an **internal Infrastructure seam** used to swap technical mechanisms (libraries, algorithms)
+without claiming to be an Application/Domain Port.
 
 **Naming**:
 
@@ -374,17 +412,17 @@ export interface SessionTokenServiceContract {
 // ✅ Good: Technology in adapter name
 // bcrypt-hasher.adapter.ts
 export class BcryptHasherAdapter implements PasswordHasherContract {
-  // ...
+    // ...
 }
 
 // cookie-session.adapter.ts
 export class CookieSessionAdapter implements SessionStoreContract {
-  // ...
+    // ...
 }
 
 // jwt-token.adapter.ts
 export class JwtTokenAdapter implements SessionTokenServiceContract {
-  // ...
+    // ...
 }
 ```
 
@@ -395,28 +433,28 @@ In use cases and workflows, **use the contract name** (without "Contract" suffix
 ```typescript
 // ✅ Good: Consumer-centric dependency names
 export class LoginUseCase {
-  private readonly userRepo: UserRepositoryContract;
-  private readonly hasher: PasswordHasherContract;
-  private readonly logger: LoggerContract;
+    private readonly userRepo: UserRepositoryContract;
+    private readonly hasher: PasswordHasherContract;
+    private readonly logger: LoggerContract;
 
-  constructor(
-    userRepo: UserRepositoryContract,
-    hasher: PasswordHasherContract,
-    logger: LoggerContract,
-  ) {
-    this.userRepo = userRepo;
-    this.hasher = hasher;
-    this.logger = logger;
-  }
+    constructor(
+        userRepo: UserRepositoryContract,
+        hasher: PasswordHasherContract,
+        logger: LoggerContract,
+    ) {
+        this.userRepo = userRepo;
+        this.hasher = hasher;
+        this.logger = logger;
+    }
 }
 
 // ❌ Bad: Implementation-leaky names
 export class LoginUseCase {
-  constructor(
-    private readonly userAdapter: UserRepositoryContract,
-    private readonly bcryptHasher: PasswordHasherContract,
-    private readonly pgRepo: UserRepositoryContract,
-  ) {}
+    constructor(
+        private readonly userAdapter: UserRepositoryContract,
+        private readonly bcryptHasher: PasswordHasherContract,
+        private readonly pgRepo: UserRepositoryContract,
+    ) {}
 }
 ```
 
@@ -437,17 +475,19 @@ export class LoginUseCase {
 // ✅ Domain repository (entity-focused)
 // domain/repositories/user-repository.contract.ts
 export interface UserRepositoryContract {
-  findById(id: UserId): Promise<Result<UserEntity | null, AppError>>;
-  save(user: UserEntity): Promise<Result<void, AppError>>;
+    findById(id: UserId): Promise<Result<UserEntity | null, AppError>>;
+
+    save(user: UserEntity): Promise<Result<void, AppError>>;
 }
 
 // ✅ Application repository (DTO/use-case-focused)
 // application/contracts/auth-user-repository.contract.ts
 export interface AuthUserRepositoryContract {
-  login(
-    query: UserLookupQueryDto,
-  ): Promise<Result<AuthUserEntity | null, AppError>>;
-  signup(request: SignupRequestDto): Promise<Result<AuthUserEntity, AppError>>;
+    login(
+        query: UserLookupQueryDto,
+    ): Promise<Result<AuthUserEntity | null, AppError>>;
+
+    signup(request: SignupRequestDto): Promise<Result<AuthUserEntity, AppError>>;
 }
 ```
 
@@ -464,20 +504,20 @@ export interface AuthUserRepositoryContract {
 // ✅ Good
 // infrastructure/repositories/user.repository.ts
 export class UserRepository implements UserRepositoryContract {
-  private readonly db: Database;
-  private readonly logger: LoggerContract;
+    private readonly db: Database;
+    private readonly logger: LoggerContract;
 
-  constructor(db: Database, logger: LoggerContract) {
-    this.db = db;
-    this.logger = logger;
-  }
+    constructor(db: Database, logger: LoggerContract) {
+        this.db = db;
+        this.logger = logger;
+    }
 
-  async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-    const rowResult = await getUserByIdDal(this.db, id, this.logger);
-    if (!rowResult.ok) return rowResult;
+    async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+        const rowResult = await getUserByIdDal(this.db, id, this.logger);
+        if (!rowResult.ok) return rowResult;
 
-    return Ok(rowResult.value ? toUserEntity(rowResult.value) : null);
-  }
+        return Ok(rowResult.value ? toUserEntity(rowResult.value) : null);
+    }
 }
 ```
 
@@ -499,17 +539,17 @@ export class UserRepository implements UserRepositoryContract {
 // ✅ Good
 // login.use-case.ts
 export class LoginUseCase {
-  // ...
+    // ...
 }
 
 // create-user.use-case.ts
 export class CreateUserUseCase {
-  // ...
+    // ...
 }
 
 // refresh-session.use-case.ts
 export class RefreshSessionUseCase {
-  // ...
+    // ...
 }
 ```
 
@@ -526,10 +566,10 @@ export class RefreshSessionUseCase {
 // ✅ Good
 // login.workflow.ts
 export async function loginWorkflow(
-  input: LoginRequestDto,
-  deps: LoginDependencies,
+    input: LoginRequestDto,
+    deps: LoginDependencies,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  // ...
+    // ...
 }
 ```
 
@@ -553,9 +593,9 @@ export async function loginWorkflow(
 // ✅ Good
 // read-session-token.helper.ts
 export async function readSessionTokenHelper(
-  deps: SessionDependencies,
+    deps: SessionDependencies,
 ): Promise<Result<SessionToken, AppError>> {
-  // ...
+    // ...
 }
 ```
 
@@ -581,22 +621,34 @@ export async function readSessionTokenHelper(
 // ✅ Good: Clear CRUD operations
 // get-user-by-id.dal.ts
 export async function getUserByIdDal(
-  db: Database,
-  id: UserId,
-  logger: LoggerContract,
+    db: Database,
+    id: UserId,
+    logger: LoggerContract,
 ): Promise<Result<UserRow | null, AppError>> { ... }
 
 // get-user-by-email.dal.ts
-export async function getUserByEmailDal(...): Promise<...> { ... }
+export async function getUserByEmailDal(...): Promise<
+
+...>
+{ ... }
 
 // insert-user.dal.ts
-export async function insertUserDal(...): Promise<...> { ... }
+export async function insertUserDal(...): Promise<
+
+...>
+{ ... }
 
 // update-user-email.dal.ts
-export async function updateUserEmailDal(...): Promise<...> { ... }
+export async function updateUserEmailDal(...): Promise<
+
+...>
+{ ... }
 
 // delete-user.dal.ts
-export async function deleteUserDal(...): Promise<...> { ... }
+export async function deleteUserDal(...): Promise<
+
+...>
+{ ... }
 ```
 
 **DAL Verb Vocabulary**:
@@ -618,8 +670,8 @@ export async function deleteUserDal(...): Promise<...> { ... }
 
 - **Format**: PascalCase always
 - **Suffix Inclusion**: Always include the suffix
-  - ✅ `LoginRequestDto`, `UserEntity`, `PasswordHasherContract`
-  - ❌ `LoginRequest`, `User`, `PasswordHasher`
+    - ✅ `LoginRequestDto`, `UserEntity`, `PasswordHasherContract`
+    - ❌ `LoginRequest`, `User`, `PasswordHasher`
 
 ### Interface vs Type Alias
 
@@ -643,14 +695,18 @@ When a type is tied to a specific external system, include the technology name:
 
 ```typescript
 // ✅ Good: Technology prefix for integration-specific types
-export interface PgErrorMetadata { ... }
-export interface StripePaymentIntent { ... }
-export interface JwtTokenClaims { ... }
+export interface PgErrorMetadata {...}
+
+export interface StripePaymentIntent {...}
+
+export interface JwtTokenClaims {...}
 
 // ✅ Good: Generic for domain concepts
-export interface ErrorMetadata { ... }
-export interface PaymentIntent { ... }
-export interface TokenClaims { ... }
+export interface ErrorMetadata {...}
+
+export interface PaymentIntent {...}
+
+export interface TokenClaims {...}
 ```
 
 ---
@@ -700,13 +756,13 @@ export const SESSION_REFRESH_THRESHOLD_MS = 5 * 60 * 1000;
 
 // routes.constants.ts
 export const ROUTES = {
-  auth: {
-    login: "/auth/login",
-    signup: "/auth/signup",
-  },
-  dashboard: {
-    root: "/dashboard",
-  },
+    auth: {
+        login: "/auth/login",
+        signup: "/auth/signup",
+    },
+    dashboard: {
+        root: "/dashboard",
+    },
 } as const;
 ```
 

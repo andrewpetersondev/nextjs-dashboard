@@ -67,9 +67,33 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ### Hard Rules
 
-- **No `*.types.ts` files** — Always use a specific suffix that reveals the type's role
-- **Suffix redundancy required** — Type name and file name should both include the suffix
+- **Avoid generic suffixes when a boundary-specific suffix is accurate**
+    - Prefer `.dto.ts`, `.schema.ts`, `.contract.ts`, `.constants.ts`, `.tokens.ts`, etc. when they reflect the file’s
+      role.
+
+- **`*.types.ts` is allowed, but only under strict constraints (Anti-Dumping-Ground Rule)**  
+  Use `*.types.ts` only when the file is a **type-only companion module** that does *not* represent a boundary object.
+
+  **Allowed for `*.types.ts`:**
+    - The file exports **only** `type` / `interface` declarations (no runtime exports).
+    - The types are **structural** or **utility** in nature (e.g., helper generics, internal shapes, reusable type-level
+      helpers).
+    - The file is **dependency-light**:
+        - It may import other **type-only** modules.
+        - It must not import runtime modules (anything that would generate JS).
+    - The file should be **narrowly scoped**:
+        - Prefer placing them under a `types/` folder (e.g., `forms/core/types/...`).
+
+  **Not allowed for `*.types.ts`:**
+    - DTOs, transports, views, schemas, ports/contracts.
+    - “Everything type-related for this feature/capability” mega-files.
+    - Runtime values (constants, functions, classes).
+
+  **If you’re tempted to put runtime exports in a `*.types.ts` file, it’s a sign the file name is wrong.**
+
+- **Suffix redundancy required for boundary objects**
     - ✅ `LoginRequestDto` in `login-request.dto.ts`
+    - ✅ `PasswordHasherContract` in `password-hasher.contract.ts`
     - ❌ `LoginRequest` in `login-request.dto.ts` (missing suffix in type name)
     - ❌ `LoginRequestDto` in `login-request.ts` (missing suffix in file name)
 
@@ -158,13 +182,11 @@ export function toAuthenticatedUserDto(
 export function toUserRow(entity: UserEntity): InsertUser {
     // ...
 }
+```
 
-// ❌ Bad: Ambiguous or verbose
+```typescript
+// ❌ Bad: Ambiguous
 export function mapUser(dto: CreateUserDto): UserEntity {
-    // ...
-}
-
-export function convertDtoToEntity(dto: CreateUserDto): UserEntity {
     // ...
 }
 ```
