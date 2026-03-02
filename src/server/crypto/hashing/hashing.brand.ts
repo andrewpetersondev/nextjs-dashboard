@@ -1,3 +1,4 @@
+import "server-only";
 import type { Brand } from "@/shared/core/branding/brand";
 
 export const HASH_BRAND: unique symbol = Symbol("Hash");

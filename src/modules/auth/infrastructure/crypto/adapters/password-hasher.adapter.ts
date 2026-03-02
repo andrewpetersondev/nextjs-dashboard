@@ -1,11 +1,11 @@
 import "server-only";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service";
+import type { Hash } from "@/server/crypto/hashing/hashing.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
-import type { Hash } from "@/shared/primitives/hash/hash.brand";
 
 /**
  * Adapter that implements the password hashing contract.

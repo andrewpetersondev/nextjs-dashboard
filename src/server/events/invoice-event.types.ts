@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 
 /**

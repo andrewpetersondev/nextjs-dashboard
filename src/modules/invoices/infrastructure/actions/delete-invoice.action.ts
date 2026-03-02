@@ -9,7 +9,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import {
   type BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server/events/invoice/invoice-event.types";
+} from "@/server/events/invoice-event.types";
 import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";

@@ -20,7 +20,7 @@ import type {
   PeriodArg,
 } from "@/modules/revenues/events/updated-invoice/types";
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
-import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
+import type { BaseInvoiceEvent } from "@/server/events/invoice-event.types";
 
 import type { Period } from "@/shared/primitives/period/period.brand";
 

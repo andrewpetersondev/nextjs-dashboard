@@ -1,6 +1,6 @@
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
+import type { Hash } from "@/server/crypto/hashing/hashing.brand";
 import type { invoices } from "@/server/db/schema/invoices";
-import type { Hash } from "@/shared/primitives/hash/hash.brand";
 import type { Period } from "@/shared/primitives/period/period.brand";
 import {
   ADMIN_ROLE,

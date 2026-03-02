@@ -5,8 +5,8 @@ import { processInvoiceEvent } from "@/modules/revenues/events/handlers/orchestr
 import { processInvoiceUpsert } from "@/modules/revenues/events/shared/process-invoice-upsert";
 import { processInvoiceUpdated } from "@/modules/revenues/events/updated-invoice/handlers/invoice-update.handlers";
 import { EventBus } from "@/server/events/event-bus";
-import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import { INVOICE_EVENTS } from "@/server/events/invoice/invoice-event.types";
+import type { BaseInvoiceEvent } from "@/server/events/invoice-event.types";
+import { INVOICE_EVENTS } from "@/server/events/invoice-event.types";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**

@@ -3,7 +3,7 @@ import "server-only";
 import type {
   BaseInvoiceEvent,
   INVOICE_EVENTS,
-} from "@/server/events/invoice/invoice-event.types";
+} from "@/server/events/invoice-event.types";
 
 /**
  * Module augmentation for the EventBus DomainEvents map.

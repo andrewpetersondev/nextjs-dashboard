@@ -1,6 +1,6 @@
+import type { Hash } from "@/server/crypto/hashing/hashing.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
-import type { Hash } from "@/shared/primitives/hash/hash.brand";
 
 /**
  * Application-layer contract for password hashing and verification.

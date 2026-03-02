@@ -3,7 +3,7 @@
  * @description In-memory event bus for decoupling event publishers and subscribers.
  * @see src/features/revenues/event-driven-revenue-strategy.md
  */
-/// <reference path="./types/domain-events.d.ts" />
+/// <reference path="./domain-events.d.ts" />
 import "server-only";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 

@@ -8,7 +8,7 @@ import {
 import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/application/cross-cutting/period-extraction";
 import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { checkInvoiceEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
-import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
+import type { BaseInvoiceEvent } from "@/server/events/invoice-event.types";
 
 import type { Period } from "@/shared/primitives/period/period.brand";
 

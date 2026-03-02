@@ -1,5 +1,5 @@
 import "server-only";
-import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
+import type { BaseInvoiceEvent } from "@/server/events/invoice-event.types";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
