@@ -17,7 +17,9 @@
       "enabled": true
     },
     "formatter": {
-      "enabled": true
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2
     },
     "linter": {
       "enabled": true
@@ -29,46 +31,30 @@
   "files": {
     "ignoreUnknown": true,
     "includes": [
-      "**",
-      "!!**/build",
-      "!!**/dist",
-      "!!.next",
-      "!!**/out",
-      "!!**/coverage",
-      "!!**/*.nyc_output",
-      "!!**/*.log",
-      "!!storage",
-      "!!docs",
-      "!!tsconfig.tsbuildinfo",
-      "!!.idea",
-      "!!**/*.js",
-      "!!**/*.jsx",
-      "!!node_modules",
-      "!!pnpm-lock.yaml",
-      "!.aiassistant",
-      "!.github",
-      "!.junie",
-      "!cypress",
-      "!drizzle",
-      "!public",
-      "!.aiignore",
-      "!.env*",
-      "!next-env.d.ts",
-      "!pnpm-workspace.yaml",
-      "!.turbo"
+      "./devtools/**/*.{ts,tsx,css,json}",
+      "./src/**/*.{ts,tsx,css,json}",
+      "./drizzle.config.ts",
+      "./next.config.ts",
+      "./package.json",
+      "./postcss.config.mjs",
+      "./tsconfig.json",
+      "./vitest.config.ts",
+      "./vitest.setup.ts",
+      "!!**/*.{js,jsx}",
+      "!node_modules"
     ]
   },
   "formatter": {
-    "enabled": true,
-    "indentStyle": "space",
-    "indentWidth": 2
+    "enabled": true
   },
   "javascript": {
     "assist": {
       "enabled": true
     },
     "formatter": {
-      "enabled": true
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2
     },
     "linter": {
       "enabled": true
@@ -79,7 +65,9 @@
       "enabled": true
     },
     "formatter": {
-      "enabled": true
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2
     },
     "linter": {
       "enabled": true
@@ -93,7 +81,8 @@
       "next": "all",
       "project": "all",
       "react": "all",
-      "test": "all"
+      "test": "all",
+      "types": "recommended"
     },
     "enabled": true,
     "rules": {
@@ -107,8 +96,10 @@
         "noForEach": "on",
         "noImplicitCoercions": "on",
         "noUselessStringConcat": "on",
+        "noUselessUndefined": "on",
         "noVoid": "on",
         "recommended": true,
+        "useMaxParams": "on",
         "useSimplifiedLogicExpression": "on",
         "useWhile": "on"
       },
@@ -117,6 +108,7 @@
         "noNodejsModules": "on",
         "noProcessGlobal": "on",
         "noUndeclaredVariables": "on",
+        "noUnresolvedImports": "off",
         "noUnusedFunctionParameters": "on",
         "noUnusedImports": "on",
         "noUnusedLabels": "on",
@@ -129,21 +121,17 @@
       "nursery": {
         "noContinue": "on",
         "noDivRegex": "on",
-        "noDuplicateDependencies": "on",
         "noDuplicatedSpreadProps": "on",
         "noDuplicateEnumValues": "on",
-        "noEmptySource": "on",
         "noEqualsToNull": "on",
         "noExcessiveClassesPerFile": "on",
         "noExcessiveLinesPerFile": "on",
         "noFloatingClasses": "on",
         "noFloatingPromises": "on",
         "noForIn": "on",
-        "noImportCycles": "on",
         "noShadow": "on",
-        "noUselessUndefined": "on",
         "useExplicitType": "on",
-        "useMaxParams": "on",
+        "useRequiredScripts": "on",
         "useSortedClasses": "on"
       },
       "performance": {
@@ -215,8 +203,11 @@
         "noAlert": "on",
         "noBitwiseOperators": "on",
         "noConstantBinaryExpressions": "on",
+        "noDuplicateDependencies": "on",
         "noEmptyBlockStatements": "on",
+        "noEmptySource": "on",
         "noEvolvingTypes": "on",
+        "noImportCycles": "on",
         "noMisplacedAssertion": "on",
         "noRedeclare": "on",
         "noSkippedTests": "on",
@@ -395,5 +386,6 @@
         }
       }
     }
-  ]
+  ],
+  "root": true
 }

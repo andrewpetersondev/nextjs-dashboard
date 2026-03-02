@@ -245,7 +245,7 @@ export async function pipeAsync<
   TError3 extends AppError,
   TError4 extends AppError,
   TError5 extends AppError,
-  // biome-ignore lint/nursery/useMaxParams: <multistep pipe requires more params>
+  // biome-ignore lint/complexity/useMaxParams: multistep pipe requires more params
 >(
   seed: Result<TValue, TError>,
   step1: PipeStep<TValue, TValue2, TError, TError2>,
