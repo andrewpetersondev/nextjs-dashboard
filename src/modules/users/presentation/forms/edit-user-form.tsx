@@ -21,10 +21,10 @@ import { isValidationMetadata } from "@/shared/core/errors/metadata/error-metada
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
-import { FormActionRow } from "@/shared/forms/presentation/components/layout/form-action-row";
 import { ROUTES } from "@/shared/routes/routes";
 import { TYPING_MS } from "@/shared/time/timings.tokens";
 import { H1 } from "@/ui/atoms/headings";
+import { FormActionRow } from "@/ui/forms/components/layout/form-action-row";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { ServerMessage } from "@/ui/molecules/server-message";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";

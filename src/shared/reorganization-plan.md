@@ -1,23 +1,6 @@
 To refactor your `src/shared/` folder into a professional, scalable structure, I recommend the following 10
 organizational and clarity improvements based on the current project state:
 
-### 1. Unified Validation Structure
-
-Currently, validation is split between `src/shared/validation/` (policies/normalizers) and
-`src/shared/validation/zod/` (schemas).
-
-* **Action:** Group these by domain. For example, move `email-policy.ts`, `identity.normalizers.ts`, and
-  `email.schema.ts` into a single `src/shared/validation/email/` folder. This keeps related logic (rules, normalization,
-  and schema) together.
-
-### 2. Standardize Barrel Files (`index.ts`)
-
-The project currently relies on deep imports (e.g., `@/shared/forms/core/types/field-error.types`).
-
-* **Action:** Implement `index.ts` barrel files at the root of major sub-folders (like `errors`, `forms`, `logging`).
-  This allows consumers to use cleaner imports like `@/shared/forms` instead of reaching into deep internal structures,
-  which also makes future internal refactoring easier.
-
 ### 3. Separation of UI and Logic in Shared Components
 
 The `src/shared/forms/presentation` folder contains UI components like `ErrorMessage`.
