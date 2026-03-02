@@ -13,14 +13,6 @@ import type { UserRole } from "@/shared/validation/user-role/user-role.constants
  */
 export interface AuthUserRepositoryContract {
   /**
-   * Increments the demo user counter for a specific role.
-   *
-   * @param role - The role whose demo counter should be incremented.
-   * @returns The updated counter value after incrementing (or AppError on failure).
-   */
-  incrementDemoUserCounter(role: UserRole): Promise<Result<number, AppError>>;
-
-  /**
    * Fetches a user candidate by their unique email.
    *
    * @param query - The lookup criteria including the email address.
@@ -30,6 +22,13 @@ export interface AuthUserRepositoryContract {
   findByEmail(
     query: Readonly<AuthUserLookupQuery>,
   ): Promise<Result<AuthUserEntity | null, AppError>>;
+  /**
+   * Increments the demo user counter for a specific role.
+   *
+   * @param role - The role whose demo counter should be incremented.
+   * @returns The updated counter value after incrementing (or AppError on failure).
+   */
+  incrementDemoUserCounter(role: UserRole): Promise<Result<number, AppError>>;
 
   /**
    * Creates a new user account in the persistent store.

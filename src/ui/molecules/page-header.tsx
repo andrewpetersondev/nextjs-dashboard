@@ -3,14 +3,14 @@ import type { FC, ReactNode } from "react";
 import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
 interface PageHeaderProps {
-  /** Main heading text */
-  title: string;
   /** Optional sub-content or description */
   children?: ReactNode;
   /** Alt text for the logo */
   logoAlt?: string;
   /** Source URL for the logo */
   logoSrc?: string;
+  /** Main heading text */
+  title: string;
 }
 
 /**

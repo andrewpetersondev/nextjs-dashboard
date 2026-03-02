@@ -12,8 +12,8 @@ import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";
 
 interface InvoicesSearchParams {
-  query?: string;
   page?: string;
+  query?: string;
 }
 
 interface InvoicesPageProps {

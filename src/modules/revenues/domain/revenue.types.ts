@@ -20,8 +20,8 @@ export type RevenueSource = (typeof REVENUE_SOURCES)[number];
  * @prop topLabel - Maximum chart value in dollars for scaling purposes
  */
 export interface YaxisResult {
-  readonly yAxisLabels: readonly string[];
   readonly topLabel: Dollars;
+  readonly yAxisLabels: readonly string[];
 }
 
 /**
@@ -37,8 +37,8 @@ export interface RollingMonthData {
   readonly displayOrder: number;
   readonly month: MonthName;
   readonly monthNumber: number;
-  readonly year: number;
   readonly period: Period;
+  readonly year: number;
 }
 
 /**
@@ -81,10 +81,10 @@ export interface RevenueStatisticsDto {
  */
 export interface SimpleRevenueDto {
   readonly month: MonthName;
+  readonly monthNumber: number;
   readonly totalAmount: Dollars;
   readonly totalPaidAmount: Dollars;
   readonly totalPendingAmount: Dollars;
-  readonly monthNumber: number;
 }
 
 /**

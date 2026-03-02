@@ -21,11 +21,11 @@ const SIZES = {
  */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "outline" | "danger";
-  size?: "sm" | "md" | "lg";
+  fullWidth?: boolean;
   isLoading?: boolean;
   loadingText?: ReactNode;
-  fullWidth?: boolean;
+  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "secondary" | "outline" | "danger";
 }
 
 export function ButtonAtom({

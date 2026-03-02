@@ -6,12 +6,12 @@ import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {
-  label: string;
-  text: string;
   action: (
     _prevState: FormResult<never>,
     formData: FormData,
   ) => Promise<FormResult<never>>;
+  label: string;
+  text: string;
 }
 
 /**

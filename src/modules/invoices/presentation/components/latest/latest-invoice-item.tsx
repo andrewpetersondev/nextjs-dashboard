@@ -6,8 +6,8 @@ import { formatCurrency } from "@/shared/utilities/money/convert";
 import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
 export interface LatestInvoiceItemProps {
-  readonly invoice: InvoiceListFilter;
   readonly hasTopBorder: boolean;
+  readonly invoice: InvoiceListFilter;
 }
 
 export function LatestInvoiceItem({

@@ -7,8 +7,8 @@ import type { PgCode } from "@/shared/core/errors/server/adapters/postgres/pg-co
  * Internal helper for error chain traversal.
  */
 interface ErrorCandidate {
-  readonly [key: string]: unknown;
   readonly code?: unknown;
+  readonly [key: string]: unknown;
 }
 
 /**

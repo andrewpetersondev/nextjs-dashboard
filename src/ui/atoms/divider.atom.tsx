@@ -2,10 +2,10 @@ import type { FC, ReactNode } from "react";
 import { cn } from "@/ui/utils/cn";
 
 interface DividerProps {
-  /** Optional label to display in the center of the divider */
-  label?: ReactNode;
   /** Optional: Additional class names */
   className?: string;
+  /** Optional label to display in the center of the divider */
+  label?: ReactNode;
 }
 
 /**

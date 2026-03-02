@@ -4,8 +4,11 @@
     "actions": {
       "recommended": true,
       "source": {
+        "noDuplicateClasses": "on",
         "organizeImports": "on",
+        "recommended": true,
         "useSortedAttributes": "on",
+        "useSortedInterfaceMembers": "on",
         "useSortedKeys": "on",
         "useSortedProperties": "on"
       }
@@ -29,7 +32,6 @@
     }
   },
   "files": {
-    "ignoreUnknown": true,
     "includes": [
       "./devtools/**/*.{ts,tsx,css,json}",
       "./src/**/*.{ts,tsx,css,json}",
@@ -82,7 +84,7 @@
       "project": "all",
       "react": "all",
       "test": "all",
-      "types": "recommended"
+      "types": "all"
     },
     "enabled": true,
     "rules": {
@@ -130,6 +132,7 @@
         "noFloatingPromises": "on",
         "noForIn": "on",
         "noShadow": "on",
+        "recommended": true,
         "useExplicitType": "on",
         "useRequiredScripts": "on",
         "useSortedClasses": "on"
@@ -165,6 +168,7 @@
         "noSubstr": "on",
         "noUnusedTemplateLiteral": "on",
         "noUselessElse": "on",
+        "noValueAtRule": "on",
         "noYodaExpression": "on",
         "recommended": true,
         "useAsConstAssertion": "on",
@@ -387,5 +391,12 @@
       }
     }
   ],
-  "root": true
+  "root": true,
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "enabled": true,
+    "root": ".",
+    "useIgnoreFile": true
+  }
 }

@@ -9,8 +9,8 @@ import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
 import { Pagination } from "@/ui/pagination/pagination";
 
 interface UsersSearchParams {
-  query?: string;
   page?: string;
+  query?: string;
 }
 
 interface UsersPageProps {

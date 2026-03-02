@@ -21,19 +21,13 @@ export interface RevenueRepositoryContract {
   create(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
 
   /**
-   * Read a revenue record by its unique identifier.
-   */
-  read(id: RevenueId): Promise<RevenueEntity>;
-
-  /**
-   * Update mutable fields of a revenue record by id.
-   */
-  update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>;
-
-  /**
    * Delete a revenue record by id.
    */
   delete(id: RevenueId): Promise<void>;
+  /**
+   * Delete a revenue record by id (alias of delete()).
+   */
+  deleteById(id: RevenueId): Promise<void>;
 
   /**
    * Find revenue records within an inclusive period range.
@@ -44,18 +38,24 @@ export interface RevenueRepositoryContract {
   ): Promise<RevenueEntity[]>;
 
   /**
-   * Upsert (insert-or-update) a revenue record.
-   */
-  upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
-  /**
-   * Delete a revenue record by id (alias of delete()).
-   */
-  deleteById(id: RevenueId): Promise<void>;
-
-  /**
    * Find a revenue record by its period.
    */
   findByPeriod(period: Period): Promise<RevenueEntity | null>;
+
+  /**
+   * Read a revenue record by its unique identifier.
+   */
+  read(id: RevenueId): Promise<RevenueEntity>;
+
+  /**
+   * Update mutable fields of a revenue record by id.
+   */
+  update(id: RevenueId, revenue: RevenueUpdatable): Promise<RevenueEntity>;
+
+  /**
+   * Upsert (insert-or-update) a revenue record.
+   */
+  upsert(revenue: RevenueCreateEntity): Promise<RevenueEntity>;
   /**
    * Upserts a revenue record for the given period.
    */

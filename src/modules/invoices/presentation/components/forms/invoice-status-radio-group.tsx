@@ -10,8 +10,8 @@ import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
  */
 interface InvoiceStatusRadioGroupProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
-  value: InvoiceStatus;
   error?: FieldError;
+  value: InvoiceStatus;
 }
 
 /**
@@ -22,6 +22,7 @@ interface InvoiceStatusRadioGroupProps
  * @param name - The name of the radio group.
  * @param disabled - Whether the inputs are disabled.
  * @param error - Error(s) to display.
+ * @param props - ADD DESCRIPTION
  */
 export const InvoiceStatusRadioGroup = ({
   value,
@@ -51,7 +52,7 @@ export const InvoiceStatusRadioGroup = ({
         <legend className="mb-2 block font-medium text-sm">
           Set the invoice status
         </legend>
-        <div className="rounded-md border border-bg-accent px-[14px] py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
+        <div className="rounded-md border border-bg-accent px-3.5 py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
           <div className="flex gap-4">
             {options.map((opt) => (
               <div className="flex items-center" key={opt.value}>

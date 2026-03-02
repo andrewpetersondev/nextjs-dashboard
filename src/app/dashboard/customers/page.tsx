@@ -5,8 +5,8 @@ import { readFilteredCustomersAction } from "@/modules/customers/infrastructure/
 import { CustomersTable } from "@/modules/customers/presentation/components/customers-table";
 
 interface CustomersSearchParams {
-  query?: string;
   page?: string;
+  query?: string;
 }
 
 interface CustomersPageProps {

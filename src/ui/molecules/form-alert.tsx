@@ -2,6 +2,10 @@ import type { FC } from "react";
 import { cn } from "@/ui/utils/cn";
 
 interface FormAlertProps {
+  /** Optional additional classes */
+  className?: string;
+  /** Optional cypress data attribute */
+  dataCy?: string;
   /** The message to display. If undefined/empty, nothing renders. */
   message?: string;
   /**
@@ -10,10 +14,6 @@ interface FormAlertProps {
    * Currently, the implementation follows the original design (error text).
    */
   type?: "error" | "success";
-  /** Optional cypress data attribute */
-  dataCy?: string;
-  /** Optional additional classes */
-  className?: string;
 }
 
 /**
