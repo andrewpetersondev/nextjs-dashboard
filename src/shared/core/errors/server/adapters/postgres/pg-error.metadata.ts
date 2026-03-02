@@ -2,8 +2,10 @@ import "server-only";
 
 import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.registry";
 import type { PgErrorMetadata } from "@/shared/core/errors/server/adapters/postgres/db-error.dto";
-import type { PgCode } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
-import type { PgCondition } from "@/shared/core/errors/server/adapters/postgres/pg-conditions";
+import type {
+  PgCode,
+  PgCondition,
+} from "@/shared/core/errors/server/adapters/postgres/pg-error.constants";
 
 /**
  * Static mapping between a Postgres pgCode and application logic.

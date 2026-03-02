@@ -6,8 +6,9 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { isPgMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
-import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
-import { getPgConstraintFromAppError } from "@/shared/core/errors/server/adapters/postgres/utils";
+
+import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error.constants";
+import { getPgConstraintFromAppError } from "@/shared/core/errors/server/adapters/postgres/pg-error.utils";
 import { Err } from "@/shared/core/result/result";
 import type {
   FieldError,

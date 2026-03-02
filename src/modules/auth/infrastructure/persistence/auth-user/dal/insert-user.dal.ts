@@ -6,7 +6,8 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { executeDalResult } from "@/shared/core/errors/server/adapters/dal/execute-dal-result";
-import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
+
+import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error.constants";
 import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
