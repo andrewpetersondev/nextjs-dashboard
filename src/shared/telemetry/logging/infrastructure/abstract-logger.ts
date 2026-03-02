@@ -1,6 +1,6 @@
-import { getProcessId } from "@/shared/core/config/env-utils";
 import { isPublicProd } from "@/shared/core/config/public/env-public";
 import type { LogLevel } from "@/shared/core/config/schemas/env-schemas";
+import { getProcessId } from "@/shared/core/config/server/env-access.utils";
 import type { LogEntry } from "@/shared/telemetry/logging/core/logger.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import {

@@ -6,8 +6,9 @@
 
 import "server-only";
 import type { z } from "zod";
-import { mapEnvVars } from "@/shared/core/config/env-utils";
+import { mapEnvVars } from "@/shared/core/config/env-mapping.utils";
 import { ServerEnvSchema } from "@/shared/core/config/schemas/env-schemas";
+import { getEnvVariable } from "@/shared/core/config/server/env-access.utils";
 
 let cachedServerEnv: Readonly<z.infer<typeof ServerEnvSchema>> | undefined;
 
@@ -18,13 +19,16 @@ function parseServerEnv() {
   }
 
   // Use centralized env mapping from shared config
-  const envToValidate = mapEnvVars({
-    authBcryptSaltRounds: "AUTH_BCRYPT_SALT_ROUNDS",
-    databaseUrl: "DATABASE_URL",
-    sessionAudience: "SESSION_AUDIENCE",
-    sessionIssuer: "SESSION_ISSUER",
-    sessionSecret: "SESSION_SECRET",
-  });
+  const envToValidate = mapEnvVars(
+    {
+      authBcryptSaltRounds: "AUTH_BCRYPT_SALT_ROUNDS",
+      databaseUrl: "DATABASE_URL",
+      sessionAudience: "SESSION_AUDIENCE",
+      sessionIssuer: "SESSION_ISSUER",
+      sessionSecret: "SESSION_SECRET",
+    },
+    getEnvVariable,
+  );
 
   const parsed = ServerEnvSchema.safeParse(envToValidate);
 

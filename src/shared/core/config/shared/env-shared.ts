@@ -1,4 +1,3 @@
-import { getEnvVariable } from "@/shared/core/config/env-utils";
 import { getPublicNodeEnvResult } from "@/shared/core/config/public/env-public";
 import {
   type DatabaseEnvironment,
@@ -8,6 +7,7 @@ import {
   type NodeEnvironment,
   NodeEnvironmentSchema,
 } from "@/shared/core/config/schemas/env-schemas";
+import { getEnvVariable } from "@/shared/core/config/server/env-access.utils";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
