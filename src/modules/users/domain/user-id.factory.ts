@@ -2,7 +2,7 @@ import {
   USER_ID_BRAND,
   type UserId,
 } from "@/modules/users/domain/types/user-id.brand";
-import { createIdFactory } from "@/shared/branding/factories/id-factories";
+import { createIdFactory } from "@/shared/utilities/ids/id.factory";
 
 /**
  * Creates a validated and branded UserId from an unknown value.

@@ -14,7 +14,8 @@ import type {
   UpdateExistingRevenueArgs,
   UpsertRevenueArgs,
 } from "@/modules/revenues/events/shared/types";
-import { toPeriod } from "@/shared/branding/converters/id-converters";
+
+import { toPeriod } from "@/shared/utilities/period/period.mappers";
 
 /**
  * Checks if this is a diff update operation.

@@ -2,9 +2,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
+import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { toUserId } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";

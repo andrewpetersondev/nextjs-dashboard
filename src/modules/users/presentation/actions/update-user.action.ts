@@ -10,9 +10,9 @@ import {
   type EditUserFormFieldNames,
   EditUserFormSchema,
 } from "@/modules/users/domain/schemas/user.schema";
+import { toUserIdResult } from "@/modules/users/domain/user-id.mappers";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { toUserIdResult } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {

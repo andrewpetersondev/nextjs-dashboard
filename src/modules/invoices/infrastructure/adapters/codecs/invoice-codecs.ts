@@ -1,4 +1,5 @@
 import "server-only";
+import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 import type {
   InvoiceDto,
   InvoiceFormDto,
@@ -14,7 +15,6 @@ import {
 } from "@/modules/invoices/domain/invoice.codecs";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
-import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
 import type { Result } from "@/shared/core/results/result.types";

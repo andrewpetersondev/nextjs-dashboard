@@ -1,4 +1,4 @@
-import type { Brand } from "@/shared/branding/brand";
+import type { Brand } from "@/shared/core/branding/brand";
 
 /**
  * Brand symbol for period (first day of month) timestamps.

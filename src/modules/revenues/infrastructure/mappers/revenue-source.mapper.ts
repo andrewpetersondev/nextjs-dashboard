@@ -1,5 +1,5 @@
 import { REVENUE_SOURCES } from "@/modules/revenues/domain/revenue.types";
-import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
+import { createEnumValidator } from "@/shared/utilities/enums/enum.factory";
 
 /**
  * Validates and converts a value to a RevenueSource.

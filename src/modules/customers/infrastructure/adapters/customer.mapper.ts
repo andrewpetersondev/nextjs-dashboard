@@ -1,4 +1,5 @@
 import "server-only";
+import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 
 import type {
   CustomerAggregatesRowRaw,
@@ -6,7 +7,6 @@ import type {
   CustomerSelectRowRaw,
   CustomerSelectServerDto,
 } from "@/modules/customers/domain/types";
-import { toCustomerId } from "@/shared/branding/converters/id-converters";
 
 /**
  * Maps a raw "select" projection row to a server DTO with branded ID.

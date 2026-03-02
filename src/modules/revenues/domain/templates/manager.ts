@@ -9,9 +9,9 @@ import { createDefaultRevenueData } from "@/modules/revenues/domain/templates/fa
 import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/generator";
 import { toIntervalDuration } from "@/modules/revenues/domain/time/interval-duration.mapper";
 import { calculateDateRange } from "@/modules/revenues/domain/time/range";
-import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { toPeriod } from "@/shared/utilities/period/period.mappers";
 
 /**
  * Private helper to compute the validated template.

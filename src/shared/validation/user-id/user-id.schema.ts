@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
-import { toUserId } from "@/shared/branding/converters/id-converters";
+import { toUserId } from "@/modules/users/domain/user-id.mappers";
 
 /**
  * UserId boundary schema (UUID string ⇄ branded UserId).

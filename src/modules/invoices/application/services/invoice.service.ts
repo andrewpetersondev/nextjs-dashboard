@@ -5,13 +5,13 @@ import type {
   InvoiceFormDto,
 } from "@/modules/invoices/application/dto/invoice.dto";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
 import {
   dtoToCreateInvoiceEntity,
   partialDtoToCreateInvoiceEntity,
 } from "@/modules/invoices/infrastructure/adapters/codecs/invoice-codecs";
 import { invoiceFormEntityToServiceEntity } from "@/modules/invoices/infrastructure/adapters/mappers/invoice.mapper";
 import type { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
-import { toInvoiceId } from "@/shared/branding/converters/id-converters";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/results/result";

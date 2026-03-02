@@ -1,8 +1,8 @@
 import "server-only";
 import { logInfo } from "@/modules/revenues/application/cross-cutting/logging";
 import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
+import { toRevenueId } from "@/modules/revenues/domain/revenue-id.mappers";
 import type { UpdateRevenueRecordArgs } from "@/modules/revenues/events/shared/types";
-import { toRevenueId } from "@/shared/branding/converters/id-converters";
 
 /**
  * Updates a revenue record with new values.

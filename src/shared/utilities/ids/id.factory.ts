@@ -1,4 +1,4 @@
-import { createBrand } from "@/shared/branding/brand";
+import { createBrand } from "@/shared/core/branding/brand";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";

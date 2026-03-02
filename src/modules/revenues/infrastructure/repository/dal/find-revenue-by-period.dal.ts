@@ -4,13 +4,13 @@ import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.e
 import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
-import { toPeriod } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
 } from "@/shared/core/errors/factories/app-error.factory";
 import type { Period } from "@/shared/utilities/period/period.brand";
+import { toPeriod } from "@/shared/utilities/period/period.mappers";
 
 /**
  * Finds a revenue record by period.

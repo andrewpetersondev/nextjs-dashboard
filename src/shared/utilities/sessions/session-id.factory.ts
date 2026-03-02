@@ -1,4 +1,4 @@
-import { createIdFactory } from "@/shared/branding/factories/id-factories";
+import { createIdFactory } from "@/shared/utilities/ids/id.factory";
 import {
   SESSION_ID_BRAND,
   type SessionId,

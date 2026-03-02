@@ -1,5 +1,5 @@
 import { INTERVAL_DURATIONS } from "@/modules/revenues/domain/revenue.constants";
-import { createEnumValidator } from "@/shared/branding/factories/enum-factory";
+import { createEnumValidator } from "@/shared/utilities/enums/enum.factory";
 
 /**
  * Validates and converts a value to an IntervalDuration

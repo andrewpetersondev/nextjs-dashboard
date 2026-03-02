@@ -2,6 +2,7 @@ import "server-only";
 
 import { isValid } from "date-fns";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
+import { toRevenueId } from "@/modules/revenues/domain/revenue-id.mappers";
 import { toRevenueSource } from "@/modules/revenues/infrastructure/mappers/revenue-source.mapper";
 import {
   isNonNegativeInteger,
@@ -9,12 +10,9 @@ import {
   validateCondition,
 } from "@/modules/revenues/infrastructure/utils/validation";
 import type { RevenueRow } from "@/server/db/schema/revenues";
-import {
-  toPeriod,
-  toRevenueId,
-} from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { toPeriod } from "@/shared/utilities/period/period.mappers";
 
 /**
  * Validates a revenue row from the database.

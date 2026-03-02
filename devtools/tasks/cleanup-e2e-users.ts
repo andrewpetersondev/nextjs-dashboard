@@ -1,6 +1,6 @@
 import { inArray, like, or } from "drizzle-orm";
+import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { users } from "@/server/db/schema/users";
-import { toUserId } from "@/shared/branding/converters/id-converters";
 import { nodeDb } from "../cli/node-db";
 
 /** Delete E2E users and their sessions (email/username starting with e2e_). */

@@ -1,4 +1,4 @@
-import { type Brand, createBrand } from "@/shared/branding/brand";
+import { type Brand, createBrand } from "@/shared/core/branding/brand";
 
 export const UNIX_SECONDS_BRAND: unique symbol = Symbol("UnixSeconds");
 export type UnixSeconds = Brand<number, typeof UNIX_SECONDS_BRAND>;

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
+import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
-import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**
  * Unit tests for toAuthenticatedUserDto mapper.

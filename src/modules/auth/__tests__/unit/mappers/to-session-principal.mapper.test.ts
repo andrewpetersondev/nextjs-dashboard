@@ -5,7 +5,7 @@ import {
   type UpdateSessionSuccessDto,
 } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { toSessionPrincipal } from "@/modules/auth/application/shared/mappers/flows/login/to-session-principal.mapper";
-import { toUserId } from "@/shared/branding/converters/id-converters";
+import { toUserId } from "@/modules/users/domain/user-id.mappers";
 
 /**
  * Unit tests for toSessionPrincipal mapper.

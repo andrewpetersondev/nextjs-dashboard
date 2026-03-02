@@ -1,5 +1,5 @@
+import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 import type { invoices } from "@/server/db/schema/invoices";
-import { toCustomerId } from "@/shared/branding/converters/id-converters";
 import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 import type { Period } from "@/shared/utilities/period/period.brand";
 import {
