@@ -4,6 +4,10 @@
  */
 export const MILLISECONDS_PER_SECOND = 1000;
 
+export const ALERT_AUTO_HIDE_MS = 5000;
+export const TYPING_MS = 4000;
+export const DEBOUNCE_MS = 500;
+
 /**
  * Returns the current time as a UNIX timestamp in seconds.
  * Useful for session tokens, JWT claims, and temporal validations.

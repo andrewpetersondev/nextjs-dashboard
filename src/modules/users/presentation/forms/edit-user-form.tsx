@@ -22,7 +22,7 @@ import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
 import { ROUTES } from "@/shared/routing/routes";
-import { TYPING_MS } from "@/shared/time/timings.tokens";
+import { TYPING_MS } from "@/shared/time/time.constants";
 import { H1 } from "@/ui/atoms/headings";
 import { FormActionRow } from "@/ui/forms/components/layout/form-action-row";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
