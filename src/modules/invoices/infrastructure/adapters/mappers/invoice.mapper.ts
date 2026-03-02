@@ -11,9 +11,9 @@ import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**

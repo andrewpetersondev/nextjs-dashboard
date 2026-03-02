@@ -8,9 +8,9 @@ import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/a
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { safeExecute } from "@/shared/core/result/integrations/safe-execute";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import { PerformanceTracker } from "@/shared/telemetry/observability/performance-tracker";
 

@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/nursery/noExcessiveLinesPerFile: <getting close> */
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Applies async function to successful value and flattens resulting Result.

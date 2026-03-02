@@ -1,4 +1,4 @@
-import type { LogLevel } from "@/shared/core/config/env-schemas";
+import type { LogLevel } from "@/shared/core/config/schemas/env-schemas";
 import type { AppErrorSeverity } from "@/shared/core/errors/core/app-error.dto";
 import { isAppError } from "@/shared/core/errors/core/app-error.entity";
 import type { SafeErrorShape } from "@/shared/telemetry/logging/core/logger.dto";

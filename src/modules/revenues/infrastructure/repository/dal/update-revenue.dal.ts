@@ -9,11 +9,11 @@ import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand
 import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
-} from "@/shared/core/errors/factories/app-error.factory";
+} from "@/shared/core/errors/core/factories/app-error.factory";
 
 /**
  * Updates a revenue record.

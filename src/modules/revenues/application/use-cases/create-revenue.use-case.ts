@@ -5,11 +5,11 @@ import type {
   RevenueCreateEntity,
   RevenueEntity,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
-} from "@/shared/core/errors/factories/app-error.factory";
+} from "@/shared/core/errors/core/factories/app-error.factory";
 
 export class CreateRevenueUseCase {
   private readonly repository: RevenueRepositoryContract;

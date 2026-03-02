@@ -13,7 +13,7 @@ import { loginUseCaseFactory } from "@/modules/auth/infrastructure/composition/f
 import { signupUseCaseFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/signup-use-case.factory";
 import { sessionServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { getRequestMetadata } from "@/shared/http/request-metadata";
+import { getRequestMetadata } from "@/shared/http/server/request-metadata";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 

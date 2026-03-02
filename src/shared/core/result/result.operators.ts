@@ -1,6 +1,6 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Transforms the value of an `Ok` result using the provided function, maintaining the `Err` state otherwise.

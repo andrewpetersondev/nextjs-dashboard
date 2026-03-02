@@ -1,7 +1,7 @@
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { isPgMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { isPgMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
 
 /**

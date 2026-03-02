@@ -4,8 +4,8 @@ import type { SessionServiceContract } from "@/modules/auth/application/session/
 import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { toSessionPrincipal } from "@/modules/auth/application/shared/mappers/flows/login/to-session-principal.mapper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Shared sub-workflow to establish a session after a user has been authenticated or created.

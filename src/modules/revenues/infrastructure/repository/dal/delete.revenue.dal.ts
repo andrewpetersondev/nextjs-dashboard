@@ -4,11 +4,11 @@ import { eq } from "drizzle-orm";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { revenues } from "@/server/db/schema/revenues";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import {
   makeAppError,
   makeUnexpectedError,
-} from "@/shared/core/errors/factories/app-error.factory";
+} from "@/shared/core/errors/core/factories/app-error.factory";
 
 /**
  * Deletes a revenue record from the database.

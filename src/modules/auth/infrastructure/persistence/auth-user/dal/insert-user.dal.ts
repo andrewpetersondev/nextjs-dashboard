@@ -2,12 +2,12 @@ import "server-only";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type NewUserRow, type UserRow, users } from "@/server/db/schema";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { executeDalResult } from "@/shared/core/errors/server/adapters/dal/execute-dal-result";
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
-import type { Result } from "@/shared/core/results/result.dto";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

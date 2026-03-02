@@ -11,7 +11,7 @@ import {
   UnexpectedErrorMetadataSchema,
   UnknownErrorMetadataSchema,
   ValidationErrorMetadataSchema,
-} from "@/shared/core/errors/metadata/error-metadata.value";
+} from "@/shared/core/errors/core/metadata/error-metadata.value";
 
 /**
  * Registry of all available Application Error Keys.

@@ -3,7 +3,7 @@ import "server-only";
 import bcryptjs from "bcryptjs";
 import type { HashingContract } from "@/server/crypto/hashing/hashing.contract";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import type { Hash } from "@/shared/primitives/hash/hash.brand";
 
 const SALT_ROUNDS = 10 as const;

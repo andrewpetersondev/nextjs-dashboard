@@ -10,7 +10,7 @@ import {
   HTTP_STATUS_NO_CONTENT,
   PRAGMA_NO_CACHE,
   VARY_COOKIE,
-} from "@/shared/http/http-headers";
+} from "@/shared/http/core/http-headers";
 import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 function applyNoStoreHeaders(res: NextResponse): NextResponse {

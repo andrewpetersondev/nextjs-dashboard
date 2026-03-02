@@ -4,7 +4,7 @@ import type { SessionVerificationDto } from "@/modules/auth/application/session/
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.dto";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Contract defining session operations available to the application layer.

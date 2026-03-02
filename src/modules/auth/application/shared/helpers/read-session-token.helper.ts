@@ -4,8 +4,8 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/ses
 import type { ReadSessionTokenOutcomeDto } from "@/modules/auth/application/session/dtos/responses/read-session-token-outcome.dto";
 import { cleanupInvalidTokenHelper } from "@/modules/auth/application/shared/helpers/session-cleanup.helper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 async function tryCleanupInvalidToken(

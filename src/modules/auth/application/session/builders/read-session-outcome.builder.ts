@@ -4,11 +4,11 @@ import {
   type SessionEntity,
 } from "@/modules/auth/domain/session/entities/session.entity";
 import type { UnixSeconds } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Builds a ReadSessionOutcomeDto from a SessionEntity.

@@ -9,8 +9,8 @@ import { createDefaultRevenueData } from "@/modules/revenues/domain/templates/fa
 import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/generator";
 import { toIntervalDuration } from "@/modules/revenues/domain/time/interval-duration.mapper";
 import { calculateDateRange } from "@/modules/revenues/domain/time/range";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**

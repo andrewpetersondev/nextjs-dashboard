@@ -1,6 +1,6 @@
 import "server-only";
 
-import { makeUnexpectedError } from "@/shared/core/errors/factories/app-error.factory";
+import { makeUnexpectedError } from "@/shared/core/errors/core/factories/app-error.factory";
 import type {
   DalContextLite,
   ExecuteDalCoreOptions,

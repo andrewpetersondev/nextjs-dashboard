@@ -5,9 +5,9 @@ import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructur
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeUnexpectedError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { makeUnexpectedError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

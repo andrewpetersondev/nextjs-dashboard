@@ -1,6 +1,6 @@
 import type { ZodObject, ZodRawShape } from "zod";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err } from "@/shared/core/results/result";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err } from "@/shared/core/result/result";
 import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";

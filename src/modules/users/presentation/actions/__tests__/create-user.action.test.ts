@@ -6,9 +6,9 @@ import {
 import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
 import {
   makeFormError,
   makeFormOk,

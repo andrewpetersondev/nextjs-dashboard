@@ -16,8 +16,8 @@ import {
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Maps branded Entity to plain DTO.

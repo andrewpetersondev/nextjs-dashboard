@@ -13,11 +13,11 @@ import type {
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { toUserDto } from "@/modules/users/infrastructure/mappers/to-user-dto.mapper";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { normalizeUnknownError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { normalizeUnknownError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 export class UserService {

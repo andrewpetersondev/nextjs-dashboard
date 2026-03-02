@@ -4,7 +4,7 @@ import {
   type AppError,
   isAppError,
 } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { toPgError } from "@/shared/core/errors/server/adapters/postgres/to-pg-error";
 
 function normalizePgCause(err: unknown): AppError | Error | string {

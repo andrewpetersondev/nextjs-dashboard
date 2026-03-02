@@ -2,7 +2,7 @@ import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dto
 import type { AuthUserLookupQuery } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup.query";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.dto";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**

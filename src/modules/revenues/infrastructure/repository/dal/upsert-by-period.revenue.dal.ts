@@ -6,8 +6,8 @@ import type {
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import type { Period } from "@/shared/primitives/period/period.brand";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";
 import { upsertRevenueDal } from "./upsert-revenue.dal";

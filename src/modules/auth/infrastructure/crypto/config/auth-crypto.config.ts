@@ -1,5 +1,5 @@
 import "server-only";
-import { AUTH_BCRYPT_SALT_ROUNDS } from "@/server/config/env-server";
+import { AUTH_BCRYPT_SALT_ROUNDS } from "@/shared/core/config/server/env-server";
 
 /**
  * Configuration for authentication-related cryptography.

@@ -1,7 +1,7 @@
 import { createCustomerId } from "@/modules/customers/domain/customer-id.factory";
 import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.dto";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Validate and convert an arbitrary value into a branded `CustomerId`.

@@ -1,19 +1,19 @@
-import {
-  APP_ERROR_KEYS,
-  type AppErrorKey,
-  type AppErrorMetadataValueByKey,
-} from "@/shared/core/errors/catalog/app-error.registry";
 import type {
   AppErrorParams,
   UnexpectedErrorParams,
 } from "@/shared/core/errors/core/app-error.dto";
 import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import {
+  APP_ERROR_KEYS,
+  type AppErrorKey,
+  type AppErrorMetadataValueByKey,
+} from "@/shared/core/errors/core/catalog/app-error.registry";
+import {
   buildUnknownErrorMetadata,
   normalizeCause,
   safeStringifyUnknown,
-} from "@/shared/core/errors/factories/app-error-factory.utils";
-import type { UnexpectedErrorMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+} from "@/shared/core/errors/core/factories/app-error-factory.utils";
+import type { UnexpectedErrorMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 
 /**
  * Primary factory for creating structured application errors.

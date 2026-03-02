@@ -1,6 +1,6 @@
-import type { AppErrorKey } from "@/shared/core/errors/catalog/app-error.registry";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
+import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
 import type {
   DenseFieldErrorMap,
   FormErrors,

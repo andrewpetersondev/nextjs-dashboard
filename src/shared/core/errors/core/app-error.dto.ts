@@ -1,6 +1,6 @@
-import type { AppErrorKey } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { AppErrorMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.registry";
+import type { AppErrorMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 
 export const APP_ERROR_SEVERITY = {
   ERROR: "ERROR",

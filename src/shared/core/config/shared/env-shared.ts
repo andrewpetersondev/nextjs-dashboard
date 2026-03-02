@@ -1,4 +1,5 @@
-import { getPublicNodeEnvResult } from "@/shared/core/config/env-public";
+import { getEnvVariable } from "@/shared/core/config/env-utils";
+import { getPublicNodeEnvResult } from "@/shared/core/config/public/env-public";
 import {
   type DatabaseEnvironment,
   DatabaseEnvironmentSchema,
@@ -6,13 +7,12 @@ import {
   LogLevelSchema,
   type NodeEnvironment,
   NodeEnvironmentSchema,
-} from "@/shared/core/config/env-schemas";
-import { getEnvVariable } from "@/shared/core/config/env-utils";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
+} from "@/shared/core/config/schemas/env-schemas";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /* -------------------------------------------------------------------------------------------------
  *  Environment Accessors (no module-level caching)

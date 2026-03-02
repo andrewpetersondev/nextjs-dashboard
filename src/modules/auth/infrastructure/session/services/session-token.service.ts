@@ -10,11 +10,11 @@ import { SESSION_DURATION_SEC } from "@/modules/auth/domain/shared/constants/ses
 import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/session/config/session-token.constants";
 import { jwtToSessionTokenClaimsDto } from "@/modules/auth/infrastructure/session/mappers/jwt-to-session-token-claims-dto.mapper";
 import { SessionTokenClaimsSchema } from "@/modules/auth/infrastructure/session/schemas/session-token-claims.schema";
-import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import {
   nowInSeconds,
   secondsToMilliseconds,

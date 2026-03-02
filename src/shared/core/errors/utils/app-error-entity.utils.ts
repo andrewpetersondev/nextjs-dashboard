@@ -1,8 +1,8 @@
 import {
   type AppErrorKey,
   getMetadataSchemaForKey,
-} from "@/shared/core/errors/catalog/app-error.registry";
-import type { AppErrorMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+} from "@/shared/core/errors/core/catalog/app-error.registry";
+import type { AppErrorMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 import { redactNonSerializable } from "@/shared/core/errors/utils/serialization";
 
 function validateMetadataByCode<T extends AppErrorMetadata>(

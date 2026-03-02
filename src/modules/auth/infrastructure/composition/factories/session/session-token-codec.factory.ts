@@ -6,7 +6,7 @@ import {
   SESSION_AUDIENCE,
   SESSION_ISSUER,
   SESSION_SECRET,
-} from "@/server/config/env-server";
+} from "@/shared/core/config/server/env-server";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

@@ -15,9 +15,9 @@ import {
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
-import { Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { safeExecute } from "@/shared/core/result/integrations/safe-execute";
+import { Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import { nowInSeconds } from "@/shared/time/time.constants";
 

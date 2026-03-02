@@ -8,8 +8,8 @@ import { createDemoUserTxHelper } from "@/modules/auth/application/shared/helper
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
-import type { Result } from "@/shared/core/results/result.dto";
+import { safeExecute } from "@/shared/core/result/integrations/safe-execute";
+import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

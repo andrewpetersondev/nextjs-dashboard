@@ -12,8 +12,8 @@ import { ReadSessionUseCase } from "@/modules/auth/application/session/queries/r
 import { RequireSessionUseCase } from "@/modules/auth/application/session/queries/require-session.use-case";
 import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Concrete implementation of the SessionServiceContract.

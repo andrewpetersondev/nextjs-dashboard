@@ -10,7 +10,7 @@ import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand
 import { rawDbToInvoiceEntity } from "@/modules/invoices/infrastructure/adapters/mappers/invoice.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 /**
  * Updates an invoice in the database.

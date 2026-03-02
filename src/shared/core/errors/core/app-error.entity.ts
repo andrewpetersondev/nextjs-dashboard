@@ -1,14 +1,14 @@
-import {
-  type AppErrorKey,
-  getAppErrorDefinition,
-} from "@/shared/core/errors/catalog/app-error.registry";
 import type {
   AppErrorJsonDto,
   AppErrorLayer,
   AppErrorParams,
   AppErrorSeverity,
 } from "@/shared/core/errors/core/app-error.dto";
-import type { AppErrorMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
+import {
+  type AppErrorKey,
+  getAppErrorDefinition,
+} from "@/shared/core/errors/core/catalog/app-error.registry";
+import type { AppErrorMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 import {
   deepFreeze,
   validateAndMaybeSanitizeMetadata,

@@ -2,12 +2,12 @@
 import { useEffect, useRef } from "react";
 import type { UpdateSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { AUTH_REFRESH_ENDPOINT } from "@/modules/auth/presentation/constants/auth-ui.constants";
-import { getPublicNodeEnv } from "@/shared/core/config/env-public";
+import { getPublicNodeEnv } from "@/shared/core/config/public/env-public";
 import {
   CONTENT_TYPE_JSON,
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
-} from "@/shared/http/http-headers";
+} from "@/shared/http/core/http-headers";
 import { ROUTES } from "@/shared/routes/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 

@@ -3,8 +3,8 @@ import type { SessionTokenCodecContract } from "@/modules/auth/application/sessi
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/strategies/session-jwt-crypto.strategy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.dto";
+import { Err, Ok } from "@/shared/core/result/result";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Adapter for encoding and decoding session JWTs.

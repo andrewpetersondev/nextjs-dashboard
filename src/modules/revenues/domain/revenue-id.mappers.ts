@@ -1,7 +1,7 @@
 import { createRevenueId } from "@/modules/revenues/domain/factories/revenue-id.factory";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.dto";
+import type { Result } from "@/shared/core/result/result.dto";
 
 /**
  * Validate and convert an arbitrary value into a branded `RevenueId`.
