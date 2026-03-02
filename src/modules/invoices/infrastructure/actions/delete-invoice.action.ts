@@ -15,7 +15,7 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**

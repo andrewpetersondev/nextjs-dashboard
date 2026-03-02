@@ -17,7 +17,7 @@ import { SensitiveData } from "@/modules/invoices/presentation/components/forms/
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { FormActionRow } from "@/ui/forms/components/layout/form-action-row";
 import { useFormMessage } from "@/ui/forms/hooks/state/use-form-message";

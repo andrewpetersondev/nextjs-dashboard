@@ -3,7 +3,7 @@ import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.a
 import { SignupCard } from "@/modules/auth/presentation/authn/components/cards/signup-card";
 import { AuthPageWrapper } from "@/modules/auth/presentation/authn/components/shared/layout/auth-page-wrapper";
 import { SIGNUP_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { LinkPrompt } from "@/ui/molecules/link-prompt";
 
 export default function SignupPage(): JSX.Element {

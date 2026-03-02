@@ -1,5 +1,5 @@
 import { INVOICE_STATUSES } from "@/modules/invoices/domain/statuses/invoice.statuses";
-import { createEnumValidator } from "@/shared/utilities/enums/enum.factory";
+import { createEnumValidator } from "@/shared/primitives/core/enums/enum.factory";
 
 /**
  * Validates and converts a value to an InvoiceStatus.

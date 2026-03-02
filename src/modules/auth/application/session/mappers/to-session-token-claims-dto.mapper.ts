@@ -1,6 +1,6 @@
 import type { IssueTokenCommand } from "@/modules/auth/application/session/dtos/requests/issue-token.command";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
-import { UserIdSchema } from "@/shared/validation/user-id/user-id.schema";
+import { UserIdSchema } from "@/modules/users/domain/user-id.schema";
 
 /**
  * Maps a token issuance request to the application-level claims DTO.

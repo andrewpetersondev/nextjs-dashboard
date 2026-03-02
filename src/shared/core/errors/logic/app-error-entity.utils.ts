@@ -3,7 +3,7 @@ import {
   getMetadataSchemaForKey,
 } from "@/shared/core/errors/core/catalog/app-error.registry";
 import type { AppErrorMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
-import { redactNonSerializable } from "@/shared/core/errors/utils/serialization";
+import { redactNonSerializable } from "@/shared/core/errors/logic/serialization";
 
 function validateMetadataByCode<T extends AppErrorMetadata>(
   code: AppErrorKey,

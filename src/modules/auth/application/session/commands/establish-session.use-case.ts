@@ -13,8 +13,8 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { safeExecute } from "@/shared/core/result/integrations/safe-execute";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
+import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
-import { PerformanceTracker } from "@/shared/telemetry/observability/performance-tracker";
 
 /**
  * Establishes a new session for a user.

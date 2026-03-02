@@ -3,7 +3,7 @@ import { loginAction } from "@/modules/auth/presentation/authn/actions/login.act
 import { LoginCard } from "@/modules/auth/presentation/authn/components/cards/login-card";
 import { AuthPageWrapper } from "@/modules/auth/presentation/authn/components/shared/layout/auth-page-wrapper";
 import { LOGIN_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { LinkPrompt } from "@/ui/molecules/link-prompt";
 
 export default function LoginPage(): JSX.Element {

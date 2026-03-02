@@ -8,7 +8,7 @@ import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 
 /**
  * Deletes a user by ID, revalidates and redirects.

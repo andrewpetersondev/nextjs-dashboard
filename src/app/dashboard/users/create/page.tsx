@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { JSX } from "react";
 import { CreateUserForm } from "@/modules/users/presentation/forms/create-user-form";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>

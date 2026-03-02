@@ -12,7 +12,7 @@ import {
   isPublicRoute as isPublicRouteHelper,
   normalizePath,
   ROUTES,
-} from "@/shared/routes/routes";
+} from "@/shared/routing/routes";
 import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 export default async function proxy(req: NextRequest): Promise<NextResponse> {

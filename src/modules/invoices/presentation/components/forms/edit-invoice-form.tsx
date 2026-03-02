@@ -21,7 +21,7 @@ import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { CENTS_IN_DOLLAR } from "@/shared/primitives/money/money.constants";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { FormActionRow } from "@/ui/forms/components/layout/form-action-row";
 import { useAutoHideAlert } from "@/ui/hooks/useAutoHideAlert";
 import { ServerMessage } from "@/ui/molecules/server-message";

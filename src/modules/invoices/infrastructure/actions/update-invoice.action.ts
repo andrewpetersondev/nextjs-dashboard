@@ -25,7 +25,7 @@ import {
   selectSparseFieldErrors,
   toDenseFieldErrorMap,
 } from "@/shared/forms/logic/mappers/field-error-map.mapper";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 // Publish "invoice updated" domain event

@@ -13,8 +13,8 @@ import type { LoginField } from "@/modules/auth/presentation/authn/transports/lo
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form";
-import { ROUTES } from "@/shared/routes/routes";
-import { PerformanceTracker } from "@/shared/telemetry/observability/performance-tracker";
+import { ROUTES } from "@/shared/routing/routes";
+import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 
 /**
  * Next.js Server Action for user authentication (login).

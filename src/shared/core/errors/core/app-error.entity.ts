@@ -12,7 +12,7 @@ import type { AppErrorMetadata } from "@/shared/core/errors/core/metadata/error-
 import {
   deepFreeze,
   validateAndMaybeSanitizeMetadata,
-} from "@/shared/core/errors/utils/app-error-entity.utils";
+} from "@/shared/core/errors/logic/app-error-entity.utils";
 
 /**
  * Standardized application error with transport-agnostic error codes.

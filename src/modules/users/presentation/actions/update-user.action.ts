@@ -22,7 +22,7 @@ import {
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { validateForm } from "@/shared/forms/server/validate-form";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 
 type DiffableUserFields = Pick<UserDto, "username" | "email" | "role">;
 

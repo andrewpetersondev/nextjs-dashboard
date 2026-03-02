@@ -8,7 +8,7 @@ import {
   HEADER_CONTENT_TYPE,
   HTTP_STATUS_NO_CONTENT,
 } from "@/shared/http/core/http-headers";
-import { ROUTES } from "@/shared/routes/routes";
+import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 const REFRESH_INTERVAL_MS = 60_000;

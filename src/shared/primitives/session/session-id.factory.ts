@@ -1,4 +1,4 @@
-import { createIdFactory } from "@/shared/primitives/id/id.factory";
+import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
 import {
   SESSION_ID_BRAND,
   type SessionId,
