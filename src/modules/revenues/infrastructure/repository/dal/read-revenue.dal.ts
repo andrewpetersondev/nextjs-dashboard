@@ -2,10 +2,10 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
+import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
-import type { RevenueId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,

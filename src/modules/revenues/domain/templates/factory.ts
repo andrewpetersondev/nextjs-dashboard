@@ -3,13 +3,13 @@ import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/re
 import { createRevenueDisplayEntity } from "@/modules/revenues/domain/factories/revenue-display.factory";
 import { MONTH_ORDER } from "@/modules/revenues/domain/revenue.constants";
 import type { RollingMonthData } from "@/modules/revenues/domain/revenue.types";
-import type { Period } from "@/shared/branding/brands";
 import {
   toPeriod,
   toRevenueId,
 } from "@/shared/branding/converters/id-converters";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

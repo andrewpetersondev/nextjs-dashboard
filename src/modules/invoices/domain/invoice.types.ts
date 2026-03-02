@@ -1,5 +1,8 @@
+import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
-import type { CustomerId, InvoiceId, Period } from "@/shared/branding/brands";
+import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Row for invoice table queries (with customer info).

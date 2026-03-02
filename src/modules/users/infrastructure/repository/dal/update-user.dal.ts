@@ -4,10 +4,10 @@ import type {
   UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { toUserEntity } from "@/modules/users/infrastructure/mappers/to-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { users } from "@/server/db/schema/users";
-import type { UserId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { normalizeUnknownError } from "@/shared/core/errors/factories/app-error.factory";

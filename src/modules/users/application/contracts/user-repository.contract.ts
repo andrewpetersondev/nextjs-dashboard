@@ -4,7 +4,7 @@ import type {
   UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
-import type { UserId } from "@/shared/branding/brands";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/results/result.types";
 

@@ -8,7 +8,8 @@ import { periodKey } from "@/modules/revenues/domain/time/period";
 import type { ApplyDeletionEffectsArgs } from "@/modules/revenues/events/deleted-invoice/types";
 import { updateRevenueRecord } from "@/modules/revenues/events/shared/revenue-mutations";
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
-import type { Period } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Applies deletion effects to revenue records.

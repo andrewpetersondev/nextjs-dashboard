@@ -1,16 +1,4 @@
 import { createBrand } from "@/shared/branding/brand";
-import {
-  CUSTOMER_ID_BRAND,
-  type CustomerId,
-  INVOICE_ID_BRAND,
-  type InvoiceId,
-  REVENUE_ID_BRAND,
-  type RevenueId,
-  SESSION_ID_BRAND,
-  type SessionId,
-  USER_ID_BRAND,
-  type UserId,
-} from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
@@ -71,7 +59,10 @@ const validateUuid = (
  * @typeParam B - The branded ID type
  * @returns A factory function that creates branded IDs from unknown values
  */
-const createIdFactory = <S extends symbol, B>(brand: S, label: string) => {
+export const createIdFactory = <S extends symbol, B>(
+  brand: S,
+  label: string,
+) => {
   return (value: unknown): Result<B, AppError> => {
     const result = validateUuid(value, label);
     if (!result.ok) {
@@ -80,63 +71,3 @@ const createIdFactory = <S extends symbol, B>(brand: S, label: string) => {
     return Ok(createBrand<string, S>(brand)(result.value) as B);
   };
 };
-
-/**
- * Creates a validated and branded CustomerId from an unknown value.
- *
- * @param value - The value to convert (must be a valid UUID)
- * @returns A Result containing the branded CustomerId or an AppError
- */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const createCustomerId = createIdFactory<
-  typeof CUSTOMER_ID_BRAND,
-  CustomerId
->(CUSTOMER_ID_BRAND, "CustomerId");
-
-/**
- * Creates a validated and branded InvoiceId from an unknown value.
- *
- * @param value - The value to convert (must be a valid UUID)
- * @returns A Result containing the branded InvoiceId or an AppError
- */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const createInvoiceId = createIdFactory<
-  typeof INVOICE_ID_BRAND,
-  InvoiceId
->(INVOICE_ID_BRAND, "InvoiceId");
-
-/**
- * Creates a validated and branded RevenueId from an unknown value.
- *
- * @param value - The value to convert (must be a valid UUID)
- * @returns A Result containing the branded RevenueId or an AppError
- */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const createRevenueId = createIdFactory<
-  typeof REVENUE_ID_BRAND,
-  RevenueId
->(REVENUE_ID_BRAND, "RevenueId");
-
-/**
- * Creates a validated and branded SessionId from an unknown value.
- *
- * @param value - The value to convert (must be a valid UUID)
- * @returns A Result containing the branded SessionId or an AppError
- */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const createSessionId = createIdFactory<
-  typeof SESSION_ID_BRAND,
-  SessionId
->(SESSION_ID_BRAND, "SessionId");
-
-/**
- * Creates a validated and branded UserId from an unknown value.
- *
- * @param value - The value to convert (must be a valid UUID)
- * @returns A Result containing the branded UserId or an AppError
- */
-// biome-ignore lint/nursery/useExplicitType: fix
-export const createUserId = createIdFactory<typeof USER_ID_BRAND, UserId>(
-  USER_ID_BRAND,
-  "UserId",
-);

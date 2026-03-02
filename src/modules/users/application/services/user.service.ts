@@ -10,9 +10,9 @@ import type {
   CreateUserData,
   EditUserData,
 } from "@/modules/users/domain/schemas/user.schema";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { toUserDto } from "@/modules/users/infrastructure/mappers/to-user-dto.mapper";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
-import type { UserId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { normalizeUnknownError } from "@/shared/core/errors/factories/app-error.factory";

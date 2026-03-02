@@ -1,6 +1,7 @@
 import type { invoices } from "@/server/db/schema/invoices";
-import type { Hash, Period } from "@/shared/branding/brands";
 import { toCustomerId } from "@/shared/branding/converters/id-converters";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
+import type { Period } from "@/shared/utilities/period/period.brand";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,

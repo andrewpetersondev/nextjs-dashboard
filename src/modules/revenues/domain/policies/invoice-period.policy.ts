@@ -3,8 +3,8 @@ import { isValid, parseISO } from "date-fns";
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { ISO_YEAR_MONTH_REGEX } from "@/modules/invoices/domain/invoice.constants";
 import { dateToPeriod } from "@/modules/revenues/domain/time/period";
-import type { Period } from "@/shared/branding/brands";
 import { toPeriod } from "@/shared/branding/converters/id-converters";
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Domain policy: safely extract the Period (first-of-month DATE) from an invoice date.

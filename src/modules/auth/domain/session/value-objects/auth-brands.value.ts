@@ -1,6 +1,5 @@
 import { type Brand, createBrand } from "@/shared/branding/brand";
 
-// Keep naming consistent with shared/branding/brands.ts
 export const UNIX_SECONDS_BRAND: unique symbol = Symbol("UnixSeconds");
 export type UnixSeconds = Brand<number, typeof UNIX_SECONDS_BRAND>;
 

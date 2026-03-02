@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Hash } from "@/shared/branding/brands";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 
 export interface HashingContract {
   /**

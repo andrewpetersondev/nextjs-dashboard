@@ -8,7 +8,7 @@ import type {
   DurationSeconds,
   TimeDeltaSeconds,
 } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
-import type { UserId } from "@/shared/branding/brands";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";

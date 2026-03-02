@@ -1,9 +1,9 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
+import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { revenues } from "@/server/db/schema/revenues";
-import type { RevenueId } from "@/shared/branding/brands";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,

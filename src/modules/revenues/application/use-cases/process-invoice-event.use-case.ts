@@ -9,7 +9,8 @@ import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/applicat
 import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import { checkInvoiceEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import type { Period } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Use case that standardizes processing of invoice-related events.

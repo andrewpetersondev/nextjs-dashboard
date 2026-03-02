@@ -3,7 +3,9 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { Period, RevenueId } from "@/shared/branding/brands";
+import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * RevenueRepositoryInterface

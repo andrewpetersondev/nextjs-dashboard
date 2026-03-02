@@ -21,7 +21,8 @@ import type {
 } from "@/modules/revenues/events/updated-invoice/types";
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
-import type { Period } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Extracts and validates the period and builds metadata with period string.

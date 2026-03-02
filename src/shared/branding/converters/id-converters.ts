@@ -12,24 +12,20 @@
  * See also: `toCustomerIdResult` / `toCustomerId` pattern used below.
  */
 
-import type {
-  CustomerId,
-  InvoiceId,
-  Period,
-  RevenueId,
-  SessionId,
-  UserId,
-} from "@/shared/branding/brands";
-import {
-  createCustomerId,
-  createInvoiceId,
-  createRevenueId,
-  createSessionId,
-  createUserId,
-} from "@/shared/branding/factories/id-factories";
+import { createCustomerId } from "@/modules/customers/domain/customer-id.factory";
+import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
+import { createInvoiceId } from "@/modules/invoices/domain/invoice-id.factory";
+import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
+import { createRevenueId } from "@/modules/revenues/domain/factories/revenue-id.factory";
+import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
+import { createUserId } from "@/modules/users/domain/user-id.factory";
 import { createPeriod } from "@/shared/branding/factories/period-factory";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/results/result.types";
+import type { Period } from "@/shared/utilities/period/period.brand";
+import type { SessionId } from "@/shared/utilities/sessions/session-id.brand";
+import { createSessionId } from "@/shared/utilities/sessions/session-id.factory";
 
 /**
  * Validate and convert an arbitrary value into a branded `CustomerId`.

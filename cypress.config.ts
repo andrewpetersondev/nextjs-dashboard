@@ -1,8 +1,8 @@
 // biome-ignore-all lint/nursery/useExplicitType: fix later
 
+import type {Hash} from "@/shared/utilities/hashing/hash.brand";
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
-import type { Hash } from "@/shared/branding/brands";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
 

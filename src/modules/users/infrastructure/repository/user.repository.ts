@@ -4,6 +4,7 @@ import type {
   UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { createUserDal } from "@/modules/users/infrastructure/repository/dal/create-user.dal";
 import { deleteUserDal } from "@/modules/users/infrastructure/repository/dal/delete-user.dal";
 import { readFilteredUsersDal } from "@/modules/users/infrastructure/repository/dal/read-filtered-users.dal";
@@ -11,7 +12,6 @@ import { readUserDal } from "@/modules/users/infrastructure/repository/dal/read-
 import { readUsersPageCountDal } from "@/modules/users/infrastructure/repository/dal/read-users-page-count.dal";
 import { updateUserDal } from "@/modules/users/infrastructure/repository/dal/update-user.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/results/result.types";
 

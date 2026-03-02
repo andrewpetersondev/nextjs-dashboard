@@ -1,7 +1,7 @@
 import "server-only";
 import type { HashingContract } from "@/server/crypto/hashing/hashing.contract";
 
-import type { Hash } from "@/shared/branding/brands";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 
 /**
  * Generic hashing service.

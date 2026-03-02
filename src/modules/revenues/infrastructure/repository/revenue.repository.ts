@@ -6,6 +6,7 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
+import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import { createRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/create-revenue.dal";
 import { deleteRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/delete.revenue.dal";
 import { findRevenueByPeriodDal } from "@/modules/revenues/infrastructure/repository/dal/find-revenue-by-period.dal";
@@ -15,7 +16,8 @@ import { updateRevenueDal } from "@/modules/revenues/infrastructure/repository/d
 import { upsertRevenueByPeriod } from "@/modules/revenues/infrastructure/repository/dal/upsert-by-period.revenue.dal";
 import { upsertRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/upsert-revenue.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
-import type { Period, RevenueId } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 export class RevenueRepository implements RevenueRepositoryContract {
   /**

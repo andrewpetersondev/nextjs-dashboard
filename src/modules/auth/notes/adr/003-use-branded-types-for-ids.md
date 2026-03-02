@@ -16,7 +16,6 @@ We will use "Branded Types" (also known as opaque types or flavored types) for a
 
 - Branded types are created by intersecting a base type (e.g., `string`) with a unique tag.
 - Example: `export type UserId = string & { readonly __brand: "UserId" };`
-- These types are defined in a central location (`src/shared/branding/brands.ts`).
 - Type assertions (`as UserId`) should be used only at the boundaries (e.g., in mappers when converting from a database
   row).
 

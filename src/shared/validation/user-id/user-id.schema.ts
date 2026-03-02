@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { UserId } from "@/shared/branding/brands";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { toUserId } from "@/shared/branding/converters/id-converters";
 
 /**

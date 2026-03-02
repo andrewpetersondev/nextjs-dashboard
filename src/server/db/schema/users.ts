@@ -8,7 +8,8 @@
  */
 
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import type { Hash, UserId } from "@/shared/branding/brands";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 import {
   DEFAULT_USER_ROLE,
   USER_ROLES,

@@ -9,8 +9,8 @@ import {
   mergeWithTemplate,
 } from "@/modules/revenues/domain/templates/manager";
 import { mapRevenueEntityToDisplayEntity } from "@/modules/revenues/infrastructure/mappers/revenue-display.mapper";
-import type { Period } from "@/shared/branding/brands";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 export class GetRollingYearRevenuesUseCase {
   private readonly repository: RevenueRepositoryContract;

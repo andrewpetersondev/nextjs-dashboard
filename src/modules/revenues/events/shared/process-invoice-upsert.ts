@@ -6,7 +6,8 @@ import { periodKey } from "@/modules/revenues/domain/time/period";
 import type { ProcessInvoiceOptions } from "@/modules/revenues/events/shared/types";
 import { upsertRevenue } from "@/modules/revenues/events/shared/upsert-revenue";
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
-import type { Period } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Processes an invoice for revenue calculation.

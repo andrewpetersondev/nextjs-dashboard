@@ -1,5 +1,5 @@
 import bcryptjs from "bcryptjs";
-import type { Hash } from "@/shared/branding/brands";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 import { SEED_CONFIG } from "./constants";
 
 /**

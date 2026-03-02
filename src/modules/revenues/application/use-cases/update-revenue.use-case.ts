@@ -5,7 +5,7 @@ import type {
   RevenueEntity,
   RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
-import type { RevenueId } from "@/shared/branding/brands";
+import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import {
   makeAppError,

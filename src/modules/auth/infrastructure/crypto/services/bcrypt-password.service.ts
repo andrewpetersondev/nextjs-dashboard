@@ -1,7 +1,7 @@
 import "server-only";
 import bcryptjs from "bcryptjs";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
-import type { Hash } from "@/shared/branding/brands";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 
 /**
  * Technical implementation of password hashing using bcrypt.

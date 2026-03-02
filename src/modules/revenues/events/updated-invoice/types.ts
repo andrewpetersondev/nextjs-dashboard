@@ -3,7 +3,8 @@ import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.s
 import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/logging";
 import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { ExistingRevenueData } from "@/modules/revenues/events/shared/types";
-import type { Period } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Types of invoice changes that affect revenue.

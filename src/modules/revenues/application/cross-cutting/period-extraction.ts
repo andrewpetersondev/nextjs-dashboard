@@ -2,7 +2,8 @@ import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { logError } from "@/modules/revenues/application/cross-cutting/logging";
 import { extractPeriodFromInvoice } from "@/modules/revenues/domain/policies/invoice-period.policy";
-import type { Period } from "@/shared/branding/brands";
+
+import type { Period } from "@/shared/utilities/period/period.brand";
 
 /**
  * Extracts and validates the period from an invoice with structured error logging.

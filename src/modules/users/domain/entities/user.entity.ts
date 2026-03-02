@@ -1,6 +1,7 @@
 import "server-only";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 
-import type { Hash, UserId } from "@/shared/branding/brands";
+import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**

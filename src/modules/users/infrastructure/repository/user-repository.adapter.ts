@@ -5,8 +5,8 @@ import type {
   UpdateUserProps,
   UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { UserRepositoryImpl } from "@/modules/users/infrastructure/repository/user.repository";
-import type { UserId } from "@/shared/branding/brands";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/results/result.types";
 

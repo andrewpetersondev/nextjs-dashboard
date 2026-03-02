@@ -6,10 +6,10 @@ import type {
   InvoiceFormEntity,
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 import { rawDbToInvoiceEntity } from "@/modules/invoices/infrastructure/adapters/mappers/invoice.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { invoices } from "@/server/db/schema/invoices";
-import type { InvoiceId } from "@/shared/branding/brands";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 
 /**

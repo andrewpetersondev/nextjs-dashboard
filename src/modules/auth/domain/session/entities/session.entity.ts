@@ -7,7 +7,7 @@ import {
   calculateAgeSec,
   calculateTimeLeftSec,
 } from "@/modules/auth/domain/session/value-objects/time.value";
-import type { UserId } from "@/shared/branding/brands";
+import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**
