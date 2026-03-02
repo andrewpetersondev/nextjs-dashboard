@@ -5,8 +5,8 @@ import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import type { HashingService } from "@/server/crypto/hashing/hashing.service";
 import { Err, Ok } from "@/shared/core/results/result";
+import type { Hash } from "@/shared/primitives/hash/hash.brand";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
-import type { Hash } from "@/shared/utilities/hashing/hash.brand";
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("UserService", () => {

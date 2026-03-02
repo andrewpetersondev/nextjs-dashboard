@@ -1,7 +1,7 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
-import type { Period } from "@/shared/utilities/period/period.brand";
-import { createPeriod } from "@/shared/utilities/period/period.factory";
+import type { Result } from "@/shared/core/results/result.dto";
+import type { Period } from "@/shared/primitives/period/period.brand";
+import { createPeriod } from "@/shared/primitives/period/period.factory";
 
 /**
  * Normalize and validate an input into a branded `Period`.

@@ -12,7 +12,7 @@ import {
 import type { RevenueRow } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Validates a revenue row from the database.

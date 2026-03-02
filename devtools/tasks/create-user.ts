@@ -1,6 +1,6 @@
 import { users } from "@/server/db/schema/users";
 
-import type { Hash } from "@/shared/utilities/hashing/hash.brand";
+import type { Hash } from "@/shared/primitives/hash/hash.brand";
 import {
   USER_ROLE,
   type UserRole,

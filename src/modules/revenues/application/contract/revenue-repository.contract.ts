@@ -5,7 +5,7 @@ import type {
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * RevenueRepositoryInterface

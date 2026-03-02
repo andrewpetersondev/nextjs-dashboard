@@ -2,7 +2,7 @@ import type { SessionStoreContract } from "@/modules/auth/application/session/co
 import { AUTH_LOG_CONTEXTS } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

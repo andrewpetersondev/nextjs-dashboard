@@ -4,7 +4,7 @@ import type { LogMetadata } from "@/modules/revenues/application/cross-cutting/l
 import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
 import type { ExistingRevenueData } from "@/modules/revenues/events/shared/types";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Types of invoice changes that affect revenue.

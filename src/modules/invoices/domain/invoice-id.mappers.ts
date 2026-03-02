@@ -1,7 +1,7 @@
 import { createInvoiceId } from "@/modules/invoices/domain/invoice-id.factory";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 /**
  * Validate and convert an arbitrary value into a branded `InvoiceId`.

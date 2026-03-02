@@ -15,8 +15,8 @@ import type { InvoiceRepository } from "@/modules/invoices/infrastructure/reposi
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
-import { CENTS_IN_DOLLAR } from "@/shared/utilities/money/types";
+import type { Result } from "@/shared/core/results/result.dto";
+import { CENTS_IN_DOLLAR } from "@/shared/primitives/money/money.constants";
 
 export class InvoiceService {
   private readonly repo: InvoiceRepository;

@@ -22,7 +22,7 @@ import type {
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Extracts and validates the period and builds metadata with period string.

@@ -1,6 +1,6 @@
 import { periodKey } from "@/modules/revenues/domain/time/period";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Encodes a Date to ISO date string (YYYY-MM-DD) for transport.

@@ -1,7 +1,7 @@
 import type { LogLevel } from "@/shared/core/config/env-schemas";
+import type { AppErrorSeverity } from "@/shared/core/errors/core/app-error.dto";
 import { isAppError } from "@/shared/core/errors/core/app-error.entity";
-import type { AppErrorSeverity } from "@/shared/core/errors/core/app-error.types";
-import type { SafeErrorShape } from "@/shared/telemetry/logging/core/logger.types";
+import type { SafeErrorShape } from "@/shared/telemetry/logging/core/logger.dto";
 
 /**
  * Normalize any `unknown` error into a safe, structured shape for logging.

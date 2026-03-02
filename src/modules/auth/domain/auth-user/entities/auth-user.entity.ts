@@ -1,6 +1,6 @@
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 
-import type { Hash } from "@/shared/utilities/hashing/hash.brand";
+import type { Hash } from "@/shared/primitives/hash/hash.brand";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 
 /**

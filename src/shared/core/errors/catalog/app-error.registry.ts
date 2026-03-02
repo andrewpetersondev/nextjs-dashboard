@@ -3,7 +3,7 @@ import {
   APP_ERROR_LAYER,
   APP_ERROR_SEVERITY,
   type AppErrorDefinition,
-} from "@/shared/core/errors/core/app-error.types";
+} from "@/shared/core/errors/core/app-error.dto";
 import {
   ConflictErrorMetadataSchema,
   InfrastructureErrorMetadataSchema,

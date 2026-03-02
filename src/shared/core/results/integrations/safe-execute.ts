@@ -4,7 +4,7 @@ import {
 } from "@/shared/core/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

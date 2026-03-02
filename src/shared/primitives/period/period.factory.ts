@@ -3,11 +3,11 @@ import { createBrand } from "@/shared/core/branding/brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import {
   PERIOD_BRAND,
   type Period,
-} from "@/shared/utilities/period/period.brand";
+} from "@/shared/primitives/period/period.brand";
 
 /**
  * Normalizes a Date to the first day of its month in UTC.

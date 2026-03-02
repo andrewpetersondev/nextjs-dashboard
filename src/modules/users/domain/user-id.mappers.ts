@@ -1,7 +1,7 @@
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { createUserId } from "@/modules/users/domain/user-id.factory";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 /**
  * Validate and convert an arbitrary value into a branded `UserId`.

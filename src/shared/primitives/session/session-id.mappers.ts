@@ -1,7 +1,7 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
-import type { SessionId } from "@/shared/utilities/sessions/session-id.brand";
-import { createSessionId } from "@/shared/utilities/sessions/session-id.factory";
+import type { Result } from "@/shared/core/results/result.dto";
+import type { SessionId } from "@/shared/primitives/session/session-id.brand";
+import { createSessionId } from "@/shared/primitives/session/session-id.factory";
 
 /**
  * Validate and convert an arbitrary value into a branded `SessionId`.

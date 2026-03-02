@@ -1,8 +1,8 @@
-import { createIdFactory } from "@/shared/utilities/ids/id.factory";
+import { createIdFactory } from "@/shared/primitives/id/id.factory";
 import {
   SESSION_ID_BRAND,
   type SessionId,
-} from "@/shared/utilities/sessions/session-id.brand";
+} from "@/shared/primitives/session/session-id.brand";
 
 /**
  * Creates a validated and branded SessionId from an unknown value.

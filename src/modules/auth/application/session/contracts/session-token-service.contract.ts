@@ -3,7 +3,7 @@ import type { IssueTokenCommand } from "@/modules/auth/application/session/dtos/
 import type { IssuedTokenDto } from "@/modules/auth/application/session/dtos/responses/issue-token.dto";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 /**
  * Application contract for session token operations.

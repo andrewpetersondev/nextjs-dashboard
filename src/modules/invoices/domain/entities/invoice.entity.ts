@@ -2,7 +2,7 @@ import type { CustomerId } from "@/modules/customers/domain/types/customer-id.br
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Domain model for Invoice.

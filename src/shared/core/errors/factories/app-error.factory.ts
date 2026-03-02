@@ -3,11 +3,11 @@ import {
   type AppErrorKey,
   type AppErrorMetadataValueByKey,
 } from "@/shared/core/errors/catalog/app-error.registry";
-import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type {
   AppErrorParams,
   UnexpectedErrorParams,
-} from "@/shared/core/errors/core/app-error.types";
+} from "@/shared/core/errors/core/app-error.dto";
+import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import {
   buildUnknownErrorMetadata,
   normalizeCause,

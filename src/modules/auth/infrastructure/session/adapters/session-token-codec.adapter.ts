@@ -4,7 +4,7 @@ import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/d
 import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/strategies/session-jwt-crypto.strategy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 /**
  * Adapter for encoding and decoding session JWTs.

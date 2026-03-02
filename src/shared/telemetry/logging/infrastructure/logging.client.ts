@@ -9,7 +9,7 @@ import type {
   LogEventContext,
   LogOperationData,
   SerializedError,
-} from "@/shared/telemetry/logging/core/logger.types";
+} from "@/shared/telemetry/logging/core/logger.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import { AbstractLogger } from "@/shared/telemetry/logging/infrastructure/abstract-logger";
 import { toSafeErrorShape } from "@/shared/telemetry/logging/infrastructure/logging.mappers";

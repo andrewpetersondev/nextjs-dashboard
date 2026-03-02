@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Hash } from "@/shared/utilities/hashing/hash.brand";
+import type { Hash } from "@/shared/primitives/hash/hash.brand";
 
 /**
  * Pure mapping to brand a trusted hash string.

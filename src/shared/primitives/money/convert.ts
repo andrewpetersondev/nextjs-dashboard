@@ -1,10 +1,9 @@
 import {
   CENTS_IN_DOLLAR,
-  type Cents,
-  type Dollars,
   USD_CURRENCY,
   USD_LOCALE,
-} from "@/shared/utilities/money/types";
+} from "@/shared/primitives/money/money.constants";
+import type { Cents, Dollars } from "@/shared/primitives/money/types";
 
 /**
  * Converts monetary values from database cents to display dollars.

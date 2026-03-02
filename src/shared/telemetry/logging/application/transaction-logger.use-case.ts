@@ -3,6 +3,8 @@ import "server-only";
 import type { TransactionLoggingContext } from "@/shared/telemetry/logging/application/transaction-logging-context.tokens";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
+// TODO: RENAME THIS FILE
+
 /**
  * Configuration for the transaction lifecycle logger.
  */

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { PgErrorMetadata } from "@/shared/core/errors/server/adapters/postgres/db-error.types";
+import type { PgErrorMetadata } from "@/shared/core/errors/server/adapters/postgres/db-error.dto";
 import type { PgCode } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
 
 /**

@@ -13,7 +13,7 @@ import { RequireSessionUseCase } from "@/modules/auth/application/session/querie
 import type { TerminateSessionReason } from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 /**
  * Concrete implementation of the SessionServiceContract.

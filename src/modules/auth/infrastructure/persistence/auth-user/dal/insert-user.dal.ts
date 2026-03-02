@@ -7,7 +7,7 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 import { executeDalResult } from "@/shared/core/errors/server/adapters/dal/execute-dal-result";
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-codes";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

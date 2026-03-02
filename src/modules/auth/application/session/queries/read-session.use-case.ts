@@ -17,7 +17,7 @@ import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { safeExecute } from "@/shared/core/results/integrations/safe-execute";
 import { Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import { nowInSeconds } from "@/shared/time/time.constants";
 

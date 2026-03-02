@@ -13,7 +13,7 @@ import { readUsersPageCountDal } from "@/modules/users/infrastructure/repository
 import { updateUserDal } from "@/modules/users/infrastructure/repository/dal/update-user.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 export class UserRepositoryImpl {
   protected readonly db: AppDatabase;

@@ -1,6 +1,6 @@
 import type { MonthName } from "@/modules/revenues/domain/revenue.constants";
-import type { Cents, Dollars } from "@/shared/utilities/money/types";
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Cents, Dollars } from "@/shared/primitives/money/types";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 // Standardized sources of revenue data.
 export const REVENUE_SOURCES = [

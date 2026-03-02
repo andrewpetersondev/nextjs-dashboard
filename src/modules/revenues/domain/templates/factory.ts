@@ -6,8 +6,8 @@ import type { RollingMonthData } from "@/modules/revenues/domain/revenue.types";
 import { toRevenueId } from "@/modules/revenues/domain/revenue-id.mappers";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import type { Period } from "@/shared/utilities/period/period.brand";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import type { Period } from "@/shared/primitives/period/period.brand";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Internal helper: construct a default RevenueEntity for a given period.

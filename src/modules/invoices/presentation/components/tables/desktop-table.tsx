@@ -7,7 +7,7 @@ import {
   UpdateInvoiceLink,
 } from "@/modules/invoices/presentation/components/invoice-links";
 import { InvoiceStatusComponent } from "@/modules/invoices/presentation/components/tables/status";
-import { formatCurrency } from "@/shared/utilities/money/convert";
+import { formatCurrency } from "@/shared/primitives/money/convert";
 
 export const DesktopTable = ({
   invoices,

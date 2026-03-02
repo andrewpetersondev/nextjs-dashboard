@@ -4,7 +4,7 @@ import type { RevenueApplicationService } from "@/modules/revenues/application/s
 import { ProcessInvoiceEventUseCase } from "@/modules/revenues/application/use-cases/process-invoice-event.use-case";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Processes an invoice event by delegating to the ProcessInvoiceEventUseCase.

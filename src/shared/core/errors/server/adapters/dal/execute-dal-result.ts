@@ -7,7 +7,7 @@ import type {
 } from "@/shared/core/errors/server/adapters/dal/dal-context.schema";
 import { normalizePgError } from "@/shared/core/errors/server/adapters/postgres/normalize-pg-error";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**

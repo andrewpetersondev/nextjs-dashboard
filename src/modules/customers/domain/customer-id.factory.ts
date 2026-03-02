@@ -2,7 +2,7 @@ import {
   CUSTOMER_ID_BRAND,
   type CustomerId,
 } from "@/modules/customers/domain/types/customer-id.brand";
-import { createIdFactory } from "@/shared/utilities/ids/id.factory";
+import { createIdFactory } from "@/shared/primitives/id/id.factory";
 
 /**
  * Creates a validated and branded CustomerId from an unknown value.

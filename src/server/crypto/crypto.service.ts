@@ -1,7 +1,7 @@
 import "server-only";
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 
-import type { Hash } from "@/shared/utilities/hashing/hash.brand";
+import type { Hash } from "@/shared/primitives/hash/hash.brand";
 
 /**
  * Small facade over shared crypto capabilities.

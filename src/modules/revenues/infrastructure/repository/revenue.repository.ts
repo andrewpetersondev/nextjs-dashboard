@@ -17,7 +17,7 @@ import { upsertRevenueByPeriod } from "@/modules/revenues/infrastructure/reposit
 import { upsertRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/upsert-revenue.dal";
 import type { AppDatabase } from "@/server/db/db.connection";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 export class RevenueRepository implements RevenueRepositoryContract {
   /**

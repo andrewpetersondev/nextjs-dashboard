@@ -13,8 +13,8 @@ import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import type { Result } from "@/shared/core/results/result.dto";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Converts a date to the first day of the same month.

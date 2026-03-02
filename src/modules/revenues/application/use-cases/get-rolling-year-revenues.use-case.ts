@@ -1,5 +1,4 @@
 import "server-only";
-
 import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
@@ -9,8 +8,8 @@ import {
   mergeWithTemplate,
 } from "@/modules/revenues/domain/templates/manager";
 import { mapRevenueEntityToDisplayEntity } from "@/modules/revenues/infrastructure/mappers/revenue-display.mapper";
+import type { Period } from "@/shared/primitives/period/period.brand";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
-import type { Period } from "@/shared/utilities/period/period.brand";
 
 export class GetRollingYearRevenuesUseCase {
   private readonly repository: RevenueRepositoryContract;

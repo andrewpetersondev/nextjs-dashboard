@@ -17,7 +17,7 @@ import {
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 import { customers } from "@/server/db/schema/customers";
 import { revenues } from "@/server/db/schema/revenues";
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 // biome-ignore lint/nursery/useExplicitType: fix
 export const statusEnum = pgEnum("status", INVOICE_STATUSES);

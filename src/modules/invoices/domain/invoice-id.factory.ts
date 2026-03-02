@@ -2,7 +2,7 @@ import {
   INVOICE_ID_BRAND,
   type InvoiceId,
 } from "@/modules/invoices/domain/types/invoice-id.brand";
-import { createIdFactory } from "@/shared/utilities/ids/id.factory";
+import { createIdFactory } from "@/shared/primitives/id/id.factory";
 
 /**
  * Creates a validated and branded InvoiceId from an unknown value.

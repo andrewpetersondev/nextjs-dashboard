@@ -5,7 +5,7 @@ import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.const
 import { readInvoicesSummaryAction } from "@/modules/invoices/infrastructure/actions/read-invoices-summary.action";
 import { readLatestInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-latest-invoices.action";
 import { getAppDb } from "@/server/db/db.connection";
-import { formatCurrency } from "@/shared/utilities/money/convert";
+import { formatCurrency } from "@/shared/primitives/money/convert";
 import {
   ADMIN_ROLE,
   GUEST_ROLE,

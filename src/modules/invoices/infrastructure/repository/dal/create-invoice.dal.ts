@@ -11,7 +11,7 @@ import { invoices } from "@/server/db/schema/invoices";
 import { revenues } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Creates a new invoice in the database.

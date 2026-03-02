@@ -1,10 +1,6 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
-import type {
-  ErrType,
-  OkType,
-  Result,
-} from "@/shared/core/results/result.types";
+import type { ErrType, OkType, Result } from "@/shared/core/results/result.dto";
 
 /**
  * Collects all successful results from the provided array, returning a combined `Result`.

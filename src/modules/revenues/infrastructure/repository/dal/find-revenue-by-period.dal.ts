@@ -9,8 +9,8 @@ import {
   makeAppError,
   makeUnexpectedError,
 } from "@/shared/core/errors/factories/app-error.factory";
-import type { Period } from "@/shared/utilities/period/period.brand";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import type { Period } from "@/shared/primitives/period/period.brand";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Finds a revenue record by period.

@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionServiceContract } from "@/modules/auth/application/session/contracts/session-service.contract";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 
 /**
  * Orchestrates the logout process.

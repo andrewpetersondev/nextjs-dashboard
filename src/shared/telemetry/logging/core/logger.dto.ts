@@ -3,7 +3,7 @@ import type { AppErrorKey } from "@/shared/core/errors/catalog/app-error.registr
 import type {
   AppErrorJsonDto,
   AppErrorSeverity,
-} from "@/shared/core/errors/core/app-error.types";
+} from "@/shared/core/errors/core/app-error.dto";
 
 export type ImmutableRecord = Readonly<Record<string, unknown>>;
 

@@ -9,7 +9,7 @@ import type { ApplyDeletionEffectsArgs } from "@/modules/revenues/events/deleted
 import { updateRevenueRecord } from "@/modules/revenues/events/shared/revenue-mutations";
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Applies deletion effects to revenue records.

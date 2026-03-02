@@ -3,7 +3,7 @@ import type {
   ErrResult,
   OkResult,
   Result,
-} from "@/shared/core/results/result.types";
+} from "@/shared/core/results/result.dto";
 
 /**
  * Freezes an object to prevent mutation (shallow).

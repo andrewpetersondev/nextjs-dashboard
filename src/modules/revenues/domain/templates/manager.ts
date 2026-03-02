@@ -11,7 +11,7 @@ import { toIntervalDuration } from "@/modules/revenues/domain/time/interval-dura
 import { calculateDateRange } from "@/modules/revenues/domain/time/range";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/factories/app-error.factory";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Private helper to compute the validated template.

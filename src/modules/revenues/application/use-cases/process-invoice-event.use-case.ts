@@ -10,7 +10,7 @@ import type { RevenueApplicationService } from "@/modules/revenues/application/s
 import { checkInvoiceEligibility } from "@/modules/revenues/domain/guards/invoice-eligibility.guard";
 import type { BaseInvoiceEvent } from "@/server/events/invoice/invoice-event.types";
 
-import type { Period } from "@/shared/utilities/period/period.brand";
+import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
  * Use case that standardizes processing of invoice-related events.

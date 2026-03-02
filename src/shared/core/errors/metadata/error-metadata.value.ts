@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { PgErrorMetadata } from "@/shared/core/errors/server/adapters/postgres/db-error.types";
+import type { PgErrorMetadata } from "@/shared/core/errors/server/adapters/postgres/db-error.dto";
 
 export type ValidationErrorMetadata = Readonly<{
   readonly field?: string;

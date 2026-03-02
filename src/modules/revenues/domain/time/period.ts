@@ -1,6 +1,6 @@
 import { format } from "date-fns";
-import type { Period } from "@/shared/utilities/period/period.brand";
-import { toPeriod } from "@/shared/utilities/period/period.mappers";
+import type { Period } from "@/shared/primitives/period/period.brand";
+import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
  * Converts a Date to a branded Period (first-of-month Date).

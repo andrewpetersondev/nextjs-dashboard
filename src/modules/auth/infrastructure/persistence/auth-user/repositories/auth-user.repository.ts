@@ -12,7 +12,7 @@ import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/results/result";
-import type { Result } from "@/shared/core/results/result.types";
+import type { Result } from "@/shared/core/results/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 import type { UserRole } from "@/shared/validation/user-role/user-role.constants";
 

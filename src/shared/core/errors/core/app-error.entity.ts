@@ -7,7 +7,7 @@ import type {
   AppErrorLayer,
   AppErrorParams,
   AppErrorSeverity,
-} from "@/shared/core/errors/core/app-error.types";
+} from "@/shared/core/errors/core/app-error.dto";
 import type { AppErrorMetadata } from "@/shared/core/errors/metadata/error-metadata.value";
 import {
   deepFreeze,
