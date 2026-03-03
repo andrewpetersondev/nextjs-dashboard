@@ -13,7 +13,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @param fn - Async function transforming value into Result.
  * @returns A function that accepts a Result and returns a Promise resolving to Result with transformed value or errors.
  */
-export function flatMapAsync<
+function _flatMapAsync<
   TValue,
   TNextValue,
   TError extends AppError,
@@ -42,7 +42,7 @@ export function flatMapAsync<
  * @param mapError - Maps unknown errors to TSideError.
  * @returns A function that accepts a Result and returns a Promise resolving to new Result with transformed or error value.
  */
-export function flatMapSafeAsync<
+function _flatMapSafeAsync<
   TValue,
   TNextValue,
   TError extends AppError,
@@ -77,7 +77,7 @@ export function flatMapSafeAsync<
  * @param fn - Async function to transform value.
  * @returns A function that accepts a Result and returns a Promise resolving to transformed Result or original error.
  */
-export function mapAsync<TValue, TNextValue, TError extends AppError>(
+function _mapAsync<TValue, TNextValue, TError extends AppError>(
   fn: (v: TValue) => Promise<TNextValue>,
 ): (r: Result<TValue, TError>) => Promise<Result<TNextValue, TError>> {
   return function mapAsyncInner(
@@ -96,7 +96,7 @@ export function mapAsync<TValue, TNextValue, TError extends AppError>(
  * @param fn - Transforms original error to new error asynchronously.
  * @returns A function that accepts a Result and returns a Promise resolving to transformed error or original value.
  */
-export function mapErrAsync<
+function _mapErrAsync<
   TValue,
   TError extends AppError,
   TNextError extends AppError,
@@ -121,7 +121,7 @@ export function mapErrAsync<
  * @param mapError - Handles unexpected errors.
  * @returns A function that accepts a Result and returns a Promise resolving to Result with transformed error or value.
  */
-export function mapErrSafeAsync<
+function _mapErrSafeAsync<
   TValue,
   TError extends AppError,
   TNextError extends AppError,
@@ -158,7 +158,7 @@ export function mapErrSafeAsync<
  * @param mapError - Maps exceptions during execution.
  * @returns A function that accepts a Result and returns a Promise resolving to new Result with transformed value or error.
  */
-export function mapSafeAsync<
+function _mapSafeAsync<
   TValue,
   TNextValue,
   TError extends AppError,
@@ -186,7 +186,7 @@ export function mapSafeAsync<
 /**
  * Step function transforming Result<TValue, TError> → Result<TNextValue, TNextError>.
  */
-export type PipeStep<
+type PipeStep<
   TValue,
   TNextValue,
   TError extends AppError,
@@ -195,7 +195,7 @@ export type PipeStep<
   r: Result<TValue, TError>,
 ) => Result<TNextValue, TNextError> | Promise<Result<TNextValue, TNextError>>;
 
-export async function pipeAsync<
+async function _pipeAsync<
   TValue,
   TNextValue,
   TError extends AppError,
@@ -205,7 +205,7 @@ export async function pipeAsync<
   step1: PipeStep<TValue, TNextValue, TError, TNextError>,
 ): Promise<Result<TNextValue, TError | TNextError>>;
 
-export async function pipeAsync<
+async function _pipeAsync<
   TValue,
   TValue2,
   TValue3,
@@ -218,7 +218,7 @@ export async function pipeAsync<
   step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
 ): Promise<Result<TValue3, TError | TError2 | TError3>>;
 
-export async function pipeAsync<
+async function _pipeAsync<
   TValue,
   TValue2,
   TValue3,
@@ -234,7 +234,7 @@ export async function pipeAsync<
   step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
 ): Promise<Result<TValue4, TError | TError2 | TError3 | TError4>>;
 
-export async function pipeAsync<
+async function _pipeAsync<
   TValue,
   TValue2,
   TValue3,
@@ -259,7 +259,7 @@ export async function pipeAsync<
   >,
 ): Promise<Result<TValue5, TError | TError2 | TError3 | TError4 | TError5>>;
 
-export async function pipeAsync<E extends AppError>(
+async function _pipeAsync<E extends AppError>(
   // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
   seed: Result<any, E>,
   // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
@@ -296,7 +296,7 @@ export async function pipeAsync<E extends AppError>(
  * @param fn - Async function to execute with value.
  * @returns A function that accepts a Result and returns a Promise resolving to same Result.
  */
-export function tapAsync<TValue, TError extends AppError>(
+function _tapAsync<TValue, TError extends AppError>(
   fn: (v: TValue) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError>> {
   return function tapAsyncInner(
@@ -319,7 +319,7 @@ export function tapAsync<TValue, TError extends AppError>(
  * @param mapError - Maps thrown errors to TSideError.
  * @returns A function that accepts a Result and returns a Promise resolving to same Result or wrapping error.
  */
-export function tapSafeAsync<
+function _tapSafeAsync<
   TValue,
   TError extends AppError,
   TSideError extends AppError,
@@ -350,7 +350,7 @@ export function tapSafeAsync<
  * @param fn - Async function to process error.
  * @returns A function that accepts a Result and returns a Promise resolving to unchanged Result.
  */
-export function tapErrAsync<TValue, TError extends AppError>(
+function _tapErrAsync<TValue, TError extends AppError>(
   fn: (e: TError) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError>> {
   return function tapErrAsyncInner(
@@ -373,7 +373,7 @@ export function tapErrAsync<TValue, TError extends AppError>(
  * @param mapError - Transforms unknown errors.
  * @returns A function that accepts a Result and returns a Promise resolving to Result with original value or transformed error.
  */
-export function tapErrSafeAsync<
+function _tapErrSafeAsync<
   TValue,
   TError extends AppError,
   TSideError extends AppError,
@@ -405,7 +405,7 @@ export function tapErrSafeAsync<
  * @returns Promise resolving to value or rejecting with error.
  * @throws Throws error if result is not ok.
  */
-export function toPromiseOrThrow<TValue, TError extends AppError>(
+function _toPromiseOrThrow<TValue, TError extends AppError>(
   r: Result<TValue, TError>,
 ): Promise<TValue> {
   if (r.ok) {

@@ -10,7 +10,7 @@ import type { ErrType, OkType, Result } from "@/shared/core/result/result.dto";
  * @param results - An array of `Result` objects to process.
  * @returns A `Result` containing an array of all successful values (`Ok`) or the first encountered error (`Err`).
  */
-export function collectAll<T, E extends AppError>(
+function _collectAll<T, E extends AppError>(
   results: readonly Result<T, E>[],
 ): Result<readonly T[], E> {
   const acc: T[] = [];
@@ -31,7 +31,7 @@ export function collectAll<T, E extends AppError>(
  * @param source - An iterable of `Result<T, E>` to collect.
  * @returns `Ok` with a readonly array of all collected values or the first encountered `Err`.
  */
-export function collectAllLazy<T, E extends AppError>(
+function _collectAllLazy<T, E extends AppError>(
   source: Iterable<Result<T, E>>,
 ): Result<readonly T[], E> {
   const acc: T[] = [];
@@ -53,7 +53,7 @@ export function collectAllLazy<T, E extends AppError>(
  * @param results - A variadic list of `Result` objects to combine.
  * @returns A `Result` containing a readonly tuple of all `Ok` values or the first `Err`.
  */
-export function collectTuple<
+function _collectTuple<
   E extends AppError,
   Tt extends readonly Result<unknown, E>[],
 >(...results: Tt): Result<{ readonly [K in keyof Tt]: OkType<Tt[K]> }, E> {
@@ -75,9 +75,7 @@ export function collectTuple<
  * @param results - A variadic list of `Result` objects to combine.
  * @returns A `Result` containing either a readonly tuple of all successful values or the first occurred `Err`.
  */
-export function collectTupleHetero<
-  Tt extends readonly Result<unknown, AppError>[],
->(
+function _collectTupleHetero<Tt extends readonly Result<unknown, AppError>[]>(
   ...results: Tt
 ): Result<{ readonly [K in keyof Tt]: OkType<Tt[K]> }, ErrType<Tt[number]>> {
   const acc: unknown[] = [];
@@ -102,7 +100,7 @@ export function collectTupleHetero<
  * @param onEmpty - A callback that produces a fallback error when no successful result is found.
  * @returns The first `Result` with `ok: true`, or a fallback `Err` produced by `onEmpty`.
  */
-export function firstOkOrElse<T, E extends AppError>(
+function _firstOkOrElse<T, E extends AppError>(
   onEmpty: () => E,
 ): (results: readonly Result<T, E>[]) => Result<T, E> {
   return function firstOkOrElseInner(
@@ -127,7 +125,7 @@ export function firstOkOrElse<T, E extends AppError>(
  * @param source - An iterable of `Result<T, E>` to process.
  * @returns A generator that yields `T` values and returns `Result<void, E>`.
  */
-export function* iterateOk<T, E extends AppError>(
+function* _iterateOk<T, E extends AppError>(
   source: Iterable<Result<T, E>>,
 ): Generator<T, Result<void, E>, unknown> {
   for (const r of source) {

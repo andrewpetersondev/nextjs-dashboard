@@ -11,7 +11,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @param mapError - A callback that maps any thrown value to a `Te` error.
  * @returns A `Result<Tv, Te>` which is `Ok` with the function return value or `Err` with the mapped error.
  */
-export function tryCatch<Tv, Te extends AppError>(
+function _tryCatch<Tv, Te extends AppError>(
   fn: () => Tv,
   mapError: (e: unknown) => Te,
 ): Result<Tv, Te> {
@@ -31,7 +31,7 @@ export function tryCatch<Tv, Te extends AppError>(
  * @param onNull - A callback that produces a `Te` error when `v` is `null` or `undefined`.
  * @returns `Ok(v)` when `v` is non-null/undefined, otherwise `Err(onNull())`.
  */
-export function fromNullable<Tv, Te extends AppError>(
+function _fromNullable<Tv, Te extends AppError>(
   v: Tv | null | undefined,
   onNull: () => Te,
 ): Result<Tv, Te> {
@@ -49,7 +49,7 @@ export function fromNullable<Tv, Te extends AppError>(
  * @param onFail - A function that produces a `Te` error when the predicate returns `false`.
  * @returns `Ok(value)` if `predicate(value)` is `true`, otherwise `Err(onFail(value))`.
  */
-export function fromPredicate<Tv, Te extends AppError>(
+function _fromPredicate<Tv, Te extends AppError>(
   value: Tv,
   predicate: (v: Tv) => boolean,
   onFail: (v: Tv) => Te,
@@ -68,7 +68,7 @@ export function fromPredicate<Tv, Te extends AppError>(
  * @param onFail - A function that produces a `Te` error when the guard fails.
  * @returns `Ok(value)` typed as `To` when the guard passes, otherwise `Err(onFail(value))`.
  */
-export function fromGuard<Ti, To extends Ti, Te extends AppError>(
+function _fromGuard<Ti, To extends Ti, Te extends AppError>(
   value: Ti,
   guard: (v: Ti) => v is To,
   onFail: (v: Ti) => Te,
@@ -84,7 +84,7 @@ export function fromGuard<Ti, To extends Ti, Te extends AppError>(
  * @param onFalse - A thunk that produces the `TError` error when `condition` is `false`.
  * @returns `Ok(true)` when `condition` is `true`, otherwise `Err(onFalse())`.
  */
-export function fromCondition<TError extends AppError>(
+function _fromCondition<TError extends AppError>(
   condition: boolean,
   onFalse: () => TError,
 ): Result<boolean, TError> {
@@ -100,7 +100,7 @@ export function fromCondition<TError extends AppError>(
  * @param mapError - Maps unknown errors to error type.
  * @returns Promise resolving to Result with value or error.
  */
-export async function tryCatchAsync<TValue, TError extends AppError>(
+async function _tryCatchAsync<TValue, TError extends AppError>(
   fn: () => Promise<TValue>,
   mapError: (e: unknown) => TError,
 ): Promise<Result<TValue, TError>> {
