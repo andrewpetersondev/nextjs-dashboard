@@ -5,24 +5,28 @@ patterns: src/modules/**/*.ts
 
 # Clean Architecture Standards
 
-Rules for maintaining strict architectural boundaries and ensuring business logic remains independent of frameworks and drivers.
+Rules for maintaining strict architectural boundaries and ensuring business logic remains independent of frameworks and
+drivers.
 
 ## Core Principles
 
-1.  **Strict Dependency Rule**: Source code dependencies must point only inwards.
+1. **Strict Dependency Rule**: Source code dependencies must point only inwards.
 
 - `Domain` knows NOTHING about `Application`, `Infrastructure`, or `Presentation`.
 - `Application` knows NOTHING about `Infrastructure` or `Presentation`.
 
-2.  **Persistence Ignorance**: The Domain layer must not contain database-specific logic or know how data is stored.
-3.  **Library Independence**: Domain entities and core business logic must remain pure TypeScript. Avoid third-party library dependencies (including Zod) in domain entities and policies.
-4.  **Framework Isolation**: `domain/` and `application/` must never import from `next/*`, `react`, or any DB-specific libraries (Drizzle, Prisma, etc.).
-5.  **Testability**: Business rules must be testable in isolation using mocks for Ports (Contracts). Use Cases should be verifiable using pure Vitest without a browser or database.
+2. **Persistence Ignorance**: The Domain layer must not contain database-specific logic or know how data is stored.
+3. **Library Independence**: Domain entities and core business logic must remain pure TypeScript. Avoid third-party
+   library dependencies (including Zod) in domain entities and policies.
+4. **Framework Isolation**: `domain/` and `application/` must never import from `next/*`, `react`, or any DB-specific
+   libraries (Drizzle, Prisma, etc.).
+5. **Testability**: Business rules must be testable in isolation using mocks for Ports (Contracts). Use Cases should be
+   verifiable using pure Vitest without a browser or database.
 
 ## Layer Responsibilities & Mapping
 
 | Layer            | Responsibility             | Contents                                                                                     |
-| :--------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
+|:-----------------|:---------------------------|:---------------------------------------------------------------------------------------------|
 | `domain`         | Enterprise Business Rules  | Entities (interfaces), Value Objects, Policies (pure functions).                             |
 | `application`    | Application Business Rules | Use Cases, Workflows, DTOs, Contracts (Ports), Schemas (Zod), Mappers, Helpers.              |
 | `infrastructure` | Technical Details          | Repository Implementations, Adapters, DAL, Mappers (row ↔ entity), Framework-specific logic. |
@@ -35,12 +39,12 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 **Purpose**: Define the **what** of your business—entities and rules—without any side-effect concerns.
 
 - **Allowed Imports**:
-  - Primitives and TypeScript utilities
-  - Shared domain types (`@/shared/domain/`)
+    - Primitives and TypeScript utilities
+    - Shared domain types (`@/shared/domain/`)
 - **Forbidden Imports**:
-  - Application layer (DTOs, schemas, use cases, contracts)
-  - Infrastructure implementations
-  - Zod, Drizzle, Next.js, React
+    - Application layer (DTOs, schemas, use cases, contracts)
+    - Infrastructure implementations
+    - Zod, Drizzle, Next.js, React
 
 **What Belongs Here**:
 
@@ -55,6 +59,8 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
     readonly role: UserRole;
   }
   ```
+
+- **Value Objects** (`values/`): Branded primitives and value types
 
 - **Policies** (`policies/`): Pure functions encoding invariants.
 
@@ -72,28 +78,10 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   }
   ```
 
-- **Repository Contracts** (`repositories/`): Interfaces defining data access needs
-
-  ```typescript
-  // ✅ Good: Contract accepts/returns entities
-  export interface UserRepositoryContract {
-    findById(id: UserId): Promise<Result<UserEntity | null, AppError>>;
-    save(user: UserEntity): Promise<Result<void, AppError>>;
-  }
-  ```
-
-- **Service Contracts** (`services/`): Interfaces for capabilities requiring side effects
-  ```typescript
-  // ✅ Good: Defines capability, not implementation
-  export interface PasswordHasherContract {
-    hash(plain: string): Promise<string>;
-    compare(plain: string, hash: string): Promise<boolean>;
-  }
-  ```
-
 **What Does NOT Belong Here**:
 
-- ❌ **Repository/Service Contracts** (move to `application/contracts/`)
+- ❌ **Contracts / Ports** (move to `application/contracts/` — contracts imply side effects, which domain must not know
+  about)
 - ❌ **Zod schemas** (move to `application/schemas/`)
 - ❌ **DTOs** (move to `application/dtos/`)
 
@@ -102,19 +90,15 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 **Purpose**: Define **application-specific business rules** and orchestrate domain logic to fulfill use cases.
 
 - **Allowed Imports**:
-  - Domain layer (entities, policies)
-  - Shared utilities (`@/shared/`)
-  - Zod for schema validation
+    - Domain layer (entities, policies)
+    - Shared utilities (`@/shared/`)
+    - Zod for schema validation
 - **Forbidden Imports**:
-  - Infrastructure implementations (classes, concrete adapters)
-  - Database libraries (Drizzle, Prisma)
-  - Presentation layer
+    - Infrastructure implementations (classes, concrete adapters)
+    - Database libraries (Drizzle, Prisma)
+    - Presentation layer
 
 **What Belongs Here**:
-
-- **Use Cases** (`use-cases/`): Single-responsibility business operations.
-- **Contracts** (`contracts/`): Interfaces defining dependencies (Ports) for repositories and services.
-- **Workflows** (`use-cases/`): Multi-step orchestrations.
 
 - **Use Cases** (`use-cases/`): Single-responsibility business operations
 
@@ -228,28 +212,29 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
 **What Belongs Here**:
 
 - **Repositories** (`repositories/`): Concrete persistence implementations.
-  - Use the `.repository.ts` suffix.
-  - Handle direct DAL coordination and technology-specific logic (e.g., Drizzle).
+    - Use the `.repository.ts` suffix.
+    - Handle direct DAL coordination and technology-specific logic (e.g., Drizzle).
 
-    ```typescript
-    // ✅ Good: Implements contract, coordinates DAL + mappers
-    export class UserRepository implements UserRepositoryContract {
-      async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-        const rowResult = await getUserByIdDal(this.db, id, this.logger);
-        if (!rowResult.ok) return rowResult;
-
-        const entity = rowResult.value ? toUserEntity(rowResult.value) : null;
-        return Ok(entity);
+      ```typescript
+      // ✅ Good: Implements contract, coordinates DAL + mappers
+      export class UserRepository implements UserRepositoryContract {
+        async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+          const rowResult = await getUserByIdDal(this.db, id, this.logger);
+          if (!rowResult.ok) return rowResult;
+  
+          const entity = rowResult.value ? toUserEntity(rowResult.value) : null;
+          return Ok(entity);
+        }
       }
-    }
-    ```
+      ```
 
 - **Services** (`services/`): Concrete technical logic implementations.
-  - Use the `.service.ts` suffix for implementations (e.g., `bcrypt-password.service.ts`).
+    - Use the `.service.ts` suffix for implementations (e.g., `bcrypt-password.service.ts`).
 
 - **Adapters** (`adapters/`): Structural bridges between contracts and implementations.
-  - Use the `.adapter.ts` suffix.
-  - Responsibilities: satisfy the contract, delegate to the concrete implementation, and provide a stable boundary for the Application layer to consume.
+    - Use the `.adapter.ts` suffix.
+    - Responsibilities: satisfy the contract, delegate to the concrete implementation, and provide a stable boundary for
+      the Application layer to consume.
 
   ```typescript
   // ✅ Good: Structural bridge satisfied by an implementation
@@ -294,37 +279,38 @@ Rules for maintaining strict architectural boundaries and ensuring business logi
   ```
 
 - **Factories** (`factories/`): Wire up dependencies and construct use cases.
-  - Factories are responsible for instantiating the **Bridge (Adapter)** and injecting the **Implementation** into it.
-  - **Explicit Wiring Rule**: Dependencies must be instantiated separately before being passed to the constructor. Avoid nested instantiation.
+    - Factories are responsible for instantiating the **Bridge (Adapter)** and injecting the **Implementation** into it.
+    - **Explicit Wiring Rule**: Dependencies must be instantiated separately before being passed to the constructor.
+      Avoid nested instantiation.
 
-    ```typescript
-    // ✅ Good: Explicit wiring and assignment
-    export function loginUseCaseFactory(
-      db: AppDatabase,
-      logger: Logger,
-    ): LoginUseCase {
-      const repo = new AuthUserRepository(db, logger);
-      const repoContract: AuthUserRepositoryContract =
-        new AuthUserRepositoryAdapter(repo);
-
-      const service = new BcryptPasswordService();
-      const hasher = new BcryptPasswordHasherAdapter(service);
-
-      return new LoginUseCase(repoContract, hasher, logger);
-    }
-
-    // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
-    export function makeLoginUseCase(
-      db: AppDatabase,
-      logger: Logger,
-    ): LoginUseCase {
-      return new LoginUseCase(
-        new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
-        new BcryptHasherAdapter(new BcryptPasswordService()),
-        logger,
-      );
-    }
-    ```
+      ```typescript
+      // ✅ Good: Explicit wiring and assignment
+      export function loginUseCaseFactory(
+        db: AppDatabase,
+        logger: Logger,
+      ): LoginUseCase {
+        const repo = new AuthUserRepository(db, logger);
+        const repoContract: AuthUserRepositoryContract =
+          new AuthUserRepositoryAdapter(repo);
+  
+        const service = new BcryptPasswordService();
+        const hasher = new BcryptPasswordHasherAdapter(service);
+  
+        return new LoginUseCase(repoContract, hasher, logger);
+      }
+  
+      // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
+      export function makeLoginUseCase(
+        db: AppDatabase,
+        logger: Logger,
+      ): LoginUseCase {
+        return new LoginUseCase(
+          new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
+          new BcryptHasherAdapter(new BcryptPasswordService()),
+          logger,
+        );
+      }
+      ```
 
 **Additional Rule: Ports vs Infrastructure Seams**
 
@@ -337,29 +323,30 @@ These are **Infrastructure seams** and must not be labeled as Application/Domain
 
 Sanity checks:
 
-- If `domain/**` or `application/**` imports the interface → it’s a **Port** → it belongs in `domain/**` or `application/contracts/`.
-- If the interface is referenced only by `infrastructure/**` files → it’s an **Infrastructure seam** → use `Strategy/Provider/Client` naming and keep it in Infrastructure.
+- If `domain/**` or `application/**` imports the interface → it’s a **Port** → it belongs in
+  `application/contracts/`.
+- If the interface is referenced only by `infrastructure/**` files → it’s an **Infrastructure seam** → use
+  `Strategy/Provider/Client` naming and keep it in Infrastructure.
 
 ## Constructor Standards
 
-To maintain consistency and avoid implicit behavior, all classes must use explicit property assignment in the constructor.
-
-- **No Parameter Properties**: Avoid using `private readonly prop: Type` inside the constructor argument list.
-- **Explicit Assignment**: Define the property in the class body and assign it in the constructor body.
+Use TypeScript parameter properties to reduce boilerplate. This is the idiomatic TypeScript pattern.
 
 ```typescript
-// ✅ Good: Explicit assignment
+// ✅ Good: Parameter properties (idiomatic TypeScript)
 export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
-  private readonly service: BcryptPasswordService;
-
-  constructor(service: BcryptPasswordService) {
-    this.service = service;
-  }
+    constructor(private readonly service: BcryptPasswordService) {}
 }
 
-// ❌ Bad: Shorthand parameter properties
-export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
-  constructor(private readonly service: BcryptPasswordService) {}
+// ✅ Also acceptable: Explicit assignment (when additional constructor logic is needed)
+export class UserRepository implements UserRepositoryContract {
+    private readonly db: Database;
+    private readonly logger: LoggerContract;
+
+    constructor(db: Database, logger: LoggerContract) {
+        this.db = db;
+        this.logger = logger;
+    }
 }
 ```
 
@@ -368,13 +355,13 @@ export class BcryptPasswordHasherAdapter implements PasswordHasherContract {
 **Purpose**: Adapt application layer to the delivery mechanism (web UI, API, CLI, etc.).
 
 - **Allowed Imports**:
-  - Application layer (use cases, DTOs, schemas)
-  - Shared UI utilities
-  - React, Next.js, framework code
+    - Application layer (use cases, DTOs, schemas)
+    - Shared UI utilities
+    - React, Next.js, framework code
 - **Forbidden Imports**:
-  - Domain entities directly (use DTOs)
-  - Infrastructure implementations
-  - Database code
+    - Domain entities directly (use DTOs)
+    - Infrastructure implementations
+    - Database code
 
 **What Belongs Here**:
 
@@ -427,7 +414,7 @@ Transport     →   DTO    →   Entity  ←   Row
 ### Mapping Responsibility Matrix
 
 | From → To            | Layer          | Location                      | Example                     |
-| :------------------- | :------------- | :---------------------------- | :-------------------------- |
+|:---------------------|:---------------|:------------------------------|:----------------------------|
 | Transport → DTO      | Presentation   | Server actions                | `extractFormData()`         |
 | DTO → Entity         | Application    | Use cases / helpers           | `toEntity(dto)`             |
 | Entity → DTO         | Application    | `application/mappers/`        | `toDto(entity)`             |
@@ -448,45 +435,45 @@ Transport     →   DTO    →   Entity  ←   Row
 ```typescript
 // ✅ Good: Use case owns transaction boundary
 export class CreateUserUseCase {
-  private readonly hasher: PasswordHasherContract;
-  private readonly uow: UnitOfWorkContract;
-  private readonly emailService: EmailServiceContract;
+    private readonly hasher: PasswordHasherContract;
+    private readonly uow: UnitOfWorkContract;
+    private readonly emailService: EmailServiceContract;
 
-  constructor(
-    hasher: PasswordHasherContract,
-    uow: UnitOfWorkContract,
-    emailService: EmailServiceContract,
-  ) {
-    this.hasher = hasher;
-    this.uow = uow;
-    this.emailService = emailService;
-  }
-
-  async execute(input: CreateUserDto): Promise<Result<UserDto, AppError>> {
-    // 1. Perform side effects BEFORE transaction
-    const passwordHash = await this.hasher.hash(input.password);
-
-    // 2. Execute transaction
-    const result = await this.uow.withTransaction(async (tx) => {
-      const userResult = await tx.users.create({
-        ...input,
-        password: passwordHash,
-      });
-      if (!userResult.ok) return userResult;
-
-      const roleResult = await tx.roles.assignDefault(userResult.value.id);
-      if (!roleResult.ok) return roleResult;
-
-      return Ok(userResult.value);
-    });
-
-    // 3. Perform side effects AFTER transaction
-    if (result.ok) {
-      await this.emailService.sendWelcome(result.value.email);
+    constructor(
+        hasher: PasswordHasherContract,
+        uow: UnitOfWorkContract,
+        emailService: EmailServiceContract,
+    ) {
+        this.hasher = hasher;
+        this.uow = uow;
+        this.emailService = emailService;
     }
 
-    return result;
-  }
+    async execute(input: CreateUserDto): Promise<Result<UserDto, AppError>> {
+        // 1. Perform side effects BEFORE transaction
+        const passwordHash = await this.hasher.hash(input.password);
+
+        // 2. Execute transaction
+        const result = await this.uow.withTransaction(async (tx) => {
+            const userResult = await tx.users.create({
+                ...input,
+                password: passwordHash,
+            });
+            if (!userResult.ok) return userResult;
+
+            const roleResult = await tx.roles.assignDefault(userResult.value.id);
+            if (!roleResult.ok) return roleResult;
+
+            return Ok(userResult.value);
+        });
+
+        // 3. Perform side effects AFTER transaction
+        if (result.ok) {
+            await this.emailService.sendWelcome(result.value.email);
+        }
+
+        return result;
+    }
 }
 ```
 
@@ -517,13 +504,13 @@ export class CreateUserUseCase {
 
 ### Decision Matrix
 
-| Concern                                         | Pattern      | Location                       |
-| :---------------------------------------------- | :----------- | :----------------------------- |
-| Pure business rule with no side effects         | **Policy**   | `domain/policies/`             |
-| Capability requiring side effects (hash, store) | **Service**  | Contract in `domain/services/` |
-| Orchestration logic reused across use cases     | **Helper**   | `application/helpers/`         |
-| Single business operation exposed to UI         | **Use Case** | `application/use-cases/`       |
-| Multi-step coordination of use cases            | **Workflow** | `application/use-cases/`       |
+| Concern                                         | Pattern      | Location                             |
+|:------------------------------------------------|:-------------|:-------------------------------------|
+| Pure business rule with no side effects         | **Policy**   | `domain/policies/`                   |
+| Capability requiring side effects (hash, store) | **Service**  | Contract in `application/contracts/` |
+| Orchestration logic reused across use cases     | **Helper**   | `application/helpers/`               |
+| Single business operation exposed to UI         | **Use Case** | `application/use-cases/`             |
+| Multi-step coordination of use cases            | **Workflow** | `application/use-cases/`             |
 
 ### Policies (`.policy.ts`)
 
@@ -532,16 +519,16 @@ export class CreateUserUseCase {
 ```typescript
 // ✅ Good: Pure business logic
 export function calculateDiscount(
-  user: UserEntity,
-  product: ProductEntity,
+    user: UserEntity,
+    product: ProductEntity,
 ): number {
-  if (user.role === "premium") return product.price * 0.2;
-  if (product.category === "sale") return product.price * 0.1;
-  return 0;
+    if (user.role === "premium") return product.price * 0.2;
+    if (product.category === "sale") return product.price * 0.1;
+    return 0;
 }
 
 export function canUserDeletePost(user: UserEntity, post: PostEntity): boolean {
-  return user.id === post.authorId || user.role === "admin";
+    return user.id === post.authorId || user.role === "admin";
 }
 ```
 
@@ -552,16 +539,17 @@ export function canUserDeletePost(user: UserEntity, post: PostEntity): boolean {
 ```typescript
 // ✅ Good: Defines capability without implementation
 export interface EmailServiceContract {
-  send(
-    to: string,
-    subject: string,
-    body: string,
-  ): Promise<Result<void, AppError>>;
+    send(
+        to: string,
+        subject: string,
+        body: string,
+    ): Promise<Result<void, AppError>>;
 }
 
 export interface CacheServiceContract {
-  get<T>(key: string): Promise<T | null>;
-  set<T>(key: string, value: T, ttl: number): Promise<void>;
+    get<T>(key: string): Promise<T | null>;
+
+    set<T>(key: string, value: T, ttl: number): Promise<void>;
 }
 ```
 
@@ -572,18 +560,18 @@ export interface CacheServiceContract {
 ```typescript
 // ✅ Good: Reusable coordination logic
 export async function validateAndRefreshSessionHelper(
-  deps: SessionDependencies,
+    deps: SessionDependencies,
 ): Promise<Result<SessionPrincipal, AppError>> {
-  const tokenResult = await deps.sessionStore.get();
-  if (!tokenResult.ok) return tokenResult;
+    const tokenResult = await deps.sessionStore.get();
+    if (!tokenResult.ok) return tokenResult;
 
-  const decodedResult = await deps.tokenService.decode(tokenResult.value);
-  if (!decodedResult.ok) {
-    await deps.sessionStore.delete();
-    return decodedResult;
-  }
+    const decodedResult = await deps.tokenService.decode(tokenResult.value);
+    if (!decodedResult.ok) {
+        await deps.sessionStore.delete();
+        return decodedResult;
+    }
 
-  return Ok(decodedResult.value);
+    return Ok(decodedResult.value);
 }
 ```
 
@@ -599,11 +587,11 @@ export async function validateAndRefreshSessionHelper(
 ```typescript
 // ❌ Bad: Zod in domain layer
 // domain/schemas/auth-user.schema.ts
-import { z } from "zod"; // Violates library independence
+import {z} from "zod"; // Violates library independence
 
 export const LoginSchema = z.strictObject({
-  email: EmailSchema,
-  password: PasswordSchema,
+    email: EmailSchema,
+    password: PasswordSchema,
 });
 ```
 
@@ -612,11 +600,11 @@ export const LoginSchema = z.strictObject({
 ```typescript
 // ✅ Good: Zod in application layer
 // application/schemas/login-request.schema.ts
-import { z } from "zod";
+import {z} from "zod";
 
 export const LoginRequestSchema = z.strictObject({
-  email: EmailSchema,
-  password: PasswordSchema,
+    email: EmailSchema,
+    password: PasswordSchema,
 });
 
 export type LoginRequestDto = z.output<typeof LoginRequestSchema>;

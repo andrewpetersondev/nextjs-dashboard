@@ -86,11 +86,6 @@ Application logic.
     - Manual password hashing or crypto logic.
     - Instantiating complex Infrastructure classes directly (use Factories).
 
-## Module Boundaries
-
-- Feature modules should be self-contained "bounded contexts".
-- Cross-module imports are only allowed from a module's `shared` or `ui` folders, or from the global `src/shared`.
-
 ### `@/server/**` boundary (server-only infrastructure)
 
 `@/server/**` is a server-only infrastructure boundary for shared sensitive code (DB, secrets, cookies, crypto, event

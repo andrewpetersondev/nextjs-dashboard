@@ -51,7 +51,7 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 | `.helper.ts`     | Stateless orchestration logic               | Application            | N/A (exports functions)     | `read-session-token.helper.ts`    |
 | `.transport.ts`  | Wire/HTTP/Cookie-only shape                 | Presentation           | `LoginTransport`            | `login.transport.ts`              |
 | `.view.ts`       | Server → Client UI shape                    | Presentation           | `UserProfileView`           | `user-profile.view.ts`            |
-| `.contract.ts`   | Dependency boundary interface (Port)        | Domain / Application   | `PasswordHasherContract`    | `password-hasher.contract.ts`     |
+| `.contract.ts`   | Dependency boundary interface (Port)        | Application            | `PasswordHasherContract`    | `password-hasher.contract.ts`     |
 | `.strategy.ts`   | Infrastructure-internal interface/seam      | Infrastructure         | `SessionJwtCryptoStrategy`  | `session-jwt-crypto.strategy.ts`  |
 | `.adapter.ts`    | Structural Bridge (delegates/wraps)         | Infrastructure         | `AuthUserRepositoryAdapter` | `auth-user-repository.adapter.ts` |
 | `.repository.ts` | Concrete Persistence Implementation         | Infrastructure         | `AuthUserRepository`        | `auth-user.repository.ts`         |
@@ -361,7 +361,7 @@ export function handleError(error: unknown): AppError {
 
 ### Contracts (Interfaces)
 
-**Location**: `domain/services/` or `application/contracts/`
+**Location**: `application/contracts/`
 
 **Meaning**: A Contract is a **Port** owned by the inner layers (Domain/Application) and implemented by Infrastructure.
 
@@ -402,6 +402,25 @@ without claiming to be an Application/Domain Port.
 
 - File: `{capability}.strategy.ts`
 - Type: `{Capability}Strategy`
+- Infrastructure-internal names that reveal technical concern
+
+```typescript
+// ✅ Good: Infrastructure-only seam for swapping JWT libraries
+// infrastructure/strategies/session-jwt-crypto.strategy.ts
+export interface SessionJwtCryptoStrategy {
+    sign(payload: Record<string, unknown>, expiresInMs: number): Promise<string>;
+
+    verify(token: string): Promise<Record<string, unknown> | null>;
+}
+
+// ✅ Good: Infrastructure-only seam for swapping storage backends
+// infrastructure/strategies/file-storage.strategy.ts
+export interface FileStorageStrategy {
+    upload(key: string, data: Buffer): Promise<string>;
+
+    download(key: string): Promise<Buffer | null>;
+}
+```
 
 ### Adapters (Implementations)
 
@@ -469,23 +488,23 @@ export class LoginUseCase {
 
 ### Repository Contracts
 
-**Location**:
+**Location**: `application/contracts/`
 
-- `domain/repositories/` (when working with entities)
-- `application/contracts/` (when working with DTOs or use-case-specific)
+All repository contracts live in the application layer. Contracts imply side effects (I/O), so placing them in domain
+would violate domain purity.
 
 **Naming**:
 
 ```typescript
-// ✅ Domain repository (entity-focused)
-// domain/repositories/user-repository.contract.ts
+// ✅ Good: Entity-focused repository contract
+// application/contracts/user-repository.contract.ts
 export interface UserRepositoryContract {
     findById(id: UserId): Promise<Result<UserEntity | null, AppError>>;
 
     save(user: UserEntity): Promise<Result<void, AppError>>;
 }
 
-// ✅ Application repository (DTO/use-case-focused)
+// ✅ Good: Use-case-focused repository contract
 // application/contracts/auth-user-repository.contract.ts
 export interface AuthUserRepositoryContract {
     login(
