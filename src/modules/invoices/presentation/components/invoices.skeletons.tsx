@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { TableRowSkeleton } from "@/ui/skeletons/skeletons";
 import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
-export function InvoiceSkeleton(): JSX.Element {
+function InvoiceSkeleton(): JSX.Element {
   return (
     <div className="flex flex-row items-center justify-between border-bg-accent border-b py-4">
       <div className="flex items-center">
@@ -13,6 +13,30 @@ export function InvoiceSkeleton(): JSX.Element {
         </div>
       </div>
       <div className="mt-2 h-4 w-12 rounded-md bg-bg-accent" />
+    </div>
+  );
+}
+
+function InvoicesMobileSkeleton(): JSX.Element {
+  return (
+    <div className="mb-2 w-full rounded-md bg-bg-accent p-4">
+      <div className="flex items-center justify-between border-bg-primary border-b pb-8">
+        <div className="flex items-center">
+          <div className="mr-2 h-8 w-8 rounded-full bg-bg-accent" />
+          <div className="h-6 w-16 rounded-sm bg-bg-accent" />
+        </div>
+        <div className="h-6 w-16 rounded-sm bg-bg-accent" />
+      </div>
+      <div className="flex w-full items-center justify-between pt-4">
+        <div>
+          <div className="h-6 w-16 rounded-sm bg-bg-accent" />
+          <div className="mt-2 h-6 w-24 rounded-sm bg-bg-primary" />
+        </div>
+        <div className="flex justify-end gap-2">
+          <div className="h-10 w-10 rounded-sm bg-bg-accent" />
+          <div className="h-10 w-10 rounded-sm bg-bg-accent" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -34,30 +58,6 @@ export function LatestInvoicesSkeleton(): JSX.Element {
         <div className="flex items-center pt-6 pb-2">
           <div className="h-5 w-5 rounded-full bg-bg-accent" />
           <div className="ml-2 h-4 w-20 rounded-md bg-bg-accent" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function InvoicesMobileSkeleton(): JSX.Element {
-  return (
-    <div className="mb-2 w-full rounded-md bg-bg-accent p-4">
-      <div className="flex items-center justify-between border-bg-primary border-b pb-8">
-        <div className="flex items-center">
-          <div className="mr-2 h-8 w-8 rounded-full bg-bg-accent" />
-          <div className="h-6 w-16 rounded-sm bg-bg-accent" />
-        </div>
-        <div className="h-6 w-16 rounded-sm bg-bg-accent" />
-      </div>
-      <div className="flex w-full items-center justify-between pt-4">
-        <div>
-          <div className="h-6 w-16 rounded-sm bg-bg-accent" />
-          <div className="mt-2 h-6 w-24 rounded-sm bg-bg-primary" />
-        </div>
-        <div className="flex justify-end gap-2">
-          <div className="h-10 w-10 rounded-sm bg-bg-accent" />
-          <div className="h-10 w-10 rounded-sm bg-bg-accent" />
         </div>
       </div>
     </div>

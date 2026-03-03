@@ -19,28 +19,28 @@ function optionalEdit<T extends z.ZodType>(schema: T) {
  * Use strictObject to reject unknown keys early.
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
-export const UserFormBaseSchema = z.strictObject({
+const UserFormBaseSchema = z.strictObject({
   email: EmailSchema, // already trims + lowercases via pipe
   password: PasswordSchema, // trims with strength rules
   role: UserRoleFormSchema, // normalized + validated
   username: UsernameSchema, // trims + lowercases
 });
 
-// biome-ignore lint/nursery/useExplicitType: fix later
-export const CreateUserFormSchema = UserFormBaseSchema;
-
 /**
  * Optional, preprocessed fields for edit.
  * Each field accepts empty string as "unset" and otherwise applies full normalization.
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
-export const emailEdit = optionalEdit(EmailSchema);
+const emailEdit = optionalEdit(EmailSchema);
 // biome-ignore lint/nursery/useExplicitType: fix later
-export const passwordEdit = optionalEdit(PasswordSchema);
+const passwordEdit = optionalEdit(PasswordSchema);
 // biome-ignore lint/nursery/useExplicitType: fix later
-export const roleEdit = optionalEdit(UserRoleFormSchema);
+const roleEdit = optionalEdit(UserRoleFormSchema);
 // biome-ignore lint/nursery/useExplicitType: fix later
-export const usernameEdit = optionalEdit(UsernameSchema);
+const usernameEdit = optionalEdit(UsernameSchema);
+
+// biome-ignore lint/nursery/useExplicitType: fix later
+export const CreateUserFormSchema = UserFormBaseSchema;
 
 /**
  * Edit schema with all fields optional after preprocessing.

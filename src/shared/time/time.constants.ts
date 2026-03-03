@@ -2,7 +2,7 @@
  * Milliseconds per second.
  * Used for converting JavaScript's Date.now() (milliseconds) to Unix time (seconds).
  */
-export const MILLISECONDS_PER_SECOND = 1000;
+const MILLISECONDS_PER_SECOND = 1000;
 
 export const ALERT_AUTO_HIDE_MS = 5000;
 export const TYPING_MS = 4000;

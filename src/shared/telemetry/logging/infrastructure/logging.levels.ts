@@ -10,7 +10,7 @@ let cachedPriority: number | null = null;
  *
  * @returns The effective LogLevel, defaulting to 'info' on error.
  */
-export function getEffectiveLogLevel(): LogLevel {
+function getEffectiveLogLevel(): LogLevel {
   if (cachedLogLevel !== null) {
     return cachedLogLevel;
   }

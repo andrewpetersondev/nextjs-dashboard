@@ -10,7 +10,7 @@ const BANNER_COOKIE_HTTPONLY = false as const;
 const BANNER_COOKIE_PATH = "/" as const;
 const BANNER_COOKIE_SAMESITE = "lax" as const;
 
-export class BannerCookieAdapter {
+class BannerCookieAdapter {
   private readonly cookies = createCookieService();
 
   async dismiss(): Promise<void> {

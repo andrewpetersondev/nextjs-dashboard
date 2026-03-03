@@ -9,9 +9,8 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @param value - The input value to validate and convert.
  * @returns A `Result<InvoiceId, AppError>` representing success or an `AppError`.
  */
-export const toInvoiceIdResult = (
-  value: unknown,
-): Result<InvoiceId, AppError> => createInvoiceId(value);
+const toInvoiceIdResult = (value: unknown): Result<InvoiceId, AppError> =>
+  createInvoiceId(value);
 
 /**
  * Validate and convert a string to a branded `InvoiceId`.

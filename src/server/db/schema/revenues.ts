@@ -17,10 +17,7 @@ import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand
 import type { Period } from "@/shared/primitives/period/period.brand";
 
 // biome-ignore lint/nursery/useExplicitType: fix
-export const calculationSourceEnum = pgEnum(
-  "calculation_source",
-  REVENUE_SOURCES,
-);
+const calculationSourceEnum = pgEnum("calculation_source", REVENUE_SOURCES);
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const revenues = pgTable(

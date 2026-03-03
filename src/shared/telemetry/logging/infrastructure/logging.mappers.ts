@@ -4,6 +4,24 @@ import { isAppError } from "@/shared/core/errors/core/app-error.entity";
 import type { SafeErrorShape } from "@/shared/telemetry/logging/core/logger.dto";
 
 /**
+ * Map domain `Severity` to `LogLevel` with an exhaustive check.
+ */
+function _mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
+  switch (severity) {
+    case "WARN":
+      return "warn";
+    case "INFO":
+      return "info";
+    case "ERROR":
+      return "error";
+    default: {
+      const _exhaustive: never = severity;
+      return _exhaustive;
+    }
+  }
+}
+
+/**
  * Normalize any `unknown` error into a safe, structured shape for logging.
  *
  * - If it's a AppError, returns it as-is (serialized later by logger).
@@ -22,22 +40,4 @@ export function toSafeErrorShape(err: unknown): SafeErrorShape | unknown {
     };
   }
   return String(err);
-}
-
-/**
- * Map domain `Severity` to `LogLevel` with an exhaustive check.
- */
-export function mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
-  switch (severity) {
-    case "WARN":
-      return "warn";
-    case "INFO":
-      return "info";
-    case "ERROR":
-      return "error";
-    default: {
-      const _exhaustive: never = severity;
-      return _exhaustive;
-    }
-  }
 }

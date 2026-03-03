@@ -14,7 +14,7 @@ import { createMonthTemplateData } from "@/modules/revenues/domain/templates/fac
  * @param monthOffset - Offset from start date (0-11)
  * @param startDate - The rolling period start date
  */
-export function calculateMonthDateFromStart(
+function calculateMonthDateFromStart(
   startDate: Date,
   monthOffset: number,
 ): Date {

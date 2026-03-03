@@ -34,7 +34,7 @@ const invoiceStatusSchema = z.enum(INVOICE_STATUSES);
 const customerIdSchema: ZodUUID = z.uuid();
 
 // biome-ignore lint/nursery/useExplicitType: fix
-export const InvoiceBaseSchema = z.object({
+const InvoiceBaseSchema = z.object({
   amount: amountCodec,
   customerId: customerIdSchema,
   date: isoDateCodec,

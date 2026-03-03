@@ -25,6 +25,65 @@ function hasProcessEnv(): boolean {
 }
 
 /**
+ * Resolve and validate NEXT_PUBLIC_LOG_LEVEL as a Result.
+ *
+ * @returns A Result containing the validated LogLevel or an AppError.
+ */
+function getPublicLogLevelResult(): Result<LogLevel, AppError> {
+  if (!hasProcessEnv()) {
+    return Err(
+      makeAppError(APP_ERROR_KEYS.infrastructure, {
+        cause: "",
+        message: "process.env is not available in this environment",
+        metadata: {},
+      }),
+    );
+  }
+  const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
+  if (!raw) {
+    return Err(
+      makeAppError(APP_ERROR_KEYS.validation, {
+        cause: "",
+        message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
+        metadata: {},
+      }),
+    );
+  }
+  const result = LogLevelSchema.safeParse(raw.trim());
+  if (!result.success) {
+    return Err(
+      makeAppError(APP_ERROR_KEYS.validation, {
+        cause: "",
+        message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
+        metadata: {},
+      }),
+    );
+  }
+  return Ok(result.data);
+}
+
+/**
+ * Get runtime NODE_ENV (server-side only).
+ * Falls back to NEXT_PUBLIC_NODE_ENV for universal access.
+ */
+function _getRuntimeNodeEnv(): NodeEnvironment {
+  if (hasProcessEnv() && process.env.NODE_ENV) {
+    const result = NodeEnvironmentSchema.safeParse(process.env.NODE_ENV);
+    if (result.success) {
+      return result.data;
+    }
+  }
+  return getPublicNodeEnv();
+}
+
+function _isPublicDev(): boolean {
+  return getPublicNodeEnv() === "development";
+}
+function _isPublicTest(): boolean {
+  return getPublicNodeEnv() === "test";
+}
+
+/**
  * Resolve and validate NEXT_PUBLIC_NODE_ENV as a Result.
  *
  * @returns A Result containing the validated NodeEnvironment or an AppError.
@@ -78,44 +137,6 @@ export function getPublicNodeEnv(): NodeEnvironment {
 }
 
 /**
- * Resolve and validate NEXT_PUBLIC_LOG_LEVEL as a Result.
- *
- * @returns A Result containing the validated LogLevel or an AppError.
- */
-export function getPublicLogLevelResult(): Result<LogLevel, AppError> {
-  if (!hasProcessEnv()) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.infrastructure, {
-        cause: "",
-        message: "process.env is not available in this environment",
-        metadata: {},
-      }),
-    );
-  }
-  const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
-  if (!raw) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
-        metadata: {},
-      }),
-    );
-  }
-  const result = LogLevelSchema.safeParse(raw.trim());
-  if (!result.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
-        metadata: {},
-      }),
-    );
-  }
-  return Ok(result.data);
-}
-
-/**
  * Resolve and validate NEXT_PUBLIC_LOG_LEVEL.
  * - Requires NEXT_PUBLIC_LOG_LEVEL to be set and valid
  *
@@ -130,30 +151,10 @@ export function getPublicLogLevel(): LogLevel {
   throw new Error(result.error.message);
 }
 
-/**
- * Get runtime NODE_ENV (server-side only).
- * Falls back to NEXT_PUBLIC_NODE_ENV for universal access.
- */
-export function getRuntimeNodeEnv(): NodeEnvironment {
-  if (hasProcessEnv() && process.env.NODE_ENV) {
-    const result = NodeEnvironmentSchema.safeParse(process.env.NODE_ENV);
-    if (result.success) {
-      return result.data;
-    }
-  }
-  return getPublicNodeEnv();
-}
-
 /* -------------------------------------------------------------------------------------------------
  *  Flags (runtime functions)
  * -----------------------------------------------------------------------------------------------*/
 
-export function isPublicDev(): boolean {
-  return getPublicNodeEnv() === "development";
-}
-export function isPublicTest(): boolean {
-  return getPublicNodeEnv() === "test";
-}
 export function isPublicProd(): boolean {
   return getPublicNodeEnv() === "production";
 }

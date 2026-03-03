@@ -20,7 +20,7 @@ import { revenues } from "@/server/db/schema/revenues";
 import type { Period } from "@/shared/primitives/period/period.brand";
 
 // biome-ignore lint/nursery/useExplicitType: fix
-export const statusEnum = pgEnum("status", INVOICE_STATUSES);
+const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const invoices = pgTable(

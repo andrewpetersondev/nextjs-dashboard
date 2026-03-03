@@ -3,24 +3,24 @@ import type { Period } from "@/shared/primitives/period/period.brand";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";
 
 /**
- * Converts a Date to a branded Period (first-of-month Date).
- */
-export function dateToPeriod(date: Date): Period {
-  return toPeriod(date);
-}
-
-/**
  * Converts a branded Period to a Date (returns the branded Date value).
  */
-export function periodToDate(period: Period): Date {
+function periodToDate(period: Period): Date {
   return period as unknown as Date;
 }
 
 /**
  * Formats a Date as yyyy-MM (UTC-based string useful for keys).
  */
-export function formatYearMonthUtc(date: Date): string {
+function formatYearMonthUtc(date: Date): string {
   return format(date, "yyyy-MM");
+}
+
+/**
+ * Converts a Date to a branded Period (first-of-month Date).
+ */
+export function dateToPeriod(date: Date): Period {
+  return toPeriod(date);
 }
 
 /**

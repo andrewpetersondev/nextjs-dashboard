@@ -18,7 +18,7 @@ import type { AppDatabase } from "@/server/db/db.connection";
  * - DAL returns raw DB projections.
  * - Repository maps to server DTOs (brands IDs, normalizes sums).
  */
-export class CustomersRepository {
+class CustomersRepository {
   private readonly db: AppDatabase;
 
   constructor(db: AppDatabase) {

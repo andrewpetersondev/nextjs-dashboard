@@ -122,7 +122,7 @@ export async function makeAuthComposition(): Promise<AuthComposition> {
  *
  * Enforces "all-or-nothing" overrides (no optional props) to prevent drift.
  */
-export async function makeAuthCompositionForTest(
+export async function _makeAuthCompositionForTest(
   overrides: AuthCompositionOverrides,
 ): Promise<AuthComposition> {
   return await makeAuthCompositionInternal(overrides);

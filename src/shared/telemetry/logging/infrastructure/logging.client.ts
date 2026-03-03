@@ -18,7 +18,7 @@ import { toSafeErrorShape } from "@/shared/telemetry/logging/infrastructure/logg
  * Sensitivity-aware structured logger implementation.
  * Handles AppError serialization and operational metadata injection.
  */
-export class LoggingClient extends BaseLogger implements LoggingClientContract {
+class LoggingClient extends BaseLogger implements LoggingClientContract {
   /**
    * @inheritdoc
    */
