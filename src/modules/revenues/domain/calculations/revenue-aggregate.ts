@@ -1,7 +1,7 @@
 /**
  * Aggregate data for revenue calculations.
  */
-export type RevenueAggregate = Readonly<{
+type RevenueAggregate = Readonly<{
   readonly invoiceCount: number;
   readonly totalAmount: number;
 }>;

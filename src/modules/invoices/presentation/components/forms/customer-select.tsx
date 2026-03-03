@@ -9,7 +9,7 @@ import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
 /**
  * Props for the CustomerSelect component.
  */
-export interface CustomerSelectProps
+interface CustomerSelectProps
   extends Omit<SelectMenuProps<CustomerField>, "id" | "name" | "options"> {
   readonly customers: readonly CustomerField[];
   readonly dataCy?: string;

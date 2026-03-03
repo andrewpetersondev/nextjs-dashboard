@@ -6,7 +6,7 @@ import { validateInvoicePeriodForRevenue } from "@/modules/revenues/domain/polic
 /**
  * Result of an eligibility check.
  */
-export type EligibilityResult =
+type EligibilityResult =
   | { readonly eligible: false; readonly reason: string }
   | { readonly eligible: true };
 

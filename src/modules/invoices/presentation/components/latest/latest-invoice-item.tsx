@@ -5,7 +5,7 @@ import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types"
 import { formatCurrency } from "@/shared/primitives/money/convert";
 import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
-export interface LatestInvoiceItemProps {
+interface LatestInvoiceItemProps {
   readonly hasTopBorder: boolean;
   readonly invoice: InvoiceListFilter;
 }
