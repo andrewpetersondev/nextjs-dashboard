@@ -2,66 +2,92 @@
 
 This guide helps you set up, run, and develop the Next.js Dashboard locally.
 
-Prereqs
+## Prerequisites
 
 - Node >= 24
 - PNPM >= 10.12
 - PostgreSQL (local or remote)
 
-1) Install dependencies
+## 1. Install Dependencies
 
-- pnpm install
+```sh
+pnpm install
+```
 
-2) Configure environment
-   Create the appropriate .env files at the project root. Common files:
+## 2. Configure Environment
 
-- .env.development.local
-- .env.test.local
-- .env.production.local
+Create the appropriate `.env` files at the project root. Common files:
+
+- `.env.development.local`
+- `.env.test.local`
+- `.env.production.local`
 
 Minimal variables (adjust to your setup):
 
-- DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
-- SESSION_SECRET=change-me
-- NODE_ENV=development
+```
+DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
+SESSION_SECRET=change-me
+NODE_ENV=development
+```
 
-See docs/environment-variables.md for details and optional flags.
+## 3. Prepare the Database
 
-3) Prepare the database
-   Run migrations and seeds for your target environment.
+Run migrations and seeds for your target environment.
 
-- Development
-    - pnpm db:generate:migrate:dev
-    - pnpm db:seed:dev
-- Test
-    - pnpm db:generate:migrate:test
-    - pnpm db:seed:test
-- Production
-    - pnpm db:generate:migrate:prod
-    - pnpm db:seed:prod
+**Development:**
 
-4) Start the app
+```sh
+pnpm db:generate:migrate:dev
+pnpm db:seed:dev
+```
 
-- Development (Turbopack):
-    - pnpm dev
-- Production-like (standalone build):
-    - pnpm standalone
-    - # or, if already built
-    - pnpm start:standalone
+**Test:**
 
-5) Running tests
+```sh
+pnpm db:generate:migrate:test
+pnpm db:seed:test
+```
 
-- Build (test env): pnpm build:test
-- Serve (test env): pnpm serve:test
-- Cypress (open): pnpm cyp:open
-- Cypress (headless): pnpm cyp:e2e:headless
+**Production:**
 
-Tips
+```sh
+pnpm db:generate:migrate:prod
+pnpm db:seed:prod
+```
 
-- If you see build anomalies, try pnpm clean then pnpm build.
-- Ensure DATABASE_URL points to a reachable database and that migrations have run.
-- Auth requires SESSION_SECRET to be set. See docs/auth.md for flow details.
+## 4. Start the App
 
----
-_Last updated: 2025-10-04_
-_Author: GitHub Copilot_
+**Development (Turbopack):**
+
+```sh
+pnpm dev
+```
+
+**Production-like (standalone build):**
+
+```sh
+pnpm standalone
+```
+
+Or, if already built:
+
+```sh
+pnpm start:standalone
+```
+
+## 5. Running Tests
+
+```sh
+pnpm build:test      # Build with test env
+pnpm serve:test      # Serve with test env
+pnpm cyp:open        # Open Cypress interactive runner
+pnpm cyp:e2e:headless  # Run Cypress headless
+```
+
+See [docs/guides/testing.md](./testing.md) for the full E2E workflow.
+
+## Tips
+
+- If you see build anomalies, try `pnpm clean` then `pnpm build`.
+- Ensure `DATABASE_URL` points to a reachable database and that migrations have run.
+- Auth requires `SESSION_SECRET` to be set and consistent across processes.

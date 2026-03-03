@@ -1,6 +1,6 @@
 # Steps to Create a Database
 
-## Step 1: Use Docker to Create a Database
+## Step 1: Start a PostgreSQL Container
 
 ```bash
 docker run --name dashboard-postgres \
@@ -13,18 +13,16 @@ docker run --name dashboard-postgres \
   -d postgres:latest
 ```
 
-Replace `{your_postgres_user}`, `{your_postgres_password}`, and `{your_postgres_db}` with your desired PostgreSQL user, password, and database name.
+Replace `{your_postgres_user}`, `{your_postgres_password}`, and `{your_postgres_db}` with your desired values.
 
-### _**THIS STEP ALWAYS CREATES A TABLE CALLED POSTGRES**_
+> **Note:** This step automatically creates a default database named after `POSTGRES_DB`.
 
-## Step 2: Use Docker to Create a Table
+## Step 2: Create Additional Databases
 
 ```bash
 docker exec -it dashboard-postgres psql -U {your_postgres_user} -c "CREATE DATABASE postgres_test;"
 ```
 
-## Step 3: Push Schema (assuming POSTGRES_URL_TESTDB=postgresql://postgres:postgres@localhost:5432/test_db)
+## Step 3: Push Schema
 
-```bash
-hcp vault-secrets run -- pnpm drizzle-kit push --config=drizzle-test.config.ts
-```
+Use [drizzle.md](./guides/drizzle.md) to generate and apply migrations to the database.

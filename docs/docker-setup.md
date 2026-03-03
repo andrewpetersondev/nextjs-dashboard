@@ -1,6 +1,7 @@
 # Steps to Setup a Database with Docker
 
-About: This guide provides step-by-step instructions to set up a PostgreSQL database using Docker. The containerized database will be started from "Docker Desktop App" by clicking the "Run" button.
+About: This guide provides step-by-step instructions to set up a PostgreSQL database using Docker. The containerized
+database will be started from "Docker Desktop App" by clicking the "Run" button.
 
 ## Step 1: Create a Docker Network
 
@@ -21,9 +22,9 @@ docker run --name dashboard-postgres \
   -d postgres:latest
 ```
 
-_**THIS STEP ALWAYS CREATES A TABLE CALLED POSTGRES**_
+> **Note:** This step automatically creates a default database named `postgres`.
 
-## Step 2: Use Docker to Create a default administrative Database
+## Step 3: Create Additional Databases
 
 ```bash
 docker exec -it dashboard-postgres psql -U {POSTGRES_USER} -c "CREATE DATABASE {DATABASE_NAME};"
@@ -47,6 +48,6 @@ create a database named `prod_db`:
 docker exec -it dashboard-postgres psql -U postgres -c "CREATE DATABASE prod_db;"
 ```
 
-## Step 3: Set Up Schema
+## Step 4: Set Up Schema
 
 Use [drizzle.md](./guides/drizzle.md) to push the schema to the database.

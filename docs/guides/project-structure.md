@@ -6,7 +6,7 @@ Use this guide to decide where code belongs and how layers interact.
 
 - Domain capability: A cohesive business area with its own models, rules, and reusable UI (e.g., auth, invoices,
   customers).
-- Page/layout composition: App “chrome” and orchestration that stitches together multiple features for a route (e.g.,
+- Page/layout composition: App "chrome" and orchestration that stitches together multiple modules for a route (e.g.,
   dashboard pages, sidebars, nav, guards, providers).
 
 ## 2) Map concerns to layers
@@ -40,81 +40,51 @@ Use this guide to decide where code belongs and how layers interact.
     - Services: Authentication, Authorization, Business rules
     - Data validation and transformation logic
 
-- Infrastructure (system setup, deployment, and technical foundation)
-    - Database Layer
-        - Database setup and migrations
-        - Connection pooling
-        - Query optimization
-        - Data backup and recovery
-    - API Layer
-        - REST/GraphQL endpoints
-        - API versioning
-        - Rate limiting
-        - Request/Response handling
-    - Security
-        - Authentication middleware
-        - Authorization controls
-        - SSL/TLS configuration
-        - CORS policies
-    - Deployment
-        - CI/CD pipelines
-        - Container configurations
-        - Environment management
-        - Health monitoring
-    - Performance
-        - Caching strategies
-        - Load balancing
-        - Resource optimization
-        - Performance monitoring
-    - Integration
-        - Third-party services
-        - Message queues
-        - External APIs
-        - Webhooks
+- Infrastructure (system setup and technical foundation)
+    - Database access, repositories, and migrations
+    - Server actions and services
+    - Authentication middleware and session handling
+    - Integration with external systems
 
 ## 3) Apply import-boundary restrictions
 
 - shared: May only import from shared. Lowest-level utilities, tokens, and primitives.
 - ui: Base, reusable UI primitives and patterns (atoms/molecules). May import from shared.
-- features: A domain slice. May import from features (itself/peers) and shared/ui. Must not import from shell.
-- shell: App composition/orchestration. May import from features, shared, ui. Should not be imported by features.
+- modules: A domain slice. May import from modules (itself/peers) and shared/ui. Must not import from shell.
+- shell: App composition/orchestration. May import from modules, shared, ui. Should not be imported by modules.
 - server: Infrastructure, actions, services, repositories. No import restrictions (but keep server code server-only).
-- app (Next.js): Routes and server components. Should delegate domain logic to server/features and composition to shell.
+- app (Next.js): Routes and server components. Should delegate domain logic to server/modules and composition to shell.
 
 One-way dependency rule of thumb:
-shared/ui -> features -> shell -> app
-server is usable from features/shell/app as needed.
+shared/ui -> modules -> shell -> app
+server is usable from modules/shell/app as needed.
 
 ---
 
 ## Purpose of the `src` folder's children
 
-1. `features` — Domain-centric slices (auth, invoices, customers, users, etc.). Each slice exposes:
+1. `modules` — Domain-centric slices (auth, invoices, customers, users, etc.). Each slice exposes:
     - Domain types, schemas, and view-model mappers
-    - Reusable, feature-scoped UI
-    - Light adapters that are feature-specific (no DB or external I/O)
+    - Reusable, module-scoped UI
+    - Light adapters that are module-specific (no DB or external I/O)
 
-2. `shared` — Cross-cutting, feature-agnostic utilities and tokens:
+2. `shared` — Cross-cutting, module-agnostic utilities and tokens:
     - Pure helpers, constants, types
     - Design tokens, formatting utilities
-    - Must not depend on features or shell
+    - Must not depend on modules or shell
 
-3. `shell` — Application composition layer (the “app chrome” and orchestration).
+3. `shell` — Application composition layer (the "app chrome" and orchestration).
     - What it owns:
         - Route and section layouts (e.g., dashboard layout, root frame)
         - Navigation (sidebars, top bars, breadcrumbs) with active state
-        - Cross-feature wrappers and gates (auth/role guards)
+        - Cross-module wrappers and gates (auth/role guards)
         - App-wide providers (theme, toasts), error and suspense boundaries
-        - Page-level compositions that stitch multiple features together (e.g., a dashboard page showing cards, charts,
-          and lists from several features)
+        - Page-level compositions that stitch multiple modules together (e.g., a dashboard page showing cards, charts,
+          and lists from several modules)
     - What it avoids:
-        - Domain/business logic (keep in features/server)
+        - Domain/business logic (keep in modules/server)
         - Data access or external API calls (keep in server)
         - Generic utilities (keep in shared)
-    - Why “dashboard” was suggested to be moved here:
-        - “Dashboard” in this codebase primarily composes multiple domain features into a single screen (cards, charts,
-          latest items) and controls navigation/layout. That is app composition—not a single domain capability—so it
-          belongs in shell.
 
 4. `server` — Infrastructure and backend-facing code:
     - Database access, repositories, migrations
@@ -129,37 +99,37 @@ server is usable from features/shell/app as needed.
 
 ## Placement decision tree
 
-1. Is it app chrome or cross-feature composition (layouts, nav, role gates, dashboard composition)?
+1. Is it app chrome or cross-module composition (layouts, nav, role gates, dashboard composition)?
     - Yes → Place in `shell`.
 2. Is it a domain capability with reusable UI and types (auth, invoices, customers)?
-    - Yes → Place in `features/<feature>`.
+    - Yes → Place in `modules/<module>`.
 3. Is it infrastructure (DB, services, actions, external APIs)?
     - Yes → Place in `server`.
 4. Is it a generic utility, token, or primitive UI with no domain knowledge?
     - Yes → `shared` (utilities/tokens) or `ui` (primitive components).
 5. Route files and data fetching for pages?
     - Prefer `src/app` server components that call into `server` (for data) and render `shell` (for composition) and
-      `features` (for feature UI).
+      `modules` (for module UI).
 
 ---
 
-## Do/Don’t by layer
+## Do/Don't by layer
 
 - shell
-    - Do: Compose multiple features into pages; host nav, providers, guards, boundaries.
-    - Don’t: Implement domain rules, hit databases, or define generic utilities.
+    - Do: Compose multiple modules into pages; host nav, providers, guards, boundaries.
+    - Don't: Implement domain rules, hit databases, or define generic utilities.
 
-- features
-    - Do: Keep domain logic, validation schemas, and feature-scoped UI; expose clean, reusable APIs.
-    - Don’t: Own app-wide layout or cross-feature navigation.
+- modules
+    - Do: Keep domain logic, validation schemas, and module-scoped UI; expose clean, reusable APIs.
+    - Don't: Own app-wide layout or cross-module navigation.
 
 - shared/ui
     - Do: Provide foundational building blocks without domain coupling.
-    - Don’t: Import from features or shell.
+    - Don't: Import from modules or shell.
 
 - server
     - Do: Encapsulate data access and integrations; expose actions/services.
-    - Don’t: Contain client UI.
+    - Don't: Contain client UI.
 
 ---
 
@@ -167,20 +137,19 @@ server is usable from features/shell/app as needed.
 
 - Dashboard page that shows cards (payments), chart (revenues), and latest invoices:
     - Composition in `shell` (page/layout + orchestration)
-    - Underlying widgets provided by their respective `features/*`
+    - Underlying widgets provided by their respective `modules/*`
 
 - Authentication:
-    - Forms, schemas, roles, and client helpers in `features/auth`
+    - Forms, schemas, roles, and client helpers in `modules/auth`
     - Server actions and provider integrations in `server/auth`
-    - If the sidebar needs a logout button or role-aware links, the sidebar lives in `shell`, consuming `features/auth`
+    - If the sidebar needs a logout button or role-aware links, the sidebar lives in `shell`, consuming `modules/auth`
       UI or actions.
 
 ---
 
-By separating domain features from app composition in `shell`, you keep features reusable, maintain clear import
+By separating domain modules from app composition in `shell`, you keep modules reusable, maintain clear import
 boundaries, and simplify testing and scaling of both the UI and the backend.
 
 ---
 
-_Last updated: 2025-10-04_
-_Author: GitHub Copilot_
+_Last updated: 2026-03-03_

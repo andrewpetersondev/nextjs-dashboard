@@ -2,13 +2,13 @@
 
 ## PostgreSQL Container
 
-To start the database, create a Docker container by running the following command:
+Create a Docker network:
 
 ```bash
 docker network create dashboard-network
 ```
 
-Start the PostgreSQL container on the network:
+Start the PostgreSQL container:
 
 ```bash
 docker run --name dashboard-postgres \
@@ -21,11 +21,11 @@ docker run --name dashboard-postgres \
   -d postgres:latest
 ```
 
-Replace `{your_postgres_user}`, `{your_postgres_password}`, and `{your_postgres_db}` with your desired PostgreSQL user, password, and database name.
+Replace `{your_postgres_user}`, `{your_postgres_password}`, and `{your_postgres_db}` with your desired values.
 
 ## Adminer Container
 
-To manage the PostgreSQL database, you can use Adminer. Start an Adminer container with the following command:
+Start an Adminer container to manage the database via a web UI:
 
 ```bash
 docker run --name dashboard-adminer \
@@ -35,67 +35,58 @@ docker run --name dashboard-adminer \
   -d adminer:latest
 ```
 
-Login Details:
+Login details:
 
 - **System**: PostgreSQL
-- **Server**: dashboard-postgres
+- **Server**: `dashboard-postgres`
 - **Username**: `{your_postgres_user}`
 - **Password**: `{your_postgres_password}`
 - **Database**: `{your_postgres_db}`
 
-### TEST DATABASE NEEDS TO BE CREATED MANUALLY
+## Create the Test Database
 
-- Easily create a test database using Adminer
-- _OR_ **make life difficult** and create it manually using the CLI.
+The test database must be created manually. Use one of the following approaches:
+
+**Via Adminer** (recommended): log in and create the database through the UI.
+
+**Via CLI**:
 
 ```bash
 docker exec -it dashboard-postgres psql -U {your_postgres_user} -c "CREATE DATABASE postgres_test;"
 ```
 
-- _OR_ **automate it for no reason** by ...
-
 ## Next.js
 
-To start the Next.js application with development server, run the following command:
+Start the development server:
 
 ```bash
-hcp vault-secrets run -- pnpm next dev
+pnpm dev
 ```
 
-This command will start the Next.js development server, allowing you to access the application at `http://localhost:3000`.
-
-To start the Next.js application in standalone production mode, first build the application and then start it:
+Build and start in standalone production mode:
 
 ```bash
-hcp vault-secrets run -- pnpm next build
-hcp vault-secrets run -- pnpm next start
+pnpm standalone
 ```
 
-"start" should point to `node .next/standalone/server.js`
-
-### Example Production Start Command
+Or, if already built:
 
 ```bash
-hcp vault-secrets run -- rm -rf ".next" && next build --turbopack && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js
+pnpm start:standalone
 ```
 
 ## Drizzle Kit
 
-To run Drizzle Kit commands, you need to ensure that the environment variables are set up correctly. Use the following command to run Drizzle Kit migrations:
+Generate and apply migrations for the test environment:
 
 ```bash
-hcp vault-secrets run -- pnpm drizzle-kit up --config=drizzle-test.config.ts
+pnpm db:generate:migrate:test
 ```
 
-To generate the Drizzle Kit schema, use:
-
-- Use drizzle-kit generate to create migration files based on your Drizzle schema.
-- Use drizzle-kit migrate to apply these migrations to your database.
+For development:
 
 ```bash
-hcp vault-secrets run -- pnpm drizzle-kit generate --config=drizzle-test.config.ts
-
-hcp vault-secrets run -- pnpm drizzle-kit migrate --config=drizzle-test.config.ts
-
-
+pnpm db:generate:migrate:dev
 ```
+
+See [docs/guides/drizzle.md](./guides/drizzle.md) for the full list of database commands.

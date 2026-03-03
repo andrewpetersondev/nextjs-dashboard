@@ -2,8 +2,10 @@
 
 ## What is Knip?
 
-It is a tool for finding unused code.
+A tool for finding unused exports, files, and dependencies.
 
-## How do I use Knip?
+## How to Use
 
-In the terminal, run `pnpm env:dev knip`
+```sh
+pnpm env:dev knip
+```

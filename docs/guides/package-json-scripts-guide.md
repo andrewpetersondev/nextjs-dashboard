@@ -1,11 +1,11 @@
 # Package Scripts Guide
 
-This document explains each group of scripts defined in package.json and how to use them with pnpm.
+This document explains each group of scripts defined in `package.json` and how to use them with pnpm.
 
 ## Conventions
 
-- Run scripts with: `pnpm run <script>` (or `pnpm <script>` for short).
-- Some scripts assume a test environment file `.env.test` is present.
+- Run scripts with: `pnpm <script>` (or `pnpm run <script>`).
+- Scripts that target a specific environment load the corresponding `.env.*.local` file via the `env:*` wrappers.
 
 ---
 
@@ -13,182 +13,108 @@ This document explains each group of scripts defined in package.json and how to 
 
 Static analysis and formatting.
 
-- biome-check  
-  Formats code and runs Biome checks, showing up to 100 diagnostics.
-    - Use: `pnpm biome-check`
-
-- biome-check-write  
-  Fixes issues Biome can auto-correct.
-    - Use: `pnpm biome-check-write`
-
-- biome-format  
-  Formats files with Biome.
-    - Use: `pnpm biome-format`
-
-- biome-summary  
-  Prints a compact check report.
-    - Use: `pnpm biome-summary`
-
-- type-gen  
-  Generates Next.js types and runs TypeScript type checking (no emit).
-    - Use: `pnpm type-gen`
+- `pnpm biome:check` — run Biome checks (lint + format).
+- `pnpm biome:format` — format files with Biome.
+- `pnpm biome:summary` — print a compact check report.
+- `pnpm type:gen` — generate Next.js types and run TypeScript type checking (no emit).
+- `pnpm typecheck` — run TypeScript type checking only.
 
 ---
 
-## Next.js (App lifecycle)
+## Next.js (App Lifecycle)
 
 Build and run the app.
 
-- dev  
-  Start Next.js in development mode (Turbopack).
-    - Use: `pnpm dev`
-
-- build  
-  Create a production build (Turbopack).
-    - Use: `pnpm build`
-
-- start  
-  Run the production server (expects a prior build).
-    - Use: `pnpm start`
-
-- standalone  
-  Clean build artifacts, build, and run the standalone server.
-    - Use: `pnpm standalone`
-
-- start-standalone  
-  Prepare assets and start the standalone server output.
-    - Use: `pnpm start-standalone`
-
-- debug  
-  Start dev server with Node inspector on port 9229.
-    - Use: `pnpm debug`
+- `pnpm dev` — start Next.js in development mode (Turbopack).
+- `pnpm build` — create a production build.
+- `pnpm build:test` — build the app using the test environment.
+- `pnpm start` — run the production server (requires a prior build).
+- `pnpm start:standalone` — prepare assets and start the standalone server output.
+- `pnpm standalone` — clean, build, and run the standalone server in one step.
+- `pnpm serve:test` — start the standalone server using the test environment.
 
 ---
 
 ## Cypress (E2E)
 
-End-to-end testing workflow.
+End-to-end testing.
 
-- clean  
-  Clean Cypress artifacts and Next.js build output.
-    - Use: `pnpm clean`
-
-- cyp-open  
-  Open Cypress interactive runner.
-    - Use: `pnpm cyp-open`
-
-- cyp-e2e-headless  
-  Run Cypress E2E in headless mode.
-    - Use: `pnpm cyp-e2e-headless`
-
-- cyp-test-e2e  
-  Generate and run test DB migrations, then run headless E2E.
-    - Use: `pnpm cyp-test-e2e`
-
----
-
-## Test-focused (dotenv + wait-on)
-
-Build and run the app under the test environment, then run Cypress.
-
-- build:test  
-  Build the app using `.env.test`.
-    - Use: `pnpm build:test`
-
-- serve:test  
-  Start the standalone server using `.env.test`.
-    - Use: `pnpm serve:test`
-
-- wait:health  
-  Wait until the app responds (default http://localhost:3100/).
-    - Use: `pnpm wait:health`
-
-- e2e:run  
-  Run Cypress E2E using `.env.test`.
-    - Use: `pnpm e2e:run`
-
-- e2e:ci  
-  One-shot CI flow: build → start (in background) → wait → run E2E → stop server.
-    - Use: `pnpm e2e:ci`
-
-- e2e:open  
-  Interactive variant: build → start (in background) → wait → open Cypress; cleans up on exit.
-    - Use: `pnpm e2e:open`
+- `pnpm cyp:open` — open the Cypress interactive runner.
+- `pnpm cyp:e2e:headless` — run Cypress E2E in headless mode.
+- `pnpm e2e:run` — run Cypress E2E using the test environment.
 
 ---
 
 ## Database (Drizzle)
 
-Database migrations, seeding, and resets for dev/test.
+Migrations, seeding, and resets per environment.
 
-- db-reset-dev  
-  Drop/recreate and seed the development DB.
-    - Use: `pnpm db-reset-dev`
+- `pnpm db:generate:migrate:dev` — generate and apply migrations (development).
+- `pnpm db:generate:migrate:test` — generate and apply migrations (test).
+- `pnpm db:generate:migrate:prod` — generate and apply migrations (production).
+- `pnpm db:seed:dev` — seed the development database.
+- `pnpm db:seed:test` — seed the test database.
+- `pnpm db:seed:prod` — seed the production database.
+- `pnpm db:reset:dev` — drop, recreate, and seed the development database.
+- `pnpm db:reset:test` — drop, recreate, and seed the test database.
+- `pnpm db:reset:prod` — drop, recreate, and seed the production database.
+- `pnpm db:studio:dev` — open Drizzle Studio against the development database.
 
-- db-reset-test  
-  Drop/recreate and seed the test DB.
-    - Use: `pnpm db-reset-test`
+---
 
-- db-truncate-dev  
-  Truncate dev DB tables (fast reset), then seed minimal data.
-    - Use: `pnpm db-truncate-dev`
+## Environment Wrappers
 
-- db-truncate-test  
-  Truncate test DB tables (fast reset), then seed minimal data.
-    - Use: `pnpm db-truncate-test`
+Load a specific `.env.*.local` file before running a command.
 
-- db-migrate-generate-test  
-  Generate migrations and apply them for the test DB.
-    - Use: `pnpm db-migrate-generate-test`
-
-- db-seed-dev  
-  Seed the development DB.
-    - Use: `pnpm db-seed-dev`
-
-- db-seed-test  
-  Seed the test DB.
-    - Use: `pnpm db-seed-test`
+- `pnpm env:dev <cmd>` — run `<cmd>` with the development environment.
+- `pnpm env:test <cmd>` — run `<cmd>` with the test environment.
+- `pnpm env:prod <cmd>` — run `<cmd>` with the production environment.
 
 ---
 
 ## Utilities
 
-Miscellaneous helpers.
-
-- wait:health  
-  Wait for the local server to be available (useful in scripts before E2E).
-    - Use: `pnpm wait:health`
-
-- db-create  
-  Example command to create a test database inside a running Docker Postgres container. Replace `{your_postgres_user}`
-  before running.
-    - Use: `pnpm db-create`
-
-- create-auth-secret  
-  Generate an auth secret (via `pnpm dlx`).
-    - Use: `pnpm create-auth-secret`
+- `pnpm clean` — remove `.next` build output.
+- `pnpm clean:all` — remove `.next` and `node_modules` (requires reinstall).
+- `pnpm knip` — find unused exports, files, and dependencies.
+- `pnpm test` — run unit/integration tests (Vitest).
 
 ---
 
 ## Typical Workflows
 
-- Local development
-    1) `pnpm install`
-    2) `pnpm dev`
+**Local development:**
 
-- Prepare and run E2E against a production build
-    1) `pnpm build:test`
-    2) `pnpm serve:test` (in background)
-    3) `pnpm wait:health`
-    4) `pnpm e2e:run`
+```sh
+pnpm install
+pnpm db:generate:migrate:dev
+pnpm db:seed:dev
+pnpm dev
+```
 
-- One-shot E2E in CI
-    - `pnpm e2e:ci`
+**Prepare and run E2E locally:**
 
-- Reset dev DB and start fresh
-    - `pnpm db-reset-dev` then `pnpm dev`
+```sh
+pnpm db:generate:migrate:test
+pnpm db:seed:test
+pnpm build:test
+pnpm serve:test   # keep running in a separate terminal
+pnpm cyp:open
+```
+
+**One-shot E2E run:**
+
+```sh
+pnpm e2e:run
+```
+
+**Reset dev database and start fresh:**
+
+```sh
+pnpm db:reset:dev
+pnpm dev
+```
 
 ---
 
-_Last updated: 2025-10-04_  
-_Author: GitHub Copilot_
+_Last updated: 2026-03-03_
