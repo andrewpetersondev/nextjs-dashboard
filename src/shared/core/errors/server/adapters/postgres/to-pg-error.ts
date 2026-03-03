@@ -21,10 +21,7 @@ interface ErrorCandidate {
 /**
  * Extracts native Postgres fields from a raw error candidate.
  */
-export function extractPgMetadata(
-  obj: ErrorCandidate,
-  code: PgCode,
-): PgErrorMetadata {
+function extractPgMetadata(obj: ErrorCandidate, code: PgCode): PgErrorMetadata {
   const asStr = (v: unknown): string | undefined =>
     typeof v === "string" ? v : undefined;
 
@@ -51,7 +48,7 @@ export function extractPgMetadata(
  *
  * It uses a Breadth-First Search to ensure shallow causes are processed first.
  */
-export function flattenErrorChain(root: unknown): ErrorCandidate[] {
+function flattenErrorChain(root: unknown): ErrorCandidate[] {
   if (!root || typeof root !== "object") {
     return [];
   }

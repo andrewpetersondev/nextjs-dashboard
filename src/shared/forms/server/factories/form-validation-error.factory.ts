@@ -15,7 +15,7 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
 /**
  * Maps an unknown error to a canonical ValidationErrors shape.
  */
-export function mapToValidationErrors<T extends string>(
+function mapToValidationErrors<T extends string>(
   error: unknown,
   fields: readonly T[],
 ): ValidationErrors<T, string> {

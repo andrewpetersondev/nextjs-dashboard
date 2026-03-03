@@ -49,6 +49,7 @@ export function Ok<TValue>(value: TValue): Result<TValue, never> {
  * // result.ok === false
  * // result.error === error
  */
+// biome-ignore lint/style/useExportsLast: blah blah blah
 export function Err<TError extends AppError>(
   error: TError,
 ): Result<never, TError> {
@@ -68,7 +69,7 @@ export function Err<TError extends AppError>(
  *   // result.value is available
  * }
  */
-export function isOk<TValue, TError extends AppError>(
+function _isOk<TValue, TError extends AppError>(
   r: Result<TValue, TError>,
 ): r is OkResult<TValue> {
   return r.ok;
@@ -86,7 +87,7 @@ export function isOk<TValue, TError extends AppError>(
  *   // result.error is available
  * }
  */
-export function isErr<TValue, TError extends AppError>(
+function _isErr<TValue, TError extends AppError>(
   r: Result<TValue, TError>,
 ): r is ErrResult<TError> {
   return !r.ok;
@@ -121,7 +122,7 @@ export function unwrapOrNull<TValue, TError extends AppError>(
  * // ok is true if result is Ok, false otherwise
  * // err is true if result is Err, false otherwise
  */
-export function toFlags<TValue, TError extends AppError>(
+function _toFlags<TValue, TError extends AppError>(
   r: Result<TValue, TError>,
 ): readonly [isOk: boolean, isErr: boolean] {
   return [r.ok, !r.ok] as const;

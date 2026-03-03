@@ -1,6 +1,22 @@
 import { z } from "zod";
 import type { PgErrorMetadata } from "@/shared/core/errors/server/adapters/postgres/db-error.dto";
 
+const PgErrorMetadataSchema: z.ZodType<PgErrorMetadata> = z
+  .object({
+    column: z.string().optional(),
+    constraint: z.string().optional(),
+    datatype: z.string().optional(),
+    detail: z.string().optional(),
+    hint: z.string().optional(),
+    pgCode: z.string(),
+    position: z.string().optional(),
+    schema: z.string().optional(),
+    severity: z.string().optional(),
+    table: z.string().optional(),
+    where: z.string().optional(),
+  })
+  .passthrough();
+
 export type ValidationErrorMetadata = Readonly<{
   readonly field?: string;
   readonly fieldErrors?: Record<string, readonly string[]>;
@@ -34,22 +50,6 @@ export const InfrastructureErrorMetadataSchema = z
     reason: z.string().optional(),
   })
   .passthrough() as z.ZodType<InfrastructureErrorMetadata>;
-
-export const PgErrorMetadataSchema: z.ZodType<PgErrorMetadata> = z
-  .object({
-    column: z.string().optional(),
-    constraint: z.string().optional(),
-    datatype: z.string().optional(),
-    detail: z.string().optional(),
-    hint: z.string().optional(),
-    pgCode: z.string(),
-    position: z.string().optional(),
-    schema: z.string().optional(),
-    severity: z.string().optional(),
-    table: z.string().optional(),
-    where: z.string().optional(),
-  })
-  .passthrough();
 
 export type ConflictErrorMetadata = Readonly<PgErrorMetadata>;
 

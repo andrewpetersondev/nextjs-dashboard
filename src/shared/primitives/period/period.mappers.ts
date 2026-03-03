@@ -11,7 +11,7 @@ import { createPeriod } from "@/shared/primitives/period/period.factory";
  * @param value - The input value to normalize and validate.
  * @returns A `Result<Period, AppError>` representing success or an `AppError`.
  */
-export const toPeriodResult = (value: unknown): Result<Period, AppError> =>
+const toPeriodResult = (value: unknown): Result<Period, AppError> =>
   createPeriod(value);
 
 /**

@@ -15,7 +15,7 @@ import {
  * @param role - The value to check.
  * @returns {boolean} - True if the value is a valid UserRole.
  */
-export function isUserRole(role: unknown): role is UserRole {
+function isUserRole(role: unknown): role is UserRole {
   return typeof role === "string" && USER_ROLES.includes(role as UserRole);
 }
 
