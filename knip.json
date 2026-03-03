@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+
+  "entry": [
+    "src/app/**/*.{ts,tsx}",
+    "src/proxy.ts",
+    "src/**/*.d.ts",
+
+    "devtools/**/*.{ts,tsx}",
+
+    "next.config.ts",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
+
+  "ignore": [
+    "cypress/**",
+    "cypress.config.ts",
+    "drizzle.config.ts",
+    ".next/**",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**"
+  ],
+  "ignoreExportsUsedInFile": false,
+  "project": ["./tsconfig.json", "**/*.{ts,tsx}"]
+}

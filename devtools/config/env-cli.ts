@@ -1,6 +1,8 @@
 /** biome-ignore-all lint/style/noProcessEnv: <env config> */
 /** biome-ignore-all lint/correctness/noProcessGlobal: <env config> */
-import { getDatabaseEnv } from "@/shared/core/config/shared/env-shared";
+// Use a relative import here because this file is loaded by tooling (Knip/Cypress/Node)
+// which may not understand tsconfig path aliases like "@/*".
+import { getDatabaseEnv } from "../../src/shared/core/config/shared/env-shared";
 import { ToolingEnvShape } from "./env-cli.schema";
 
 // Build a normalized object from process.env (use UPPER_SNAKE names)

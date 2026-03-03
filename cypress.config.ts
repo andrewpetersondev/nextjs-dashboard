@@ -1,10 +1,9 @@
-// biome-ignore-all lint/nursery/useExplicitType: fix later
-
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { defineConfig } from "cypress";
 import dotenv from "dotenv";
 import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
-import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
+// Removed: importing env-cli at module load time breaks Knip/Node because of tsconfig path aliases.
+// import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
 
 export default defineConfig({
   e2e: {
@@ -12,7 +11,7 @@ export default defineConfig({
     // In tests, prefer using Cypress.env() and Cypress config values.
     // .env.test.local is loaded in setupNodeEvents to override defaults.
     // The baseUrl below is a fallback; set CYPRESS_BASE_URL in .env.test.local to override it.
-    baseUrl: CYPRESS_BASE_URL ?? "http://localhost:3000",
+    baseUrl: "http://localhost:3000",
 
     // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <it's clean>
     async setupNodeEvents(on, config) {

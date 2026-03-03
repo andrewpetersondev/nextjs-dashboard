@@ -6,6 +6,17 @@ import {
 } from "@/shared/policies/user-role/user-role.constants";
 
 /**
+ * Domain Policy: Registration failures.
+ *
+ * @remarks
+ * Domain must not manufacture application error types (`AppError`) or depend on error catalogs.
+ * Failures are modeled as domain values and mapped to `AppError` in outer layers.
+ */
+const REGISTRATION_FAILURE_KINDS = {
+  INVALID_DEMO_COUNTER: "invalid_demo_counter",
+} as const;
+
+/**
  * Domain Policy: Default Registration Role.
  *
  * @returns The default `UserRole` for new registrations.
@@ -40,17 +51,6 @@ export function generateDemoUserIdentity(
 export function validateDemoUserCounter(counter: unknown): counter is number {
   return typeof counter === "number" && counter > 0;
 }
-
-/**
- * Domain Policy: Registration failures.
- *
- * @remarks
- * Domain must not manufacture application error types (`AppError`) or depend on error catalogs.
- * Failures are modeled as domain values and mapped to `AppError` in outer layers.
- */
-export const REGISTRATION_FAILURE_KINDS = {
-  INVALID_DEMO_COUNTER: "invalid_demo_counter",
-} as const;
 
 export type RegistrationFailureKind =
   (typeof REGISTRATION_FAILURE_KINDS)[keyof typeof REGISTRATION_FAILURE_KINDS];

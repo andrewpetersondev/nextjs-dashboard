@@ -36,6 +36,7 @@
       "./devtools/**/*.{ts,tsx,css,json}",
       "./src/**/*.{ts,tsx,css,json}",
       "./drizzle.config.ts",
+      "./knip.json",
       "./next.config.ts",
       "./package.json",
       "./postcss.config.mjs",

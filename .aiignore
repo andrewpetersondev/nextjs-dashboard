@@ -8,10 +8,10 @@
 # ======================================================
 # TOOLING
 # ======================================================
-.gitignore
-biome.json
-devtools
-src/drizzle
+# .gitignore
+# biome.json
+# devtools
+# src/drizzle
 eslint.config.mjs
 
 # ======================================================
@@ -26,16 +26,16 @@ cypress/downloads
 # ======================================================
 # DOCUMENTATION & STORAGE
 # ======================================================
-docs
+# docs
 storage
 
 # ======================================================
 # NEXT.JS PROJECT CODE
 # ======================================================
 # public
-src/modules/banner
-src/modules/revenues
-src/modules/invoices
+# src/modules/banner
+# src/modules/revenues
+# src/modules/invoices
 
 # ======================================================
 # BUILD / OUTPUT FILES
@@ -57,7 +57,6 @@ tsconfig.tsbuildinfo
 *.sh
 *.txt
 *.yaml
-# *.tsx
 
 # ======================================================
 # DOCKER
@@ -68,55 +67,3 @@ Dockerfile.*
 # ======================================================
 # OTHER STUFF
 # ======================================================
-.vite
-build
-coverage
-logs
-reports
-dist
-out
-*.log
-*.log.*
-*.tmp
-*.DS_Store
-.DS_Store
-*.db
-*.swp
-*.swo
-*.iml
-.turbo
-.cache
-.eslintcache
-.stylelintcache
-pgdata
-postgres-data
-docker/postgres-data
-db_dumps
-dumps
-backups
-*.dump
-*.psql
-Thumbs.db
-.history
-.fleet
-*.pem
-*.key
-*.crt
-*.pfx
-*.p12
-*.der
-.pnp
-.pnp.*
-package-lock.json
-yarn.lock
-*.tgz
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-logs/*.log
-.node_repl_history
-tmp
-temp
-.pnpm-store
-.yarn

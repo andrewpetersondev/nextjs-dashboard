@@ -57,17 +57,3 @@ export function tryGetRouteTypePolicy(
   }
   return { ok: true, value: AUTH_ROUTE_TYPES.PUBLIC };
 }
-
-/**
- * @deprecated Prefer {@link tryGetRouteTypePolicy} in request/edge/server flows.
- * Kept for compatibility with existing call sites that expect an exception.
- */
-export function getRouteTypePolicy(flags: AuthRouteTypeFlags): AuthRouteType {
-  const res = tryGetRouteTypePolicy(flags);
-  if (!res.ok) {
-    throw new Error(
-      "Invalid route type flags: exactly one of isAdminRoute/isProtectedRoute/isPublicRoute must be true.",
-    );
-  }
-  return res.value;
-}

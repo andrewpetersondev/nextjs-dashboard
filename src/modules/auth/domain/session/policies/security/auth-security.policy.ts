@@ -10,7 +10,7 @@ import {
  * Domain must stay independent from application error catalogs and factories.
  * This policy returns domain-level failure values (not `AppError`).
  */
-export const AUTH_SECURITY_FAILURE_KINDS = {
+const AUTH_SECURITY_FAILURE_KINDS = {
   MISSING_SESSION: "missing_session",
 } as const;
 
