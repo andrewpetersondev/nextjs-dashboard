@@ -21,7 +21,7 @@ interface RoleOption {
 /**
  * Props for the UserRoleSelect component.
  */
-export interface UserRoleSelectProps
+interface UserRoleSelectProps
   extends Omit<SelectMenuProps<RoleOption>, "id" | "name" | "options"> {
   readonly dataCy?: string;
   readonly error?: FieldError;

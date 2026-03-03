@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { EmailSchema } from "@/shared/policies/email/email.schema";
 import { PasswordSchema } from "@/shared/policies/password/password.schema";
 import { UserRoleFormSchema } from "@/shared/policies/user-role/user-role.schema";
@@ -57,20 +56,9 @@ export const EditUserFormSchema = z.strictObject({
 // UI/view-model types derived from the shared schema
 
 // Zod Input (pre-parse) - Raw form values
-export type CreateUserFormInput = z.input<typeof CreateUserFormSchema>;
-export type CreateUserFormFieldNames = keyof CreateUserFormInput;
 export type EditUserFormInput = z.input<typeof EditUserFormSchema>;
 export type EditUserFormFieldNames = keyof EditUserFormInput;
 
 // Zod Output (post-parse) - Validated domain data
 export type CreateUserData = z.output<typeof CreateUserFormSchema>;
 export type EditUserData = z.output<typeof EditUserFormSchema>;
-
-export type CreateUserFormField = keyof CreateUserData;
-export type EditUserFormField = keyof EditUserData;
-
-export const CREATE_USER_FIELDS_LIST: readonly CreateUserFormField[] =
-  toSchemaKeys(CreateUserFormSchema);
-
-export const EDIT_USER_FIELDS_LIST: readonly EditUserFormField[] =
-  toSchemaKeys(EditUserFormSchema);

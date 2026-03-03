@@ -7,7 +7,7 @@ import type { Result } from "@/shared/core/result/result.dto";
 /**
  * Type-safe env accessor keys.
  */
-export const ENV_VARIABLES_TUPLE = [
+const ENV_VARIABLES_TUPLE = [
   "AUTH_BCRYPT_SALT_ROUNDS",
   "CYPRESS_BASE_URL",
   "DATABASE_ENV",
@@ -21,7 +21,7 @@ export const ENV_VARIABLES_TUPLE = [
   "SESSION_SECRET",
 ] as const;
 
-export type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
+type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
 
 /**
  * Get a required env var value as a Result.
@@ -29,7 +29,7 @@ export type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
  * @param key - The environment variable key to retrieve.
  * @returns A Result containing the trimmed string value or an AppError if missing/empty.
  */
-export function getEnvVariableResult<K extends EnvVariables>(
+function getEnvVariableResult<K extends EnvVariables>(
   key: K,
 ): Result<string, AppError> {
   console.log(`Retrieving env var: ${key}`);
@@ -56,6 +56,7 @@ export function getEnvVariableResult<K extends EnvVariables>(
  * @returns The trimmed string value.
  * @throws {Error} When the environment variable is missing or empty.
  */
+// biome-ignore lint/style/useExportsLast: fix at some point
 export function getEnvVariable<K extends EnvVariables>(key: K): string {
   const result = getEnvVariableResult(key);
   if (result.ok) {
@@ -70,7 +71,7 @@ export function getEnvVariable<K extends EnvVariables>(key: K): string {
  * @param requiredVars - Array of environment variable keys to validate.
  * @returns A Result containing void on success or an AppError listing missing variables.
  */
-export function validateEnvResult(
+function validateEnvResult(
   requiredVars: readonly EnvVariables[] = ENV_VARIABLES_TUPLE,
 ): Result<void, AppError> {
   const missing: EnvVariables[] = [];
@@ -107,7 +108,7 @@ export function validateEnvResult(
  * @param requiredVars - Array of environment variable keys to validate.
  * @throws {Error} When any required environment variables are missing or empty.
  */
-export function validateEnv(
+function _validateEnv(
   requiredVars: readonly EnvVariables[] = ENV_VARIABLES_TUPLE,
 ): void {
   const result = validateEnvResult(requiredVars);

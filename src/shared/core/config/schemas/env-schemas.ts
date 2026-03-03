@@ -36,8 +36,6 @@ export const LogLevelSchema = z.enum(LOG_LEVEL_TUPLE);
  */
 export type LogLevel = z.infer<typeof LogLevelSchema>;
 
-export type SessionIssuer = z.infer<typeof SessionIssuerSchema>;
-
 // Canonical server/tooling schema for secrets used everywhere
 // biome-ignore lint/nursery/useExplicitType: fix
 export const ServerEnvSchema = z.object({
