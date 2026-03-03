@@ -14,7 +14,7 @@ import {
 /**
  * Result of the route access evaluation (domain-level: authorization only).
  */
-export type AuthRouteAccessDecision =
+type AuthRouteAccessDecision =
   | Readonly<{
       /** Access is granted */
       allowed: true;

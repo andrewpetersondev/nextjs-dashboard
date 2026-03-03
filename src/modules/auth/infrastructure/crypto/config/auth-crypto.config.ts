@@ -4,7 +4,7 @@ import { AUTH_BCRYPT_SALT_ROUNDS } from "@/shared/core/config/server/env-server"
 /**
  * Configuration for authentication-related cryptography.
  */
-export interface AuthCryptoConfig {
+interface AuthCryptoConfig {
   /**
    * The number of salt rounds to use for bcrypt hashing.
    */

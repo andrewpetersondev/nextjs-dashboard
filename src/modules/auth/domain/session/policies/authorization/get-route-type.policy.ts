@@ -10,13 +10,13 @@ import {
  * This policy is intentionally strict: exactly one flag must be `true`.
  * Silent fallbacks would mask upstream routing bugs and cause authorization drift.
  */
-export type AuthRouteTypeFlags = Readonly<{
+type AuthRouteTypeFlags = Readonly<{
   isAdminRoute: boolean;
   isProtectedRoute: boolean;
   isPublicRoute: boolean;
 }>;
 
-export type AuthRouteTypeResolution =
+type AuthRouteTypeResolution =
   | Readonly<{ ok: true; value: AuthRouteType }>
   | Readonly<{
       ok: false;

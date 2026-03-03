@@ -14,10 +14,10 @@ const AUTH_SECURITY_FAILURE_KINDS = {
   MISSING_SESSION: "missing_session",
 } as const;
 
-export type AuthSecurityFailureKind =
+type AuthSecurityFailureKind =
   (typeof AUTH_SECURITY_FAILURE_KINDS)[keyof typeof AUTH_SECURITY_FAILURE_KINDS];
 
-export type AuthSecurityFailure = Readonly<{
+type AuthSecurityFailure = Readonly<{
   readonly kind: AuthSecurityFailureKind;
   readonly policy: typeof AUTH_POLICY_NAMES.SESSION_VERIFICATION;
   readonly reason: typeof AUTH_POLICY_REASONS.NO_TOKEN;

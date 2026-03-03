@@ -77,7 +77,7 @@ async function makeAuthCompositionInternal(
   } as const;
 }
 
-export type AuthComposition = Readonly<{
+type AuthComposition = Readonly<{
   request: Readonly<{
     ip: string | null;
     logger: LoggingClientContract;

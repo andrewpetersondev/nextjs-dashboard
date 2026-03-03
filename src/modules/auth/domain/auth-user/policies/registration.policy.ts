@@ -16,6 +16,14 @@ const REGISTRATION_FAILURE_KINDS = {
   INVALID_DEMO_COUNTER: "invalid_demo_counter",
 } as const;
 
+type RegistrationFailureKind =
+  (typeof REGISTRATION_FAILURE_KINDS)[keyof typeof REGISTRATION_FAILURE_KINDS];
+
+type RegistrationFailure = Readonly<{
+  readonly kind: RegistrationFailureKind;
+  readonly policy: typeof AUTH_POLICY_NAMES.REGISTRATION;
+}>;
+
 /**
  * Domain Policy: Default Registration Role.
  *
@@ -51,14 +59,6 @@ export function generateDemoUserIdentity(
 export function validateDemoUserCounter(counter: unknown): counter is number {
   return typeof counter === "number" && counter > 0;
 }
-
-export type RegistrationFailureKind =
-  (typeof REGISTRATION_FAILURE_KINDS)[keyof typeof REGISTRATION_FAILURE_KINDS];
-
-export type RegistrationFailure = Readonly<{
-  readonly kind: RegistrationFailureKind;
-  readonly policy: typeof AUTH_POLICY_NAMES.REGISTRATION;
-}>;
 
 /**
  * Creates a domain-specific failure value for invalid demo counters.

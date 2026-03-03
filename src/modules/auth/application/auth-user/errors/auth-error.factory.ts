@@ -6,7 +6,7 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
 /**
  * Authentication failure reasons used internally for logging/debugging.
  */
-export type CredentialFailureReason =
+type CredentialFailureReason =
   | "invalid_password"
   | "user_disabled"
   | "user_not_found";
@@ -14,7 +14,7 @@ export type CredentialFailureReason =
 /**
  * Explicit context for credential failures to prevent metadata drift.
  */
-export type CredentialFailureContext = { email: string } | { userId: string };
+type CredentialFailureContext = { email: string } | { userId: string };
 
 /**
  * Application-level Auth Error Factory.
