@@ -1,12 +1,6 @@
-/** biome-ignore-all lint/nursery/useExplicitType: <fix later> */
 import React from "react";
 import { tektur } from "@/ui/styles/fonts";
 import { cn } from "@/ui/utils/cn";
-
-type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
-	className?: string;
-	children: React.ReactNode;
-};
 
 const headingStyles = {
 	h1: "text-2xl md:text-3xl font-bold tracking-tight",
@@ -17,18 +11,30 @@ const headingStyles = {
 	h6: "text-sm font-medium tracking-tight",
 } as const;
 
+type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
+	className?: string;
+	children?: React.ReactNode;
+};
+
+type HeadingTag = keyof typeof headingStyles;
+
+type HeadingComponent = React.ForwardRefExoticComponent<
+	HeadingProps & React.RefAttributes<HTMLHeadingElement>
+>;
+
 /**
  * Factory for heading components.
  */
-function createHeading<T extends keyof typeof headingStyles>(tag: T) {
+function createHeading<T extends HeadingTag>(tag: T): HeadingComponent {
+	// biome-ignore lint/suspicious/noReactForwardRef: forwardRef is intentional for UI primitives
 	const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
 		({ className, children, ...props }, ref) =>
 			React.createElement(
 				tag,
 				{
+					...props,
 					className: cn(tektur.className, headingStyles[tag], className),
 					ref,
-					...props,
 				},
 				children,
 			),
@@ -37,9 +43,9 @@ function createHeading<T extends keyof typeof headingStyles>(tag: T) {
 	return Heading;
 }
 
-export const H1 = createHeading("h1");
-export const H2 = createHeading("h2");
-export const H3 = createHeading("h3");
-export const H4 = createHeading("h4");
-export const H5 = createHeading("h5");
-export const H6 = createHeading("h6");
+export const H1: HeadingComponent = createHeading("h1");
+export const H2: HeadingComponent = createHeading("h2");
+export const H3: HeadingComponent = createHeading("h3");
+export const H4: HeadingComponent = createHeading("h4");
+export const H5: HeadingComponent = createHeading("h5");
+export const H6: HeadingComponent = createHeading("h6");
