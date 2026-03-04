@@ -1,401 +1,397 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "assist": {
-    "actions": {
-      "recommended": true,
-      "source": {
-        "noDuplicateClasses": "on",
-        "organizeImports": "on",
-        "recommended": true,
-        "useSortedAttributes": "on",
-        "useSortedInterfaceMembers": "on",
-        "useSortedKeys": "on",
-        "useSortedProperties": "on"
-      }
-    },
-    "enabled": true
-  },
-  "css": {
-    "assist": {
-      "enabled": true
-    },
-    "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2
-    },
-    "linter": {
-      "enabled": true
-    },
-    "parser": {
-      "tailwindDirectives": true
-    }
-  },
-  "files": {
-    "includes": [
-      "./devtools/**/*.{ts,tsx,css,json}",
-      "./src/**/*.{ts,tsx,css,json}",
-      "./drizzle.config.ts",
-      "./knip.json",
-      "./next.config.ts",
-      "./package.json",
-      "./postcss.config.mjs",
-      "./tsconfig.json",
-      "./vitest.config.ts",
-      "./vitest.setup.ts",
-      "!!**/*.{js,jsx}",
-      "!node_modules"
-    ]
-  },
-  "formatter": {
-    "enabled": true
-  },
-  "javascript": {
-    "assist": {
-      "enabled": true
-    },
-    "formatter": {
-      "enabled": true
-    },
-    "linter": {
-      "enabled": true
-    }
-  },
-  "json": {
-    "assist": {
-      "enabled": true
-    },
-    "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2
-    },
-    "linter": {
-      "enabled": true
-    },
-    "parser": {
-      "allowComments": true
-    }
-  },
-  "linter": {
-    "domains": {
-      "next": "all",
-      "project": "all",
-      "react": "all",
-      "test": "all",
-      "types": "all"
-    },
-    "enabled": true,
-    "rules": {
-      "a11y": {
-        "noNoninteractiveElementInteractions": "on",
-        "recommended": true
-      },
-      "complexity": {
-        "noExcessiveCognitiveComplexity": "on",
-        "noExcessiveLinesPerFunction": "on",
-        "noForEach": "on",
-        "noImplicitCoercions": "on",
-        "noUselessStringConcat": "on",
-        "noUselessUndefined": "on",
-        "noVoid": "on",
-        "recommended": true,
-        "useMaxParams": "on",
-        "useSimplifiedLogicExpression": "on",
-        "useWhile": "on"
-      },
-      "correctness": {
-        "noGlobalDirnameFilename": "on",
-        "noNodejsModules": "on",
-        "noProcessGlobal": "on",
-        "noUndeclaredVariables": "on",
-        "noUnresolvedImports": "off",
-        "noUnusedFunctionParameters": "on",
-        "noUnusedImports": "on",
-        "noUnusedLabels": "on",
-        "noUnusedPrivateClassMembers": "on",
-        "noUnusedVariables": "on",
-        "recommended": true,
-        "useImportExtensions": "off",
-        "useSingleJsDocAsterisk": "on"
-      },
-      "nursery": {
-        "noContinue": "on",
-        "noDivRegex": "on",
-        "noDuplicatedSpreadProps": "on",
-        "noDuplicateEnumValues": "on",
-        "noEqualsToNull": "on",
-        "noExcessiveClassesPerFile": "on",
-        "noExcessiveLinesPerFile": "on",
-        "noFloatingClasses": "on",
-        "noFloatingPromises": "on",
-        "noForIn": "on",
-        "noShadow": "on",
-        "recommended": true,
-        "useExplicitType": "on",
-        "useRequiredScripts": "on",
-        "useSortedClasses": "on"
-      },
-      "performance": {
-        "noAwaitInLoops": "on",
-        "noBarrelFile": "on",
-        "noDelete": "on",
-        "noNamespaceImport": "on",
-        "noReExportAll": "on",
-        "recommended": true,
-        "useTopLevelRegex": "on"
-      },
-      "recommended": true,
-      "security": {
-        "recommended": true
-      },
-      "style": {
-        "noCommonJs": "on",
-        "noDoneCallback": "on",
-        "noEnum": "on",
-        "noExportedImports": "on",
-        "noImplicitBoolean": "on",
-        "noInferrableTypes": "off",
-        "noMagicNumbers": "on",
-        "noNamespace": "on",
-        "noNegationElse": "on",
-        "noNestedTernary": "on",
-        "noParameterAssign": "on",
-        "noParameterProperties": "on",
-        "noProcessEnv": "on",
-        "noShoutyConstants": "on",
-        "noSubstr": "on",
-        "noUnusedTemplateLiteral": "on",
-        "noUselessElse": "on",
-        "noValueAtRule": "on",
-        "noYodaExpression": "on",
-        "recommended": true,
-        "useAsConstAssertion": "on",
-        "useAtIndex": "on",
-        "useBlockStatements": "on",
-        "useCollapsedElseIf": "on",
-        "useCollapsedIf": "on",
-        "useConsistentArrayType": "on",
-        "useConsistentBuiltinInstantiation": "on",
-        "useConsistentCurlyBraces": "on",
-        "useConsistentMemberAccessibility": "on",
-        "useConsistentObjectDefinitions": "on",
-        "useDefaultParameterLast": "on",
-        "useDefaultSwitchClause": "on",
-        "useEnumInitializers": "on",
-        "useExplicitLengthCheck": "on",
-        "useExportsLast": "on",
-        "useFilenamingConvention": "on",
-        "useForOf": "on",
-        "useFragmentSyntax": "on",
-        "useGroupedAccessorPairs": "on",
-        "useNumberNamespace": "on",
-        "useNumericSeparators": "on",
-        "useObjectSpread": "on",
-        "useReadonlyClassProperties": "on",
-        "useSelfClosingElements": "on",
-        "useShorthandAssign": "on",
-        "useSingleVarDeclarator": "on",
-        "useSymbolDescription": "on",
-        "useThrowNewError": "on",
-        "useThrowOnlyError": "on",
-        "useTrimStartEnd": "on",
-        "useUnifiedTypeSignatures": "on"
-      },
-      "suspicious": {
-        "noAlert": "on",
-        "noBitwiseOperators": "on",
-        "noConstantBinaryExpressions": "on",
-        "noDuplicateDependencies": "on",
-        "noEmptyBlockStatements": "on",
-        "noEmptySource": "on",
-        "noEvolvingTypes": "on",
-        "noImportCycles": "on",
-        "noMisplacedAssertion": "on",
-        "noRedeclare": "on",
-        "noSkippedTests": "on",
-        "noUnassignedVariables": "on",
-        "noVar": "on",
-        "recommended": true,
-        "useAwait": "on",
-        "useErrorMessage": "on",
-        "useGuardForIn": "on",
-        "useNumberToFixedDigitsArgument": "on",
-        "useStaticResponseMethods": "on",
-        "useStrictMode": "on"
-      }
-    }
-  },
-  "overrides": [
-    {
-      "includes": ["src/shared/**/*.{ts,tsx}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": ["../**"],
-                    "message": "src/shared may only import from src/shared or node_modules."
-                  },
-                  {
-                    "group": [
-                      "@/app/**",
-                      "@/modules/**",
-                      "@/server/**",
-                      "@/shell/**",
-                      "@/ui/**"
-                    ],
-                    "message": "src/shared must not import from higher-level application modules."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["src/ui/**/*.{ts,tsx}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": [
-                      "@/app/**",
-                      "@/modules/**",
-                      "@/server/**",
-                      "@/shell/**"
-                    ],
-                    "message": "src/ui may only import from src/ui, src/shared, or npm packages."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["src/modules/**/*.{ts,tsx}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": ["@/app/**", "@/shell/**"],
-                    "message": "src/modules must not import from src/app or src/shell."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["src/shell/**/*.{ts,tsx}"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": ["@/app/**"],
-                    "message": "src/shell must not import from src/app."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": ["src/shared/config/**/*.ts"],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": [
-                      "@/shared/logging/**",
-                      "../logging/**",
-                      "../../shared/logging/**"
-                    ],
-                    "message": "config must not import the logger — it initializes too early."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "src/ui/**/*.{ts,tsx}",
-        "src/shell/**/*.{ts,tsx}",
-        "src/modules/**/components/**/*.{ts,tsx}",
-        "src/modules/**/hooks/**/*.{ts,tsx}"
-      ],
-      "linter": {
-        "rules": {
-          "style": {
-            "noRestrictedImports": {
-              "level": "error",
-              "options": {
-                "patterns": [
-                  {
-                    "group": ["@/server/db/schema/**"],
-                    "message": "Client/UI code must not import DB schema files. Use types safe for client viewing."
-                  }
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "src/server/**/*.{ts,tsx}",
-        "src/shared/core/config/**/*.ts",
-        "src/server/config/**/*.ts"
-      ],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noNodejsModules": "off",
-            "noProcessGlobal": "off"
-          },
-          "style": {
-            "noProcessEnv": "off"
-          }
-        }
-      }
-    }
-  ],
-  "root": true,
-  "vcs": {
-    "clientKind": "git",
-    "defaultBranch": "main",
-    "enabled": true,
-    "root": ".",
-    "useIgnoreFile": true
-  }
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"assist": {
+		"actions": {
+			"recommended": true,
+			"source": {
+				"noDuplicateClasses": "on",
+				"organizeImports": "on",
+				"recommended": true,
+				"useSortedAttributes": "on",
+				"useSortedInterfaceMembers": "on",
+				"useSortedKeys": "on",
+				"useSortedProperties": "on"
+			}
+		},
+		"enabled": true
+	},
+	"css": {
+		"assist": {
+			"enabled": true
+		},
+		"formatter": {
+			"enabled": true
+		},
+		"linter": {
+			"enabled": true
+		},
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"files": {
+		"includes": [
+			"./devtools/**/*.{ts,tsx,css,json}",
+			"./src/**/*.{ts,tsx,css,json}",
+			"./drizzle.config.ts",
+			"./knip.json",
+			"./next.config.ts",
+			"./package.json",
+			"./postcss.config.mjs",
+			"./tsconfig.json",
+			"./vitest.config.ts",
+			"./vitest.setup.ts",
+			"!!**/*.{js,jsx}",
+			"!node_modules"
+		]
+	},
+	"formatter": {
+		"enabled": true
+	},
+	"javascript": {
+		"assist": {
+			"enabled": true
+		},
+		"formatter": {
+			"enabled": true
+		},
+		"linter": {
+			"enabled": true
+		}
+	},
+	"json": {
+		"assist": {
+			"enabled": true
+		},
+		"formatter": {
+			"enabled": true
+		},
+		"linter": {
+			"enabled": true
+		},
+		"parser": {
+			"allowComments": true
+		}
+	},
+	"linter": {
+		"domains": {
+			"next": "all",
+			"project": "all",
+			"react": "all",
+			"test": "all",
+			"types": "all"
+		},
+		"enabled": true,
+		"rules": {
+			"a11y": {
+				"noNoninteractiveElementInteractions": "on",
+				"recommended": true
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "on",
+				"noExcessiveLinesPerFunction": "on",
+				"noForEach": "on",
+				"noImplicitCoercions": "on",
+				"noUselessStringConcat": "on",
+				"noUselessUndefined": "on",
+				"noVoid": "on",
+				"recommended": true,
+				"useMaxParams": "on",
+				"useSimplifiedLogicExpression": "on",
+				"useWhile": "on"
+			},
+			"correctness": {
+				"noGlobalDirnameFilename": "on",
+				"noNodejsModules": "on",
+				"noProcessGlobal": "on",
+				"noUndeclaredVariables": "on",
+				"noUnresolvedImports": "off",
+				"noUnusedFunctionParameters": "on",
+				"noUnusedImports": "on",
+				"noUnusedLabels": "on",
+				"noUnusedPrivateClassMembers": "on",
+				"noUnusedVariables": "on",
+				"recommended": true,
+				"useImportExtensions": "off",
+				"useSingleJsDocAsterisk": "on"
+			},
+			"nursery": {
+				"noContinue": "on",
+				"noDivRegex": "on",
+				"noDuplicatedSpreadProps": "on",
+				"noDuplicateEnumValues": "on",
+				"noEqualsToNull": "on",
+				"noExcessiveClassesPerFile": "on",
+				"noExcessiveLinesPerFile": "on",
+				"noFloatingClasses": "on",
+				"noFloatingPromises": "on",
+				"noForIn": "on",
+				"noShadow": "on",
+				"recommended": true,
+				"useExplicitType": "on",
+				"useRequiredScripts": "on",
+				"useSortedClasses": "on"
+			},
+			"performance": {
+				"noAwaitInLoops": "on",
+				"noBarrelFile": "on",
+				"noDelete": "on",
+				"noNamespaceImport": "on",
+				"noReExportAll": "on",
+				"recommended": true,
+				"useTopLevelRegex": "on"
+			},
+			"recommended": true,
+			"security": {
+				"recommended": true
+			},
+			"style": {
+				"noCommonJs": "on",
+				"noDoneCallback": "on",
+				"noEnum": "on",
+				"noExportedImports": "on",
+				"noImplicitBoolean": "on",
+				"noInferrableTypes": "off",
+				"noMagicNumbers": "on",
+				"noNamespace": "on",
+				"noNegationElse": "on",
+				"noNestedTernary": "on",
+				"noParameterAssign": "on",
+				"noParameterProperties": "on",
+				"noProcessEnv": "on",
+				"noShoutyConstants": "on",
+				"noSubstr": "on",
+				"noUnusedTemplateLiteral": "on",
+				"noUselessElse": "on",
+				"noValueAtRule": "on",
+				"noYodaExpression": "on",
+				"recommended": true,
+				"useAsConstAssertion": "on",
+				"useAtIndex": "on",
+				"useBlockStatements": "on",
+				"useCollapsedElseIf": "on",
+				"useCollapsedIf": "on",
+				"useConsistentArrayType": "on",
+				"useConsistentBuiltinInstantiation": "on",
+				"useConsistentCurlyBraces": "on",
+				"useConsistentMemberAccessibility": "on",
+				"useConsistentObjectDefinitions": "on",
+				"useDefaultParameterLast": "on",
+				"useDefaultSwitchClause": "on",
+				"useEnumInitializers": "on",
+				"useExplicitLengthCheck": "on",
+				"useExportsLast": "on",
+				"useFilenamingConvention": "on",
+				"useForOf": "on",
+				"useFragmentSyntax": "on",
+				"useGroupedAccessorPairs": "on",
+				"useNumberNamespace": "on",
+				"useNumericSeparators": "on",
+				"useObjectSpread": "on",
+				"useReadonlyClassProperties": "on",
+				"useSelfClosingElements": "on",
+				"useShorthandAssign": "on",
+				"useSingleVarDeclarator": "on",
+				"useSymbolDescription": "on",
+				"useThrowNewError": "on",
+				"useThrowOnlyError": "on",
+				"useTrimStartEnd": "on",
+				"useUnifiedTypeSignatures": "on"
+			},
+			"suspicious": {
+				"noAlert": "on",
+				"noBitwiseOperators": "on",
+				"noConstantBinaryExpressions": "on",
+				"noDuplicateDependencies": "on",
+				"noEmptyBlockStatements": "on",
+				"noEmptySource": "on",
+				"noEvolvingTypes": "on",
+				"noImportCycles": "on",
+				"noMisplacedAssertion": "on",
+				"noRedeclare": "on",
+				"noSkippedTests": "on",
+				"noUnassignedVariables": "on",
+				"noVar": "on",
+				"recommended": true,
+				"useAwait": "on",
+				"useErrorMessage": "on",
+				"useGuardForIn": "on",
+				"useNumberToFixedDigitsArgument": "on",
+				"useStaticResponseMethods": "on",
+				"useStrictMode": "on"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["src/shared/**/*.{ts,tsx}"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["../**"],
+										"message": "src/shared may only import from src/shared or node_modules."
+									},
+									{
+										"group": [
+											"@/app/**",
+											"@/modules/**",
+											"@/server/**",
+											"@/shell/**",
+											"@/ui/**"
+										],
+										"message": "src/shared must not import from higher-level application modules."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/ui/**/*.{ts,tsx}"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"@/app/**",
+											"@/modules/**",
+											"@/server/**",
+											"@/shell/**"
+										],
+										"message": "src/ui may only import from src/ui, src/shared, or npm packages."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/modules/**/*.{ts,tsx}"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["@/app/**", "@/shell/**"],
+										"message": "src/modules must not import from src/app or src/shell."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/shell/**/*.{ts,tsx}"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["@/app/**"],
+										"message": "src/shell must not import from src/app."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/shared/config/**/*.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"@/shared/logging/**",
+											"../logging/**",
+											"../../shared/logging/**"
+										],
+										"message": "config must not import the logger — it initializes too early."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"src/ui/**/*.{ts,tsx}",
+				"src/shell/**/*.{ts,tsx}",
+				"src/modules/**/components/**/*.{ts,tsx}",
+				"src/modules/**/hooks/**/*.{ts,tsx}"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["@/server/db/schema/**"],
+										"message": "Client/UI code must not import DB schema files. Use types safe for client viewing."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"src/server/**/*.{ts,tsx}",
+				"src/shared/core/config/**/*.ts",
+				"src/server/config/**/*.ts"
+			],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "off",
+						"noProcessGlobal": "off"
+					},
+					"style": {
+						"noProcessEnv": "off"
+					}
+				}
+			}
+		}
+	],
+	"root": true,
+	"vcs": {
+		"clientKind": "git",
+		"defaultBranch": "main",
+		"enabled": true,
+		"root": ".",
+		"useIgnoreFile": true
+	}
 }
