@@ -76,4 +76,4 @@ export const revenues = pgTable(
 );
 
 export type RevenueRow = typeof revenues.$inferSelect;
-export type NewRevenueRow = typeof revenues.$inferInsert;
+export type _NewRevenueRow = typeof revenues.$inferInsert;

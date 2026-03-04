@@ -13,4 +13,4 @@ export const customers = pgTable("customers", {
 });
 
 export type CustomerRow = typeof customers.$inferSelect;
-export type NewCustomerRow = typeof customers.$inferInsert;
+export type _NewCustomerRow = typeof customers.$inferInsert;

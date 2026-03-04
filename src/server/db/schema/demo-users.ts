@@ -12,5 +12,5 @@ export const demoUserCounters = pgTable("demo_user_counters", {
   role: userRolePgEnum("role").notNull().default(GUEST_ROLE).$type<UserRole>(),
 });
 
-export type DemoUserCounterRow = typeof demoUserCounters.$inferSelect;
-export type NewDemoUserCounterRow = typeof demoUserCounters.$inferInsert;
+export type _DemoUserCounterRow = typeof demoUserCounters.$inferSelect;
+export type _NewDemoUserCounterRow = typeof demoUserCounters.$inferInsert;

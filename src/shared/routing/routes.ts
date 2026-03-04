@@ -28,6 +28,7 @@ type RoutesShape = Readonly<{
 }>;
 
 // Core route map (preserved keys/shape for compatibility)
+// biome-ignore lint/style/useExportsLast: fine for now
 export const ROUTES: RoutesShape = {
   auth: {
     login: "/auth/login",
@@ -50,11 +51,11 @@ export const ROUTES: RoutesShape = {
 
 // Middleware/shared guards
 
-export const PROTECTED_PREFIX: StaticPath = ROUTES.dashboard.root;
+const PROTECTED_PREFIX: StaticPath = ROUTES.dashboard.root;
 
-export const ADMIN_PREFIX: StaticPath = ROUTES.dashboard.users;
+const ADMIN_PREFIX: StaticPath = ROUTES.dashboard.users;
 
-export const PUBLIC_ROUTES: ReadonlySet<StaticPath> = new Set<StaticPath>([
+const PUBLIC_ROUTES: ReadonlySet<StaticPath> = new Set<StaticPath>([
   ROUTES.auth.login,
   ROUTES.auth.signup,
   ROUTES.root,

@@ -121,6 +121,7 @@ function _getLogLevel(): LogLevel {
  * @returns The validated DatabaseEnvironment.
  * @throws {Error} When DATABASE_ENV is invalid.
  */
+// biome-ignore lint/style/useExportsLast: fine for now
 export function getDatabaseEnv(): DatabaseEnvironment {
   const result = getDatabaseEnvResult();
   if (result.ok) {
@@ -133,23 +134,23 @@ export function getDatabaseEnv(): DatabaseEnvironment {
  *  Runtime flag helpers
  * -----------------------------------------------------------------------------------------------*/
 
-export function isDev(): boolean {
+function _isDev(): boolean {
   return getNodeEnv() === "development";
 }
-export function isTest(): boolean {
+function _isTest(): boolean {
   return getNodeEnv() === "test";
 }
 export function isProd(): boolean {
   return getNodeEnv() === "production";
 }
 
-export function isDevDb(): boolean {
+function _isDevDb(): boolean {
   return getDatabaseEnv() === "development";
 }
-export function isTestDb(): boolean {
+function _isTestDb(): boolean {
   return getDatabaseEnv() === "test";
 }
-export function isProdDb(): boolean {
+function _isProdDb(): boolean {
   return getDatabaseEnv() === "production";
 }
 
@@ -159,6 +160,6 @@ export function isProdDb(): boolean {
  * @example
  * if (isEnv("development", "test")) console.log("Debug logging enabled");
  */
-export function isEnv(...envs: NodeEnvironment[]): boolean {
+function _isEnv(...envs: NodeEnvironment[]): boolean {
   return envs.includes(getNodeEnv());
 }

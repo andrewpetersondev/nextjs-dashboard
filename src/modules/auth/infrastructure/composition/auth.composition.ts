@@ -105,6 +105,17 @@ type AuthComposition = Readonly<{
 }>;
 
 /**
+ * Testing-only escape hatch.
+ *
+ * Enforces "all-or-nothing" overrides (no optional props) to prevent drift.
+ */
+async function _makeAuthCompositionForTest(
+  overrides: AuthCompositionOverrides,
+): Promise<AuthComposition> {
+  return await makeAuthCompositionInternal(overrides);
+}
+
+/**
  * Composition root for the auth module.
  *
  * - Creates a per-request `requestId`
@@ -115,15 +126,4 @@ type AuthComposition = Readonly<{
  */
 export async function makeAuthComposition(): Promise<AuthComposition> {
   return await makeAuthCompositionInternal();
-}
-
-/**
- * Testing-only escape hatch.
- *
- * Enforces "all-or-nothing" overrides (no optional props) to prevent drift.
- */
-export async function _makeAuthCompositionForTest(
-  overrides: AuthCompositionOverrides,
-): Promise<AuthComposition> {
-  return await makeAuthCompositionInternal(overrides);
 }
