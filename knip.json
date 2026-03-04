@@ -3,14 +3,9 @@
 
   "entry": [
     "src/app/**/*.{ts,tsx}",
-    "src/proxy.ts",
     "src/**/*.d.ts",
 
-    "devtools/**/*.{ts,tsx}",
-
-    "next.config.ts",
-    "vitest.config.ts",
-    "vitest.setup.ts"
+    "devtools/**/*.{ts,tsx}"
   ],
 
   "ignore": ["cypress/**", "cypress.config.ts", "drizzle.config.ts"],
