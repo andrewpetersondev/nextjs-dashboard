@@ -13,6 +13,12 @@ import {
   ValidationErrorMetadataSchema,
 } from "@/shared/core/errors/core/metadata/error-metadata.value";
 
+type AppErrorRegistryEntry = AppErrorDefinition & {
+  readonly metadataSchema: z.ZodType;
+};
+
+type AppErrorDefinitionByKey = (typeof APP_ERROR_REGISTRY)[AppErrorKey];
+
 /**
  * Registry of all available Application Error Keys.
  * Using a constant object ensures type safety and IDE autocompletion across the project.
@@ -34,10 +40,6 @@ export const APP_ERROR_KEYS = {
 } as const;
 
 export type AppErrorKey = keyof typeof APP_ERROR_KEYS;
-
-export type AppErrorRegistryEntry = AppErrorDefinition & {
-  readonly metadataSchema: z.ZodType;
-};
 
 /**
  * Single source of truth for Error Definitions and their Metadata Schemas.
@@ -137,8 +139,6 @@ export const APP_ERROR_REGISTRY = {
     severity: APP_ERROR_SEVERITY.WARN,
   },
 } as const satisfies Record<AppErrorKey, AppErrorRegistryEntry>;
-
-export type AppErrorDefinitionByKey = (typeof APP_ERROR_REGISTRY)[AppErrorKey];
 
 export function getAppErrorDefinition(
   key: AppErrorKey,

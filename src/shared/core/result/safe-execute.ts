@@ -10,7 +10,7 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
 /**
  * Options for safe execution of an operation.
  */
-export type SafeExecuteOptions = {
+type SafeExecuteOptions = {
   readonly logger: LoggingClientContract;
   readonly message: string;
   readonly operation: string;

@@ -1,7 +1,7 @@
 /**
  * Core database fields often extracted from persistence errors.
  */
-export type DbErrorMetadata = Readonly<{
+type DbErrorMetadata = Readonly<{
   column?: string;
   constraint?: string;
   table?: string;

@@ -15,7 +15,7 @@ import type { FormValidationMetadata } from "@/shared/forms/core/types/validatio
 /**
  * Parameters for creating a form error result.
  */
-export interface FormErrorParams<TFields extends string> {
+interface FormErrorParams<TFields extends string> {
   readonly fieldErrors: DenseFieldErrorMap<TFields, string>;
   readonly formData: SparseFieldValueMap<TFields, string>;
   readonly formErrors: FormErrors;

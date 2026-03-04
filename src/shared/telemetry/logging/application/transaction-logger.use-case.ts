@@ -8,7 +8,7 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
 /**
  * Configuration for the transaction lifecycle logger.
  */
-export type TransactionLoggerConfig = Readonly<{
+type TransactionLoggerConfig = Readonly<{
   operationContext: TransactionLoggingContext;
   operationNamePrefix: string;
 }>;

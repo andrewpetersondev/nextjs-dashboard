@@ -112,7 +112,7 @@ export function isAppError(val: unknown): val is AppError {
  * @param val - The value to check.
  * @returns `true` if `val` matches the shape of an `AppErrorJsonDto`, otherwise `false`.
  */
-export function isAppErrorDto(val: unknown): val is AppErrorJsonDto {
+export function _isAppErrorDto(val: unknown): val is AppErrorJsonDto {
   if (typeof val !== "object" || val === null) {
     return false;
   }

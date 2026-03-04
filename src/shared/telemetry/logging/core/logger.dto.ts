@@ -5,13 +5,13 @@ import type {
 } from "@/shared/core/errors/core/app-error.dto";
 import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.registry";
 
-export type ImmutableRecord = Readonly<Record<string, unknown>>;
-
-export interface BaseLogEntry {
+interface BaseLogEntry {
   readonly logLevel: LogLevel;
   readonly message: string;
   readonly timestamp: string;
 }
+
+export type ImmutableRecord = Readonly<Record<string, unknown>>;
 
 /**
  * JSON-serializable representation of a standard Error object.
