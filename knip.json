@@ -9,6 +9,5 @@
   ],
 
   "ignore": ["cypress/**", "cypress.config.ts", "drizzle.config.ts"],
-  "ignoreExportsUsedInFile": false,
   "project": ["./tsconfig.json", "**/*.{ts,tsx}"]
 }
