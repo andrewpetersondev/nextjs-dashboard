@@ -2,5 +2,5 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["src/app/**/*.{ts,tsx}"],
   "ignore": ["cypress/**"],
-  "project": ["./tsconfig.json", "**/*.{ts,tsx}"]
+  "project": ["**/*.{ts,tsx}"]
 }
