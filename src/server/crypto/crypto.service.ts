@@ -1,5 +1,4 @@
 import "server-only";
-
 import { createHashingService } from "@/server/crypto/hashing/hashing.factory";
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 
@@ -20,3 +19,9 @@ export class CryptoService {
     return await this.hashing.hash(raw);
   }
 }
+
+/**
+ * Should this be a singleton? Or, should it be different?
+ * @type {CryptoService}
+ */
+export const cryptoClient: CryptoService = new CryptoService();

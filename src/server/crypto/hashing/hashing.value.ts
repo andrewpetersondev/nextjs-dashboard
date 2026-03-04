@@ -1,16 +1,12 @@
 import "server-only";
 import type { Brand } from "@/shared/core/branding/brand";
 
-// ─── Branded Type ───────────────────────────────────────────────────────────
-
-export const HASH_BRAND: unique symbol = Symbol("Hash");
+const HASH_BRAND: unique symbol = Symbol("Hash");
 
 /**
  * Branded hash string (e.g., for passwords or tokens).
  */
 export type Hash = Brand<string, typeof HASH_BRAND>;
-
-// ─── Factory ────────────────────────────────────────────────────────────────
 
 /**
  * Pure mapping to brand a trusted hash string.
