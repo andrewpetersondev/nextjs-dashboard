@@ -17,7 +17,7 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * - Prefer {@link executeDalResult} for expected DB failures that should be
  *   handled as `Result.Err`.
  */
-export async function executeDalThrow<T>(
+async function _executeDalThrow<T>(
   thunk: () => Promise<T>,
   context: DalContextLite,
   logger: LoggingClientContract,

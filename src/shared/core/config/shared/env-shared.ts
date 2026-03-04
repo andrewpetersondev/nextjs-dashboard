@@ -25,7 +25,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  *
  * @returns A Result containing the validated NodeEnvironment or an AppError.
  */
-export function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
+function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
   if (typeof window !== "undefined") {
     return getPublicNodeEnvResult();
   }
@@ -51,7 +51,7 @@ export function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
  * @returns The validated NodeEnvironment.
  * @throws {Error} When NODE_ENV is invalid.
  */
-export function getNodeEnv(): NodeEnvironment {
+function getNodeEnv(): NodeEnvironment {
   const result = getNodeEnvResult();
   if (result.ok) {
     return result.value;
@@ -64,7 +64,7 @@ export function getNodeEnv(): NodeEnvironment {
  *
  * @returns A Result containing the validated DatabaseEnvironment or an AppError.
  */
-export function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
+function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
   const raw = getEnvVariable("DATABASE_ENV");
   const result = DatabaseEnvironmentSchema.safeParse(raw);
   if (!result.success) {
@@ -80,26 +80,11 @@ export function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
 }
 
 /**
- * Resolve and validate DATABASE_ENV.
- * - Requires DATABASE_ENV to be set and valid
- *
- * @returns The validated DatabaseEnvironment.
- * @throws {Error} When DATABASE_ENV is invalid.
- */
-export function getDatabaseEnv(): DatabaseEnvironment {
-  const result = getDatabaseEnvResult();
-  if (result.ok) {
-    return result.value;
-  }
-  throw new Error(result.error.message);
-}
-
-/**
  * Get effective LOG_LEVEL as a Result.
  *
  * @returns A Result containing the validated LogLevel or an AppError.
  */
-export function getLogLevelResult(): Result<LogLevel, AppError> {
+function getLogLevelResult(): Result<LogLevel, AppError> {
   const raw = getEnvVariable("LOG_LEVEL");
   const result = LogLevelSchema.safeParse(raw);
   if (!result.success) {
@@ -121,8 +106,23 @@ export function getLogLevelResult(): Result<LogLevel, AppError> {
  * @returns The validated LogLevel.
  * @throws {Error} When LOG_LEVEL is invalid.
  */
-export function getLogLevel(): LogLevel {
+function _getLogLevel(): LogLevel {
   const result = getLogLevelResult();
+  if (result.ok) {
+    return result.value;
+  }
+  throw new Error(result.error.message);
+}
+
+/**
+ * Resolve and validate DATABASE_ENV.
+ * - Requires DATABASE_ENV to be set and valid
+ *
+ * @returns The validated DatabaseEnvironment.
+ * @throws {Error} When DATABASE_ENV is invalid.
+ */
+export function getDatabaseEnv(): DatabaseEnvironment {
+  const result = getDatabaseEnvResult();
   if (result.ok) {
     return result.value;
   }

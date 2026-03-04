@@ -6,7 +6,7 @@ import type { FormValidationMetadata } from "@/shared/forms/core/types/validatio
 /**
  * Type guard: checks if the form result is an error.
  */
-export const isFormErr = <TData>(
+const _isFormErr = <TData>(
   result: FormResult<TData>,
 ): result is Extract<FormResult<TData>, { ok: false }> => {
   return !result.ok;
@@ -15,7 +15,7 @@ export const isFormErr = <TData>(
 /**
  * Type guard: checks if the form result is successful.
  */
-export const isFormOk = <TData>(
+const _isFormOk = <TData>(
   result: FormResult<TData>,
 ): result is Extract<FormResult<TData>, { ok: true }> => {
   return result.ok;

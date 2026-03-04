@@ -3,6 +3,12 @@ import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import { SEED_CONFIG } from "./constants";
 
 /**
+ * Pure mapping to brand a trusted hash string.
+ * Use this only for values already hashed by the system or retrieved from DB.
+ */
+const toHash = (value: string): Hash => value as unknown as Hash;
+
+/**
  * Validates that a period string represents the first day of a month.
  */
 export function validatePeriod(period: string): void {
@@ -103,9 +109,3 @@ export function randomInvoiceStatus(): "pending" | "paid" {
     ? "pending"
     : "paid";
 }
-
-/**
- * Pure mapping to brand a trusted hash string.
- * Use this only for values already hashed by the system or retrieved from DB.
- */
-export const toHash = (value: string): Hash => value as unknown as Hash;

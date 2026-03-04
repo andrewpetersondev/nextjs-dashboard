@@ -8,6 +8,22 @@ import {
 } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 
 /**
+ * Converts a number to {@link TimeDeltaSeconds} with strict validation.
+ *
+ * @remarks
+ * Signed delta seconds: can be negative (e.g., "expired by 10 seconds").
+ *
+ * @throws Error
+ * Thrown when the input is not a safe integer.
+ */
+function toTimeDeltaSeconds(value: number): TimeDeltaSeconds {
+  if (!Number.isSafeInteger(value)) {
+    throw new Error("TimeDeltaSeconds must be a safe integer.");
+  }
+  return createTimeDeltaSeconds(value);
+}
+
+/**
  * Converts a number to {@link UnixSeconds} with strict validation.
  *
  * @throws Error
@@ -40,22 +56,6 @@ export function toDurationSeconds(value: number): DurationSeconds {
     throw new Error("DurationSeconds must be >= 0.");
   }
   return createDurationSeconds(value);
-}
-
-/**
- * Converts a number to {@link TimeDeltaSeconds} with strict validation.
- *
- * @remarks
- * Signed delta seconds: can be negative (e.g., "expired by 10 seconds").
- *
- * @throws Error
- * Thrown when the input is not a safe integer.
- */
-export function toTimeDeltaSeconds(value: number): TimeDeltaSeconds {
-  if (!Number.isSafeInteger(value)) {
-    throw new Error("TimeDeltaSeconds must be a safe integer.");
-  }
-  return createTimeDeltaSeconds(value);
 }
 
 /**

@@ -7,7 +7,7 @@
  * A minimal shape for a pg/drizzle result carrying rows.
  * @template TRow - The row type contained in the result.
  */
-export interface PgRows<Trow extends object> {
+interface PgRows<Trow extends object> {
   /** The rows returned by the query. */
   readonly rows: readonly Trow[];
 }
@@ -17,9 +17,7 @@ export interface PgRows<Trow extends object> {
  * @param value - Unknown value to test.
  * @returns True if the value has an array `rows` property.
  */
-export function hasRows<Trow extends object>(
-  value: unknown,
-): value is PgRows<Trow> {
+function hasRows<Trow extends object>(value: unknown): value is PgRows<Trow> {
   if (typeof value !== "object" || value === null) {
     return false;
   }

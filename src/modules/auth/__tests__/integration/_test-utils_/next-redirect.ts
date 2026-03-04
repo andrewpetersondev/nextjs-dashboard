@@ -1,4 +1,4 @@
-export function getNextRedirectPath(error: unknown): string | null {
+function getNextRedirectPath(error: unknown): string | null {
   if (error instanceof Error && error.message === "NEXT_REDIRECT") {
     // The path is embedded in the digest in your mock implementation.
     // We keep this intentionally loose but *typed*.
