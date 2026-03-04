@@ -24,7 +24,7 @@ const defineMapperRegistry = <T extends Record<string, MapperRegistryInfo>>(
 ): T => registry;
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
-export const MAPPER_REGISTRY = defineMapperRegistry({
+const MAPPER_REGISTRY = defineMapperRegistry({
   "AppError → GenericAuthError": {
     file: "presentation/authn/mappers/map-generic-auth.error.ts",
     flows: ["login", "signup"],
@@ -144,12 +144,12 @@ export const MAPPER_REGISTRY = defineMapperRegistry({
 /**
  * Type-safe accessor for mapper information.
  */
-export type MapperKey = keyof typeof MAPPER_REGISTRY;
+type MapperKey = keyof typeof MAPPER_REGISTRY;
 
 /**
  * Get all mappers used in a specific flow.
  */
-export function getMappersForFlow(flow: FlowName): MapperKey[] {
+function _getMappersForFlow(flow: FlowName): MapperKey[] {
   return Object.entries(MAPPER_REGISTRY)
     .filter(([_, info]) => (info.flows as readonly FlowName[]).includes(flow))
     .map(([key]) => key as MapperKey);
