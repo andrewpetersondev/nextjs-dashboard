@@ -1,50 +1,39 @@
-// biome-ignore-all assist/source/useSortedKeys: <preferred organization>
 {
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ES2024",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
-    "skipLibCheck": true,
-    "noEmit": true,
+    "baseUrl": "./",
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "incremental": true,
-    /* Relative Imports */
-    //    "allowImportingTsExtensions": true,
-    /* Type Checking */
-    // strict = true: also sets strictBindCallApply, strictFunctionTypes, strictNullChecks, strictPropertyInitialization, useUnknownInCatchVariables
-    "strict": true,
-    "strictBindCallApply": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitReturns": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
-    /* Path Mapping */
-    "baseUrl": "./",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
     "paths": {
       "@/*": ["./src/*"]
     },
-    /* Next.js specific */
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "target": "ES2024",
+    "useUnknownInCatchVariables": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.mts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
   "exclude": [
     "./.aiassistant",
     "./.github",
@@ -62,5 +51,13 @@
     "**/*.spec.tsx",
     "**/*.cy.ts",
     "**/*.cy.tsx"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ]
 }
