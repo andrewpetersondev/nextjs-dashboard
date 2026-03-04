@@ -13,19 +13,11 @@ type AuthCredentialsSchemaShape = Readonly<{
   password: typeof PasswordSchema;
 }>;
 
-export const AuthCredentialsSchema: z.ZodObject<AuthCredentialsSchemaShape> =
+export const LoginFormSchema: z.ZodObject<AuthCredentialsSchemaShape> =
   z.strictObject({
     email: EmailSchema,
     password: PasswordSchema,
   });
-
-/**
- * Object schema for login form.
- *
- * Alias of AuthCredentialsSchema.
- */
-export const LoginFormSchema: typeof AuthCredentialsSchema =
-  AuthCredentialsSchema;
 
 /** The validated data used by the Workflow and Services */
 export type LoginRequestDto = z.output<typeof LoginFormSchema>;

@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { AuthCredentialsSchema } from "@/modules/auth/presentation/authn/transports/login.form.schema";
+import { LoginFormSchema } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { UsernameSchema } from "@/shared/policies/username/username.schema";
 
@@ -9,7 +9,7 @@ import { UsernameSchema } from "@/shared/policies/username/username.schema";
  * Extends credentials with normalized username.
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
-export const SignupFormSchema = AuthCredentialsSchema.safeExtend({
+export const SignupFormSchema = LoginFormSchema.safeExtend({
   username: UsernameSchema,
 });
 
