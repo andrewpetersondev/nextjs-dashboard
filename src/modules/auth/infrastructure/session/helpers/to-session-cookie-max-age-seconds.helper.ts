@@ -12,9 +12,9 @@ import { millisecondsToSeconds } from "@/shared/time/time.constants";
  * @returns The number of seconds until expiration, or 0 if already expired.
  */
 export function toSessionCookieMaxAgeSecondsHelper(
-  expiresAtMs: number,
-  nowMs: number,
+	expiresAtMs: number,
+	nowMs: number,
 ): number {
-  const secondsUntilExpiry = millisecondsToSeconds(expiresAtMs - nowMs);
-  return Math.max(0, secondsUntilExpiry);
+	const secondsUntilExpiry = millisecondsToSeconds(expiresAtMs - nowMs);
+	return Math.max(0, secondsUntilExpiry);
 }

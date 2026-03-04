@@ -1,10 +1,10 @@
 import {
-  createDurationSeconds,
-  createTimeDeltaSeconds,
-  createUnixSeconds,
-  type DurationSeconds,
-  type TimeDeltaSeconds,
-  type UnixSeconds,
+	createDurationSeconds,
+	createTimeDeltaSeconds,
+	createUnixSeconds,
+	type DurationSeconds,
+	type TimeDeltaSeconds,
+	type UnixSeconds,
 } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 
 /**
@@ -17,10 +17,10 @@ import {
  * Thrown when the input is not a safe integer.
  */
 function toTimeDeltaSeconds(value: number): TimeDeltaSeconds {
-  if (!Number.isSafeInteger(value)) {
-    throw new Error("TimeDeltaSeconds must be a safe integer.");
-  }
-  return createTimeDeltaSeconds(value);
+	if (!Number.isSafeInteger(value)) {
+		throw new Error("TimeDeltaSeconds must be a safe integer.");
+	}
+	return createTimeDeltaSeconds(value);
 }
 
 /**
@@ -30,13 +30,13 @@ function toTimeDeltaSeconds(value: number): TimeDeltaSeconds {
  * Thrown when the input is not a safe integer or is negative.
  */
 export function toUnixSeconds(value: number): UnixSeconds {
-  if (!Number.isSafeInteger(value)) {
-    throw new Error("UnixSeconds must be a safe integer.");
-  }
-  if (value < 0) {
-    throw new Error("UnixSeconds must be >= 0.");
-  }
-  return createUnixSeconds(value);
+	if (!Number.isSafeInteger(value)) {
+		throw new Error("UnixSeconds must be a safe integer.");
+	}
+	if (value < 0) {
+		throw new Error("UnixSeconds must be >= 0.");
+	}
+	return createUnixSeconds(value);
 }
 
 /**
@@ -49,23 +49,23 @@ export function toUnixSeconds(value: number): UnixSeconds {
  * Thrown when the input is not a safe integer or is negative.
  */
 export function toDurationSeconds(value: number): DurationSeconds {
-  if (!Number.isSafeInteger(value)) {
-    throw new Error("DurationSeconds must be a safe integer.");
-  }
-  if (value < 0) {
-    throw new Error("DurationSeconds must be >= 0.");
-  }
-  return createDurationSeconds(value);
+	if (!Number.isSafeInteger(value)) {
+		throw new Error("DurationSeconds must be a safe integer.");
+	}
+	if (value < 0) {
+		throw new Error("DurationSeconds must be >= 0.");
+	}
+	return createDurationSeconds(value);
 }
 
 /**
  * Calculates time left until expiry (signed).
  */
 export function calculateTimeLeftSec(
-  expiresAt: UnixSeconds,
-  nowSec: UnixSeconds,
+	expiresAt: UnixSeconds,
+	nowSec: UnixSeconds,
 ): TimeDeltaSeconds {
-  return toTimeDeltaSeconds(expiresAt - nowSec);
+	return toTimeDeltaSeconds(expiresAt - nowSec);
 }
 
 /**
@@ -74,8 +74,8 @@ export function calculateTimeLeftSec(
  * @throws Error if nowSec < issuedAt (clock skew / inconsistent inputs).
  */
 export function calculateAgeSec(
-  issuedAt: UnixSeconds,
-  nowSec: UnixSeconds,
+	issuedAt: UnixSeconds,
+	nowSec: UnixSeconds,
 ): DurationSeconds {
-  return toDurationSeconds(nowSec - issuedAt);
+	return toDurationSeconds(nowSec - issuedAt);
 }

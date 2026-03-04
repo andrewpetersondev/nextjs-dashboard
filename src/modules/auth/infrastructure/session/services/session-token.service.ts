@@ -16,67 +16,67 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
 import {
-  nowInSeconds,
-  secondsToMilliseconds,
+	nowInSeconds,
+	secondsToMilliseconds,
 } from "@/shared/time/time.constants";
 
 function validateSessionTokenClaimsSemantics(
-  claims: Readonly<{ exp: number; iat: number; nbf: number }>,
-  nowSec: number,
+	claims: Readonly<{ exp: number; iat: number; nbf: number }>,
+	nowSec: number,
 ): Result<void, AppError> {
-  // These checks are intentionally *not* part of the Zod schema so we can
-  // distinguish schema-shape failures from semantic/time-window failures.
-  if (claims.iat > nowSec + SESSION_TOKEN_CLOCK_TOLERANCE_SEC) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "iat_in_future",
-        message: "session.claims.invalid_semantics",
-        metadata: { policy: "session", reason: "iat_in_future" },
-      }),
-    );
-  }
+	// These checks are intentionally *not* part of the Zod schema so we can
+	// distinguish schema-shape failures from semantic/time-window failures.
+	if (claims.iat > nowSec + SESSION_TOKEN_CLOCK_TOLERANCE_SEC) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "iat_in_future",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "iat_in_future" },
+			}),
+		);
+	}
 
-  if (claims.nbf > nowSec + SESSION_TOKEN_CLOCK_TOLERANCE_SEC) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "nbf_in_future",
-        message: "session.claims.invalid_semantics",
-        metadata: { policy: "session", reason: "nbf_in_future" },
-      }),
-    );
-  }
+	if (claims.nbf > nowSec + SESSION_TOKEN_CLOCK_TOLERANCE_SEC) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "nbf_in_future",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "nbf_in_future" },
+			}),
+		);
+	}
 
-  if (claims.exp <= claims.iat) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "exp_before_iat",
-        message: "session.claims.invalid_semantics",
-        metadata: { policy: "session", reason: "exp_before_iat" },
-      }),
-    );
-  }
+	if (claims.exp <= claims.iat) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "exp_before_iat",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "exp_before_iat" },
+			}),
+		);
+	}
 
-  if (claims.nbf > claims.exp) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "nbf_after_exp",
-        message: "session.claims.invalid_semantics",
-        metadata: { policy: "session", reason: "nbf_after_exp" },
-      }),
-    );
-  }
+	if (claims.nbf > claims.exp) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "nbf_after_exp",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "nbf_after_exp" },
+			}),
+		);
+	}
 
-  if (claims.nbf > claims.iat) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "nbf_after_iat",
-        message: "session.claims.invalid_semantics",
-        metadata: { policy: "session", reason: "nbf_after_iat" },
-      }),
-    );
-  }
+	if (claims.nbf > claims.iat) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "nbf_after_iat",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "nbf_after_iat" },
+			}),
+		);
+	}
 
-  return Ok(undefined);
+	return Ok(undefined);
 }
 
 /**
@@ -88,141 +88,141 @@ function validateSessionTokenClaimsSemantics(
  * @implements {SessionTokenServiceContract}
  */
 export class SessionTokenService implements SessionTokenServiceContract {
-  private readonly codec: SessionTokenCodecContract;
+	private readonly codec: SessionTokenCodecContract;
 
-  /**
-   * Initializes the session token service.
-   *
-   * @param codec - The codec used for encoding and decoding tokens.
-   */
-  constructor(codec: SessionTokenCodecContract) {
-    this.codec = codec;
-  }
+	/**
+	 * Initializes the session token service.
+	 *
+	 * @param codec - The codec used for encoding and decoding tokens.
+	 */
+	constructor(codec: SessionTokenCodecContract) {
+		this.codec = codec;
+	}
 
-  /**
-   * Decodes and cryptographically verifies a token.
-   *
-   * @remarks
-   * Contract: this returns decoded-but-untrusted payload. Call `validate()` to
-   * enforce schema/invariants and obtain application-level claims.
-   *
-   * @param token - The token to decode.
-   * @returns A promise resolving to a {@link Result} containing the decoded payload or an {@link AppError}.
-   */
-  async decode(token: string): Promise<Result<unknown, AppError>> {
-    return await this.codec.decode(token);
-  }
+	/**
+	 * Decodes and cryptographically verifies a token.
+	 *
+	 * @remarks
+	 * Contract: this returns decoded-but-untrusted payload. Call `validate()` to
+	 * enforce schema/invariants and obtain application-level claims.
+	 *
+	 * @param token - The token to decode.
+	 * @returns A promise resolving to a {@link Result} containing the decoded payload or an {@link AppError}.
+	 */
+	async decode(token: string): Promise<Result<unknown, AppError>> {
+		return await this.codec.decode(token);
+	}
 
-  /**
-   * Issues a new session token with the provided claims.
-   *
-   * @remarks
-   * This method generates unique identifiers for the session (sid) and the token (jti),
-   * sets the issued-at (iat) and expiration (exp) times, and encodes the claims into a token string.
-   *
-   * @param input - The request containing user data for the token.
-   * @returns A promise resolving to a {@link Result} containing the {@link IssuedTokenDto} (token + expiration) or an {@link AppError}.
-   */
-  async issue(
-    input: IssueTokenCommand,
-  ): Promise<Result<IssuedTokenDto, AppError>> {
-    const nowSec = nowInSeconds();
-    const expiresAtSec = nowSec + SESSION_DURATION_SEC;
+	/**
+	 * Issues a new session token with the provided claims.
+	 *
+	 * @remarks
+	 * This method generates unique identifiers for the session (sid) and the token (jti),
+	 * sets the issued-at (iat) and expiration (exp) times, and encodes the claims into a token string.
+	 *
+	 * @param input - The request containing user data for the token.
+	 * @returns A promise resolving to a {@link Result} containing the {@link IssuedTokenDto} (token + expiration) or an {@link AppError}.
+	 */
+	async issue(
+		input: IssueTokenCommand,
+	): Promise<Result<IssuedTokenDto, AppError>> {
+		const nowSec = nowInSeconds();
+		const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
-    const sid = crypto.randomUUID();
-    const jti = crypto.randomUUID();
+		const sid = crypto.randomUUID();
+		const jti = crypto.randomUUID();
 
-    const claims = toSessionTokenClaimsDto(input, {
-      exp: expiresAtSec,
-      iat: nowSec,
-      jti,
-      sid,
-    });
+		const claims = toSessionTokenClaimsDto(input, {
+			exp: expiresAtSec,
+			iat: nowSec,
+			jti,
+			sid,
+		});
 
-    const encodedResult = await this.codec.encode(claims);
+		const encodedResult = await this.codec.encode(claims);
 
-    if (!encodedResult.ok) {
-      return Err(encodedResult.error);
-    }
+		if (!encodedResult.ok) {
+			return Err(encodedResult.error);
+		}
 
-    return Ok({
-      expiresAtMs: secondsToMilliseconds(expiresAtSec),
-      token: encodedResult.value,
-    });
-  }
+		return Ok({
+			expiresAtMs: secondsToMilliseconds(expiresAtSec),
+			token: encodedResult.value,
+		});
+	}
 
-  /**
-   * Issues a rotated session token.
-   *
-   * @param input - The request containing existing session data for rotation.
-   * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
-   */
-  async issueRotated(
-    input: IssueRotatedTokenCommand,
-  ): Promise<Result<IssuedTokenDto, AppError>> {
-    const nowSec = nowInSeconds();
-    const expiresAtSec = nowSec + SESSION_DURATION_SEC;
+	/**
+	 * Issues a rotated session token.
+	 *
+	 * @param input - The request containing existing session data for rotation.
+	 * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
+	 */
+	async issueRotated(
+		input: IssueRotatedTokenCommand,
+	): Promise<Result<IssuedTokenDto, AppError>> {
+		const nowSec = nowInSeconds();
+		const expiresAtSec = nowSec + SESSION_DURATION_SEC;
 
-    const jti = crypto.randomUUID();
+		const jti = crypto.randomUUID();
 
-    const claims = toSessionTokenClaimsDto(
-      { role: input.role, userId: input.userId },
-      {
-        exp: expiresAtSec,
-        iat: nowSec,
-        jti,
-        sid: input.sid,
-      },
-    );
+		const claims = toSessionTokenClaimsDto(
+			{ role: input.role, userId: input.userId },
+			{
+				exp: expiresAtSec,
+				iat: nowSec,
+				jti,
+				sid: input.sid,
+			},
+		);
 
-    const encodedResult = await this.codec.encode(claims);
+		const encodedResult = await this.codec.encode(claims);
 
-    if (!encodedResult.ok) {
-      return Err(encodedResult.error);
-    }
+		if (!encodedResult.ok) {
+			return Err(encodedResult.error);
+		}
 
-    return Ok({
-      expiresAtMs: secondsToMilliseconds(expiresAtSec),
-      token: encodedResult.value,
-    });
-  }
+		return Ok({
+			expiresAtMs: secondsToMilliseconds(expiresAtSec),
+			token: encodedResult.value,
+		});
+	}
 
-  /**
-   * Validates decoded claims against the session token claims schema.
-   *
-   * @param claims - The claims to validate.
-   * @returns A promise resolving to a {@link Result} containing the validated claims DTO or an {@link AppError}.
-   */
-  // biome-ignore lint/suspicious/useAwait: keep it as async to unify contracts
-  async validate(
-    claims: unknown,
-  ): Promise<Result<SessionTokenClaimsDto, AppError>> {
-    const parsed = SessionTokenClaimsSchema.safeParse(claims);
+	/**
+	 * Validates decoded claims against the session token claims schema.
+	 *
+	 * @param claims - The claims to validate.
+	 * @returns A promise resolving to a {@link Result} containing the validated claims DTO or an {@link AppError}.
+	 */
+	// biome-ignore lint/suspicious/useAwait: keep it as async to unify contracts
+	async validate(
+		claims: unknown,
+	): Promise<Result<SessionTokenClaimsDto, AppError>> {
+		const parsed = SessionTokenClaimsSchema.safeParse(claims);
 
-    if (!parsed.success) {
-      return Err(
-        makeAppError(APP_ERROR_KEYS.validation, {
-          cause: parsed.error,
-          message: "session.claims.invalid_schema",
-          metadata: { policy: "session", reason: "invalid_schema" },
-        }),
-      );
-    }
+		if (!parsed.success) {
+			return Err(
+				makeAppError(APP_ERROR_KEYS.validation, {
+					cause: parsed.error,
+					message: "session.claims.invalid_schema",
+					metadata: { policy: "session", reason: "invalid_schema" },
+				}),
+			);
+		}
 
-    const nowSec = nowInSeconds();
-    const semanticValidation = validateSessionTokenClaimsSemantics(
-      {
-        exp: parsed.data.exp,
-        iat: parsed.data.iat,
-        nbf: parsed.data.nbf,
-      },
-      nowSec,
-    );
+		const nowSec = nowInSeconds();
+		const semanticValidation = validateSessionTokenClaimsSemantics(
+			{
+				exp: parsed.data.exp,
+				iat: parsed.data.iat,
+				nbf: parsed.data.nbf,
+			},
+			nowSec,
+		);
 
-    if (!semanticValidation.ok) {
-      return Err(semanticValidation.error);
-    }
+		if (!semanticValidation.ok) {
+			return Err(semanticValidation.error);
+		}
 
-    return Ok(jwtToSessionTokenClaimsDto(parsed.data));
-  }
+		return Ok(jwtToSessionTokenClaimsDto(parsed.data));
+	}
 }

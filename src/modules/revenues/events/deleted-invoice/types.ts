@@ -8,9 +8,9 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Arguments for applying deletion effects to revenue records.
  */
 export type ApplyDeletionEffectsArgs = Readonly<{
-  context: string;
-  invoice: InvoiceDto;
-  metadata: LogMetadata;
-  period: Period;
-  revenueService: RevenueApplicationService;
+	context: string;
+	invoice: InvoiceDto;
+	metadata: LogMetadata;
+	period: Period;
+	revenueService: RevenueApplicationService;
 }>;

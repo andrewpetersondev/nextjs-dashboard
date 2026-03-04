@@ -5,10 +5,10 @@ import { AUTH_BCRYPT_SALT_ROUNDS } from "@/shared/core/config/server/env-server"
  * Configuration for authentication-related cryptography.
  */
 interface AuthCryptoConfig {
-  /**
-   * The number of salt rounds to use for bcrypt hashing.
-   */
-  readonly bcryptSaltRounds: number;
+	/**
+	 * The number of salt rounds to use for bcrypt hashing.
+	 */
+	readonly bcryptSaltRounds: number;
 }
 
 /**
@@ -17,7 +17,7 @@ interface AuthCryptoConfig {
  * @returns The authentication cryptography configuration.
  */
 export function getAuthCryptoConfig(): AuthCryptoConfig {
-  return {
-    bcryptSaltRounds: AUTH_BCRYPT_SALT_ROUNDS,
-  };
+	return {
+		bcryptSaltRounds: AUTH_BCRYPT_SALT_ROUNDS,
+	};
 }

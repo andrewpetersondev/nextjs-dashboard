@@ -8,19 +8,19 @@ import { CustomersTableMobileRow } from "@/modules/customers/presentation/compon
  * @returns JSX.Element
  */
 export function CustomersTableMobile({
-  customers,
+	customers,
 }: {
-  customers: FormattedCustomersTableRow[];
+	customers: FormattedCustomersTableRow[];
 }): JSX.Element {
-  return (
-    <div
-      className="md:hidden"
-      data-cy="customers-table-mobile"
-      data-testid="mobile-table"
-    >
-      {customers.map((customer) => (
-        <CustomersTableMobileRow customer={customer} key={customer.id} />
-      ))}
-    </div>
-  );
+	return (
+		<div
+			className="md:hidden"
+			data-cy="customers-table-mobile"
+			data-testid="mobile-table"
+		>
+			{customers.map((customer) => (
+				<CustomersTableMobileRow customer={customer} key={customer.id} />
+			))}
+		</div>
+	);
 }

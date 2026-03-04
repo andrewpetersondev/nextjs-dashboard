@@ -2,8 +2,8 @@ import "server-only";
 
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import type {
-  InvoiceFormPartialEntity,
-  InvoiceServiceEntity,
+	InvoiceFormPartialEntity,
+	InvoiceServiceEntity,
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
@@ -27,111 +27,111 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @typeParam TUpdateInput - Input type for updating an invoice.
  */
 export class InvoiceRepository extends BaseRepository<
-  InvoiceDto,
-  InvoiceId,
-  InvoiceServiceEntity,
-  InvoiceFormPartialEntity
+	InvoiceDto,
+	InvoiceId,
+	InvoiceServiceEntity,
+	InvoiceFormPartialEntity
 > {
-  /**
-   * Repo method to create an invoice.
-   * - Accepts values created/set by users in the UI (`InvoiceFormEntity`), AS WELL AS
-   * - generated values in the service layer (`InvoiceServiceEntity`).
-   * @param input - Invoice creation data as InvoiceServiceEntity
-   * @returns Promise resolving to created InvoiceDto returning to Service layer.
-   * @throws AppError (code: "validation") for invalid input
-   * @throws
-   * - Error bubbles up through the Service Layer to the Actions layer.
-   */
-  async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
-    if (!input || typeof input !== "object") {
-      throw makeAppError("validation", {
-        cause: "",
-        message: INVOICE_MSG.invalidInput,
-        metadata: {},
-      });
-    }
+	/**
+	 * Repo method to create an invoice.
+	 * - Accepts values created/set by users in the UI (`InvoiceFormEntity`), AS WELL AS
+	 * - generated values in the service layer (`InvoiceServiceEntity`).
+	 * @param input - Invoice creation data as InvoiceServiceEntity
+	 * @returns Promise resolving to created InvoiceDto returning to Service layer.
+	 * @throws AppError (code: "validation") for invalid input
+	 * @throws
+	 * - Error bubbles up through the Service Layer to the Actions layer.
+	 */
+	async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
+		if (!input || typeof input !== "object") {
+			throw makeAppError("validation", {
+				cause: "",
+				message: INVOICE_MSG.invalidInput,
+				metadata: {},
+			});
+		}
 
-    const createdEntity = await createInvoiceDal(this.db, input);
+		const createdEntity = await createInvoiceDal(this.db, input);
 
-    return entityToInvoiceDto(createdEntity);
-  }
+		return entityToInvoiceDto(createdEntity);
+	}
 
-  /**
-   * Reads an invoice by ID.
-   * @param id - InvoiceId (branded type)
-   * @returns Promise resolving to InvoiceDto
-   * @throws AppError (code: "validation") for invalid parameter id
-   */
-  async read(id: InvoiceId): Promise<InvoiceDto> {
-    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
-    if (!id) {
-      throw makeAppError("validation", {
-        cause: "",
-        message: INVOICE_MSG.invalidId,
-        metadata: {},
-      });
-    }
+	/**
+	 * Reads an invoice by ID.
+	 * @param id - InvoiceId (branded type)
+	 * @returns Promise resolving to InvoiceDto
+	 * @throws AppError (code: "validation") for invalid parameter id
+	 */
+	async read(id: InvoiceId): Promise<InvoiceDto> {
+		// Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
+		if (!id) {
+			throw makeAppError("validation", {
+				cause: "",
+				message: INVOICE_MSG.invalidId,
+				metadata: {},
+			});
+		}
 
-    // Call DAL with branded ID
-    const entity = await readInvoiceDal(this.db, id);
+		// Call DAL with branded ID
+		const entity = await readInvoiceDal(this.db, id);
 
-    // Transform Entity (branded) → DTO (plain)
-    return entityToInvoiceDto(entity);
-  }
+		// Transform Entity (branded) → DTO (plain)
+		return entityToInvoiceDto(entity);
+	}
 
-  /**
-   * Updates an invoice.
-   * @param id - InvoiceId (branded type)
-   * @param data - Update data as InvoiceFormPartialEntity
-   * @returns Promise resolving to updated InvoiceDto
-   * @throws AppError (code: "validation") for invalid input
-   */
-  async update(
-    id: InvoiceId,
-    data: InvoiceFormPartialEntity,
-  ): Promise<InvoiceDto> {
-    if (!id) {
-      throw makeAppError("validation", {
-        cause: "",
-        message: INVOICE_MSG.invalidId,
-        metadata: {},
-      });
-    }
-    if (!data || typeof data !== "object") {
-      throw makeAppError("validation", {
-        cause: "",
-        message: INVOICE_MSG.invalidInput,
-        metadata: {},
-      });
-    }
+	/**
+	 * Updates an invoice.
+	 * @param id - InvoiceId (branded type)
+	 * @param data - Update data as InvoiceFormPartialEntity
+	 * @returns Promise resolving to updated InvoiceDto
+	 * @throws AppError (code: "validation") for invalid input
+	 */
+	async update(
+		id: InvoiceId,
+		data: InvoiceFormPartialEntity,
+	): Promise<InvoiceDto> {
+		if (!id) {
+			throw makeAppError("validation", {
+				cause: "",
+				message: INVOICE_MSG.invalidId,
+				metadata: {},
+			});
+		}
+		if (!data || typeof data !== "object") {
+			throw makeAppError("validation", {
+				cause: "",
+				message: INVOICE_MSG.invalidInput,
+				metadata: {},
+			});
+		}
 
-    // Call DAL with branded types
-    const updatedEntity = await updateInvoiceDal(this.db, id, data);
+		// Call DAL with branded types
+		const updatedEntity = await updateInvoiceDal(this.db, id, data);
 
-    // Transform Entity (branded) → DTO (plain)
-    return entityToInvoiceDto(updatedEntity);
-  }
+		// Transform Entity (branded) → DTO (plain)
+		return entityToInvoiceDto(updatedEntity);
+	}
 
-  /**
-   * Deletes an invoice.
-   * @param id - InvoiceId (branded type)
-   * @returns Promise resolving to deleted InvoiceDto
-   * @throws AppError (code: "validation") for invalid ID
-   */
-  async delete(id: InvoiceId): Promise<InvoiceDto> {
-    // Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
-    if (!id) {
-      throw makeAppError("validation", {
-        cause: "",
-        message: INVOICE_MSG.invalidId,
-        metadata: {},
-      });
-    }
+	/**
+	 * Deletes an invoice.
+	 * @param id - InvoiceId (branded type)
+	 * @returns Promise resolving to deleted InvoiceDto
+	 * @throws AppError (code: "validation") for invalid ID
+	 */
+	async delete(id: InvoiceId): Promise<InvoiceDto> {
+		// Basic parameter validation. Throw error. Error bubbles up through Service Layer to Actions layer.
+		if (!id) {
+			throw makeAppError("validation", {
+				cause: "",
+				message: INVOICE_MSG.invalidId,
+				metadata: {},
+			});
+		}
 
-    // Call DAL with branded ID
-    const deletedEntity = await deleteInvoiceDal(this.db, id);
+		// Call DAL with branded ID
+		const deletedEntity = await deleteInvoiceDal(this.db, id);
 
-    // Transform Entity (branded) → DTO (plain)
-    return entityToInvoiceDto(deletedEntity);
-  }
+		// Transform Entity (branded) → DTO (plain)
+		return entityToInvoiceDto(deletedEntity);
+	}
 }

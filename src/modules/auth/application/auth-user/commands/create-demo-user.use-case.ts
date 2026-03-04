@@ -19,70 +19,70 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * and persisting the demo user in the database.
  */
 export class CreateDemoUserUseCase {
-  private readonly hasher: PasswordHasherContract;
-  private readonly logger: LoggingClientContract;
-  private readonly passwordGenerator: PasswordGeneratorContract;
-  private readonly uow: AuthUnitOfWorkContract;
+	private readonly hasher: PasswordHasherContract;
+	private readonly logger: LoggingClientContract;
+	private readonly passwordGenerator: PasswordGeneratorContract;
+	private readonly uow: AuthUnitOfWorkContract;
 
-  /**
-   * @param uow - Unit of Work for transactional database operations.
-   * @param hasher - Service for hashing user passwords.
-   * @param passwordGenerator - Service for generating compliant random passwords.
-   * @param logger - Logging client for audit and debugging.
-   */
-  constructor(
-    uow: AuthUnitOfWorkContract,
-    hasher: PasswordHasherContract,
-    passwordGenerator: PasswordGeneratorContract,
-    logger: LoggingClientContract,
-  ) {
-    this.logger = makeAuthUseCaseLoggerHelper(
-      logger,
-      AUTH_USE_CASE_NAMES.CREATE_DEMO_USER,
-    );
-    this.hasher = hasher;
-    this.passwordGenerator = passwordGenerator;
-    this.uow = uow;
-  }
+	/**
+	 * @param uow - Unit of Work for transactional database operations.
+	 * @param hasher - Service for hashing user passwords.
+	 * @param passwordGenerator - Service for generating compliant random passwords.
+	 * @param logger - Logging client for audit and debugging.
+	 */
+	constructor(
+		uow: AuthUnitOfWorkContract,
+		hasher: PasswordHasherContract,
+		passwordGenerator: PasswordGeneratorContract,
+		logger: LoggingClientContract,
+	) {
+		this.logger = makeAuthUseCaseLoggerHelper(
+			logger,
+			AUTH_USE_CASE_NAMES.CREATE_DEMO_USER,
+		);
+		this.hasher = hasher;
+		this.passwordGenerator = passwordGenerator;
+		this.uow = uow;
+	}
 
-  /**
-   * Executes the demo user creation logic.
-   *
-   * @param input - The command containing the role to assign to the new demo user.
-   * @returns A Result containing the created user DTO or an AppError.
-   *
-   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
-   */
-  execute(
-    input: Readonly<CreateDemoUserCommand>,
-  ): Promise<Result<AuthenticatedUserDto, AppError>> {
-    return safeExecute<AuthenticatedUserDto>(
-      async () => {
-        const { role } = input;
-        const result = await createDemoUserTxHelper(
-          {
-            hasher: this.hasher,
-            passwordGenerator: this.passwordGenerator,
-            uow: this.uow,
-          },
-          role,
-        );
+	/**
+	 * Executes the demo user creation logic.
+	 *
+	 * @param input - The command containing the role to assign to the new demo user.
+	 * @returns A Result containing the created user DTO or an AppError.
+	 *
+	 * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+	 */
+	execute(
+		input: Readonly<CreateDemoUserCommand>,
+	): Promise<Result<AuthenticatedUserDto, AppError>> {
+		return safeExecute<AuthenticatedUserDto>(
+			async () => {
+				const { role } = input;
+				const result = await createDemoUserTxHelper(
+					{
+						hasher: this.hasher,
+						passwordGenerator: this.passwordGenerator,
+						uow: this.uow,
+					},
+					role,
+				);
 
-        if (result.ok) {
-          this.logger.operation("info", "Create demo user succeeded", {
-            operationContext: "auth",
-            operationIdentifiers: { role, userId: result.value.id },
-            operationName: "auth.demo_user.success",
-          });
-        }
+				if (result.ok) {
+					this.logger.operation("info", "Create demo user succeeded", {
+						operationContext: "auth",
+						operationIdentifiers: { role, userId: result.value.id },
+						operationName: "auth.demo_user.success",
+					});
+				}
 
-        return result;
-      },
-      {
-        logger: this.logger,
-        message: "An unexpected error occurred while creating a demo user.",
-        operation: AUTH_USE_CASE_NAMES.CREATE_DEMO_USER,
-      },
-    );
-  }
+				return result;
+			},
+			{
+				logger: this.logger,
+				message: "An unexpected error occurred while creating a demo user.",
+				operation: AUTH_USE_CASE_NAMES.CREATE_DEMO_USER,
+			},
+		);
+	}
 }

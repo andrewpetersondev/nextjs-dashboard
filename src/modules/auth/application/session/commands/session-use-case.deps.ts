@@ -6,7 +6,7 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * Common dependencies required by Session-related application use cases.
  */
 export type SessionUseCaseDeps = Readonly<{
-  logger: LoggingClientContract;
-  sessionStore: SessionStoreContract;
-  sessionTokenService: SessionTokenServiceContract;
+	logger: LoggingClientContract;
+	sessionStore: SessionStoreContract;
+	sessionTokenService: SessionTokenServiceContract;
 }>;

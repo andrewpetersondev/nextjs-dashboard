@@ -15,7 +15,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * if (r.ok) { // use r.value }
  */
 const toCustomerIdResult = (value: unknown): Result<CustomerId, AppError> =>
-  createCustomerId(value);
+	createCustomerId(value);
 
 /**
  * Validate and convert a string to a branded `CustomerId`.
@@ -36,9 +36,9 @@ const toCustomerIdResult = (value: unknown): Result<CustomerId, AppError> =>
  * }
  */
 export const toCustomerId = (id: string): CustomerId => {
-  const r = toCustomerIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
+	const r = toCustomerIdResult(id);
+	if (r.ok) {
+		return r.value;
+	}
+	throw r.error;
 };

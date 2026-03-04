@@ -21,127 +21,127 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * This class handles the actual DAL calls and data mapping.
  */
 export class AuthUserRepository {
-  /** Database connection (or transaction-scoped connection) used by DAL calls. */
-  protected readonly db: AppDatabase;
+	/** Database connection (or transaction-scoped connection) used by DAL calls. */
+	protected readonly db: AppDatabase;
 
-  /** Repository-scoped logger enriched with auth context and optional request id. */
-  private readonly logger: LoggingClientContract;
+	/** Repository-scoped logger enriched with auth context and optional request id. */
+	private readonly logger: LoggingClientContract;
 
-  /**
-   * @param db - Database connection used for all DAL operations.
-   * @param logger - Logger (required).
-   * @param requestId - Request id used to correlate logs across layers (required).
-   */
-  constructor(
-    db: AppDatabase,
-    logger: LoggingClientContract,
-    requestId: string,
-  ) {
-    this.db = db;
-    this.logger = logger.withContext("auth:repo").withRequest(requestId);
-  }
+	/**
+	 * @param db - Database connection used for all DAL operations.
+	 * @param logger - Logger (required).
+	 * @param requestId - Request id used to correlate logs across layers (required).
+	 */
+	constructor(
+		db: AppDatabase,
+		logger: LoggingClientContract,
+		requestId: string,
+	) {
+		this.db = db;
+		this.logger = logger.withContext("auth:repo").withRequest(requestId);
+	}
 
-  /**
-   * Increments the demo user counter for a given role.
-   *
-   * @param role - Role whose counter should be incremented.
-   * @returns Result containing the updated counter value.
-   *
-   * @remarks
-   * This method delegates to the DAL and returns its numeric result. Any DAL errors
-   * are allowed to propagate to be handled/mapped by higher layers.
-   */
-  async incrementDemoUserCounter(
-    role: UserRole,
-  ): Promise<Result<number, AppError>> {
-    return await incrementDemoUserCounterDal(this.db, role, this.logger);
-  }
+	/**
+	 * Increments the demo user counter for a given role.
+	 *
+	 * @param role - Role whose counter should be incremented.
+	 * @returns Result containing the updated counter value.
+	 *
+	 * @remarks
+	 * This method delegates to the DAL and returns its numeric result. Any DAL errors
+	 * are allowed to propagate to be handled/mapped by higher layers.
+	 */
+	async incrementDemoUserCounter(
+		role: UserRole,
+	): Promise<Result<number, AppError>> {
+		return await incrementDemoUserCounterDal(this.db, role, this.logger);
+	}
 
-  /**
-   * Finds a user by email.
-   *
-   * @param query - The lookup query containing the email.
-   * @returns A promise resolving to a {@link Result} containing the user entity or null.
-   */
-  async findByEmail(
-    query: Readonly<AuthUserLookupQuery>,
-  ): Promise<Result<AuthUserEntity | null, AppError>> {
-    const rowResult = await getUserByEmailDal(
-      this.db,
-      query.email,
-      this.logger,
-    );
+	/**
+	 * Finds a user by email.
+	 *
+	 * @param query - The lookup query containing the email.
+	 * @returns A promise resolving to a {@link Result} containing the user entity or null.
+	 */
+	async findByEmail(
+		query: Readonly<AuthUserLookupQuery>,
+	): Promise<Result<AuthUserEntity | null, AppError>> {
+		const rowResult = await getUserByEmailDal(
+			this.db,
+			query.email,
+			this.logger,
+		);
 
-    if (!rowResult.ok) {
-      return rowResult;
-    }
+		if (!rowResult.ok) {
+			return rowResult;
+		}
 
-    const row = rowResult.value;
+		const row = rowResult.value;
 
-    if (!row) {
-      return Ok(null);
-    }
+		if (!row) {
+			return Ok(null);
+		}
 
-    const entity = toAuthUserEntity(row);
-    const validationResult = validateAuthUserEntity(entity);
+		const entity = toAuthUserEntity(row);
+		const validationResult = validateAuthUserEntity(entity);
 
-    if (!validationResult.ok) {
-      this.logger.error("AuthUserEntity validation failed in findByEmail", {
-        error: validationResult.error,
-        userId: entity.id,
-      });
-      return validationResult;
-    }
+		if (!validationResult.ok) {
+			this.logger.error("AuthUserEntity validation failed in findByEmail", {
+				error: validationResult.error,
+				userId: entity.id,
+			});
+			return validationResult;
+		}
 
-    return Ok(entity);
-  }
+		return Ok(entity);
+	}
 
-  /**
-   * Creates a new user for the signup flow.
-   *
-   * @param input - Signup payload (already validated/normalized by higher layers as needed).
-   * @returns The created user entity.
-   *
-   * @remarks
-   * DAL-level errors are intentionally not translated here; they are propagated so
-   * upper layers can map them consistently.
-   */
-  async signup(
-    input: Readonly<AuthUserCreateDto>,
-  ): Promise<Result<AuthUserEntity, AppError>> {
-    const preDalValidation = validateAuthUserCreateDto(input);
+	/**
+	 * Creates a new user for the signup flow.
+	 *
+	 * @param input - Signup payload (already validated/normalized by higher layers as needed).
+	 * @returns The created user entity.
+	 *
+	 * @remarks
+	 * DAL-level errors are intentionally not translated here; they are propagated so
+	 * upper layers can map them consistently.
+	 */
+	async signup(
+		input: Readonly<AuthUserCreateDto>,
+	): Promise<Result<AuthUserEntity, AppError>> {
+		const preDalValidation = validateAuthUserCreateDto(input);
 
-    if (!preDalValidation.ok) {
-      this.logger.error(
-        "AuthUserCreateDto validation failed before insertUserDal",
-        {
-          email: input.email,
-          error: preDalValidation.error,
-          role: input.role,
-          username: input.username,
-        },
-      );
-      return preDalValidation;
-    }
+		if (!preDalValidation.ok) {
+			this.logger.error(
+				"AuthUserCreateDto validation failed before insertUserDal",
+				{
+					email: input.email,
+					error: preDalValidation.error,
+					role: input.role,
+					username: input.username,
+				},
+			);
+			return preDalValidation;
+		}
 
-    const rowResult = await insertUserDal(this.db, input, this.logger);
+		const rowResult = await insertUserDal(this.db, input, this.logger);
 
-    if (!rowResult.ok) {
-      const mapped = pgUniqueViolationToSignupConflictError(rowResult.error);
-      return Err(mapped ?? rowResult.error);
-    }
+		if (!rowResult.ok) {
+			const mapped = pgUniqueViolationToSignupConflictError(rowResult.error);
+			return Err(mapped ?? rowResult.error);
+		}
 
-    const entity = toAuthUserEntity(rowResult.value);
-    const validationResult = validateAuthUserEntity(entity);
+		const entity = toAuthUserEntity(rowResult.value);
+		const validationResult = validateAuthUserEntity(entity);
 
-    if (!validationResult.ok) {
-      this.logger.error("AuthUserEntity validation failed in signup", {
-        error: validationResult.error,
-        userId: entity.id,
-      });
-      return validationResult;
-    }
+		if (!validationResult.ok) {
+			this.logger.error("AuthUserEntity validation failed in signup", {
+				error: validationResult.error,
+				userId: entity.id,
+			});
+			return validationResult;
+		}
 
-    return Ok(entity);
-  }
+		return Ok(entity);
+	}
 }

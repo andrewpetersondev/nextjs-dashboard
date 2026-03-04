@@ -8,8 +8,8 @@
  * @returns `true` if the value passes validation and can be treated as the branded type.
  */
 const _isBrand = <T, B extends symbol>(
-  value: unknown,
-  validator: (v: unknown) => v is T,
+	value: unknown,
+	validator: (v: unknown) => v is T,
 ): value is Brand<T, B> => validator(value);
 
 /**
@@ -25,7 +25,7 @@ const _isBrand = <T, B extends symbol>(
  * @returns The underlying value without the brand.
  */
 const _unbrand = <T, B extends symbol>(brandedValue: Brand<T, B>): T =>
-  brandedValue as T;
+	brandedValue as T;
 
 /**
  * A branded type for stricter compile-time type safety.
@@ -50,5 +50,5 @@ export type Brand<T, B extends symbol> = T & { readonly __brand: B };
  * const id: CustomerId = brandCustomerId("123e4567-e89b-12d3-a456-426614174000");
  */
 export const createBrand = <T, B extends symbol>(_brandSymbol: B) => {
-  return (value: T): Brand<T, B> => value as Brand<T, B>;
+	return (value: T): Brand<T, B> => value as Brand<T, B>;
 };

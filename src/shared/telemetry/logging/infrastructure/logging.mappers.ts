@@ -7,18 +7,18 @@ import type { SafeErrorShape } from "@/shared/telemetry/logging/core/logger.dto"
  * Map domain `Severity` to `LogLevel` with an exhaustive check.
  */
 function _mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
-  switch (severity) {
-    case "WARN":
-      return "warn";
-    case "INFO":
-      return "info";
-    case "ERROR":
-      return "error";
-    default: {
-      const _exhaustive: never = severity;
-      return _exhaustive;
-    }
-  }
+	switch (severity) {
+		case "WARN":
+			return "warn";
+		case "INFO":
+			return "info";
+		case "ERROR":
+			return "error";
+		default: {
+			const _exhaustive: never = severity;
+			return _exhaustive;
+		}
+	}
 }
 
 /**
@@ -29,15 +29,15 @@ function _mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
  * - If it's anything else (string, number, etc.), returns the string representation.
  */
 export function toSafeErrorShape(err: unknown): SafeErrorShape | unknown {
-  if (isAppError(err)) {
-    return err;
-  }
-  if (err instanceof Error) {
-    return {
-      message: err.message,
-      name: err.name,
-      ...(err.stack && { stack: err.stack }),
-    };
-  }
-  return String(err);
+	if (isAppError(err)) {
+		return err;
+	}
+	if (err instanceof Error) {
+		return {
+			message: err.message,
+			name: err.name,
+			...(err.stack && { stack: err.stack }),
+		};
+	}
+	return String(err);
 }

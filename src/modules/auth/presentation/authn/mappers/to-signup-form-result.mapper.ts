@@ -11,8 +11,8 @@ import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error
 import { getPgConstraintFromAppError } from "@/shared/core/errors/server/adapters/postgres/pg-error.utils";
 import { Err } from "@/shared/core/result/result";
 import type {
-  FieldError,
-  SparseFieldErrorMap,
+	FieldError,
+	SparseFieldErrorMap,
 } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
@@ -20,7 +20,7 @@ import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-m
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;
 
 const ALREADY_IN_USE_FIELD_ERRORS: FieldError<string> = Object.freeze([
-  "alreadyInUse",
+	"alreadyInUse",
 ] as const);
 
 /**
@@ -39,58 +39,58 @@ const ALREADY_IN_USE_FIELD_ERRORS: FieldError<string> = Object.freeze([
  * @returns A {@link FormResult} containing the mapped errors.
  */
 export function toSignupFormResult(
-  error: AppError,
-  formData: SignupFormData,
+	error: AppError,
+	formData: SignupFormData,
 ): FormResult<never> {
-  if (
-    isPgMetadata(error.metadata) &&
-    error.metadata.pgCode === PG_CODES.UNIQUE_VIOLATION
-  ) {
-    const constraint = getPgConstraintFromAppError(error) ?? "";
-    const sparseFieldErrorsMutable: Partial<
-      Record<SignupField, FieldError<string>>
-    > = {};
+	if (
+		isPgMetadata(error.metadata) &&
+		error.metadata.pgCode === PG_CODES.UNIQUE_VIOLATION
+	) {
+		const constraint = getPgConstraintFromAppError(error) ?? "";
+		const sparseFieldErrorsMutable: Partial<
+			Record<SignupField, FieldError<string>>
+		> = {};
 
-    const emailConflict = constraint.includes("email");
-    const usernameConflict = constraint.includes("username");
+		const emailConflict = constraint.includes("email");
+		const usernameConflict = constraint.includes("username");
 
-    if (emailConflict) {
-      sparseFieldErrorsMutable.email = ALREADY_IN_USE_FIELD_ERRORS;
-    }
+		if (emailConflict) {
+			sparseFieldErrorsMutable.email = ALREADY_IN_USE_FIELD_ERRORS;
+		}
 
-    if (usernameConflict) {
-      sparseFieldErrorsMutable.username = ALREADY_IN_USE_FIELD_ERRORS;
-    }
+		if (usernameConflict) {
+			sparseFieldErrorsMutable.username = ALREADY_IN_USE_FIELD_ERRORS;
+		}
 
-    if (!(emailConflict || usernameConflict)) {
-      sparseFieldErrorsMutable.email = ALREADY_IN_USE_FIELD_ERRORS;
-      sparseFieldErrorsMutable.username = ALREADY_IN_USE_FIELD_ERRORS;
-    }
+		if (!(emailConflict || usernameConflict)) {
+			sparseFieldErrorsMutable.email = ALREADY_IN_USE_FIELD_ERRORS;
+			sparseFieldErrorsMutable.username = ALREADY_IN_USE_FIELD_ERRORS;
+		}
 
-    const sparseFieldErrors = Object.freeze(
-      sparseFieldErrorsMutable,
-    ) as SparseFieldErrorMap<SignupField, string>;
+		const sparseFieldErrors = Object.freeze(
+			sparseFieldErrorsMutable,
+		) as SparseFieldErrorMap<SignupField, string>;
 
-    const fieldErrors = toDenseFieldErrorMap<SignupField, string>(
-      sparseFieldErrors,
-      SIGNUP_FIELDS_LIST,
-    );
+		const fieldErrors = toDenseFieldErrorMap<SignupField, string>(
+			sparseFieldErrors,
+			SIGNUP_FIELDS_LIST,
+		);
 
-    return Err(
-      makeAppError(APP_ERROR_KEYS.conflict, {
-        cause: error,
-        message: "Value already in use",
-        metadata: Object.freeze({
-          ...error.metadata,
-          constraint,
-          fieldErrors,
-          formData,
-          formErrors: Object.freeze([]),
-          pgCode: PG_CODES.UNIQUE_VIOLATION,
-        }),
-      }),
-    );
-  }
+		return Err(
+			makeAppError(APP_ERROR_KEYS.conflict, {
+				cause: error,
+				message: "Value already in use",
+				metadata: Object.freeze({
+					...error.metadata,
+					constraint,
+					fieldErrors,
+					formData,
+					formErrors: Object.freeze([]),
+					pgCode: PG_CODES.UNIQUE_VIOLATION,
+				}),
+			}),
+		);
+	}
 
-  return mapGenericAuthError(error, formData, SIGNUP_FIELDS_LIST);
+	return mapGenericAuthError(error, formData, SIGNUP_FIELDS_LIST);
 }

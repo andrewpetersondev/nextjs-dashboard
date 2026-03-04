@@ -9,16 +9,16 @@ import type { JSX } from "react";
  * @returns {JSX.Element} A Link component styled as a button.
  */
 export function CreateUserLink(): JSX.Element {
-  return (
-    <Link
-      className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
-      data-cy="add-item-button"
-      href="/dashboard/users/create"
-    >
-      <span className="hidden md:block">Create User</span>{" "}
-      <PlusIcon className="h-5 md:ml-4" />
-    </Link>
-  );
+	return (
+		<Link
+			className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
+			data-cy="add-item-button"
+			href="/dashboard/users/create"
+		>
+			<span className="hidden md:block">Create User</span>{" "}
+			<PlusIcon className="h-5 md:ml-4" />
+		</Link>
+	);
 }
 
 /**
@@ -28,14 +28,14 @@ export function CreateUserLink(): JSX.Element {
  * @returns {JSX.Element} A Link component styled as a button with an edit icon
  */
 export function UpdateUserLink({ id }: { id: string }): JSX.Element {
-  return (
-    <Link
-      className="rounded-md border p-2 hover:bg-bg-hover"
-      data-cy="edit-item-button"
-      href={`/dashboard/users/${id}/edit`}
-    >
-      <span className="sr-only">Update</span>
-      <PencilIcon className="w-5" />
-    </Link>
-  );
+	return (
+		<Link
+			className="rounded-md border p-2 hover:bg-bg-hover"
+			data-cy="edit-item-button"
+			href={`/dashboard/users/${id}/edit`}
+		>
+			<span className="sr-only">Update</span>
+			<PencilIcon className="w-5" />
+		</Link>
+	);
 }

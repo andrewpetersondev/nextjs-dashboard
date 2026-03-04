@@ -7,60 +7,60 @@ import { validateInvoicePeriodForRevenue } from "@/modules/revenues/domain/polic
  * Result of an eligibility check.
  */
 type EligibilityResult =
-  | { readonly eligible: false; readonly reason: string }
-  | { readonly eligible: true };
+	| { readonly eligible: false; readonly reason: string }
+	| { readonly eligible: true };
 
 /**
  * Checks if an invoice is eligible for revenue calculation.
  * Pure domain logic.
  */
 export function checkInvoiceEligibility(
-  invoice: InvoiceDto,
+	invoice: InvoiceDto,
 ): EligibilityResult {
-  // Validate the invoice structure and period
-  const validationResult = validateInvoicePeriodForRevenue(invoice);
-  if (!validationResult.valid) {
-    return {
-      eligible: false,
-      reason: validationResult.reason ?? "Invalid invoice structure",
-    };
-  }
+	// Validate the invoice structure and period
+	const validationResult = validateInvoicePeriodForRevenue(invoice);
+	if (!validationResult.valid) {
+		return {
+			eligible: false,
+			reason: validationResult.reason ?? "Invalid invoice structure",
+		};
+	}
 
-  // Check if the invoice has a valid amount
-  if (!invoice.amount || invoice.amount <= 0) {
-    return { eligible: false, reason: "Invoice has zero or negative amount" };
-  }
+	// Check if the invoice has a valid amount
+	if (!invoice.amount || invoice.amount <= 0) {
+		return { eligible: false, reason: "Invoice has zero or negative amount" };
+	}
 
-  // Check if the invoice has a valid status
-  if (!checkStatusEligibleForRevenue(invoice.status)) {
-    return {
-      eligible: false,
-      reason: `Invoice status ${invoice.status} not eligible for revenue`,
-    };
-  }
+	// Check if the invoice has a valid status
+	if (!checkStatusEligibleForRevenue(invoice.status)) {
+		return {
+			eligible: false,
+			reason: `Invoice status ${invoice.status} not eligible for revenue`,
+		};
+	}
 
-  return { eligible: true };
+	return { eligible: true };
 }
 
 /**
  * Checks if an invoice is eligible for deletion.
  */
 export function checkDeletionEligibility(
-  invoice: InvoiceDto,
+	invoice: InvoiceDto,
 ): EligibilityResult {
-  if (!checkStatusEligibleForRevenue(invoice.status)) {
-    return {
-      eligible: false,
-      reason: "Deleted invoice was not eligible for revenue",
-    };
-  }
-  if (invoice.amount <= 0) {
-    return {
-      eligible: false,
-      reason: "Deleted invoice had an invalid amount",
-    };
-  }
-  return { eligible: true };
+	if (!checkStatusEligibleForRevenue(invoice.status)) {
+		return {
+			eligible: false,
+			reason: "Deleted invoice was not eligible for revenue",
+		};
+	}
+	if (invoice.amount <= 0) {
+		return {
+			eligible: false,
+			reason: "Deleted invoice had an invalid amount",
+		};
+	}
+	return { eligible: true };
 }
 
 // Deprecated wrapper to maintain some compatibility during refactor if strictly needed,

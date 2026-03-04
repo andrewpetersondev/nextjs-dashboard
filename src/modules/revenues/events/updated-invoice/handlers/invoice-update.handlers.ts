@@ -1,9 +1,9 @@
 import "server-only";
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import {
-  logInfo,
-  logMissingPrevious,
-  logNoRelevantChange,
+	logInfo,
+	logMissingPrevious,
+	logNoRelevantChange,
 } from "@/modules/revenues/application/cross-cutting/logging";
 import { extractAndValidatePeriodWithLogging } from "@/modules/revenues/application/cross-cutting/period-extraction";
 import type { RevenueApplicationService } from "@/modules/revenues/application/services/revenue-application.service";
@@ -12,12 +12,12 @@ import { processInvoiceUpsert } from "@/modules/revenues/events/shared/process-i
 import { detectChange } from "@/modules/revenues/events/updated-invoice/change-detector";
 import { dispatchChange } from "@/modules/revenues/events/updated-invoice/change-dispatcher";
 import type {
-  BaseMetadata,
-  CoreArgs,
-  HandleAmountChangeParams,
-  HandleStatusChangeParams,
-  MetadataWithPeriod,
-  PeriodArg,
+	BaseMetadata,
+	CoreArgs,
+	HandleAmountChangeParams,
+	HandleStatusChangeParams,
+	MetadataWithPeriod,
+	PeriodArg,
 } from "@/modules/revenues/events/updated-invoice/types";
 import { withErrorHandling } from "@/modules/revenues/infrastructure/errors/error-handling";
 import type { BaseInvoiceEvent } from "@/server/events/invoice-event.types";
@@ -29,47 +29,47 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Returns null when the period is not derivable (policy guard).
  */
 function preparePeriodAndMeta(
-  currentInvoice: InvoiceDto,
-  context: string,
-  baseMeta: BaseMetadata,
+	currentInvoice: InvoiceDto,
+	context: string,
+	baseMeta: BaseMetadata,
 ): { readonly period: PeriodArg; readonly meta: MetadataWithPeriod } | null {
-  const period = extractAndValidatePeriodWithLogging(currentInvoice, context);
-  if (!period) {
-    return null;
-  }
-  const meta: MetadataWithPeriod = { ...baseMeta, period: periodKey(period) };
-  return { meta, period } as const;
+	const period = extractAndValidatePeriodWithLogging(currentInvoice, context);
+	if (!period) {
+		return null;
+	}
+	const meta: MetadataWithPeriod = { ...baseMeta, period: periodKey(period) };
+	return { meta, period } as const;
 }
 
 async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
-  const { revenueService, previousInvoice, currentInvoice, context, baseMeta } =
-    args;
+	const { revenueService, previousInvoice, currentInvoice, context, baseMeta } =
+		args;
 
-  const prepared = preparePeriodAndMeta(currentInvoice, context, baseMeta);
-  if (!prepared) {
-    return;
-  }
-  const { period, meta } = prepared;
+	const prepared = preparePeriodAndMeta(currentInvoice, context, baseMeta);
+	if (!prepared) {
+		return;
+	}
+	const { period, meta } = prepared;
 
-  const existingRevenue = await revenueService.findByPeriod(period);
-  const change = detectChange(previousInvoice, currentInvoice);
+	const existingRevenue = await revenueService.findByPeriod(period);
+	const change = detectChange(previousInvoice, currentInvoice);
 
-  await dispatchChange(change, context, {
-    currentInvoice,
-    existingRevenue: existingRevenue
-      ? {
-          id: existingRevenue.id,
-          invoiceCount: existingRevenue.invoiceCount,
-          totalAmount: existingRevenue.totalAmount,
-          totalPaidAmount: existingRevenue.totalPaidAmount,
-          totalPendingAmount: existingRevenue.totalPendingAmount,
-        }
-      : undefined,
-    meta,
-    period,
-    previousInvoice,
-    revenueService,
-  });
+	await dispatchChange(change, context, {
+		currentInvoice,
+		existingRevenue: existingRevenue
+			? {
+					id: existingRevenue.id,
+					invoiceCount: existingRevenue.invoiceCount,
+					totalAmount: existingRevenue.totalAmount,
+					totalPaidAmount: existingRevenue.totalPaidAmount,
+					totalPendingAmount: existingRevenue.totalPendingAmount,
+				}
+			: undefined,
+		meta,
+		period,
+		previousInvoice,
+		revenueService,
+	});
 }
 
 /**
@@ -77,69 +77,69 @@ async function adjustRevenueForStatusChangeCore(args: CoreArgs): Promise<void> {
  * Thin orchestrator that delegates to status-change/core. No behavior changes.
  */
 function buildBaseMetadata(prev: InvoiceDto, curr: InvoiceDto): BaseMetadata {
-  return {
-    currentStatus: curr.status,
-    invoice: curr.id,
-    previousStatus: prev.status,
-  };
+	return {
+		currentStatus: curr.status,
+		invoice: curr.id,
+		previousStatus: prev.status,
+	};
 }
 
 async function handleStatusChange({
-  context,
-  eventId,
-  previousInvoice,
-  currentInvoice,
-  revenueService,
+	context,
+	eventId,
+	previousInvoice,
+	currentInvoice,
+	revenueService,
 }: HandleStatusChangeParams): Promise<void> {
-  logInfo(context, "Invoice status changed, adjusting revenue", {
-    currentStatus: currentInvoice.status,
-    eventId,
-    invoiceId: currentInvoice.id,
-    previousStatus: previousInvoice.status,
-  });
-  await adjustRevenueForStatusChange(
-    revenueService,
-    previousInvoice,
-    currentInvoice,
-  );
+	logInfo(context, "Invoice status changed, adjusting revenue", {
+		currentStatus: currentInvoice.status,
+		eventId,
+		invoiceId: currentInvoice.id,
+		previousStatus: previousInvoice.status,
+	});
+	await adjustRevenueForStatusChange(
+		revenueService,
+		previousInvoice,
+		currentInvoice,
+	);
 }
 
 async function handleAmountChange({
-  context,
-  previousAmount,
-  invoice,
-  period,
-  revenueService,
+	context,
+	previousAmount,
+	invoice,
+	period,
+	revenueService,
 }: HandleAmountChangeParams): Promise<void> {
-  await processInvoiceUpsert(revenueService, invoice, period, {
-    context,
-    isUpdate: true,
-    previousAmount,
-  });
+	await processInvoiceUpsert(revenueService, invoice, period, {
+		context,
+		isUpdate: true,
+		previousAmount,
+	});
 }
 
 async function adjustRevenueForStatusChange(
-  revenueService: RevenueApplicationService,
-  previousInvoice: InvoiceDto,
-  currentInvoice: InvoiceDto,
+	revenueService: RevenueApplicationService,
+	previousInvoice: InvoiceDto,
+	currentInvoice: InvoiceDto,
 ): Promise<void> {
-  const context = "RevenueEventHandler.adjustRevenueForStatusChange";
-  const baseMeta = buildBaseMetadata(previousInvoice, currentInvoice);
+	const context = "RevenueEventHandler.adjustRevenueForStatusChange";
+	const baseMeta = buildBaseMetadata(previousInvoice, currentInvoice);
 
-  await withErrorHandling(
-    context,
-    "Adjusting revenue for status change",
-    async () => {
-      await adjustRevenueForStatusChangeCore({
-        baseMeta,
-        context,
-        currentInvoice,
-        previousInvoice,
-        revenueService,
-      });
-    },
-    baseMeta,
-  );
+	await withErrorHandling(
+		context,
+		"Adjusting revenue for status change",
+		async () => {
+			await adjustRevenueForStatusChangeCore({
+				baseMeta,
+				context,
+				currentInvoice,
+				previousInvoice,
+				revenueService,
+			});
+		},
+		baseMeta,
+	);
 }
 
 /**
@@ -147,40 +147,40 @@ async function adjustRevenueForStatusChange(
  * Extracted from RevenueEventHandler to keep the class concise.
  */
 export async function processInvoiceUpdated(
-  event: BaseInvoiceEvent,
-  invoice: InvoiceDto,
-  period: Period,
-  revenueService: RevenueApplicationService,
+	event: BaseInvoiceEvent,
+	invoice: InvoiceDto,
+	period: Period,
+	revenueService: RevenueApplicationService,
 ): Promise<void> {
-  const context = "RevenueEventHandler.handleInvoiceUpdated";
-  const previousInvoice = event.previousInvoice;
+	const context = "RevenueEventHandler.handleInvoiceUpdated";
+	const previousInvoice = event.previousInvoice;
 
-  if (!previousInvoice) {
-    logMissingPrevious(context, event.eventId, invoice.id);
-    return;
-  }
+	if (!previousInvoice) {
+		logMissingPrevious(context, event.eventId, invoice.id);
+		return;
+	}
 
-  if (previousInvoice.status !== invoice.status) {
-    await handleStatusChange({
-      context,
-      currentInvoice: invoice,
-      eventId: event.eventId,
-      previousInvoice,
-      revenueService,
-    });
-    return;
-  }
+	if (previousInvoice.status !== invoice.status) {
+		await handleStatusChange({
+			context,
+			currentInvoice: invoice,
+			eventId: event.eventId,
+			previousInvoice,
+			revenueService,
+		});
+		return;
+	}
 
-  if (previousInvoice.amount !== invoice.amount) {
-    await handleAmountChange({
-      context,
-      invoice,
-      period,
-      previousAmount: previousInvoice.amount,
-      revenueService,
-    });
-    return;
-  }
+	if (previousInvoice.amount !== invoice.amount) {
+		await handleAmountChange({
+			context,
+			invoice,
+			period,
+			previousAmount: previousInvoice.amount,
+			revenueService,
+		});
+		return;
+	}
 
-  logNoRelevantChange(context, event.eventId, invoice.id);
+	logNoRelevantChange(context, event.eventId, invoice.id);
 }

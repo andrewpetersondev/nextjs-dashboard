@@ -8,13 +8,13 @@ import { cn } from "@/ui/utils/cn";
  * Props for the InputField component.
  */
 interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
-  dataCy?: string;
-  describedById?: string;
-  // Accept dense errors (readonly string[]) to match FormState failure shape
-  error?: readonly string[] | undefined;
-  icon?: ReactNode;
-  id: string;
-  label: string;
+	dataCy?: string;
+	describedById?: string;
+	// Accept dense errors (readonly string[]) to match FormState failure shape
+	error?: readonly string[] | undefined;
+	icon?: ReactNode;
+	id: string;
+	label: string;
 }
 
 /**
@@ -31,44 +31,44 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
  * @returns Rendered input field with label, icon, and error handling.
  */
 export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
-  const { id, label, icon, error, dataCy, describedById, className, ...rest } =
-    props;
+	const { id, label, icon, error, dataCy, describedById, className, ...rest } =
+		props;
 
-  const hasError = Array.isArray(error) && error.length > 0;
+	const hasError = Array.isArray(error) && error.length > 0;
 
-  return (
-    <InputFieldCardWrapper>
-      <div>
-        <LabelAtom htmlFor={id} text={label} />
-        <div className="flex items-center">
-          <input
-            aria-describedby={
-              hasError ? (describedById ?? `${id}-errors`) : undefined
-            }
-            aria-invalid={hasError}
-            className={cn(
-              "block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6",
-              className,
-            )}
-            data-cy={dataCy}
-            id={id}
-            // Allow overriding name via props; default to id for convenience.
-            name={rest.name ?? id}
-            {...rest}
-          />
-          {/* Mark icon decorative for screen readers */}
-          {icon ? <span aria-hidden="true">{icon}</span> : null}
-        </div>
-        {/* Only render FieldError if error is defined and non-empty */}
-        {hasError && (
-          <FieldErrorComponent
-            dataCy={dataCy ? `${dataCy}-errors` : undefined}
-            error={error}
-            id={describedById ?? `${id}-errors`}
-            label={`${label} error:`}
-          />
-        )}
-      </div>
-    </InputFieldCardWrapper>
-  );
+	return (
+		<InputFieldCardWrapper>
+			<div>
+				<LabelAtom htmlFor={id} text={label} />
+				<div className="flex items-center">
+					<input
+						aria-describedby={
+							hasError ? (describedById ?? `${id}-errors`) : undefined
+						}
+						aria-invalid={hasError}
+						className={cn(
+							"block w-full rounded-md bg-bg-accent px-3 py-1.5 text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-accent focus:ring-2 focus:ring-bg-focus sm:text-sm/6",
+							className,
+						)}
+						data-cy={dataCy}
+						id={id}
+						// Allow overriding name via props; default to id for convenience.
+						name={rest.name ?? id}
+						{...rest}
+					/>
+					{/* Mark icon decorative for screen readers */}
+					{icon ? <span aria-hidden="true">{icon}</span> : null}
+				</div>
+				{/* Only render FieldError if error is defined and non-empty */}
+				{hasError && (
+					<FieldErrorComponent
+						dataCy={dataCy ? `${dataCy}-errors` : undefined}
+						error={error}
+						id={describedById ?? `${id}-errors`}
+						label={`${label} error:`}
+					/>
+				)}
+			</div>
+		</InputFieldCardWrapper>
+	);
 }

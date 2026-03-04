@@ -6,26 +6,26 @@ import type { Result } from "@/shared/core/result/result.dto";
  * implemented by infrastructure adapters (Cookies, Redis, etc.).
  */
 export interface SessionStoreContract {
-  /**
-   * Removes the session from the underlying storage.
-   *
-   * @returns A Result indicating success or an AppError.
-   */
-  delete(): Promise<Result<void, AppError>>;
+	/**
+	 * Removes the session from the underlying storage.
+	 *
+	 * @returns A Result indicating success or an AppError.
+	 */
+	delete(): Promise<Result<void, AppError>>;
 
-  /**
-   * Retrieves the current session token from storage if it exists.
-   *
-   * @returns A Result containing the token string, undefined if not found, or an AppError.
-   */
-  get(): Promise<Result<string | undefined, AppError>>;
+	/**
+	 * Retrieves the current session token from storage if it exists.
+	 *
+	 * @returns A Result containing the token string, undefined if not found, or an AppError.
+	 */
+	get(): Promise<Result<string | undefined, AppError>>;
 
-  /**
-   * Persists the session token with a specific expiration time.
-   *
-   * @param value - The encoded session token to store.
-   * @param expiresAtMs - Absolute expiration time in milliseconds.
-   * @returns A Result indicating success or an AppError.
-   */
-  set(value: string, expiresAtMs: number): Promise<Result<void, AppError>>;
+	/**
+	 * Persists the session token with a specific expiration time.
+	 *
+	 * @param value - The encoded session token to store.
+	 * @param expiresAtMs - Absolute expiration time in milliseconds.
+	 * @returns A Result indicating success or an AppError.
+	 */
+	set(value: string, expiresAtMs: number): Promise<Result<void, AppError>>;
 }

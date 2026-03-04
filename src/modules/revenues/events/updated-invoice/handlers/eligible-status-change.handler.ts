@@ -11,61 +11,61 @@ import type { HandleEligibleStatusChangeArgs } from "@/modules/revenues/events/u
  * and moves value between paid/pending buckets accordingly.
  */
 export async function handleEligibleStatusChange(
-  args: HandleEligibleStatusChangeArgs,
+	args: HandleEligibleStatusChangeArgs,
 ): Promise<void> {
-  const {
-    context,
-    currentAmount,
-    currentCount,
-    currentPaidTotal,
-    currentPendingTotal,
-    currentStatus,
-    currentTotal,
-    meta,
-    previousAmount,
-    previousStatus,
-    revenueId,
-    revenueService,
-  } = args;
+	const {
+		context,
+		currentAmount,
+		currentCount,
+		currentPaidTotal,
+		currentPendingTotal,
+		currentStatus,
+		currentTotal,
+		meta,
+		previousAmount,
+		previousStatus,
+		revenueId,
+		revenueService,
+	} = args;
 
-  const amountDifference = currentAmount - previousAmount;
+	const amountDifference = currentAmount - previousAmount;
 
-  logInfo(context, "Invoice status switched between eligible states", {
-    ...meta,
-    amountDifference,
-    currentAmount,
-    currentStatus,
-    previousAmount,
-    previousStatus,
-  });
+	logInfo(context, "Invoice status switched between eligible states", {
+		...meta,
+		amountDifference,
+		currentAmount,
+		currentStatus,
+		previousAmount,
+		previousStatus,
+	});
 
-  const aggregate = computeAggregateAfterAmountChange(
-    currentCount,
-    currentTotal,
-    previousAmount,
-    currentAmount,
-  );
+	const aggregate = computeAggregateAfterAmountChange(
+		currentCount,
+		currentTotal,
+		previousAmount,
+		currentAmount,
+	);
 
-  const nextBuckets = moveBetweenBuckets(
-    {
-      totalPaidAmount: currentPaidTotal,
-      totalPendingAmount: currentPendingTotal,
-    },
-    {
-      currentAmount,
-      fromStatus: previousStatus,
-      previousAmount,
-      toStatus: currentStatus,
-    },
-  );
+	const nextBuckets = moveBetweenBuckets(
+		{
+			totalPaidAmount: currentPaidTotal,
+			totalPendingAmount: currentPendingTotal,
+		},
+		{
+			currentAmount,
+			fromStatus: previousStatus,
+			previousAmount,
+			toStatus: currentStatus,
+		},
+	);
 
-  await updateRevenueRecord(revenueService, {
-    context,
-    invoiceCount: aggregate.invoiceCount,
-    metadata: meta,
-    revenueId,
-    totalAmount: aggregate.totalAmount,
-    totalPaidAmount: nextBuckets.totalPaidAmount,
-    totalPendingAmount: nextBuckets.totalPendingAmount,
-  });
+	await updateRevenueRecord(revenueService, {
+		context,
+		invoiceCount: aggregate.invoiceCount,
+		metadata: meta,
+		revenueId,
+		totalAmount: aggregate.totalAmount,
+		totalPaidAmount: nextBuckets.totalPaidAmount,
+		totalPendingAmount: nextBuckets.totalPendingAmount,
+	});
 }

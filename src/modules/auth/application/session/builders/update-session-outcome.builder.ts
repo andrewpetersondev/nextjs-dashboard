@@ -1,12 +1,12 @@
 import "server-only";
 import {
-  UPDATE_SESSION_OUTCOME_REASON,
-  type UpdateSessionNotRotatedDto,
-  type UpdateSessionSuccessDto,
+	UPDATE_SESSION_OUTCOME_REASON,
+	type UpdateSessionNotRotatedDto,
+	type UpdateSessionSuccessDto,
 } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import type {
-  DurationSeconds,
-  TimeDeltaSeconds,
+	DurationSeconds,
+	TimeDeltaSeconds,
 } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
@@ -17,22 +17,22 @@ import type { Result } from "@/shared/core/result/result.dto";
 import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
 type UpdateSessionNotRotatedParams = Readonly<
-  | {
-      readonly reason:
-        | typeof UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser
-        | typeof UPDATE_SESSION_OUTCOME_REASON.noCookie;
-    }
-  | {
-      readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.notNeeded;
-      readonly timeLeftSec: TimeDeltaSeconds;
-    }
-  | {
-      readonly reason:
-        | typeof UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
-        | typeof UPDATE_SESSION_OUTCOME_REASON.expired;
-      readonly ageSec: DurationSeconds;
-      readonly maxSec: DurationSeconds;
-    }
+	| {
+			readonly reason:
+				| typeof UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser
+				| typeof UPDATE_SESSION_OUTCOME_REASON.noCookie;
+	  }
+	| {
+			readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.notNeeded;
+			readonly timeLeftSec: TimeDeltaSeconds;
+	  }
+	| {
+			readonly reason:
+				| typeof UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
+				| typeof UPDATE_SESSION_OUTCOME_REASON.expired;
+			readonly ageSec: DurationSeconds;
+			readonly maxSec: DurationSeconds;
+	  }
 >;
 
 /**
@@ -41,32 +41,32 @@ type UpdateSessionNotRotatedParams = Readonly<
  * Non-throwing: returns a Result so callers can propagate an AppError instead of 500-ing.
  */
 export function buildUpdateSessionSuccess(
-  params: Readonly<{
-    expiresAtMs: number;
-    role: UserRole;
-    userId: UserId;
-  }>,
+	params: Readonly<{
+		expiresAtMs: number;
+		role: UserRole;
+		userId: UserId;
+	}>,
 ): Result<Readonly<UpdateSessionSuccessDto>, AppError> {
-  if (params.expiresAtMs <= Date.now()) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: `Invalid rotation: expiresAtMs must be in the future (${String(params.expiresAtMs)})`,
-        message: "Invalid session rotation state",
-        metadata: {
-          policy: "session",
-          reason: "rotation_expires_at_not_in_future",
-        },
-      }),
-    );
-  }
+	if (params.expiresAtMs <= Date.now()) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: `Invalid rotation: expiresAtMs must be in the future (${String(params.expiresAtMs)})`,
+				message: "Invalid session rotation state",
+				metadata: {
+					policy: "session",
+					reason: "rotation_expires_at_not_in_future",
+				},
+			}),
+		);
+	}
 
-  return Ok({
-    expiresAtMs: params.expiresAtMs,
-    reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
-    refreshed: true,
-    role: params.role,
-    userId: params.userId,
-  } as const);
+	return Ok({
+		expiresAtMs: params.expiresAtMs,
+		reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
+		refreshed: true,
+		role: params.role,
+		userId: params.userId,
+	} as const);
 }
 
 /**
@@ -76,30 +76,30 @@ export function buildUpdateSessionSuccess(
  * without relying on overload signatures.
  */
 export function buildUpdateSessionNotRotated(
-  params: UpdateSessionNotRotatedParams,
+	params: UpdateSessionNotRotatedParams,
 ): Readonly<UpdateSessionNotRotatedDto> {
-  if (params.reason === UPDATE_SESSION_OUTCOME_REASON.notNeeded) {
-    return {
-      reason: params.reason,
-      refreshed: false,
-      timeLeftSec: params.timeLeftSec,
-    } as const;
-  }
+	if (params.reason === UPDATE_SESSION_OUTCOME_REASON.notNeeded) {
+		return {
+			reason: params.reason,
+			refreshed: false,
+			timeLeftSec: params.timeLeftSec,
+		} as const;
+	}
 
-  if (
-    params.reason === UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded ||
-    params.reason === UPDATE_SESSION_OUTCOME_REASON.expired
-  ) {
-    return {
-      ageSec: params.ageSec,
-      maxSec: params.maxSec,
-      reason: params.reason,
-      refreshed: false,
-    } as const;
-  }
+	if (
+		params.reason === UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded ||
+		params.reason === UPDATE_SESSION_OUTCOME_REASON.expired
+	) {
+		return {
+			ageSec: params.ageSec,
+			maxSec: params.maxSec,
+			reason: params.reason,
+			refreshed: false,
+		} as const;
+	}
 
-  return {
-    reason: params.reason,
-    refreshed: false,
-  } as const;
+	return {
+		reason: params.reason,
+		refreshed: false,
+	} as const;
 }

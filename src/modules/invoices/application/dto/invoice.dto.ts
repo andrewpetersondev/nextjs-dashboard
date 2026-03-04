@@ -9,15 +9,15 @@ export type PeriodFirstDayString = string; // YYYY-MM-01
  * Plain, serializable shape for UI/API transport.
  */
 export interface InvoiceDto {
-  readonly amount: number; // integer cents
-  readonly customerId: string;
-  /** Transport date format: ISO date string = YYYY-MM-DD */
-  readonly date: IsoDateString;
-  readonly id: string;
-  /** Transport period format: YYYY-MM-01 (first-of-month date) */
-  readonly revenuePeriod: PeriodFirstDayString;
-  readonly sensitiveData: string;
-  readonly status: InvoiceStatus;
+	readonly amount: number; // integer cents
+	readonly customerId: string;
+	/** Transport date format: ISO date string = YYYY-MM-DD */
+	readonly date: IsoDateString;
+	readonly id: string;
+	/** Transport period format: YYYY-MM-01 (first-of-month date) */
+	readonly revenuePeriod: PeriodFirstDayString;
+	readonly sensitiveData: string;
+	readonly status: InvoiceStatus;
 }
 
 /**
@@ -30,7 +30,7 @@ export type InvoiceFormDto = Omit<InvoiceDto, "id" | "revenuePeriod">;
  * DTO for the invoices summary card.
  */
 export type InvoicesSummary = {
-  totalInvoices: number;
-  totalPaid: number;
-  totalPending: number;
+	totalInvoices: number;
+	totalPaid: number;
+	totalPending: number;
 };

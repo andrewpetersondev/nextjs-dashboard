@@ -15,18 +15,18 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * @returns The extracted period or null if extraction fails
  */
 export function extractAndValidatePeriodWithLogging(
-  invoice: InvoiceDto,
-  context: string,
-  eventId?: string,
+	invoice: InvoiceDto,
+	context: string,
+	eventId?: string,
 ): Period | null {
-  try {
-    return extractPeriodFromInvoice(invoice);
-  } catch (error) {
-    logError(context, "Failed to extract period from the invoice", error, {
-      eventId: eventId ?? null,
-      invoiceDate: invoice.date ?? null,
-      invoiceId: invoice.id ?? null,
-    });
-    return null;
-  }
+	try {
+		return extractPeriodFromInvoice(invoice);
+	} catch (error) {
+		logError(context, "Failed to extract period from the invoice", error, {
+			eventId: eventId ?? null,
+			invoiceDate: invoice.date ?? null,
+			invoiceId: invoice.id ?? null,
+		});
+		return null;
+	}
 }

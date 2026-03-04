@@ -13,8 +13,8 @@ import { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/serv
  * @returns An implementation of the {@link PasswordHasherContract}.
  */
 export function passwordHasherFactory(): PasswordHasherContract {
-  const config = getAuthCryptoConfig();
+	const config = getAuthCryptoConfig();
 
-  const passwordService = new BcryptPasswordService(config.bcryptSaltRounds);
-  return new PasswordHasherAdapter(passwordService);
+	const passwordService = new BcryptPasswordService(config.bcryptSaltRounds);
+	return new PasswordHasherAdapter(passwordService);
 }

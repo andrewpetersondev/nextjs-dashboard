@@ -9,9 +9,9 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * Factory type for creating transaction-scoped auth dependencies.
  */
 export type AuthTxDepsFactory = (
-  txDb: AppDatabase,
-  txLogger: LoggingClientContract,
-  requestId: string,
+	txDb: AppDatabase,
+	txLogger: LoggingClientContract,
+	requestId: string,
 ) => AuthTxDeps;
 
 /**
@@ -27,14 +27,14 @@ export type AuthTxDepsFactory = (
  * @returns An object containing transaction-scoped dependencies.
  */
 export function authTxDepsFactory(
-  txDb: AppDatabase,
-  txLogger: LoggingClientContract,
-  requestId: string,
+	txDb: AppDatabase,
+	txLogger: LoggingClientContract,
+	requestId: string,
 ): AuthTxDeps {
-  const authUserRepo = new AuthUserRepository(txDb, txLogger, requestId);
-  const authUsers = new AuthUserRepositoryAdapter(authUserRepo);
+	const authUserRepo = new AuthUserRepository(txDb, txLogger, requestId);
+	const authUsers = new AuthUserRepositoryAdapter(authUserRepo);
 
-  return {
-    authUsers,
-  };
+	return {
+		authUsers,
+	};
 }

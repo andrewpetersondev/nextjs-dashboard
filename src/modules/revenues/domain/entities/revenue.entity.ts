@@ -11,15 +11,15 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * in the database with all necessary metadata for tracking and auditing.
  */
 export interface RevenueEntity {
-  readonly calculationSource: RevenueSource;
-  readonly createdAt: Date;
-  readonly id: RevenueId;
-  readonly invoiceCount: number;
-  readonly period: Period;
-  readonly totalAmount: Cents;
-  readonly totalPaidAmount: Cents;
-  readonly totalPendingAmount: Cents;
-  readonly updatedAt: Date;
+	readonly calculationSource: RevenueSource;
+	readonly createdAt: Date;
+	readonly id: RevenueId;
+	readonly invoiceCount: number;
+	readonly period: Period;
+	readonly totalAmount: Cents;
+	readonly totalPaidAmount: Cents;
+	readonly totalPendingAmount: Cents;
+	readonly updatedAt: Date;
 }
 
 /**
@@ -35,10 +35,10 @@ export type RevenueCreateEntity = Omit<RevenueEntity, "id">;
  * System metadata fields like timestamps are excluded.
  */
 export type RevenueUpdatable = Pick<
-  RevenueEntity,
-  | "invoiceCount"
-  | "totalAmount"
-  | "totalPaidAmount"
-  | "totalPendingAmount"
-  | "calculationSource"
+	RevenueEntity,
+	| "invoiceCount"
+	| "totalAmount"
+	| "totalPaidAmount"
+	| "totalPendingAmount"
+	| "calculationSource"
 >;

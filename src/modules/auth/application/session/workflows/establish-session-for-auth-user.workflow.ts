@@ -18,14 +18,14 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A Result containing the session principal or an AppError.
  */
 export async function establishSessionForAuthUserWorkflow(
-  authUserResult: Result<AuthenticatedUserDto, AppError>,
-  deps: Readonly<{ sessionService: SessionServiceContract }>,
+	authUserResult: Result<AuthenticatedUserDto, AppError>,
+	deps: Readonly<{ sessionService: SessionServiceContract }>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  if (!authUserResult.ok) {
-    return Err(authUserResult.error);
-  }
+	if (!authUserResult.ok) {
+		return Err(authUserResult.error);
+	}
 
-  const principal = toSessionPrincipal(authUserResult.value);
+	const principal = toSessionPrincipal(authUserResult.value);
 
-  return await deps.sessionService.establish(principal);
+	return await deps.sessionService.establish(principal);
 }

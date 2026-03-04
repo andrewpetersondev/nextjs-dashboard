@@ -7,21 +7,21 @@ import { UserIdSchema } from "@/modules/users/domain/user-id.schema";
  * Encapsulates the transformation of branded types to transport strings.
  */
 export function toSessionTokenClaimsDto(
-  input: IssueTokenCommand,
-  params: Readonly<{
-    exp: number;
-    iat: number;
-    jti: string;
-    sid: string;
-  }>,
+	input: IssueTokenCommand,
+	params: Readonly<{
+		exp: number;
+		iat: number;
+		jti: string;
+		sid: string;
+	}>,
 ): SessionTokenClaimsDto {
-  return {
-    exp: params.exp,
-    iat: params.iat,
-    jti: params.jti,
-    nbf: params.iat,
-    role: input.role,
-    sid: params.sid,
-    sub: UserIdSchema.encode(input.userId),
-  };
+	return {
+		exp: params.exp,
+		iat: params.iat,
+		jti: params.jti,
+		nbf: params.iat,
+		role: input.role,
+		sid: params.sid,
+		sub: UserIdSchema.encode(input.userId),
+	};
 }

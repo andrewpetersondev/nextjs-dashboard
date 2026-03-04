@@ -1,7 +1,7 @@
 import "server-only";
 import type {
-  CreateUserProps,
-  UserEntity,
+	CreateUserProps,
+	UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import { toUserEntity } from "@/modules/users/infrastructure/mappers/to-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -20,31 +20,31 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @param db
  */
 export async function createUserDal(
-  db: AppDatabase,
-  params: CreateUserProps,
+	db: AppDatabase,
+	params: CreateUserProps,
 ): Promise<Result<UserEntity | null, AppError>> {
-  const { username, email, password, role } = params;
+	const { username, email, password, role } = params;
 
-  try {
-    // Explicitly type the insert object as NewUserRow (schema type)
-    // This ensures we match the shape required by Drizzle's $inferInsert
-    const newUser: NewUserRow = {
-      email,
-      password,
-      role,
-      username,
-    };
+	try {
+		// Explicitly type the insert object as NewUserRow (schema type)
+		// This ensures we match the shape required by Drizzle's $inferInsert
+		const newUser: NewUserRow = {
+			email,
+			password,
+			role,
+			username,
+		};
 
-    const [userRow] = await db.insert(users).values(newUser).returning();
-    return Ok(userRow ? toUserEntity(userRow) : null);
-  } catch (error) {
-    logger.error("Failed to create a user in the database.", {
-      context: "createUserDal",
-      email,
-      error,
-      role,
-      username,
-    });
-    return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
-  }
+		const [userRow] = await db.insert(users).values(newUser).returning();
+		return Ok(userRow ? toUserEntity(userRow) : null);
+	} catch (error) {
+		logger.error("Failed to create a user in the database.", {
+			context: "createUserDal",
+			email,
+			error,
+			role,
+			username,
+		});
+		return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
+	}
 }

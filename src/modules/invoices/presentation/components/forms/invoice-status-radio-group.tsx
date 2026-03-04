@@ -9,9 +9,9 @@ import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
  * Props for InvoiceStatusRadioGroup.
  */
 interface InvoiceStatusRadioGroupProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
-  error?: FieldError;
-  value: InvoiceStatus;
+	extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
+	error?: FieldError;
+	value: InvoiceStatus;
 }
 
 /**
@@ -25,65 +25,65 @@ interface InvoiceStatusRadioGroupProps
  * @param props - ADD DESCRIPTION
  */
 export const InvoiceStatusRadioGroup = ({
-  value,
-  name = "status",
-  disabled,
-  error,
-  ...props
+	value,
+	name = "status",
+	disabled,
+	error,
+	...props
 }: InvoiceStatusRadioGroupProps): JSX.Element => {
-  const options = [
-    {
-      icon: <ClockIcon className="h-4 w-4" />,
-      label: "Pending",
-      value: "pending",
-    },
-    {
-      icon: <CheckIcon className="h-4 w-4" />,
-      label: "Paid",
-      value: "paid",
-    },
-  ];
-  const hasError = Boolean(error && error.length > 0);
-  const errorMessageId = useId();
+	const options = [
+		{
+			icon: <ClockIcon className="h-4 w-4" />,
+			label: "Pending",
+			value: "pending",
+		},
+		{
+			icon: <CheckIcon className="h-4 w-4" />,
+			label: "Paid",
+			value: "paid",
+		},
+	];
+	const hasError = Boolean(error && error.length > 0);
+	const errorMessageId = useId();
 
-  return (
-    <InputFieldCardWrapper>
-      <fieldset>
-        <legend className="mb-2 block font-medium text-sm">
-          Set the invoice status
-        </legend>
-        <div className="rounded-md border border-bg-accent px-3.5 py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
-          <div className="flex gap-4">
-            {options.map((opt) => (
-              <div className="flex items-center" key={opt.value}>
-                <input
-                  aria-describedby={hasError ? `${name}-error` : undefined}
-                  className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
-                  defaultChecked={value === opt.value}
-                  disabled={disabled}
-                  id={opt.value}
-                  name={name}
-                  type="radio"
-                  value={opt.value}
-                  {...props}
-                />
-                <label
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 font-medium text-text-primary text-xs"
-                  htmlFor={opt.value}
-                >
-                  {opt.label} {opt.icon}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-        <ErrorMessage
-          dataCy="invoice-status-error"
-          error={error}
-          id={errorMessageId}
-          label="Invoice status error"
-        />
-      </fieldset>
-    </InputFieldCardWrapper>
-  );
+	return (
+		<InputFieldCardWrapper>
+			<fieldset>
+				<legend className="mb-2 block font-medium text-sm">
+					Set the invoice status
+				</legend>
+				<div className="rounded-md border border-bg-accent px-3.5 py-3 outline-2 focus-within:ring-bg-focus focus:ring-2">
+					<div className="flex gap-4">
+						{options.map((opt) => (
+							<div className="flex items-center" key={opt.value}>
+								<input
+									aria-describedby={hasError ? `${name}-error` : undefined}
+									className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
+									defaultChecked={value === opt.value}
+									disabled={disabled}
+									id={opt.value}
+									name={name}
+									type="radio"
+									value={opt.value}
+									{...props}
+								/>
+								<label
+									className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-bg-accent px-3 py-1.5 font-medium text-text-primary text-xs"
+									htmlFor={opt.value}
+								>
+									{opt.label} {opt.icon}
+								</label>
+							</div>
+						))}
+					</div>
+				</div>
+				<ErrorMessage
+					dataCy="invoice-status-error"
+					error={error}
+					id={errorMessageId}
+					label="Invoice status error"
+				/>
+			</fieldset>
+		</InputFieldCardWrapper>
+	);
 };

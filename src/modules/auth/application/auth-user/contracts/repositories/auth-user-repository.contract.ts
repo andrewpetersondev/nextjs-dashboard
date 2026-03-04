@@ -12,32 +12,32 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * This interface defines the persistence capabilities required by the Use Cases.
  */
 export interface AuthUserRepositoryContract {
-  /**
-   * Fetches a user candidate by their unique email.
-   *
-   * @param query - The lookup criteria including the email address.
-   * @returns A promise resolving to a {@link Result} containing the found {@link AuthUserEntity},
-   * null if not found, or an {@link AppError} for infrastructure OR validation failures.
-   */
-  findByEmail(
-    query: Readonly<AuthUserLookupQuery>,
-  ): Promise<Result<AuthUserEntity | null, AppError>>;
-  /**
-   * Increments the demo user counter for a specific role.
-   *
-   * @param role - The role whose demo counter should be incremented.
-   * @returns The updated counter value after incrementing (or AppError on failure).
-   */
-  incrementDemoUserCounter(role: UserRole): Promise<Result<number, AppError>>;
+	/**
+	 * Fetches a user candidate by their unique email.
+	 *
+	 * @param query - The lookup criteria including the email address.
+	 * @returns A promise resolving to a {@link Result} containing the found {@link AuthUserEntity},
+	 * null if not found, or an {@link AppError} for infrastructure OR validation failures.
+	 */
+	findByEmail(
+		query: Readonly<AuthUserLookupQuery>,
+	): Promise<Result<AuthUserEntity | null, AppError>>;
+	/**
+	 * Increments the demo user counter for a specific role.
+	 *
+	 * @param role - The role whose demo counter should be incremented.
+	 * @returns The updated counter value after incrementing (or AppError on failure).
+	 */
+	incrementDemoUserCounter(role: UserRole): Promise<Result<number, AppError>>;
 
-  /**
-   * Creates a new user account in the persistent store.
-   *
-   * @param input - Signup payload required to create a user.
-   * @returns A promise resolving to a {@link Result} containing the newly created {@link AuthUserEntity},
-   * or an {@link AppError} (e.g., if the email already exists or a validation fails).
-   */
-  signup(
-    input: Readonly<AuthUserCreateDto>,
-  ): Promise<Result<AuthUserEntity, AppError>>;
+	/**
+	 * Creates a new user account in the persistent store.
+	 *
+	 * @param input - Signup payload required to create a user.
+	 * @returns A promise resolving to a {@link Result} containing the newly created {@link AuthUserEntity},
+	 * or an {@link AppError} (e.g., if the email already exists or a validation fails).
+	 */
+	signup(
+		input: Readonly<AuthUserCreateDto>,
+	): Promise<Result<AuthUserEntity, AppError>>;
 }

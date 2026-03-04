@@ -3,8 +3,8 @@ import { fetchLatestInvoicesDal } from "@/modules/invoices/infrastructure/reposi
 import type { AppDatabase } from "@/server/db/db.connection";
 
 export async function readLatestInvoicesAction(
-  db: AppDatabase,
-  limit: number = 5,
+	db: AppDatabase,
+	limit: number = 5,
 ): Promise<InvoiceListFilter[]> {
-  return await fetchLatestInvoicesDal(db, limit);
+	return await fetchLatestInvoicesDal(db, limit);
 }

@@ -22,68 +22,68 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * within a transaction.
  */
 export class SignupUseCase {
-  private readonly hasher: PasswordHasherContract;
-  private readonly logger: LoggingClientContract;
-  private readonly uow: AuthUnitOfWorkContract;
+	private readonly hasher: PasswordHasherContract;
+	private readonly logger: LoggingClientContract;
+	private readonly uow: AuthUnitOfWorkContract;
 
-  /**
-   * @param uow - Unit of Work for transactional database operations.
-   * @param hasher - Service for hashing user passwords.
-   * @param logger - Logging client for audit and debugging.
-   */
-  constructor(
-    uow: AuthUnitOfWorkContract,
-    hasher: PasswordHasherContract,
-    logger: LoggingClientContract,
-  ) {
-    this.hasher = hasher;
-    this.logger = makeAuthUseCaseLoggerHelper(
-      logger,
-      AUTH_USE_CASE_NAMES.SIGNUP_USER,
-    );
-    this.uow = uow;
-  }
+	/**
+	 * @param uow - Unit of Work for transactional database operations.
+	 * @param hasher - Service for hashing user passwords.
+	 * @param logger - Logging client for audit and debugging.
+	 */
+	constructor(
+		uow: AuthUnitOfWorkContract,
+		hasher: PasswordHasherContract,
+		logger: LoggingClientContract,
+	) {
+		this.hasher = hasher;
+		this.logger = makeAuthUseCaseLoggerHelper(
+			logger,
+			AUTH_USE_CASE_NAMES.SIGNUP_USER,
+		);
+		this.uow = uow;
+	}
 
-  /**
-   * Executes the user creation process.
-   *
-   * @param input - The signup request data (email, password, username).
-   * @returns A Result containing the created user DTO or an AppError.
-   *
-   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
-   */
-  execute(
-    input: Readonly<SignupCommand>,
-  ): Promise<Result<AuthenticatedUserDto, AppError>> {
-    return safeExecute(
-      () =>
-        this.uow.withTransaction(async (tx) => {
-          const hashResult = await this.hasher.hash(input.password);
+	/**
+	 * Executes the user creation process.
+	 *
+	 * @param input - The signup request data (email, password, username).
+	 * @returns A Result containing the created user DTO or an AppError.
+	 *
+	 * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+	 */
+	execute(
+		input: Readonly<SignupCommand>,
+	): Promise<Result<AuthenticatedUserDto, AppError>> {
+		return safeExecute(
+			() =>
+				this.uow.withTransaction(async (tx) => {
+					const hashResult = await this.hasher.hash(input.password);
 
-          if (!hashResult.ok) {
-            return hashResult;
-          }
+					if (!hashResult.ok) {
+						return hashResult;
+					}
 
-          const signupCommand: AuthUserCreateDto = {
-            email: input.email,
-            password: hashResult.value,
-            role: getDefaultRegistrationRole(),
-            username: input.username,
-          };
+					const signupCommand: AuthUserCreateDto = {
+						email: input.email,
+						password: hashResult.value,
+						role: getDefaultRegistrationRole(),
+						username: input.username,
+					};
 
-          const createdResultTx = await tx.authUsers.signup(signupCommand);
+					const createdResultTx = await tx.authUsers.signup(signupCommand);
 
-          if (!createdResultTx.ok) {
-            return createdResultTx;
-          }
+					if (!createdResultTx.ok) {
+						return createdResultTx;
+					}
 
-          return Ok(toAuthenticatedUserDto(createdResultTx.value));
-        }),
-      {
-        logger: this.logger,
-        message: "An unexpected error occurred during user creation.",
-        operation: AUTH_USE_CASE_NAMES.SIGNUP_USER,
-      },
-    );
-  }
+					return Ok(toAuthenticatedUserDto(createdResultTx.value));
+				}),
+			{
+				logger: this.logger,
+				message: "An unexpected error occurred during user creation.",
+				operation: AUTH_USE_CASE_NAMES.SIGNUP_USER,
+			},
+		);
+	}
 }

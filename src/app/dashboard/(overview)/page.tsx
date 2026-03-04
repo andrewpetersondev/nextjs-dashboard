@@ -6,10 +6,10 @@ import { readInvoicesSummaryAction } from "@/modules/invoices/infrastructure/act
 import { readLatestInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-latest-invoices.action";
 import { getAppDb } from "@/server/db/db.connection";
 import {
-  ADMIN_ROLE,
-  GUEST_ROLE,
-  USER_ROLE,
-  type UserRole,
+	ADMIN_ROLE,
+	GUEST_ROLE,
+	USER_ROLE,
+	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
 import { normalizeUserRole } from "@/shared/policies/user-role/user-role.parser";
 import { formatCurrency } from "@/shared/primitives/money/convert";
@@ -25,48 +25,48 @@ export const dynamic = "force-dynamic";
  * Renders role-appropriate dashboard with new invoice schema compatibility.
  */
 export default async function Page(): Promise<JSX.Element> {
-  const db = getAppDb();
+	const db = getAppDb();
 
-  const [session, invoicesSummary, latestInvoices, totalCustomers] =
-    await Promise.all([
-      verifySessionOptimistic(),
-      readInvoicesSummaryAction(db),
-      readLatestInvoicesAction(db, ITEMS_PER_PAGE_INVOICES),
-      readTotalCustomersCountAction(),
-    ]);
+	const [session, invoicesSummary, latestInvoices, totalCustomers] =
+		await Promise.all([
+			verifySessionOptimistic(),
+			readInvoicesSummaryAction(db),
+			readLatestInvoicesAction(db, ITEMS_PER_PAGE_INVOICES),
+			readTotalCustomersCountAction(),
+		]);
 
-  const role: UserRole = normalizeUserRole(session?.role);
+	const role: UserRole = normalizeUserRole(session?.role);
 
-  const dashboardData = {
-    cards: {
-      totalCustomers,
-      totalInvoices: invoicesSummary.totalInvoices,
-      totalPaid: formatCurrency(invoicesSummary.totalPaid),
-      totalPending: formatCurrency(invoicesSummary.totalPending),
-    },
-    latestInvoices,
-  };
+	const dashboardData = {
+		cards: {
+			totalCustomers,
+			totalInvoices: invoicesSummary.totalInvoices,
+			totalPaid: formatCurrency(invoicesSummary.totalPaid),
+			totalPending: formatCurrency(invoicesSummary.totalPending),
+		},
+		latestInvoices,
+	};
 
-  let title = "Dashboard";
-  if (role === ADMIN_ROLE) {
-    title = DASHBOARD_TITLES.admin;
-  } else if (role === USER_ROLE) {
-    title = DASHBOARD_TITLES.user;
-  } else if (role === GUEST_ROLE) {
-    title = DASHBOARD_TITLES.guest;
-  }
+	let title = "Dashboard";
+	if (role === ADMIN_ROLE) {
+		title = DASHBOARD_TITLES.admin;
+	} else if (role === USER_ROLE) {
+		title = DASHBOARD_TITLES.user;
+	} else if (role === GUEST_ROLE) {
+		title = DASHBOARD_TITLES.guest;
+	}
 
-  const commonContent = (
-    <main>
-      <MiddlewareCard />
-      <Dashboard
-        dashboardCardData={dashboardData.cards}
-        latestInvoices={dashboardData.latestInvoices}
-        title={title}
-      />
-    </main>
-  );
+	const commonContent = (
+		<main>
+			<MiddlewareCard />
+			<Dashboard
+				dashboardCardData={dashboardData.cards}
+				latestInvoices={dashboardData.latestInvoices}
+				title={title}
+			/>
+		</main>
+	);
 
-  // getValidUserRole already enforces allowed roles; this condition will always be true.
-  return commonContent;
+	// getValidUserRole already enforces allowed roles; this condition will always be true.
+	return commonContent;
 }

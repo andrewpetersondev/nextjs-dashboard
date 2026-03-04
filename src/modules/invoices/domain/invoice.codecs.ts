@@ -8,7 +8,7 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * @returns ISO date string in YYYY-MM-DD format
  */
 export function encodeInvoiceDateToIso(date: Date): string {
-  return date.toISOString().slice(0, 10);
+	return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -17,5 +17,5 @@ export function encodeInvoiceDateToIso(date: Date): string {
  * @returns ISO date string in YYYY-MM-01 format
  */
 export function encodePeriodToFirstDay(period: Period): string {
-  return `${periodKey(period)}-01`;
+	return `${periodKey(period)}-01`;
 }

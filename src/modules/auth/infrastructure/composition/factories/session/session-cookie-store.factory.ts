@@ -11,14 +11,14 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An implementation of the {@link SessionStoreContract}.
  */
 export function sessionCookieStoreFactory(
-  logger: LoggingClientContract,
+	logger: LoggingClientContract,
 ): SessionStoreContract {
-  const cookies = createCookieService();
+	const cookies = createCookieService();
 
-  const store: SessionStoreContract = new SessionCookieStoreAdapter(
-    cookies,
-    logger,
-  );
+	const store: SessionStoreContract = new SessionCookieStoreAdapter(
+		cookies,
+		logger,
+	);
 
-  return store;
+	return store;
 }

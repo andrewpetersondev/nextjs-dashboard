@@ -5,31 +5,31 @@ import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 
 interface InvoiceAmountInputProps
-  extends InputHTMLAttributes<HTMLInputElement> {
-  dataCy?: string;
-  error?: FieldError;
-  label?: string;
+	extends InputHTMLAttributes<HTMLInputElement> {
+	dataCy?: string;
+	error?: FieldError;
+	label?: string;
 }
 
 export const InvoiceAmountInput = ({
-  id = "amount",
-  dataCy,
-  label = "Choose an amount",
-  error,
-  ...props
+	id = "amount",
+	dataCy,
+	label = "Choose an amount",
+	error,
+	...props
 }: InvoiceAmountInputProps): JSX.Element => {
-  return (
-    <InputFieldMolecule
-      dataCy={dataCy}
-      error={error}
-      icon={<CurrencyDollarIcon className={INPUT_ICON_CLASS} />}
-      id={id}
-      label={label}
-      name={props.name ?? id}
-      placeholder="Enter USD amount"
-      step="0.01"
-      type="number"
-      {...props}
-    />
-  );
+	return (
+		<InputFieldMolecule
+			dataCy={dataCy}
+			error={error}
+			icon={<CurrencyDollarIcon className={INPUT_ICON_CLASS} />}
+			id={id}
+			label={label}
+			name={props.name ?? id}
+			placeholder="Enter USD amount"
+			step="0.01"
+			type="number"
+			{...props}
+		/>
+	);
 };

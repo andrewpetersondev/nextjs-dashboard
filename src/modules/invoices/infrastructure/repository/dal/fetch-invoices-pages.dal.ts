@@ -16,49 +16,49 @@ import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
  * @throws AppError if query fails
  */
 export async function fetchInvoicesPagesDal(
-  db: AppDatabase,
-  query: string,
+	db: AppDatabase,
+	query: string,
 ): Promise<number> {
-  // Count invoices matching the search query
-  const [{ count: total = 0 } = { count: 0 }] = await db
-    .select({
-      count: count(invoices.id),
-    })
-    .from(invoices)
-    .innerJoin(customers, eq(invoices.customerId, customers.id))
-    .where(
-      or(
-        ilike(customers.name, `%${query}%`),
-        ilike(customers.email, `%${query}%`),
-        ilike(
-          sql<string>`${invoices.amount}
+	// Count invoices matching the search query
+	const [{ count: total = 0 } = { count: 0 }] = await db
+		.select({
+			count: count(invoices.id),
+		})
+		.from(invoices)
+		.innerJoin(customers, eq(invoices.customerId, customers.id))
+		.where(
+			or(
+				ilike(customers.name, `%${query}%`),
+				ilike(customers.email, `%${query}%`),
+				ilike(
+					sql<string>`${invoices.amount}
                 ::text`,
-          `%${query}%`,
-        ),
-        ilike(
-          sql<string>`${invoices.date}
+					`%${query}%`,
+				),
+				ilike(
+					sql<string>`${invoices.date}
                 ::text`,
-          `%${query}%`,
-        ),
-        ilike(
-          sql<string>`${invoices.status}
+					`%${query}%`,
+				),
+				ilike(
+					sql<string>`${invoices.status}
                 ::text`,
-          `%${query}%`,
-        ),
-      ),
-    );
+					`%${query}%`,
+				),
+			),
+		);
 
-  // TODO: Refactor. Empty result does not mean that an error occurred.
-  if (!total || total < 0) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.fetchPagesFailed,
-      metadata: {},
-    });
-  }
+	// TODO: Refactor. Empty result does not mean that an error occurred.
+	if (!total || total < 0) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.fetchPagesFailed,
+			metadata: {},
+		});
+	}
 
-  // Always return at least 1 page for UX consistency
-  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+	// Always return at least 1 page for UX consistency
+	const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
-  return Math.max(totalPages, 1);
+	return Math.max(totalPages, 1);
 }

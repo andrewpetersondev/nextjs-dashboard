@@ -15,72 +15,72 @@ import type { Result } from "@/shared/core/result/result.dto";
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: keep aligned with other validators
 export function validateAuthUserCreateDto(
-  dto: AuthUserCreateDto,
+	dto: AuthUserCreateDto,
 ): Result<AuthUserCreateDto, AppError> {
-  if (!dto.email || dto.email.trim().length === 0) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "empty_email",
-        message: "auth.validation.email_required",
-        metadata: {
-          field: "email",
-          reason: "Email cannot be empty",
-        },
-      }),
-    );
-  }
+	if (!dto.email || dto.email.trim().length === 0) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "empty_email",
+				message: "auth.validation.email_required",
+				metadata: {
+					field: "email",
+					reason: "Email cannot be empty",
+				},
+			}),
+		);
+	}
 
-  if (!dto.email.includes("@")) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "invalid_email_format",
-        message: "auth.validation.invalid_email",
-        metadata: {
-          field: "email",
-          reason: "Email must contain @ symbol",
-        },
-      }),
-    );
-  }
+	if (!dto.email.includes("@")) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "invalid_email_format",
+				message: "auth.validation.invalid_email",
+				metadata: {
+					field: "email",
+					reason: "Email must contain @ symbol",
+				},
+			}),
+		);
+	}
 
-  if (!dto.username || dto.username.trim().length === 0) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "empty_username",
-        message: "auth.validation.username_required",
-        metadata: {
-          field: "username",
-          reason: "Username cannot be empty",
-        },
-      }),
-    );
-  }
+	if (!dto.username || dto.username.trim().length === 0) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "empty_username",
+				message: "auth.validation.username_required",
+				metadata: {
+					field: "username",
+					reason: "Username cannot be empty",
+				},
+			}),
+		);
+	}
 
-  if (!dto.password || dto.password.length === 0) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "missing_password_hash",
-        message: "auth.validation.password_hash_required",
-        metadata: {
-          field: "password",
-          reason: "Password hash must be present for persistence",
-        },
-      }),
-    );
-  }
+	if (!dto.password || dto.password.length === 0) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "missing_password_hash",
+				message: "auth.validation.password_hash_required",
+				metadata: {
+					field: "password",
+					reason: "Password hash must be present for persistence",
+				},
+			}),
+		);
+	}
 
-  if (!dto.role) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "missing_role",
-        message: "auth.validation.role_required",
-        metadata: {
-          field: "role",
-          reason: "User role must be present",
-        },
-      }),
-    );
-  }
+	if (!dto.role) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "missing_role",
+				message: "auth.validation.role_required",
+				metadata: {
+					field: "role",
+					reason: "User role must be present",
+				},
+			}),
+		);
+	}
 
-  return Ok(dto);
+	return Ok(dto);
 }

@@ -1,11 +1,11 @@
 import { getPublicNodeEnvResult } from "@/shared/core/config/public/env-public";
 import {
-  type DatabaseEnvironment,
-  DatabaseEnvironmentSchema,
-  type LogLevel,
-  LogLevelSchema,
-  type NodeEnvironment,
-  NodeEnvironmentSchema,
+	type DatabaseEnvironment,
+	DatabaseEnvironmentSchema,
+	type LogLevel,
+	LogLevelSchema,
+	type NodeEnvironment,
+	NodeEnvironmentSchema,
 } from "@/shared/core/config/schemas/env-schemas";
 import { getEnvVariable } from "@/shared/core/config/server/env-access.utils";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
@@ -26,21 +26,21 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A Result containing the validated NodeEnvironment or an AppError.
  */
 function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
-  if (typeof window !== "undefined") {
-    return getPublicNodeEnvResult();
-  }
-  const raw = getEnvVariable("NODE_ENV");
-  const result = NodeEnvironmentSchema.safeParse(raw);
-  if (!result.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid NODE_ENV value "${raw}": ${result.error.message}`,
-        metadata: {},
-      }),
-    );
-  }
-  return Ok(result.data);
+	if (typeof window !== "undefined") {
+		return getPublicNodeEnvResult();
+	}
+	const raw = getEnvVariable("NODE_ENV");
+	const result = NodeEnvironmentSchema.safeParse(raw);
+	if (!result.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Invalid NODE_ENV value "${raw}": ${result.error.message}`,
+				metadata: {},
+			}),
+		);
+	}
+	return Ok(result.data);
 }
 
 /**
@@ -52,11 +52,11 @@ function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
  * @throws {Error} When NODE_ENV is invalid.
  */
 function getNodeEnv(): NodeEnvironment {
-  const result = getNodeEnvResult();
-  if (result.ok) {
-    return result.value;
-  }
-  throw new Error(result.error.message);
+	const result = getNodeEnvResult();
+	if (result.ok) {
+		return result.value;
+	}
+	throw new Error(result.error.message);
 }
 
 /**
@@ -65,18 +65,18 @@ function getNodeEnv(): NodeEnvironment {
  * @returns A Result containing the validated DatabaseEnvironment or an AppError.
  */
 function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
-  const raw = getEnvVariable("DATABASE_ENV");
-  const result = DatabaseEnvironmentSchema.safeParse(raw);
-  if (!result.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid DATABASE_ENV value "${raw}": ${result.error.message}`,
-        metadata: {},
-      }),
-    );
-  }
-  return Ok(result.data);
+	const raw = getEnvVariable("DATABASE_ENV");
+	const result = DatabaseEnvironmentSchema.safeParse(raw);
+	if (!result.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Invalid DATABASE_ENV value "${raw}": ${result.error.message}`,
+				metadata: {},
+			}),
+		);
+	}
+	return Ok(result.data);
 }
 
 /**
@@ -85,18 +85,18 @@ function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
  * @returns A Result containing the validated LogLevel or an AppError.
  */
 function getLogLevelResult(): Result<LogLevel, AppError> {
-  const raw = getEnvVariable("LOG_LEVEL");
-  const result = LogLevelSchema.safeParse(raw);
-  if (!result.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid LOG_LEVEL value "${raw}": ${result.error.message}`,
-        metadata: {},
-      }),
-    );
-  }
-  return Ok(result.data);
+	const raw = getEnvVariable("LOG_LEVEL");
+	const result = LogLevelSchema.safeParse(raw);
+	if (!result.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Invalid LOG_LEVEL value "${raw}": ${result.error.message}`,
+				metadata: {},
+			}),
+		);
+	}
+	return Ok(result.data);
 }
 
 /**
@@ -107,11 +107,11 @@ function getLogLevelResult(): Result<LogLevel, AppError> {
  * @throws {Error} When LOG_LEVEL is invalid.
  */
 function _getLogLevel(): LogLevel {
-  const result = getLogLevelResult();
-  if (result.ok) {
-    return result.value;
-  }
-  throw new Error(result.error.message);
+	const result = getLogLevelResult();
+	if (result.ok) {
+		return result.value;
+	}
+	throw new Error(result.error.message);
 }
 
 /**
@@ -123,11 +123,11 @@ function _getLogLevel(): LogLevel {
  */
 // biome-ignore lint/style/useExportsLast: fine for now
 export function getDatabaseEnv(): DatabaseEnvironment {
-  const result = getDatabaseEnvResult();
-  if (result.ok) {
-    return result.value;
-  }
-  throw new Error(result.error.message);
+	const result = getDatabaseEnvResult();
+	if (result.ok) {
+		return result.value;
+	}
+	throw new Error(result.error.message);
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -135,23 +135,23 @@ export function getDatabaseEnv(): DatabaseEnvironment {
  * -----------------------------------------------------------------------------------------------*/
 
 function _isDev(): boolean {
-  return getNodeEnv() === "development";
+	return getNodeEnv() === "development";
 }
 function _isTest(): boolean {
-  return getNodeEnv() === "test";
+	return getNodeEnv() === "test";
 }
 export function isProd(): boolean {
-  return getNodeEnv() === "production";
+	return getNodeEnv() === "production";
 }
 
 function _isDevDb(): boolean {
-  return getDatabaseEnv() === "development";
+	return getDatabaseEnv() === "development";
 }
 function _isTestDb(): boolean {
-  return getDatabaseEnv() === "test";
+	return getDatabaseEnv() === "test";
 }
 function _isProdDb(): boolean {
-  return getDatabaseEnv() === "production";
+	return getDatabaseEnv() === "production";
 }
 
 /**
@@ -161,5 +161,5 @@ function _isProdDb(): boolean {
  * if (isEnv("development", "test")) console.log("Debug logging enabled");
  */
 function _isEnv(...envs: NodeEnvironment[]): boolean {
-  return envs.includes(getNodeEnv());
+	return envs.includes(getNodeEnv());
 }

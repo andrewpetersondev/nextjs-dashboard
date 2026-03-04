@@ -6,8 +6,8 @@ import { handleEligibleToIneligible } from "@/modules/revenues/events/updated-in
 import { handleIneligibleToEligible } from "@/modules/revenues/events/updated-invoice/handlers/ineligible-to-eligible.handler";
 import { handleNoExistingRevenue } from "@/modules/revenues/events/updated-invoice/handlers/no-existing-revenue.handler";
 import type {
-  ChangeType,
-  DispatchChangeArgs,
+	ChangeType,
+	DispatchChangeArgs,
 } from "@/modules/revenues/events/updated-invoice/types";
 
 /**
@@ -15,95 +15,95 @@ import type {
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <good for now>
 export async function dispatchChange(
-  change: ChangeType,
-  context: string,
-  args: DispatchChangeArgs,
+	change: ChangeType,
+	context: string,
+	args: DispatchChangeArgs,
 ): Promise<void> {
-  const {
-    currentInvoice,
-    existingRevenue,
-    meta,
-    period,
-    previousInvoice,
-    revenueService,
-  } = args;
+	const {
+		currentInvoice,
+		existingRevenue,
+		meta,
+		period,
+		previousInvoice,
+		revenueService,
+	} = args;
 
-  if (!existingRevenue) {
-    await handleNoExistingRevenue({
-      context,
-      currentInvoice,
-      meta,
-      period,
-      revenueService,
-    });
-    return;
-  }
+	if (!existingRevenue) {
+		await handleNoExistingRevenue({
+			context,
+			currentInvoice,
+			meta,
+			period,
+			revenueService,
+		});
+		return;
+	}
 
-  if (change === "eligible-to-ineligible") {
-    await handleEligibleToIneligible({
-      context,
-      currentPaidTotal: existingRevenue.totalPaidAmount,
-      currentPendingTotal: existingRevenue.totalPendingAmount,
-      meta: {
-        ...meta,
-        existingCount: existingRevenue.invoiceCount,
-        existingTotal: existingRevenue.totalAmount,
-      },
-      previousAmount: previousInvoice.amount,
-      previousStatus: previousInvoice.status,
-      revenueId: existingRevenue.id,
-      revenueService,
-    });
-    return;
-  }
-  if (change === "ineligible-to-eligible") {
-    await handleIneligibleToEligible({
-      context,
-      currentAmount: currentInvoice.amount,
-      currentCount: existingRevenue.invoiceCount,
-      currentPaidTotal: existingRevenue.totalPaidAmount,
-      currentPendingTotal: existingRevenue.totalPendingAmount,
-      currentStatus: currentInvoice.status,
-      currentTotal: existingRevenue.totalAmount,
-      meta,
-      revenueId: existingRevenue.id,
-      revenueService,
-    });
-    return;
-  }
-  if (change === "eligible-amount-change") {
-    await handleEligibleAmountChange({
-      context,
-      currentAmount: currentInvoice.amount,
-      currentCount: existingRevenue.invoiceCount,
-      currentPaidTotal: existingRevenue.totalPaidAmount,
-      currentPendingTotal: existingRevenue.totalPendingAmount,
-      currentStatus: currentInvoice.status,
-      currentTotal: existingRevenue.totalAmount,
-      meta,
-      previousAmount: previousInvoice.amount,
-      revenueId: existingRevenue.id,
-      revenueService,
-    });
-    return;
-  }
-  if (change === "eligible-status-change") {
-    await handleEligibleStatusChange({
-      context,
-      currentAmount: currentInvoice.amount,
-      currentCount: existingRevenue.invoiceCount,
-      currentPaidTotal: existingRevenue.totalPaidAmount,
-      currentPendingTotal: existingRevenue.totalPendingAmount,
-      currentStatus: currentInvoice.status,
-      currentTotal: existingRevenue.totalAmount,
-      meta,
-      previousAmount: previousInvoice.amount,
-      previousStatus: previousInvoice.status,
-      revenueId: existingRevenue.id,
-      revenueService,
-    });
-    return;
-  }
+	if (change === "eligible-to-ineligible") {
+		await handleEligibleToIneligible({
+			context,
+			currentPaidTotal: existingRevenue.totalPaidAmount,
+			currentPendingTotal: existingRevenue.totalPendingAmount,
+			meta: {
+				...meta,
+				existingCount: existingRevenue.invoiceCount,
+				existingTotal: existingRevenue.totalAmount,
+			},
+			previousAmount: previousInvoice.amount,
+			previousStatus: previousInvoice.status,
+			revenueId: existingRevenue.id,
+			revenueService,
+		});
+		return;
+	}
+	if (change === "ineligible-to-eligible") {
+		await handleIneligibleToEligible({
+			context,
+			currentAmount: currentInvoice.amount,
+			currentCount: existingRevenue.invoiceCount,
+			currentPaidTotal: existingRevenue.totalPaidAmount,
+			currentPendingTotal: existingRevenue.totalPendingAmount,
+			currentStatus: currentInvoice.status,
+			currentTotal: existingRevenue.totalAmount,
+			meta,
+			revenueId: existingRevenue.id,
+			revenueService,
+		});
+		return;
+	}
+	if (change === "eligible-amount-change") {
+		await handleEligibleAmountChange({
+			context,
+			currentAmount: currentInvoice.amount,
+			currentCount: existingRevenue.invoiceCount,
+			currentPaidTotal: existingRevenue.totalPaidAmount,
+			currentPendingTotal: existingRevenue.totalPendingAmount,
+			currentStatus: currentInvoice.status,
+			currentTotal: existingRevenue.totalAmount,
+			meta,
+			previousAmount: previousInvoice.amount,
+			revenueId: existingRevenue.id,
+			revenueService,
+		});
+		return;
+	}
+	if (change === "eligible-status-change") {
+		await handleEligibleStatusChange({
+			context,
+			currentAmount: currentInvoice.amount,
+			currentCount: existingRevenue.invoiceCount,
+			currentPaidTotal: existingRevenue.totalPaidAmount,
+			currentPendingTotal: existingRevenue.totalPendingAmount,
+			currentStatus: currentInvoice.status,
+			currentTotal: existingRevenue.totalAmount,
+			meta,
+			previousAmount: previousInvoice.amount,
+			previousStatus: previousInvoice.status,
+			revenueId: existingRevenue.id,
+			revenueService,
+		});
+		return;
+	}
 
-  logInfo(context, "No changes affecting revenue calculation", meta);
+	logInfo(context, "No changes affecting revenue calculation", meta);
 }

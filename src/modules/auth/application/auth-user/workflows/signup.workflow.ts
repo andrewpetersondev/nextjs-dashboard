@@ -19,15 +19,15 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A Result containing the session principal or an AppError.
  */
 export async function signupWorkflow(
-  input: Readonly<SignupCommand>,
-  deps: Readonly<{
-    sessionService: SessionServiceContract;
-    signupUseCase: SignupUseCase;
-  }>,
+	input: Readonly<SignupCommand>,
+	deps: Readonly<{
+		sessionService: SessionServiceContract;
+		signupUseCase: SignupUseCase;
+	}>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  const signupResult = await deps.signupUseCase.execute(input);
+	const signupResult = await deps.signupUseCase.execute(input);
 
-  return await establishSessionForAuthUserWorkflow(signupResult, {
-    sessionService: deps.sessionService,
-  });
+	return await establishSessionForAuthUserWorkflow(signupResult, {
+		sessionService: deps.sessionService,
+	});
 }

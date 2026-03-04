@@ -6,9 +6,9 @@ import { cn } from "@/ui/utils/cn";
  * Represents a single breadcrumb item.
  */
 interface Breadcrumb {
-  active?: boolean;
-  href: string;
-  label: string;
+	active?: boolean;
+	href: string;
+	label: string;
 }
 
 const BREADCRUMB_SEPARATOR = "/";
@@ -18,7 +18,7 @@ const BREADCRUMB_SEPARATOR = "/";
  * Avoids array-index keys to prevent subtle UI bugs when items are inserted/removed/reordered.
  */
 function makeBreadcrumbKey(breadcrumb: Breadcrumb): string {
-  return `${breadcrumb.href}::${breadcrumb.label}`;
+	return `${breadcrumb.href}::${breadcrumb.label}`;
 }
 
 /**
@@ -27,35 +27,35 @@ function makeBreadcrumbKey(breadcrumb: Breadcrumb): string {
  * @param props.breadcrumbs - List of breadcrumb items
  */
 export const Breadcrumbs = ({
-  breadcrumbs,
+	breadcrumbs,
 }: {
-  breadcrumbs: readonly Breadcrumb[];
+	breadcrumbs: readonly Breadcrumb[];
 }): JSX.Element => (
-  <nav aria-label="Breadcrumb" className="mb-6 block">
-    <ol className="flex text-xl md:text-2xl">
-      {breadcrumbs.map((breadcrumb) => {
-        const isActive = Boolean(breadcrumb.active);
-        return (
-          <li
-            aria-current={isActive ? "page" : undefined}
-            className={cn(isActive ? "text-text-active" : "text-text-primary")}
-            key={makeBreadcrumbKey(breadcrumb)}
-          >
-            <Link
-              aria-disabled={isActive}
-              href={breadcrumb.href}
-              tabIndex={isActive ? -1 : 0}
-            >
-              {breadcrumb.label}
-            </Link>
-            {breadcrumb !== breadcrumbs.at(-1) && (
-              <span aria-hidden="true" className="mx-3 inline-block">
-                {BREADCRUMB_SEPARATOR}
-              </span>
-            )}
-          </li>
-        );
-      })}
-    </ol>
-  </nav>
+	<nav aria-label="Breadcrumb" className="mb-6 block">
+		<ol className="flex text-xl md:text-2xl">
+			{breadcrumbs.map((breadcrumb) => {
+				const isActive = Boolean(breadcrumb.active);
+				return (
+					<li
+						aria-current={isActive ? "page" : undefined}
+						className={cn(isActive ? "text-text-active" : "text-text-primary")}
+						key={makeBreadcrumbKey(breadcrumb)}
+					>
+						<Link
+							aria-disabled={isActive}
+							href={breadcrumb.href}
+							tabIndex={isActive ? -1 : 0}
+						>
+							{breadcrumb.label}
+						</Link>
+						{breadcrumb !== breadcrumbs.at(-1) && (
+							<span aria-hidden="true" className="mx-3 inline-block">
+								{BREADCRUMB_SEPARATOR}
+							</span>
+						)}
+					</li>
+				);
+			})}
+		</ol>
+	</nav>
 );

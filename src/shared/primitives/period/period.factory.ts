@@ -5,8 +5,8 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
 import {
-  PERIOD_BRAND,
-  type Period,
+	PERIOD_BRAND,
+	type Period,
 } from "@/shared/primitives/period/period.brand";
 
 /**
@@ -14,14 +14,14 @@ import {
  * Throws ValidationError if the provided date is invalid.
  */
 function toFirstDayOfMonthUtc(date: Date): Date {
-  if (!isValid(date)) {
-    throw makeAppError("validation", {
-      cause: "",
-      message: "Invalid Date",
-      metadata: {},
-    });
-  }
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+	if (!isValid(date)) {
+		throw makeAppError("validation", {
+			cause: "",
+			message: "Invalid Date",
+			metadata: {},
+		});
+	}
+	return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 
 /**
@@ -32,55 +32,55 @@ function toFirstDayOfMonthUtc(date: Date): Date {
  * @returns A Result containing the normalized Date or an AppError
  */
 const validatePeriod = (value: unknown): Result<Date, AppError> => {
-  if (value instanceof Date) {
-    if (!isValid(value)) {
-      return Err(
-        makeAppError("validation", {
-          cause: "",
-          message: "Invalid period: Date instance is not valid",
-          metadata: {},
-        }),
-      );
-    }
-    return Ok(toFirstDayOfMonthUtc(value));
-  }
+	if (value instanceof Date) {
+		if (!isValid(value)) {
+			return Err(
+				makeAppError("validation", {
+					cause: "",
+					message: "Invalid period: Date instance is not valid",
+					metadata: {},
+				}),
+			);
+		}
+		return Ok(toFirstDayOfMonthUtc(value));
+	}
 
-  if (typeof value === "string") {
-    const parsedMonth = parse(value, "yyyy-MM", new Date());
-    if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === value) {
-      return Ok(toFirstDayOfMonthUtc(parsedMonth));
-    }
+	if (typeof value === "string") {
+		const parsedMonth = parse(value, "yyyy-MM", new Date());
+		if (isValid(parsedMonth) && format(parsedMonth, "yyyy-MM") === value) {
+			return Ok(toFirstDayOfMonthUtc(parsedMonth));
+		}
 
-    const parsedDay = parse(value, "yyyy-MM-dd", new Date());
-    if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === value) {
-      if (parsedDay.getUTCDate() !== 1) {
-        return Err(
-          makeAppError("validation", {
-            cause: "",
-            message: `Invalid period: date must be the first day of the month, got "${value}"`,
-            metadata: {},
-          }),
-        );
-      }
-      return Ok(toFirstDayOfMonthUtc(parsedDay));
-    }
+		const parsedDay = parse(value, "yyyy-MM-dd", new Date());
+		if (isValid(parsedDay) && format(parsedDay, "yyyy-MM-dd") === value) {
+			if (parsedDay.getUTCDate() !== 1) {
+				return Err(
+					makeAppError("validation", {
+						cause: "",
+						message: `Invalid period: date must be the first day of the month, got "${value}"`,
+						metadata: {},
+					}),
+				);
+			}
+			return Ok(toFirstDayOfMonthUtc(parsedDay));
+		}
 
-    return Err(
-      makeAppError("validation", {
-        cause: "",
-        message: `Invalid period: "${value}". Expected "yyyy-MM" or "yyyy-MM-01"`,
-        metadata: {},
-      }),
-    );
-  }
+		return Err(
+			makeAppError("validation", {
+				cause: "",
+				message: `Invalid period: "${value}". Expected "yyyy-MM" or "yyyy-MM-01"`,
+				metadata: {},
+			}),
+		);
+	}
 
-  return Err(
-    makeAppError("validation", {
-      cause: "",
-      message: `Invalid period: unsupported input type ${typeof value}`,
-      metadata: {},
-    }),
-  );
+	return Err(
+		makeAppError("validation", {
+			cause: "",
+			message: `Invalid period: unsupported input type ${typeof value}`,
+			metadata: {},
+		}),
+	);
 };
 
 /**
@@ -91,9 +91,9 @@ const validatePeriod = (value: unknown): Result<Date, AppError> => {
  * @returns A Result containing the branded Period or an AppError
  */
 export const createPeriod = (value: unknown): Result<Period, AppError> => {
-  const result = validatePeriod(value);
-  if (!result.ok) {
-    return result;
-  }
-  return Ok(createBrand<Date, typeof PERIOD_BRAND>(PERIOD_BRAND)(result.value));
+	const result = validatePeriod(value);
+	if (!result.ok) {
+		return result;
+	}
+	return Ok(createBrand<Date, typeof PERIOD_BRAND>(PERIOD_BRAND)(result.value));
 };

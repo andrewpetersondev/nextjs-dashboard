@@ -10,7 +10,7 @@ import { UsernameSchema } from "@/shared/policies/username/username.schema";
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
 export const SignupFormSchema = LoginFormSchema.safeExtend({
-  username: UsernameSchema,
+	username: UsernameSchema,
 });
 
 /** The validated data used by the Workflow and Services */

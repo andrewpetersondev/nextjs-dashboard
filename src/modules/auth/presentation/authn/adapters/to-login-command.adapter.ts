@@ -8,8 +8,8 @@ import type { LoginRequestDto } from "@/modules/auth/presentation/authn/transpor
  * @returns The login command.
  */
 export function toLoginCommand(input: LoginRequestDto): LoginCommand {
-  return {
-    email: input.email,
-    password: input.password,
-  };
+	return {
+		email: input.email,
+		password: input.password,
+	};
 }

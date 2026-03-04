@@ -13,15 +13,15 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * @returns Application-layer session token claims DTO.
  */
 export function jwtToSessionTokenClaimsDto(
-  jwtClaims: SessionJwtClaimsTransport,
+	jwtClaims: SessionJwtClaimsTransport,
 ): SessionTokenClaimsDto {
-  return {
-    exp: jwtClaims.exp,
-    iat: jwtClaims.iat,
-    jti: jwtClaims.jti,
-    nbf: jwtClaims.nbf,
-    role: jwtClaims.role as UserRole,
-    sid: jwtClaims.sid,
-    sub: jwtClaims.sub,
-  };
+	return {
+		exp: jwtClaims.exp,
+		iat: jwtClaims.iat,
+		jti: jwtClaims.jti,
+		nbf: jwtClaims.nbf,
+		role: jwtClaims.role as UserRole,
+		sid: jwtClaims.sid,
+		sub: jwtClaims.sub,
+	};
 }

@@ -11,16 +11,16 @@ import type { ErrType, OkType, Result } from "@/shared/core/result/result.dto";
  * @returns A `Result` containing an array of all successful values (`Ok`) or the first encountered error (`Err`).
  */
 function _collectAll<T, E extends AppError>(
-  results: readonly Result<T, E>[],
+	results: readonly Result<T, E>[],
 ): Result<readonly T[], E> {
-  const acc: T[] = [];
-  for (const r of results) {
-    if (!r.ok) {
-      return r;
-    }
-    acc.push(r.value);
-  }
-  return Ok(acc as readonly T[]);
+	const acc: T[] = [];
+	for (const r of results) {
+		if (!r.ok) {
+			return r;
+		}
+		acc.push(r.value);
+	}
+	return Ok(acc as readonly T[]);
 }
 
 /**
@@ -32,16 +32,16 @@ function _collectAll<T, E extends AppError>(
  * @returns `Ok` with a readonly array of all collected values or the first encountered `Err`.
  */
 function _collectAllLazy<T, E extends AppError>(
-  source: Iterable<Result<T, E>>,
+	source: Iterable<Result<T, E>>,
 ): Result<readonly T[], E> {
-  const acc: T[] = [];
-  for (const r of source) {
-    if (!r.ok) {
-      return r;
-    }
-    acc.push(r.value);
-  }
-  return Ok(acc as readonly T[]);
+	const acc: T[] = [];
+	for (const r of source) {
+		if (!r.ok) {
+			return r;
+		}
+		acc.push(r.value);
+	}
+	return Ok(acc as readonly T[]);
 }
 
 /**
@@ -54,17 +54,17 @@ function _collectAllLazy<T, E extends AppError>(
  * @returns A `Result` containing a readonly tuple of all `Ok` values or the first `Err`.
  */
 function _collectTuple<
-  E extends AppError,
-  Tt extends readonly Result<unknown, E>[],
+	E extends AppError,
+	Tt extends readonly Result<unknown, E>[],
 >(...results: Tt): Result<{ readonly [K in keyof Tt]: OkType<Tt[K]> }, E> {
-  const acc: unknown[] = [];
-  for (const r of results) {
-    if (!r.ok) {
-      return r as Result<{ readonly [K in keyof Tt]: OkType<Tt[K]> }, E>;
-    }
-    acc.push(r.value);
-  }
-  return Ok(acc as { readonly [K in keyof Tt]: OkType<Tt[K]> });
+	const acc: unknown[] = [];
+	for (const r of results) {
+		if (!r.ok) {
+			return r as Result<{ readonly [K in keyof Tt]: OkType<Tt[K]> }, E>;
+		}
+		acc.push(r.value);
+	}
+	return Ok(acc as { readonly [K in keyof Tt]: OkType<Tt[K]> });
 }
 
 /**
@@ -76,19 +76,19 @@ function _collectTuple<
  * @returns A `Result` containing either a readonly tuple of all successful values or the first occurred `Err`.
  */
 function _collectTupleHetero<Tt extends readonly Result<unknown, AppError>[]>(
-  ...results: Tt
+	...results: Tt
 ): Result<{ readonly [K in keyof Tt]: OkType<Tt[K]> }, ErrType<Tt[number]>> {
-  const acc: unknown[] = [];
-  for (const r of results) {
-    if (!r.ok) {
-      return r as Result<
-        { readonly [K in keyof Tt]: OkType<Tt[K]> },
-        ErrType<Tt[number]>
-      >;
-    }
-    acc.push(r.value);
-  }
-  return Ok(acc as { readonly [K in keyof Tt]: OkType<Tt[K]> });
+	const acc: unknown[] = [];
+	for (const r of results) {
+		if (!r.ok) {
+			return r as Result<
+				{ readonly [K in keyof Tt]: OkType<Tt[K]> },
+				ErrType<Tt[number]>
+			>;
+		}
+		acc.push(r.value);
+	}
+	return Ok(acc as { readonly [K in keyof Tt]: OkType<Tt[K]> });
 }
 
 /**
@@ -101,20 +101,20 @@ function _collectTupleHetero<Tt extends readonly Result<unknown, AppError>[]>(
  * @returns The first `Result` with `ok: true`, or a fallback `Err` produced by `onEmpty`.
  */
 function _firstOkOrElse<T, E extends AppError>(
-  onEmpty: () => E,
+	onEmpty: () => E,
 ): (results: readonly Result<T, E>[]) => Result<T, E> {
-  return function firstOkOrElseInner(
-    results: readonly Result<T, E>[],
-  ): Result<T, E> {
-    let lastErr: Result<never, E> | null = null;
-    for (const r of results) {
-      if (r.ok) {
-        return r;
-      }
-      lastErr = r as Result<never, E>;
-    }
-    return lastErr ?? Err(onEmpty());
-  };
+	return function firstOkOrElseInner(
+		results: readonly Result<T, E>[],
+	): Result<T, E> {
+		let lastErr: Result<never, E> | null = null;
+		for (const r of results) {
+			if (r.ok) {
+				return r;
+			}
+			lastErr = r as Result<never, E>;
+		}
+		return lastErr ?? Err(onEmpty());
+	};
 }
 
 /**
@@ -126,13 +126,13 @@ function _firstOkOrElse<T, E extends AppError>(
  * @returns A generator that yields `T` values and returns `Result<void, E>`.
  */
 function* _iterateOk<T, E extends AppError>(
-  source: Iterable<Result<T, E>>,
+	source: Iterable<Result<T, E>>,
 ): Generator<T, Result<void, E>, unknown> {
-  for (const r of source) {
-    if (!r.ok) {
-      return r;
-    }
-    yield r.value;
-  }
-  return Ok<void>(undefined);
+	for (const r of source) {
+		if (!r.ok) {
+			return r;
+		}
+		yield r.value;
+	}
+	return Ok<void>(undefined);
 }

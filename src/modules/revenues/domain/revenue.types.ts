@@ -4,11 +4,11 @@ import type { Period } from "@/shared/primitives/period/period.brand";
 
 // Standardized sources of revenue data.
 export const REVENUE_SOURCES = [
-  "seed",
-  "handler",
-  "invoice_event",
-  "rolling_calculation",
-  "template",
+	"seed",
+	"handler",
+	"invoice_event",
+	"rolling_calculation",
+	"template",
 ] as const;
 
 // Type-safe union of valid revenue sources.
@@ -20,8 +20,8 @@ export type RevenueSource = (typeof REVENUE_SOURCES)[number];
  * @prop topLabel - Maximum chart value in dollars for scaling purposes
  */
 export interface YaxisResult {
-  readonly topLabel: Dollars;
-  readonly yAxisLabels: readonly string[];
+	readonly topLabel: Dollars;
+	readonly yAxisLabels: readonly string[];
 }
 
 /**
@@ -34,11 +34,11 @@ export interface YaxisResult {
  * @prop period - Branded Period (first-of-month Date) for this month, used as the source of truth
  */
 export interface RollingMonthData {
-  readonly displayOrder: number;
-  readonly month: MonthName;
-  readonly monthNumber: number;
-  readonly period: Period;
-  readonly year: number;
+	readonly displayOrder: number;
+	readonly month: MonthName;
+	readonly monthNumber: number;
+	readonly period: Period;
+	readonly year: number;
 }
 
 /**
@@ -51,22 +51,22 @@ export interface RollingMonthData {
  * @prop monthsWithData - Count of months containing actual revenue data (non-zero values)
  */
 export interface RevenueStatistics {
-  readonly average: Cents;
-  readonly maximum: Cents;
-  readonly minimum: Cents;
-  readonly monthsWithData: number;
-  readonly total: Cents;
+	readonly average: Cents;
+	readonly maximum: Cents;
+	readonly minimum: Cents;
+	readonly monthsWithData: number;
+	readonly total: Cents;
 }
 
 /**
  * Statistical metrics data transfer object with dollar-converted values.
  */
 export interface RevenueStatisticsDto {
-  readonly average: Dollars;
-  readonly maximum: Dollars;
-  readonly minimum: Dollars;
-  readonly monthsWithData: number;
-  readonly total: Dollars;
+	readonly average: Dollars;
+	readonly maximum: Dollars;
+	readonly minimum: Dollars;
+	readonly monthsWithData: number;
+	readonly total: Dollars;
 }
 
 /**
@@ -80,24 +80,24 @@ export interface RevenueStatisticsDto {
  * @prop monthNumber - Sequential month number for proper chronological ordering and scrolling logic
  */
 export interface SimpleRevenueDto {
-  readonly month: MonthName;
-  readonly monthNumber: number;
-  readonly totalAmount: Dollars;
-  readonly totalPaidAmount: Dollars;
-  readonly totalPendingAmount: Dollars;
+	readonly month: MonthName;
+	readonly monthNumber: number;
+	readonly totalAmount: Dollars;
+	readonly totalPaidAmount: Dollars;
+	readonly totalPendingAmount: Dollars;
 }
 
 /**
  * Complete chart data transfer object with revenue data and statistical metrics.
  */
 export interface RevenueChartDto {
-  readonly monthlyData: readonly SimpleRevenueDto[];
-  readonly statistics: RevenueStatisticsDto;
-  readonly year: number;
+	readonly monthlyData: readonly SimpleRevenueDto[];
+	readonly statistics: RevenueStatisticsDto;
+	readonly year: number;
 }
 
 export interface TemplateAndPeriods {
-  readonly endPeriod: Period;
-  readonly startPeriod: Period;
-  readonly template: readonly RollingMonthData[];
+	readonly endPeriod: Period;
+	readonly startPeriod: Period;
+	readonly template: readonly RollingMonthData[];
 }

@@ -1,8 +1,8 @@
 import type { IntervalDuration } from "@/modules/revenues/domain/revenue.constants";
 import type { RollingMonthData } from "@/modules/revenues/domain/revenue.types";
 import {
-  createMonthTemplateFromIndex,
-  getIntervalCount,
+	createMonthTemplateFromIndex,
+	getIntervalCount,
 } from "@/modules/revenues/domain/time/range";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
@@ -15,30 +15,30 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @throws Error if interval count is invalid or template generation fails.
  */
 export function generateMonthsTemplate(
-  startDate: Date,
-  duration: IntervalDuration,
+	startDate: Date,
+	duration: IntervalDuration,
 ): RollingMonthData[] {
-  const intervalCount = getIntervalCount(duration);
+	const intervalCount = getIntervalCount(duration);
 
-  if (intervalCount <= 0) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: `Invalid interval count: ${intervalCount}`,
-      metadata: {},
-    });
-  }
+	if (intervalCount <= 0) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: `Invalid interval count: ${intervalCount}`,
+			metadata: {},
+		});
+	}
 
-  const template = Array.from({ length: intervalCount }, (_, index) => {
-    return createMonthTemplateFromIndex(startDate, index);
-  });
+	const template = Array.from({ length: intervalCount }, (_, index) => {
+		return createMonthTemplateFromIndex(startDate, index);
+	});
 
-  if (template.length === 0) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Failed to generate a template: an empty array created",
-      metadata: {},
-    });
-  }
+	if (template.length === 0) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Failed to generate a template: an empty array created",
+			metadata: {},
+		});
+	}
 
-  return template;
+	return template;
 }

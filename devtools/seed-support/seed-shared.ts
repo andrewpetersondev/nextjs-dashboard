@@ -18,50 +18,50 @@ export const roles = ["ADMIN", "GUEST", "USER"] as const;
  * Demo customers data used during seeding.
  */
 export const customersData: ReadonlyArray<{
-  readonly name: string;
-  readonly email: string;
-  readonly imageUrl: string;
+	readonly name: string;
+	readonly email: string;
+	readonly imageUrl: string;
 }> = [
-  {
-    email: "evil@rabbit.com",
-    imageUrl: "/customers/evil-rabbit.png",
-    name: "Evil Rabbits",
-  },
-  {
-    email: "delba@oliveira.com",
-    imageUrl: "/customers/delba-de-oliveira.png",
-    name: "Delba de Oliveira",
-  },
-  {
-    email: "lee@robinson.com",
-    imageUrl: "/customers/lee-robinson.png",
-    name: "Lee Robinson",
-  },
-  {
-    email: "michael@novotny.com",
-    imageUrl: "/customers/michael-novotny.png",
-    name: "Michael Novotny",
-  },
-  {
-    email: "amy@burns.com",
-    imageUrl: "/customers/amy-burns.png",
-    name: "Amy Burns",
-  },
-  {
-    email: "balazs@orban.com",
-    imageUrl: "/customers/balazs-orban.png",
-    name: "Balazs Orban",
-  },
+	{
+		email: "evil@rabbit.com",
+		imageUrl: "/customers/evil-rabbit.png",
+		name: "Evil Rabbits",
+	},
+	{
+		email: "delba@oliveira.com",
+		imageUrl: "/customers/delba-de-oliveira.png",
+		name: "Delba de Oliveira",
+	},
+	{
+		email: "lee@robinson.com",
+		imageUrl: "/customers/lee-robinson.png",
+		name: "Lee Robinson",
+	},
+	{
+		email: "michael@novotny.com",
+		imageUrl: "/customers/michael-novotny.png",
+		name: "Michael Novotny",
+	},
+	{
+		email: "amy@burns.com",
+		imageUrl: "/customers/amy-burns.png",
+		name: "Amy Burns",
+	},
+	{
+		email: "balazs@orban.com",
+		imageUrl: "/customers/balazs-orban.png",
+		name: "Balazs Orban",
+	},
 ] as const;
 
 /**
  * Generated seed periods and corresponding Date values.
  */
 export const periods: readonly string[] = generateMonthlyPeriods(
-  "2024-01-01",
-  SEED_CONFIG.generateMonthlyPeriodsCount,
+	"2024-01-01",
+	SEED_CONFIG.generateMonthlyPeriodsCount,
 );
 
 export const periodDates: ReadonlyArray<Date & Period> = periods.map(
-  (p) => new Date(`${p}T00:00:00.000Z`) as Date & Period,
+	(p) => new Date(`${p}T00:00:00.000Z`) as Date & Period,
 );

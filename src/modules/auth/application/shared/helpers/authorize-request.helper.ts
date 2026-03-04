@@ -7,9 +7,9 @@ import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/session/polic
 import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/session/types/auth-request-authorization.output";
 import { AUTH_POLICY_REASONS } from "@/modules/auth/domain/shared/constants/auth-policy.constants";
 import {
-  AUTH_REQUEST_REASONS,
-  AUTH_SESSION_DECODE_RESULTS,
-  type AuthSessionDecodeResult,
+	AUTH_REQUEST_REASONS,
+	AUTH_SESSION_DECODE_RESULTS,
+	type AuthSessionDecodeResult,
 } from "@/modules/auth/domain/shared/constants/auth-request.constants";
 
 /**
@@ -20,49 +20,49 @@ import {
  * @param sessionTokenService Service used to decode + validate the session token.
  */
 async function extractSessionClaims(
-  cookie: string | undefined,
-  sessionTokenService: SessionTokenServiceContract,
+	cookie: string | undefined,
+	sessionTokenService: SessionTokenServiceContract,
 ): Promise<
-  Readonly<
-    | {
-        claims: SessionTokenClaimsDto;
-        reason: typeof AUTH_SESSION_DECODE_RESULTS.OK;
-      }
-    | {
-        claims: undefined;
-        reason: Exclude<
-          AuthSessionDecodeResult,
-          typeof AUTH_SESSION_DECODE_RESULTS.OK
-        >;
-      }
-  >
+	Readonly<
+		| {
+				claims: SessionTokenClaimsDto;
+				reason: typeof AUTH_SESSION_DECODE_RESULTS.OK;
+		  }
+		| {
+				claims: undefined;
+				reason: Exclude<
+					AuthSessionDecodeResult,
+					typeof AUTH_SESSION_DECODE_RESULTS.OK
+				>;
+		  }
+	>
 > {
-  if (!cookie) {
-    return { claims: undefined, reason: AUTH_SESSION_DECODE_RESULTS.NO_COOKIE };
-  }
+	if (!cookie) {
+		return { claims: undefined, reason: AUTH_SESSION_DECODE_RESULTS.NO_COOKIE };
+	}
 
-  const decodedResult = await sessionTokenService.decode(cookie);
-  if (!decodedResult.ok) {
-    return {
-      claims: undefined,
-      reason: AUTH_SESSION_DECODE_RESULTS.DECODE_FAILED,
-    };
-  }
+	const decodedResult = await sessionTokenService.decode(cookie);
+	if (!decodedResult.ok) {
+		return {
+			claims: undefined,
+			reason: AUTH_SESSION_DECODE_RESULTS.DECODE_FAILED,
+		};
+	}
 
-  const validatedResult = await sessionTokenService.validate(
-    decodedResult.value,
-  );
-  if (!validatedResult.ok) {
-    return {
-      claims: undefined,
-      reason: AUTH_SESSION_DECODE_RESULTS.INVALID_CLAIMS,
-    };
-  }
+	const validatedResult = await sessionTokenService.validate(
+		decodedResult.value,
+	);
+	if (!validatedResult.ok) {
+		return {
+			claims: undefined,
+			reason: AUTH_SESSION_DECODE_RESULTS.INVALID_CLAIMS,
+		};
+	}
 
-  return {
-    claims: validatedResult.value,
-    reason: AUTH_SESSION_DECODE_RESULTS.OK,
-  };
+	return {
+		claims: validatedResult.value,
+		reason: AUTH_SESSION_DECODE_RESULTS.OK,
+	};
 }
 
 /**
@@ -76,63 +76,63 @@ async function extractSessionClaims(
  * @returns An authorization outcome (either "next" or "redirect").
  */
 export async function authorizeRequestHelper(
-  input: Readonly<{
-    cookie: string | undefined;
-    isAdminRoute: boolean;
-    isProtectedRoute: boolean;
-    isPublicRoute: boolean;
-    path: string;
-  }>,
-  deps: Readonly<{
-    routes: Readonly<{
-      dashboardRoot: `/${string}`;
-      login: `/${string}`;
-    }>;
-    sessionTokenService: SessionTokenServiceContract;
-  }>,
+	input: Readonly<{
+		cookie: string | undefined;
+		isAdminRoute: boolean;
+		isProtectedRoute: boolean;
+		isPublicRoute: boolean;
+		path: string;
+	}>,
+	deps: Readonly<{
+		routes: Readonly<{
+			dashboardRoot: `/${string}`;
+			login: `/${string}`;
+		}>;
+		sessionTokenService: SessionTokenServiceContract;
+	}>,
 ): Promise<AuthRequestAuthorizationOutcome> {
-  const decoded = await extractSessionClaims(
-    input.cookie,
-    deps.sessionTokenService,
-  );
+	const decoded = await extractSessionClaims(
+		input.cookie,
+		deps.sessionTokenService,
+	);
 
-  const routeTypeResult = tryGetRouteTypePolicy({
-    isAdminRoute: input.isAdminRoute,
-    isProtectedRoute: input.isProtectedRoute,
-    isPublicRoute: input.isPublicRoute,
-  });
+	const routeTypeResult = tryGetRouteTypePolicy({
+		isAdminRoute: input.isAdminRoute,
+		isProtectedRoute: input.isProtectedRoute,
+		isPublicRoute: input.isPublicRoute,
+	});
 
-  if (!routeTypeResult.ok) {
-    return {
-      kind: "redirect",
-      reason: AUTH_REQUEST_REASONS.ROUTE_FLAGS_INVALID,
-      to: deps.routes.login,
-    };
-  }
+	if (!routeTypeResult.ok) {
+		return {
+			kind: "redirect",
+			reason: AUTH_REQUEST_REASONS.ROUTE_FLAGS_INVALID,
+			to: deps.routes.login,
+		};
+	}
 
-  const routeType = routeTypeResult.value;
+	const routeType = routeTypeResult.value;
 
-  const isAuthenticated = Boolean(decoded.claims?.sub);
+	const isAuthenticated = Boolean(decoded.claims?.sub);
 
-  const decision = evaluateRouteAccessPolicy(routeType, {
-    isAuthenticated,
-    role: decoded.claims?.role,
-  });
+	const decision = evaluateRouteAccessPolicy(routeType, {
+		isAuthenticated,
+		role: decoded.claims?.role,
+	});
 
-  if (decision.allowed) {
-    return { kind: "next", reason: "ok" };
-  }
+	if (decision.allowed) {
+		return { kind: "next", reason: "ok" };
+	}
 
-  const redirectTo =
-    decision.reason === AUTH_POLICY_REASONS.NOT_AUTHENTICATED
-      ? deps.routes.login
-      : deps.routes.dashboardRoot;
+	const redirectTo =
+		decision.reason === AUTH_POLICY_REASONS.NOT_AUTHENTICATED
+			? deps.routes.login
+			: deps.routes.dashboardRoot;
 
-  const reason = toAuthorizationReasonPolicy(
-    routeType,
-    decision.reason,
-    decoded.reason,
-  );
+	const reason = toAuthorizationReasonPolicy(
+		routeType,
+		decision.reason,
+		decoded.reason,
+	);
 
-  return { kind: "redirect", reason, to: redirectTo };
+	return { kind: "redirect", reason, to: redirectTo };
 }

@@ -1,6 +1,6 @@
 import {
-  USER_ID_BRAND,
-  type UserId,
+	USER_ID_BRAND,
+	type UserId,
 } from "@/modules/users/domain/types/user-id.brand";
 import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
 
@@ -12,6 +12,6 @@ import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const createUserId = createIdFactory<typeof USER_ID_BRAND, UserId>(
-  USER_ID_BRAND,
-  "UserId",
+	USER_ID_BRAND,
+	"UserId",
 );

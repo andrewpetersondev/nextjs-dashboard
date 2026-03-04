@@ -13,38 +13,38 @@ import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error
  * @returns A new `AppError` with conflict details, or `null` if the error is not a unique violation.
  */
 export function pgUniqueViolationToSignupConflictError(
-  error: AppError,
+	error: AppError,
 ): AppError | null {
-  if (error.key !== APP_ERROR_KEYS.integrity || !isPgMetadata(error.metadata)) {
-    return null;
-  }
+	if (error.key !== APP_ERROR_KEYS.integrity || !isPgMetadata(error.metadata)) {
+		return null;
+	}
 
-  // TODO: fallback is not ideal
-  //    const { constraint } = error.metadata;
-  //    if (!constraint) {
-  //        return null;
-  //    }
-  const constraint = error.metadata.constraint ?? "";
+	// TODO: fallback is not ideal
+	//    const { constraint } = error.metadata;
+	//    if (!constraint) {
+	//        return null;
+	//    }
+	const constraint = error.metadata.constraint ?? "";
 
-  const fieldErrors: Record<string, string[]> = {};
+	const fieldErrors: Record<string, string[]> = {};
 
-  if (constraint.includes("email")) {
-    fieldErrors.email = ["alreadyInUse"];
-  }
+	if (constraint.includes("email")) {
+		fieldErrors.email = ["alreadyInUse"];
+	}
 
-  if (constraint.includes("username")) {
-    fieldErrors.username = ["alreadyInUse"];
-  }
+	if (constraint.includes("username")) {
+		fieldErrors.username = ["alreadyInUse"];
+	}
 
-  if (Object.keys(fieldErrors).length === 0) {
-    return null;
-  }
+	if (Object.keys(fieldErrors).length === 0) {
+		return null;
+	}
 
-  return makeAppError(APP_ERROR_KEYS.conflict, {
-    cause: error,
-    message: "Signup failed: value already in use",
-    metadata: {
-      pgCode: PG_CODES.UNIQUE_VIOLATION,
-    },
-  });
+	return makeAppError(APP_ERROR_KEYS.conflict, {
+		cause: error,
+		message: "Signup failed: value already in use",
+		metadata: {
+			pgCode: PG_CODES.UNIQUE_VIOLATION,
+		},
+	});
 }

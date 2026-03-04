@@ -4,7 +4,7 @@
  * @returns The current date as an ISO date string
  */
 export function getCurrentIsoDate(): string {
-  return new Date().toISOString().split("T")[0] as string;
+	return new Date().toISOString().split("T")[0] as string;
 }
 
 /**
@@ -16,18 +16,18 @@ export function getCurrentIsoDate(): string {
  * formatInvoiceDateLocalized("2025-08-12") // Returns "Aug 12, 2025"
  */
 export function formatInvoiceDateLocalized(
-  dateStr: string,
-  locale: string = "en-US",
+	dateStr: string,
+	locale: string = "en-US",
 ): string {
-  const date: Date = new Date(dateStr);
-  const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  };
-  const formatter: Intl.DateTimeFormat = new Intl.DateTimeFormat(
-    locale,
-    options,
-  );
-  return formatter.format(date);
+	const date: Date = new Date(dateStr);
+	const options: Intl.DateTimeFormatOptions = {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+	};
+	const formatter: Intl.DateTimeFormat = new Intl.DateTimeFormat(
+		locale,
+		options,
+	);
+	return formatter.format(date);
 }

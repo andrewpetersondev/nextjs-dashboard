@@ -23,93 +23,93 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * - Implements idempotent event handling for reliability
  */
 export class RevenueEventHandler {
-  /**
-   * Creates a new instance of the RevenueEventHandler.
-   *
-   * @param revenueService - The service for managing revenue records
-   */
-  private readonly revenueService: RevenueApplicationService;
+	/**
+	 * Creates a new instance of the RevenueEventHandler.
+	 *
+	 * @param revenueService - The service for managing revenue records
+	 */
+	private readonly revenueService: RevenueApplicationService;
 
-  constructor(revenueService: RevenueApplicationService) {
-    this.revenueService = revenueService;
+	constructor(revenueService: RevenueApplicationService) {
+		this.revenueService = revenueService;
 
-    logger.debug("Initializing revenue event handler", {
-      context: "RevenueEventHandler.constructor",
-    });
+		logger.debug("Initializing revenue event handler", {
+			context: "RevenueEventHandler.constructor",
+		});
 
-    // Set up event subscriptions
-    this.setupEventSubscriptions();
-  }
+		// Set up event subscriptions
+		this.setupEventSubscriptions();
+	}
 
-  /**
-   * Sets up subscriptions to invoice events.
-   */
-  private setupEventSubscriptions(): void {
-    logger.info("Setting up event subscriptions", {
-      context: "RevenueEventHandler.setupEventSubscriptions",
-    });
+	/**
+	 * Sets up subscriptions to invoice events.
+	 */
+	private setupEventSubscriptions(): void {
+		logger.info("Setting up event subscriptions", {
+			context: "RevenueEventHandler.setupEventSubscriptions",
+		});
 
-    // Subscribe to invoice events using centralized constants (DRY)
-    EventBus.subscribe(
-      INVOICE_EVENTS.created,
-      this.handleInvoiceCreated.bind(this),
-    );
-    EventBus.subscribe(
-      INVOICE_EVENTS.updated,
-      this.handleInvoiceUpdated.bind(this),
-    );
-    EventBus.subscribe(
-      INVOICE_EVENTS.deleted,
-      this.handleInvoiceDeleted.bind(this),
-    );
+		// Subscribe to invoice events using centralized constants (DRY)
+		EventBus.subscribe(
+			INVOICE_EVENTS.created,
+			this.handleInvoiceCreated.bind(this),
+		);
+		EventBus.subscribe(
+			INVOICE_EVENTS.updated,
+			this.handleInvoiceUpdated.bind(this),
+		);
+		EventBus.subscribe(
+			INVOICE_EVENTS.deleted,
+			this.handleInvoiceDeleted.bind(this),
+		);
 
-    logger.info("Event subscriptions set up successfully", {
-      context: "RevenueEventHandler.setupEventSubscriptions",
-    });
-  }
+		logger.info("Event subscriptions set up successfully", {
+			context: "RevenueEventHandler.setupEventSubscriptions",
+		});
+	}
 
-  /**
-   * Handles invoice created events.
-   *
-   * @param event - The invoice created event
-   */
-  private async handleInvoiceCreated(event: BaseInvoiceEvent): Promise<void> {
-    await processInvoiceEvent(
-      event,
-      this.revenueService,
-      "handleInvoiceCreated",
-      (invoice, period) =>
-        processInvoiceUpsert(this.revenueService, invoice, period),
-    );
-  }
+	/**
+	 * Handles invoice created events.
+	 *
+	 * @param event - The invoice created event
+	 */
+	private async handleInvoiceCreated(event: BaseInvoiceEvent): Promise<void> {
+		await processInvoiceEvent(
+			event,
+			this.revenueService,
+			"handleInvoiceCreated",
+			(invoice, period) =>
+				processInvoiceUpsert(this.revenueService, invoice, period),
+		);
+	}
 
-  /**
-   * Handles invoice updated events.
-   *
-   * @param event - The invoice updated event
-   */
-  private async handleInvoiceUpdated(event: BaseInvoiceEvent): Promise<void> {
-    await processInvoiceEvent(
-      event,
-      this.revenueService,
-      "handleInvoiceUpdated",
-      async (invoice, period) =>
-        processInvoiceUpdated(event, invoice, period, this.revenueService),
-    );
-  }
+	/**
+	 * Handles invoice updated events.
+	 *
+	 * @param event - The invoice updated event
+	 */
+	private async handleInvoiceUpdated(event: BaseInvoiceEvent): Promise<void> {
+		await processInvoiceEvent(
+			event,
+			this.revenueService,
+			"handleInvoiceUpdated",
+			async (invoice, period) =>
+				processInvoiceUpdated(event, invoice, period, this.revenueService),
+		);
+	}
 
-  /**
-   * Handles invoice deleted events.
-   *
-   * @param event - The invoice deleted event
-   */
-  private async handleInvoiceDeleted(event: BaseInvoiceEvent): Promise<void> {
-    await processInvoiceEvent(
-      event,
-      this.revenueService,
-      "handleInvoiceDeleted",
-      (invoice, period) =>
-        adjustRevenueForDeletedInvoice(this.revenueService, invoice, period),
-    );
-  }
+	/**
+	 * Handles invoice deleted events.
+	 *
+	 * @param event - The invoice deleted event
+	 */
+	private async handleInvoiceDeleted(event: BaseInvoiceEvent): Promise<void> {
+		await processInvoiceEvent(
+			event,
+			this.revenueService,
+			"handleInvoiceDeleted",
+			(invoice, period) =>
+				adjustRevenueForDeletedInvoice(this.revenueService, invoice, period),
+		);
+	}
 }

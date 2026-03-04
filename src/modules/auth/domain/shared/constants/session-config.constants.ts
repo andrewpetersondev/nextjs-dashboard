@@ -7,8 +7,8 @@ export const SESSION_DURATION_SEC: DurationSeconds = toDurationSeconds(900);
 
 /** Threshold for triggering session rotation (2 minutes) */
 export const SESSION_REFRESH_THRESHOLD_SEC: DurationSeconds =
-  toDurationSeconds(120);
+	toDurationSeconds(120);
 
 /** Maximum absolute session lifetime (30 days) */
 export const MAX_ABSOLUTE_SESSION_SEC: DurationSeconds =
-  toDurationSeconds(2_592_000);
+	toDurationSeconds(2_592_000);

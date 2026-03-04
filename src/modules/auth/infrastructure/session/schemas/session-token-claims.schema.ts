@@ -6,36 +6,36 @@ import { UserRoleEnumSchema } from "@/shared/policies/user-role/user-role.schema
  * Represents a non-negative integer UNIX timestamp (in seconds) indicating when the token was issued.
  */
 const IatSchema: ZodNumber = z
-  .number()
-  .int()
-  .nonnegative()
-  .refine((v: number) => Number.isSafeInteger(v), {
-    message: "iat must be a safe integer",
-  });
+	.number()
+	.int()
+	.nonnegative()
+	.refine((v: number) => Number.isSafeInteger(v), {
+		message: "iat must be a safe integer",
+	});
 
 /**
  * Not Before (nbf) claim schema.
  * Represents a non-negative integer UNIX timestamp (in seconds) before which the token must be considered invalid.
  */
 const NbfSchema: ZodNumber = z
-  .number()
-  .int()
-  .nonnegative()
-  .refine((v: number) => Number.isSafeInteger(v), {
-    message: "nbf must be a safe integer",
-  });
+	.number()
+	.int()
+	.nonnegative()
+	.refine((v: number) => Number.isSafeInteger(v), {
+		message: "nbf must be a safe integer",
+	});
 
 /**
  * Expiration (exp) claim schema.
  * Represents a positive integer UNIX timestamp (in seconds) after which the token must be considered invalid.
  */
 const ExpSchema: ZodNumber = z
-  .number()
-  .int()
-  .positive()
-  .refine((v: number) => Number.isSafeInteger(v), {
-    message: "exp must be a safe integer",
-  });
+	.number()
+	.int()
+	.positive()
+	.refine((v: number) => Number.isSafeInteger(v), {
+		message: "exp must be a safe integer",
+	});
 
 /**
  * JWT ID (jti) claim schema.
@@ -60,11 +60,11 @@ const SubSchema: ZodUUID = z.uuid();
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const SessionTokenClaimsSchema = z.object({
-  exp: ExpSchema,
-  iat: IatSchema,
-  jti: JtiSchema,
-  nbf: NbfSchema,
-  role: UserRoleEnumSchema,
-  sid: SidSchema,
-  sub: SubSchema,
+	exp: ExpSchema,
+	iat: IatSchema,
+	jti: JtiSchema,
+	nbf: NbfSchema,
+	role: UserRoleEnumSchema,
+	sid: SidSchema,
+	sub: SubSchema,
 });

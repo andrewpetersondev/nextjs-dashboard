@@ -13,13 +13,13 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An instance of {@link CreateDemoUserUseCase}.
  */
 export function demoUserUseCaseFactory(
-  uow: AuthUnitOfWorkContract,
-  logger: LoggingClientContract,
+	uow: AuthUnitOfWorkContract,
+	logger: LoggingClientContract,
 ): CreateDemoUserUseCase {
-  return new CreateDemoUserUseCase(
-    uow,
-    passwordHasherFactory(),
-    passwordGeneratorFactory(),
-    logger,
-  );
+	return new CreateDemoUserUseCase(
+		uow,
+		passwordHasherFactory(),
+		passwordGeneratorFactory(),
+		logger,
+	);
 }

@@ -6,18 +6,18 @@ import { isPgMetadata } from "@/shared/core/errors/core/metadata/error-metadata.
  * value found in pg metadata.
  */
 export function getPgConstraintFromAppError(
-  error: AppError,
+	error: AppError,
 ): string | undefined {
-  let current: AppError | undefined = error;
+	let current: AppError | undefined = error;
 
-  while (current) {
-    if (isPgMetadata(current.metadata) && current.metadata.constraint) {
-      return current.metadata.constraint;
-    }
+	while (current) {
+		if (isPgMetadata(current.metadata) && current.metadata.constraint) {
+			return current.metadata.constraint;
+		}
 
-    const cause: AppError | Error | string = current.cause;
-    current = cause instanceof AppError ? cause : undefined;
-  }
+		const cause: AppError | Error | string = current.cause;
+		current = cause instanceof AppError ? cause : undefined;
+	}
 
-  return;
+	return;
 }

@@ -1,8 +1,8 @@
 import type { JSX } from "react";
 import { isAppError } from "@/shared/core/errors/core/app-error.entity";
 import type {
-  FormResult,
-  FormSuccessPayload,
+	FormResult,
+	FormSuccessPayload,
 } from "@/shared/forms/core/types/form-result.dto";
 
 /**
@@ -16,8 +16,8 @@ import type {
 type ServerMessageState<Tdata> = FormResult<Tdata>;
 
 type ServerMessageProps<Tdata> = Readonly<{
-  readonly showAlert: boolean;
-  readonly state: ServerMessageState<Tdata>;
+	readonly showAlert: boolean;
+	readonly state: ServerMessageState<Tdata>;
 }>;
 
 /**
@@ -25,13 +25,13 @@ type ServerMessageProps<Tdata> = Readonly<{
  * FormSuccess has `data` and `message` properties.
  */
 function isFormSuccess<Tdata>(
-  value: unknown,
+	value: unknown,
 ): value is FormSuccessPayload<Tdata> {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const obj = value as Record<string, unknown>;
-  return "data" in obj && "message" in obj && typeof obj.message === "string";
+	if (typeof value !== "object" || value === null) {
+		return false;
+	}
+	const obj = value as Record<string, unknown>;
+	return "data" in obj && "message" in obj && typeof obj.message === "string";
 }
 
 /**
@@ -43,43 +43,43 @@ function isFormSuccess<Tdata>(
  * - Never throws; returns sensible defaults
  */
 function extractMessageAndSuccess<Tdata>(
-  state: ServerMessageState<Tdata>,
+	state: ServerMessageState<Tdata>,
 ): Readonly<{
-  readonly message: string | undefined;
-  readonly success: boolean;
+	readonly message: string | undefined;
+	readonly success: boolean;
 }> {
-  if (state.ok) {
-    const value = state.value;
+	if (state.ok) {
+		const value = state.value;
 
-    if (isFormSuccess(value)) {
-      return Object.freeze({
-        message: value.message,
-        success: true,
-      });
-    }
+		if (isFormSuccess(value)) {
+			return Object.freeze({
+				message: value.message,
+				success: true,
+			});
+		}
 
-    // Fallback if shape is unexpected (defensive programming)
-    return Object.freeze({
-      message: undefined,
-      success: true,
-    });
-  }
+		// Fallback if shape is unexpected (defensive programming)
+		return Object.freeze({
+			message: undefined,
+			success: true,
+		});
+	}
 
-  // Error branch: state.error is AppError
-  const error = state.error;
+	// Error branch: state.error is AppError
+	const error = state.error;
 
-  if (isAppError(error)) {
-    return Object.freeze({
-      message: error.message,
-      success: false,
-    });
-  }
+	if (isAppError(error)) {
+		return Object.freeze({
+			message: error.message,
+			success: false,
+		});
+	}
 
-  // Fallback if error shape is unexpected (defensive programming)
-  return Object.freeze({
-    message: undefined,
-    success: false,
-  });
+	// Fallback if error shape is unexpected (defensive programming)
+	return Object.freeze({
+		message: undefined,
+		success: false,
+	});
 }
 
 /**
@@ -92,37 +92,37 @@ function extractMessageAndSuccess<Tdata>(
  * - Integrates with form submission flow
  */
 export function ServerMessage<Tdata>({
-  state,
-  showAlert,
+	state,
+	showAlert,
 }: ServerMessageProps<Tdata>): JSX.Element {
-  const { message, success } = extractMessageAndSuccess(state);
+	const { message, success } = extractMessageAndSuccess(state);
 
-  const baseStyles =
-    "pointer-events-auto absolute right-0 left-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500";
+	const baseStyles =
+		"pointer-events-auto absolute right-0 left-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500";
 
-  const visibilityStyles = showAlert
-    ? "translate-y-0 opacity-100"
-    : "-translate-y-4 pointer-events-none opacity-0";
+	const visibilityStyles = showAlert
+		? "translate-y-0 opacity-100"
+		: "-translate-y-4 pointer-events-none opacity-0";
 
-  const semanticStyles = success
-    ? "border-green-300 bg-green-50 text-green-800"
-    : "border-red-300 bg-red-50 text-red-800";
+	const semanticStyles = success
+		? "border-green-300 bg-green-50 text-green-800"
+		: "border-red-300 bg-red-50 text-red-800";
 
-  return (
-    <div className="relative min-h-[56px]">
-      {message && (
-        <div
-          aria-live={success ? "polite" : "assertive"}
-          className={`${baseStyles} ${visibilityStyles} ${semanticStyles}`}
-          data-cy={success ? "server-message-success" : "server-message-error"}
-          data-testid={
-            success ? "server-message-success" : "server-message-error"
-          }
-          role={success ? "status" : "alert"}
-        >
-          {message}
-        </div>
-      )}
-    </div>
-  );
+	return (
+		<div className="relative min-h-[56px]">
+			{message && (
+				<div
+					aria-live={success ? "polite" : "assertive"}
+					className={`${baseStyles} ${visibilityStyles} ${semanticStyles}`}
+					data-cy={success ? "server-message-success" : "server-message-error"}
+					data-testid={
+						success ? "server-message-success" : "server-message-error"
+					}
+					role={success ? "status" : "alert"}
+				>
+					{message}
+				</div>
+			)}
+		</div>
+	);
 }

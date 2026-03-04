@@ -9,44 +9,44 @@ import type { Result } from "@/shared/core/result/result.dto";
  * Application contract for session token operations.
  */
 export interface SessionTokenServiceContract {
-  /**
-   * Decodes an encoded session token.
-   *
-   * Contract: this returns decoded-but-untrusted payload. Call `validate()` to
-   * enforce schema/invariants and obtain application-level claims.
-   *
-   * @param token - The encoded session token string.
-   * @returns A Result containing the decoded token payload or an AppError.
-   */
-  decode(token: string): Promise<Result<unknown, AppError>>;
+	/**
+	 * Decodes an encoded session token.
+	 *
+	 * Contract: this returns decoded-but-untrusted payload. Call `validate()` to
+	 * enforce schema/invariants and obtain application-level claims.
+	 *
+	 * @param token - The encoded session token string.
+	 * @returns A Result containing the decoded token payload or an AppError.
+	 */
+	decode(token: string): Promise<Result<unknown, AppError>>;
 
-  /**
-   * Issues a brand-new session token for a new session.
-   *
-   * Generates a new session ID (sid) and JWT ID (jti).
-   *
-   * @param input - The command for issuing a new token.
-   * @returns A Result containing the newly issued token DTO or an AppError.
-   */
-  issue(input: IssueTokenCommand): Promise<Result<IssuedTokenDto, AppError>>;
+	/**
+	 * Issues a brand-new session token for a new session.
+	 *
+	 * Generates a new session ID (sid) and JWT ID (jti).
+	 *
+	 * @param input - The command for issuing a new token.
+	 * @returns A Result containing the newly issued token DTO or an AppError.
+	 */
+	issue(input: IssueTokenCommand): Promise<Result<IssuedTokenDto, AppError>>;
 
-  /**
-   * Issues a rotated session token for an existing session.
-   *
-   * Reuses the provided session ID (sid) and generates a new JWT ID (jti).
-   *
-   * @param input - The command for issuing a rotated token.
-   * @returns A Result containing the rotated token DTO or an AppError.
-   */
-  issueRotated(
-    input: IssueRotatedTokenCommand,
-  ): Promise<Result<IssuedTokenDto, AppError>>;
+	/**
+	 * Issues a rotated session token for an existing session.
+	 *
+	 * Reuses the provided session ID (sid) and generates a new JWT ID (jti).
+	 *
+	 * @param input - The command for issuing a rotated token.
+	 * @returns A Result containing the rotated token DTO or an AppError.
+	 */
+	issueRotated(
+		input: IssueRotatedTokenCommand,
+	): Promise<Result<IssuedTokenDto, AppError>>;
 
-  /**
-   * Validates decoded claims against the session token schema.
-   *
-   * @param claims - The claims to validate (typically from a decoded token).
-   * @returns A Result containing the validated session token claims or an AppError.
-   */
-  validate(claims: unknown): Promise<Result<SessionTokenClaimsDto, AppError>>;
+	/**
+	 * Validates decoded claims against the session token schema.
+	 *
+	 * @param claims - The claims to validate (typically from a decoded token).
+	 * @returns A Result containing the validated session token claims or an AppError.
+	 */
+	validate(claims: unknown): Promise<Result<SessionTokenClaimsDto, AppError>>;
 }

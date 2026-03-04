@@ -2,18 +2,18 @@
  * Core database fields often extracted from persistence errors.
  */
 type DbErrorMetadata = Readonly<{
-  column?: string;
-  constraint?: string;
-  table?: string;
+	column?: string;
+	constraint?: string;
+	table?: string;
 }>;
 
 /**
  * Base Postgres metadata requiring a specific error code.
  */
 export type PgErrorMetadataBase = DbErrorMetadata &
-  Readonly<{
-    pgCode: string;
-  }>;
+	Readonly<{
+		pgCode: string;
+	}>;
 
 /**
  * Comprehensive Postgres error metadata.
@@ -23,12 +23,12 @@ export type PgErrorMetadataBase = DbErrorMetadata &
  * and the database version/configuration.
  */
 export type PgErrorMetadata = PgErrorMetadataBase &
-  Readonly<{
-    datatype?: string;
-    detail?: string;
-    hint?: string;
-    position?: string;
-    schema?: string;
-    severity?: string;
-    where?: string;
-  }>;
+	Readonly<{
+		datatype?: string;
+		detail?: string;
+		hint?: string;
+		position?: string;
+		schema?: string;
+		severity?: string;
+		where?: string;
+	}>;

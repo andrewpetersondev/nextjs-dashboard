@@ -18,60 +18,60 @@ import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
  * @throws AppError if query fails
  */
 export async function fetchFilteredInvoicesDal(
-  db: AppDatabase,
-  query: string,
-  currentPage: number,
+	db: AppDatabase,
+	query: string,
+	currentPage: number,
 ): Promise<InvoiceListFilter[]> {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  const data: InvoiceListFilter[] = await db
-    .select({
-      amount: invoices.amount,
-      customerId: invoices.customerId,
-      date: invoices.date,
-      email: customers.email,
-      id: invoices.id,
-      imageUrl: customers.imageUrl,
-      name: customers.name,
-      revenuePeriod: invoices.revenuePeriod,
-      sensitiveData: invoices.sensitiveData,
-      status: invoices.status,
-    })
-    .from(invoices)
-    .innerJoin(customers, eq(invoices.customerId, customers.id))
-    .where(
-      or(
-        ilike(customers.name, `%${query}%`),
-        ilike(customers.email, `%${query}%`),
-        ilike(
-          sql<string>`${invoices.amount}
+	const data: InvoiceListFilter[] = await db
+		.select({
+			amount: invoices.amount,
+			customerId: invoices.customerId,
+			date: invoices.date,
+			email: customers.email,
+			id: invoices.id,
+			imageUrl: customers.imageUrl,
+			name: customers.name,
+			revenuePeriod: invoices.revenuePeriod,
+			sensitiveData: invoices.sensitiveData,
+			status: invoices.status,
+		})
+		.from(invoices)
+		.innerJoin(customers, eq(invoices.customerId, customers.id))
+		.where(
+			or(
+				ilike(customers.name, `%${query}%`),
+				ilike(customers.email, `%${query}%`),
+				ilike(
+					sql<string>`${invoices.amount}
                 ::text`,
-          `%${query}%`,
-        ),
-        ilike(
-          sql<string>`${invoices.date}
+					`%${query}%`,
+				),
+				ilike(
+					sql<string>`${invoices.date}
                 ::text`,
-          `%${query}%`,
-        ),
-        ilike(
-          sql<string>`${invoices.status}
+					`%${query}%`,
+				),
+				ilike(
+					sql<string>`${invoices.status}
                 ::text`,
-          `%${query}%`,
-        ),
-      ),
-    )
-    .orderBy(desc(invoices.date))
-    .limit(ITEMS_PER_PAGE)
-    .offset(offset);
+					`%${query}%`,
+				),
+			),
+		)
+		.orderBy(desc(invoices.date))
+		.limit(ITEMS_PER_PAGE)
+		.offset(offset);
 
-  // TODO: Refactor. Empty result does not mean that an error occurred.
-  if (!data || data.length === 0) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.fetchFilteredFailed,
-      metadata: {},
-    });
-  }
+	// TODO: Refactor. Empty result does not mean that an error occurred.
+	if (!data || data.length === 0) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.fetchFilteredFailed,
+			metadata: {},
+		});
+	}
 
-  return data;
+	return data;
 }

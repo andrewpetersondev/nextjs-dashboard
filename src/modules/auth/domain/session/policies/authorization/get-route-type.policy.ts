@@ -1,6 +1,6 @@
 import {
-  AUTH_ROUTE_TYPES,
-  type AuthRouteType,
+	AUTH_ROUTE_TYPES,
+	type AuthRouteType,
 } from "@/modules/auth/domain/shared/constants/auth-route.constants";
 
 /**
@@ -11,20 +11,20 @@ import {
  * Silent fallbacks would mask upstream routing bugs and cause authorization drift.
  */
 type AuthRouteTypeFlags = Readonly<{
-  isAdminRoute: boolean;
-  isProtectedRoute: boolean;
-  isPublicRoute: boolean;
+	isAdminRoute: boolean;
+	isProtectedRoute: boolean;
+	isPublicRoute: boolean;
 }>;
 
 type AuthRouteTypeResolution =
-  | Readonly<{ ok: true; value: AuthRouteType }>
-  | Readonly<{
-      ok: false;
-      error: Readonly<{
-        kind: "invalid_route_type_flags";
-        trueCount: number;
-      }>;
-    }>;
+	| Readonly<{ ok: true; value: AuthRouteType }>
+	| Readonly<{
+			ok: false;
+			error: Readonly<{
+				kind: "invalid_route_type_flags";
+				trueCount: number;
+			}>;
+	  }>;
 
 /**
  * Determines the route type based on boolean flags.
@@ -34,26 +34,26 @@ type AuthRouteTypeResolution =
  * It preserves strictness while avoiding unexpected 500s.
  */
 export function tryGetRouteTypePolicy(
-  flags: AuthRouteTypeFlags,
+	flags: AuthRouteTypeFlags,
 ): AuthRouteTypeResolution {
-  const trueCount: number = [
-    flags.isAdminRoute,
-    flags.isProtectedRoute,
-    flags.isPublicRoute,
-  ].filter((v: boolean) => v).length;
+	const trueCount: number = [
+		flags.isAdminRoute,
+		flags.isProtectedRoute,
+		flags.isPublicRoute,
+	].filter((v: boolean) => v).length;
 
-  if (trueCount !== 1) {
-    return {
-      error: { kind: "invalid_route_type_flags", trueCount },
-      ok: false,
-    };
-  }
+	if (trueCount !== 1) {
+		return {
+			error: { kind: "invalid_route_type_flags", trueCount },
+			ok: false,
+		};
+	}
 
-  if (flags.isAdminRoute) {
-    return { ok: true, value: AUTH_ROUTE_TYPES.ADMIN };
-  }
-  if (flags.isProtectedRoute) {
-    return { ok: true, value: AUTH_ROUTE_TYPES.PROTECTED };
-  }
-  return { ok: true, value: AUTH_ROUTE_TYPES.PUBLIC };
+	if (flags.isAdminRoute) {
+		return { ok: true, value: AUTH_ROUTE_TYPES.ADMIN };
+	}
+	if (flags.isProtectedRoute) {
+		return { ok: true, value: AUTH_ROUTE_TYPES.PROTECTED };
+	}
+	return { ok: true, value: AUTH_ROUTE_TYPES.PUBLIC };
 }

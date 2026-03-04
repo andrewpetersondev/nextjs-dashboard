@@ -2,8 +2,8 @@ import "server-only";
 
 import type { RevenueDisplayEntity } from "@/modules/revenues/domain/entities/revenue-display.entity";
 import type {
-  RollingMonthData,
-  TemplateAndPeriods,
+	RollingMonthData,
+	TemplateAndPeriods,
 } from "@/modules/revenues/domain/revenue.types";
 import { createDefaultRevenueData } from "@/modules/revenues/domain/templates/factory";
 import { generateMonthsTemplate } from "@/modules/revenues/domain/templates/generator";
@@ -18,28 +18,28 @@ import { toPeriod } from "@/shared/primitives/period/period.mappers";
  * @returns The generated template.
  */
 function getValidatedTemplate(): readonly RollingMonthData[] {
-  const { duration, startDate } = calculateDateRange();
+	const { duration, startDate } = calculateDateRange();
 
-  const durationResult = toIntervalDuration(duration);
-  if (!durationResult.ok) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Invalid interval duration",
-      metadata: {},
-    });
-  }
+	const durationResult = toIntervalDuration(duration);
+	if (!durationResult.ok) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Invalid interval duration",
+			metadata: {},
+		});
+	}
 
-  const template = generateMonthsTemplate(startDate, durationResult.value);
+	const template = generateMonthsTemplate(startDate, durationResult.value);
 
-  if (template.length === 0) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Template generation failed: no months generated",
-      metadata: {},
-    });
-  }
+	if (template.length === 0) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Template generation failed: no months generated",
+			metadata: {},
+		});
+	}
 
-  return template;
+	return template;
 }
 
 /**
@@ -47,26 +47,26 @@ function getValidatedTemplate(): readonly RollingMonthData[] {
  * @returns The template and associated periods.
  */
 export function buildTemplateAndPeriods(): TemplateAndPeriods {
-  const template = getValidatedTemplate();
+	const template = getValidatedTemplate();
 
-  const firstMonth = template[0];
-  const lastMonth = template.at(-1);
-  if (!(firstMonth && lastMonth)) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Template generation failed: invalid month data",
-      metadata: {},
-    });
-  }
+	const firstMonth = template[0];
+	const lastMonth = template.at(-1);
+	if (!(firstMonth && lastMonth)) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Template generation failed: invalid month data",
+			metadata: {},
+		});
+	}
 
-  const endDatePeriod = lastMonth.period;
-  const startDatePeriod = firstMonth.period;
+	const endDatePeriod = lastMonth.period;
+	const startDatePeriod = firstMonth.period;
 
-  return {
-    endPeriod: toPeriod(endDatePeriod),
-    startPeriod: toPeriod(startDatePeriod),
-    template,
-  };
+	return {
+		endPeriod: toPeriod(endDatePeriod),
+		startPeriod: toPeriod(startDatePeriod),
+		template,
+	};
 }
 
 /**
@@ -74,8 +74,8 @@ export function buildTemplateAndPeriods(): TemplateAndPeriods {
  * @returns Array of default revenue display entities.
  */
 export function buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
-  const template = getValidatedTemplate();
-  return template.map((t) => createDefaultRevenueData(toPeriod(t.period)));
+	const template = getValidatedTemplate();
+	return template.map((t) => createDefaultRevenueData(toPeriod(t.period)));
 }
 
 /**
@@ -85,15 +85,15 @@ export function buildDefaultsFromFreshTemplate(): RevenueDisplayEntity[] {
  * @returns Merged array of revenue display entities.
  */
 export function mergeWithTemplate(
-  template: readonly RollingMonthData[],
-  displayEntities: readonly RevenueDisplayEntity[],
+	template: readonly RollingMonthData[],
+	displayEntities: readonly RevenueDisplayEntity[],
 ): RevenueDisplayEntity[] {
-  const dataLookup = new Map<number, RevenueDisplayEntity>(
-    displayEntities.map((e) => [e.period.getTime(), e] as const),
-  );
-  return template.map(
-    (t) =>
-      dataLookup.get(t.period.getTime()) ??
-      createDefaultRevenueData(toPeriod(t.period)),
-  );
+	const dataLookup = new Map<number, RevenueDisplayEntity>(
+		displayEntities.map((e) => [e.period.getTime(), e] as const),
+	);
+	return template.map(
+		(t) =>
+			dataLookup.get(t.period.getTime()) ??
+			createDefaultRevenueData(toPeriod(t.period)),
+	);
 }

@@ -15,52 +15,52 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @implements {SessionTokenCodecContract}
  */
 export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
-  private readonly jwtCrypto: SessionJwtCryptoStrategy;
+	private readonly jwtCrypto: SessionJwtCryptoStrategy;
 
-  /**
-   * Initializes the session token codec adapter.
-   *
-   * @param jwtCrypto - The strategy for JWT cryptography operations.
-   */
-  constructor(jwtCrypto: SessionJwtCryptoStrategy) {
-    this.jwtCrypto = jwtCrypto;
-  }
+	/**
+	 * Initializes the session token codec adapter.
+	 *
+	 * @param jwtCrypto - The strategy for JWT cryptography operations.
+	 */
+	constructor(jwtCrypto: SessionJwtCryptoStrategy) {
+		this.jwtCrypto = jwtCrypto;
+	}
 
-  /**
-   * Decodes and verifies a JWT token, returning Application layer claims.
-   *
-   * @param token - The JWT token to decode.
-   * @returns A promise resolving to a {@link Result} containing the decoded claims or an {@link AppError}.
-   */
-  async decode(token: string): Promise<Result<unknown, AppError>> {
-    const jwtCryptoResult = await this.jwtCrypto.verify(token);
+	/**
+	 * Decodes and verifies a JWT token, returning Application layer claims.
+	 *
+	 * @param token - The JWT token to decode.
+	 * @returns A promise resolving to a {@link Result} containing the decoded claims or an {@link AppError}.
+	 */
+	async decode(token: string): Promise<Result<unknown, AppError>> {
+		const jwtCryptoResult = await this.jwtCrypto.verify(token);
 
-    if (!jwtCryptoResult.ok) {
-      return Err(jwtCryptoResult.error);
-    }
+		if (!jwtCryptoResult.ok) {
+			return Err(jwtCryptoResult.error);
+		}
 
-    return Ok(jwtCryptoResult.value);
-  }
+		return Ok(jwtCryptoResult.value);
+	}
 
-  /**
-   * Encodes session claims into a signed JWT.
-   *
-   * @param claims - The session claims to encode.
-   * @returns A promise resolving to a {@link Result} containing the signed JWT string or an {@link AppError}.
-   */
-  async encode(
-    claims: SessionTokenClaimsDto,
-  ): Promise<Result<string, AppError>> {
-    const jwtClaims = {
-      exp: claims.exp,
-      iat: claims.iat,
-      jti: claims.jti,
-      nbf: claims.nbf,
-      role: claims.role,
-      sid: claims.sid,
-      sub: claims.sub,
-    };
+	/**
+	 * Encodes session claims into a signed JWT.
+	 *
+	 * @param claims - The session claims to encode.
+	 * @returns A promise resolving to a {@link Result} containing the signed JWT string or an {@link AppError}.
+	 */
+	async encode(
+		claims: SessionTokenClaimsDto,
+	): Promise<Result<string, AppError>> {
+		const jwtClaims = {
+			exp: claims.exp,
+			iat: claims.iat,
+			jti: claims.jti,
+			nbf: claims.nbf,
+			role: claims.role,
+			sid: claims.sid,
+			sub: claims.sub,
+		};
 
-    return await this.jwtCrypto.sign(jwtClaims);
-  }
+		return await this.jwtCrypto.sign(jwtClaims);
+	}
 }

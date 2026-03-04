@@ -6,10 +6,10 @@
 
 import process from "node:process";
 import {
-  type LogLevel,
-  LogLevelSchema,
-  type NodeEnvironment,
-  NodeEnvironmentSchema,
+	type LogLevel,
+	LogLevelSchema,
+	type NodeEnvironment,
+	NodeEnvironmentSchema,
 } from "@/shared/core/config/schemas/env-schemas";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
@@ -21,7 +21,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * Check if process.env is available (server-side).
  */
 function hasProcessEnv(): boolean {
-  return typeof process !== "undefined" && typeof process.env !== "undefined";
+	return typeof process !== "undefined" && typeof process.env !== "undefined";
 }
 
 /**
@@ -30,36 +30,36 @@ function hasProcessEnv(): boolean {
  * @returns A Result containing the validated LogLevel or an AppError.
  */
 function getPublicLogLevelResult(): Result<LogLevel, AppError> {
-  if (!hasProcessEnv()) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.infrastructure, {
-        cause: "",
-        message: "process.env is not available in this environment",
-        metadata: {},
-      }),
-    );
-  }
-  const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
-  if (!raw) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
-        metadata: {},
-      }),
-    );
-  }
-  const result = LogLevelSchema.safeParse(raw.trim());
-  if (!result.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
-        metadata: {},
-      }),
-    );
-  }
-  return Ok(result.data);
+	if (!hasProcessEnv()) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.infrastructure, {
+				cause: "",
+				message: "process.env is not available in this environment",
+				metadata: {},
+			}),
+		);
+	}
+	const raw = process.env.NEXT_PUBLIC_LOG_LEVEL;
+	if (!raw) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: "Missing required environment variable: NEXT_PUBLIC_LOG_LEVEL",
+				metadata: {},
+			}),
+		);
+	}
+	const result = LogLevelSchema.safeParse(raw.trim());
+	if (!result.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Invalid NEXT_PUBLIC_LOG_LEVEL: ${result.error.message}`,
+				metadata: {},
+			}),
+		);
+	}
+	return Ok(result.data);
 }
 
 /**
@@ -67,20 +67,20 @@ function getPublicLogLevelResult(): Result<LogLevel, AppError> {
  * Falls back to NEXT_PUBLIC_NODE_ENV for universal access.
  */
 function _getRuntimeNodeEnv(): NodeEnvironment {
-  if (hasProcessEnv() && process.env.NODE_ENV) {
-    const result = NodeEnvironmentSchema.safeParse(process.env.NODE_ENV);
-    if (result.success) {
-      return result.data;
-    }
-  }
-  return getPublicNodeEnv();
+	if (hasProcessEnv() && process.env.NODE_ENV) {
+		const result = NodeEnvironmentSchema.safeParse(process.env.NODE_ENV);
+		if (result.success) {
+			return result.data;
+		}
+	}
+	return getPublicNodeEnv();
 }
 
 function _isPublicDev(): boolean {
-  return getPublicNodeEnv() === "development";
+	return getPublicNodeEnv() === "development";
 }
 function _isPublicTest(): boolean {
-  return getPublicNodeEnv() === "test";
+	return getPublicNodeEnv() === "test";
 }
 
 /**
@@ -89,36 +89,36 @@ function _isPublicTest(): boolean {
  * @returns A Result containing the validated NodeEnvironment or an AppError.
  */
 export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
-  if (!hasProcessEnv()) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.infrastructure, {
-        cause: "",
-        message: "process.env is not available in this environment",
-        metadata: {},
-      }),
-    );
-  }
-  const raw = process.env.NEXT_PUBLIC_NODE_ENV;
-  if (!raw) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
-        metadata: {},
-      }),
-    );
-  }
-  const result = NodeEnvironmentSchema.safeParse(raw.trim());
-  if (!result.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`,
-        metadata: {},
-      }),
-    );
-  }
-  return Ok(result.data);
+	if (!hasProcessEnv()) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.infrastructure, {
+				cause: "",
+				message: "process.env is not available in this environment",
+				metadata: {},
+			}),
+		);
+	}
+	const raw = process.env.NEXT_PUBLIC_NODE_ENV;
+	if (!raw) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: "Missing required environment variable: NEXT_PUBLIC_NODE_ENV",
+				metadata: {},
+			}),
+		);
+	}
+	const result = NodeEnvironmentSchema.safeParse(raw.trim());
+	if (!result.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Invalid NEXT_PUBLIC_NODE_ENV: ${result.error.message}`,
+				metadata: {},
+			}),
+		);
+	}
+	return Ok(result.data);
 }
 
 /**
@@ -129,11 +129,11 @@ export function getPublicNodeEnvResult(): Result<NodeEnvironment, AppError> {
  * @throws {Error} When NEXT_PUBLIC_NODE_ENV is invalid or missing.
  */
 export function getPublicNodeEnv(): NodeEnvironment {
-  const result = getPublicNodeEnvResult();
-  if (result.ok) {
-    return result.value;
-  }
-  throw new Error(result.error.message);
+	const result = getPublicNodeEnvResult();
+	if (result.ok) {
+		return result.value;
+	}
+	throw new Error(result.error.message);
 }
 
 /**
@@ -144,11 +144,11 @@ export function getPublicNodeEnv(): NodeEnvironment {
  * @throws {Error} When NEXT_PUBLIC_LOG_LEVEL is invalid or missing.
  */
 export function getPublicLogLevel(): LogLevel {
-  const result = getPublicLogLevelResult();
-  if (result.ok) {
-    return result.value;
-  }
-  throw new Error(result.error.message);
+	const result = getPublicLogLevelResult();
+	if (result.ok) {
+		return result.value;
+	}
+	throw new Error(result.error.message);
 }
 
 /* -------------------------------------------------------------------------------------------------
@@ -156,5 +156,5 @@ export function getPublicLogLevel(): LogLevel {
  * -----------------------------------------------------------------------------------------------*/
 
 export function isPublicProd(): boolean {
-  return getPublicNodeEnv() === "production";
+	return getPublicNodeEnv() === "production";
 }

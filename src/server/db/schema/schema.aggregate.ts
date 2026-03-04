@@ -9,9 +9,9 @@ import { users } from "@/server/db/schema/users";
  * Import this in db.connection.ts.
  */
 export const schema = {
-  customers,
-  demoUserCounters,
-  invoices,
-  revenues,
-  users,
+	customers,
+	demoUserCounters,
+	invoices,
+	revenues,
+	users,
 } as const;

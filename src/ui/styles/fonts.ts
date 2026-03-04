@@ -7,24 +7,24 @@ import { Doto, Merienda, Noto_Sans, Tektur } from "next/font/google";
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const notoSans = Noto_Sans({
-  display: "swap",
-  subsets: ["latin"],
+	display: "swap",
+	subsets: ["latin"],
 });
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const tektur = Tektur({
-  display: "swap",
-  subsets: ["latin"],
+	display: "swap",
+	subsets: ["latin"],
 });
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const merienda = Merienda({
-  display: "swap",
-  subsets: ["latin"],
+	display: "swap",
+	subsets: ["latin"],
 });
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const doto = Doto({
-  display: "swap",
-  subsets: ["latin"],
+	display: "swap",
+	subsets: ["latin"],
 });

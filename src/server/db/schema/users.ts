@@ -11,9 +11,9 @@ import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import {
-  DEFAULT_USER_ROLE,
-  USER_ROLES,
-  type UserRole,
+	DEFAULT_USER_ROLE,
+	USER_ROLES,
+	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
 
 // biome-ignore lint/nursery/useExplicitType: not easy to fix
@@ -21,19 +21,19 @@ export const userRolePgEnum = pgEnum("role", USER_ROLES);
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const users = pgTable("users", {
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  emailVerified: timestamp("email_verified", { mode: "date" }),
-  id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
-  password: varchar("password", { length: 255 }).notNull().$type<Hash>(),
-  // TODO: THIS SETS A DEFAULT WHICH IS DISCOURAGED
-  role: userRolePgEnum("role")
-    .default(DEFAULT_USER_ROLE)
-    .notNull()
-    .$type<UserRole>(),
-  sensitiveData: varchar("sensitive_data", { length: 255 })
-    .notNull()
-    .default("cantTouchThis"),
-  username: varchar("username", { length: 50 }).notNull().unique(),
+	email: varchar("email", { length: 255 }).notNull().unique(),
+	emailVerified: timestamp("email_verified", { mode: "date" }),
+	id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
+	password: varchar("password", { length: 255 }).notNull().$type<Hash>(),
+	// TODO: THIS SETS A DEFAULT WHICH IS DISCOURAGED
+	role: userRolePgEnum("role")
+		.default(DEFAULT_USER_ROLE)
+		.notNull()
+		.$type<UserRole>(),
+	sensitiveData: varchar("sensitive_data", { length: 255 })
+		.notNull()
+		.default("cantTouchThis"),
+	username: varchar("username", { length: 50 }).notNull().unique(),
 });
 
 /**

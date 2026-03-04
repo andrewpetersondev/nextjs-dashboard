@@ -1,51 +1,51 @@
 import {
-  getSessionTimeLeftSec,
-  isSessionAbsoluteLifetimeExceeded,
-  isSessionApproachingExpiry,
-  isSessionExpired,
-  type SessionEntity,
+	getSessionTimeLeftSec,
+	isSessionAbsoluteLifetimeExceeded,
+	isSessionApproachingExpiry,
+	isSessionExpired,
+	type SessionEntity,
 } from "@/modules/auth/domain/session/entities/session.entity";
 import type {
-  TimeDeltaSeconds,
-  UnixSeconds,
+	TimeDeltaSeconds,
+	UnixSeconds,
 } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import {
-  MAX_ABSOLUTE_SESSION_SEC,
-  SESSION_REFRESH_THRESHOLD_SEC,
+	MAX_ABSOLUTE_SESSION_SEC,
+	SESSION_REFRESH_THRESHOLD_SEC,
 } from "@/modules/auth/domain/shared/constants/session-config.constants";
 import {
-  SESSION_LIFECYCLE_ACTIONS,
-  SESSION_LIFECYCLE_REASONS,
-  type SessionLifecycleAction,
-  type SessionLifecycleReason,
+	SESSION_LIFECYCLE_ACTIONS,
+	SESSION_LIFECYCLE_REASONS,
+	type SessionLifecycleAction,
+	type SessionLifecycleReason,
 } from "@/modules/auth/domain/shared/constants/session-lifecycle.constants";
 
 type SessionLifecycleTerminationDecision = Readonly<{
-  readonly action: typeof SESSION_LIFECYCLE_ACTIONS.TERMINATE;
-  readonly ageSec: typeof MAX_ABSOLUTE_SESSION_SEC extends infer T ? T : never;
-  readonly maxSec: typeof MAX_ABSOLUTE_SESSION_SEC;
-  readonly reason: TerminateSessionReason;
+	readonly action: typeof SESSION_LIFECYCLE_ACTIONS.TERMINATE;
+	readonly ageSec: typeof MAX_ABSOLUTE_SESSION_SEC extends infer T ? T : never;
+	readonly maxSec: typeof MAX_ABSOLUTE_SESSION_SEC;
+	readonly reason: TerminateSessionReason;
 }>;
 
 type SessionLifecycleRotateDecision = Readonly<{
-  readonly action: typeof SESSION_LIFECYCLE_ACTIONS.ROTATE;
-  readonly reason: typeof SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY;
-  readonly timeLeftSec: TimeDeltaSeconds;
+	readonly action: typeof SESSION_LIFECYCLE_ACTIONS.ROTATE;
+	readonly reason: typeof SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY;
+	readonly timeLeftSec: TimeDeltaSeconds;
 }>;
 
 type SessionLifecycleContinueDecision = Readonly<{
-  readonly action: typeof SESSION_LIFECYCLE_ACTIONS.CONTINUE;
-  readonly reason: typeof SESSION_LIFECYCLE_REASONS.VALID;
-  readonly timeLeftSec: TimeDeltaSeconds;
+	readonly action: typeof SESSION_LIFECYCLE_ACTIONS.CONTINUE;
+	readonly reason: typeof SESSION_LIFECYCLE_REASONS.VALID;
+	readonly timeLeftSec: TimeDeltaSeconds;
 }>;
 
 /**
  * Represents the structured result of a session lifecycle evaluation.
  */
 type SessionLifecycleDecision =
-  | SessionLifecycleContinueDecision
-  | SessionLifecycleRotateDecision
-  | SessionLifecycleTerminationDecision;
+	| SessionLifecycleContinueDecision
+	| SessionLifecycleRotateDecision
+	| SessionLifecycleTerminationDecision;
 
 /**
  * Domain Policy: Recognized reasons for terminating a session.
@@ -54,10 +54,10 @@ type SessionLifecycleDecision =
  * This is a subset of `SessionLifecycleReason` (termination-only reasons).
  */
 export type TerminateSessionReason = Extract<
-  SessionLifecycleReason,
-  | typeof SESSION_LIFECYCLE_REASONS.ABSOLUTE_LIMIT_EXCEEDED
-  | typeof SESSION_LIFECYCLE_REASONS.EXPIRED
-  | typeof SESSION_LIFECYCLE_REASONS.LOGOUT
+	SessionLifecycleReason,
+	| typeof SESSION_LIFECYCLE_REASONS.ABSOLUTE_LIMIT_EXCEEDED
+	| typeof SESSION_LIFECYCLE_REASONS.EXPIRED
+	| typeof SESSION_LIFECYCLE_REASONS.LOGOUT
 >;
 
 /**
@@ -68,66 +68,66 @@ export type TerminateSessionReason = Extract<
  * @returns A decision object specifying the required action and reason.
  */
 export function evaluateSessionLifecyclePolicy(
-  session: SessionEntity,
-  nowSec: UnixSeconds,
+	session: SessionEntity,
+	nowSec: UnixSeconds,
 ): SessionLifecycleDecision {
-  const { ageSec, exceeded } = isSessionAbsoluteLifetimeExceeded(
-    session,
-    MAX_ABSOLUTE_SESSION_SEC,
-    nowSec,
-  );
+	const { ageSec, exceeded } = isSessionAbsoluteLifetimeExceeded(
+		session,
+		MAX_ABSOLUTE_SESSION_SEC,
+		nowSec,
+	);
 
-  if (exceeded) {
-    return {
-      action: SESSION_LIFECYCLE_ACTIONS.TERMINATE,
-      ageSec,
-      maxSec: MAX_ABSOLUTE_SESSION_SEC,
-      reason: SESSION_LIFECYCLE_REASONS.ABSOLUTE_LIMIT_EXCEEDED,
-    };
-  }
+	if (exceeded) {
+		return {
+			action: SESSION_LIFECYCLE_ACTIONS.TERMINATE,
+			ageSec,
+			maxSec: MAX_ABSOLUTE_SESSION_SEC,
+			reason: SESSION_LIFECYCLE_REASONS.ABSOLUTE_LIMIT_EXCEEDED,
+		};
+	}
 
-  if (isSessionExpired(session, nowSec)) {
-    return {
-      action: SESSION_LIFECYCLE_ACTIONS.TERMINATE,
-      ageSec,
-      maxSec: MAX_ABSOLUTE_SESSION_SEC,
-      reason: SESSION_LIFECYCLE_REASONS.EXPIRED,
-    };
-  }
+	if (isSessionExpired(session, nowSec)) {
+		return {
+			action: SESSION_LIFECYCLE_ACTIONS.TERMINATE,
+			ageSec,
+			maxSec: MAX_ABSOLUTE_SESSION_SEC,
+			reason: SESSION_LIFECYCLE_REASONS.EXPIRED,
+		};
+	}
 
-  const timeLeftSec: TimeDeltaSeconds = getSessionTimeLeftSec(session, nowSec);
+	const timeLeftSec: TimeDeltaSeconds = getSessionTimeLeftSec(session, nowSec);
 
-  if (
-    isSessionApproachingExpiry(session, SESSION_REFRESH_THRESHOLD_SEC, nowSec)
-  ) {
-    return {
-      action: SESSION_LIFECYCLE_ACTIONS.ROTATE,
-      reason: SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY,
-      timeLeftSec,
-    };
-  }
+	if (
+		isSessionApproachingExpiry(session, SESSION_REFRESH_THRESHOLD_SEC, nowSec)
+	) {
+		return {
+			action: SESSION_LIFECYCLE_ACTIONS.ROTATE,
+			reason: SESSION_LIFECYCLE_REASONS.APPROACHING_EXPIRY,
+			timeLeftSec,
+		};
+	}
 
-  return {
-    action: SESSION_LIFECYCLE_ACTIONS.CONTINUE,
-    reason: SESSION_LIFECYCLE_REASONS.VALID,
-    timeLeftSec,
-  };
+	return {
+		action: SESSION_LIFECYCLE_ACTIONS.CONTINUE,
+		reason: SESSION_LIFECYCLE_REASONS.VALID,
+		timeLeftSec,
+	};
 }
 
 /**
  * Type guard to check if the session requires rotation.
  */
 export function requiresRotation(
-  decision: Readonly<{ action: SessionLifecycleAction }>,
+	decision: Readonly<{ action: SessionLifecycleAction }>,
 ): decision is SessionLifecycleRotateDecision {
-  return decision.action === SESSION_LIFECYCLE_ACTIONS.ROTATE;
+	return decision.action === SESSION_LIFECYCLE_ACTIONS.ROTATE;
 }
 
 /**
  * Type guard to check if the session should be terminated.
  */
 export function requiresTermination(
-  decision: Readonly<{ action: SessionLifecycleAction }>,
+	decision: Readonly<{ action: SessionLifecycleAction }>,
 ): decision is SessionLifecycleTerminationDecision {
-  return decision.action === SESSION_LIFECYCLE_ACTIONS.TERMINATE;
+	return decision.action === SESSION_LIFECYCLE_ACTIONS.TERMINATE;
 }

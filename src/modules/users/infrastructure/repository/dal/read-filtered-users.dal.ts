@@ -21,36 +21,36 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @returns Array of UserDto for the page.
  */
 export async function readFilteredUsersDal(
-  db: AppDatabase,
-  query: string,
-  currentPage: number,
+	db: AppDatabase,
+	query: string,
+	currentPage: number,
 ): Promise<Result<UserEntity[], AppError>> {
-  // Calculate offset using constant for items per page
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
-  try {
-    // Fetch raw DB rows matching the query
-    const userRows = await db
-      .select()
-      .from(users)
-      .where(
-        or(
-          ilike(users.username, `%${query}%`),
-          ilike(users.email, `%${query}%`),
-        ),
-      )
-      .orderBy(asc(users.username))
-      .limit(ITEMS_PER_PAGE_USERS)
-      .offset(offset);
+	// Calculate offset using constant for items per page
+	const offset = (currentPage - 1) * ITEMS_PER_PAGE_USERS;
+	try {
+		// Fetch raw DB rows matching the query
+		const userRows = await db
+			.select()
+			.from(users)
+			.where(
+				or(
+					ilike(users.username, `%${query}%`),
+					ilike(users.email, `%${query}%`),
+				),
+			)
+			.orderBy(asc(users.username))
+			.limit(ITEMS_PER_PAGE_USERS)
+			.offset(offset);
 
-    // Map each raw row to UserEntity
-    return Ok(userRows.map((row) => toUserEntity(row)));
-  } catch (error) {
-    logger.error("Failed to fetch filtered users", {
-      context: "fetchFilteredUsers",
-      currentPage,
-      error,
-      query,
-    });
-    return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
-  }
+		// Map each raw row to UserEntity
+		return Ok(userRows.map((row) => toUserEntity(row)));
+	} catch (error) {
+		logger.error("Failed to fetch filtered users", {
+			context: "fetchFilteredUsers",
+			currentPage,
+			error,
+			query,
+		});
+		return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
+	}
 }

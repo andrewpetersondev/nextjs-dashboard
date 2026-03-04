@@ -18,56 +18,56 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @implements {PasswordHasherContract}
  */
 export class PasswordHasherAdapter implements PasswordHasherContract {
-  private readonly service: BcryptPasswordService;
+	private readonly service: BcryptPasswordService;
 
-  /**
-   * Initializes the adapter with the bcrypt service.
-   *
-   * @param service - The underlying bcrypt password service.
-   */
-  constructor(service: BcryptPasswordService) {
-    this.service = service;
-  }
+	/**
+	 * Initializes the adapter with the bcrypt service.
+	 *
+	 * @param service - The underlying bcrypt password service.
+	 */
+	constructor(service: BcryptPasswordService) {
+		this.service = service;
+	}
 
-  /**
-   * Compares a plain-text password with a hash.
-   *
-   * @param password - The plain-text password to check.
-   * @param hash - The hashed password to compare against.
-   * @returns A promise resolving to a {@link Result} containing `true` if matched, or an {@link AppError}.
-   */
-  async compare(
-    password: string,
-    hash: Hash,
-  ): Promise<Result<boolean, AppError>> {
-    try {
-      const match = await this.service.compare(password, hash);
-      return Ok(match);
-    } catch (err) {
-      return Err(
-        makeUnexpectedError(err, {
-          message: "Failed to compare password hash",
-        }),
-      );
-    }
-  }
+	/**
+	 * Compares a plain-text password with a hash.
+	 *
+	 * @param password - The plain-text password to check.
+	 * @param hash - The hashed password to compare against.
+	 * @returns A promise resolving to a {@link Result} containing `true` if matched, or an {@link AppError}.
+	 */
+	async compare(
+		password: string,
+		hash: Hash,
+	): Promise<Result<boolean, AppError>> {
+		try {
+			const match = await this.service.compare(password, hash);
+			return Ok(match);
+		} catch (err) {
+			return Err(
+				makeUnexpectedError(err, {
+					message: "Failed to compare password hash",
+				}),
+			);
+		}
+	}
 
-  /**
-   * Hashes a plain-text password.
-   *
-   * @param password - The plain-text password to hash.
-   * @returns A promise resolving to a {@link Result} containing the generated {@link Hash}, or an {@link AppError}.
-   */
-  async hash(password: string): Promise<Result<Hash, AppError>> {
-    try {
-      const hashed = await this.service.hash(password);
-      return Ok(hashed);
-    } catch (err) {
-      return Err(
-        makeUnexpectedError(err, {
-          message: "Failed to hash password",
-        }),
-      );
-    }
-  }
+	/**
+	 * Hashes a plain-text password.
+	 *
+	 * @param password - The plain-text password to hash.
+	 * @returns A promise resolving to a {@link Result} containing the generated {@link Hash}, or an {@link AppError}.
+	 */
+	async hash(password: string): Promise<Result<Hash, AppError>> {
+		try {
+			const hashed = await this.service.hash(password);
+			return Ok(hashed);
+		} catch (err) {
+			return Err(
+				makeUnexpectedError(err, {
+					message: "Failed to hash password",
+				}),
+			);
+		}
+	}
 }

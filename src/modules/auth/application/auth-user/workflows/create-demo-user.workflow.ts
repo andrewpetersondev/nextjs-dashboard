@@ -11,15 +11,15 @@ import type { Result } from "@/shared/core/result/result.dto";
  * Orchestrates the creation of a demo user and session.
  */
 export async function createDemoUserWorkflow(
-  input: Readonly<CreateDemoUserCommand>,
-  deps: Readonly<{
-    demoUserUseCase: CreateDemoUserUseCase;
-    sessionService: SessionServiceContract;
-  }>,
+	input: Readonly<CreateDemoUserCommand>,
+	deps: Readonly<{
+		demoUserUseCase: CreateDemoUserUseCase;
+		sessionService: SessionServiceContract;
+	}>,
 ): Promise<Result<SessionPrincipalDto, AppError>> {
-  const userResult = await deps.demoUserUseCase.execute(input);
+	const userResult = await deps.demoUserUseCase.execute(input);
 
-  return await establishSessionForAuthUserWorkflow(userResult, {
-    sessionService: deps.sessionService,
-  });
+	return await establishSessionForAuthUserWorkflow(userResult, {
+		sessionService: deps.sessionService,
+	});
 }

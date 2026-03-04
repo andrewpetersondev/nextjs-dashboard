@@ -1,6 +1,6 @@
 import {
-  AUTH_POLICY_NAMES,
-  AUTH_POLICY_REASONS,
+	AUTH_POLICY_NAMES,
+	AUTH_POLICY_REASONS,
 } from "@/modules/auth/domain/shared/constants/auth-policy.constants";
 
 /**
@@ -11,23 +11,23 @@ import {
  * This policy returns domain-level failure values (not `AppError`).
  */
 const AUTH_SECURITY_FAILURE_KINDS = {
-  MISSING_SESSION: "missing_session",
+	MISSING_SESSION: "missing_session",
 } as const;
 
 type AuthSecurityFailureKind =
-  (typeof AUTH_SECURITY_FAILURE_KINDS)[keyof typeof AUTH_SECURITY_FAILURE_KINDS];
+	(typeof AUTH_SECURITY_FAILURE_KINDS)[keyof typeof AUTH_SECURITY_FAILURE_KINDS];
 
 type AuthSecurityFailure = Readonly<{
-  readonly kind: AuthSecurityFailureKind;
-  readonly policy: typeof AUTH_POLICY_NAMES.SESSION_VERIFICATION;
-  readonly reason: typeof AUTH_POLICY_REASONS.NO_TOKEN;
+	readonly kind: AuthSecurityFailureKind;
+	readonly policy: typeof AUTH_POLICY_NAMES.SESSION_VERIFICATION;
+	readonly reason: typeof AUTH_POLICY_REASONS.NO_TOKEN;
 }>;
 
 export const AuthSecurityFailures = {
-  /** No session found in the request */
-  missingSession: (): AuthSecurityFailure => ({
-    kind: AUTH_SECURITY_FAILURE_KINDS.MISSING_SESSION,
-    policy: AUTH_POLICY_NAMES.SESSION_VERIFICATION,
-    reason: AUTH_POLICY_REASONS.NO_TOKEN,
-  }),
+	/** No session found in the request */
+	missingSession: (): AuthSecurityFailure => ({
+		kind: AUTH_SECURITY_FAILURE_KINDS.MISSING_SESSION,
+		policy: AUTH_POLICY_NAMES.SESSION_VERIFICATION,
+		reason: AUTH_POLICY_REASONS.NO_TOKEN,
+	}),
 };

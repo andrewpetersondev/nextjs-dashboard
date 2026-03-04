@@ -7,7 +7,7 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * `sid` must be provided to keep session identity stable across token rotation.
  */
 export type IssueRotatedTokenCommand = {
-  readonly role: UserRole;
-  readonly sid: string;
-  readonly userId: UserId;
+	readonly role: UserRole;
+	readonly sid: string;
+	readonly userId: UserId;
 };

@@ -2,8 +2,8 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type {
-  InvoiceEntity,
-  InvoiceFormEntity,
+	InvoiceEntity,
+	InvoiceFormEntity,
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
@@ -22,35 +22,35 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @throws AppError if update fails or invoice not found
  */
 export async function updateInvoiceDal(
-  db: AppDatabase,
-  id: InvoiceId,
-  updateData: Partial<InvoiceFormEntity>,
+	db: AppDatabase,
+	id: InvoiceId,
+	updateData: Partial<InvoiceFormEntity>,
 ): Promise<InvoiceEntity> {
-  if (!(db && id && updateData)) {
-    throw makeAppError("validation", {
-      cause: "",
-      message: INVOICE_MSG.invalidInput,
-      metadata: {},
-    });
-  }
+	if (!(db && id && updateData)) {
+		throw makeAppError("validation", {
+			cause: "",
+			message: INVOICE_MSG.invalidInput,
+			metadata: {},
+		});
+	}
 
-  const [updated] = await db
-    .update(invoices)
-    .set(updateData)
-    .where(eq(invoices.id, id))
-    .returning();
+	const [updated] = await db
+		.update(invoices)
+		.set(updateData)
+		.where(eq(invoices.id, id))
+		.returning();
 
-  if (!updated) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.updateFailed,
-      metadata: {},
-    });
-  }
+	if (!updated) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.updateFailed,
+			metadata: {},
+		});
+	}
 
-  const result = rawDbToInvoiceEntity(updated);
-  if (!result.ok) {
-    throw result.error;
-  }
-  return result.value;
+	const result = rawDbToInvoiceEntity(updated);
+	if (!result.ok) {
+		throw result.error;
+	}
+	return result.value;
 }

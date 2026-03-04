@@ -8,8 +8,8 @@
  * @template TRow - The row type contained in the result.
  */
 interface PgRows<Trow extends object> {
-  /** The rows returned by the query. */
-  readonly rows: readonly Trow[];
+	/** The rows returned by the query. */
+	readonly rows: readonly Trow[];
 }
 
 /**
@@ -18,12 +18,12 @@ interface PgRows<Trow extends object> {
  * @returns True if the value has an array `rows` property.
  */
 function hasRows<Trow extends object>(value: unknown): value is PgRows<Trow> {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  // Using a temporary typed view to avoid `any`.
-  const candidate = value as { readonly rows?: unknown };
-  return Array.isArray(candidate.rows);
+	if (typeof value !== "object" || value === null) {
+		return false;
+	}
+	// Using a temporary typed view to avoid `any`.
+	const candidate = value as { readonly rows?: unknown };
+	return Array.isArray(candidate.rows);
 }
 
 /**
@@ -31,9 +31,9 @@ function hasRows<Trow extends object>(value: unknown): value is PgRows<Trow> {
  * @param value - Unknown result to extract the first row from.
  */
 export function firstRow<Trow extends object>(value: unknown): Trow | null {
-  if (!hasRows<Trow>(value)) {
-    return null;
-  }
-  const [row] = value.rows as readonly Trow[];
-  return row ?? null;
+	if (!hasRows<Trow>(value)) {
+		return null;
+	}
+	const [row] = value.rows as readonly Trow[];
+	return row ?? null;
 }

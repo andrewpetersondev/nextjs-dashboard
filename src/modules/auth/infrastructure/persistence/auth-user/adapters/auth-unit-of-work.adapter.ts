@@ -16,69 +16,69 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * within the transaction scope share the same database client and logger context.
  */
 export class AuthUnitOfWorkAdapter implements AuthUnitOfWorkContract {
-  private readonly db: AppDatabase;
-  private readonly logger: LoggingClientContract;
-  private readonly requestId: string;
-  private readonly makeTxDeps: AuthTxDepsFactory;
+	private readonly db: AppDatabase;
+	private readonly logger: LoggingClientContract;
+	private readonly requestId: string;
+	private readonly makeTxDeps: AuthTxDepsFactory;
 
-  /**
-   * Initializes the Unit of Work adapter.
-   *
-   * @param db - The main database connection.
-   * @param logger - The logging client.
-   * @param requestId - Unique identifier for the current request.
-   * @param makeTxDeps - Factory to create transaction-scoped dependencies.
-   */
-  constructor(
-    db: AppDatabase,
-    logger: LoggingClientContract,
-    requestId: string,
-    makeTxDeps: AuthTxDepsFactory,
-  ) {
-    this.db = db;
-    this.logger = logger;
-    this.requestId = requestId;
-    this.makeTxDeps = makeTxDeps;
-  }
+	/**
+	 * Initializes the Unit of Work adapter.
+	 *
+	 * @param db - The main database connection.
+	 * @param logger - The logging client.
+	 * @param requestId - Unique identifier for the current request.
+	 * @param makeTxDeps - Factory to create transaction-scoped dependencies.
+	 */
+	constructor(
+		db: AppDatabase,
+		logger: LoggingClientContract,
+		requestId: string,
+		makeTxDeps: AuthTxDepsFactory,
+	) {
+		this.db = db;
+		this.logger = logger;
+		this.requestId = requestId;
+		this.makeTxDeps = makeTxDeps;
+	}
 
-  /**
-   * Executes a function within a database transaction.
-   *
-   * @param fn - The function to execute within the transaction context.
-   * @returns The result of the executed function.
-   * @throws Error if the database does not support transactions or if the transaction fails.
-   */
-  async withTransaction<T>(fn: (tx: AuthTxDeps) => Promise<T>): Promise<T> {
-    const dbWithTx = this.db as AppDatabase & {
-      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
-    };
+	/**
+	 * Executes a function within a database transaction.
+	 *
+	 * @param fn - The function to execute within the transaction context.
+	 * @returns The result of the executed function.
+	 * @throws Error if the database does not support transactions or if the transaction fails.
+	 */
+	async withTransaction<T>(fn: (tx: AuthTxDeps) => Promise<T>): Promise<T> {
+		const dbWithTx = this.db as AppDatabase & {
+			transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
+		};
 
-    if (typeof dbWithTx.transaction !== "function") {
-      throw new Error("Database does not support transactions");
-    }
+		if (typeof dbWithTx.transaction !== "function") {
+			throw new Error("Database does not support transactions");
+		}
 
-    const transactionId = randomUUID();
+		const transactionId = randomUUID();
 
-    const txLogger = this.logger
-      .child({ scope: "uow", transactionId })
-      .withRequest(this.requestId)
-      .withContext("auth:tx");
+		const txLogger = this.logger
+			.child({ scope: "uow", transactionId })
+			.withRequest(this.requestId)
+			.withContext("auth:tx");
 
-    const txEvents = new AuthTransactionLogger(txLogger);
+		const txEvents = new AuthTransactionLogger(txLogger);
 
-    txEvents.start(transactionId);
+		txEvents.start(transactionId);
 
-    try {
-      const result = await dbWithTx.transaction(async (txDb: AppDatabase) => {
-        const txDeps = this.makeTxDeps(txDb, txLogger, this.requestId);
-        return await fn(txDeps);
-      });
+		try {
+			const result = await dbWithTx.transaction(async (txDb: AppDatabase) => {
+				const txDeps = this.makeTxDeps(txDb, txLogger, this.requestId);
+				return await fn(txDeps);
+			});
 
-      txEvents.commit(transactionId);
-      return result;
-    } catch (err) {
-      txEvents.rollback(err, transactionId);
-      throw err;
-    }
-  }
+			txEvents.commit(transactionId);
+			return result;
+		} catch (err) {
+			txEvents.rollback(err, transactionId);
+			throw err;
+		}
+	}
 }

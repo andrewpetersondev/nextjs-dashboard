@@ -17,12 +17,12 @@ import { UserIdSchema } from "@/modules/users/domain/user-id.schema";
  * @returns The session domain entity.
  */
 export function toSessionEntity(
-  tokenClaims: SessionTokenClaimsDto,
+	tokenClaims: SessionTokenClaimsDto,
 ): SessionEntity {
-  return {
-    expiresAt: toUnixSeconds(tokenClaims.exp),
-    issuedAt: toUnixSeconds(tokenClaims.iat),
-    role: tokenClaims.role,
-    userId: UserIdSchema.decode(tokenClaims.sub),
-  };
+	return {
+		expiresAt: toUnixSeconds(tokenClaims.exp),
+		issuedAt: toUnixSeconds(tokenClaims.iat),
+		role: tokenClaims.role,
+		userId: UserIdSchema.decode(tokenClaims.sub),
+	};
 }

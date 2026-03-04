@@ -5,15 +5,15 @@ import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto"
  * @description This list defines the operations that can be performed on invoices.
  */
 const InvoiceOperations = [
-  "invoice_created",
-  "invoice_updated",
-  "invoice_deleted",
+	"invoice_created",
+	"invoice_updated",
+	"invoice_deleted",
 ] as const;
 
 export const INVOICE_EVENTS = {
-  created: "InvoiceCreatedEvent",
-  deleted: "InvoiceDeletedEvent",
-  updated: "InvoiceUpdatedEvent",
+	created: "InvoiceCreatedEvent",
+	deleted: "InvoiceDeletedEvent",
+	updated: "InvoiceUpdatedEvent",
 } as const;
 
 /**
@@ -21,14 +21,14 @@ export const INVOICE_EVENTS = {
  * Contains common properties shared by all invoice-related events.
  */
 export interface BaseInvoiceEvent {
-  /** Unique identifier for the event (uuid) */
-  eventId: string;
-  /** ISO timestamp when the event occurred */
-  eventTimestamp: string;
-  /** Invoice data at the time of the event */
-  invoice: InvoiceDto;
-  /** Operation type that triggered the event */
-  operation: (typeof InvoiceOperations)[number];
-  /** Previous invoice state (for updates) */
-  previousInvoice?: InvoiceDto;
+	/** Unique identifier for the event (uuid) */
+	eventId: string;
+	/** ISO timestamp when the event occurred */
+	eventTimestamp: string;
+	/** Invoice data at the time of the event */
+	invoice: InvoiceDto;
+	/** Operation type that triggered the event */
+	operation: (typeof InvoiceOperations)[number];
+	/** Previous invoice state (for updates) */
+	previousInvoice?: InvoiceDto;
 }

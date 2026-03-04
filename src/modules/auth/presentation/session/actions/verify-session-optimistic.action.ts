@@ -24,29 +24,29 @@ import { ROUTES } from "@/shared/routing/routes";
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
 export const verifySessionOptimistic = cache(
-  async (): Promise<SessionVerificationDto> => {
-    const auth = await makeAuthComposition();
-    const logger = auth.loggers.action;
-    const sessionService = auth.services.sessionService;
+	async (): Promise<SessionVerificationDto> => {
+		const auth = await makeAuthComposition();
+		const logger = auth.loggers.action;
+		const sessionService = auth.services.sessionService;
 
-    const res = await sessionService.verify();
+		const res = await sessionService.verify();
 
-    if (!res.ok) {
-      logger.operation("warn", "No valid session found", {
-        operationContext: "authentication",
-        operationIdentifiers: { reason: res.error.definitionDescription },
-        operationName: "session.verifyOptimistic.noSession",
-      });
+		if (!res.ok) {
+			logger.operation("warn", "No valid session found", {
+				operationContext: "authentication",
+				operationIdentifiers: { reason: res.error.definitionDescription },
+				operationName: "session.verifyOptimistic.noSession",
+			});
 
-      redirect(ROUTES.auth.login);
-    }
+			redirect(ROUTES.auth.login);
+		}
 
-    logger.operation("info", "Session verified (optimistic)", {
-      operationContext: "authentication",
-      operationIdentifiers: { role: res.value.role, userId: res.value.userId },
-      operationName: "session.verifyOptimistic.success",
-    });
+		logger.operation("info", "Session verified (optimistic)", {
+			operationContext: "authentication",
+			operationIdentifiers: { role: res.value.role, userId: res.value.userId },
+			operationName: "session.verifyOptimistic.success",
+		});
 
-    return res.value;
-  },
+		return res.value;
+	},
 );

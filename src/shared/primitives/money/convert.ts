@@ -1,7 +1,7 @@
 import {
-  CENTS_IN_DOLLAR,
-  USD_CURRENCY,
-  USD_LOCALE,
+	CENTS_IN_DOLLAR,
+	USD_CURRENCY,
+	USD_LOCALE,
 } from "@/shared/primitives/money/money.constants";
 import type { Cents, Dollars } from "@/shared/primitives/money/types";
 
@@ -10,7 +10,7 @@ import type { Cents, Dollars } from "@/shared/primitives/money/types";
  * Shared location so both server and features can use it without crossing boundaries.
  */
 export function convertCentsToDollars(cents: Cents): Dollars {
-  return Math.round(cents / CENTS_IN_DOLLAR);
+	return Math.round(cents / CENTS_IN_DOLLAR);
 }
 
 /**
@@ -18,8 +18,8 @@ export function convertCentsToDollars(cents: Cents): Dollars {
  * Converts an amount in cents to USD and formats it as a currency string.
  */
 export const formatCurrency = (amount: number): string => {
-  return (amount / CENTS_IN_DOLLAR).toLocaleString(USD_LOCALE, {
-    currency: USD_CURRENCY,
-    style: "currency",
-  });
+	return (amount / CENTS_IN_DOLLAR).toLocaleString(USD_LOCALE, {
+		currency: USD_CURRENCY,
+		style: "currency",
+	});
 };

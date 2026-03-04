@@ -26,53 +26,53 @@ import { resolveRawFieldPayload } from "@/shared/forms/server/utils/form-data.ut
  * - Calls `schema.safeParseAsync` and maps Zod errors to form field errors when validation fails.
  */
 export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
-  formData: FormData,
-  schema: z.ZodType<Tin>,
-  allowedFields?: readonly Tfieldnames[],
-  options: FormValidationOptions<Tin, Tfieldnames> = {},
+	formData: FormData,
+	schema: z.ZodType<Tin>,
+	allowedFields?: readonly Tfieldnames[],
+	options: FormValidationOptions<Tin, Tfieldnames> = {},
 ): Promise<FormResult<Tin>> {
-  const {
-    fields: explicitFields,
-    loggerContext = "FormValidation",
-    messages: {
-      failureMessage = FORM_MESSAGES.failure,
-      successMessage = FORM_MESSAGES.success,
-    } = {},
-    raw: explicitRaw,
-  } = options;
+	const {
+		fields: explicitFields,
+		loggerContext = "FormValidation",
+		messages: {
+			failureMessage = FORM_MESSAGES.failure,
+			successMessage = FORM_MESSAGES.success,
+		} = {},
+		raw: explicitRaw,
+	} = options;
 
-  const fields = resolveCanonicalFieldNames<Tin, Tfieldnames>(
-    schema,
-    allowedFields,
-    explicitFields,
-  );
+	const fields = resolveCanonicalFieldNames<Tin, Tfieldnames>(
+		schema,
+		allowedFields,
+		explicitFields,
+	);
 
-  const raw = resolveRawFieldPayload(formData, fields, explicitRaw);
+	const raw = resolveRawFieldPayload(formData, fields, explicitRaw);
 
-  let parsed: Awaited<ReturnType<typeof schema.safeParseAsync>>;
-  try {
-    parsed = await schema.safeParseAsync(raw);
-  } catch (e: unknown) {
-    // Unexpected errors during validation (e.g., async refinements throwing)
-    return formValidationErrorFactory<Tfieldnames>(e, loggerContext, {
-      failureMessage,
-      fields,
-      formData: raw,
-    });
-  }
+	let parsed: Awaited<ReturnType<typeof schema.safeParseAsync>>;
+	try {
+		parsed = await schema.safeParseAsync(raw);
+	} catch (e: unknown) {
+		// Unexpected errors during validation (e.g., async refinements throwing)
+		return formValidationErrorFactory<Tfieldnames>(e, loggerContext, {
+			failureMessage,
+			fields,
+			formData: raw,
+		});
+	}
 
-  // Zod validation failed
-  if (!parsed.success) {
-    return formValidationErrorFactory<Tfieldnames>(
-      parsed.error,
-      loggerContext,
-      {
-        failureMessage,
-        fields,
-        formData: raw,
-      },
-    );
-  }
+	// Zod validation failed
+	if (!parsed.success) {
+		return formValidationErrorFactory<Tfieldnames>(
+			parsed.error,
+			loggerContext,
+			{
+				failureMessage,
+				fields,
+				formData: raw,
+			},
+		);
+	}
 
-  return makeFormOk<Tin>(parsed.data, successMessage);
+	return makeFormOk<Tin>(parsed.data, successMessage);
 }

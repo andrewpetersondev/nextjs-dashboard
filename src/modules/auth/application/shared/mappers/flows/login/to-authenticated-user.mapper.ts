@@ -9,12 +9,12 @@ import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/au
  * properties (like password hashes) never leave the Auth domain boundary.
  */
 export function toAuthenticatedUserDto(
-  user: AuthUserEntity,
+	user: AuthUserEntity,
 ): AuthenticatedUserDto {
-  return {
-    email: user.email,
-    id: user.id,
-    role: user.role,
-    username: user.username,
-  };
+	return {
+		email: user.email,
+		id: user.id,
+		role: user.role,
+		username: user.username,
+	};
 }

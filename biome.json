@@ -55,9 +55,7 @@
       "enabled": true
     },
     "formatter": {
-      "enabled": true,
-      "indentStyle": "space",
-      "indentWidth": 2
+      "enabled": true
     },
     "linter": {
       "enabled": true

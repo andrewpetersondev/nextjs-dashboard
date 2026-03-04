@@ -4,24 +4,24 @@ export const INVALID_EMAIL: string = "invalid@example.com";
 export const INVALID_PASSWORD: string = "wrongpassword";
 
 export const ERROR_MESSAGES_REGEX = {
-  failedAuthForm: /Failed to validate form data/i,
-  invalidCredentials: /Invalid email or password/i,
+	failedAuthForm: /Failed to validate form data/i,
+	invalidCredentials: /Invalid email or password/i,
 } as const satisfies Readonly<Record<string, RegExp>>;
 
 export type SignupCreds = {
-  readonly email: string;
-  readonly password: string;
-  readonly username: string;
+	readonly email: string;
+	readonly password: string;
+	readonly username: string;
 };
 
 export type LoginCreds = {
-  readonly email: string;
-  readonly password: string;
+	readonly email: string;
+	readonly password: string;
 };
 
 export interface TestUser {
-  readonly email: string;
-  readonly password: string;
-  readonly timestamp: number;
-  readonly username: string;
+	readonly email: string;
+	readonly password: string;
+	readonly timestamp: number;
+	readonly username: string;
 }

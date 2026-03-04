@@ -2,13 +2,13 @@ import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.re
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
 import type {
-  DenseFieldErrorMap,
-  FormErrors,
+	DenseFieldErrorMap,
+	FormErrors,
 } from "@/shared/forms/core/types/field-error.types";
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 import type {
-  FormResult,
-  FormSuccessPayload,
+	FormResult,
+	FormSuccessPayload,
 } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
 
@@ -16,11 +16,11 @@ import type { FormValidationMetadata } from "@/shared/forms/core/types/validatio
  * Parameters for creating a form error result.
  */
 interface FormErrorParams<TFields extends string> {
-  readonly fieldErrors: DenseFieldErrorMap<TFields, string>;
-  readonly formData: SparseFieldValueMap<TFields, string>;
-  readonly formErrors: FormErrors;
-  readonly key: AppErrorKey;
-  readonly message: string;
+	readonly fieldErrors: DenseFieldErrorMap<TFields, string>;
+	readonly formData: SparseFieldValueMap<TFields, string>;
+	readonly formErrors: FormErrors;
+	readonly key: AppErrorKey;
+	readonly message: string;
 }
 
 /**
@@ -30,21 +30,21 @@ interface FormErrorParams<TFields extends string> {
  * @returns A Result containing an AppError with validation metadata.
  */
 export const makeFormError = <TFields extends string>(
-  params: FormErrorParams<TFields>,
+	params: FormErrorParams<TFields>,
 ): FormResult<never> => {
-  const metadata: FormValidationMetadata<TFields> = Object.freeze({
-    fieldErrors: params.fieldErrors,
-    formData: params.formData,
-    formErrors: params.formErrors,
-  });
+	const metadata: FormValidationMetadata<TFields> = Object.freeze({
+		fieldErrors: params.fieldErrors,
+		formData: params.formData,
+		formErrors: params.formErrors,
+	});
 
-  return Err(
-    makeAppError(params.key, {
-      cause: "",
-      message: params.message,
-      metadata,
-    }),
-  );
+	return Err(
+		makeAppError(params.key, {
+			cause: "",
+			message: params.message,
+			metadata,
+		}),
+	);
 };
 
 /**
@@ -55,13 +55,13 @@ export const makeFormError = <TFields extends string>(
  * @returns A Result containing the success payload.
  */
 export const makeFormOk = <TData>(
-  data: TData,
-  message: string,
+	data: TData,
+	message: string,
 ): FormResult<TData> => {
-  return Ok(
-    Object.freeze({
-      data,
-      message,
-    } satisfies FormSuccessPayload<TData>),
-  );
+	return Ok(
+		Object.freeze({
+			data,
+			message,
+		} satisfies FormSuccessPayload<TData>),
+	);
 };

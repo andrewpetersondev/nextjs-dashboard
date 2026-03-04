@@ -6,42 +6,42 @@ import { formatCurrency } from "@/shared/primitives/money/convert";
 import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
 interface LatestInvoiceItemProps {
-  readonly hasTopBorder: boolean;
-  readonly invoice: InvoiceListFilter;
+	readonly hasTopBorder: boolean;
+	readonly invoice: InvoiceListFilter;
 }
 
 export function LatestInvoiceItem({
-  invoice,
-  hasTopBorder,
+	invoice,
+	hasTopBorder,
 }: LatestInvoiceItemProps): JSX.Element {
-  return (
-    <div
-      className={clsx("flex flex-row items-center justify-between py-4", {
-        "border-text-secondary border-t": hasTopBorder,
-      })}
-      data-cy="latest-invoices-item"
-      key={invoice.id}
-    >
-      <div className="flex items-center">
-        <Image
-          alt={`${invoice.name}'s profile picture`}
-          className="mr-4 rounded-full"
-          height={IMAGE_SIZES.small}
-          src={invoice.imageUrl}
-          width={IMAGE_SIZES.small}
-        />
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-sm text-text-secondary md:text-base">
-            {invoice.name}
-          </p>
-          <p className="hidden text-sm text-text-secondary sm:block">
-            {invoice.email}
-          </p>
-        </div>
-      </div>
-      <p className="truncate font-medium text-sm text-text-secondary md:text-base">
-        {formatCurrency(invoice.amount)}
-      </p>
-    </div>
-  );
+	return (
+		<div
+			className={clsx("flex flex-row items-center justify-between py-4", {
+				"border-text-secondary border-t": hasTopBorder,
+			})}
+			data-cy="latest-invoices-item"
+			key={invoice.id}
+		>
+			<div className="flex items-center">
+				<Image
+					alt={`${invoice.name}'s profile picture`}
+					className="mr-4 rounded-full"
+					height={IMAGE_SIZES.small}
+					src={invoice.imageUrl}
+					width={IMAGE_SIZES.small}
+				/>
+				<div className="min-w-0">
+					<p className="truncate font-semibold text-sm text-text-secondary md:text-base">
+						{invoice.name}
+					</p>
+					<p className="hidden text-sm text-text-secondary sm:block">
+						{invoice.email}
+					</p>
+				</div>
+			</div>
+			<p className="truncate font-medium text-sm text-text-secondary md:text-base">
+				{formatCurrency(invoice.amount)}
+			</p>
+		</div>
+	);
 }

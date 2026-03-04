@@ -3,8 +3,8 @@ import type { JSX } from "react";
 import { useId, useMemo } from "react";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import {
-  USER_ROLES,
-  type UserRole,
+	USER_ROLES,
+	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
 import type { SelectMenuProps } from "@/ui/atoms/select-menu.atom";
 import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
@@ -14,17 +14,17 @@ import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
  * @template T - The role type.
  */
 interface RoleOption {
-  id: UserRole;
-  name: UserRole;
+	id: UserRole;
+	name: UserRole;
 }
 
 /**
  * Props for the UserRoleSelect component.
  */
 interface UserRoleSelectProps
-  extends Omit<SelectMenuProps<RoleOption>, "id" | "name" | "options"> {
-  readonly dataCy?: string;
-  readonly error?: FieldError;
+	extends Omit<SelectMenuProps<RoleOption>, "id" | "name" | "options"> {
+	readonly dataCy?: string;
+	readonly error?: FieldError;
 }
 
 /**
@@ -35,32 +35,32 @@ interface UserRoleSelectProps
  * @param props - Additional props for the SelectMenu component.
  */
 export const UserRoleSelect = ({
-  dataCy,
-  error,
-  ...props
+	dataCy,
+	error,
+	...props
 }: UserRoleSelectProps): JSX.Element => {
-  const id = useId();
+	const id = useId();
 
-  const roleOptions = useMemo(
-    (): RoleOption[] =>
-      USER_ROLES.map((role) => ({
-        id: role,
-        name: role,
-      })),
-    [],
-  );
+	const roleOptions = useMemo(
+		(): RoleOption[] =>
+			USER_ROLES.map((role) => ({
+				id: role,
+				name: role,
+			})),
+		[],
+	);
 
-  return (
-    <SelectFieldMolecule
-      dataCy={dataCy}
-      error={error}
-      icon={UserCircleIcon}
-      id={id}
-      label="Choose Role"
-      name="role"
-      options={roleOptions}
-      placeholder="Select a role"
-      {...props}
-    />
-  );
+	return (
+		<SelectFieldMolecule
+			dataCy={dataCy}
+			error={error}
+			icon={UserCircleIcon}
+			id={id}
+			label="Choose Role"
+			name="role"
+			options={roleOptions}
+			placeholder="Select a role"
+			{...props}
+		/>
+	);
 };

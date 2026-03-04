@@ -5,9 +5,9 @@ import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.e
 import { toRevenueId } from "@/modules/revenues/domain/revenue-id.mappers";
 import { toRevenueSource } from "@/modules/revenues/infrastructure/mappers/revenue-source.mapper";
 import {
-  isNonNegativeInteger,
-  isNonNegativeNumber,
-  validateCondition,
+	isNonNegativeInteger,
+	isNonNegativeNumber,
+	validateCondition,
 } from "@/modules/revenues/infrastructure/utils/validation";
 import type { RevenueRow } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
@@ -20,42 +20,42 @@ import { toPeriod } from "@/shared/primitives/period/period.mappers";
  * @throws Error if validation fails.
  */
 function validateRevenueRow(revenueRow: RevenueRow): void {
-  validateCondition(
-    revenueRow.calculationSource,
-    "Invalid revenue row: missing required field 'calculationSource'",
-  );
-  validateCondition(
-    isValid(revenueRow.createdAt),
-    "Invalid revenue row: 'createdAt' must be a Date",
-  );
-  validateCondition(
-    revenueRow.id,
-    "Invalid revenue row: missing required field 'id'",
-  );
-  validateCondition(
-    isNonNegativeInteger(revenueRow.invoiceCount),
-    "Invalid revenue row: 'invoiceCount' must be a non-negative integer",
-  );
-  validateCondition(
-    revenueRow.period,
-    "Invalid revenue row: missing required field 'period'",
-  );
-  validateCondition(
-    isNonNegativeNumber(revenueRow.totalAmount),
-    "Invalid revenue row: 'totalAmount' must be a non-negative number",
-  );
-  validateCondition(
-    isNonNegativeNumber(revenueRow.totalPaidAmount as number),
-    "Invalid revenue row: 'totalPaidAmount' must be a non-negative number",
-  );
-  validateCondition(
-    isNonNegativeNumber(revenueRow.totalPendingAmount as number),
-    "Invalid revenue row: 'totalPendingAmount' must be a non-negative number",
-  );
-  validateCondition(
-    isValid(revenueRow.updatedAt),
-    "Invalid revenue row: 'updatedAt' must be a Date",
-  );
+	validateCondition(
+		revenueRow.calculationSource,
+		"Invalid revenue row: missing required field 'calculationSource'",
+	);
+	validateCondition(
+		isValid(revenueRow.createdAt),
+		"Invalid revenue row: 'createdAt' must be a Date",
+	);
+	validateCondition(
+		revenueRow.id,
+		"Invalid revenue row: missing required field 'id'",
+	);
+	validateCondition(
+		isNonNegativeInteger(revenueRow.invoiceCount),
+		"Invalid revenue row: 'invoiceCount' must be a non-negative integer",
+	);
+	validateCondition(
+		revenueRow.period,
+		"Invalid revenue row: missing required field 'period'",
+	);
+	validateCondition(
+		isNonNegativeNumber(revenueRow.totalAmount),
+		"Invalid revenue row: 'totalAmount' must be a non-negative number",
+	);
+	validateCondition(
+		isNonNegativeNumber(revenueRow.totalPaidAmount as number),
+		"Invalid revenue row: 'totalPaidAmount' must be a non-negative number",
+	);
+	validateCondition(
+		isNonNegativeNumber(revenueRow.totalPendingAmount as number),
+		"Invalid revenue row: 'totalPendingAmount' must be a non-negative number",
+	);
+	validateCondition(
+		isValid(revenueRow.updatedAt),
+		"Invalid revenue row: 'updatedAt' must be a Date",
+	);
 }
 
 /**
@@ -65,49 +65,49 @@ function validateRevenueRow(revenueRow: RevenueRow): void {
  * @throws Error if mapping fails.
  */
 export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
-  if (!revenueRow || typeof revenueRow !== "object") {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Invalid revenue row data: expected non-null object",
-      metadata: {},
-    });
-  }
-  try {
-    validateRevenueRow(revenueRow);
+	if (!revenueRow || typeof revenueRow !== "object") {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Invalid revenue row data: expected non-null object",
+			metadata: {},
+		});
+	}
+	try {
+		validateRevenueRow(revenueRow);
 
-    const sourceResult = toRevenueSource(revenueRow.calculationSource);
-    const calculationSource: RevenueEntity["calculationSource"] =
-      typeof sourceResult === "object" && "ok" in sourceResult
-        ? // biome-ignore lint/style/noNestedTernary: <ignore for now>
-          sourceResult.ok
-          ? sourceResult.value
-          : (() => {
-              throw makeAppError(APP_ERROR_KEYS.validation, {
-                cause: "",
-                message: `Invalid calculationSource: ${sourceResult.error.message}`,
-                metadata: {},
-              });
-            })()
-        : sourceResult;
+		const sourceResult = toRevenueSource(revenueRow.calculationSource);
+		const calculationSource: RevenueEntity["calculationSource"] =
+			typeof sourceResult === "object" && "ok" in sourceResult
+				? // biome-ignore lint/style/noNestedTernary: <ignore for now>
+					sourceResult.ok
+					? sourceResult.value
+					: (() => {
+							throw makeAppError(APP_ERROR_KEYS.validation, {
+								cause: "",
+								message: `Invalid calculationSource: ${sourceResult.error.message}`,
+								metadata: {},
+							});
+						})()
+				: sourceResult;
 
-    return {
-      calculationSource,
-      createdAt: revenueRow.createdAt,
-      id: toRevenueId(revenueRow.id),
-      invoiceCount: revenueRow.invoiceCount,
-      period: toPeriod(revenueRow.period),
-      totalAmount: revenueRow.totalAmount,
-      totalPaidAmount: revenueRow.totalPaidAmount as number,
-      totalPendingAmount: revenueRow.totalPendingAmount as number,
-      updatedAt: revenueRow.updatedAt,
-    };
-  } catch (error) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: `Failed to map revenue row to entity: ${error instanceof Error ? error.message : "Unknown error"}`,
-      metadata: {},
-    });
-  }
+		return {
+			calculationSource,
+			createdAt: revenueRow.createdAt,
+			id: toRevenueId(revenueRow.id),
+			invoiceCount: revenueRow.invoiceCount,
+			period: toPeriod(revenueRow.period),
+			totalAmount: revenueRow.totalAmount,
+			totalPaidAmount: revenueRow.totalPaidAmount as number,
+			totalPendingAmount: revenueRow.totalPendingAmount as number,
+			updatedAt: revenueRow.updatedAt,
+		};
+	} catch (error) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: `Failed to map revenue row to entity: ${error instanceof Error ? error.message : "Unknown error"}`,
+			metadata: {},
+		});
+	}
 }
 
 /**
@@ -117,24 +117,24 @@ export function mapRevenueRowToEntity(revenueRow: RevenueRow): RevenueEntity {
  * @throws Error if mapping fails.
  */
 export function mapRevenueRowsToEntities(
-  revenueRows: RevenueRow[],
+	revenueRows: RevenueRow[],
 ): RevenueEntity[] {
-  if (!Array.isArray(revenueRows)) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Invalid revenue rows data: expected array",
-      metadata: {},
-    });
-  }
-  return revenueRows.map((revenueRow, index) => {
-    try {
-      return mapRevenueRowToEntity(revenueRow);
-    } catch (error) {
-      throw makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Failed to map revenue row at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
-        metadata: {},
-      });
-    }
-  });
+	if (!Array.isArray(revenueRows)) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Invalid revenue rows data: expected array",
+			metadata: {},
+		});
+	}
+	return revenueRows.map((revenueRow, index) => {
+		try {
+			return mapRevenueRowToEntity(revenueRow);
+		} catch (error) {
+			throw makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Failed to map revenue row at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
+				metadata: {},
+			});
+		}
+	});
 }

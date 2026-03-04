@@ -13,25 +13,25 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * Returns a raw projection reflecting the DB selection (no branding).
  */
 export async function fetchCustomersSelectDal(
-  db: AppDatabase,
+	db: AppDatabase,
 ): Promise<CustomerSelectRowRaw[]> {
-  try {
-    return await db
-      .select({
-        id: customers.id,
-        name: customers.name,
-      })
-      .from(customers)
-      .orderBy(asc(customers.name));
-  } catch (error) {
-    // Use structured logging in production
-    console.error("Database Error:", error);
-    throw makeAppError(APP_ERROR_KEYS.database, {
-      cause: Error.isError(error)
-        ? error
-        : "failed to fetch customers for select",
-      message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
-      metadata: {},
-    });
-  }
+	try {
+		return await db
+			.select({
+				id: customers.id,
+				name: customers.name,
+			})
+			.from(customers)
+			.orderBy(asc(customers.name));
+	} catch (error) {
+		// Use structured logging in production
+		console.error("Database Error:", error);
+		throw makeAppError(APP_ERROR_KEYS.database, {
+			cause: Error.isError(error)
+				? error
+				: "failed to fetch customers for select",
+			message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchAllFailed,
+			metadata: {},
+		});
+	}
 }

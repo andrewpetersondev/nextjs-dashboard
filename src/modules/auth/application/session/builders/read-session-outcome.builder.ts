@@ -1,7 +1,7 @@
 import type { ReadSessionOutcomeDto } from "@/modules/auth/application/session/dtos/responses/read-session-outcome.dto";
 import {
-  getSessionTimeLeftSec,
-  type SessionEntity,
+	getSessionTimeLeftSec,
+	type SessionEntity,
 } from "@/modules/auth/domain/session/entities/session.entity";
 import type { UnixSeconds } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
@@ -21,29 +21,29 @@ import type { Result } from "@/shared/core/result/result.dto";
  * Non-throwing: returns a Result so request flows can degrade gracefully.
  */
 export function buildReadSessionOutcome(
-  session: SessionEntity,
-  nowSec: UnixSeconds,
+	session: SessionEntity,
+	nowSec: UnixSeconds,
 ): Result<Readonly<ReadSessionOutcomeDto>, AppError> {
-  const timeLeftSec = getSessionTimeLeftSec(session, nowSec);
+	const timeLeftSec = getSessionTimeLeftSec(session, nowSec);
 
-  if (timeLeftSec < 0) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: `Invalid session: computed timeLeftSec is negative (${String(timeLeftSec)})`,
-        message: "Invalid session state",
-        metadata: {
-          policy: "session",
-          reason: "negative_time_left_sec",
-        },
-      }),
-    );
-  }
+	if (timeLeftSec < 0) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: `Invalid session: computed timeLeftSec is negative (${String(timeLeftSec)})`,
+				message: "Invalid session state",
+				metadata: {
+					policy: "session",
+					reason: "negative_time_left_sec",
+				},
+			}),
+		);
+	}
 
-  return Ok({
-    expiresAtSec: session.expiresAt,
-    id: session.userId,
-    issuedAtSec: session.issuedAt,
-    role: session.role,
-    timeLeftSec,
-  });
+	return Ok({
+		expiresAtSec: session.expiresAt,
+		id: session.userId,
+		issuedAtSec: session.issuedAt,
+		role: session.role,
+		timeLeftSec,
+	});
 }

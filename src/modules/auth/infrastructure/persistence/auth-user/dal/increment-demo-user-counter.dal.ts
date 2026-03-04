@@ -24,72 +24,72 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
 export async function incrementDemoUserCounterDal(
-  db: AppDatabase,
-  role: UserRole,
-  logger: LoggingClientContract,
+	db: AppDatabase,
+	role: UserRole,
+	logger: LoggingClientContract,
 ): Promise<Result<number, AppError>> {
-  try {
-    const [counterRow] = await db
-      .insert(demoUserCounters)
-      .values({ count: 1, role })
-      .returning();
+	try {
+		const [counterRow] = await db
+			.insert(demoUserCounters)
+			.values({ count: 1, role })
+			.returning();
 
-    if (!counterRow) {
-      logger.operation(
-        "error",
-        "Invariant failed: demoUserCounter did not return row",
-        {
-          error: new Error("row_missing"),
-          operationContext: "auth:dal",
-          operationIdentifiers: { role },
-          operationName: "demoUserCounter.invariant.rowMissing",
-        },
-      );
+		if (!counterRow) {
+			logger.operation(
+				"error",
+				"Invariant failed: demoUserCounter did not return row",
+				{
+					error: new Error("row_missing"),
+					operationContext: "auth:dal",
+					operationIdentifiers: { role },
+					operationName: "demoUserCounter.invariant.rowMissing",
+				},
+			);
 
-      return Err(
-        makeAppError(APP_ERROR_KEYS.integrity, {
-          cause: "row_missing",
-          message: "Invariant: insert did not return a row",
-          metadata: { pgCode: PG_CODES.INVARIANT_NO_ROWS_RETURNED },
-        }),
-      );
-    }
+			return Err(
+				makeAppError(APP_ERROR_KEYS.integrity, {
+					cause: "row_missing",
+					message: "Invariant: insert did not return a row",
+					metadata: { pgCode: PG_CODES.INVARIANT_NO_ROWS_RETURNED },
+				}),
+			);
+		}
 
-    // biome-ignore lint/nursery/noEqualsToNull: fix
-    if (counterRow.id == null) {
-      logger.operation("error", "Invalid counter row returned: missing id", {
-        error: new Error("missing_id"),
-        operationContext: "auth:dal",
-        operationIdentifiers: { role },
-        operationName: "demoUserCounter.invariant.missingId",
-      });
+		// biome-ignore lint/nursery/noEqualsToNull: fix
+		if (counterRow.id == null) {
+			logger.operation("error", "Invalid counter row returned: missing id", {
+				error: new Error("missing_id"),
+				operationContext: "auth:dal",
+				operationIdentifiers: { role },
+				operationName: "demoUserCounter.invariant.missingId",
+			});
 
-      return Err(
-        makeAppError(APP_ERROR_KEYS.integrity, {
-          cause: "missing_id",
-          message: "Invariant: demo user counter row returned with null id",
-          metadata: { pgCode: PG_CODES.INVARIANT_NO_ROWS_RETURNED },
-        }),
-      );
-    }
+			return Err(
+				makeAppError(APP_ERROR_KEYS.integrity, {
+					cause: "missing_id",
+					message: "Invariant: demo user counter row returned with null id",
+					metadata: { pgCode: PG_CODES.INVARIANT_NO_ROWS_RETURNED },
+				}),
+			);
+		}
 
-    logger.operation("info", "Demo user counter created for role", {
-      operationContext: "auth:dal",
-      operationIdentifiers: { count: counterRow.id, role },
-      operationName: "demoUserCounter.success",
-    });
+		logger.operation("info", "Demo user counter created for role", {
+			operationContext: "auth:dal",
+			operationIdentifiers: { count: counterRow.id, role },
+			operationName: "demoUserCounter.success",
+		});
 
-    return Ok(counterRow.id);
-  } catch (err: unknown) {
-    const error = normalizePgError(err);
+		return Ok(counterRow.id);
+	} catch (err: unknown) {
+		const error = normalizePgError(err);
 
-    logger.operation("error", "demoUserCounter.failed", {
-      error,
-      operationContext: "auth:dal",
-      operationIdentifiers: { role },
-      operationName: "demoUserCounter",
-    });
+		logger.operation("error", "demoUserCounter.failed", {
+			error,
+			operationContext: "auth:dal",
+			operationIdentifiers: { role },
+			operationName: "demoUserCounter",
+		});
 
-    return Err(error);
-  }
+		return Err(error);
+	}
 }

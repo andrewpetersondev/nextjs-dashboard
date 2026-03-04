@@ -20,29 +20,29 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @returns The user as UserDto, or null if not found.
  */
 export async function readUserDal(
-  db: AppDatabase,
-  id: UserId, // Use branded UserId for strict typing
+	db: AppDatabase,
+	id: UserId, // Use branded UserId for strict typing
 ): Promise<Result<UserEntity | null, AppError>> {
-  try {
-    // Fetch raw DB row, not UserEntity
-    const [userRow] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
+	try {
+		// Fetch raw DB row, not UserEntity
+		const [userRow] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, id))
+			.limit(1);
 
-    if (!userRow) {
-      return Ok(null);
-    }
+		if (!userRow) {
+			return Ok(null);
+		}
 
-    // Map raw DB row to UserEntity for type safety (brands id/role)
-    return Ok(toUserEntity(userRow));
-  } catch (error) {
-    logger.error("Failed to read user by ID.", {
-      context: "readUserDal",
-      error,
-      id,
-    });
-    return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
-  }
+		// Map raw DB row to UserEntity for type safety (brands id/role)
+		return Ok(toUserEntity(userRow));
+	} catch (error) {
+		logger.error("Failed to read user by ID.", {
+			context: "readUserDal",
+			error,
+			id,
+		});
+		return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
+	}
 }

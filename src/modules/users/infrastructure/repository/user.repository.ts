@@ -1,8 +1,8 @@
 import "server-only";
 import type {
-  CreateUserProps,
-  UpdateUserProps,
-  UserEntity,
+	CreateUserProps,
+	UpdateUserProps,
+	UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { createUserDal } from "@/modules/users/infrastructure/repository/dal/create-user.dal";
@@ -16,58 +16,58 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 
 export class UserRepositoryImpl {
-  protected readonly db: AppDatabase;
+	protected readonly db: AppDatabase;
 
-  constructor(db: AppDatabase) {
-    this.db = db;
-  }
+	constructor(db: AppDatabase) {
+		this.db = db;
+	}
 
-  async create(
-    input: CreateUserProps,
-  ): Promise<Result<UserEntity | null, AppError>> {
-    return await createUserDal(this.db, input);
-  }
+	async create(
+		input: CreateUserProps,
+	): Promise<Result<UserEntity | null, AppError>> {
+		return await createUserDal(this.db, input);
+	}
 
-  async delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-    return await deleteUserDal(this.db, id);
-  }
+	async delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+		return await deleteUserDal(this.db, id);
+	}
 
-  async readById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-    return await readUserDal(this.db, id);
-  }
+	async readById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+		return await readUserDal(this.db, id);
+	}
 
-  async readFilteredUsers(
-    query: string,
-    page: number,
-  ): Promise<Result<UserEntity[], AppError>> {
-    return await readFilteredUsersDal(this.db, query, page);
-  }
+	async readFilteredUsers(
+		query: string,
+		page: number,
+	): Promise<Result<UserEntity[], AppError>> {
+		return await readFilteredUsersDal(this.db, query, page);
+	}
 
-  async readPageCount(query: string): Promise<Result<number, AppError>> {
-    return await readUsersPageCountDal(this.db, query);
-  }
+	async readPageCount(query: string): Promise<Result<number, AppError>> {
+		return await readUsersPageCountDal(this.db, query);
+	}
 
-  async update(
-    id: UserId,
-    patch: UpdateUserProps,
-  ): Promise<Result<UserEntity | null, AppError>> {
-    return await updateUserDal(this.db, id, patch);
-  }
+	async update(
+		id: UserId,
+		patch: UpdateUserProps,
+	): Promise<Result<UserEntity | null, AppError>> {
+		return await updateUserDal(this.db, id, patch);
+	}
 
-  async withTransaction<T>(
-    fn: (txRepo: UserRepositoryImpl) => Promise<T>,
-  ): Promise<T> {
-    const dbWithTx = this.db as AppDatabase & {
-      transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
-    };
+	async withTransaction<T>(
+		fn: (txRepo: UserRepositoryImpl) => Promise<T>,
+	): Promise<T> {
+		const dbWithTx = this.db as AppDatabase & {
+			transaction<R>(scope: (tx: AppDatabase) => Promise<R>): Promise<R>;
+		};
 
-    if (typeof dbWithTx.transaction !== "function") {
-      throw new Error("Database does not support transactions");
-    }
+		if (typeof dbWithTx.transaction !== "function") {
+			throw new Error("Database does not support transactions");
+		}
 
-    return await dbWithTx.transaction(async (tx: AppDatabase) => {
-      const txRepo = new UserRepositoryImpl(tx);
-      return await fn(txRepo);
-    });
-  }
+		return await dbWithTx.transaction(async (tx: AppDatabase) => {
+			const txRepo = new UserRepositoryImpl(tx);
+			return await fn(txRepo);
+		});
+	}
 }

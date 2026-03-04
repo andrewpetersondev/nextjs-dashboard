@@ -14,9 +14,9 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An implementation of the {@link AuthUnitOfWorkContract}.
  */
 export function authUnitOfWorkFactory(
-  db: AppDatabase,
-  logger: LoggingClientContract,
-  requestId: string,
+	db: AppDatabase,
+	logger: LoggingClientContract,
+	requestId: string,
 ): AuthUnitOfWorkContract {
-  return new AuthUnitOfWorkAdapter(db, logger, requestId, authTxDepsFactory);
+	return new AuthUnitOfWorkAdapter(db, logger, requestId, authTxDepsFactory);
 }

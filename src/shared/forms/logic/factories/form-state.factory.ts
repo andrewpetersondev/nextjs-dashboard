@@ -13,22 +13,22 @@ import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-
  * before the first submission, but with empty messages.
  */
 export function makeInitialFormState<T extends string>(
-  fieldNames: readonly T[],
+	fieldNames: readonly T[],
 ): FormResult<never> {
-  const fieldErrors: DenseFieldErrorMap<T, string> =
-    makeEmptyDenseFieldErrorMap<T, string>(fieldNames);
+	const fieldErrors: DenseFieldErrorMap<T, string> =
+		makeEmptyDenseFieldErrorMap<T, string>(fieldNames);
 
-  const error = makeAppError("validation", {
-    cause: "INITIAL_STATE",
-    message: "",
-    metadata: Object.freeze({
-      fieldErrors,
-      formData: Object.freeze({}),
-      formErrors: EMPTY_FORM_ERRORS,
-    }),
-  });
+	const error = makeAppError("validation", {
+		cause: "INITIAL_STATE",
+		message: "",
+		metadata: Object.freeze({
+			fieldErrors,
+			formData: Object.freeze({}),
+			formErrors: EMPTY_FORM_ERRORS,
+		}),
+	});
 
-  return Err(error);
+	return Err(error);
 }
 
 /**
@@ -36,8 +36,8 @@ export function makeInitialFormState<T extends string>(
  * Extracts field names automatically from the schema shape.
  */
 export function makeInitialFormStateFromSchema<
-  S extends ZodObject<ZodRawShape>,
+	S extends ZodObject<ZodRawShape>,
 >(schema: S): FormResult<never> {
-  const fields = toSchemaKeys(schema);
-  return makeInitialFormState(fields);
+	const fields = toSchemaKeys(schema);
+	return makeInitialFormState(fields);
 }

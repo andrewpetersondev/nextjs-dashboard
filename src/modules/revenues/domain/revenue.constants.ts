@@ -1,9 +1,9 @@
 export const CHART_Y_AXIS = {
-  currencyPrefix: "$",
-  labelCount: 5,
-  paddingRatio: 0.1,
-  step: 1000,
-  thousandsSuffix: "K",
+	currencyPrefix: "$",
+	labelCount: 5,
+	paddingRatio: 0.1,
+	step: 1000,
+	thousandsSuffix: "K",
 };
 export const MIN_MONTH_NUMBER = 1 as const; // January as 1
 export const MAX_MONTH_NUMBER = 12 as const; // December as 12
@@ -13,18 +13,18 @@ export const SINGLE_MONTH_INTERVAL = 1 as const;
 // Example: with 12 months in the window, the start is current month minus 11 months
 export const ROLLING_START_OFFSET_MONTHS = 11 as const;
 export const MONTH_ORDER = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec",
 ] as const;
 // Standardized period durations used in revenue calculations.
 export const INTERVAL_DURATIONS = ["year", "month"] as const;

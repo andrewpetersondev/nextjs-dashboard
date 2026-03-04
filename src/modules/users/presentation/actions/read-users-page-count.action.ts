@@ -7,10 +7,10 @@ import { unwrapOrNull } from "@/shared/core/result/result";
  * Server action to fetch the total number of user pages.
  */
 export async function readUsersPageCountAction(
-  query: string = "",
+	query: string = "",
 ): Promise<number> {
-  const db = getAppDb();
-  const service = createUserService(db);
-  const result = await service.readUserPageCount(query);
-  return unwrapOrNull(result) ?? 0;
+	const db = getAppDb();
+	const service = createUserService(db);
+	const result = await service.readUserPageCount(query);
+	return unwrapOrNull(result) ?? 0;
 }

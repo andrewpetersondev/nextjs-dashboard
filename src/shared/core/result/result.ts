@@ -1,8 +1,8 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type {
-  ErrResult,
-  OkResult,
-  Result,
+	ErrResult,
+	OkResult,
+	Result,
 } from "@/shared/core/result/result.dto";
 
 /**
@@ -18,7 +18,7 @@ import type {
  * // frozen.a === 1
  */
 function freezeObject<TObject extends object>(obj: TObject): Readonly<TObject> {
-  return Object.freeze(obj);
+	return Object.freeze(obj);
 }
 
 /**
@@ -33,8 +33,8 @@ function freezeObject<TObject extends object>(obj: TObject): Readonly<TObject> {
  * // result.value === 42
  */
 export function Ok<TValue>(value: TValue): Result<TValue, never> {
-  const r = { ok: true as const, value } satisfies OkResult<TValue>;
-  return freezeObject(r);
+	const r = { ok: true as const, value } satisfies OkResult<TValue>;
+	return freezeObject(r);
 }
 
 /**
@@ -51,10 +51,10 @@ export function Ok<TValue>(value: TValue): Result<TValue, never> {
  */
 // biome-ignore lint/style/useExportsLast: blah blah blah
 export function Err<TError extends AppError>(
-  error: TError,
+	error: TError,
 ): Result<never, TError> {
-  const r = { error, ok: false as const } satisfies ErrResult<TError>;
-  return freezeObject(r);
+	const r = { error, ok: false as const } satisfies ErrResult<TError>;
+	return freezeObject(r);
 }
 
 /**
@@ -70,9 +70,9 @@ export function Err<TError extends AppError>(
  * }
  */
 function _isOk<TValue, TError extends AppError>(
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ): r is OkResult<TValue> {
-  return r.ok;
+	return r.ok;
 }
 
 /**
@@ -88,9 +88,9 @@ function _isOk<TValue, TError extends AppError>(
  * }
  */
 function _isErr<TValue, TError extends AppError>(
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ): r is ErrResult<TError> {
-  return !r.ok;
+	return !r.ok;
 }
 
 /**
@@ -105,9 +105,9 @@ function _isErr<TValue, TError extends AppError>(
  * // value is TValue or null
  */
 export function unwrapOrNull<TValue, TError extends AppError>(
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ): TValue | null {
-  return r.ok ? r.value : null;
+	return r.ok ? r.value : null;
 }
 
 /**
@@ -123,7 +123,7 @@ export function unwrapOrNull<TValue, TError extends AppError>(
  * // err is true if result is Err, false otherwise
  */
 function _toFlags<TValue, TError extends AppError>(
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ): readonly [isOk: boolean, isErr: boolean] {
-  return [r.ok, !r.ok] as const;
+	return [r.ok, !r.ok] as const;
 }

@@ -7,10 +7,10 @@ import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
  * @returns {UserDto} - The DTO with plain types.
  */
 export function toUserDto(entity: UserEntity): UserDto {
-  return {
-    email: String(entity.email),
-    id: String(entity.id),
-    role: entity.role,
-    username: String(entity.username),
-  };
+	return {
+		email: String(entity.email),
+		id: String(entity.id),
+		role: entity.role,
+		username: String(entity.username),
+	};
 }

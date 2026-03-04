@@ -1,6 +1,6 @@
 import {
-  REVENUE_ID_BRAND,
-  type RevenueId,
+	REVENUE_ID_BRAND,
+	type RevenueId,
 } from "@/modules/revenues/domain/types/revenue-id.brand";
 import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
 
@@ -12,6 +12,6 @@ import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const createRevenueId = createIdFactory<
-  typeof REVENUE_ID_BRAND,
-  RevenueId
+	typeof REVENUE_ID_BRAND,
+	RevenueId
 >(REVENUE_ID_BRAND, "RevenueId");

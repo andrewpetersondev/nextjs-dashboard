@@ -6,6 +6,6 @@ import { createEnumValidator } from "@/shared/primitives/core/enums/enum.factory
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const toIntervalDuration = createEnumValidator(
-  "IntervalDuration",
-  INTERVAL_DURATIONS,
+	"IntervalDuration",
+	INTERVAL_DURATIONS,
 );

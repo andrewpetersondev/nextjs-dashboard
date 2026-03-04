@@ -12,11 +12,11 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A function that maps a `Result<T, E>` to `Result<U, E>`.
  */
 function _map<T, U, E extends AppError>(
-  fn: (v: T) => U,
+	fn: (v: T) => U,
 ): (r: Result<T, E>) => Result<U, E> {
-  return function mapOk(r: Result<T, E>): Result<U, E> {
-    return r.ok ? Ok(fn(r.value)) : r;
-  };
+	return function mapOk(r: Result<T, E>): Result<U, E> {
+		return r.ok ? Ok(fn(r.value)) : r;
+	};
 }
 
 /**
@@ -29,11 +29,11 @@ function _map<T, U, E extends AppError>(
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E2>`.
  */
 function _mapErr<T, E1 extends AppError, E2 extends AppError>(
-  fn: (e: E1) => E2,
+	fn: (e: E1) => E2,
 ): (r: Result<T, E1>) => Result<T, E2> {
-  return function mapErrInner(r: Result<T, E1>): Result<T, E2> {
-    return r.ok ? r : Err(fn(r.error));
-  };
+	return function mapErrInner(r: Result<T, E1>): Result<T, E2> {
+		return r.ok ? r : Err(fn(r.error));
+	};
 }
 
 /**
@@ -48,12 +48,12 @@ function _mapErr<T, E1 extends AppError, E2 extends AppError>(
  * @returns A function that takes a result and transforms it using the provided mappings.
  */
 function _mapBoth<T, U, E1 extends AppError, E2 extends AppError>(
-  onOk: (v: T) => U,
-  onErr: (e: E1) => E2,
+	onOk: (v: T) => U,
+	onErr: (e: E1) => E2,
 ): (r: Result<T, E1>) => Result<U, E2> {
-  return function mapBothInner(r: Result<T, E1>): Result<U, E2> {
-    return r.ok ? Ok(onOk(r.value)) : Err(onErr(r.error));
-  };
+	return function mapBothInner(r: Result<T, E1>): Result<U, E2> {
+		return r.ok ? Ok(onOk(r.value)) : Err(onErr(r.error));
+	};
 }
 
 /**
@@ -66,11 +66,11 @@ function _mapBoth<T, U, E1 extends AppError, E2 extends AppError>(
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E1 | E2>`.
  */
 function _mapErrUnion<T, E1 extends AppError, E2 extends AppError>(
-  fn: (e: E1) => E2,
+	fn: (e: E1) => E2,
 ): (r: Result<T, E1>) => Result<T, E1 | E2> {
-  return function mapErrUnionInner(r: Result<T, E1>): Result<T, E1 | E2> {
-    return r.ok ? r : Err(fn(r.error));
-  };
+	return function mapErrUnionInner(r: Result<T, E1>): Result<T, E1 | E2> {
+		return r.ok ? r : Err(fn(r.error));
+	};
 }
 
 /**
@@ -84,15 +84,15 @@ function _mapErrUnion<T, E1 extends AppError, E2 extends AppError>(
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E1 | E2>`, preserving the original `Err` object when unchanged.
  */
 function _mapErrPreserve<T, E1 extends AppError, E2 extends AppError>(
-  fn: (e: E1) => E2,
+	fn: (e: E1) => E2,
 ): (r: Result<T, E1>) => Result<T, E1 | E2> {
-  return function mapErrPreserveInner(r: Result<T, E1>): Result<T, E1 | E2> {
-    if (r.ok) {
-      return r;
-    }
-    const mapped = fn(r.error);
-    return Object.is(mapped, r.error) ? r : Err(mapped);
-  };
+	return function mapErrPreserveInner(r: Result<T, E1>): Result<T, E1 | E2> {
+		if (r.ok) {
+			return r;
+		}
+		const mapped = fn(r.error);
+		return Object.is(mapped, r.error) ? r : Err(mapped);
+	};
 }
 
 /**
@@ -105,14 +105,14 @@ function _mapErrPreserve<T, E1 extends AppError, E2 extends AppError>(
  * @returns A function that accepts a `Result<Tv, Te>` and returns the same `Result`.
  */
 function _tap<Tv, Te extends AppError>(
-  fn: (v: Tv) => void,
+	fn: (v: Tv) => void,
 ): (r: Result<Tv, Te>) => Result<Tv, Te> {
-  return function tapInner(r: Result<Tv, Te>): Result<Tv, Te> {
-    if (r.ok) {
-      fn(r.value);
-    }
-    return r;
-  };
+	return function tapInner(r: Result<Tv, Te>): Result<Tv, Te> {
+		if (r.ok) {
+			fn(r.value);
+		}
+		return r;
+	};
 }
 
 /**
@@ -125,14 +125,14 @@ function _tap<Tv, Te extends AppError>(
  * @returns A function that accepts a `Result<Tv, Te>` and returns the same `Result`.
  */
 function _tapErr<Tv, Te extends AppError>(
-  fn: (e: Te) => void,
+	fn: (e: Te) => void,
 ): (r: Result<Tv, Te>) => Result<Tv, Te> {
-  return function tapErrInner(r: Result<Tv, Te>): Result<Tv, Te> {
-    if (!r.ok) {
-      fn(r.error);
-    }
-    return r;
-  };
+	return function tapErrInner(r: Result<Tv, Te>): Result<Tv, Te> {
+		if (!r.ok) {
+			fn(r.error);
+		}
+		return r;
+	};
 }
 
 /**
@@ -147,20 +147,20 @@ function _tapErr<Tv, Te extends AppError>(
  * @returns A function that accepts a `Result<Tv, Te>` and returns `Result<Tv, Te | Ts>`.
  */
 function _tapSafe<Tv, Te extends AppError, Ts extends AppError>(
-  fn: (v: Tv) => void,
-  mapError: (e: unknown) => Ts,
+	fn: (v: Tv) => void,
+	mapError: (e: unknown) => Ts,
 ): (r: Result<Tv, Te>) => Result<Tv, Te | Ts> {
-  return function tapSafeInner(r: Result<Tv, Te>): Result<Tv, Te | Ts> {
-    if (r.ok) {
-      try {
-        fn(r.value);
-      } catch (e) {
-        const sideErr = mapError(e);
-        return Err(sideErr);
-      }
-    }
-    return r;
-  };
+	return function tapSafeInner(r: Result<Tv, Te>): Result<Tv, Te | Ts> {
+		if (r.ok) {
+			try {
+				fn(r.value);
+			} catch (e) {
+				const sideErr = mapError(e);
+				return Err(sideErr);
+			}
+		}
+		return r;
+	};
 }
 
 /**
@@ -175,20 +175,20 @@ function _tapSafe<Tv, Te extends AppError, Ts extends AppError>(
  * @returns A function that accepts a `Result<Tv, Te>` and returns `Result<Tv, Te | Ts>`.
  */
 function _tapErrSafe<Tv, Te extends AppError, Ts extends AppError>(
-  fn: (e: Te) => void,
-  mapError: (e: unknown) => Ts,
+	fn: (e: Te) => void,
+	mapError: (e: unknown) => Ts,
 ): (r: Result<Tv, Te>) => Result<Tv, Te | Ts> {
-  return function tapErrSafeInner(r: Result<Tv, Te>): Result<Tv, Te | Ts> {
-    if (!r.ok) {
-      try {
-        fn(r.error);
-      } catch (e) {
-        const sideErr = mapError(e);
-        return Err(sideErr);
-      }
-    }
-    return r;
-  };
+	return function tapErrSafeInner(r: Result<Tv, Te>): Result<Tv, Te | Ts> {
+		if (!r.ok) {
+			try {
+				fn(r.error);
+			} catch (e) {
+				const sideErr = mapError(e);
+				return Err(sideErr);
+			}
+		}
+		return r;
+	};
 }
 
 /**
@@ -204,11 +204,11 @@ function _tapErrSafe<Tv, Te extends AppError, Ts extends AppError>(
  *          producing the transformed `Ok` value or propagating the first encountered `Err`.
  */
 function _flatMap<T, U, E extends AppError, F extends AppError>(
-  fn: (v: T) => Result<U, F>,
+	fn: (v: T) => Result<U, F>,
 ): (r: Result<T, E>) => Result<U, E | F> {
-  return function flatMapInner(r: Result<T, E>): Result<U, E | F> {
-    return r.ok ? fn(r.value) : r;
-  };
+	return function flatMapInner(r: Result<T, E>): Result<U, E | F> {
+		return r.ok ? fn(r.value) : r;
+	};
 }
 
 /**
@@ -221,10 +221,10 @@ function _flatMap<T, U, E extends AppError, F extends AppError>(
  * @throws The error of type `E` when `r.ok` is false.
  */
 function _unwrapOrThrow<T, E extends AppError>(r: Result<T, E>): T {
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
+	if (r.ok) {
+		return r.value;
+	}
+	throw r.error;
 }
 
 /**
@@ -236,9 +236,9 @@ function _unwrapOrThrow<T, E extends AppError>(r: Result<T, E>): T {
  * @returns A function that accepts a `Result<T, E>` and returns `T` or the `fallback`.
  */
 function _unwrapOr<T, E extends AppError>(fallback: T): (r: Result<T, E>) => T {
-  return function unwrapOrInner(r: Result<T, E>): T {
-    return r.ok ? r.value : fallback;
-  };
+	return function unwrapOrInner(r: Result<T, E>): T {
+		return r.ok ? r.value : fallback;
+	};
 }
 
 /**
@@ -250,11 +250,11 @@ function _unwrapOr<T, E extends AppError>(fallback: T): (r: Result<T, E>) => T {
  * @returns A function that accepts a `Result<T, E>` and returns `T` either from the result or computed via `fallback`.
  */
 function _unwrapOrElse<T, E extends AppError>(
-  fallback: (e: E) => T,
+	fallback: (e: E) => T,
 ): (r: Result<T, E>) => T {
-  return function unwrapOrElseInner(r: Result<T, E>): T {
-    return r.ok ? r.value : fallback(r.error);
-  };
+	return function unwrapOrElseInner(r: Result<T, E>): T {
+		return r.ok ? r.value : fallback(r.error);
+	};
 }
 
 /**
@@ -269,11 +269,11 @@ function _unwrapOrElse<T, E extends AppError>(
  * @returns The return value of either `onOk` or `onErr`.
  */
 function _match<T, E extends AppError, O>(
-  r: Result<T, E>,
-  onOk: (v: T) => O,
-  onErr: (e: E) => O,
+	r: Result<T, E>,
+	onOk: (v: T) => O,
+	onErr: (e: E) => O,
 ): O {
-  return r.ok ? onOk(r.value) : onErr(r.error);
+	return r.ok ? onOk(r.value) : onErr(r.error);
 }
 
 /**
@@ -287,10 +287,10 @@ function _match<T, E extends AppError, O>(
  * @returns A function that accepts a `Result<T, E>` and returns either `onOk` or `onErr`.
  */
 function _matchTo<T, E extends AppError, O>(
-  onOk: O,
-  onErr: O,
+	onOk: O,
+	onErr: O,
 ): (r: Result<T, E>) => O {
-  return function matchToInner(r: Result<T, E>): O {
-    return r.ok ? onOk : onErr;
-  };
+	return function matchToInner(r: Result<T, E>): O {
+		return r.ok ? onOk : onErr;
+	};
 }

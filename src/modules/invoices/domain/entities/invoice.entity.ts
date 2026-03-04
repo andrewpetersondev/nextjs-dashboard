@@ -12,13 +12,13 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Contains `id` as it represents the primary key in the database.
  */
 export interface InvoiceEntity {
-  readonly amount: number;
-  readonly customerId: CustomerId;
-  readonly date: Date;
-  readonly id: InvoiceId;
-  readonly revenuePeriod: Period;
-  readonly sensitiveData: string;
-  readonly status: InvoiceStatus;
+	readonly amount: number;
+	readonly customerId: CustomerId;
+	readonly date: Date;
+	readonly id: InvoiceId;
+	readonly revenuePeriod: Period;
+	readonly sensitiveData: string;
+	readonly status: InvoiceStatus;
 }
 
 /**

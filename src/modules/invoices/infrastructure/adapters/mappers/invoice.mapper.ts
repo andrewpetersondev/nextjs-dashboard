@@ -3,9 +3,9 @@ import "server-only";
 import { isValid } from "date-fns";
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 import type {
-  InvoiceEntity,
-  InvoiceFormEntity,
-  InvoiceServiceEntity,
+	InvoiceEntity,
+	InvoiceFormEntity,
+	InvoiceServiceEntity,
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
@@ -22,29 +22,29 @@ import { toPeriod } from "@/shared/primitives/period/period.mappers";
  * @returns A new Date object representing the first day of the month
  */
 function toFirstDayOfMonthLocal(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+	return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
 /**
  * Maps raw database row to branded Entity.
  */
 export function rawDbToInvoiceEntity(
-  row: InvoiceRow,
+	row: InvoiceRow,
 ): Result<InvoiceEntity, AppError> {
-  const statusResult = validateInvoiceStatus(row.status);
-  if (!statusResult.ok) {
-    return Err(statusResult.error);
-  }
+	const statusResult = validateInvoiceStatus(row.status);
+	if (!statusResult.ok) {
+		return Err(statusResult.error);
+	}
 
-  return Ok({
-    amount: row.amount,
-    customerId: toCustomerId(row.customerId),
-    date: row.date,
-    id: toInvoiceId(row.id),
-    revenuePeriod: toPeriod(row.revenuePeriod),
-    sensitiveData: row.sensitiveData,
-    status: statusResult.value,
-  });
+	return Ok({
+		amount: row.amount,
+		customerId: toCustomerId(row.customerId),
+		date: row.date,
+		id: toInvoiceId(row.id),
+		revenuePeriod: toPeriod(row.revenuePeriod),
+		sensitiveData: row.sensitiveData,
+		status: statusResult.value,
+	});
 }
 
 /**
@@ -55,22 +55,22 @@ export function rawDbToInvoiceEntity(
  * @param formEntity - `InvoiceFormEntity` Branded form entity with valid Date object
  */
 export function invoiceFormEntityToServiceEntity(
-  formEntity: InvoiceFormEntity,
+	formEntity: InvoiceFormEntity,
 ): Result<InvoiceServiceEntity, AppError> {
-  if (!isValid(formEntity.date)) {
-    return Err(
-      makeAppError("validation", {
-        cause: "",
-        message: `Invalid date in form entity: ${formEntity.date}`,
-        metadata: {},
-      }),
-    );
-  }
+	if (!isValid(formEntity.date)) {
+		return Err(
+			makeAppError("validation", {
+				cause: "",
+				message: `Invalid date in form entity: ${formEntity.date}`,
+				metadata: {},
+			}),
+		);
+	}
 
-  const derivedRevenuePeriod = toFirstDayOfMonthLocal(formEntity.date);
+	const derivedRevenuePeriod = toFirstDayOfMonthLocal(formEntity.date);
 
-  return Ok({
-    ...formEntity,
-    revenuePeriod: toPeriod(derivedRevenuePeriod),
-  });
+	return Ok({
+		...formEntity,
+		revenuePeriod: toPeriod(derivedRevenuePeriod),
+	});
 }

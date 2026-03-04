@@ -4,7 +4,7 @@ import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
 import { cn } from "@/ui/utils/cn";
 
 type GenericSelectMenu = <T extends { id: string; name: string }>(
-  props: SelectMenuProps<T>,
+	props: SelectMenuProps<T>,
 ) => React.ReactElement;
 
 type SelectMenuComponent = GenericSelectMenu & { displayName?: string };
@@ -14,30 +14,30 @@ type SelectMenuComponent = GenericSelectMenu & { displayName?: string };
  * @template T - The type of the option object.
  */
 export interface SelectMenuProps<
-  T extends { id: string; name: string } = { id: string; name: string },
+	T extends { id: string; name: string } = { id: string; name: string },
 > {
-  className?: string;
-  dataCy?: string;
-  defaultValue?: string;
-  disabled?: boolean;
-  error?: FieldError;
-  /**
-   * Optional id of the element that describes the select (e.g. the error container).
-   * If not provided, falls back to `${name}-error`.
-   */
-  errorId?: string;
-  /**
-   * Optional icon component to display on the left side.
-   * Defaults to UserCircleIcon.
-   */
-  icon?: React.ComponentType<React.ComponentProps<"svg">>;
-  id: string;
-  name: string;
-  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: T[];
-  placeholder?: string;
-  required?: boolean;
-  value?: string | undefined;
+	className?: string;
+	dataCy?: string;
+	defaultValue?: string;
+	disabled?: boolean;
+	error?: FieldError;
+	/**
+	 * Optional id of the element that describes the select (e.g. the error container).
+	 * If not provided, falls back to `${name}-error`.
+	 */
+	errorId?: string;
+	/**
+	 * Optional icon component to display on the left side.
+	 * Defaults to UserCircleIcon.
+	 */
+	icon?: React.ComponentType<React.ComponentProps<"svg">>;
+	id: string;
+	name: string;
+	onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+	options: T[];
+	placeholder?: string;
+	required?: boolean;
+	value?: string | undefined;
 }
 
 /**
@@ -47,63 +47,63 @@ export interface SelectMenuProps<
  */
 // biome-ignore lint/style/useExportsLast: <this follows convention>
 export const SelectMenuAtom: SelectMenuComponent = React.memo(
-  function SelectMenuInner<T extends { id: string; name: string }>({
-    className,
-    dataCy,
-    defaultValue,
-    disabled,
-    error,
-    errorId,
-    icon: Icon,
-    id,
-    name,
-    onChange,
-    options,
-    placeholder,
-    required,
-    value,
-  }: SelectMenuProps<T>): React.ReactElement {
-    const errorDescriptionId = error && error.length > 0 ? errorId : undefined;
+	function SelectMenuInner<T extends { id: string; name: string }>({
+		className,
+		dataCy,
+		defaultValue,
+		disabled,
+		error,
+		errorId,
+		icon: Icon,
+		id,
+		name,
+		onChange,
+		options,
+		placeholder,
+		required,
+		value,
+	}: SelectMenuProps<T>): React.ReactElement {
+		const errorDescriptionId = error && error.length > 0 ? errorId : undefined;
 
-    return (
-      <div className="relative flex items-center">
-        <select
-          aria-describedby={errorDescriptionId}
-          aria-label={placeholder}
-          className={cn(
-            "peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 pl-3 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
-            className,
-          )}
-          data-cy={dataCy}
-          defaultValue={defaultValue}
-          disabled={disabled}
-          id={id}
-          name={name}
-          onChange={onChange}
-          required={required}
-          value={value}
-        >
-          <option disabled={true} value="">
-            {placeholder}
-          </option>
-          {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.name}
-            </option>
-          ))}
-        </select>
-        {Icon && (
-          <Icon
-            className={cn(
-              "ml-3 shrink-0",
-              INPUT_ICON_CLASS,
-              "h-[18px] w-[18px]",
-            )}
-          />
-        )}
-      </div>
-    );
-  },
+		return (
+			<div className="relative flex items-center">
+				<select
+					aria-describedby={errorDescriptionId}
+					aria-label={placeholder}
+					className={cn(
+						"peer block w-full cursor-pointer rounded-md bg-bg-accent py-2 pl-3 text-sm text-text-primary ring-1 ring-bg-accent ring-inset placeholder:text-text-secondary focus:ring-2 focus:ring-bg-focus",
+						className,
+					)}
+					data-cy={dataCy}
+					defaultValue={defaultValue}
+					disabled={disabled}
+					id={id}
+					name={name}
+					onChange={onChange}
+					required={required}
+					value={value}
+				>
+					<option disabled={true} value="">
+						{placeholder}
+					</option>
+					{options.map((option) => (
+						<option key={option.id} value={option.id}>
+							{option.name}
+						</option>
+					))}
+				</select>
+				{Icon && (
+					<Icon
+						className={cn(
+							"ml-3 shrink-0",
+							INPUT_ICON_CLASS,
+							"h-[18px] w-[18px]",
+						)}
+					/>
+				)}
+			</div>
+		);
+	},
 ) as unknown as SelectMenuComponent;
 
 SelectMenuAtom.displayName = "SelectMenu";

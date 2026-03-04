@@ -19,7 +19,7 @@ export type FieldError<T = string> = NonEmptyArray<T>;
  * };
  */
 export type SparseFieldErrorMap<T extends string, M> = Partial<
-  Readonly<Record<T, FieldError<M>>>
+	Readonly<Record<T, FieldError<M>>>
 >;
 
 /**
@@ -35,7 +35,7 @@ export type SparseFieldErrorMap<T extends string, M> = Partial<
  * };
  */
 export type DenseFieldErrorMap<T extends string, M> = Readonly<
-  Record<T, readonly M[]>
+	Record<T, readonly M[]>
 >;
 
 /**

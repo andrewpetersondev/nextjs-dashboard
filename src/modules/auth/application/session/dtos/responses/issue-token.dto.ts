@@ -1,4 +1,4 @@
 export type IssuedTokenDto = Readonly<{
-  expiresAtMs: number;
-  token: string;
+	expiresAtMs: number;
+	token: string;
 }>;

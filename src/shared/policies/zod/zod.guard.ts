@@ -7,7 +7,7 @@ import { type ZodRawShape, z } from "zod";
  * @returns True if the schema is an object schema; otherwise false.
  */
 export const isZodObjectSchema = (
-  schema: z.ZodType,
+	schema: z.ZodType,
 ): schema is z.ZodObject<ZodRawShape> => schema instanceof z.ZodObject;
 
 /**
@@ -17,7 +17,7 @@ export const isZodObjectSchema = (
  * @returns `true` if `err` is an instance of {@link z.ZodError}; otherwise `false`.
  */
 export const isZodErrorInstance = (err: unknown): err is z.ZodError =>
-  err instanceof z.ZodError;
+	err instanceof z.ZodError;
 
 /**
  * Loose shape check for a value resembling a {@link z.ZodError}.
@@ -29,29 +29,29 @@ export const isZodErrorInstance = (err: unknown): err is z.ZodError =>
  * @returns `true` if `err` looks like a ZodError; otherwise `false`.
  */
 export const isZodErrorLikeShape = (
-  err: unknown,
+	err: unknown,
 ): err is {
-  name: string;
-  issues: { path: (string | number | symbol)[]; message: string }[];
+	name: string;
+	issues: { path: (string | number | symbol)[]; message: string }[];
 } => {
-  if (
-    typeof err !== "object" ||
-    err === null ||
-    !("name" in err) ||
-    err.name !== "ZodError" ||
-    !("issues" in err) ||
-    !Array.isArray(err.issues)
-  ) {
-    return false;
-  }
+	if (
+		typeof err !== "object" ||
+		err === null ||
+		!("name" in err) ||
+		err.name !== "ZodError" ||
+		!("issues" in err) ||
+		!Array.isArray(err.issues)
+	) {
+		return false;
+	}
 
-  return err.issues.every(
-    (issue) =>
-      typeof issue === "object" &&
-      issue !== null &&
-      "path" in issue &&
-      Array.isArray(issue.path) &&
-      "message" in issue &&
-      typeof issue.message === "string",
-  );
+	return err.issues.every(
+		(issue) =>
+			typeof issue === "object" &&
+			issue !== null &&
+			"path" in issue &&
+			Array.isArray(issue.path) &&
+			"message" in issue &&
+			typeof issue.message === "string",
+	);
 };

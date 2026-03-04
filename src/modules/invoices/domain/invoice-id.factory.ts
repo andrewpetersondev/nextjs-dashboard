@@ -1,6 +1,6 @@
 import {
-  INVOICE_ID_BRAND,
-  type InvoiceId,
+	INVOICE_ID_BRAND,
+	type InvoiceId,
 } from "@/modules/invoices/domain/types/invoice-id.brand";
 import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
 
@@ -12,6 +12,6 @@ import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const createInvoiceId = createIdFactory<
-  typeof INVOICE_ID_BRAND,
-  InvoiceId
+	typeof INVOICE_ID_BRAND,
+	InvoiceId
 >(INVOICE_ID_BRAND, "InvoiceId");

@@ -1,9 +1,9 @@
 import "server-only";
 
 import {
-  type LogMetadata,
-  logError,
-  logInfo,
+	type LogMetadata,
+	logError,
+	logInfo,
 } from "@/modules/revenues/application/cross-cutting/logging";
 
 /**
@@ -16,20 +16,20 @@ import {
  * @throws Error if the function fails.
  */
 export async function withErrorHandling<T>(
-  context: string,
-  operation: string,
-  fn: () => Promise<T>,
-  metadata?: LogMetadata,
+	context: string,
+	operation: string,
+	fn: () => Promise<T>,
+	metadata?: LogMetadata,
 ): Promise<T> {
-  try {
-    logInfo(context, `${operation} - started`, metadata);
+	try {
+		logInfo(context, `${operation} - started`, metadata);
 
-    const result = await fn();
+		const result = await fn();
 
-    logInfo(context, `${operation} - completed successfully`, metadata);
-    return result;
-  } catch (error) {
-    logError(context, `Error ${operation.toLowerCase()}`, error, metadata);
-    throw error;
-  }
+		logInfo(context, `${operation} - completed successfully`, metadata);
+		return result;
+	} catch (error) {
+		logError(context, `Error ${operation.toLowerCase()}`, error, metadata);
+		throw error;
+	}
 }

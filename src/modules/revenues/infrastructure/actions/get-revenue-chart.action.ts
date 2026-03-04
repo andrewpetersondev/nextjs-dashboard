@@ -2,8 +2,8 @@
 import { RevenueStatisticsService } from "@/modules/revenues/application/services/revenue-statistics.service";
 import type { RevenueChartDto } from "@/modules/revenues/domain/revenue.types";
 import {
-  mapEntityToSimpleRevenueDto,
-  mapToStatisticsDto,
+	mapEntityToSimpleRevenueDto,
+	mapToStatisticsDto,
 } from "@/modules/revenues/infrastructure/mappers/revenue-dto.mapper";
 import { RevenueRepository } from "@/modules/revenues/infrastructure/repository/revenue.repository";
 import { getAppDb } from "@/server/db/db.connection";
@@ -18,8 +18,8 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @template T - The type of data returned on successful operations
  */
 type RevenueActionResult<T> =
-  | { readonly error: string; readonly success: false }
-  | { readonly data: T; readonly success: true };
+	| { readonly error: string; readonly success: false }
+	| { readonly data: T; readonly success: true };
 
 /**
  * Retrieves complete revenue chart data for the last 12 months with statistical metrics.
@@ -32,33 +32,33 @@ type RevenueActionResult<T> =
  *
  */
 export async function getRevenueChartAction(): Promise<
-  RevenueActionResult<RevenueChartDto>
+	RevenueActionResult<RevenueChartDto>
 > {
-  try {
-    const repository = new RevenueRepository(getAppDb());
-    const service = new RevenueStatisticsService(repository);
+	try {
+		const repository = new RevenueRepository(getAppDb());
+		const service = new RevenueStatisticsService(repository);
 
-    const [entities, rawStatistics] = await Promise.all([
-      service.calculateForRollingYear(),
-      service.calculateStatistics(),
-    ]);
+		const [entities, rawStatistics] = await Promise.all([
+			service.calculateForRollingYear(),
+			service.calculateStatistics(),
+		]);
 
-    const monthlyData = entities.map(mapEntityToSimpleRevenueDto);
-    const statistics = mapToStatisticsDto(rawStatistics);
+		const monthlyData = entities.map(mapEntityToSimpleRevenueDto);
+		const statistics = mapToStatisticsDto(rawStatistics);
 
-    return {
-      data: {
-        monthlyData,
-        statistics,
-        year: new Date().getFullYear(),
-      },
-      success: true,
-    };
-  } catch (error) {
-    logger.error("Get revenue chart action error (rolling 12 months)", {
-      error,
-      message: "Get revenue chart action error (rolling 12 months)",
-    });
-    return { error: "Failed to fetch chart data", success: false };
-  }
+		return {
+			data: {
+				monthlyData,
+				statistics,
+				year: new Date().getFullYear(),
+			},
+			success: true,
+		};
+	} catch (error) {
+		logger.error("Get revenue chart action error (rolling 12 months)", {
+			error,
+			message: "Get revenue chart action error (rolling 12 months)",
+		});
+		return { error: "Failed to fetch chart data", success: false };
+	}
 }

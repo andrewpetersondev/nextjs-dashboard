@@ -13,59 +13,59 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns A promise that resolves when the token is stored and the operation is logged.
  */
 export async function setSessionCookieAndLogHelper(
-  deps: Readonly<{
-    logger: LoggingClientContract;
-    sessionCookieAdapter: SessionStoreContract;
-  }>,
-  params: Readonly<{
-    expiresAtMs: number;
-    identifiers: Record<string, unknown>;
-    message: string;
-    operationName: string;
-    token: string;
-  }>,
+	deps: Readonly<{
+		logger: LoggingClientContract;
+		sessionCookieAdapter: SessionStoreContract;
+	}>,
+	params: Readonly<{
+		expiresAtMs: number;
+		identifiers: Record<string, unknown>;
+		message: string;
+		operationName: string;
+		token: string;
+	}>,
 ): Promise<Result<void, AppError>> {
-  const setResult = await deps.sessionCookieAdapter.set(
-    params.token,
-    params.expiresAtMs,
-  );
+	const setResult = await deps.sessionCookieAdapter.set(
+		params.token,
+		params.expiresAtMs,
+	);
 
-  if (!setResult.ok) {
-    deps.logger.operation("warn", "Session cookie persistence failed", {
-      operationContext: AUTH_LOG_CONTEXTS.SESSION,
-      operationIdentifiers: {
-        ...params.identifiers,
-        expiresAtMs: params.expiresAtMs,
-      },
-      operationName: `${params.operationName}.failed`,
-    });
+	if (!setResult.ok) {
+		deps.logger.operation("warn", "Session cookie persistence failed", {
+			operationContext: AUTH_LOG_CONTEXTS.SESSION,
+			operationIdentifiers: {
+				...params.identifiers,
+				expiresAtMs: params.expiresAtMs,
+			},
+			operationName: `${params.operationName}.failed`,
+		});
 
-    deps.logger.errorWithDetails(
-      "Session cookie persistence failed with an application error.",
-      setResult.error,
-      {
-        operationContext: AUTH_LOG_CONTEXTS.SESSION,
-        operationIdentifiers: {
-          ...params.identifiers,
-          expiresAtMs: params.expiresAtMs,
-        },
-        operationName: `${params.operationName}.failed.details`,
-      },
-    );
+		deps.logger.errorWithDetails(
+			"Session cookie persistence failed with an application error.",
+			setResult.error,
+			{
+				operationContext: AUTH_LOG_CONTEXTS.SESSION,
+				operationIdentifiers: {
+					...params.identifiers,
+					expiresAtMs: params.expiresAtMs,
+				},
+				operationName: `${params.operationName}.failed.details`,
+			},
+		);
 
-    return Err(setResult.error);
-  }
+		return Err(setResult.error);
+	}
 
-  deps.logger.operation("info", params.message, {
-    operationContext: AUTH_LOG_CONTEXTS.SESSION,
-    operationIdentifiers: {
-      ...params.identifiers,
-      expiresAtMs: params.expiresAtMs,
-    },
-    operationName: params.operationName,
-  });
+	deps.logger.operation("info", params.message, {
+		operationContext: AUTH_LOG_CONTEXTS.SESSION,
+		operationIdentifiers: {
+			...params.identifiers,
+			expiresAtMs: params.expiresAtMs,
+		},
+		operationName: params.operationName,
+	});
 
-  return Ok(undefined);
+	return Ok(undefined);
 }
 
 /**
@@ -76,43 +76,43 @@ export async function setSessionCookieAndLogHelper(
  * @returns A promise that resolves when the token is deleted and the operation is logged.
  */
 export async function deleteSessionCookieAndLogHelper(
-  deps: Readonly<{
-    logger: LoggingClientContract;
-    sessionCookieAdapter: SessionStoreContract;
-  }>,
-  params: Readonly<{
-    identifiers: Record<string, unknown>;
-    message: string;
-    operationName: string;
-  }>,
+	deps: Readonly<{
+		logger: LoggingClientContract;
+		sessionCookieAdapter: SessionStoreContract;
+	}>,
+	params: Readonly<{
+		identifiers: Record<string, unknown>;
+		message: string;
+		operationName: string;
+	}>,
 ): Promise<Result<void, AppError>> {
-  const deleteResult = await deps.sessionCookieAdapter.delete();
+	const deleteResult = await deps.sessionCookieAdapter.delete();
 
-  if (!deleteResult.ok) {
-    deps.logger.operation("warn", "Session cookie deletion failed", {
-      operationContext: AUTH_LOG_CONTEXTS.SESSION,
-      operationIdentifiers: params.identifiers,
-      operationName: `${params.operationName}.failed`,
-    });
+	if (!deleteResult.ok) {
+		deps.logger.operation("warn", "Session cookie deletion failed", {
+			operationContext: AUTH_LOG_CONTEXTS.SESSION,
+			operationIdentifiers: params.identifiers,
+			operationName: `${params.operationName}.failed`,
+		});
 
-    deps.logger.errorWithDetails(
-      "Session cookie deletion failed with an application error.",
-      deleteResult.error,
-      {
-        operationContext: AUTH_LOG_CONTEXTS.SESSION,
-        operationIdentifiers: params.identifiers,
-        operationName: `${params.operationName}.failed.details`,
-      },
-    );
+		deps.logger.errorWithDetails(
+			"Session cookie deletion failed with an application error.",
+			deleteResult.error,
+			{
+				operationContext: AUTH_LOG_CONTEXTS.SESSION,
+				operationIdentifiers: params.identifiers,
+				operationName: `${params.operationName}.failed.details`,
+			},
+		);
 
-    return Err(deleteResult.error);
-  }
+		return Err(deleteResult.error);
+	}
 
-  deps.logger.operation("info", params.message, {
-    operationContext: AUTH_LOG_CONTEXTS.SESSION,
-    operationIdentifiers: params.identifiers,
-    operationName: params.operationName,
-  });
+	deps.logger.operation("info", params.message, {
+		operationContext: AUTH_LOG_CONTEXTS.SESSION,
+		operationIdentifiers: params.identifiers,
+		operationName: params.operationName,
+	});
 
-  return Ok(undefined);
+	return Ok(undefined);
 }

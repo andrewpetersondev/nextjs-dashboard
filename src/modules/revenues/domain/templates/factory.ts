@@ -14,17 +14,17 @@ import { toPeriod } from "@/shared/primitives/period/period.mappers";
  * DRY: used by default month and default period creators.
  */
 function makeDefaultRevenueEntity(p: Period): RevenueEntity {
-  return {
-    calculationSource: "template",
-    createdAt: new Date(),
-    id: toRevenueId(crypto.randomUUID()),
-    invoiceCount: 0,
-    period: toPeriod(p),
-    totalAmount: 0,
-    totalPaidAmount: 0,
-    totalPendingAmount: 0,
-    updatedAt: new Date(),
-  };
+	return {
+		calculationSource: "template",
+		createdAt: new Date(),
+		id: toRevenueId(crypto.randomUUID()),
+		invoiceCount: 0,
+		period: toPeriod(p),
+		totalAmount: 0,
+		totalPaidAmount: 0,
+		totalPendingAmount: 0,
+		updatedAt: new Date(),
+	};
 }
 
 /**
@@ -36,32 +36,32 @@ function makeDefaultRevenueEntity(p: Period): RevenueEntity {
  * @returns RollingMonthData object.
  */
 export function createMonthTemplateData(
-  displayOrder: number,
-  monthDate: Date,
-  calendarMonthIndex: number,
+	displayOrder: number,
+	monthDate: Date,
+	calendarMonthIndex: number,
 ): RollingMonthData {
-  const monthName = MONTH_ORDER[calendarMonthIndex];
-  if (!monthName) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: `Invalid month index: ${calendarMonthIndex}. Expected 0-11.`,
-      metadata: {},
-    });
-  }
+	const monthName = MONTH_ORDER[calendarMonthIndex];
+	if (!monthName) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: `Invalid month index: ${calendarMonthIndex}. Expected 0-11.`,
+			metadata: {},
+		});
+	}
 
-  const monthNumber = calendarMonthIndex + 1;
-  const period = toPeriod(
-    `${monthDate.getFullYear()}-${String(monthNumber).padStart(2, "0")}`,
-  );
-  const year = monthDate.getFullYear();
+	const monthNumber = calendarMonthIndex + 1;
+	const period = toPeriod(
+		`${monthDate.getFullYear()}-${String(monthNumber).padStart(2, "0")}`,
+	);
+	const year = monthDate.getFullYear();
 
-  return {
-    displayOrder,
-    month: monthName,
-    monthNumber,
-    period,
-    year,
-  };
+	return {
+		displayOrder,
+		month: monthName,
+		monthNumber,
+		period,
+		year,
+	};
 }
 
 /**
@@ -73,9 +73,9 @@ export function createMonthTemplateData(
  * @returns Complete RevenueDisplayEntity with default values.
  */
 export function createDefaultRevenueData(period: Period): RevenueDisplayEntity {
-  // Create a default RevenueEntity
-  const defaultEntity: RevenueEntity = makeDefaultRevenueEntity(period);
+	// Create a default RevenueEntity
+	const defaultEntity: RevenueEntity = makeDefaultRevenueEntity(period);
 
-  // Transform to RevenueDisplayEntity using the factory method
-  return createRevenueDisplayEntity(defaultEntity);
+	// Transform to RevenueDisplayEntity using the factory method
+	return createRevenueDisplayEntity(defaultEntity);
 }

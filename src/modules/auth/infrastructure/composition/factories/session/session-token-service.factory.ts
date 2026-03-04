@@ -11,8 +11,8 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An implementation of the {@link SessionTokenServiceContract}.
  */
 export function sessionTokenServiceFactory(
-  logger: LoggingClientContract,
+	logger: LoggingClientContract,
 ): SessionTokenServiceContract {
-  const tokenCodec = sessionTokenCodecFactory(logger);
-  return new SessionTokenService(tokenCodec);
+	const tokenCodec = sessionTokenCodecFactory(logger);
+	return new SessionTokenService(tokenCodec);
 }

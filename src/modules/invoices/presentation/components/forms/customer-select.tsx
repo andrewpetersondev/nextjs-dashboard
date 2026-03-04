@@ -10,10 +10,10 @@ import { SelectFieldMolecule } from "@/ui/molecules/select-field.molecule";
  * Props for the CustomerSelect component.
  */
 interface CustomerSelectProps
-  extends Omit<SelectMenuProps<CustomerField>, "id" | "name" | "options"> {
-  readonly customers: readonly CustomerField[];
-  readonly dataCy?: string;
-  readonly error?: FieldError;
+	extends Omit<SelectMenuProps<CustomerField>, "id" | "name" | "options"> {
+	readonly customers: readonly CustomerField[];
+	readonly dataCy?: string;
+	readonly error?: FieldError;
 }
 
 /**
@@ -25,26 +25,26 @@ interface CustomerSelectProps
  * @param props - Additional props for the SelectMenu component.
  */
 export const CustomerSelect = ({
-  customers,
-  dataCy,
-  error,
-  ...props
+	customers,
+	dataCy,
+	error,
+	...props
 }: CustomerSelectProps): JSX.Element => {
-  const id = useId();
+	const id = useId();
 
-  return (
-    <SelectFieldMolecule
-      dataCy={dataCy}
-      defaultValue=""
-      error={error}
-      icon={UserCircleIcon}
-      id={id}
-      label="Choose customer"
-      name="customerId"
-      options={[...customers]}
-      placeholder="Select a customer"
-      required={true}
-      {...props}
-    />
-  );
+	return (
+		<SelectFieldMolecule
+			dataCy={dataCy}
+			defaultValue=""
+			error={error}
+			icon={UserCircleIcon}
+			id={id}
+			label="Choose customer"
+			name="customerId"
+			options={[...customers]}
+			placeholder="Select a customer"
+			required={true}
+			{...props}
+		/>
+	);
 };

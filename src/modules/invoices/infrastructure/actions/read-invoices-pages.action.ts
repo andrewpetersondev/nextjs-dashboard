@@ -12,29 +12,29 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @returns Promise<number> - Total number of pages
  */
 export async function readInvoicesPagesAction(
-  query: string = "",
+	query: string = "",
 ): Promise<number> {
-  try {
-    const db = getAppDb();
-    const sanitizedQuery = query.trim();
-    const totalPages = await fetchInvoicesPagesDal(db, sanitizedQuery);
+	try {
+		const db = getAppDb();
+		const sanitizedQuery = query.trim();
+		const totalPages = await fetchInvoicesPagesDal(db, sanitizedQuery);
 
-    if (!Number.isInteger(totalPages) || totalPages < 1) {
-      logger.error("Invalid totalPages returned from DAL", {
-        context: "readInvoicesPagesAction",
-        query: sanitizedQuery,
-      });
-      throw new Error(INVOICE_MSG.fetchPagesFailed);
-    }
+		if (!Number.isInteger(totalPages) || totalPages < 1) {
+			logger.error("Invalid totalPages returned from DAL", {
+				context: "readInvoicesPagesAction",
+				query: sanitizedQuery,
+			});
+			throw new Error(INVOICE_MSG.fetchPagesFailed);
+		}
 
-    return totalPages;
-  } catch (error) {
-    logger.error(INVOICE_MSG.dbError, {
-      context: "readInvoicesPagesAction",
-      error,
-      message: INVOICE_MSG.dbError,
-      query,
-    });
-    throw new Error(INVOICE_MSG.dbError);
-  }
+		return totalPages;
+	} catch (error) {
+		logger.error(INVOICE_MSG.dbError, {
+			context: "readInvoicesPagesAction",
+			error,
+			message: INVOICE_MSG.dbError,
+			query,
+		});
+		throw new Error(INVOICE_MSG.dbError);
+	}
 }

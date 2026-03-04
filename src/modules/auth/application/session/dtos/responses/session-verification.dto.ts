@@ -7,10 +7,10 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * status of a user session to the presentation layer.
  */
 export interface SessionVerificationDto {
-  /** Indicates if the session is valid and authorized. */
-  readonly isAuthorized: boolean;
-  /** The role of the user associated with the session. */
-  readonly role: UserRole;
-  /** The unique identifier of the user as a string. */
-  readonly userId: string;
+	/** Indicates if the session is valid and authorized. */
+	readonly isAuthorized: boolean;
+	/** The role of the user associated with the session. */
+	readonly role: UserRole;
+	/** The unique identifier of the user as a string. */
+	readonly userId: string;
 }

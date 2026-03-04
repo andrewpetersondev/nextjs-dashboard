@@ -7,25 +7,25 @@ import { invoices } from "@/server/db/schema/invoices";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 export async function fetchTotalPaidInvoicesDal(
-  db: AppDatabase,
+	db: AppDatabase,
 ): Promise<number> {
-  const paid = await db
-    .select({
-      value: sql<number>`sum(
+	const paid = await db
+		.select({
+			value: sql<number>`sum(
             ${invoices.amount}
             )`,
-    })
-    .from(invoices)
-    .where(eq(invoices.status, "paid"))
-    .then((rows) => rows[0]?.value ?? 0);
+		})
+		.from(invoices)
+		.where(eq(invoices.status, "paid"))
+		.then((rows) => rows[0]?.value ?? 0);
 
-  if (paid === undefined) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.fetchTotalPaidFailed,
-      metadata: {},
-    });
-  }
+	if (paid === undefined) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.fetchTotalPaidFailed,
+			metadata: {},
+		});
+	}
 
-  return paid;
+	return paid;
 }

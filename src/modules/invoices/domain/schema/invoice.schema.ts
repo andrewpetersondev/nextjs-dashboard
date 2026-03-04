@@ -8,25 +8,25 @@ const MAX_SENSITIVE_DATA_LENGTH = 100;
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const amountCodec = z.codec(
-  z.string(),
-  z.number().positive().max(MAX_INVOICE_AMOUNT_USD),
-  {
-    decode: (val: string) => Number(val),
-    encode: (val: number) => val.toString(),
-  },
+	z.string(),
+	z.number().positive().max(MAX_INVOICE_AMOUNT_USD),
+	{
+		decode: (val: string) => Number(val),
+		encode: (val: number) => val.toString(),
+	},
 );
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const isoDateCodec = z.codec(z.string(), z.iso.date(), {
-  decode: (value: string) => value,
-  encode: (value: string) => value.toString(),
+	decode: (value: string) => value,
+	encode: (value: string) => value.toString(),
 });
 
 const sensitiveDataSchema: ZodString = z
-  .string()
-  .min(MIN_SENSITIVE_DATA_LENGTH)
-  .max(MAX_SENSITIVE_DATA_LENGTH)
-  .trim();
+	.string()
+	.min(MIN_SENSITIVE_DATA_LENGTH)
+	.max(MAX_SENSITIVE_DATA_LENGTH)
+	.trim();
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const invoiceStatusSchema = z.enum(INVOICE_STATUSES);
@@ -35,11 +35,11 @@ const customerIdSchema: ZodUUID = z.uuid();
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const InvoiceBaseSchema = z.object({
-  amount: amountCodec,
-  customerId: customerIdSchema,
-  date: isoDateCodec,
-  sensitiveData: sensitiveDataSchema,
-  status: invoiceStatusSchema,
+	amount: amountCodec,
+	customerId: customerIdSchema,
+	date: isoDateCodec,
+	sensitiveData: sensitiveDataSchema,
+	status: invoiceStatusSchema,
 });
 
 // biome-ignore lint/nursery/useExplicitType: fix
@@ -58,7 +58,7 @@ export type CreateInvoiceFieldNames = keyof CreateInvoiceInput;
 export type UpdateInvoiceFieldNames = keyof UpdateInvoiceInput;
 
 export type EditInvoiceViewModel = z.output<typeof CreateInvoiceSchema> & {
-  id: string;
+	id: string;
 };
 
 // biome-ignore lint/nursery/useExplicitType: fix

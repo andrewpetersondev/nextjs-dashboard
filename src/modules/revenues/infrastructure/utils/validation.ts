@@ -8,16 +8,16 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @throws Error if condition is falsy.
  */
 export const validateCondition = (
-  condition: unknown,
-  message: string,
+	condition: unknown,
+	message: string,
 ): void => {
-  if (!condition) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message,
-      metadata: {},
-    });
-  }
+	if (!condition) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message,
+			metadata: {},
+		});
+	}
 };
 
 /**
@@ -26,7 +26,7 @@ export const validateCondition = (
  * @returns True if non-negative integer.
  */
 export function isNonNegativeInteger(value: unknown): value is number {
-  return typeof value === "number" && Number.isInteger(value) && value >= 0;
+	return typeof value === "number" && Number.isInteger(value) && value >= 0;
 }
 
 /**
@@ -35,5 +35,5 @@ export function isNonNegativeInteger(value: unknown): value is number {
  * @returns True if non-negative number.
  */
 export function isNonNegativeNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+	return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }

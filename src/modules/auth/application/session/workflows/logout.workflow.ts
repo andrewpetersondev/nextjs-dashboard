@@ -12,7 +12,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A Result indicating success or an AppError.
  */
 export async function logoutWorkflow(
-  deps: Readonly<{ sessionService: SessionServiceContract }>,
+	deps: Readonly<{ sessionService: SessionServiceContract }>,
 ): Promise<Result<void, AppError>> {
-  return await deps.sessionService.terminate("logout");
+	return await deps.sessionService.terminate("logout");
 }

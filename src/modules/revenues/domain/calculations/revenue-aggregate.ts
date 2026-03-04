@@ -2,8 +2,8 @@
  * Aggregate data for revenue calculations.
  */
 type RevenueAggregate = Readonly<{
-  readonly invoiceCount: number;
-  readonly totalAmount: number;
+	readonly invoiceCount: number;
+	readonly totalAmount: number;
 }>;
 
 /**
@@ -14,14 +14,14 @@ type RevenueAggregate = Readonly<{
  * @returns Updated aggregate.
  */
 export function computeAggregateAfterAdd(
-  currentCount: number,
-  currentTotal: number,
-  addedAmount: number,
+	currentCount: number,
+	currentTotal: number,
+	addedAmount: number,
 ): RevenueAggregate {
-  return {
-    invoiceCount: currentCount + 1,
-    totalAmount: currentTotal + addedAmount,
-  } as const;
+	return {
+		invoiceCount: currentCount + 1,
+		totalAmount: currentTotal + addedAmount,
+	} as const;
 }
 
 /**
@@ -33,14 +33,14 @@ export function computeAggregateAfterAdd(
  * @returns Updated aggregate.
  */
 export function computeAggregateAfterRemoval(
-  existingCount: number,
-  existingTotal: number,
-  removedAmount: number,
+	existingCount: number,
+	existingTotal: number,
+	removedAmount: number,
 ): RevenueAggregate {
-  return {
-    invoiceCount: Math.max(0, existingCount - 1),
-    totalAmount: Math.max(0, existingTotal - removedAmount),
-  } as const;
+	return {
+		invoiceCount: Math.max(0, existingCount - 1),
+		totalAmount: Math.max(0, existingTotal - removedAmount),
+	} as const;
 }
 
 /**
@@ -53,14 +53,14 @@ export function computeAggregateAfterRemoval(
  * @returns Updated aggregate.
  */
 export function computeAggregateAfterAmountChange(
-  currentCount: number,
-  currentTotal: number,
-  previousAmount: number,
-  currentAmount: number,
+	currentCount: number,
+	currentTotal: number,
+	previousAmount: number,
+	currentAmount: number,
 ): RevenueAggregate {
-  const amountDifference = currentAmount - previousAmount;
-  return {
-    invoiceCount: currentCount,
-    totalAmount: currentTotal + amountDifference,
-  } as const;
+	const amountDifference = currentAmount - previousAmount;
+	return {
+		invoiceCount: currentCount,
+		totalAmount: currentTotal + amountDifference,
+	} as const;
 }

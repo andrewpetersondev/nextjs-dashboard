@@ -16,19 +16,19 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An instance of {@link LoginUseCase}.
  */
 export function loginUseCaseFactory(
-  db: AppDatabase,
-  logger: LoggingClientContract,
-  requestId: string,
+	db: AppDatabase,
+	logger: LoggingClientContract,
+	requestId: string,
 ): LoginUseCase {
-  const scopedLogger = logger.withContext("auth").withRequest(requestId);
+	const scopedLogger = logger.withContext("auth").withRequest(requestId);
 
-  // Implementation (Infrastructure)
-  const repo = new AuthUserRepository(db, scopedLogger, requestId);
+	// Implementation (Infrastructure)
+	const repo = new AuthUserRepository(db, scopedLogger, requestId);
 
-  // Adapter (Bridge Infrastructure to Contract)
-  const repoContract: AuthUserRepositoryContract =
-    new AuthUserRepositoryAdapter(repo);
+	// Adapter (Bridge Infrastructure to Contract)
+	const repoContract: AuthUserRepositoryContract =
+		new AuthUserRepositoryAdapter(repo);
 
-  // Use Case (Application Core)
-  return new LoginUseCase(repoContract, passwordHasherFactory(), scopedLogger);
+	// Use Case (Application Core)
+	return new LoginUseCase(repoContract, passwordHasherFactory(), scopedLogger);
 }

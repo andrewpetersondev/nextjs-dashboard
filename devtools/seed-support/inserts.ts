@@ -8,70 +8,70 @@ import type { Tx } from "./types";
 
 /** Insert revenues rows for each period. */
 export async function insertRevenues(tx: Tx): Promise<void> {
-  await tx
-    .insert(revenues)
-    .values(
-      periodDates.map((periodDate) => ({
-        calculationSource: "seed" as const,
-        invoiceCount: 0,
-        period: periodDate,
-        totalAmount: 0,
-        totalPaidAmount: 0,
-        totalPendingAmount: 0,
-      })),
-    )
-    .onConflictDoUpdate({
-      set: {
-        calculationSource: "seed",
-        invoiceCount: 0,
-        totalAmount: 0,
-        totalPaidAmount: 0,
-        totalPendingAmount: 0,
-        updatedAt: new Date(),
-      },
-      target: revenues.period,
-    });
+	await tx
+		.insert(revenues)
+		.values(
+			periodDates.map((periodDate) => ({
+				calculationSource: "seed" as const,
+				invoiceCount: 0,
+				period: periodDate,
+				totalAmount: 0,
+				totalPaidAmount: 0,
+				totalPendingAmount: 0,
+			})),
+		)
+		.onConflictDoUpdate({
+			set: {
+				calculationSource: "seed",
+				invoiceCount: 0,
+				totalAmount: 0,
+				totalPaidAmount: 0,
+				totalPendingAmount: 0,
+				updatedAt: new Date(),
+			},
+			target: revenues.period,
+		});
 }
 
 /** Insert demo customers. */
 export async function insertCustomers(tx: Tx): Promise<void> {
-  await tx.insert(customers).values(
-    customersData.map((c) => ({
-      email: c.email,
-      imageUrl: c.imageUrl,
-      name: c.name,
-    })),
-  );
+	await tx.insert(customers).values(
+		customersData.map((c) => ({
+			email: c.email,
+			imageUrl: c.imageUrl,
+			name: c.name,
+		})),
+	);
 }
 
 /** Fetch all customer ids after insertion. */
 export async function fetchCustomerIds(
-  tx: Tx,
+	tx: Tx,
 ): Promise<ReadonlyArray<{ readonly id: string }>> {
-  const rows = await tx.select({ id: customers.id }).from(customers);
-  if (rows.length === 0) {
-    throw new Error("No customers found after seeding customers.");
-  }
-  return rows as ReadonlyArray<{ readonly id: string }>;
+	const rows = await tx.select({ id: customers.id }).from(customers);
+	if (rows.length === 0) {
+		throw new Error("No customers found after seeding customers.");
+	}
+	return rows as ReadonlyArray<{ readonly id: string }>;
 }
 
 /** Insert demo counters for each role. */
 export async function insertDemoCounters(tx: Tx): Promise<void> {
-  await tx.insert(demoUserCounters).values(
-    roles.map((role) => ({
-      count:
-        Math.floor(
-          Math.random() *
-            (SEED_CONFIG.demoCounterMax - SEED_CONFIG.demoCounterMin + 1),
-        ) + SEED_CONFIG.demoCounterMin,
-      role,
-    })),
-  );
+	await tx.insert(demoUserCounters).values(
+		roles.map((role) => ({
+			count:
+				Math.floor(
+					Math.random() *
+						(SEED_CONFIG.demoCounterMax - SEED_CONFIG.demoCounterMin + 1),
+				) + SEED_CONFIG.demoCounterMin,
+			role,
+		})),
+	);
 }
 
 /** Aggregate revenues from invoices into revenues table. */
 export async function aggregateRevenues(tx: Tx): Promise<void> {
-  await tx.execute(sql`
+	await tx.execute(sql`
       UPDATE revenues AS r
       SET total_amount         = COALESCE(agg.total_amount, 0),
           total_paid_amount    = COALESCE(agg.total_paid_amount, 0),

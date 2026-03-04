@@ -7,32 +7,32 @@ import type { ChangeType } from "@/modules/revenues/events/updated-invoice/types
  * Detects how the invoice change affects revenue eligibility/amount.
  */
 export function detectChange(
-  previousInvoice: InvoiceDto,
-  currentInvoice: InvoiceDto,
+	previousInvoice: InvoiceDto,
+	currentInvoice: InvoiceDto,
 ): ChangeType {
-  const prevEligible = checkStatusEligibleForRevenue(previousInvoice.status);
-  const currEligible = checkStatusEligibleForRevenue(currentInvoice.status);
-  if (prevEligible && !currEligible) {
-    return "eligible-to-ineligible";
-  }
-  if (!prevEligible && currEligible) {
-    return "ineligible-to-eligible";
-  }
+	const prevEligible = checkStatusEligibleForRevenue(previousInvoice.status);
+	const currEligible = checkStatusEligibleForRevenue(currentInvoice.status);
+	if (prevEligible && !currEligible) {
+		return "eligible-to-ineligible";
+	}
+	if (!prevEligible && currEligible) {
+		return "ineligible-to-eligible";
+	}
 
-  if (
-    prevEligible &&
-    currEligible &&
-    previousInvoice.status !== currentInvoice.status
-  ) {
-    return "eligible-status-change";
-  }
+	if (
+		prevEligible &&
+		currEligible &&
+		previousInvoice.status !== currentInvoice.status
+	) {
+		return "eligible-status-change";
+	}
 
-  if (
-    prevEligible &&
-    currEligible &&
-    previousInvoice.amount !== currentInvoice.amount
-  ) {
-    return "eligible-amount-change";
-  }
-  return "none";
+	if (
+		prevEligible &&
+		currEligible &&
+		previousInvoice.amount !== currentInvoice.amount
+	) {
+		return "eligible-amount-change";
+	}
+	return "none";
 }

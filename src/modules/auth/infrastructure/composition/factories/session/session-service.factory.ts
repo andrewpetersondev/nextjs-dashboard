@@ -16,16 +16,16 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An implementation of the {@link SessionServiceContract}.
  */
 export function sessionServiceFactory(
-  logger: LoggingClientContract,
-  requestId: string,
+	logger: LoggingClientContract,
+	requestId: string,
 ): SessionServiceContract {
-  const scopedLogger = logger.withContext("auth").withRequest(requestId);
+	const scopedLogger = logger.withContext("auth").withRequest(requestId);
 
-  const deps: SessionUseCaseDeps = {
-    logger: scopedLogger,
-    sessionStore: sessionCookieStoreFactory(scopedLogger),
-    sessionTokenService: sessionTokenServiceFactory(scopedLogger),
-  };
+	const deps: SessionUseCaseDeps = {
+		logger: scopedLogger,
+		sessionStore: sessionCookieStoreFactory(scopedLogger),
+		sessionTokenService: sessionTokenServiceFactory(scopedLogger),
+	};
 
-  return new SessionService(deps);
+	return new SessionService(deps);
 }

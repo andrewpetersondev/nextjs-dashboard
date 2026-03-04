@@ -10,10 +10,10 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * associated with a session and to authorize operations based on their role.
  */
 export interface SessionPrincipalDto {
-  /** The unique identifier of the user. */
-  readonly id: UserId;
-  /** The role assigned to the user. */
-  readonly role: UserRole;
+	/** The unique identifier of the user. */
+	readonly id: UserId;
+	/** The role assigned to the user. */
+	readonly role: UserRole;
 }
 
 // TODO: consider expanding to include session state and renaming or creating SessionPrincipalDto

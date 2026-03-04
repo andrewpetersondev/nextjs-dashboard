@@ -27,92 +27,92 @@ import { UsernameSchema } from "@/shared/policies/username/username.schema";
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <FIX LATER>
 export function validateAuthUserEntity(
-  entity: AuthUserEntity,
+	entity: AuthUserEntity,
 ): Result<AuthUserEntity, AppError> {
-  const emailResult = EmailSchema.safeParse(entity.email);
+	const emailResult = EmailSchema.safeParse(entity.email);
 
-  if (!emailResult.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "invalid_email",
-        message: "auth.validation.invalid_email",
-        metadata: {
-          field: "email",
-          reason: "Email must be a valid, normalized email address",
-        },
-      }),
-    );
-  }
+	if (!emailResult.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "invalid_email",
+				message: "auth.validation.invalid_email",
+				metadata: {
+					field: "email",
+					reason: "Email must be a valid, normalized email address",
+				},
+			}),
+		);
+	}
 
-  const normalizedEmail = emailResult.data;
+	const normalizedEmail = emailResult.data;
 
-  const usernameResult = UsernameSchema.safeParse(entity.username);
+	const usernameResult = UsernameSchema.safeParse(entity.username);
 
-  if (!usernameResult.success) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "invalid_username",
-        message: "auth.validation.username_required",
-        metadata: {
-          field: "username",
-          reason: "Username must be present and satisfy username policy",
-        },
-      }),
-    );
-  }
+	if (!usernameResult.success) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "invalid_username",
+				message: "auth.validation.username_required",
+				metadata: {
+					field: "username",
+					reason: "Username must be present and satisfy username policy",
+				},
+			}),
+		);
+	}
 
-  const normalizedUsername = usernameResult.data;
+	const normalizedUsername = usernameResult.data;
 
-  // Normalize at the boundary so infra/domain entities always use canonical identity values.
-  // This keeps auth flows resilient even if legacy rows exist in the database.
-  const normalizedEntity: AuthUserEntity = {
-    ...entity,
-    email: normalizedEmail,
-    username: normalizedUsername,
-  };
+	// Normalize at the boundary so infra/domain entities always use canonical identity values.
+	// This keeps auth flows resilient even if legacy rows exist in the database.
+	const normalizedEntity: AuthUserEntity = {
+		...entity,
+		email: normalizedEmail,
+		username: normalizedUsername,
+	};
 
-  // Validate user ID
-  if (!normalizedEntity.id) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "missing_user_id",
-        message: "auth.validation.user_id_required",
-        metadata: {
-          field: "id",
-          reason: "User ID must be present",
-        },
-      }),
-    );
-  }
+	// Validate user ID
+	if (!normalizedEntity.id) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "missing_user_id",
+				message: "auth.validation.user_id_required",
+				metadata: {
+					field: "id",
+					reason: "User ID must be present",
+				},
+			}),
+		);
+	}
 
-  // Validate password hash (for authentication entities)
-  if (!normalizedEntity.password || normalizedEntity.password.length === 0) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "missing_password_hash",
-        message: "auth.validation.password_hash_required",
-        metadata: {
-          field: "password",
-          reason: "Password hash must be present for authentication",
-        },
-      }),
-    );
-  }
+	// Validate password hash (for authentication entities)
+	if (!normalizedEntity.password || normalizedEntity.password.length === 0) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "missing_password_hash",
+				message: "auth.validation.password_hash_required",
+				metadata: {
+					field: "password",
+					reason: "Password hash must be present for authentication",
+				},
+			}),
+		);
+	}
 
-  // Validate role
-  if (!normalizedEntity.role) {
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "missing_role",
-        message: "auth.validation.role_required",
-        metadata: {
-          field: "role",
-          reason: "User role must be present",
-        },
-      }),
-    );
-  }
+	// Validate role
+	if (!normalizedEntity.role) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "missing_role",
+				message: "auth.validation.role_required",
+				metadata: {
+					field: "role",
+					reason: "User role must be present",
+				},
+			}),
+		);
+	}
 
-  // All validations passed
-  return Ok(normalizedEntity);
+	// All validations passed
+	return Ok(normalizedEntity);
 }

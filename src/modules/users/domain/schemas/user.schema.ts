@@ -6,11 +6,11 @@ import { UsernameSchema } from "@/shared/policies/username/username.schema";
 
 // biome-ignore lint/nursery/useExplicitType: fix later
 const toUndefinedIfEmptyString = (v: unknown) =>
-  typeof v === "string" && v.trim() === "" ? undefined : v;
+	typeof v === "string" && v.trim() === "" ? undefined : v;
 
 // biome-ignore lint/nursery/useExplicitType: fix later
 function optionalEdit<T extends z.ZodType>(schema: T) {
-  return z.preprocess(toUndefinedIfEmptyString, schema).optional();
+	return z.preprocess(toUndefinedIfEmptyString, schema).optional();
 }
 
 /**
@@ -19,10 +19,10 @@ function optionalEdit<T extends z.ZodType>(schema: T) {
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
 const UserFormBaseSchema = z.strictObject({
-  email: EmailSchema, // already trims + lowercases via pipe
-  password: PasswordSchema, // trims with strength rules
-  role: UserRoleFormSchema, // normalized + validated
-  username: UsernameSchema, // trims + lowercases
+	email: EmailSchema, // already trims + lowercases via pipe
+	password: PasswordSchema, // trims with strength rules
+	role: UserRoleFormSchema, // normalized + validated
+	username: UsernameSchema, // trims + lowercases
 });
 
 /**
@@ -47,10 +47,10 @@ export const CreateUserFormSchema = UserFormBaseSchema;
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
 export const EditUserFormSchema = z.strictObject({
-  email: emailEdit,
-  password: passwordEdit,
-  role: roleEdit,
-  username: usernameEdit,
+	email: emailEdit,
+	password: passwordEdit,
+	role: roleEdit,
+	username: usernameEdit,
 });
 
 // UI/view-model types derived from the shared schema

@@ -3,8 +3,8 @@ import { DatabaseEnvironmentSchema } from "@/shared/core/config/schemas/env-sche
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const ToolingEnvShape = z.object({
-  cypressBaseUrl: z.url(),
-  databaseEnv: DatabaseEnvironmentSchema,
-  databaseUrl: z.string().min(1),
-  sessionSecret: z.string().min(1),
+	cypressBaseUrl: z.url(),
+	databaseEnv: DatabaseEnvironmentSchema,
+	databaseUrl: z.string().min(1),
+	sessionSecret: z.string().min(1),
 });

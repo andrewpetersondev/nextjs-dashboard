@@ -1,13 +1,13 @@
 import type { JSX, ReactNode } from "react";
 
 export function FormRowWrapper({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }): JSX.Element {
-  return (
-    <div className="mb-4">
-      <div className="rounded-md p-4">{children}</div>
-    </div>
-  );
+	return (
+		<div className="mb-4">
+			<div className="rounded-md p-4">{children}</div>
+		</div>
+	);
 }

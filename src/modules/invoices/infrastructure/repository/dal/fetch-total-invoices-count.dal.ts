@@ -12,24 +12,24 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @returns Total number of invoices as a number.
  */
 export async function fetchTotalInvoicesCountDal(
-  db: AppDatabase,
+	db: AppDatabase,
 ): Promise<number> {
-  try {
-    const [result] = await db
-      .select({ value: count(invoices.id) })
-      .from(invoices);
+	try {
+		const [result] = await db
+			.select({ value: count(invoices.id) })
+			.from(invoices);
 
-    return result?.value ?? 0;
-  } catch (error) {
-    logger.error("Error fetching total invoices count", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-    });
+		return result?.value ?? 0;
+	} catch (error) {
+		logger.error("Error fetching total invoices count", {
+			error: error instanceof Error ? error.message : "Unknown error",
+			stack: error instanceof Error ? error.stack : undefined,
+		});
 
-    throw makeAppError("database", {
-      cause: "",
-      message: "Failed to fetch dashboard cards.",
-      metadata: {},
-    });
-  }
+		throw makeAppError("database", {
+			cause: "",
+			message: "Failed to fetch dashboard cards.",
+			metadata: {},
+		});
+	}
 }

@@ -10,9 +10,9 @@ import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
  * Currently uncontrolled - consider changing to controlled input with onChange handler.
  */
 interface InvoiceDateProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
-  defaultValue: string;
-  label?: string;
+	extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+	defaultValue: string;
+	label?: string;
 }
 
 /**
@@ -20,29 +20,29 @@ interface InvoiceDateProps
  * Provides consistent styling with other form components.
  */
 export function InvoiceDate({
-  value,
-  defaultValue,
-  min = "2020-01-01",
-  max = "2029-12-31",
-  label = "Date",
-  id = "date",
-  name = "date",
-  required = true,
-  ...rest
+	value,
+	defaultValue,
+	min = "2020-01-01",
+	max = "2029-12-31",
+	label = "Date",
+	id = "date",
+	name = "date",
+	required = true,
+	...rest
 }: InvoiceDateProps): JSX.Element {
-  return (
-    <InputFieldMolecule
-      defaultValue={defaultValue}
-      icon={<CalendarDaysIcon className={INPUT_ICON_CLASS} />}
-      id={id}
-      label={label}
-      max={max}
-      min={min}
-      name={name}
-      required={required}
-      type="date"
-      value={value}
-      {...rest}
-    />
-  );
+	return (
+		<InputFieldMolecule
+			defaultValue={defaultValue}
+			icon={<CalendarDaysIcon className={INPUT_ICON_CLASS} />}
+			id={id}
+			label={label}
+			max={max}
+			min={min}
+			name={name}
+			required={required}
+			type="date"
+			value={value}
+			{...rest}
+		/>
+	);
 }

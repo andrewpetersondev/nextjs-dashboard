@@ -4,9 +4,9 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
 import {
-  GUEST_ROLE,
-  USER_ROLES,
-  type UserRole,
+	GUEST_ROLE,
+	USER_ROLES,
+	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
 
 /**
@@ -16,7 +16,7 @@ import {
  * @returns {boolean} - True if the value is a valid UserRole.
  */
 function isUserRole(role: unknown): role is UserRole {
-  return typeof role === "string" && USER_ROLES.includes(role as UserRole);
+	return typeof role === "string" && USER_ROLES.includes(role as UserRole);
 }
 
 /**
@@ -24,19 +24,19 @@ function isUserRole(role: unknown): role is UserRole {
  * Does not throw.
  */
 export function toUserRole(role: unknown): Result<UserRole, AppError> {
-  const value = typeof role === "string" ? role.trim().toUpperCase() : role;
+	const value = typeof role === "string" ? role.trim().toUpperCase() : role;
 
-  if (isUserRole(value)) {
-    return Ok(value);
-  }
+	if (isUserRole(value)) {
+		return Ok(value);
+	}
 
-  return Err(
-    makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Invalid user role",
-      metadata: {},
-    }),
-  );
+	return Err(
+		makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Invalid user role",
+			metadata: {},
+		}),
+	);
 }
 
 /**
@@ -46,6 +46,6 @@ export function toUserRole(role: unknown): Result<UserRole, AppError> {
  * @returns {UserRole} - A valid user role.
  */
 export const normalizeUserRole = (role: unknown): UserRole => {
-  const result = toUserRole(role);
-  return result.ok ? result.value : GUEST_ROLE;
+	const result = toUserRole(role);
+	return result.ok ? result.value : GUEST_ROLE;
 };

@@ -24,74 +24,74 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @implements {SessionServiceContract}
  */
 export class SessionService implements SessionServiceContract {
-  private readonly deps: SessionUseCaseDeps;
+	private readonly deps: SessionUseCaseDeps;
 
-  /**
-   * Initializes the session service.
-   *
-   * @param deps - The dependencies required by session use cases.
-   */
-  constructor(deps: SessionUseCaseDeps) {
-    this.deps = deps;
-  }
+	/**
+	 * Initializes the session service.
+	 *
+	 * @param deps - The dependencies required by session use cases.
+	 */
+	constructor(deps: SessionUseCaseDeps) {
+		this.deps = deps;
+	}
 
-  /**
-   * Establishes a new session for a user.
-   *
-   * @param user - The user principal for whom to establish the session.
-   * @returns A promise resolving to a {@link Result} containing the user principal.
-   */
-  establish(
-    user: SessionPrincipalDto,
-  ): Promise<Result<SessionPrincipalDto, AppError>> {
-    return new EstablishSessionUseCase(this.deps).execute(user);
-  }
+	/**
+	 * Establishes a new session for a user.
+	 *
+	 * @param user - The user principal for whom to establish the session.
+	 * @returns A promise resolving to a {@link Result} containing the user principal.
+	 */
+	establish(
+		user: SessionPrincipalDto,
+	): Promise<Result<SessionPrincipalDto, AppError>> {
+		return new EstablishSessionUseCase(this.deps).execute(user);
+	}
 
-  /**
-   * Reads the current session.
-   *
-   * @returns A promise resolving to a {@link Result} containing the session outcome or undefined if no session.
-   */
-  read(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>> {
-    return new ReadSessionUseCase(this.deps).execute();
-  }
+	/**
+	 * Reads the current session.
+	 *
+	 * @returns A promise resolving to a {@link Result} containing the session outcome or undefined if no session.
+	 */
+	read(): Promise<Result<ReadSessionOutcomeDto | undefined, AppError>> {
+		return new ReadSessionUseCase(this.deps).execute();
+	}
 
-  /**
-   * Rotates the current session.
-   *
-   * @returns A promise resolving to a {@link Result} containing the updated session outcome.
-   */
-  rotate(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
-    return new RotateSessionUseCase(this.deps).execute();
-  }
+	/**
+	 * Rotates the current session.
+	 *
+	 * @returns A promise resolving to a {@link Result} containing the updated session outcome.
+	 */
+	rotate(): Promise<Result<UpdateSessionOutcomeDto, AppError>> {
+		return new RotateSessionUseCase(this.deps).execute();
+	}
 
-  /**
-   * Terminates the current session.
-   *
-   * @param reason - The reason for terminating the session.
-   * @returns A promise resolving to a {@link Result} indicating success.
-   */
-  terminate(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
-    return new TerminateSessionUseCase(this.deps).execute(reason);
-  }
+	/**
+	 * Terminates the current session.
+	 *
+	 * @param reason - The reason for terminating the session.
+	 * @returns A promise resolving to a {@link Result} indicating success.
+	 */
+	terminate(reason: TerminateSessionReason): Promise<Result<void, AppError>> {
+		return new TerminateSessionUseCase(this.deps).execute(reason);
+	}
 
-  /**
-   * Verifies the current session.
-   *
-   * @returns A promise resolving to a {@link Result} containing the session verification data.
-   */
-  async verify(): Promise<Result<SessionVerificationDto, AppError>> {
-    const requireSessionUseCase: RequireSessionUseCase =
-      new RequireSessionUseCase(new ReadSessionUseCase(this.deps));
+	/**
+	 * Verifies the current session.
+	 *
+	 * @returns A promise resolving to a {@link Result} containing the session verification data.
+	 */
+	async verify(): Promise<Result<SessionVerificationDto, AppError>> {
+		const requireSessionUseCase: RequireSessionUseCase =
+			new RequireSessionUseCase(new ReadSessionUseCase(this.deps));
 
-    const sessionResult = await requireSessionUseCase.execute();
-    if (!sessionResult.ok) {
-      return Err(sessionResult.error);
-    }
-    return Ok({
-      isAuthorized: true,
-      role: sessionResult.value.role,
-      userId: String(sessionResult.value.id),
-    });
-  }
+		const sessionResult = await requireSessionUseCase.execute();
+		if (!sessionResult.ok) {
+			return Err(sessionResult.error);
+		}
+		return Ok({
+			isAuthorized: true,
+			role: sessionResult.value.role,
+			userId: String(sessionResult.value.id),
+		});
+	}
 }

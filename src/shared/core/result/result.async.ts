@@ -14,20 +14,20 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A function that accepts a Result and returns a Promise resolving to Result with transformed value or errors.
  */
 function _flatMapAsync<
-  TValue,
-  TNextValue,
-  TError extends AppError,
-  TNextError extends AppError,
+	TValue,
+	TNextValue,
+	TError extends AppError,
+	TNextError extends AppError,
 >(
-  fn: (v: TValue) => Promise<Result<TNextValue, TNextError>>,
+	fn: (v: TValue) => Promise<Result<TNextValue, TNextError>>,
 ): (
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ) => Promise<Result<TNextValue, TError | TNextError>> {
-  return function flatMapAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TNextValue, TError | TNextError>> {
-    return r.ok ? fn(r.value) : Promise.resolve(r);
-  };
+	return function flatMapAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TNextValue, TError | TNextError>> {
+		return r.ok ? fn(r.value) : Promise.resolve(r);
+	};
 }
 
 /**
@@ -43,29 +43,29 @@ function _flatMapAsync<
  * @returns A function that accepts a Result and returns a Promise resolving to new Result with transformed or error value.
  */
 function _flatMapSafeAsync<
-  TValue,
-  TNextValue,
-  TError extends AppError,
-  TNextError extends AppError,
-  TSideError extends AppError,
+	TValue,
+	TNextValue,
+	TError extends AppError,
+	TNextError extends AppError,
+	TSideError extends AppError,
 >(
-  fn: (v: TValue) => Promise<Result<TNextValue, TNextError>>,
-  mapError: (e: unknown) => TSideError,
+	fn: (v: TValue) => Promise<Result<TNextValue, TNextError>>,
+	mapError: (e: unknown) => TSideError,
 ): (
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ) => Promise<Result<TNextValue, TError | TNextError | TSideError>> {
-  return async function flatMapSafeAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TNextValue, TError | TNextError | TSideError>> {
-    if (!r.ok) {
-      return r;
-    }
-    try {
-      return await fn(r.value);
-    } catch (e) {
-      return Err(mapError(e));
-    }
-  };
+	return async function flatMapSafeAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TNextValue, TError | TNextError | TSideError>> {
+		if (!r.ok) {
+			return r;
+		}
+		try {
+			return await fn(r.value);
+		} catch (e) {
+			return Err(mapError(e));
+		}
+	};
 }
 
 /**
@@ -78,13 +78,13 @@ function _flatMapSafeAsync<
  * @returns A function that accepts a Result and returns a Promise resolving to transformed Result or original error.
  */
 function _mapAsync<TValue, TNextValue, TError extends AppError>(
-  fn: (v: TValue) => Promise<TNextValue>,
+	fn: (v: TValue) => Promise<TNextValue>,
 ): (r: Result<TValue, TError>) => Promise<Result<TNextValue, TError>> {
-  return function mapAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TNextValue, TError>> {
-    return r.ok ? fn(r.value).then(Ok) : Promise.resolve(r);
-  };
+	return function mapAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TNextValue, TError>> {
+		return r.ok ? fn(r.value).then(Ok) : Promise.resolve(r);
+	};
 }
 
 /**
@@ -97,17 +97,17 @@ function _mapAsync<TValue, TNextValue, TError extends AppError>(
  * @returns A function that accepts a Result and returns a Promise resolving to transformed error or original value.
  */
 function _mapErrAsync<
-  TValue,
-  TError extends AppError,
-  TNextError extends AppError,
+	TValue,
+	TError extends AppError,
+	TNextError extends AppError,
 >(
-  fn: (e: TError) => Promise<TNextError>,
+	fn: (e: TError) => Promise<TNextError>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TNextError>> {
-  return function mapErrAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TValue, TNextError>> {
-    return r.ok ? Promise.resolve(r) : fn(r.error).then(Err);
-  };
+	return function mapErrAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TValue, TNextError>> {
+		return r.ok ? Promise.resolve(r) : fn(r.error).then(Err);
+	};
 }
 
 /**
@@ -122,29 +122,29 @@ function _mapErrAsync<
  * @returns A function that accepts a Result and returns a Promise resolving to Result with transformed error or value.
  */
 function _mapErrSafeAsync<
-  TValue,
-  TError extends AppError,
-  TNextError extends AppError,
-  TSideError extends AppError,
+	TValue,
+	TError extends AppError,
+	TNextError extends AppError,
+	TSideError extends AppError,
 >(
-  fn: (e: TError) => Promise<TNextError>,
-  mapError: (e: unknown) => TSideError,
+	fn: (e: TError) => Promise<TNextError>,
+	mapError: (e: unknown) => TSideError,
 ): (
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ) => Promise<Result<TValue, TNextError | TSideError>> {
-  return async function mapErrSafeAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TValue, TNextError | TSideError>> {
-    if (r.ok) {
-      return r;
-    }
-    try {
-      const next = await fn(r.error);
-      return Err(next);
-    } catch (e) {
-      return Err(mapError(e));
-    }
-  };
+	return async function mapErrSafeAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TValue, TNextError | TSideError>> {
+		if (r.ok) {
+			return r;
+		}
+		try {
+			const next = await fn(r.error);
+			return Err(next);
+		} catch (e) {
+			return Err(mapError(e));
+		}
+	};
 }
 
 /**
@@ -159,133 +159,133 @@ function _mapErrSafeAsync<
  * @returns A function that accepts a Result and returns a Promise resolving to new Result with transformed value or error.
  */
 function _mapSafeAsync<
-  TValue,
-  TNextValue,
-  TError extends AppError,
-  TSideError extends AppError,
+	TValue,
+	TNextValue,
+	TError extends AppError,
+	TSideError extends AppError,
 >(
-  fn: (v: TValue) => Promise<TNextValue>,
-  mapError: (e: unknown) => TSideError,
+	fn: (v: TValue) => Promise<TNextValue>,
+	mapError: (e: unknown) => TSideError,
 ): (
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ) => Promise<Result<TNextValue, TError | TSideError>> {
-  return async function mapSafeAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TNextValue, TError | TSideError>> {
-    if (!r.ok) {
-      return r;
-    }
-    try {
-      return Ok(await fn(r.value));
-    } catch (e) {
-      return Err(mapError(e));
-    }
-  };
+	return async function mapSafeAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TNextValue, TError | TSideError>> {
+		if (!r.ok) {
+			return r;
+		}
+		try {
+			return Ok(await fn(r.value));
+		} catch (e) {
+			return Err(mapError(e));
+		}
+	};
 }
 
 /**
  * Step function transforming Result<TValue, TError> → Result<TNextValue, TNextError>.
  */
 type PipeStep<
-  TValue,
-  TNextValue,
-  TError extends AppError,
-  TNextError extends AppError,
+	TValue,
+	TNextValue,
+	TError extends AppError,
+	TNextError extends AppError,
 > = (
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ) => Result<TNextValue, TNextError> | Promise<Result<TNextValue, TNextError>>;
 
 async function _pipeAsync<
-  TValue,
-  TNextValue,
-  TError extends AppError,
-  TNextError extends AppError,
+	TValue,
+	TNextValue,
+	TError extends AppError,
+	TNextError extends AppError,
 >(
-  seed: Result<TValue, TError>,
-  step1: PipeStep<TValue, TNextValue, TError, TNextError>,
+	seed: Result<TValue, TError>,
+	step1: PipeStep<TValue, TNextValue, TError, TNextError>,
 ): Promise<Result<TNextValue, TError | TNextError>>;
 
 async function _pipeAsync<
-  TValue,
-  TValue2,
-  TValue3,
-  TError extends AppError,
-  TError2 extends AppError,
-  TError3 extends AppError,
+	TValue,
+	TValue2,
+	TValue3,
+	TError extends AppError,
+	TError2 extends AppError,
+	TError3 extends AppError,
 >(
-  seed: Result<TValue, TError>,
-  step1: PipeStep<TValue, TValue2, TError, TError2>,
-  step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
+	seed: Result<TValue, TError>,
+	step1: PipeStep<TValue, TValue2, TError, TError2>,
+	step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
 ): Promise<Result<TValue3, TError | TError2 | TError3>>;
 
 async function _pipeAsync<
-  TValue,
-  TValue2,
-  TValue3,
-  TValue4,
-  TError extends AppError,
-  TError2 extends AppError,
-  TError3 extends AppError,
-  TError4 extends AppError,
+	TValue,
+	TValue2,
+	TValue3,
+	TValue4,
+	TError extends AppError,
+	TError2 extends AppError,
+	TError3 extends AppError,
+	TError4 extends AppError,
 >(
-  seed: Result<TValue, TError>,
-  step1: PipeStep<TValue, TValue2, TError, TError2>,
-  step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
-  step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
+	seed: Result<TValue, TError>,
+	step1: PipeStep<TValue, TValue2, TError, TError2>,
+	step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
+	step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
 ): Promise<Result<TValue4, TError | TError2 | TError3 | TError4>>;
 
 async function _pipeAsync<
-  TValue,
-  TValue2,
-  TValue3,
-  TValue4,
-  TValue5,
-  TError extends AppError,
-  TError2 extends AppError,
-  TError3 extends AppError,
-  TError4 extends AppError,
-  TError5 extends AppError,
-  // biome-ignore lint/complexity/useMaxParams: multistep pipe requires more params
+	TValue,
+	TValue2,
+	TValue3,
+	TValue4,
+	TValue5,
+	TError extends AppError,
+	TError2 extends AppError,
+	TError3 extends AppError,
+	TError4 extends AppError,
+	TError5 extends AppError,
+	// biome-ignore lint/complexity/useMaxParams: multistep pipe requires more params
 >(
-  seed: Result<TValue, TError>,
-  step1: PipeStep<TValue, TValue2, TError, TError2>,
-  step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
-  step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
-  step4: PipeStep<
-    TValue4,
-    TValue5,
-    TError | TError2 | TError3 | TError4,
-    TError5
-  >,
+	seed: Result<TValue, TError>,
+	step1: PipeStep<TValue, TValue2, TError, TError2>,
+	step2: PipeStep<TValue2, TValue3, TError | TError2, TError3>,
+	step3: PipeStep<TValue3, TValue4, TError | TError2 | TError3, TError4>,
+	step4: PipeStep<
+		TValue4,
+		TValue5,
+		TError | TError2 | TError3 | TError4,
+		TError5
+	>,
 ): Promise<Result<TValue5, TError | TError2 | TError3 | TError4 | TError5>>;
 
 async function _pipeAsync<E extends AppError>(
-  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
-  seed: Result<any, E>,
-  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
-  ...steps: readonly PipeStep<any, any, any, any>[]
-  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
+	// biome-ignore lint/suspicious/noExplicitAny: i think this is fine
+	seed: Result<any, E>,
+	// biome-ignore lint/suspicious/noExplicitAny: i think this is fine
+	...steps: readonly PipeStep<any, any, any, any>[]
+	// biome-ignore lint/suspicious/noExplicitAny: i think this is fine
 ): Promise<Result<any, E>> {
-  // biome-ignore lint/suspicious/noExplicitAny: i think this is fine
-  let current: Result<any, E> = seed;
+	// biome-ignore lint/suspicious/noExplicitAny: i think this is fine
+	let current: Result<any, E> = seed;
 
-  for (const step of steps) {
-    if (!current.ok) {
-      break;
-    }
-    try {
-      // biome-ignore lint/performance/noAwaitInLoops: sequential execution is intended
-      current = await step(current);
-    } catch (e) {
-      // If a step throws or rejects instead of returning a Result,
-      // we treat it as an unhandled error.
-      // Note: In a production app, we'd ideally use a proper error factory here.
-      // biome-ignore lint/complexity/noUselessCatch: keep for now
-      throw e;
-    }
-  }
+	for (const step of steps) {
+		if (!current.ok) {
+			break;
+		}
+		try {
+			// biome-ignore lint/performance/noAwaitInLoops: sequential execution is intended
+			current = await step(current);
+		} catch (e) {
+			// If a step throws or rejects instead of returning a Result,
+			// we treat it as an unhandled error.
+			// Note: In a production app, we'd ideally use a proper error factory here.
+			// biome-ignore lint/complexity/noUselessCatch: keep for now
+			throw e;
+		}
+	}
 
-  return current;
+	return current;
 }
 
 /**
@@ -297,16 +297,16 @@ async function _pipeAsync<E extends AppError>(
  * @returns A function that accepts a Result and returns a Promise resolving to same Result.
  */
 function _tapAsync<TValue, TError extends AppError>(
-  fn: (v: TValue) => Promise<void>,
+	fn: (v: TValue) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError>> {
-  return function tapAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TValue, TError>> {
-    if (r.ok) {
-      return fn(r.value).then(() => r);
-    }
-    return Promise.resolve(r);
-  };
+	return function tapAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TValue, TError>> {
+		if (r.ok) {
+			return fn(r.value).then(() => r);
+		}
+		return Promise.resolve(r);
+	};
 }
 
 /**
@@ -320,26 +320,26 @@ function _tapAsync<TValue, TError extends AppError>(
  * @returns A function that accepts a Result and returns a Promise resolving to same Result or wrapping error.
  */
 function _tapSafeAsync<
-  TValue,
-  TError extends AppError,
-  TSideError extends AppError,
+	TValue,
+	TError extends AppError,
+	TSideError extends AppError,
 >(
-  fn: (v: TValue) => Promise<void>,
-  mapError: (e: unknown) => TSideError,
+	fn: (v: TValue) => Promise<void>,
+	mapError: (e: unknown) => TSideError,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>> {
-  return async function tapSafeAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TValue, TError | TSideError>> {
-    if (!r.ok) {
-      return r;
-    }
-    try {
-      await fn(r.value);
-      return r;
-    } catch (e) {
-      return Err(mapError(e));
-    }
-  };
+	return async function tapSafeAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TValue, TError | TSideError>> {
+		if (!r.ok) {
+			return r;
+		}
+		try {
+			await fn(r.value);
+			return r;
+		} catch (e) {
+			return Err(mapError(e));
+		}
+	};
 }
 
 /**
@@ -351,16 +351,16 @@ function _tapSafeAsync<
  * @returns A function that accepts a Result and returns a Promise resolving to unchanged Result.
  */
 function _tapErrAsync<TValue, TError extends AppError>(
-  fn: (e: TError) => Promise<void>,
+	fn: (e: TError) => Promise<void>,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError>> {
-  return function tapErrAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TValue, TError>> {
-    if (!r.ok) {
-      return fn(r.error).then(() => r);
-    }
-    return Promise.resolve(r);
-  };
+	return function tapErrAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TValue, TError>> {
+		if (!r.ok) {
+			return fn(r.error).then(() => r);
+		}
+		return Promise.resolve(r);
+	};
 }
 
 /**
@@ -374,26 +374,26 @@ function _tapErrAsync<TValue, TError extends AppError>(
  * @returns A function that accepts a Result and returns a Promise resolving to Result with original value or transformed error.
  */
 function _tapErrSafeAsync<
-  TValue,
-  TError extends AppError,
-  TSideError extends AppError,
+	TValue,
+	TError extends AppError,
+	TSideError extends AppError,
 >(
-  fn: (e: TError) => Promise<void>,
-  mapError: (e: unknown) => TSideError,
+	fn: (e: TError) => Promise<void>,
+	mapError: (e: unknown) => TSideError,
 ): (r: Result<TValue, TError>) => Promise<Result<TValue, TError | TSideError>> {
-  return async function tapErrSafeAsyncInner(
-    r: Result<TValue, TError>,
-  ): Promise<Result<TValue, TError | TSideError>> {
-    if (r.ok) {
-      return r;
-    }
-    try {
-      await fn(r.error);
-      return r;
-    } catch (e) {
-      return Err(mapError(e));
-    }
-  };
+	return async function tapErrSafeAsyncInner(
+		r: Result<TValue, TError>,
+	): Promise<Result<TValue, TError | TSideError>> {
+		if (r.ok) {
+			return r;
+		}
+		try {
+			await fn(r.error);
+			return r;
+		} catch (e) {
+			return Err(mapError(e));
+		}
+	};
 }
 
 /**
@@ -406,14 +406,14 @@ function _tapErrSafeAsync<
  * @throws Throws error if result is not ok.
  */
 function _toPromiseOrThrow<TValue, TError extends AppError>(
-  r: Result<TValue, TError>,
+	r: Result<TValue, TError>,
 ): Promise<TValue> {
-  if (r.ok) {
-    return Promise.resolve(r.value);
-  }
+	if (r.ok) {
+		return Promise.resolve(r.value);
+	}
 
-  // Ensure rejection with an Error instance (AppError extends Error)
-  return Promise.reject(
-    r.error instanceof Error ? r.error : new Error(String(r.error)),
-  );
+	// Ensure rejection with an Error instance (AppError extends Error)
+	return Promise.reject(
+		r.error instanceof Error ? r.error : new Error(String(r.error)),
+	);
 }

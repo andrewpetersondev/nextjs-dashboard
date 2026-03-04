@@ -21,8 +21,8 @@ type SessionId = Brand<string, typeof SESSION_ID_BRAND>;
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 const createSessionId = createIdFactory<typeof SESSION_ID_BRAND, SessionId>(
-  SESSION_ID_BRAND,
-  "SessionId",
+	SESSION_ID_BRAND,
+	"SessionId",
 );
 
 /**
@@ -32,4 +32,4 @@ const createSessionId = createIdFactory<typeof SESSION_ID_BRAND, SessionId>(
  * @returns A `Result<SessionId, AppError>` representing success or an `AppError`.
  */
 const _toSessionIdResult = (value: unknown): Result<SessionId, AppError> =>
-  createSessionId(value);
+	createSessionId(value);

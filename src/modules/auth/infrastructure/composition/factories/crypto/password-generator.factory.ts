@@ -8,5 +8,5 @@ import { PasswordGeneratorService } from "@/modules/auth/infrastructure/crypto/s
  * @returns An implementation of the {@link PasswordGeneratorContract}.
  */
 export function passwordGeneratorFactory(): PasswordGeneratorContract {
-  return new PasswordGeneratorService();
+	return new PasswordGeneratorService();
 }

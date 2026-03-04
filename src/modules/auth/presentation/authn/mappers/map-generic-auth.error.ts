@@ -18,17 +18,17 @@ import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-err
  * @internal
  */
 export function mapGenericAuthError<TField extends string>(
-  error: AppError,
-  formData: Readonly<Partial<Record<TField, string>>>,
-  fields: readonly TField[],
+	error: AppError,
+	formData: Readonly<Partial<Record<TField, string>>>,
+	fields: readonly TField[],
 ): FormResult<never> {
-  const payload = toFormErrorPayload<TField>(error, fields);
+	const payload = toFormErrorPayload<TField>(error, fields);
 
-  return makeFormError<TField>({
-    ...payload,
-    formData,
-    formErrors:
-      payload.formErrors.length > 0 ? payload.formErrors : [payload.message],
-    key: error.key,
-  }) as FormResult<never>;
+	return makeFormError<TField>({
+		...payload,
+		formData,
+		formErrors:
+			payload.formErrors.length > 0 ? payload.formErrors : [payload.message],
+		key: error.key,
+	}) as FormResult<never>;
 }

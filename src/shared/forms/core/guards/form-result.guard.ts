@@ -7,31 +7,31 @@ import type { FormValidationMetadata } from "@/shared/forms/core/types/validatio
  * Type guard: checks if the form result is an error.
  */
 const _isFormErr = <TData>(
-  result: FormResult<TData>,
+	result: FormResult<TData>,
 ): result is Extract<FormResult<TData>, { ok: false }> => {
-  return !result.ok;
+	return !result.ok;
 };
 
 /**
  * Type guard: checks if the form result is successful.
  */
 const _isFormOk = <TData>(
-  result: FormResult<TData>,
+	result: FormResult<TData>,
 ): result is Extract<FormResult<TData>, { ok: true }> => {
-  return result.ok;
+	return result.ok;
 };
 
 /**
  * Type guard: checks if an AppError contains form validation details.
  */
 export function isFormValidationError<TFields extends string>(
-  error: AppError,
+	error: AppError,
 ): error is AppError & { readonly metadata: FormValidationMetadata<TFields> } {
-  return (
-    error.key === APP_ERROR_KEYS.validation &&
-    error.metadata !== undefined &&
-    error.metadata !== null &&
-    typeof error.metadata === "object" &&
-    "fieldErrors" in error.metadata
-  );
+	return (
+		error.key === APP_ERROR_KEYS.validation &&
+		error.metadata !== undefined &&
+		error.metadata !== null &&
+		typeof error.metadata === "object" &&
+		"fieldErrors" in error.metadata
+	);
 }

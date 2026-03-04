@@ -2,9 +2,9 @@ import "server-only";
 
 import type { RevenueRepositoryContract } from "@/modules/revenues/application/contract/revenue-repository.contract";
 import type {
-  RevenueCreateEntity,
-  RevenueEntity,
-  RevenueUpdatable,
+	RevenueCreateEntity,
+	RevenueEntity,
+	RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import { createRevenueDal } from "@/modules/revenues/infrastructure/repository/dal/create-revenue.dal";
@@ -20,104 +20,104 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import type { Period } from "@/shared/primitives/period/period.brand";
 
 export class RevenueRepository implements RevenueRepositoryContract {
-  /**
-   * Constructs the repository with a database connection.
-   * @param db - The database connection.
-   */
-  private readonly db: AppDatabase;
+	/**
+	 * Constructs the repository with a database connection.
+	 * @param db - The database connection.
+	 */
+	private readonly db: AppDatabase;
 
-  constructor(db: AppDatabase) {
-    this.db = db;
-  }
+	constructor(db: AppDatabase) {
+		this.db = db;
+	}
 
-  /**
-   * Creates a new revenue record.
-   * @param revenue - The revenue data.
-   * @returns The created revenue entity.
-   */
-  async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
-    return await createRevenueDal(this.db, revenue);
-  }
+	/**
+	 * Creates a new revenue record.
+	 * @param revenue - The revenue data.
+	 * @returns The created revenue entity.
+	 */
+	async create(revenue: RevenueCreateEntity): Promise<RevenueEntity> {
+		return await createRevenueDal(this.db, revenue);
+	}
 
-  /**
-   * Reads a revenue record by ID.
-   * @param id - The revenue ID.
-   * @returns The revenue entity.
-   */
-  async read(id: RevenueId): Promise<RevenueEntity> {
-    return await readRevenueDal(this.db, id);
-  }
+	/**
+	 * Reads a revenue record by ID.
+	 * @param id - The revenue ID.
+	 * @returns The revenue entity.
+	 */
+	async read(id: RevenueId): Promise<RevenueEntity> {
+		return await readRevenueDal(this.db, id);
+	}
 
-  /**
-   * Updates a revenue record.
-   * @param id - The revenue ID.
-   * @param revenue - The updatable fields.
-   * @returns The updated revenue entity.
-   */
-  async update(
-    id: RevenueId,
-    revenue: RevenueUpdatable,
-  ): Promise<RevenueEntity> {
-    return await updateRevenueDal(this.db, id, revenue);
-  }
+	/**
+	 * Updates a revenue record.
+	 * @param id - The revenue ID.
+	 * @param revenue - The updatable fields.
+	 * @returns The updated revenue entity.
+	 */
+	async update(
+		id: RevenueId,
+		revenue: RevenueUpdatable,
+	): Promise<RevenueEntity> {
+		return await updateRevenueDal(this.db, id, revenue);
+	}
 
-  /**
-   * Deletes a revenue record.
-   * @param id - The revenue ID.
-   */
-  async delete(id: RevenueId): Promise<void> {
-    await deleteRevenueDal(this.db, id);
-  }
+	/**
+	 * Deletes a revenue record.
+	 * @param id - The revenue ID.
+	 */
+	async delete(id: RevenueId): Promise<void> {
+		await deleteRevenueDal(this.db, id);
+	}
 
-  /**
-   * Finds revenue records by date range.
-   * @param endPeriod - The end period.
-   * @param startPeriod - The start period.
-   * @returns Array of revenue entities.
-   */
-  async findByDateRange(
-    startPeriod: Period,
-    endPeriod: Period,
-  ): Promise<RevenueEntity[]> {
-    return await findRevenuesByDateRangeDal(this.db, startPeriod, endPeriod);
-  }
+	/**
+	 * Finds revenue records by date range.
+	 * @param endPeriod - The end period.
+	 * @param startPeriod - The start period.
+	 * @returns Array of revenue entities.
+	 */
+	async findByDateRange(
+		startPeriod: Period,
+		endPeriod: Period,
+	): Promise<RevenueEntity[]> {
+		return await findRevenuesByDateRangeDal(this.db, startPeriod, endPeriod);
+	}
 
-  /**
-   * Finds a revenue record by period.
-   * @param period - The period.
-   * @returns The revenue entity or null.
-   */
-  async findByPeriod(period: Period): Promise<RevenueEntity | null> {
-    return await findRevenueByPeriodDal(this.db, period);
-  }
+	/**
+	 * Finds a revenue record by period.
+	 * @param period - The period.
+	 * @returns The revenue entity or null.
+	 */
+	async findByPeriod(period: Period): Promise<RevenueEntity | null> {
+		return await findRevenueByPeriodDal(this.db, period);
+	}
 
-  /**
-   * Upserts a revenue record.
-   * @param revenueData - The revenue data.
-   * @returns The upserted revenue entity.
-   */
-  async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
-    return await upsertRevenueDal(this.db, revenueData);
-  }
+	/**
+	 * Upserts a revenue record.
+	 * @param revenueData - The revenue data.
+	 * @returns The upserted revenue entity.
+	 */
+	async upsert(revenueData: RevenueCreateEntity): Promise<RevenueEntity> {
+		return await upsertRevenueDal(this.db, revenueData);
+	}
 
-  /**
-   * Deletes a revenue record by ID (alias).
-   * @param id - The revenue ID.
-   */
-  async deleteById(id: RevenueId): Promise<void> {
-    return await this.delete(id);
-  }
+	/**
+	 * Deletes a revenue record by ID (alias).
+	 * @param id - The revenue ID.
+	 */
+	async deleteById(id: RevenueId): Promise<void> {
+		return await this.delete(id);
+	}
 
-  /**
-   * Upserts a revenue record by period.
-   * @param period - The period.
-   * @param revenue - The updatable fields.
-   * @returns The upserted revenue entity.
-   */
-  async upsertByPeriod(
-    period: Period,
-    revenue: RevenueUpdatable,
-  ): Promise<RevenueEntity> {
-    return await upsertRevenueByPeriod(this.db, period, revenue);
-  }
+	/**
+	 * Upserts a revenue record by period.
+	 * @param period - The period.
+	 * @param revenue - The updatable fields.
+	 * @returns The upserted revenue entity.
+	 */
+	async upsertByPeriod(
+		period: Period,
+		revenue: RevenueUpdatable,
+	): Promise<RevenueEntity> {
+		return await upsertRevenueByPeriod(this.db, period, revenue);
+	}
 }

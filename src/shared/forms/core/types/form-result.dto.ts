@@ -1,8 +1,8 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 import type {
-  DenseFieldErrorMap,
-  FormErrors,
+	DenseFieldErrorMap,
+	FormErrors,
 } from "@/shared/forms/core/types/field-error.types";
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 
@@ -18,8 +18,8 @@ import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.
  * };
  */
 export interface FormSuccessPayload<T> {
-  readonly data: T;
-  readonly message: string;
+	readonly data: T;
+	readonly message: string;
 }
 
 /**
@@ -38,10 +38,10 @@ export interface FormSuccessPayload<T> {
  * };
  */
 export type FormErrorPayload<T extends string> = {
-  readonly fieldErrors: DenseFieldErrorMap<T, string>;
-  readonly formErrors: FormErrors;
-  readonly message: string;
-  readonly formData: SparseFieldValueMap<T, string>;
+	readonly fieldErrors: DenseFieldErrorMap<T, string>;
+	readonly formErrors: FormErrors;
+	readonly message: string;
+	readonly formData: SparseFieldValueMap<T, string>;
 };
 
 /**

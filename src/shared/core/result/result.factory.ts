@@ -12,14 +12,14 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A `Result<Tv, Te>` which is `Ok` with the function return value or `Err` with the mapped error.
  */
 function _tryCatch<Tv, Te extends AppError>(
-  fn: () => Tv,
-  mapError: (e: unknown) => Te,
+	fn: () => Tv,
+	mapError: (e: unknown) => Te,
 ): Result<Tv, Te> {
-  try {
-    return Ok(fn());
-  } catch (e) {
-    return Err(mapError(e));
-  }
+	try {
+		return Ok(fn());
+	} catch (e) {
+		return Err(mapError(e));
+	}
 }
 
 /**
@@ -32,11 +32,11 @@ function _tryCatch<Tv, Te extends AppError>(
  * @returns `Ok(v)` when `v` is non-null/undefined, otherwise `Err(onNull())`.
  */
 function _fromNullable<Tv, Te extends AppError>(
-  v: Tv | null | undefined,
-  onNull: () => Te,
+	v: Tv | null | undefined,
+	onNull: () => Te,
 ): Result<Tv, Te> {
-  // biome-ignore lint/nursery/noEqualsToNull: TODO FIX ME
-  return v == null ? Err(onNull()) : Ok(v);
+	// biome-ignore lint/nursery/noEqualsToNull: TODO FIX ME
+	return v == null ? Err(onNull()) : Ok(v);
 }
 
 /**
@@ -50,11 +50,11 @@ function _fromNullable<Tv, Te extends AppError>(
  * @returns `Ok(value)` if `predicate(value)` is `true`, otherwise `Err(onFail(value))`.
  */
 function _fromPredicate<Tv, Te extends AppError>(
-  value: Tv,
-  predicate: (v: Tv) => boolean,
-  onFail: (v: Tv) => Te,
+	value: Tv,
+	predicate: (v: Tv) => boolean,
+	onFail: (v: Tv) => Te,
 ): Result<Tv, Te> {
-  return predicate(value) ? Ok(value) : Err(onFail(value));
+	return predicate(value) ? Ok(value) : Err(onFail(value));
 }
 
 /**
@@ -69,11 +69,11 @@ function _fromPredicate<Tv, Te extends AppError>(
  * @returns `Ok(value)` typed as `To` when the guard passes, otherwise `Err(onFail(value))`.
  */
 function _fromGuard<Ti, To extends Ti, Te extends AppError>(
-  value: Ti,
-  guard: (v: Ti) => v is To,
-  onFail: (v: Ti) => Te,
+	value: Ti,
+	guard: (v: Ti) => v is To,
+	onFail: (v: Ti) => Te,
 ): Result<To, Te> {
-  return guard(value) ? Ok(value) : Err(onFail(value));
+	return guard(value) ? Ok(value) : Err(onFail(value));
 }
 
 /**
@@ -85,10 +85,10 @@ function _fromGuard<Ti, To extends Ti, Te extends AppError>(
  * @returns `Ok(true)` when `condition` is `true`, otherwise `Err(onFalse())`.
  */
 function _fromCondition<TError extends AppError>(
-  condition: boolean,
-  onFalse: () => TError,
+	condition: boolean,
+	onFalse: () => TError,
 ): Result<boolean, TError> {
-  return condition ? Ok(true) : Err(onFalse());
+	return condition ? Ok(true) : Err(onFalse());
 }
 
 /**
@@ -101,12 +101,12 @@ function _fromCondition<TError extends AppError>(
  * @returns Promise resolving to Result with value or error.
  */
 async function _tryCatchAsync<TValue, TError extends AppError>(
-  fn: () => Promise<TValue>,
-  mapError: (e: unknown) => TError,
+	fn: () => Promise<TValue>,
+	mapError: (e: unknown) => TError,
 ): Promise<Result<TValue, TError>> {
-  try {
-    return Ok(await fn());
-  } catch (e) {
-    return Err(mapError(e));
-  }
+	try {
+		return Ok(await fn());
+	} catch (e) {
+		return Err(mapError(e));
+	}
 }

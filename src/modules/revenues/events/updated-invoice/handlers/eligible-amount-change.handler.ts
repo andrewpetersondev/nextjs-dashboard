@@ -8,43 +8,43 @@ import type { HandleEligibleAmountChangeArgs } from "@/modules/revenues/events/u
  * Handles amount changes for eligible invoices.
  */
 export async function handleEligibleAmountChange(
-  args: HandleEligibleAmountChangeArgs,
+	args: HandleEligibleAmountChangeArgs,
 ): Promise<void> {
-  const {
-    context,
-    currentAmount,
-    currentCount,
-    currentPaidTotal,
-    currentPendingTotal,
-    currentStatus,
-    currentTotal,
-    meta,
-    previousAmount,
-    revenueId,
-    revenueService,
-  } = args;
-  const amountDifference = currentAmount - previousAmount;
-  const aggregate = computeAggregateAfterAmountChange(
-    currentCount,
-    currentTotal,
-    previousAmount,
-    currentAmount,
-  );
-  const nextBuckets = applyDeltaToBucket(
-    {
-      totalPaidAmount: currentPaidTotal,
-      totalPendingAmount: currentPendingTotal,
-    },
-    currentStatus,
-    amountDifference,
-  );
-  await updateRevenueRecord(revenueService, {
-    context,
-    invoiceCount: aggregate.invoiceCount,
-    metadata: meta,
-    revenueId,
-    totalAmount: aggregate.totalAmount,
-    totalPaidAmount: nextBuckets.totalPaidAmount,
-    totalPendingAmount: nextBuckets.totalPendingAmount,
-  });
+	const {
+		context,
+		currentAmount,
+		currentCount,
+		currentPaidTotal,
+		currentPendingTotal,
+		currentStatus,
+		currentTotal,
+		meta,
+		previousAmount,
+		revenueId,
+		revenueService,
+	} = args;
+	const amountDifference = currentAmount - previousAmount;
+	const aggregate = computeAggregateAfterAmountChange(
+		currentCount,
+		currentTotal,
+		previousAmount,
+		currentAmount,
+	);
+	const nextBuckets = applyDeltaToBucket(
+		{
+			totalPaidAmount: currentPaidTotal,
+			totalPendingAmount: currentPendingTotal,
+		},
+		currentStatus,
+		amountDifference,
+	);
+	await updateRevenueRecord(revenueService, {
+		context,
+		invoiceCount: aggregate.invoiceCount,
+		metadata: meta,
+		revenueId,
+		totalAmount: aggregate.totalAmount,
+		totalPaidAmount: nextBuckets.totalPaidAmount,
+		totalPendingAmount: nextBuckets.totalPendingAmount,
+	});
 }

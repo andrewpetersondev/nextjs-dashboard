@@ -12,7 +12,7 @@ import type { MonthName } from "@/modules/revenues/domain/revenue.constants";
  * @prop year - The year in YYYY format
  */
 export interface RevenueDisplayEntity extends RevenueEntity {
-  readonly month: MonthName;
-  readonly monthNumber: number;
-  readonly year: number;
+	readonly month: MonthName;
+	readonly monthNumber: number;
+	readonly year: number;
 }

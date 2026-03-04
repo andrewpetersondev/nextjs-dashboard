@@ -2,8 +2,8 @@ import "server-only";
 
 import { eq } from "drizzle-orm";
 import type {
-  RevenueEntity,
-  RevenueUpdatable,
+	RevenueEntity,
+	RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
@@ -11,8 +11,8 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import {
-  makeAppError,
-  makeUnexpectedError,
+	makeAppError,
+	makeUnexpectedError,
 } from "@/shared/core/errors/core/factories/app-error.factory";
 
 /**
@@ -24,46 +24,46 @@ import {
  * @throws Error if inputs are invalid or update fails.
  */
 export async function updateRevenueDal(
-  db: AppDatabase,
-  id: RevenueId,
-  revenue: RevenueUpdatable,
+	db: AppDatabase,
+	id: RevenueId,
+	revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
-  if (!(id && revenue)) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Revenue ID and data are required",
-      metadata: {},
-    });
-  }
+	if (!(id && revenue)) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Revenue ID and data are required",
+			metadata: {},
+		});
+	}
 
-  const now = new Date();
+	const now = new Date();
 
-  const [data] = (await db
-    .update(revenues)
-    .set({
-      calculationSource: revenue.calculationSource,
-      invoiceCount: revenue.invoiceCount,
-      totalAmount: revenue.totalAmount,
-      totalPaidAmount: revenue.totalPaidAmount,
-      totalPendingAmount: revenue.totalPendingAmount,
-      updatedAt: now,
-    })
-    .where(eq(revenues.id, id))
-    .returning()) as RevenueRow[];
+	const [data] = (await db
+		.update(revenues)
+		.set({
+			calculationSource: revenue.calculationSource,
+			invoiceCount: revenue.invoiceCount,
+			totalAmount: revenue.totalAmount,
+			totalPaidAmount: revenue.totalPaidAmount,
+			totalPendingAmount: revenue.totalPendingAmount,
+			updatedAt: now,
+		})
+		.where(eq(revenues.id, id))
+		.returning()) as RevenueRow[];
 
-  if (!data) {
-    throw makeUnexpectedError("", {
-      message: "Failed to update revenue record",
-      overrideMetadata: {},
-    });
-  }
+	if (!data) {
+		throw makeUnexpectedError("", {
+			message: "Failed to update revenue record",
+			overrideMetadata: {},
+		});
+	}
 
-  const result: RevenueEntity = mapRevenueRowToEntity(data);
-  if (!result) {
-    throw makeUnexpectedError("", {
-      message: "Failed to convert updated revenue record",
-      overrideMetadata: { table: "revenues" },
-    });
-  }
-  return result;
+	const result: RevenueEntity = mapRevenueRowToEntity(data);
+	if (!result) {
+		throw makeUnexpectedError("", {
+			message: "Failed to convert updated revenue record",
+			overrideMetadata: { table: "revenues" },
+		});
+	}
+	return result;
 }

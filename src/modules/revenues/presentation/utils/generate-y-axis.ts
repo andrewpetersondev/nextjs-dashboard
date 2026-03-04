@@ -1,7 +1,7 @@
 import { CHART_Y_AXIS } from "@/modules/revenues/domain/revenue.constants";
 import type {
-  SimpleRevenueDto,
-  YaxisResult,
+	SimpleRevenueDto,
+	YaxisResult,
 } from "@/modules/revenues/domain/revenue.types";
 
 /**
@@ -35,24 +35,24 @@ import type {
  * @throws {Error} When revenue data contains invalid numeric values
  */
 export const generateYaxis = (revenue: SimpleRevenueDto[]): YaxisResult => {
-  const yAxisLabels: string[] = [];
-  const highestRecord: number = Math.max(
-    ...revenue.map((month: SimpleRevenueDto) => month.totalAmount),
-  );
+	const yAxisLabels: string[] = [];
+	const highestRecord: number = Math.max(
+		...revenue.map((month: SimpleRevenueDto) => month.totalAmount),
+	);
 
-  // Calculate the appropriate top label with 10% padding
-  const topLabel: number =
-    Math.ceil(
-      (highestRecord * (1 + CHART_Y_AXIS.paddingRatio)) / CHART_Y_AXIS.step,
-    ) * CHART_Y_AXIS.step;
+	// Calculate the appropriate top label with 10% padding
+	const topLabel: number =
+		Math.ceil(
+			(highestRecord * (1 + CHART_Y_AXIS.paddingRatio)) / CHART_Y_AXIS.step,
+		) * CHART_Y_AXIS.step;
 
-  // Generate 5-6 evenly spaced labels
-  const labelCount = CHART_Y_AXIS.labelCount;
+	// Generate 5-6 evenly spaced labels
+	const labelCount = CHART_Y_AXIS.labelCount;
 
-  for (let i = labelCount; i >= 0; i--) {
-    const value = Math.round((topLabel * i) / labelCount);
-    yAxisLabels.push(`$${value / CHART_Y_AXIS.step}K`);
-  }
+	for (let i = labelCount; i >= 0; i--) {
+		const value = Math.round((topLabel * i) / labelCount);
+		yAxisLabels.push(`$${value / CHART_Y_AXIS.step}K`);
+	}
 
-  return { topLabel, yAxisLabels };
+	return { topLabel, yAxisLabels };
 };

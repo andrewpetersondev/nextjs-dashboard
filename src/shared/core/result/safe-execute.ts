@@ -1,6 +1,6 @@
 import {
-  type AppError,
-  isAppError,
+	type AppError,
+	isAppError,
 } from "@/shared/core/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err } from "@/shared/core/result/result";
@@ -11,9 +11,9 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * Options for safe execution of an operation.
  */
 type SafeExecuteOptions = {
-  readonly logger: LoggingClientContract;
-  readonly message: string;
-  readonly operation: string;
+	readonly logger: LoggingClientContract;
+	readonly message: string;
+	readonly operation: string;
 };
 
 /**
@@ -24,23 +24,23 @@ type SafeExecuteOptions = {
  * being wrapped in an 'unexpected' error.
  */
 export async function safeExecute<T>(
-  thunk: () => Promise<Result<T, AppError>>,
-  options: SafeExecuteOptions,
+	thunk: () => Promise<Result<T, AppError>>,
+	options: SafeExecuteOptions,
 ): Promise<Result<T, AppError>> {
-  try {
-    return await thunk();
-  } catch (err: unknown) {
-    const error = isAppError(err)
-      ? err
-      : makeUnexpectedError(err, {
-          message: options.message,
-          overrideMetadata: { operation: options.operation },
-        });
+	try {
+		return await thunk();
+	} catch (err: unknown) {
+		const error = isAppError(err)
+			? err
+			: makeUnexpectedError(err, {
+					message: options.message,
+					overrideMetadata: { operation: options.operation },
+				});
 
-    options.logger.errorWithDetails(options.message, error, {
-      operation: options.operation,
-    });
+		options.logger.errorWithDetails(options.message, error, {
+			operation: options.operation,
+		});
 
-    return Err(error);
-  }
+		return Err(error);
+	}
 }

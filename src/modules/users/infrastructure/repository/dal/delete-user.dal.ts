@@ -20,28 +20,28 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @returns UserDto if deleted, otherwise null
  */
 export async function deleteUserDal(
-  db: AppDatabase,
-  userId: UserId, // Use branded UserId for strict typing
+	db: AppDatabase,
+	userId: UserId, // Use branded UserId for strict typing
 ): Promise<Result<UserEntity | null, AppError>> {
-  try {
-    // Fetch raw DB row, not UserEntity
-    const [deletedRow] = await db
-      .delete(users)
-      .where(eq(users.id, userId))
-      .returning();
+	try {
+		// Fetch raw DB row, not UserEntity
+		const [deletedRow] = await db
+			.delete(users)
+			.where(eq(users.id, userId))
+			.returning();
 
-    if (!deletedRow) {
-      return Ok(null);
-    }
+		if (!deletedRow) {
+			return Ok(null);
+		}
 
-    // Map raw DB row to UserEntity for type safety
-    return Ok(toUserEntity(deletedRow));
-  } catch (error) {
-    logger.error("Failed to delete user.", {
-      context: "deleteUserDal",
-      error,
-      userId,
-    });
-    return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
-  }
+		// Map raw DB row to UserEntity for type safety
+		return Ok(toUserEntity(deletedRow));
+	} catch (error) {
+		logger.error("Failed to delete user.", {
+			context: "deleteUserDal",
+			error,
+			userId,
+		});
+		return Err(normalizeUnknownError(error, APP_ERROR_KEYS.database));
+	}
 }

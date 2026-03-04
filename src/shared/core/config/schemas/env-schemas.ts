@@ -2,9 +2,9 @@ import { z } from "zod";
 
 const NODE_ENVIRONMENT_TUPLE = ["development", "production", "test"] as const;
 const DATABASE_ENVIRONMENT_TUPLE = [
-  "development",
-  "production",
-  "test",
+	"development",
+	"production",
+	"test",
 ] as const;
 const LOG_LEVEL_TUPLE = ["trace", "debug", "info", "warn", "error"] as const;
 const SESSION_ISSUER_TUPLE = ["my-app"] as const;
@@ -39,9 +39,9 @@ export type LogLevel = z.infer<typeof LogLevelSchema>;
 // Canonical server/tooling schema for secrets used everywhere
 // biome-ignore lint/nursery/useExplicitType: fix
 export const ServerEnvSchema = z.object({
-  authBcryptSaltRounds: z.coerce.number().int().positive(),
-  databaseUrl: z.string().min(1),
-  sessionAudience: SessionAudienceSchema,
-  sessionIssuer: SessionIssuerSchema,
-  sessionSecret: z.string().min(1),
+	authBcryptSaltRounds: z.coerce.number().int().positive(),
+	databaseUrl: z.string().min(1),
+	sessionAudience: SessionAudienceSchema,
+	sessionIssuer: SessionIssuerSchema,
+	sessionSecret: z.string().min(1),
 });

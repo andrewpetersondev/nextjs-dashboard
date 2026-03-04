@@ -13,8 +13,8 @@ export type OauthProvider = "google" | "github";
  */
 // biome-ignore lint/nursery/useExplicitType: fix later
 export const AUTH_ENDPOINTS = {
-  /** GitHub OAuth initiation endpoint. */
-  github: "/api/auth/github",
-  /** Google OAuth initiation endpoint. */
-  google: "/api/auth/google",
+	/** GitHub OAuth initiation endpoint. */
+	github: "/api/auth/github",
+	/** Google OAuth initiation endpoint. */
+	google: "/api/auth/google",
 } as const satisfies Record<OauthProvider, `/${string}`>;

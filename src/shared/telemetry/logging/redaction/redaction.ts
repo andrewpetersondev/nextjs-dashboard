@@ -1,12 +1,12 @@
 import { DEFAULT_SENSITIVE_KEYS } from "@/shared/telemetry/logging/redaction/redaction.constants";
 import {
-  handleArray,
-  handleObject,
-  handlePrimitive,
+	handleArray,
+	handleObject,
+	handlePrimitive,
 } from "@/shared/telemetry/logging/redaction/redaction.handlers";
 import type {
-  InternalConfig,
-  RedactOptions,
+	InternalConfig,
+	RedactOptions,
 } from "@/shared/telemetry/logging/redaction/redaction.types";
 import { buildSensitiveSet } from "@/shared/telemetry/logging/redaction/redaction.utils";
 
@@ -16,77 +16,77 @@ type Visitor = (value: unknown, depth: number, keyHint?: string) => unknown;
  * Create a visit function (closure over config + seen set).
  */
 function createVisit(cfg: InternalConfig, seen: WeakSet<object>): Visitor {
-  return function visit(
-    value: unknown,
-    depth: number,
-    keyHint?: string,
-  ): unknown {
-    if (value === null) {
-      return null;
-    }
-    if (depth > cfg.maxDepth) {
-      return value;
-    }
-    // Primitive path
-    const primitiveHandled = handlePrimitive(value, keyHint, cfg);
-    if (
-      primitiveHandled !== value ||
-      typeof value === "string" ||
-      typeof value === "number" ||
-      typeof value === "boolean" ||
-      typeof value === "bigint" ||
-      typeof value === "symbol" ||
-      typeof value === "undefined"
-    ) {
-      return primitiveHandled;
-    }
-    if (value instanceof Date || value instanceof RegExp) {
-      return value;
-    }
-    if (Array.isArray(value)) {
-      return handleArray({
-        arr: value,
-        cfg,
-        depth,
-        seen,
-        walker: visit,
-      });
-    }
-    if (typeof value === "object") {
-      return handleObject({
-        cfg,
-        depth,
-        obj: value as Record<string, unknown>,
-        seen,
-        walker: visit,
-      });
-    }
-    return value;
-  };
+	return function visit(
+		value: unknown,
+		depth: number,
+		keyHint?: string,
+	): unknown {
+		if (value === null) {
+			return null;
+		}
+		if (depth > cfg.maxDepth) {
+			return value;
+		}
+		// Primitive path
+		const primitiveHandled = handlePrimitive(value, keyHint, cfg);
+		if (
+			primitiveHandled !== value ||
+			typeof value === "string" ||
+			typeof value === "number" ||
+			typeof value === "boolean" ||
+			typeof value === "bigint" ||
+			typeof value === "symbol" ||
+			typeof value === "undefined"
+		) {
+			return primitiveHandled;
+		}
+		if (value instanceof Date || value instanceof RegExp) {
+			return value;
+		}
+		if (Array.isArray(value)) {
+			return handleArray({
+				arr: value,
+				cfg,
+				depth,
+				seen,
+				walker: visit,
+			});
+		}
+		if (typeof value === "object") {
+			return handleObject({
+				cfg,
+				depth,
+				obj: value as Record<string, unknown>,
+				seen,
+				walker: visit,
+			});
+		}
+		return value;
+	};
 }
 
 /**
  * Build a normalized redaction config from options.
  */
 function buildConfig(options: RedactOptions): InternalConfig {
-  const { extraKeys, mask, maxDepth, partialMask } = options;
+	const { extraKeys, mask, maxDepth, partialMask } = options;
 
-  return {
-    mask,
-    maxDepth,
-    partialMask,
-    sensitive: buildSensitiveSet(DEFAULT_SENSITIVE_KEYS, extraKeys),
-  };
+	return {
+		mask,
+		maxDepth,
+		partialMask,
+		sensitive: buildSensitiveSet(DEFAULT_SENSITIVE_KEYS, extraKeys),
+	};
 }
 
 /**
  * Create a fresh visitor for each redaction run.
  */
 function makeVisitor(cfg: InternalConfig): () => Visitor {
-  return () => {
-    const seen = new WeakSet<object>();
-    return createVisit(cfg, seen);
-  };
+	return () => {
+		const seen = new WeakSet<object>();
+		return createVisit(cfg, seen);
+	};
 }
 
 /**
@@ -96,13 +96,13 @@ function makeVisitor(cfg: InternalConfig): () => Visitor {
  * - Safe: guards against circular references per invocation.
  */
 export function createRedactor(
-  options: RedactOptions,
+	options: RedactOptions,
 ): (value: unknown) => unknown {
-  const cfg = buildConfig(options);
-  const getVisitor = makeVisitor(cfg);
+	const cfg = buildConfig(options);
+	const getVisitor = makeVisitor(cfg);
 
-  return function redact(value: unknown): unknown {
-    const visit = getVisitor();
-    return visit(value, 0);
-  };
+	return function redact(value: unknown): unknown {
+		const visit = getVisitor();
+		return visit(value, 0);
+	};
 }

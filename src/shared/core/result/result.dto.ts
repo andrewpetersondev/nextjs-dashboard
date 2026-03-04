@@ -11,7 +11,7 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
  * type MyError = ErrType<Result<number, AppError>>;
  */
 export type ErrType<TResult> =
-  TResult extends ErrResult<infer TError> ? TError : never;
+	TResult extends ErrResult<infer TError> ? TError : never;
 
 /**
  * Extracts the success type from a `Result` type.
@@ -21,7 +21,7 @@ export type ErrType<TResult> =
  * type MyValue = OkType<Result<string, AppError>>;
  */
 export type OkType<TResult> =
-  TResult extends OkResult<infer TValue> ? TValue : never;
+	TResult extends OkResult<infer TValue> ? TValue : never;
 
 /**
  * Represents a failed Result.
@@ -32,8 +32,8 @@ export type OkType<TResult> =
  * const result: ErrResult<typeof error> = { error, ok: false };
  */
 export type ErrResult<TError extends AppError> = {
-  readonly error: TError;
-  readonly ok: false;
+	readonly error: TError;
+	readonly ok: false;
 };
 
 /**
@@ -55,8 +55,8 @@ export type OkResult<TValue> = { readonly ok: true; readonly value: TValue };
  * const err: Result<number, AppError> = { ok: false, error: { code: "ERR", message: "fail" } };
  */
 export type Result<TValue, TError extends AppError> =
-  | OkResult<TValue>
-  | ErrResult<TError>;
+	| OkResult<TValue>
+	| ErrResult<TError>;
 
 /**
  * Represents an asynchronous thunk function that returns a promise resolving to a specified value type.
@@ -80,7 +80,7 @@ export type AsyncThunk<TValue> = () => Promise<TValue>;
  * @returns A function that accepts a `Result<T, E>` and returns a `Result<U, E>`.
  */
 export type MapOk = <T, U, E extends AppError>(
-  fn: (v: T) => U,
+	fn: (v: T) => U,
 ) => (r: Result<T, E>) => Result<U, E>;
 
 /**
@@ -93,7 +93,7 @@ export type MapOk = <T, U, E extends AppError>(
  * @returns A function that maps a `Result<T, E1>` to `Result<T, E2>`.
  */
 export type MapErr = <T, E1 extends AppError, E2 extends AppError>(
-  fn: (e: E1) => E2,
+	fn: (e: E1) => E2,
 ) => (r: Result<T, E1>) => Result<T, E2>;
 
 /**
@@ -108,6 +108,6 @@ export type MapErr = <T, E1 extends AppError, E2 extends AppError>(
  * @returns A function that maps a `Result<T, E1>` to `Result<U, E2>`.
  */
 export type MapBoth = <T, U, E1 extends AppError, E2 extends AppError>(
-  onOk: (v: T) => U,
-  onErr: (e: E1) => E2,
+	onOk: (v: T) => U,
+	onErr: (e: E1) => E2,
 ) => (r: Result<T, E1>) => Result<U, E2>;

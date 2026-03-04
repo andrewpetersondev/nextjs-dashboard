@@ -1,17 +1,17 @@
 import "server-only";
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 import type {
-  InvoiceDto,
-  InvoiceFormDto,
-  IsoDateString,
+	InvoiceDto,
+	InvoiceFormDto,
+	IsoDateString,
 } from "@/modules/invoices/application/dto/invoice.dto";
 import type {
-  InvoiceEntity,
-  InvoiceFormEntity,
+	InvoiceEntity,
+	InvoiceFormEntity,
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import {
-  encodeInvoiceDateToIso,
-  encodePeriodToFirstDay,
+	encodeInvoiceDateToIso,
+	encodePeriodToFirstDay,
 } from "@/modules/invoices/domain/invoice.codecs";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
@@ -28,18 +28,18 @@ import type { Result } from "@/shared/core/result/result.dto";
  * - revenuePeriod is YYYY-MM-01 (first-of-month date)
  */
 export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
-  const isoDate = encodeInvoiceDateToIso(entity.date); // YYYY-MM-DD
-  const periodAsFirstDay = encodePeriodToFirstDay(entity.revenuePeriod); // YYYY-MM-01
+	const isoDate = encodeInvoiceDateToIso(entity.date); // YYYY-MM-DD
+	const periodAsFirstDay = encodePeriodToFirstDay(entity.revenuePeriod); // YYYY-MM-01
 
-  return {
-    amount: entity.amount,
-    customerId: String(entity.customerId),
-    date: isoDate,
-    id: String(entity.id),
-    revenuePeriod: periodAsFirstDay,
-    sensitiveData: entity.sensitiveData,
-    status: entity.status,
-  };
+	return {
+		amount: entity.amount,
+		customerId: String(entity.customerId),
+		date: isoDate,
+		id: String(entity.id),
+		revenuePeriod: periodAsFirstDay,
+		sensitiveData: entity.sensitiveData,
+		status: entity.status,
+	};
 }
 
 /**
@@ -53,20 +53,20 @@ export function entityToInvoiceDto(entity: InvoiceEntity): InvoiceDto {
  * @param dto - `InvoiceFormDto` from service layer
  */
 export function dtoToCreateInvoiceEntity(
-  dto: InvoiceFormDto,
+	dto: InvoiceFormDto,
 ): Result<InvoiceFormEntity, AppError> {
-  const statusResult = validateInvoiceStatus(dto.status);
-  if (!statusResult.ok) {
-    return Err(statusResult.error);
-  }
+	const statusResult = validateInvoiceStatus(dto.status);
+	if (!statusResult.ok) {
+		return Err(statusResult.error);
+	}
 
-  return Ok({
-    amount: dto.amount,
-    customerId: toCustomerId(dto.customerId),
-    date: new Date(dto.date as IsoDateString), // YYYY-MM-DD → Date (UTC midnight)
-    sensitiveData: dto.sensitiveData,
-    status: statusResult.value,
-  });
+	return Ok({
+		amount: dto.amount,
+		customerId: toCustomerId(dto.customerId),
+		date: new Date(dto.date as IsoDateString), // YYYY-MM-DD → Date (UTC midnight)
+		sensitiveData: dto.sensitiveData,
+		status: statusResult.value,
+	});
 }
 
 /**
@@ -75,28 +75,28 @@ export function dtoToCreateInvoiceEntity(
  * @returns Partial form entity for DAL
  */
 export function partialDtoToCreateInvoiceEntity(
-  dto: Partial<InvoiceFormDto>,
+	dto: Partial<InvoiceFormDto>,
 ): Result<Partial<InvoiceFormEntity>, AppError> {
-  let statusValue: InvoiceStatus | undefined;
-  if (dto.status !== undefined) {
-    const statusResult = validateInvoiceStatus(dto.status);
-    if (!statusResult.ok) {
-      return Err(statusResult.error);
-    }
-    statusValue = statusResult.value;
-  }
+	let statusValue: InvoiceStatus | undefined;
+	if (dto.status !== undefined) {
+		const statusResult = validateInvoiceStatus(dto.status);
+		if (!statusResult.ok) {
+			return Err(statusResult.error);
+		}
+		statusValue = statusResult.value;
+	}
 
-  return Ok({
-    ...(dto.amount !== undefined && { amount: dto.amount }),
-    ...(dto.customerId !== undefined && {
-      customerId: toCustomerId(dto.customerId),
-    }),
-    ...(dto.date !== undefined && {
-      date: new Date(dto.date as IsoDateString),
-    }),
-    ...(dto.sensitiveData !== undefined && {
-      sensitiveData: dto.sensitiveData,
-    }),
-    ...(statusValue !== undefined && { status: statusValue }),
-  });
+	return Ok({
+		...(dto.amount !== undefined && { amount: dto.amount }),
+		...(dto.customerId !== undefined && {
+			customerId: toCustomerId(dto.customerId),
+		}),
+		...(dto.date !== undefined && {
+			date: new Date(dto.date as IsoDateString),
+		}),
+		...(dto.sensitiveData !== undefined && {
+			sensitiveData: dto.sensitiveData,
+		}),
+		...(statusValue !== undefined && { status: statusValue }),
+	});
 }

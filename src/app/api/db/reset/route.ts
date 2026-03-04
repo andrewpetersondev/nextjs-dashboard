@@ -7,14 +7,14 @@ import { schema } from "@/server/db/schema/schema.aggregate";
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export async function GET() {
-  try {
-    await reset(getAppDb(), schema);
-    return NextResponse.json({ action: "reset", ok: true });
-  } catch (error) {
-    console.error("Error resetting database:", error);
-    return NextResponse.json(
-      { action: "reset", error: String(error), ok: false },
-      { status: 500 },
-    );
-  }
+	try {
+		await reset(getAppDb(), schema);
+		return NextResponse.json({ action: "reset", ok: true });
+	} catch (error) {
+		console.error("Error resetting database:", error);
+		return NextResponse.json(
+			{ action: "reset", error: String(error), ok: false },
+			{ status: 500 },
+		);
+	}
 }

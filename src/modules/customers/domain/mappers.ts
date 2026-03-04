@@ -1,17 +1,17 @@
 import type {
-  CustomerAggregatesServerDto,
-  FormattedCustomersTableRow,
+	CustomerAggregatesServerDto,
+	FormattedCustomersTableRow,
 } from "@/modules/customers/domain/types";
 import { formatCurrency } from "@/shared/primitives/money/convert";
 
 export const toFormattedCustomersTableRow = (
-  row: CustomerAggregatesServerDto,
+	row: CustomerAggregatesServerDto,
 ): FormattedCustomersTableRow => ({
-  email: row.email,
-  id: row.id,
-  imageUrl: row.imageUrl,
-  name: row.name,
-  totalInvoices: row.totalInvoices,
-  totalPaid: formatCurrency(row.totalPaid),
-  totalPending: formatCurrency(row.totalPending),
+	email: row.email,
+	id: row.id,
+	imageUrl: row.imageUrl,
+	name: row.name,
+	totalInvoices: row.totalInvoices,
+	totalPaid: formatCurrency(row.totalPaid),
+	totalPending: formatCurrency(row.totalPending),
 });

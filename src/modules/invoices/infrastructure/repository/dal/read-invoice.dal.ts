@@ -18,31 +18,31 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @throws AppError if input parameters are invalid
  */
 export async function readInvoiceDal(
-  db: AppDatabase,
-  id: InvoiceId,
+	db: AppDatabase,
+	id: InvoiceId,
 ): Promise<InvoiceEntity> {
-  if (!(db && id)) {
-    throw makeAppError("validation", {
-      cause: "",
-      message: INVOICE_MSG.invalidInput,
-      metadata: {},
-    });
-  }
+	if (!(db && id)) {
+		throw makeAppError("validation", {
+			cause: "",
+			message: INVOICE_MSG.invalidInput,
+			metadata: {},
+		});
+	}
 
-  const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
+	const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
 
-  if (!data) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.notFound,
-      metadata: {},
-    });
-  }
+	if (!data) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.notFound,
+			metadata: {},
+		});
+	}
 
-  const result = rawDbToInvoiceEntity(data);
-  if (!result.ok) {
-    throw result.error;
-  }
+	const result = rawDbToInvoiceEntity(data);
+	if (!result.ok) {
+		throw result.error;
+	}
 
-  return result.value;
+	return result.value;
 }

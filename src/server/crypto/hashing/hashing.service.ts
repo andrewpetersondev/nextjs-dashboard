@@ -7,17 +7,17 @@ import type { Hash } from "@/server/crypto/hashing/hashing.value";
  * Delegates to a port for the actual algorithm.
  */
 export class HashingService {
-  private readonly hasher: HashingContract;
+	private readonly hasher: HashingContract;
 
-  constructor(hasher: HashingContract) {
-    this.hasher = hasher;
-  }
+	constructor(hasher: HashingContract) {
+		this.hasher = hasher;
+	}
 
-  async hash(raw: string): Promise<Hash> {
-    return await this.hasher.hash(raw);
-  }
+	async hash(raw: string): Promise<Hash> {
+		return await this.hasher.hash(raw);
+	}
 
-  async compare(raw: string, hash: Hash): Promise<boolean> {
-    return await this.hasher.compare(raw, hash);
-  }
+	async compare(raw: string, hash: Hash): Promise<boolean> {
+		return await this.hasher.compare(raw, hash);
+	}
 }

@@ -11,11 +11,11 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Kept as a thin wrapper to preserve the existing API and avoid breaking changes.
  */
 export async function processInvoiceEvent(
-  event: BaseInvoiceEvent,
-  _revenueService: RevenueApplicationService,
-  contextMethod: string,
-  processor: (invoice: InvoiceDto, period: Period) => Promise<void>,
+	event: BaseInvoiceEvent,
+	_revenueService: RevenueApplicationService,
+	contextMethod: string,
+	processor: (invoice: InvoiceDto, period: Period) => Promise<void>,
 ): Promise<void> {
-  const useCase = new ProcessInvoiceEventUseCase();
-  await useCase.execute(event, _revenueService, contextMethod, processor);
+	const useCase = new ProcessInvoiceEventUseCase();
+	await useCase.execute(event, _revenueService, contextMethod, processor);
 }

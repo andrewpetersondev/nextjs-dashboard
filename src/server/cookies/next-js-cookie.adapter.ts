@@ -9,22 +9,22 @@ import type { CookieContract } from "@/server/cookies/cookie.contract";
  * Adapter for Next.js cookies.
  */
 export class NextJsCookieAdapter implements CookieContract {
-  async delete(name: string): Promise<void> {
-    const cookieStore = await cookies();
-    cookieStore.delete(name);
-  }
+	async delete(name: string): Promise<void> {
+		const cookieStore = await cookies();
+		cookieStore.delete(name);
+	}
 
-  async get(name: string): Promise<string | undefined> {
-    const cookieStore = await cookies();
-    return cookieStore.get(name)?.value;
-  }
+	async get(name: string): Promise<string | undefined> {
+		const cookieStore = await cookies();
+		return cookieStore.get(name)?.value;
+	}
 
-  async set(
-    name: string,
-    value: string,
-    options?: Partial<ResponseCookie>,
-  ): Promise<void> {
-    const cookieStore = await cookies();
-    cookieStore.set(name, value, options);
-  }
+	async set(
+		name: string,
+		value: string,
+		options?: Partial<ResponseCookie>,
+	): Promise<void> {
+		const cookieStore = await cookies();
+		cookieStore.set(name, value, options);
+	}
 }

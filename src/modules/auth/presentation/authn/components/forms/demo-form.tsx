@@ -6,12 +6,12 @@ import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {
-  action: (
-    _prevState: FormResult<never>,
-    formData: FormData,
-  ) => Promise<FormResult<never>>;
-  label: string;
-  text: string;
+	action: (
+		_prevState: FormResult<never>,
+		formData: FormData,
+	) => Promise<FormResult<never>>;
+	label: string;
+	text: string;
 }
 
 /**
@@ -19,30 +19,30 @@ interface DemoFormProps {
  * Displays a loading state while the action is pending and error messages on failure.
  */
 export const DemoForm: FC<DemoFormProps> = ({
-  text,
-  label,
-  action,
+	text,
+	label,
+	action,
 }: DemoFormProps): JSX.Element => {
-  const initialState = makeInitialFormState([]);
+	const initialState = makeInitialFormState([]);
 
-  const [state, boundAction, pending] = useActionState<
-    FormResult<never>,
-    FormData
-  >(action, initialState);
+	const [state, boundAction, pending] = useActionState<
+		FormResult<never>,
+		FormData
+	>(action, initialState);
 
-  return (
-    <form action={boundAction} aria-label={label}>
-      <SubmitButtonMolecule
-        className="mt-2"
-        data-cy={`demo-user-button-${label}`}
-        fullWidth={true}
-        label={text}
-        pending={pending}
-      />
+	return (
+		<form action={boundAction} aria-label={label}>
+			<SubmitButtonMolecule
+				className="mt-2"
+				data-cy={`demo-user-button-${label}`}
+				fullWidth={true}
+				label={text}
+				pending={pending}
+			/>
 
-      {!state.ok && state.error.message && (
-        <p className="mt-2 text-sm text-text-error">{state.error.message}</p>
-      )}
-    </form>
-  );
+			{!state.ok && state.error.message && (
+				<p className="mt-2 text-sm text-text-error">{state.error.message}</p>
+			)}
+		</form>
+	);
 };

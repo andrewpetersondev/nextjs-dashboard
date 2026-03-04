@@ -21,37 +21,37 @@ import type { Result } from "@/shared/core/result/result.dto";
  * - This use case converts that "no session" state into an Unauthorized `AppError`.
  */
 export class RequireSessionUseCase {
-  private readonly readSessionUseCase: ReadSessionUseCase;
+	private readonly readSessionUseCase: ReadSessionUseCase;
 
-  constructor(readSessionUseCase: ReadSessionUseCase) {
-    this.readSessionUseCase = readSessionUseCase;
-  }
+	constructor(readSessionUseCase: ReadSessionUseCase) {
+		this.readSessionUseCase = readSessionUseCase;
+	}
 
-  async execute(): Promise<Result<ReadSessionOutcomeDto, AppError>> {
-    const readResult: Result<ReadSessionOutcomeDto | undefined, AppError> =
-      await this.readSessionUseCase.execute();
+	async execute(): Promise<Result<ReadSessionOutcomeDto, AppError>> {
+		const readResult: Result<ReadSessionOutcomeDto | undefined, AppError> =
+			await this.readSessionUseCase.execute();
 
-    if (!readResult.ok) {
-      return readResult;
-    }
+		if (!readResult.ok) {
+			return readResult;
+		}
 
-    const session: ReadSessionOutcomeDto | undefined = readResult.value;
+		const session: ReadSessionOutcomeDto | undefined = readResult.value;
 
-    if (!session) {
-      const failure = AuthSecurityFailures.missingSession();
+		if (!session) {
+			const failure = AuthSecurityFailures.missingSession();
 
-      return Err(
-        makeAppError(APP_ERROR_KEYS.unauthorized, {
-          cause: "No active session found.",
-          message: "No active session found.",
-          metadata: {
-            policy: failure.policy,
-            reason: failure.reason,
-          },
-        }),
-      );
-    }
+			return Err(
+				makeAppError(APP_ERROR_KEYS.unauthorized, {
+					cause: "No active session found.",
+					message: "No active session found.",
+					metadata: {
+						policy: failure.policy,
+						reason: failure.reason,
+					},
+				}),
+			);
+		}
 
-    return Ok(session);
-  }
+		return Ok(session);
+	}
 }

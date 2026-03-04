@@ -8,30 +8,30 @@ import { getAppDb } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
-  try {
-    if (!id) {
-      throw makeAppError("validation", {
-        cause: "",
-        message: INVOICE_MSG.invalidId,
-        metadata: {},
-      });
-    }
-    const repo = new InvoiceRepository(getAppDb());
-    const service = new InvoiceService(repo);
-    const result = await service.readInvoice(id);
-    if (!result.ok) {
-      throw makeAppError(result.error.key, {
-        cause: "",
-        message: result.error.message,
-        metadata: result.error.metadata,
-      });
-    }
-    return result.value;
-  } catch (error) {
-    throw makeAppError("database", {
-      cause: Error.isError(error) ? error : "fix this later",
-      message: INVOICE_MSG.dbError,
-      metadata: {},
-    });
-  }
+	try {
+		if (!id) {
+			throw makeAppError("validation", {
+				cause: "",
+				message: INVOICE_MSG.invalidId,
+				metadata: {},
+			});
+		}
+		const repo = new InvoiceRepository(getAppDb());
+		const service = new InvoiceService(repo);
+		const result = await service.readInvoice(id);
+		if (!result.ok) {
+			throw makeAppError(result.error.key, {
+				cause: "",
+				message: result.error.message,
+				metadata: result.error.metadata,
+			});
+		}
+		return result.value;
+	} catch (error) {
+		throw makeAppError("database", {
+			cause: Error.isError(error) ? error : "fix this later",
+			message: INVOICE_MSG.dbError,
+			metadata: {},
+		});
+	}
 }

@@ -7,8 +7,8 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import { type RevenueRow, revenues } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import {
-  makeAppError,
-  makeUnexpectedError,
+	makeAppError,
+	makeUnexpectedError,
 } from "@/shared/core/errors/core/factories/app-error.factory";
 import type { Period } from "@/shared/primitives/period/period.brand";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";
@@ -22,35 +22,35 @@ import { toPeriod } from "@/shared/primitives/period/period.mappers";
  * @throws Error if periods are invalid or retrieval fails.
  */
 export async function findRevenuesByDateRangeDal(
-  db: AppDatabase,
-  startPeriod: Period,
-  endPeriod: Period,
+	db: AppDatabase,
+	startPeriod: Period,
+	endPeriod: Period,
 ): Promise<RevenueEntity[]> {
-  if (!(startPeriod && endPeriod)) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Start and end periods are required",
-      metadata: {},
-    });
-  }
+	if (!(startPeriod && endPeriod)) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Start and end periods are required",
+			metadata: {},
+		});
+	}
 
-  const revenueRows = (await db
-    .select()
-    .from(revenues)
-    .where(
-      and(
-        gte(revenues.period, toPeriod(startPeriod)),
-        lte(revenues.period, toPeriod(endPeriod)),
-      ),
-    )
-    .orderBy(desc(revenues.period))) as RevenueRow[];
+	const revenueRows = (await db
+		.select()
+		.from(revenues)
+		.where(
+			and(
+				gte(revenues.period, toPeriod(startPeriod)),
+				lte(revenues.period, toPeriod(endPeriod)),
+			),
+		)
+		.orderBy(desc(revenues.period))) as RevenueRow[];
 
-  if (!revenueRows) {
-    throw makeUnexpectedError("", {
-      message: "Failed to retrieve revenue records",
-      overrideMetadata: { table: "revenues" },
-    });
-  }
+	if (!revenueRows) {
+		throw makeUnexpectedError("", {
+			message: "Failed to retrieve revenue records",
+			overrideMetadata: { table: "revenues" },
+		});
+	}
 
-  return mapRevenueRowsToEntities(revenueRows);
+	return mapRevenueRowsToEntities(revenueRows);
 }

@@ -7,14 +7,14 @@ import { ROUTES } from "@/shared/routing/routes";
 import { LinkPrompt } from "@/ui/molecules/link-prompt";
 
 export default function SignupPage(): JSX.Element {
-  return (
-    <AuthPageWrapper title={SIGNUP_HEADING}>
-      <SignupCard action={signupAction} />
-      <LinkPrompt
-        href={ROUTES.auth.login}
-        linkText="Log in here"
-        prompt="Already a member?"
-      />
-    </AuthPageWrapper>
-  );
+	return (
+		<AuthPageWrapper title={SIGNUP_HEADING}>
+			<SignupCard action={signupAction} />
+			<LinkPrompt
+				href={ROUTES.auth.login}
+				linkText="Log in here"
+				prompt="Already a member?"
+			/>
+		</AuthPageWrapper>
+	);
 }

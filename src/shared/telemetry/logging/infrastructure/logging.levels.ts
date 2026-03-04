@@ -11,17 +11,17 @@ let cachedPriority: number | null = null;
  * @returns The effective LogLevel, defaulting to 'info' on error.
  */
 function getEffectiveLogLevel(): LogLevel {
-  if (cachedLogLevel !== null) {
-    return cachedLogLevel;
-  }
-  try {
-    cachedLogLevel = getPublicLogLevel();
-  } catch {
-    console.error("getEffectiveLogLevel failed, defaulting to 'info'");
-    cachedLogLevel = "info";
-  }
-  cachedPriority = logLevelPriority[cachedLogLevel];
-  return cachedLogLevel;
+	if (cachedLogLevel !== null) {
+		return cachedLogLevel;
+	}
+	try {
+		cachedLogLevel = getPublicLogLevel();
+	} catch {
+		console.error("getEffectiveLogLevel failed, defaulting to 'info'");
+		cachedLogLevel = "info";
+	}
+	cachedPriority = logLevelPriority[cachedLogLevel];
+	return cachedLogLevel;
 }
 
 /**
@@ -36,30 +36,30 @@ function getEffectiveLogLevel(): LogLevel {
  * @property error - Lowest risk (usually safe to expose)
  */
 export const logLevelPriority: Readonly<Record<LogLevel, number>> = {
-  debug: 40,
-  error: 10,
-  info: 30,
-  trace: 50,
-  warn: 20,
+	debug: 40,
+	error: 10,
+	info: 30,
+	trace: 50,
+	warn: 20,
 };
 
 /**
  * Cached console methods for minimal overhead.
  */
 export const consoleMethod: Record<LogLevel, (...args: unknown[]) => void> = {
-  debug: console.debug.bind(console),
-  error: console.error.bind(console),
-  info: console.info.bind(console),
-  trace: console.trace.bind(console),
-  warn: console.warn.bind(console),
+	debug: console.debug.bind(console),
+	error: console.error.bind(console),
+	info: console.info.bind(console),
+	trace: console.trace.bind(console),
+	warn: console.warn.bind(console),
 } as const;
 
 /**
  * Get the current log level priority with safe fallback.
  */
 export function currentLogLevelPriority(): number {
-  if (cachedPriority === null) {
-    getEffectiveLogLevel();
-  }
-  return cachedPriority ?? logLevelPriority.info;
+	if (cachedPriority === null) {
+		getEffectiveLogLevel();
+	}
+	return cachedPriority ?? logLevelPriority.info;
 }

@@ -10,7 +10,7 @@ export const UserRoleEnumSchema = z.enum(USER_ROLES);
  */
 // biome-ignore lint/nursery/useExplicitType: Zod does not make this easy
 export const UserRoleFormSchema = z
-  .string()
-  .trim()
-  .toUpperCase()
-  .pipe(UserRoleEnumSchema);
+	.string()
+	.trim()
+	.toUpperCase()
+	.pipe(UserRoleEnumSchema);

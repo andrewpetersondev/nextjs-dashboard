@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
-  title: "Create User",
+	title: "Create User",
 };
 
 // force this page to be dynamic, so it doesn't get cached
@@ -14,22 +14,22 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function Page(): JSX.Element {
-  return (
-    <main>
-      <Breadcrumbs
-        breadcrumbs={[
-          {
-            href: ROUTES.dashboard.users,
-            label: "Users",
-          },
-          {
-            active: true,
-            href: `${ROUTES.dashboard.createUser}`,
-            label: "Create User",
-          },
-        ]}
-      />
-      <CreateUserForm />
-    </main>
-  );
+	return (
+		<main>
+			<Breadcrumbs
+				breadcrumbs={[
+					{
+						href: ROUTES.dashboard.users,
+						label: "Users",
+					},
+					{
+						active: true,
+						href: `${ROUTES.dashboard.createUser}`,
+						label: "Create User",
+					},
+				]}
+			/>
+			<CreateUserForm />
+		</main>
+	);
 }

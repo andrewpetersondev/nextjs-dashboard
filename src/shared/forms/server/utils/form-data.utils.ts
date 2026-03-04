@@ -9,19 +9,19 @@ import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.
  * @returns A readonly object containing the picked fields and their string values.
  */
 function extractFormDataFields<T extends string>(
-  fd: FormData,
-  allowed: readonly T[],
+	fd: FormData,
+	allowed: readonly T[],
 ): SparseFieldValueMap<T, string> {
-  const out = {} as Record<T, string>;
+	const out = {} as Record<T, string>;
 
-  for (const k of allowed) {
-    const v = fd.get(k);
-    if (v !== null) {
-      out[k] = typeof v === "string" ? v : String(v);
-    }
-  }
+	for (const k of allowed) {
+		const v = fd.get(k);
+		if (v !== null) {
+			out[k] = typeof v === "string" ? v : String(v);
+		}
+	}
 
-  return Object.freeze(out);
+	return Object.freeze(out);
 }
 
 /**
@@ -37,22 +37,22 @@ function extractFormDataFields<T extends string>(
  * @returns A readonly partial mapping of field names to their stringified raw values.
  */
 export function resolveRawFieldPayload<T extends string>(
-  formData: FormData,
-  fields: readonly T[],
-  explicitRaw?: SparseFieldValueMap<T, unknown>,
+	formData: FormData,
+	fields: readonly T[],
+	explicitRaw?: SparseFieldValueMap<T, unknown>,
 ): SparseFieldValueMap<T, string> {
-  if (explicitRaw && Object.keys(explicitRaw).length > 0) {
-    const out = {} as Record<T, string>;
+	if (explicitRaw && Object.keys(explicitRaw).length > 0) {
+		const out = {} as Record<T, string>;
 
-    for (const f of fields) {
-      const value = explicitRaw[f];
-      if (value !== undefined && value !== null) {
-        out[f] = String(value);
-      }
-    }
+		for (const f of fields) {
+			const value = explicitRaw[f];
+			if (value !== undefined && value !== null) {
+				out[f] = String(value);
+			}
+		}
 
-    return Object.freeze(out);
-  }
+		return Object.freeze(out);
+	}
 
-  return extractFormDataFields<T>(formData, fields);
+	return extractFormDataFields<T>(formData, fields);
 }

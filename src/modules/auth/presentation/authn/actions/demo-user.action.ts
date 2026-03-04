@@ -5,9 +5,9 @@ import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.t
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import {
-  ADMIN_ROLE,
-  USER_ROLE,
-  type UserRole,
+	ADMIN_ROLE,
+	USER_ROLE,
+	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
 import { ROUTES } from "@/shared/routing/routes";
 import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
@@ -25,51 +25,51 @@ import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker"
  * @internal
  */
 async function createDemoUserInternal(
-  role: UserRole,
+	role: UserRole,
 ): Promise<FormResult<never>> {
-  const auth = await makeAuthComposition();
-  const { ip } = auth.request;
-  const tracker = new PerformanceTracker();
+	const auth = await makeAuthComposition();
+	const { ip } = auth.request;
+	const tracker = new PerformanceTracker();
 
-  const logger = auth.loggers.action.child({ role });
+	const logger = auth.loggers.action.child({ role });
 
-  logger.operation("info", "Demo user action started", {
-    operationContext: "authentication",
-    operationIdentifiers: { ip, role },
-    operationName: "demoUser.start",
-  });
+	logger.operation("info", "Demo user action started", {
+		operationContext: "authentication",
+		operationIdentifiers: { ip, role },
+		operationName: "demoUser.start",
+	});
 
-  const sessionResult = await tracker.measure("authentication", () =>
-    auth.workflows.demoUser({ role }),
-  );
+	const sessionResult = await tracker.measure("authentication", () =>
+		auth.workflows.demoUser({ role }),
+	);
 
-  if (!sessionResult.ok) {
-    const error = sessionResult.error;
+	if (!sessionResult.ok) {
+		const error = sessionResult.error;
 
-    logger.errorWithDetails("Demo user creation failed", error, {
-      duration: tracker.getTotalDuration(),
-      operationContext: "authentication",
-      operationIdentifiers: { ip, role },
-      operationName: "demoUser.failed",
-    });
+		logger.errorWithDetails("Demo user creation failed", error, {
+			duration: tracker.getTotalDuration(),
+			operationContext: "authentication",
+			operationIdentifiers: { ip, role },
+			operationName: "demoUser.failed",
+		});
 
-    return makeFormError({
-      fieldErrors: {} as DenseFieldErrorMap<string, string>,
-      formData: {},
-      formErrors: [error.message || "demo user creation failed"],
-      key: error.key,
-      message: error.message || "demo user creation failed.",
-    });
-  }
+		return makeFormError({
+			fieldErrors: {} as DenseFieldErrorMap<string, string>,
+			formData: {},
+			formErrors: [error.message || "demo user creation failed"],
+			key: error.key,
+			message: error.message || "demo user creation failed.",
+		});
+	}
 
-  logger.operation("info", "Demo user created successfully", {
-    duration: tracker.getTotalDuration(),
-    operationContext: "authentication",
-    operationIdentifiers: { ip, role },
-    operationName: "demoUser.success",
-  });
+	logger.operation("info", "Demo user created successfully", {
+		duration: tracker.getTotalDuration(),
+		operationContext: "authentication",
+		operationIdentifiers: { ip, role },
+		operationName: "demoUser.success",
+	});
 
-  redirect(ROUTES.dashboard.root);
+	redirect(ROUTES.dashboard.root);
 }
 
 /**
@@ -81,10 +81,10 @@ async function createDemoUserInternal(
  * @redirects {ROUTES.dashboard.root} on success.
  */
 export async function demoUserAction(
-  _prevState: FormResult<never>,
-  _formData: FormData,
+	_prevState: FormResult<never>,
+	_formData: FormData,
 ): Promise<FormResult<never>> {
-  return await createDemoUserInternal(USER_ROLE);
+	return await createDemoUserInternal(USER_ROLE);
 }
 
 /**
@@ -96,8 +96,8 @@ export async function demoUserAction(
  * @redirects {ROUTES.dashboard.root} on success.
  */
 export async function demoAdminAction(
-  _prevState: FormResult<never>,
-  _formData: FormData,
+	_prevState: FormResult<never>,
+	_formData: FormData,
 ): Promise<FormResult<never>> {
-  return await createDemoUserInternal(ADMIN_ROLE);
+	return await createDemoUserInternal(ADMIN_ROLE);
 }

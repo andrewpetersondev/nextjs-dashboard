@@ -15,35 +15,35 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @throws AppError if query fails
  */
 export async function fetchLatestInvoicesDal(
-  db: AppDatabase,
-  limit: number = 5,
+	db: AppDatabase,
+	limit: number = 5,
 ): Promise<InvoiceListFilter[]> {
-  const data: InvoiceListFilter[] = await db
-    .select({
-      amount: invoices.amount,
-      customerId: invoices.customerId,
-      date: invoices.date,
-      email: customers.email,
-      id: invoices.id,
-      imageUrl: customers.imageUrl,
-      name: customers.name,
-      revenuePeriod: invoices.revenuePeriod,
-      sensitiveData: invoices.sensitiveData,
-      status: invoices.status,
-    })
-    .from(invoices)
-    .innerJoin(customers, eq(invoices.customerId, customers.id))
-    .orderBy(desc(invoices.date))
-    .limit(limit);
+	const data: InvoiceListFilter[] = await db
+		.select({
+			amount: invoices.amount,
+			customerId: invoices.customerId,
+			date: invoices.date,
+			email: customers.email,
+			id: invoices.id,
+			imageUrl: customers.imageUrl,
+			name: customers.name,
+			revenuePeriod: invoices.revenuePeriod,
+			sensitiveData: invoices.sensitiveData,
+			status: invoices.status,
+		})
+		.from(invoices)
+		.innerJoin(customers, eq(invoices.customerId, customers.id))
+		.orderBy(desc(invoices.date))
+		.limit(limit);
 
-  // TODO: Refactor. Empty result does not mean that an error occurred.
-  if (!data || data.length === 0) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.fetchLatestFailed,
-      metadata: {},
-    });
-  }
+	// TODO: Refactor. Empty result does not mean that an error occurred.
+	if (!data || data.length === 0) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.fetchLatestFailed,
+			metadata: {},
+		});
+	}
 
-  return data;
+	return data;
 }

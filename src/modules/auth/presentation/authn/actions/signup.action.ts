@@ -5,9 +5,9 @@ import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/a
 import { toSignupCommand } from "@/modules/auth/presentation/authn/adapters/to-signup-command.adapter";
 import { toSignupFormResult } from "@/modules/auth/presentation/authn/mappers/to-signup-form-result.mapper";
 import {
-  SIGNUP_FIELDS_LIST,
-  SignupFormSchema,
-  type SignupRequestDto,
+	SIGNUP_FIELDS_LIST,
+	SignupFormSchema,
+	type SignupRequestDto,
 } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -40,80 +40,80 @@ const fields = SIGNUP_FIELDS_LIST;
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup flow is inherently multi-step
 export async function signupAction(
-  _prevState: FormResult<unknown>,
-  formData: FormData,
+	_prevState: FormResult<unknown>,
+	formData: FormData,
 ): Promise<FormResult<never>> {
-  const auth = await makeAuthComposition();
-  const { ip } = auth.request;
-  const tracker = new PerformanceTracker();
+	const auth = await makeAuthComposition();
+	const { ip } = auth.request;
+	const tracker = new PerformanceTracker();
 
-  const logger = auth.loggers.action;
+	const logger = auth.loggers.action;
 
-  logger.operation("info", "Signup action started", {
-    operationContext: "authentication",
-    operationIdentifiers: { ip },
-    operationName: "signup.start",
-  });
+	logger.operation("info", "Signup action started", {
+		operationContext: "authentication",
+		operationIdentifiers: { ip },
+		operationName: "signup.start",
+	});
 
-  const validated = await tracker.measure("validation", () =>
-    validateForm(formData, SignupFormSchema, fields),
-  );
+	const validated = await tracker.measure("validation", () =>
+		validateForm(formData, SignupFormSchema, fields),
+	);
 
-  if (!validated.ok) {
-    const fieldErrors = extractFieldErrors<SignupField>(validated.error) || {};
-    const errorCount = Object.keys(fieldErrors).length;
+	if (!validated.ok) {
+		const fieldErrors = extractFieldErrors<SignupField>(validated.error) || {};
+		const errorCount = Object.keys(fieldErrors).length;
 
-    logger.operation("warn", "Signup validation failed", {
-      duration: tracker.getTotalDuration(),
-      errorCount,
-      operationContext: "validation",
-      operationIdentifiers: { ip },
-      operationName: "signup.validation.failed",
-    });
+		logger.operation("warn", "Signup validation failed", {
+			duration: tracker.getTotalDuration(),
+			errorCount,
+			operationContext: "validation",
+			operationIdentifiers: { ip },
+			operationName: "signup.validation.failed",
+		});
 
-    return validated;
-  }
+		return validated;
+	}
 
-  const input = validated.value.data satisfies SignupRequestDto;
+	const input = validated.value.data satisfies SignupRequestDto;
 
-  logger.operation("info", "Signup form validated", {
-    duration: tracker.getLastDuration("validation"),
-    operationContext: "validation",
-    operationIdentifiers: { email: input.email, ip },
+	logger.operation("info", "Signup form validated", {
+		duration: tracker.getLastDuration("validation"),
+		operationContext: "validation",
+		operationIdentifiers: { email: input.email, ip },
 
-    operationName: "signup.validation.success",
-  });
+		operationName: "signup.validation.success",
+	});
 
-  const sessionResult = await tracker.measure("authentication", () =>
-    auth.workflows.signup(toSignupCommand(input)),
-  );
+	const sessionResult = await tracker.measure("authentication", () =>
+		auth.workflows.signup(toSignupCommand(input)),
+	);
 
-  if (!sessionResult.ok) {
-    const error = sessionResult.error;
+	if (!sessionResult.ok) {
+		const error = sessionResult.error;
 
-    logger.errorWithDetails("Signup authentication failed", error, {
-      duration: tracker.getTotalDuration(),
-      operationContext: "authentication",
-      operationIdentifiers: {
-        email: input.email,
-        ip,
-        username: input.username,
-      },
-      operationName: "signup.authentication.failed",
-    });
+		logger.errorWithDetails("Signup authentication failed", error, {
+			duration: tracker.getTotalDuration(),
+			operationContext: "authentication",
+			operationIdentifiers: {
+				email: input.email,
+				ip,
+				username: input.username,
+			},
+			operationName: "signup.authentication.failed",
+		});
 
-    return toSignupFormResult(error, input);
-  }
+		return toSignupFormResult(error, input);
+	}
 
-  const { id: userId, role } = sessionResult.value;
+	const { id: userId, role } = sessionResult.value;
 
-  logger.operation("info", "Signup action completed successfully", {
-    duration: tracker.getTotalDuration(),
-    operationContext: "authentication",
-    operationIdentifiers: { email: input.email, ip, role, userId },
-    operationName: "signup.success",
-  });
+	logger.operation("info", "Signup action completed successfully", {
+		duration: tracker.getTotalDuration(),
+		operationContext: "authentication",
+		operationIdentifiers: { email: input.email, ip, role, userId },
+		operationName: "signup.success",
+	});
 
-  revalidatePath(ROUTES.dashboard.root);
-  redirect(ROUTES.dashboard.root);
+	revalidatePath(ROUTES.dashboard.root);
+	redirect(ROUTES.dashboard.root);
 }

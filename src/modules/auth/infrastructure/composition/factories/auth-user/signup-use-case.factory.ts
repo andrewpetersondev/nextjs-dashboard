@@ -12,8 +12,8 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns An instance of {@link SignupUseCase}.
  */
 export function signupUseCaseFactory(
-  uow: AuthUnitOfWorkContract,
-  logger: LoggingClientContract,
+	uow: AuthUnitOfWorkContract,
+	logger: LoggingClientContract,
 ): SignupUseCase {
-  return new SignupUseCase(uow, passwordHasherFactory(), logger);
+	return new SignupUseCase(uow, passwordHasherFactory(), logger);
 }

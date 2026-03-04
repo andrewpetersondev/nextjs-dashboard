@@ -10,7 +10,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A `Result<InvoiceId, AppError>` representing success or an `AppError`.
  */
 const toInvoiceIdResult = (value: unknown): Result<InvoiceId, AppError> =>
-  createInvoiceId(value);
+	createInvoiceId(value);
 
 /**
  * Validate and convert a string to a branded `InvoiceId`.
@@ -20,9 +20,9 @@ const toInvoiceIdResult = (value: unknown): Result<InvoiceId, AppError> =>
  * @throws {AppError} When validation fails.
  */
 export const toInvoiceId = (id: string): InvoiceId => {
-  const r = toInvoiceIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
+	const r = toInvoiceIdResult(id);
+	if (r.ok) {
+		return r.value;
+	}
+	throw r.error;
 };

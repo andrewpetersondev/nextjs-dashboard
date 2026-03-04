@@ -9,14 +9,14 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Used in invoice list views and table components.
  */
 export type InvoiceListFilter = Readonly<{
-  amount: number;
-  customerId: CustomerId;
-  date: Date;
-  email: string;
-  id: InvoiceId;
-  imageUrl: string;
-  name: string;
-  revenuePeriod: Period;
-  sensitiveData: string;
-  status: InvoiceStatus;
+	amount: number;
+	customerId: CustomerId;
+	date: Date;
+	email: string;
+	id: InvoiceId;
+	imageUrl: string;
+	name: string;
+	revenuePeriod: Period;
+	sensitiveData: string;
+	status: InvoiceStatus;
 }>;

@@ -3,14 +3,14 @@ import type { JSX, ReactNode } from "react";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
-  description: "Login and signup pages for the application.",
-  title: "Authentication",
+	description: "Login and signup pages for the application.",
+	title: "Authentication",
 };
 
 export default function AuthLayout({
-  children,
+	children,
 }: {
-  children: ReactNode;
+	children: ReactNode;
 }): JSX.Element {
-  return <>{children}</>;
+	return <>{children}</>;
 }

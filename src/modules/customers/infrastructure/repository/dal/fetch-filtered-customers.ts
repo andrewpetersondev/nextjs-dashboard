@@ -14,18 +14,18 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * Returns a raw projection reflecting the DB selection (no branding).
  */
 export async function fetchFilteredCustomersDal(
-  db: AppDatabase,
-  query: string,
+	db: AppDatabase,
+	query: string,
 ): Promise<CustomerAggregatesRowRaw[]> {
-  try {
-    return await db
-      .select({
-        email: customers.email,
-        id: customers.id,
-        imageUrl: customers.imageUrl,
-        name: customers.name,
-        totalInvoices: count(invoices.id),
-        totalPaid: sql<number | null>`sum(
+	try {
+		return await db
+			.select({
+				email: customers.email,
+				id: customers.id,
+				imageUrl: customers.imageUrl,
+				name: customers.name,
+				totalInvoices: count(invoices.id),
+				totalPaid: sql<number | null>`sum(
             ${invoices.amount}
             )
             FILTER
@@ -35,7 +35,7 @@ export async function fetchFilteredCustomersDal(
             =
             'paid'
             )`,
-        totalPending: sql<number | null>`sum(
+				totalPending: sql<number | null>`sum(
             ${invoices.amount}
             )
             FILTER
@@ -45,26 +45,26 @@ export async function fetchFilteredCustomersDal(
             =
             'pending'
             )`,
-      })
-      .from(customers)
-      .leftJoin(invoices, eq(customers.id, invoices.customerId))
-      .where(
-        or(
-          ilike(customers.name, `%${query}%`),
-          ilike(customers.email, `%${query}%`),
-        ),
-      )
-      .groupBy(customers.id)
-      .orderBy(asc(customers.name));
-  } catch (error) {
-    // Use structured logging in production
-    console.error("Fetch Filtered Customers Error:", error);
-    throw makeAppError(APP_ERROR_KEYS.database, {
-      cause: Error.isError(error)
-        ? error
-        : "failed to fetch filtered customers",
-      message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
-      metadata: {},
-    });
-  }
+			})
+			.from(customers)
+			.leftJoin(invoices, eq(customers.id, invoices.customerId))
+			.where(
+				or(
+					ilike(customers.name, `%${query}%`),
+					ilike(customers.email, `%${query}%`),
+				),
+			)
+			.groupBy(customers.id)
+			.orderBy(asc(customers.name));
+	} catch (error) {
+		// Use structured logging in production
+		console.error("Fetch Filtered Customers Error:", error);
+		throw makeAppError(APP_ERROR_KEYS.database, {
+			cause: Error.isError(error)
+				? error
+				: "failed to fetch filtered customers",
+			message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchFilteredFailed,
+			metadata: {},
+		});
+	}
 }

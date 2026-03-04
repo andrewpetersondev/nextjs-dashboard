@@ -10,44 +10,44 @@ vi.mock("server-only", () => ({}));
 
 // Centralized Next.js Mocks
 vi.mock("next/navigation", () => ({
-  redirect: vi.fn((path) => {
-    const error = new Error("NEXT_REDIRECT");
-    // biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
-    (error as any).digest = `NEXT_REDIRECT;${path}`;
-    throw error;
-  }),
-  usePathname: vi.fn(),
-  useRouter: vi.fn(() => ({
-    back: vi.fn(),
-    forward: vi.fn(),
-    push: vi.fn(),
-    refresh: vi.fn(),
-    replace: vi.fn(),
-  })),
-  useSearchParams: vi.fn(() => new URLSearchParams()),
+	redirect: vi.fn((path) => {
+		const error = new Error("NEXT_REDIRECT");
+		// biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
+		(error as any).digest = `NEXT_REDIRECT;${path}`;
+		throw error;
+	}),
+	usePathname: vi.fn(),
+	useRouter: vi.fn(() => ({
+		back: vi.fn(),
+		forward: vi.fn(),
+		push: vi.fn(),
+		refresh: vi.fn(),
+		replace: vi.fn(),
+	})),
+	useSearchParams: vi.fn(() => new URLSearchParams()),
 }));
 
 vi.mock("next/cache", () => ({
-  revalidatePath: vi.fn(),
-  revalidateTag: vi.fn(),
+	revalidatePath: vi.fn(),
+	revalidateTag: vi.fn(),
 }));
 
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 const mockCookies = {
-  delete: vi.fn(),
-  get: vi.fn(),
-  getAll: vi.fn(),
-  has: vi.fn(),
-  set: vi.fn(),
+	delete: vi.fn(),
+	get: vi.fn(),
+	getAll: vi.fn(),
+	has: vi.fn(),
+	set: vi.fn(),
 };
 
 vi.mock("next/headers", () => {
-  const mockHeaders = new Map([
-    ["user-agent", "test-agent"],
-    ["x-forwarded-for", "127.0.0.1"],
-  ]);
-  return {
-    cookies: vi.fn(async () => mockCookies),
-    headers: vi.fn(async () => mockHeaders),
-  };
+	const mockHeaders = new Map([
+		["user-agent", "test-agent"],
+		["x-forwarded-for", "127.0.0.1"],
+	]);
+	return {
+		cookies: vi.fn(async () => mockCookies),
+		headers: vi.fn(async () => mockHeaders),
+	};
 });

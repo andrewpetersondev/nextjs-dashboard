@@ -8,7 +8,7 @@ import { createRevenueDisplayEntity } from "@/modules/revenues/domain/factories/
  * Delegates to the domain factory.
  */
 export function mapRevenueEntityToDisplayEntity(
-  revenueEntity: RevenueEntity,
+	revenueEntity: RevenueEntity,
 ): RevenueDisplayEntity {
-  return createRevenueDisplayEntity(revenueEntity);
+	return createRevenueDisplayEntity(revenueEntity);
 }

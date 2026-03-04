@@ -13,33 +13,33 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Processes an invoice for revenue calculation.
  */
 export async function processInvoiceUpsert(
-  revenueService: RevenueApplicationService,
-  invoice: InvoiceDto,
-  period: Period,
-  options?: ProcessInvoiceOptions,
+	revenueService: RevenueApplicationService,
+	invoice: InvoiceDto,
+	period: Period,
+	options?: ProcessInvoiceOptions,
 ): Promise<void> {
-  const context =
-    options?.context ?? "RevenueEventHandler.processInvoiceUpsert";
-  const isUpdate = options?.isUpdate ?? false;
-  const previousAmount = options?.previousAmount;
-  const metadata: LogMetadata = {
-    invoice: invoice.id,
-    isUpdate,
-    period: periodKey(period),
-  };
-  await withErrorHandling(
-    context,
-    "Processing invoice for revenue calculation",
-    () =>
-      upsertRevenue({
-        context,
-        invoice,
-        isUpdate,
-        metadata,
-        period,
-        previousAmount,
-        revenueService,
-      }),
-    metadata,
-  );
+	const context =
+		options?.context ?? "RevenueEventHandler.processInvoiceUpsert";
+	const isUpdate = options?.isUpdate ?? false;
+	const previousAmount = options?.previousAmount;
+	const metadata: LogMetadata = {
+		invoice: invoice.id,
+		isUpdate,
+		period: periodKey(period),
+	};
+	await withErrorHandling(
+		context,
+		"Processing invoice for revenue calculation",
+		() =>
+			upsertRevenue({
+				context,
+				invoice,
+				isUpdate,
+				metadata,
+				period,
+				previousAmount,
+				revenueService,
+			}),
+		metadata,
+	);
 }

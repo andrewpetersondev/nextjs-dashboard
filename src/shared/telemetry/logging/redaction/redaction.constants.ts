@@ -20,5 +20,5 @@ export const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
  * Extend cautiously; avoid over-redaction that obscures diagnostics.
  */
 export const DEFAULT_SENSITIVE_KEYS: readonly string[] = [
-  "do_not_log_me",
+	"do_not_log_me",
 ] as const;

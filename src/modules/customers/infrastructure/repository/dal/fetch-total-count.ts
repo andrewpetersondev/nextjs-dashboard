@@ -11,20 +11,20 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * Fetches the total number of customers.
  */
 export async function fetchTotalCustomersCountDal(
-  db: AppDatabase,
+	db: AppDatabase,
 ): Promise<number> {
-  const value = await db
-    .select({ value: count(customers.id) })
-    .from(customers)
-    .then((rows) => rows[0]?.value ?? 0);
+	const value = await db
+		.select({ value: count(customers.id) })
+		.from(customers)
+		.then((rows) => rows[0]?.value ?? 0);
 
-  if (value === undefined) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchTotalFailed,
-      metadata: {},
-    });
-  }
+	if (value === undefined) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: CUSTOMER_SERVER_ERROR_MESSAGES.fetchTotalFailed,
+			metadata: {},
+		});
+	}
 
-  return value;
+	return value;
 }

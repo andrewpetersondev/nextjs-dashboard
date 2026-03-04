@@ -5,9 +5,9 @@ import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/a
 import { toLoginCommand } from "@/modules/auth/presentation/authn/adapters/to-login-command.adapter";
 import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/to-login-form-result.mapper";
 import {
-  LOGIN_FIELDS_LIST,
-  LoginFormSchema,
-  type LoginRequestDto,
+	LOGIN_FIELDS_LIST,
+	LoginFormSchema,
+	type LoginRequestDto,
 } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -36,76 +36,76 @@ import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker"
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary requires validation, orchestration, logging, and result mapping
 export async function loginAction(
-  _prevState: FormResult<unknown>,
-  formData: FormData,
+	_prevState: FormResult<unknown>,
+	formData: FormData,
 ): Promise<FormResult<never>> {
-  const auth = await makeAuthComposition();
-  const { ip } = auth.request;
+	const auth = await makeAuthComposition();
+	const { ip } = auth.request;
 
-  const tracker = new PerformanceTracker();
+	const tracker = new PerformanceTracker();
 
-  const logger = auth.loggers.action;
+	const logger = auth.loggers.action;
 
-  logger.operation("info", "Login action started", {
-    operationContext: "authentication",
-    operationIdentifiers: { ip },
-    operationName: "login.start",
-  });
+	logger.operation("info", "Login action started", {
+		operationContext: "authentication",
+		operationIdentifiers: { ip },
+		operationName: "login.start",
+	});
 
-  const validated = await tracker.measure("validation", () =>
-    validateForm(formData, LoginFormSchema, LOGIN_FIELDS_LIST),
-  );
+	const validated = await tracker.measure("validation", () =>
+		validateForm(formData, LoginFormSchema, LOGIN_FIELDS_LIST),
+	);
 
-  if (!validated.ok) {
-    const fieldErrors = extractFieldErrors<LoginField>(validated.error) || {};
-    const errorCount = Object.keys(fieldErrors).length;
+	if (!validated.ok) {
+		const fieldErrors = extractFieldErrors<LoginField>(validated.error) || {};
+		const errorCount = Object.keys(fieldErrors).length;
 
-    logger.operation("warn", "Login validation failed", {
-      duration: tracker.getTotalDuration(),
-      errorCount,
-      operationContext: "validation",
-      operationIdentifiers: { ip },
-      operationName: "login.validation.failed",
-    });
+		logger.operation("warn", "Login validation failed", {
+			duration: tracker.getTotalDuration(),
+			errorCount,
+			operationContext: "validation",
+			operationIdentifiers: { ip },
+			operationName: "login.validation.failed",
+		});
 
-    return validated;
-  }
+		return validated;
+	}
 
-  const input: LoginRequestDto = validated.value.data;
+	const input: LoginRequestDto = validated.value.data;
 
-  logger.operation("info", "Login form validated", {
-    duration: tracker.getLastDuration("validation"),
-    operationContext: "validation",
-    operationIdentifiers: { email: input.email, ip },
-    operationName: "login.validation.success",
-  });
+	logger.operation("info", "Login form validated", {
+		duration: tracker.getLastDuration("validation"),
+		operationContext: "validation",
+		operationIdentifiers: { email: input.email, ip },
+		operationName: "login.validation.success",
+	});
 
-  const sessionResult = await tracker.measure("authentication", () =>
-    auth.workflows.login(toLoginCommand(input)),
-  );
+	const sessionResult = await tracker.measure("authentication", () =>
+		auth.workflows.login(toLoginCommand(input)),
+	);
 
-  if (!sessionResult.ok) {
-    const error = sessionResult.error;
+	if (!sessionResult.ok) {
+		const error = sessionResult.error;
 
-    logger.errorWithDetails("Login authentication failed", error, {
-      duration: tracker.getTotalDuration(),
-      operationContext: "authentication",
-      operationIdentifiers: { email: input.email, ip },
-      operationName: "login.authentication.failed",
-    });
+		logger.errorWithDetails("Login authentication failed", error, {
+			duration: tracker.getTotalDuration(),
+			operationContext: "authentication",
+			operationIdentifiers: { email: input.email, ip },
+			operationName: "login.authentication.failed",
+		});
 
-    return toLoginFormResult(error, input);
-  }
+		return toLoginFormResult(error, input);
+	}
 
-  const { id: userId, role } = sessionResult.value;
+	const { id: userId, role } = sessionResult.value;
 
-  logger.operation("info", "Login action completed successfully", {
-    duration: tracker.getTotalDuration(),
-    operationContext: "authentication",
-    operationIdentifiers: { email: input.email, ip, role, userId },
-    operationName: "login.success",
-  });
+	logger.operation("info", "Login action completed successfully", {
+		duration: tracker.getTotalDuration(),
+		operationContext: "authentication",
+		operationIdentifiers: { email: input.email, ip, role, userId },
+		operationName: "login.success",
+	});
 
-  revalidatePath(ROUTES.dashboard.root);
-  redirect(ROUTES.dashboard.root);
+	revalidatePath(ROUTES.dashboard.root);
+	redirect(ROUTES.dashboard.root);
 }

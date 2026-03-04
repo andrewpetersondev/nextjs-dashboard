@@ -7,9 +7,9 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * Authentication failure reasons used internally for logging/debugging.
  */
 type CredentialFailureReason =
-  | "invalid_password"
-  | "user_disabled"
-  | "user_not_found";
+	| "invalid_password"
+	| "user_disabled"
+	| "user_not_found";
 
 /**
  * Explicit context for credential failures to prevent metadata drift.
@@ -23,21 +23,21 @@ type CredentialFailureContext = { email: string } | { userId: string };
  * specific domain/infra failures into safe application results.
  */
 export const AuthErrorFactory = {
-  /**
-   * Implements Anti-Enumeration: Maps specific reasons to a generic identity.
-   */
-  makeCredentialFailure(
-    reason: CredentialFailureReason,
-    context: CredentialFailureContext,
-  ): AppError {
-    return makeAppError(APP_ERROR_KEYS.invalid_credentials, {
-      cause: reason,
-      message: "Invalid email or password",
-      metadata: {
-        ...context,
-        policy: AUTH_OPERATIONS.ANTI_ENUMERATION,
-        reason,
-      },
-    });
-  },
+	/**
+	 * Implements Anti-Enumeration: Maps specific reasons to a generic identity.
+	 */
+	makeCredentialFailure(
+		reason: CredentialFailureReason,
+		context: CredentialFailureContext,
+	): AppError {
+		return makeAppError(APP_ERROR_KEYS.invalid_credentials, {
+			cause: reason,
+			message: "Invalid email or password",
+			metadata: {
+				...context,
+				policy: AUTH_OPERATIONS.ANTI_ENUMERATION,
+				reason,
+			},
+		});
+	},
 };

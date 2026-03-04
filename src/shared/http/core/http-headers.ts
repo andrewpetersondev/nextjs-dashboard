@@ -7,7 +7,7 @@ export const HEADER_CONTENT_TYPE = "content-type" as const;
 
 // Common header values
 export const CACHE_CONTROL_NO_STORE =
-  "no-store, no-cache, must-revalidate" as const;
+	"no-store, no-cache, must-revalidate" as const;
 export const PRAGMA_NO_CACHE = "no-cache" as const;
 export const EXPIRES_IMMEDIATELY = "0" as const;
 export const VARY_COOKIE = "Cookie" as const;

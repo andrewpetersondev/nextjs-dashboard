@@ -1,8 +1,8 @@
 import { z } from "zod";
 import {
-  EMAIL_ERROR,
-  EMAIL_MAX_LENGTH,
-  EMAIL_MAX_LENGTH_ERROR,
+	EMAIL_ERROR,
+	EMAIL_MAX_LENGTH,
+	EMAIL_MAX_LENGTH_ERROR,
 } from "@/shared/policies/email/email-policy";
 import { normalizeEmail } from "@/shared/policies/email/normalize.email";
 
@@ -13,11 +13,11 @@ import { normalizeEmail } from "@/shared/policies/email/normalize.email";
  */
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const EmailSchema = z
-  .string()
-  .transform(normalizeEmail)
-  .pipe(
-    z
-      .string()
-      .max(EMAIL_MAX_LENGTH, { error: EMAIL_MAX_LENGTH_ERROR })
-      .email({ error: EMAIL_ERROR }),
-  );
+	.string()
+	.transform(normalizeEmail)
+	.pipe(
+		z
+			.string()
+			.max(EMAIL_MAX_LENGTH, { error: EMAIL_MAX_LENGTH_ERROR })
+			.email({ error: EMAIL_ERROR }),
+	);

@@ -1,6 +1,6 @@
 import {
-  CUSTOMER_ID_BRAND,
-  type CustomerId,
+	CUSTOMER_ID_BRAND,
+	type CustomerId,
 } from "@/modules/customers/domain/types/customer-id.brand";
 import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
 
@@ -12,6 +12,6 @@ import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const createCustomerId = createIdFactory<
-  typeof CUSTOMER_ID_BRAND,
-  CustomerId
+	typeof CUSTOMER_ID_BRAND,
+	CustomerId
 >(CUSTOMER_ID_BRAND, "CustomerId");

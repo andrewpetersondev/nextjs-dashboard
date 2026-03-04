@@ -10,7 +10,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A `Result<UserId, AppError>` representing success or an `AppError`.
  */
 export const toUserIdResult = (value: unknown): Result<UserId, AppError> =>
-  createUserId(value);
+	createUserId(value);
 /**
  * Validate and convert a string to a branded `UserId`.
  *
@@ -19,9 +19,9 @@ export const toUserIdResult = (value: unknown): Result<UserId, AppError> =>
  * @throws {AppError} When validation fails.
  */
 export const toUserId = (id: string): UserId => {
-  const r = toUserIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
+	const r = toUserIdResult(id);
+	if (r.ok) {
+		return r.value;
+	}
+	throw r.error;
 };

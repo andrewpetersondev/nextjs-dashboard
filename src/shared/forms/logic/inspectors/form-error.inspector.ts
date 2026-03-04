@@ -2,20 +2,20 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
 import type {
-  DenseFieldErrorMap,
-  FormErrors,
+	DenseFieldErrorMap,
+	FormErrors,
 } from "@/shared/forms/core/types/field-error.types";
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
 
 // Helper internal to the inspector
 function hasFormMetadata<T extends string>(
-  error: AppError,
+	error: AppError,
 ): error is AppError & { readonly metadata: FormValidationMetadata<T> } {
-  return (
-    error.key === APP_ERROR_KEYS.validation ||
-    error.key === APP_ERROR_KEYS.conflict
-  );
+	return (
+		error.key === APP_ERROR_KEYS.validation ||
+		error.key === APP_ERROR_KEYS.conflict
+	);
 }
 
 /**
@@ -29,13 +29,13 @@ function hasFormMetadata<T extends string>(
  * }
  */
 export const extractFieldErrors = <T extends string>(
-  error: AppError,
+	error: AppError,
 ): DenseFieldErrorMap<T, string> | undefined => {
-  if (hasFormMetadata<T>(error)) {
-    return error.metadata.fieldErrors;
-  }
+	if (hasFormMetadata<T>(error)) {
+		return error.metadata.fieldErrors;
+	}
 
-  return;
+	return;
 };
 
 /**
@@ -43,13 +43,13 @@ export const extractFieldErrors = <T extends string>(
  * Returns undefined if not present.
  */
 export const extractFieldValues = <T extends string>(
-  error: AppError,
+	error: AppError,
 ): SparseFieldValueMap<T, string> | undefined => {
-  if (isFormValidationError<T>(error)) {
-    return error.metadata.formData;
-  }
+	if (isFormValidationError<T>(error)) {
+		return error.metadata.formData;
+	}
 
-  return;
+	return;
 };
 
 /**
@@ -57,9 +57,9 @@ export const extractFieldValues = <T extends string>(
  * Returns empty array if not present.
  */
 export const extractFormErrors = (error: AppError): FormErrors => {
-  if (isFormValidationError(error)) {
-    return error.metadata.formErrors;
-  }
+	if (isFormValidationError(error)) {
+		return error.metadata.formErrors;
+	}
 
-  return Object.freeze([]);
+	return Object.freeze([]);
 };

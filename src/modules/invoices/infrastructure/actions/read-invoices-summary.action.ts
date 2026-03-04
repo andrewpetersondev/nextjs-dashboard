@@ -6,13 +6,13 @@ import { fetchTotalPendingInvoicesDal } from "@/modules/invoices/infrastructure/
 import type { AppDatabase } from "@/server/db/db.connection";
 
 export async function readInvoicesSummaryAction(
-  db: AppDatabase,
+	db: AppDatabase,
 ): Promise<InvoicesSummary> {
-  const [totalInvoices, totalPending, totalPaid] = await Promise.all([
-    fetchTotalInvoicesCountDal(db),
-    fetchTotalPendingInvoicesDal(db),
-    fetchTotalPaidInvoicesDal(db),
-  ]);
+	const [totalInvoices, totalPending, totalPaid] = await Promise.all([
+		fetchTotalInvoicesCountDal(db),
+		fetchTotalPendingInvoicesDal(db),
+		fetchTotalPaidInvoicesDal(db),
+	]);
 
-  return { totalInvoices, totalPaid, totalPending };
+	return { totalInvoices, totalPaid, totalPending };
 }

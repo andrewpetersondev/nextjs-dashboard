@@ -10,9 +10,9 @@ import { getAppDb } from "@/server/db/db.connection";
  * @returns Array of InvoiceListFilter
  */
 export async function readFilteredInvoicesAction(
-  query: string = "",
-  currentPage: number = 1,
+	query: string = "",
+	currentPage: number = 1,
 ): Promise<InvoiceListFilter[]> {
-  const db = getAppDb();
-  return await fetchFilteredInvoicesDal(db, query, currentPage);
+	const db = getAppDb();
+	return await fetchFilteredInvoicesDal(db, query, currentPage);
 }

@@ -15,13 +15,13 @@ export const DEBOUNCE_MS = 500;
  * @returns Current time in seconds (floored for consistency with JWT standard)
  */
 export function nowInSeconds(): number {
-  return Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
+	return Math.floor(Date.now() / MILLISECONDS_PER_SECOND);
 }
 
 export function secondsToMilliseconds(seconds: number): number {
-  return seconds * MILLISECONDS_PER_SECOND;
+	return seconds * MILLISECONDS_PER_SECOND;
 }
 
 export function millisecondsToSeconds(milliseconds: number): number {
-  return Math.floor(milliseconds / MILLISECONDS_PER_SECOND);
+	return Math.floor(milliseconds / MILLISECONDS_PER_SECOND);
 }

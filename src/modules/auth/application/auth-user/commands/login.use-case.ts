@@ -21,137 +21,137 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * including user lookup, password verification, and mapping to a safe DTO.
  */
 export class LoginUseCase {
-  private readonly hasher: PasswordHasherContract;
-  private readonly logger: LoggingClientContract;
-  private readonly repo: AuthUserRepositoryContract;
+	private readonly hasher: PasswordHasherContract;
+	private readonly logger: LoggingClientContract;
+	private readonly repo: AuthUserRepositoryContract;
 
-  /**
-   * @param repo - Repository for accessing user authentication data.
-   * @param hasher - Service for hashing and comparing passwords.
-   * @param logger - Logging client for audit and debugging.
-   */
-  constructor(
-    repo: AuthUserRepositoryContract,
-    hasher: PasswordHasherContract,
-    logger: LoggingClientContract,
-  ) {
-    this.repo = repo;
-    this.hasher = hasher;
-    this.logger = makeAuthUseCaseLoggerHelper(
-      logger,
-      AUTH_USE_CASE_NAMES.LOGIN_USER,
-    );
-  }
+	/**
+	 * @param repo - Repository for accessing user authentication data.
+	 * @param hasher - Service for hashing and comparing passwords.
+	 * @param logger - Logging client for audit and debugging.
+	 */
+	constructor(
+		repo: AuthUserRepositoryContract,
+		hasher: PasswordHasherContract,
+		logger: LoggingClientContract,
+	) {
+		this.repo = repo;
+		this.hasher = hasher;
+		this.logger = makeAuthUseCaseLoggerHelper(
+			logger,
+			AUTH_USE_CASE_NAMES.LOGIN_USER,
+		);
+	}
 
-  /**
-   * Executes the login business logic.
-   *
-   * @param input - The login credentials (email and password).
-   * @returns A promise resolving to a {@link Result} containing the authenticated user DTO or an {@link AppError}.
-   *
-   * @remarks
-   * Potential error scenarios (returned as Err):
-   * - 'user_not_found': No user exists with the provided email.
-   * - 'invalid_password': The password does not match the stored hash.
-   * - Other infrastructure or validation errors.
-   *
-   * @throws {Error} If an unexpected system failure occurs (wrapped in Result by safeExecute).
-   */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
-  execute(
-    input: Readonly<LoginCommand>,
-  ): Promise<Result<AuthenticatedUserDto, AppError>> {
-    return safeExecute(
-      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
-      async () => {
-        const tracker = new PerformanceTracker();
+	/**
+	 * Executes the login business logic.
+	 *
+	 * @param input - The login credentials (email and password).
+	 * @returns A promise resolving to a {@link Result} containing the authenticated user DTO or an {@link AppError}.
+	 *
+	 * @remarks
+	 * Potential error scenarios (returned as Err):
+	 * - 'user_not_found': No user exists with the provided email.
+	 * - 'invalid_password': The password does not match the stored hash.
+	 * - Other infrastructure or validation errors.
+	 *
+	 * @throws {Error} If an unexpected system failure occurs (wrapped in Result by safeExecute).
+	 */
+	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+	execute(
+		input: Readonly<LoginCommand>,
+	): Promise<Result<AuthenticatedUserDto, AppError>> {
+		return safeExecute(
+			// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+			async () => {
+				const tracker = new PerformanceTracker();
 
-        const userResult = await tracker.measure("repo.findByEmail", () =>
-          this.repo.findByEmail({ email: input.email }),
-        );
+				const userResult = await tracker.measure("repo.findByEmail", () =>
+					this.repo.findByEmail({ email: input.email }),
+				);
 
-        if (!userResult.ok) {
-          this.logger.operation("warn", "Login use case failed at repository", {
-            duration: tracker.getTotalDuration(),
-            operationContext: "auth:use-case",
-            operationIdentifiers: { email: input.email },
-            operationName: "login.repo.failed",
-            timings: tracker.getAllTimings(),
-          });
-          return userResult;
-        }
+				if (!userResult.ok) {
+					this.logger.operation("warn", "Login use case failed at repository", {
+						duration: tracker.getTotalDuration(),
+						operationContext: "auth:use-case",
+						operationIdentifiers: { email: input.email },
+						operationName: "login.repo.failed",
+						timings: tracker.getAllTimings(),
+					});
+					return userResult;
+				}
 
-        const user = userResult.value;
+				const user = userResult.value;
 
-        if (!user) {
-          this.logger.operation("warn", "Login use case: user not found", {
-            duration: tracker.getTotalDuration(),
-            operationContext: "auth:use-case",
-            operationIdentifiers: { email: input.email },
-            operationName: "login.user_not_found",
-            timings: tracker.getAllTimings(),
-          });
-          return Err(
-            AuthErrorFactory.makeCredentialFailure("user_not_found", {
-              email: input.email,
-            }),
-          );
-        }
+				if (!user) {
+					this.logger.operation("warn", "Login use case: user not found", {
+						duration: tracker.getTotalDuration(),
+						operationContext: "auth:use-case",
+						operationIdentifiers: { email: input.email },
+						operationName: "login.user_not_found",
+						timings: tracker.getAllTimings(),
+					});
+					return Err(
+						AuthErrorFactory.makeCredentialFailure("user_not_found", {
+							email: input.email,
+						}),
+					);
+				}
 
-        const passwordOkResult = await tracker.measure("hasher.compare", () =>
-          this.hasher.compare(input.password, user.password),
-        );
+				const passwordOkResult = await tracker.measure("hasher.compare", () =>
+					this.hasher.compare(input.password, user.password),
+				);
 
-        if (!passwordOkResult.ok) {
-          this.logger.operation(
-            "warn",
-            "Login use case failed at password hash",
-            {
-              duration: tracker.getTotalDuration(),
-              operationContext: "auth:use-case",
-              operationIdentifiers: { email: input.email, userId: user.id },
-              operationName: "login.hasher.failed",
-              timings: tracker.getAllTimings(),
-            },
-          );
-          return Err(passwordOkResult.error);
-        }
+				if (!passwordOkResult.ok) {
+					this.logger.operation(
+						"warn",
+						"Login use case failed at password hash",
+						{
+							duration: tracker.getTotalDuration(),
+							operationContext: "auth:use-case",
+							operationIdentifiers: { email: input.email, userId: user.id },
+							operationName: "login.hasher.failed",
+							timings: tracker.getAllTimings(),
+						},
+					);
+					return Err(passwordOkResult.error);
+				}
 
-        if (!passwordOkResult.value) {
-          this.logger.operation("warn", "Login use case: invalid password", {
-            duration: tracker.getTotalDuration(),
-            operationContext: "auth:use-case",
-            operationIdentifiers: { email: input.email, userId: user.id },
-            operationName: "login.invalid_password",
-            timings: tracker.getAllTimings(),
-          });
-          return Err(
-            AuthErrorFactory.makeCredentialFailure("invalid_password", {
-              userId: user.id,
-            }),
-          );
-        }
+				if (!passwordOkResult.value) {
+					this.logger.operation("warn", "Login use case: invalid password", {
+						duration: tracker.getTotalDuration(),
+						operationContext: "auth:use-case",
+						operationIdentifiers: { email: input.email, userId: user.id },
+						operationName: "login.invalid_password",
+						timings: tracker.getAllTimings(),
+					});
+					return Err(
+						AuthErrorFactory.makeCredentialFailure("invalid_password", {
+							userId: user.id,
+						}),
+					);
+				}
 
-        const authenticatedUser = tracker.measureSync(
-          "mapper.toAuthenticatedUserDto",
-          () => toAuthenticatedUserDto(user),
-        );
+				const authenticatedUser = tracker.measureSync(
+					"mapper.toAuthenticatedUserDto",
+					() => toAuthenticatedUserDto(user),
+				);
 
-        this.logger.operation("info", "Login use case completed successfully", {
-          duration: tracker.getTotalDuration(),
-          operationContext: "auth:use-case",
-          operationIdentifiers: { email: input.email, userId: user.id },
-          operationName: "login.success",
-          timings: tracker.getAllTimings(),
-        });
+				this.logger.operation("info", "Login use case completed successfully", {
+					duration: tracker.getTotalDuration(),
+					operationContext: "auth:use-case",
+					operationIdentifiers: { email: input.email, userId: user.id },
+					operationName: "login.success",
+					timings: tracker.getAllTimings(),
+				});
 
-        return Ok(authenticatedUser);
-      },
-      {
-        logger: this.logger,
-        message: "An unexpected error occurred during authentication.",
-        operation: AUTH_USE_CASE_NAMES.LOGIN_USER,
-      },
-    );
-  }
+				return Ok(authenticatedUser);
+			},
+			{
+				logger: this.logger,
+				message: "An unexpected error occurred during authentication.",
+				operation: AUTH_USE_CASE_NAMES.LOGIN_USER,
+			},
+		);
+	}
 }

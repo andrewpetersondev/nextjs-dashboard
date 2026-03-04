@@ -11,11 +11,11 @@ import type { UserRow } from "@/server/db/schema/users";
  * @returns The mapped {@link AuthUserEntity}.
  */
 export function toAuthUserEntity(row: UserRow): AuthUserEntity {
-  return {
-    email: row.email,
-    id: row.id,
-    password: row.password,
-    role: row.role,
-    username: row.username,
-  };
+	return {
+		email: row.email,
+		id: row.id,
+		password: row.password,
+		role: row.role,
+		username: row.username,
+	};
 }

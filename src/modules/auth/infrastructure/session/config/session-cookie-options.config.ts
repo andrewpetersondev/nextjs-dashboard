@@ -1,9 +1,9 @@
 import "server-only";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import {
-  SESSION_COOKIE_HTTPONLY,
-  SESSION_COOKIE_PATH,
-  SESSION_COOKIE_SAMESITE,
+	SESSION_COOKIE_HTTPONLY,
+	SESSION_COOKIE_PATH,
+	SESSION_COOKIE_SAMESITE,
 } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
 import { isProd } from "@/shared/core/config/shared/env-shared";
 
@@ -18,13 +18,13 @@ import { isProd } from "@/shared/core/config/shared/env-shared";
  * @returns Partial {@link ResponseCookie} options.
  */
 export function getSessionCookieOptionsConfig(input: {
-  readonly maxAge: number;
+	readonly maxAge: number;
 }): Partial<ResponseCookie> {
-  return {
-    httpOnly: SESSION_COOKIE_HTTPONLY,
-    maxAge: input.maxAge,
-    path: SESSION_COOKIE_PATH,
-    sameSite: SESSION_COOKIE_SAMESITE,
-    secure: isProd(),
-  };
+	return {
+		httpOnly: SESSION_COOKIE_HTTPONLY,
+		maxAge: input.maxAge,
+		path: SESSION_COOKIE_PATH,
+		sameSite: SESSION_COOKIE_SAMESITE,
+		secure: isProd(),
+	};
 }

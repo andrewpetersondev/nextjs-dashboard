@@ -10,16 +10,16 @@ import { H1 } from "@/ui/atoms/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditInvoicePageParams {
-  id: string;
+	id: string;
 }
 
 interface EditInvoicePageProps {
-  params: Promise<EditInvoicePageParams>;
+	params: Promise<EditInvoicePageParams>;
 }
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
-  title: "Edit Invoice",
+	title: "Edit Invoice",
 };
 
 // force this page to be dynamic, so it doesn't get cached. otherwise, the next build will fail
@@ -27,33 +27,33 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page(
-  props: EditInvoicePageProps,
+	props: EditInvoicePageProps,
 ): Promise<JSX.Element> {
-  const { id } = await props.params;
+	const { id } = await props.params;
 
-  const [customers, invoice]: [CustomerField[], InvoiceDto] = await Promise.all(
-    [readCustomersAction(), readInvoiceByIdAction(id)],
-  );
+	const [customers, invoice]: [CustomerField[], InvoiceDto] = await Promise.all(
+		[readCustomersAction(), readInvoiceByIdAction(id)],
+	);
 
-  if (!invoice) {
-    notFound();
-  }
+	if (!invoice) {
+		notFound();
+	}
 
-  return (
-    <main>
-      <Breadcrumbs
-        breadcrumbs={[
-          { href: "/dashboard/invoices", label: "Invoices" },
-          {
-            active: true,
-            href: `/dashboard/invoices/${id}/edit`,
-            label: "Edit Invoice",
-          },
-        ]}
-      />
-      <H1 className="mb-4">edit invoice</H1>
+	return (
+		<main>
+			<Breadcrumbs
+				breadcrumbs={[
+					{ href: "/dashboard/invoices", label: "Invoices" },
+					{
+						active: true,
+						href: `/dashboard/invoices/${id}/edit`,
+						label: "Edit Invoice",
+					},
+				]}
+			/>
+			<H1 className="mb-4">edit invoice</H1>
 
-      <EditInvoiceForm customers={customers} invoice={invoice} />
-    </main>
-  );
+			<EditInvoiceForm customers={customers} invoice={invoice} />
+		</main>
+	);
 }

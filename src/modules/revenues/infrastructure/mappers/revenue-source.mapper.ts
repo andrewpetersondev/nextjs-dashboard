@@ -6,6 +6,6 @@ import { createEnumValidator } from "@/shared/primitives/core/enums/enum.factory
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const toRevenueSource = createEnumValidator(
-  "RevenueSource",
-  REVENUE_SOURCES,
+	"RevenueSource",
+	REVENUE_SOURCES,
 );

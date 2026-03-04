@@ -4,51 +4,51 @@ import { AUTH_SEL } from "../shared/selectors";
 import { EXTERNAL_URLS } from "../shared/urls";
 
 describe("Home smoke test", () => {
-  it("loads homepage and navigates to login", () => {
-    cy.visit(BASE_URL);
+	it("loads homepage and navigates to login", () => {
+		cy.visit(BASE_URL);
 
-    // Assert welcome text and course link exist
-    cy.findByText(UI_MATCHERS_REGEX.welcomeHome).should("be.visible");
-    cy.get(AUTH_SEL.nextjsCourseLink).should(
-      "have.attr",
-      "href",
-      EXTERNAL_URLS.nextJsCourse,
-    );
+		// Assert welcome text and course link exist
+		cy.findByText(UI_MATCHERS_REGEX.welcomeHome).should("be.visible");
+		cy.get(AUTH_SEL.nextjsCourseLink).should(
+			"have.attr",
+			"href",
+			EXTERNAL_URLS.nextJsCourse,
+		);
 
-    // Navigate to the login page via the login button
-    cy.get(AUTH_SEL.toLoginButton).click();
-    cy.url().should("include", LOGIN_PATH);
+		// Navigate to the login page via the login button
+		cy.get(AUTH_SEL.toLoginButton).click();
+		cy.url().should("include", LOGIN_PATH);
 
-    // Assert login page heading is visible
-    cy.findByRole("heading", { name: UI_MATCHERS_REGEX.loginHeading }).should(
-      "be.visible",
-    );
-  });
+		// Assert login page heading is visible
+		cy.findByRole("heading", { name: UI_MATCHERS_REGEX.loginHeading }).should(
+			"be.visible",
+		);
+	});
 
-  it("injects axe and checks for accessibility violations", () => {
-    cy.visit(BASE_URL);
+	it("injects axe and checks for accessibility violations", () => {
+		cy.visit(BASE_URL);
 
-    // Detailed accessibility check with violation logging
-    cy.injectAxe();
-    cy.checkA11y(
-      undefined,
-      {
-        includedImpacts: ["critical", "serious"],
-      },
-      (violations) => {
-        // Log detailed violation information
-        for (const violation of violations) {
-          cy.log(`A11y violation: ${violation.id}`);
-          cy.log(`Description: ${violation.description}`);
-          cy.log(`Help: ${violation.helpUrl}`);
+		// Detailed accessibility check with violation logging
+		cy.injectAxe();
+		cy.checkA11y(
+			undefined,
+			{
+				includedImpacts: ["critical", "serious"],
+			},
+			(violations) => {
+				// Log detailed violation information
+				for (const violation of violations) {
+					cy.log(`A11y violation: ${violation.id}`);
+					cy.log(`Description: ${violation.description}`);
+					cy.log(`Help: ${violation.helpUrl}`);
 
-          for (const node of violation.nodes) {
-            cy.log(`Element: ${node.target.join(", ")}`);
-            cy.log(`Summary: ${node.failureSummary}`);
-          }
-        }
-      },
-      true,
-    );
-  });
+					for (const node of violation.nodes) {
+						cy.log(`Element: ${node.target.join(", ")}`);
+						cy.log(`Summary: ${node.failureSummary}`);
+					}
+				}
+			},
+			true,
+		);
+	});
 });

@@ -1,8 +1,8 @@
 import { AUTH_POLICY_NAMES } from "@/modules/auth/domain/shared/constants/auth-policy.constants";
 import { DEMO_IDENTITY_CONFIG } from "@/modules/auth/domain/shared/constants/demo-identity.constants";
 import {
-  USER_ROLE,
-  type UserRole,
+	USER_ROLE,
+	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
 
 /**
@@ -13,15 +13,15 @@ import {
  * Failures are modeled as domain values and mapped to `AppError` in outer layers.
  */
 const REGISTRATION_FAILURE_KINDS = {
-  INVALID_DEMO_COUNTER: "invalid_demo_counter",
+	INVALID_DEMO_COUNTER: "invalid_demo_counter",
 } as const;
 
 type RegistrationFailureKind =
-  (typeof REGISTRATION_FAILURE_KINDS)[keyof typeof REGISTRATION_FAILURE_KINDS];
+	(typeof REGISTRATION_FAILURE_KINDS)[keyof typeof REGISTRATION_FAILURE_KINDS];
 
 type RegistrationFailure = Readonly<{
-  readonly kind: RegistrationFailureKind;
-  readonly policy: typeof AUTH_POLICY_NAMES.REGISTRATION;
+	readonly kind: RegistrationFailureKind;
+	readonly policy: typeof AUTH_POLICY_NAMES.REGISTRATION;
 }>;
 
 /**
@@ -30,7 +30,7 @@ type RegistrationFailure = Readonly<{
  * @returns The default `UserRole` for new registrations.
  */
 export function getDefaultRegistrationRole(): UserRole {
-  return USER_ROLE;
+	return USER_ROLE;
 }
 
 /**
@@ -41,13 +41,13 @@ export function getDefaultRegistrationRole(): UserRole {
  * @returns An object containing the generated email and username.
  */
 export function generateDemoUserIdentity(
-  role: UserRole,
-  counter: number,
+	role: UserRole,
+	counter: number,
 ): { email: string; username: string } {
-  return {
-    email: `demo+${role}${counter}@${DEMO_IDENTITY_CONFIG.EMAIL_DOMAIN}`,
-    username: `${DEMO_IDENTITY_CONFIG.USERNAME_PREFIX}_${role.toUpperCase()}_${counter}`,
-  };
+	return {
+		email: `demo+${role}${counter}@${DEMO_IDENTITY_CONFIG.EMAIL_DOMAIN}`,
+		username: `${DEMO_IDENTITY_CONFIG.USERNAME_PREFIX}_${role.toUpperCase()}_${counter}`,
+	};
 }
 
 /**
@@ -57,15 +57,15 @@ export function generateDemoUserIdentity(
  * @returns True if the counter is a positive number.
  */
 export function validateDemoUserCounter(counter: unknown): counter is number {
-  return typeof counter === "number" && counter > 0;
+	return typeof counter === "number" && counter > 0;
 }
 
 /**
  * Creates a domain-specific failure value for invalid demo counters.
  */
 export function makeInvalidDemoCounterFailure(): RegistrationFailure {
-  return {
-    kind: REGISTRATION_FAILURE_KINDS.INVALID_DEMO_COUNTER,
-    policy: AUTH_POLICY_NAMES.REGISTRATION,
-  };
+	return {
+		kind: REGISTRATION_FAILURE_KINDS.INVALID_DEMO_COUNTER,
+		policy: AUTH_POLICY_NAMES.REGISTRATION,
+	};
 }

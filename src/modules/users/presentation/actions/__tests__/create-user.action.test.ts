@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import {
-  USER_ERROR_MESSAGES,
-  USER_SUCCESS_MESSAGES,
+	USER_ERROR_MESSAGES,
+	USER_SUCCESS_MESSAGES,
 } from "@/modules/users/domain/constants/user.constants";
 import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
@@ -10,8 +10,8 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
 import {
-  makeFormError,
-  makeFormOk,
+	makeFormError,
+	makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
@@ -22,111 +22,111 @@ vi.mock("@/shared/forms/server/validate-form");
 vi.mock("@/modules/users/infrastructure/factories/user-service.factory");
 vi.mock("@/server/db/db.connection");
 vi.mock(
-  "@/shared/forms/logic/factories/form-result.factory",
-  async (importOriginal) => {
-    // biome-ignore lint/suspicious/noExplicitAny: fix
-    const actual = await importOriginal<any>();
-    return {
-      ...actual,
-      makeFormError: vi.fn(actual.makeFormError),
-      makeFormOk: vi.fn(actual.makeFormOk),
-    };
-  },
+	"@/shared/forms/logic/factories/form-result.factory",
+	async (importOriginal) => {
+		// biome-ignore lint/suspicious/noExplicitAny: fix
+		const actual = await importOriginal<any>();
+		return {
+			...actual,
+			makeFormError: vi.fn(actual.makeFormError),
+			makeFormOk: vi.fn(actual.makeFormOk),
+		};
+	},
 );
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: TODO
 describe("createUserAction", () => {
-  const mockFields = resolveCanonicalFieldNames(CreateUserFormSchema);
-  // biome-ignore lint/suspicious/noExplicitAny: fix
-  const prevState = {} as any;
-  const formData = new FormData();
+	const mockFields = resolveCanonicalFieldNames(CreateUserFormSchema);
+	// biome-ignore lint/suspicious/noExplicitAny: fix
+	const prevState = {} as any;
+	const formData = new FormData();
 
-  const mockService = {
-    createUser: vi.fn(),
-  };
+	const mockService = {
+		createUser: vi.fn(),
+	};
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-    (createUserService as Mock).mockReturnValue(mockService);
-    (getAppDb as Mock).mockReturnValue({});
-  });
+	beforeEach(() => {
+		vi.clearAllMocks();
+		(createUserService as Mock).mockReturnValue(mockService);
+		(getAppDb as Mock).mockReturnValue({});
+	});
 
-  it("should return success when user is created successfully", async () => {
-    const validData = {
-      email: "test@example.com",
-      password: "password123",
-      role: "USER" as const,
-      username: "testuser",
-    };
+	it("should return success when user is created successfully", async () => {
+		const validData = {
+			email: "test@example.com",
+			password: "password123",
+			role: "USER" as const,
+			username: "testuser",
+		};
 
-    (validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
-    mockService.createUser.mockResolvedValue(Ok({ id: "1", ...validData }));
+		(validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
+		mockService.createUser.mockResolvedValue(Ok({ id: "1", ...validData }));
 
-    const result = await createUserAction(prevState, formData);
+		const result = await createUserAction(prevState, formData);
 
-    expect(result.ok).toBe(true);
-    if (result.ok) {
-      expect(result.value.message).toBe(USER_SUCCESS_MESSAGES.createSuccess);
-    }
-    expect(mockService.createUser).toHaveBeenCalledWith(validData);
-  });
+		expect(result.ok).toBe(true);
+		if (result.ok) {
+			expect(result.value.message).toBe(USER_SUCCESS_MESSAGES.createSuccess);
+		}
+		expect(mockService.createUser).toHaveBeenCalledWith(validData);
+	});
 
-  it("should return validation error when validateForm fails", async () => {
-    const validationError = makeFormError({
-      fieldErrors: makeEmptyDenseFieldErrorMap(mockFields),
-      formData: {},
-      formErrors: ["Invalid input"],
-      key: APP_ERROR_KEYS.validation,
-      message: "Validation failed",
-    });
+	it("should return validation error when validateForm fails", async () => {
+		const validationError = makeFormError({
+			fieldErrors: makeEmptyDenseFieldErrorMap(mockFields),
+			formData: {},
+			formErrors: ["Invalid input"],
+			key: APP_ERROR_KEYS.validation,
+			message: "Validation failed",
+		});
 
-    (validateForm as Mock).mockResolvedValue(validationError);
+		(validateForm as Mock).mockResolvedValue(validationError);
 
-    const result = await createUserAction(prevState, formData);
+		const result = await createUserAction(prevState, formData);
 
-    expect(result.ok).toBe(false);
-    expect(result).toEqual(validationError);
-    expect(mockService.createUser).not.toHaveBeenCalled();
-  });
+		expect(result.ok).toBe(false);
+		expect(result).toEqual(validationError);
+		expect(mockService.createUser).not.toHaveBeenCalled();
+	});
 
-  it("should return form error when service.createUser fails", async () => {
-    const validData = {
-      email: "test@example.com",
-      password: "password123",
-      role: "USER" as const,
-      username: "testuser",
-    };
+	it("should return form error when service.createUser fails", async () => {
+		const validData = {
+			email: "test@example.com",
+			password: "password123",
+			role: "USER" as const,
+			username: "testuser",
+		};
 
-    (validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
-    const serviceError = makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Email already exists",
-      metadata: {
-        fieldErrors: makeEmptyDenseFieldErrorMap(mockFields),
-        formData: {},
-        formErrors: [],
-      },
-    });
-    mockService.createUser.mockResolvedValue(Err(serviceError));
+		(validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
+		const serviceError = makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Email already exists",
+			metadata: {
+				fieldErrors: makeEmptyDenseFieldErrorMap(mockFields),
+				formData: {},
+				formErrors: [],
+			},
+		});
+		mockService.createUser.mockResolvedValue(Err(serviceError));
 
-    const result = await createUserAction(prevState, formData);
+		const result = await createUserAction(prevState, formData);
 
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error.key).toBe(APP_ERROR_KEYS.validation);
-      expect(result.error.message).toBe("Email already exists");
-    }
-  });
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error.key).toBe(APP_ERROR_KEYS.validation);
+			expect(result.error.message).toBe("Email already exists");
+		}
+	});
 
-  it("should return unexpected error when an exception is thrown", async () => {
-    (validateForm as Mock).mockRejectedValue(new Error("Unexpected"));
+	it("should return unexpected error when an exception is thrown", async () => {
+		(validateForm as Mock).mockRejectedValue(new Error("Unexpected"));
 
-    const result = await createUserAction(prevState, formData);
+		const result = await createUserAction(prevState, formData);
 
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
-      expect(result.error.message).toBe(USER_ERROR_MESSAGES.unexpected);
-    }
-  });
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
+			expect(result.error.message).toBe(USER_ERROR_MESSAGES.unexpected);
+		}
+	});
 });

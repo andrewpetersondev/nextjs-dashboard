@@ -1,9 +1,9 @@
 import "server-only";
 
 import type {
-  RevenueCreateEntity,
-  RevenueEntity,
-  RevenueUpdatable,
+	RevenueCreateEntity,
+	RevenueEntity,
+	RevenueUpdatable,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
@@ -21,36 +21,36 @@ import { upsertRevenueDal } from "./upsert-revenue.dal";
  * @throws Error if inputs are invalid.
  */
 export async function upsertRevenueByPeriod(
-  db: AppDatabase,
-  period: Period,
-  revenue: RevenueUpdatable,
+	db: AppDatabase,
+	period: Period,
+	revenue: RevenueUpdatable,
 ): Promise<RevenueEntity> {
-  if (!period) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Period is required",
-      metadata: {},
-    });
-  }
-  if (!revenue) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Revenue data is required",
-      metadata: {},
-    });
-  }
+	if (!period) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Period is required",
+			metadata: {},
+		});
+	}
+	if (!revenue) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Revenue data is required",
+			metadata: {},
+		});
+	}
 
-  const now = new Date();
-  const payload: RevenueCreateEntity = {
-    calculationSource: revenue.calculationSource,
-    createdAt: now,
-    invoiceCount: revenue.invoiceCount,
-    period: toPeriod(period),
-    totalAmount: revenue.totalAmount,
-    totalPaidAmount: revenue.totalPaidAmount,
-    totalPendingAmount: revenue.totalPendingAmount,
-    updatedAt: now,
-  };
+	const now = new Date();
+	const payload: RevenueCreateEntity = {
+		calculationSource: revenue.calculationSource,
+		createdAt: now,
+		invoiceCount: revenue.invoiceCount,
+		period: toPeriod(period),
+		totalAmount: revenue.totalAmount,
+		totalPaidAmount: revenue.totalPaidAmount,
+		totalPendingAmount: revenue.totalPendingAmount,
+		updatedAt: now,
+	};
 
-  return await upsertRevenueDal(db, payload);
+	return await upsertRevenueDal(db, payload);
 }

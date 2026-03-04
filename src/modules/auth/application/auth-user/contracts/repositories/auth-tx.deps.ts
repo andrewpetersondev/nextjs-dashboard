@@ -7,5 +7,5 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth
  * Do NOT add cookie/JWT/crypto/network contracts—those are not transactional.
  */
 export type AuthTxDeps = Readonly<{
-  authUsers: AuthUserRepositoryContract;
+	authUsers: AuthUserRepositoryContract;
 }>;

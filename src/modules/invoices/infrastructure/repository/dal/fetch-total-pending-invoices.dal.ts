@@ -7,25 +7,25 @@ import { invoices } from "@/server/db/schema/invoices";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 export async function fetchTotalPendingInvoicesDal(
-  db: AppDatabase,
+	db: AppDatabase,
 ): Promise<number> {
-  const pending = await db
-    .select({
-      value: sql<number>`sum(
+	const pending = await db
+		.select({
+			value: sql<number>`sum(
             ${invoices.amount}
             )`,
-    })
-    .from(invoices)
-    .where(eq(invoices.status, "pending"))
-    .then((rows) => rows[0]?.value ?? 0);
+		})
+		.from(invoices)
+		.where(eq(invoices.status, "pending"))
+		.then((rows) => rows[0]?.value ?? 0);
 
-  if (pending === undefined) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.fetchTotalPendingFailed,
-      metadata: {},
-    });
-  }
+	if (pending === undefined) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.fetchTotalPendingFailed,
+			metadata: {},
+		});
+	}
 
-  return pending;
+	return pending;
 }

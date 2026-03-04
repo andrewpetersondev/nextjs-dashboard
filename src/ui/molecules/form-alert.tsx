@@ -2,18 +2,18 @@ import type { FC } from "react";
 import { cn } from "@/ui/utils/cn";
 
 interface FormAlertProps {
-  /** Optional additional classes */
-  className?: string;
-  /** Optional cypress data attribute */
-  dataCy?: string;
-  /** The message to display. If undefined/empty, nothing renders. */
-  message?: string;
-  /**
-   * Type of alert. Defaults to 'error'.
-   * 'error' renders red text, 'success' renders green (or primary/secondary depending on system).
-   * Currently, the implementation follows the original design (error text).
-   */
-  type?: "error" | "success";
+	/** Optional additional classes */
+	className?: string;
+	/** Optional cypress data attribute */
+	dataCy?: string;
+	/** The message to display. If undefined/empty, nothing renders. */
+	message?: string;
+	/**
+	 * Type of alert. Defaults to 'error'.
+	 * 'error' renders red text, 'success' renders green (or primary/secondary depending on system).
+	 * Currently, the implementation follows the original design (error text).
+	 */
+	type?: "error" | "success";
 }
 
 /**
@@ -22,27 +22,27 @@ interface FormAlertProps {
  * Rendered with aria-live for accessibility.
  */
 export const FormAlert: FC<FormAlertProps> = ({
-  message,
-  type = "error",
-  dataCy = "form-alert",
-  className,
+	message,
+	type = "error",
+	dataCy = "form-alert",
+	className,
 }: FormAlertProps) => {
-  return (
-    <div
-      aria-atomic="true"
-      aria-live="polite"
-      className={cn("flex h-8 items-end space-x-1", className)}
-    >
-      {message && (
-        <p
-          className={cn(
-            type === "error" ? "text-text-error" : "text-text-primary",
-          )}
-          data-cy={dataCy}
-        >
-          {message}
-        </p>
-      )}
-    </div>
-  );
+	return (
+		<div
+			aria-atomic="true"
+			aria-live="polite"
+			className={cn("flex h-8 items-end space-x-1", className)}
+		>
+			{message && (
+				<p
+					className={cn(
+						type === "error" ? "text-text-error" : "text-text-primary",
+					)}
+					data-cy={dataCy}
+				>
+					{message}
+				</p>
+			)}
+		</div>
+	);
 };

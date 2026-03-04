@@ -19,37 +19,37 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @returns A promise resolving to a {@link Result} containing the found user row or null if not found.
  */
 export async function getUserByEmailDal(
-  db: AppDatabase,
-  email: string,
-  logger: LoggingClientContract,
+	db: AppDatabase,
+	email: string,
+	logger: LoggingClientContract,
 ): Promise<Result<UserRow | null, AppError>> {
-  return await executeDalResult<UserRow | null>(
-    async (): Promise<UserRow | null> => {
-      const [userRow] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
+	return await executeDalResult<UserRow | null>(
+		async (): Promise<UserRow | null> => {
+			const [userRow] = await db
+				.select()
+				.from(users)
+				.where(eq(users.email, email))
+				.limit(1);
 
-      if (!userRow) {
-        logger.operation("info", "User not found", {
-          operationContext: "auth:dal",
-          operationIdentifiers: { email },
-          operationName: "getUserByEmail.notFound",
-        });
-        return null;
-      }
+			if (!userRow) {
+				logger.operation("info", "User not found", {
+					operationContext: "auth:dal",
+					operationIdentifiers: { email },
+					operationName: "getUserByEmail.notFound",
+				});
+				return null;
+			}
 
-      logger.operation("info", "User row fetched", {
-        operationContext: "auth:dal",
-        operationIdentifiers: { email, userId: userRow.id },
-        operationName: "getUserByEmail.success",
-      });
+			logger.operation("info", "User row fetched", {
+				operationContext: "auth:dal",
+				operationIdentifiers: { email, userId: userRow.id },
+				operationName: "getUserByEmail.success",
+			});
 
-      return userRow;
-    },
-    { entity: "user", identifiers: { email }, operation: "getUserByEmail" },
-    logger,
-    { operationContext: "auth:dal" },
-  );
+			return userRow;
+		},
+		{ entity: "user", identifiers: { email }, operation: "getUserByEmail" },
+		logger,
+		{ operationContext: "auth:dal" },
+	);
 }

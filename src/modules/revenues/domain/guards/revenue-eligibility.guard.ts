@@ -6,5 +6,5 @@ import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.s
  * Pure logic; application layers may add logging around this if needed.
  */
 export function checkStatusEligibleForRevenue(status: InvoiceStatus): boolean {
-  return status === "paid" || status === "pending";
+	return status === "paid" || status === "pending";
 }

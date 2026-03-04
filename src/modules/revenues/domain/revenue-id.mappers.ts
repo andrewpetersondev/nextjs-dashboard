@@ -10,7 +10,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A `Result<RevenueId, AppError>` representing success or an `AppError`.
  */
 const toRevenueIdResult = (value: unknown): Result<RevenueId, AppError> =>
-  createRevenueId(value);
+	createRevenueId(value);
 
 /**
  * Validate and convert a string to a branded `RevenueId`.
@@ -20,9 +20,9 @@ const toRevenueIdResult = (value: unknown): Result<RevenueId, AppError> =>
  * @throws {AppError} When validation fails.
  */
 export const toRevenueId = (id: string): RevenueId => {
-  const r = toRevenueIdResult(id);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
+	const r = toRevenueIdResult(id);
+	if (r.ok) {
+		return r.value;
+	}
+	throw r.error;
 };

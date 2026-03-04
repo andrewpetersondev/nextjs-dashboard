@@ -6,6 +6,6 @@
  * concepts into the domain model.
  */
 export type SessionTokenIdentityDto = Readonly<{
-  /** Session id claim (`sid`) from the session token */
-  sid: string;
+	/** Session id claim (`sid`) from the session token */
+	sid: string;
 }>;

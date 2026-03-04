@@ -7,8 +7,8 @@ import { makeFormError } from "@/shared/forms/logic/factories/form-result.factor
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { fromZodError } from "@/shared/forms/server/mappers/zod-error.mapper";
 import {
-  isZodErrorInstance,
-  isZodErrorLikeShape,
+	isZodErrorInstance,
+	isZodErrorLikeShape,
 } from "@/shared/policies/zod/zod.guard";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
@@ -16,53 +16,53 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * Maps an unknown error to a canonical ValidationErrors shape.
  */
 function mapToValidationErrors<T extends string>(
-  error: unknown,
-  fields: readonly T[],
+	error: unknown,
+	fields: readonly T[],
 ): ValidationErrors<T, string> {
-  if (isZodErrorInstance(error) || isZodErrorLikeShape(error)) {
-    return fromZodError<T>(error, fields);
-  }
+	if (isZodErrorInstance(error) || isZodErrorLikeShape(error)) {
+		return fromZodError<T>(error, fields);
+	}
 
-  return {
-    fieldErrors: makeEmptyDenseFieldErrorMap<T, string>(fields),
-    formErrors: EMPTY_FORM_ERRORS,
-  };
+	return {
+		fieldErrors: makeEmptyDenseFieldErrorMap<T, string>(fields),
+		formErrors: EMPTY_FORM_ERRORS,
+	};
 }
 
 /**
  * Internal helper to log and wrap validation errors.
  */
 export function formValidationErrorFactory<Tfieldnames extends string>(
-  error: unknown,
-  loggerContext: string,
-  {
-    fields,
-    failureMessage,
-    formData = Object.freeze({}),
-  }: {
-    fields: readonly Tfieldnames[];
-    failureMessage: string;
-    formData?: SparseFieldValueMap<Tfieldnames, string>;
-  },
+	error: unknown,
+	loggerContext: string,
+	{
+		fields,
+		failureMessage,
+		formData = Object.freeze({}),
+	}: {
+		fields: readonly Tfieldnames[];
+		failureMessage: string;
+		formData?: SparseFieldValueMap<Tfieldnames, string>;
+	},
 ): FormResult<never> {
-  const isZodShape = isZodErrorLikeShape(error);
+	const isZodShape = isZodErrorLikeShape(error);
 
-  logger.error(failureMessage, {
-    context: loggerContext,
-    issues: isZodShape ? error.issues.length : undefined,
-    name: isZodShape ? error.name : "UnknownValidationError",
-  });
+	logger.error(failureMessage, {
+		context: loggerContext,
+		issues: isZodShape ? error.issues.length : undefined,
+		name: isZodShape ? error.name : "UnknownValidationError",
+	});
 
-  const { fieldErrors, formErrors } = mapToValidationErrors<Tfieldnames>(
-    error,
-    fields,
-  );
+	const { fieldErrors, formErrors } = mapToValidationErrors<Tfieldnames>(
+		error,
+		fields,
+	);
 
-  return makeFormError<Tfieldnames>({
-    fieldErrors,
-    formData,
-    formErrors,
-    key: "validation",
-    message: failureMessage,
-  });
+	return makeFormError<Tfieldnames>({
+		fieldErrors,
+		formData,
+		formErrors,
+		key: "validation",
+		message: failureMessage,
+	});
 }

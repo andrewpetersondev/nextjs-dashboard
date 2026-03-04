@@ -4,7 +4,7 @@ import { createCustomersRepository } from "@/modules/customers/infrastructure/re
 import { getAppDb } from "@/server/db/db.connection";
 
 export async function readTotalCustomersCountAction(): Promise<number> {
-  const db = getAppDb();
-  const repo = createCustomersRepository(db);
-  return await repo.fetchTotalCount();
+	const db = getAppDb();
+	const repo = createCustomersRepository(db);
+	return await repo.fetchTotalCount();
 }

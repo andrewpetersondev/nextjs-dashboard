@@ -17,36 +17,36 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * @throws AppError if deletion fails or invoice not found
  */
 export async function deleteInvoiceDal(
-  db: AppDatabase,
-  id: InvoiceId,
+	db: AppDatabase,
+	id: InvoiceId,
 ): Promise<InvoiceEntity> {
-  // Ensure db and id are not empty
-  if (!(db && id)) {
-    throw makeAppError("validation", {
-      cause: "",
-      message: INVOICE_MSG.invalidInput,
-      metadata: {},
-    });
-  }
+	// Ensure db and id are not empty
+	if (!(db && id)) {
+		throw makeAppError("validation", {
+			cause: "",
+			message: INVOICE_MSG.invalidInput,
+			metadata: {},
+		});
+	}
 
-  // db operations
-  const [deletedInvoice] = await db
-    .delete(invoices)
-    .where(eq(invoices.id, id))
-    .returning();
+	// db operations
+	const [deletedInvoice] = await db
+		.delete(invoices)
+		.where(eq(invoices.id, id))
+		.returning();
 
-  // Check if deletion was successful. Throw error. Propagates up to  Actions layer.
-  if (!deletedInvoice) {
-    throw makeAppError("database", {
-      cause: "",
-      message: INVOICE_MSG.deleteFailed,
-      metadata: {},
-    });
-  }
+	// Check if deletion was successful. Throw error. Propagates up to  Actions layer.
+	if (!deletedInvoice) {
+		throw makeAppError("database", {
+			cause: "",
+			message: INVOICE_MSG.deleteFailed,
+			metadata: {},
+		});
+	}
 
-  const result = rawDbToInvoiceEntity(deletedInvoice);
-  if (!result.ok) {
-    throw result.error;
-  }
-  return result.value;
+	const result = rawDbToInvoiceEntity(deletedInvoice);
+	if (!result.ok) {
+		throw result.error;
+	}
+	return result.value;
 }

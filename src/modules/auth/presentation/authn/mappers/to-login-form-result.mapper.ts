@@ -7,7 +7,7 @@ import { makeFormError } from "@/shared/forms/logic/factories/form-result.factor
 import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 const LOGIN_CREDENTIALS_ERROR_MESSAGE =
-  "Invalid credentials. Please try again.";
+	"Invalid credentials. Please try again.";
 type LoginFormData = Readonly<Partial<Record<LoginField, string>>>;
 
 /**
@@ -23,22 +23,22 @@ type LoginFormData = Readonly<Partial<Record<LoginField, string>>>;
  * @internal
  */
 function mapLoginInvalidCredentialsError(
-  error: AppError,
-  formData: LoginFormData,
+	error: AppError,
+	formData: LoginFormData,
 ): FormResult<never> {
-  const basePayload = toFormErrorPayload<LoginField>(error, LOGIN_FIELDS_LIST);
+	const basePayload = toFormErrorPayload<LoginField>(error, LOGIN_FIELDS_LIST);
 
-  return makeFormError<LoginField>({
-    ...basePayload,
-    fieldErrors: {
-      email: [LOGIN_CREDENTIALS_ERROR_MESSAGE],
-      password: [LOGIN_CREDENTIALS_ERROR_MESSAGE],
-    },
-    formData,
-    formErrors: [LOGIN_CREDENTIALS_ERROR_MESSAGE],
-    key: error.key,
-    message: LOGIN_CREDENTIALS_ERROR_MESSAGE,
-  }) as FormResult<never>;
+	return makeFormError<LoginField>({
+		...basePayload,
+		fieldErrors: {
+			email: [LOGIN_CREDENTIALS_ERROR_MESSAGE],
+			password: [LOGIN_CREDENTIALS_ERROR_MESSAGE],
+		},
+		formData,
+		formErrors: [LOGIN_CREDENTIALS_ERROR_MESSAGE],
+		key: error.key,
+		message: LOGIN_CREDENTIALS_ERROR_MESSAGE,
+	}) as FormResult<never>;
 }
 
 /**
@@ -57,12 +57,12 @@ function mapLoginInvalidCredentialsError(
  * @returns A {@link FormResult} containing the mapped errors.
  */
 export function toLoginFormResult(
-  error: AppError,
-  formData: LoginFormData,
+	error: AppError,
+	formData: LoginFormData,
 ): FormResult<never> {
-  if (error.key === "invalid_credentials") {
-    return mapLoginInvalidCredentialsError(error, formData);
-  }
+	if (error.key === "invalid_credentials") {
+		return mapLoginInvalidCredentialsError(error, formData);
+	}
 
-  return mapGenericAuthError(error, formData, LOGIN_FIELDS_LIST);
+	return mapGenericAuthError(error, formData, LOGIN_FIELDS_LIST);
 }

@@ -3,9 +3,9 @@ import type { SessionTokenCodecContract } from "@/modules/auth/application/sessi
 import { SessionTokenCodecAdapter } from "@/modules/auth/infrastructure/session/adapters/session-token-codec.adapter";
 import { JoseSessionJwtCryptoService } from "@/modules/auth/infrastructure/session/services/jose-session-jwt-crypto.service";
 import {
-  SESSION_AUDIENCE,
-  SESSION_ISSUER,
-  SESSION_SECRET,
+	SESSION_AUDIENCE,
+	SESSION_ISSUER,
+	SESSION_SECRET,
 } from "@/shared/core/config/server/env-server";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
@@ -17,20 +17,20 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @throws Error if the session secret is missing.
  */
 export function sessionTokenCodecFactory(
-  logger: LoggingClientContract,
+	logger: LoggingClientContract,
 ): SessionTokenCodecContract {
-  if (!SESSION_SECRET) {
-    throw new Error("SESSION_SECRET is not defined");
-  }
+	if (!SESSION_SECRET) {
+		throw new Error("SESSION_SECRET is not defined");
+	}
 
-  const jwtCrypto = new JoseSessionJwtCryptoService(
-    logger,
-    SESSION_SECRET,
-    SESSION_ISSUER,
-    SESSION_AUDIENCE,
-  );
+	const jwtCrypto = new JoseSessionJwtCryptoService(
+		logger,
+		SESSION_SECRET,
+		SESSION_ISSUER,
+		SESSION_AUDIENCE,
+	);
 
-  const codec = new SessionTokenCodecAdapter(jwtCrypto);
+	const codec = new SessionTokenCodecAdapter(jwtCrypto);
 
-  return codec;
+	return codec;
 }

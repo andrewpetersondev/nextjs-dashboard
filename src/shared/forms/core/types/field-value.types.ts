@@ -5,5 +5,5 @@
  * @typeParam V - Value type.
  */
 export type SparseFieldValueMap<T extends string, V> = Readonly<
-  Partial<Record<T, V>>
+	Partial<Record<T, V>>
 >;

@@ -6,20 +6,20 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 export class DeleteRevenueUseCase {
-  private readonly repository: RevenueRepositoryContract;
+	private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryContract) {
-    this.repository = repository;
-  }
+	constructor(repository: RevenueRepositoryContract) {
+		this.repository = repository;
+	}
 
-  async execute(id: RevenueId): Promise<void> {
-    if (!id) {
-      throw makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: "Revenue ID is required",
-        metadata: {},
-      });
-    }
-    await this.repository.delete(id);
-  }
+	async execute(id: RevenueId): Promise<void> {
+		if (!id) {
+			throw makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: "Revenue ID is required",
+				metadata: {},
+			});
+		}
+		await this.repository.delete(id);
+	}
 }

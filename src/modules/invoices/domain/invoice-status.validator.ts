@@ -8,6 +8,6 @@ import { createEnumValidator } from "@/shared/primitives/core/enums/enum.factory
  */
 // biome-ignore lint/nursery/useExplicitType: fix
 export const validateInvoiceStatus = createEnumValidator(
-  "InvoiceStatus",
-  INVOICE_STATUSES,
+	"InvoiceStatus",
+	INVOICE_STATUSES,
 );

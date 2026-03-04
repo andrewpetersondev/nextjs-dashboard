@@ -1,9 +1,9 @@
 import "server-only";
 import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
 import type {
-  CreateUserProps,
-  UpdateUserProps,
-  UserEntity,
+	CreateUserProps,
+	UpdateUserProps,
+	UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { UserRepositoryImpl } from "@/modules/users/infrastructure/repository/user.repository";
@@ -11,50 +11,50 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 
 export class UserRepositoryAdapter
-  implements UserRepositoryContract<UserRepositoryImpl>
+	implements UserRepositoryContract<UserRepositoryImpl>
 {
-  private readonly repo: UserRepositoryImpl;
+	private readonly repo: UserRepositoryImpl;
 
-  constructor(repo: UserRepositoryImpl) {
-    this.repo = repo;
-  }
+	constructor(repo: UserRepositoryImpl) {
+		this.repo = repo;
+	}
 
-  create(input: CreateUserProps): Promise<Result<UserEntity | null, AppError>> {
-    return this.repo.create(input);
-  }
+	create(input: CreateUserProps): Promise<Result<UserEntity | null, AppError>> {
+		return this.repo.create(input);
+	}
 
-  delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-    return this.repo.delete(id);
-  }
+	delete(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+		return this.repo.delete(id);
+	}
 
-  readById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-    return this.repo.readById(id);
-  }
+	readById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+		return this.repo.readById(id);
+	}
 
-  readFilteredUsers(
-    query: string,
-    page: number,
-  ): Promise<Result<UserEntity[], AppError>> {
-    return this.repo.readFilteredUsers(query, page);
-  }
+	readFilteredUsers(
+		query: string,
+		page: number,
+	): Promise<Result<UserEntity[], AppError>> {
+		return this.repo.readFilteredUsers(query, page);
+	}
 
-  readPageCount(query: string): Promise<Result<number, AppError>> {
-    return this.repo.readPageCount(query);
-  }
+	readPageCount(query: string): Promise<Result<number, AppError>> {
+		return this.repo.readPageCount(query);
+	}
 
-  update(
-    id: UserId,
-    patch: UpdateUserProps,
-  ): Promise<Result<UserEntity | null, AppError>> {
-    return this.repo.update(id, patch);
-  }
+	update(
+		id: UserId,
+		patch: UpdateUserProps,
+	): Promise<Result<UserEntity | null, AppError>> {
+		return this.repo.update(id, patch);
+	}
 
-  withTransaction<T>(
-    fn: (txRepo: UserRepositoryContract<UserRepositoryImpl>) => Promise<T>,
-  ): Promise<T> {
-    return this.repo.withTransaction(async (txRepo) => {
-      const txAdapter = new UserRepositoryAdapter(txRepo);
-      return await fn(txAdapter);
-    });
-  }
+	withTransaction<T>(
+		fn: (txRepo: UserRepositoryContract<UserRepositoryImpl>) => Promise<T>,
+	): Promise<T> {
+		return this.repo.withTransaction(async (txRepo) => {
+			const txAdapter = new UserRepositoryAdapter(txRepo);
+			return await fn(txAdapter);
+		});
+	}
 }

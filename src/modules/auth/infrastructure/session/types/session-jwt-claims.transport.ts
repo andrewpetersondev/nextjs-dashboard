@@ -25,18 +25,18 @@ import "server-only";
  * remains decoupled as role is treated as an opaque string at this layer.
  */
 export type SessionJwtClaimsTransport = {
-  /** Expiration time (UNIX timestamp in seconds) - JWT standard */
-  exp: number;
-  /** Issued-at time (UNIX timestamp in seconds) - JWT standard */
-  iat: number;
-  /** JWT ID (unique token identifier) - JWT standard */
-  jti: string;
-  /** Not-before time (UNIX timestamp in seconds) - JWT standard */
-  nbf: number;
-  /** User role (cached for performance) - string at infrastructure layer */
-  role: string;
-  /** Session ID (stable identifier for a session) - application/session standard */
-  sid: string;
-  /** Subject: User identifier (UUID string) - JWT standard */
-  sub: string;
+	/** Expiration time (UNIX timestamp in seconds) - JWT standard */
+	exp: number;
+	/** Issued-at time (UNIX timestamp in seconds) - JWT standard */
+	iat: number;
+	/** JWT ID (unique token identifier) - JWT standard */
+	jti: string;
+	/** Not-before time (UNIX timestamp in seconds) - JWT standard */
+	nbf: number;
+	/** User role (cached for performance) - string at infrastructure layer */
+	role: string;
+	/** Session ID (stable identifier for a session) - application/session standard */
+	sid: string;
+	/** Subject: User identifier (UUID string) - JWT standard */
+	sub: string;
 };

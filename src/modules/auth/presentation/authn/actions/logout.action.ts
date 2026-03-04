@@ -17,34 +17,34 @@ import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/a
  * @redirects {"/"} always.
  */
 export async function logoutAction(): Promise<void> {
-  const auth = await makeAuthComposition();
-  const { ip } = auth.request;
+	const auth = await makeAuthComposition();
+	const { ip } = auth.request;
 
-  const logger = auth.loggers.action;
+	const logger = auth.loggers.action;
 
-  logger.operation("info", "Logout action start", {
-    operationContext: "authentication",
-    operationIdentifiers: { ip },
-    operationName: "logout.start",
-  });
+	logger.operation("info", "Logout action start", {
+		operationContext: "authentication",
+		operationIdentifiers: { ip },
+		operationName: "logout.start",
+	});
 
-  const res = await logoutWorkflow({
-    sessionService: auth.services.sessionService,
-  });
+	const res = await logoutWorkflow({
+		sessionService: auth.services.sessionService,
+	});
 
-  if (res.ok) {
-    logger.operation("info", "Logout success", {
-      operationContext: "authentication",
-      operationIdentifiers: { ip },
-      operationName: "logout.success",
-    });
-  } else {
-    logger.errorWithDetails("Logout session clear failed", res.error, {
-      operationContext: "authentication",
-      operationIdentifiers: { ip, reason: "session_clear_failed" },
-      operationName: "logout.failed",
-    });
-  }
+	if (res.ok) {
+		logger.operation("info", "Logout success", {
+			operationContext: "authentication",
+			operationIdentifiers: { ip },
+			operationName: "logout.success",
+		});
+	} else {
+		logger.errorWithDetails("Logout session clear failed", res.error, {
+			operationContext: "authentication",
+			operationIdentifiers: { ip, reason: "session_clear_failed" },
+			operationName: "logout.failed",
+		});
+	}
 
-  redirect("/");
+	redirect("/");
 }

@@ -10,9 +10,9 @@ import { H1 } from "@/ui/atoms/headings";
 import { CardsSkeleton } from "@/ui/skeletons/skeletons";
 
 interface DashboardProps {
-  readonly dashboardCardData: DashboardCardData;
-  readonly latestInvoices: InvoiceListFilter[];
-  readonly title: string;
+	readonly dashboardCardData: DashboardCardData;
+	readonly latestInvoices: InvoiceListFilter[];
+	readonly title: string;
 }
 
 /**
@@ -22,27 +22,27 @@ interface DashboardProps {
  * @returns The dashboard JSX element.
  */
 export const Dashboard = ({
-  dashboardCardData,
-  latestInvoices,
-  title,
+	dashboardCardData,
+	latestInvoices,
+	title,
 }: DashboardProps): JSX.Element => {
-  return (
-    <section>
-      <H1 className="mb-4">{title}</H1>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Suspense enables streaming for async server components */}
-        <Suspense fallback={<CardsSkeleton />}>
-          <CardWrapper data={dashboardCardData} />
-        </Suspense>
-      </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        <Suspense fallback={<RevenueChartSkeleton />}>
-          <RevenueChart />
-        </Suspense>
-        <Suspense fallback={<LatestInvoicesSkeleton />}>
-          <LatestInvoices latestInvoices={latestInvoices} />
-        </Suspense>
-      </div>
-    </section>
-  );
+	return (
+		<section>
+			<H1 className="mb-4">{title}</H1>
+			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+				{/* Suspense enables streaming for async server components */}
+				<Suspense fallback={<CardsSkeleton />}>
+					<CardWrapper data={dashboardCardData} />
+				</Suspense>
+			</div>
+			<div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
+				<Suspense fallback={<RevenueChartSkeleton />}>
+					<RevenueChart />
+				</Suspense>
+				<Suspense fallback={<LatestInvoicesSkeleton />}>
+					<LatestInvoices latestInvoices={latestInvoices} />
+				</Suspense>
+			</div>
+		</section>
+	);
 };

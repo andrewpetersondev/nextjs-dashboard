@@ -3,5 +3,5 @@ import type { InvoiceMessageId } from "@/modules/invoices/domain/i18n/invoice-me
 
 // Minimal translator for a single locale
 export function translator(key: InvoiceMessageId): string {
-  return enInvoices[key] ?? key;
+	return enInvoices[key] ?? key;
 }

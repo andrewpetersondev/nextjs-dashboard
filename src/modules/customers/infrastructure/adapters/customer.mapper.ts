@@ -2,22 +2,22 @@ import "server-only";
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 
 import type {
-  CustomerAggregatesRowRaw,
-  CustomerAggregatesServerDto,
-  CustomerSelectRowRaw,
-  CustomerSelectServerDto,
+	CustomerAggregatesRowRaw,
+	CustomerAggregatesServerDto,
+	CustomerSelectRowRaw,
+	CustomerSelectServerDto,
 } from "@/modules/customers/domain/types";
 
 /**
  * Maps a raw "select" projection row to a server DTO with branded ID.
  */
 export function mapCustomerSelectRawToDto(
-  row: CustomerSelectRowRaw,
+	row: CustomerSelectRowRaw,
 ): CustomerSelectServerDto {
-  return {
-    id: toCustomerId(row.id),
-    name: row.name,
-  };
+	return {
+		id: toCustomerId(row.id),
+		name: row.name,
+	};
 }
 
 /**
@@ -25,15 +25,15 @@ export function mapCustomerSelectRawToDto(
  * - Normalizes nullable sums to 0.
  */
 export function mapCustomerAggregatesRawToDto(
-  row: CustomerAggregatesRowRaw,
+	row: CustomerAggregatesRowRaw,
 ): CustomerAggregatesServerDto {
-  return {
-    email: row.email,
-    id: toCustomerId(row.id),
-    imageUrl: row.imageUrl,
-    name: row.name,
-    totalInvoices: row.totalInvoices ?? 0,
-    totalPaid: row.totalPaid ?? 0,
-    totalPending: row.totalPending ?? 0,
-  };
+	return {
+		email: row.email,
+		id: toCustomerId(row.id),
+		imageUrl: row.imageUrl,
+		name: row.name,
+		totalInvoices: row.totalInvoices ?? 0,
+		totalPaid: row.totalPaid ?? 0,
+		totalPending: row.totalPending ?? 0,
+	};
 }

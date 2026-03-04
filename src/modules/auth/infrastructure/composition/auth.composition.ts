@@ -18,90 +18,90 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
 import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 type AuthCompositionOverrides = Readonly<{
-  logger: LoggingClientContract;
-  requestId: string;
+	logger: LoggingClientContract;
+	requestId: string;
 }>;
 
 async function makeAuthCompositionInternal(
-  overrides?: AuthCompositionOverrides,
+	overrides?: AuthCompositionOverrides,
 ): Promise<AuthComposition> {
-  const requestId = overrides ? overrides.requestId : crypto.randomUUID();
+	const requestId = overrides ? overrides.requestId : crypto.randomUUID();
 
-  const { ip, userAgent } = await getRequestMetadata();
+	const { ip, userAgent } = await getRequestMetadata();
 
-  const baseLogger = (overrides ? overrides.logger : defaultLogger)
-    .withContext("auth:composition")
-    .withRequest(requestId)
-    .child({ ip, userAgent });
+	const baseLogger = (overrides ? overrides.logger : defaultLogger)
+		.withContext("auth:composition")
+		.withRequest(requestId)
+		.child({ ip, userAgent });
 
-  const actionLogger = baseLogger.withContext("auth:action");
+	const actionLogger = baseLogger.withContext("auth:action");
 
-  const db = getAppDb();
+	const db = getAppDb();
 
-  const sessionService = sessionServiceFactory(baseLogger, requestId);
+	const sessionService = sessionServiceFactory(baseLogger, requestId);
 
-  const loginUseCase = loginUseCaseFactory(db, baseLogger, requestId);
+	const loginUseCase = loginUseCaseFactory(db, baseLogger, requestId);
 
-  const uow = authUnitOfWorkFactory(db, baseLogger, requestId);
+	const uow = authUnitOfWorkFactory(db, baseLogger, requestId);
 
-  const signupUseCase = signupUseCaseFactory(uow, baseLogger);
+	const signupUseCase = signupUseCaseFactory(uow, baseLogger);
 
-  const demoUserUseCase = demoUserUseCaseFactory(uow, baseLogger);
+	const demoUserUseCase = demoUserUseCaseFactory(uow, baseLogger);
 
-  return {
-    loggers: {
-      action: actionLogger,
-      composition: baseLogger,
-    },
-    request: {
-      ip,
-      logger: baseLogger,
-      requestId,
-      userAgent,
-    },
-    services: {
-      sessionService,
-    },
-    workflows: {
-      demoUser: (input: Readonly<CreateDemoUserCommand>) =>
-        createDemoUserWorkflow(input, {
-          demoUserUseCase,
-          sessionService,
-        }),
-      login: (input: Readonly<LoginCommand>) =>
-        loginWorkflow(input, { loginUseCase, sessionService }),
-      logout: () => logoutWorkflow({ sessionService }),
-      signup: (input: Readonly<SignupCommand>) =>
-        signupWorkflow(input, { sessionService, signupUseCase }),
-    },
-  } as const;
+	return {
+		loggers: {
+			action: actionLogger,
+			composition: baseLogger,
+		},
+		request: {
+			ip,
+			logger: baseLogger,
+			requestId,
+			userAgent,
+		},
+		services: {
+			sessionService,
+		},
+		workflows: {
+			demoUser: (input: Readonly<CreateDemoUserCommand>) =>
+				createDemoUserWorkflow(input, {
+					demoUserUseCase,
+					sessionService,
+				}),
+			login: (input: Readonly<LoginCommand>) =>
+				loginWorkflow(input, { loginUseCase, sessionService }),
+			logout: () => logoutWorkflow({ sessionService }),
+			signup: (input: Readonly<SignupCommand>) =>
+				signupWorkflow(input, { sessionService, signupUseCase }),
+		},
+	} as const;
 }
 
 type AuthComposition = Readonly<{
-  request: Readonly<{
-    ip: string | null;
-    logger: LoggingClientContract;
-    requestId: string;
-    userAgent: string | null;
-  }>;
+	request: Readonly<{
+		ip: string | null;
+		logger: LoggingClientContract;
+		requestId: string;
+		userAgent: string | null;
+	}>;
 
-  loggers: Readonly<{
-    action: LoggingClientContract;
-    composition: LoggingClientContract;
-  }>;
+	loggers: Readonly<{
+		action: LoggingClientContract;
+		composition: LoggingClientContract;
+	}>;
 
-  services: Readonly<{
-    sessionService: SessionServiceContract;
-  }>;
+	services: Readonly<{
+		sessionService: SessionServiceContract;
+	}>;
 
-  workflows: Readonly<{
-    demoUser(
-      input: Readonly<CreateDemoUserCommand>,
-    ): ReturnType<typeof createDemoUserWorkflow>;
-    login(input: Readonly<LoginCommand>): ReturnType<typeof loginWorkflow>;
-    logout(): ReturnType<typeof logoutWorkflow>;
-    signup(input: Readonly<SignupCommand>): ReturnType<typeof signupWorkflow>;
-  }>;
+	workflows: Readonly<{
+		demoUser(
+			input: Readonly<CreateDemoUserCommand>,
+		): ReturnType<typeof createDemoUserWorkflow>;
+		login(input: Readonly<LoginCommand>): ReturnType<typeof loginWorkflow>;
+		logout(): ReturnType<typeof logoutWorkflow>;
+		signup(input: Readonly<SignupCommand>): ReturnType<typeof signupWorkflow>;
+	}>;
 }>;
 
 /**
@@ -110,9 +110,9 @@ type AuthComposition = Readonly<{
  * Enforces "all-or-nothing" overrides (no optional props) to prevent drift.
  */
 async function _makeAuthCompositionForTest(
-  overrides: AuthCompositionOverrides,
+	overrides: AuthCompositionOverrides,
 ): Promise<AuthComposition> {
-  return await makeAuthCompositionInternal(overrides);
+	return await makeAuthCompositionInternal(overrides);
 }
 
 /**
@@ -125,5 +125,5 @@ async function _makeAuthCompositionForTest(
  * - Exposes high-level workflows ready for server actions
  */
 export async function makeAuthComposition(): Promise<AuthComposition> {
-  return await makeAuthCompositionInternal();
+	return await makeAuthCompositionInternal();
 }

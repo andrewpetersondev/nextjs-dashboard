@@ -15,68 +15,68 @@ import type { Period } from "@/shared/primitives/period/period.brand";
  * Applies deletion effects to revenue records.
  */
 async function applyDeletionEffects(
-  args: ApplyDeletionEffectsArgs,
+	args: ApplyDeletionEffectsArgs,
 ): Promise<void> {
-  const { context, invoice, metadata, period, revenueService } = args;
+	const { context, invoice, metadata, period, revenueService } = args;
 
-  const existingRevenue = await revenueService.findByPeriod(period);
-  if (!existingRevenue) {
-    return;
-  }
-  const aggregate = computeAggregateAfterRemoval(
-    existingRevenue.invoiceCount,
-    existingRevenue.totalAmount,
-    invoice.amount,
-  );
-  if (aggregate.invoiceCount === 0) {
-    await revenueService.delete(existingRevenue.id);
-    return;
-  }
-  const nextBuckets = applyDeltaToBucket(
-    {
-      totalPaidAmount: existingRevenue.totalPaidAmount,
-      totalPendingAmount: existingRevenue.totalPendingAmount,
-    },
-    invoice.status,
-    -invoice.amount,
-  );
-  await updateRevenueRecord(revenueService, {
-    context,
-    invoiceCount: aggregate.invoiceCount,
-    metadata,
-    revenueId: existingRevenue.id,
-    totalAmount: aggregate.totalAmount,
-    totalPaidAmount: nextBuckets.totalPaidAmount,
-    totalPendingAmount: nextBuckets.totalPendingAmount,
-  });
+	const existingRevenue = await revenueService.findByPeriod(period);
+	if (!existingRevenue) {
+		return;
+	}
+	const aggregate = computeAggregateAfterRemoval(
+		existingRevenue.invoiceCount,
+		existingRevenue.totalAmount,
+		invoice.amount,
+	);
+	if (aggregate.invoiceCount === 0) {
+		await revenueService.delete(existingRevenue.id);
+		return;
+	}
+	const nextBuckets = applyDeltaToBucket(
+		{
+			totalPaidAmount: existingRevenue.totalPaidAmount,
+			totalPendingAmount: existingRevenue.totalPendingAmount,
+		},
+		invoice.status,
+		-invoice.amount,
+	);
+	await updateRevenueRecord(revenueService, {
+		context,
+		invoiceCount: aggregate.invoiceCount,
+		metadata,
+		revenueId: existingRevenue.id,
+		totalAmount: aggregate.totalAmount,
+		totalPaidAmount: nextBuckets.totalPaidAmount,
+		totalPendingAmount: nextBuckets.totalPendingAmount,
+	});
 }
 
 /**
  * Adjusts revenue for a deleted invoice.
  */
 export async function adjustRevenueForDeletedInvoice(
-  revenueService: RevenueApplicationService,
-  invoice: InvoiceDto,
-  period: Period,
+	revenueService: RevenueApplicationService,
+	invoice: InvoiceDto,
+	period: Period,
 ): Promise<void> {
-  const context = "RevenueEventHandler.adjustRevenueForDeletedInvoice";
-  const metadata = { invoice: invoice.id, period: periodKey(period) } as const;
-  await withErrorHandling(
-    context,
-    "Adjusting revenue for deleted invoice",
-    async () => {
-      const eligibility = checkDeletionEligibility(invoice);
-      if (!eligibility.eligible) {
-        return;
-      }
-      await applyDeletionEffects({
-        context,
-        invoice,
-        metadata,
-        period,
-        revenueService,
-      });
-    },
-    metadata,
-  );
+	const context = "RevenueEventHandler.adjustRevenueForDeletedInvoice";
+	const metadata = { invoice: invoice.id, period: periodKey(period) } as const;
+	await withErrorHandling(
+		context,
+		"Adjusting revenue for deleted invoice",
+		async () => {
+			const eligibility = checkDeletionEligibility(invoice);
+			if (!eligibility.eligible) {
+				return;
+			}
+			await applyDeletionEffects({
+				context,
+				invoice,
+				metadata,
+				period,
+				revenueService,
+			});
+		},
+		metadata,
+	);
 }

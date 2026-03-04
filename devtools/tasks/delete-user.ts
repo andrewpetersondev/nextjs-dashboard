@@ -3,6 +3,6 @@ import { users } from "@/server/db/schema/users";
 import { nodeDb } from "../cli/node-db";
 
 export async function deleteUser(email: string): Promise<void> {
-  console.log("deleteUser", email);
-  await nodeDb.delete(users).where(eq(users.email, email));
+	console.log("deleteUser", email);
+	await nodeDb.delete(users).where(eq(users.email, email));
 }

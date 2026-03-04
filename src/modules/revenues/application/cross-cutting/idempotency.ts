@@ -13,20 +13,20 @@ const processedEventIds: Set<string> = new Set();
  * Checks whether the given eventId has already been processed in this process.
  */
 function hasProcessedEvent(eventId: string | undefined | null): boolean {
-  if (!eventId) {
-    return false;
-  }
-  return processedEventIds.has(eventId);
+	if (!eventId) {
+		return false;
+	}
+	return processedEventIds.has(eventId);
 }
 
 /**
  * Marks the given eventId as processed in this process.
  */
 function markEventProcessed(eventId: string | undefined | null): void {
-  if (!eventId) {
-    return;
-  }
-  processedEventIds.add(eventId);
+	if (!eventId) {
+		return;
+	}
+	processedEventIds.add(eventId);
 }
 
 /**
@@ -34,14 +34,14 @@ function markEventProcessed(eventId: string | undefined | null): void {
  * processed, the function is skipped. On success, the eventId is recorded as processed.
  */
 export async function withIdempotency<T>(
-  eventId: string | undefined | null,
-  fn: () => Promise<T>,
+	eventId: string | undefined | null,
+	fn: () => Promise<T>,
 ): Promise<{ executed: boolean; result?: T }> {
-  if (hasProcessedEvent(eventId)) {
-    return { executed: false };
-  }
+	if (hasProcessedEvent(eventId)) {
+		return { executed: false };
+	}
 
-  const result = await fn();
-  markEventProcessed(eventId);
-  return { executed: true, result };
+	const result = await fn();
+	markEventProcessed(eventId);
+	return { executed: true, result };
 }

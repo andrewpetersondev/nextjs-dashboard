@@ -1,8 +1,8 @@
 import "server-only";
 
 import type {
-  BaseInvoiceEvent,
-  INVOICE_EVENTS,
+	BaseInvoiceEvent,
+	INVOICE_EVENTS,
 } from "@/server/events/invoice-event.types";
 
 /**
@@ -10,12 +10,12 @@ import type {
  * Centralizes known event names and payload types for strong typing.
  */
 declare module "@/server/events/event-bus" {
-  type InvoiceEventNames = (typeof INVOICE_EVENTS)[keyof typeof INVOICE_EVENTS];
+	type InvoiceEventNames = (typeof INVOICE_EVENTS)[keyof typeof INVOICE_EVENTS];
 
-  type InvoiceEventsMap = {
-    readonly [K in InvoiceEventNames]: BaseInvoiceEvent;
-  };
+	type InvoiceEventsMap = {
+		readonly [K in InvoiceEventNames]: BaseInvoiceEvent;
+	};
 
-  // Merge into DomainEvents to provide strong typing for invoice-related events.
-  interface DomainEvents extends InvoiceEventsMap {}
+	// Merge into DomainEvents to provide strong typing for invoice-related events.
+	interface DomainEvents extends InvoiceEventsMap {}
 }

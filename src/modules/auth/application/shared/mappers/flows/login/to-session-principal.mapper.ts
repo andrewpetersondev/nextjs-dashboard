@@ -12,19 +12,19 @@ import type { UpdateSessionSuccessDto } from "@/modules/auth/application/session
  * TODO: REFACTOR SO IT CAN ONLY TAKE ONE INPUT TYPE
  */
 export function toSessionPrincipal(
-  source: AuthenticatedUserDto | UpdateSessionSuccessDto,
+	source: AuthenticatedUserDto | UpdateSessionSuccessDto,
 ): SessionPrincipalDto {
-  if ("email" in source) {
-    // Mapping from AuthenticatedUserDto
-    return {
-      id: source.id,
-      role: source.role,
-    };
-  }
+	if ("email" in source) {
+		// Mapping from AuthenticatedUserDto
+		return {
+			id: source.id,
+			role: source.role,
+		};
+	}
 
-  // Mapping from UpdateSessionSuccessDto (already has branded userId)
-  return {
-    id: source.userId,
-    role: source.role,
-  };
+	// Mapping from UpdateSessionSuccessDto (already has branded userId)
+	return {
+		id: source.userId,
+		role: source.role,
+	};
 }

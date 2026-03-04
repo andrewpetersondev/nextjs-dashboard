@@ -8,23 +8,23 @@ import { createEmptyStatistics } from "@/modules/revenues/domain/statistics/fact
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 export class GetRevenueStatisticsUseCase {
-  private readonly repository: RevenueRepositoryContract;
+	private readonly repository: RevenueRepositoryContract;
 
-  constructor(repository: RevenueRepositoryContract) {
-    this.repository = repository;
-  }
+	constructor(repository: RevenueRepositoryContract) {
+		this.repository = repository;
+	}
 
-  async execute(): Promise<RevenueStatistics> {
-    try {
-      const rolling = new GetRollingYearRevenuesUseCase(this.repository);
-      const revenueData = await rolling.execute();
+	async execute(): Promise<RevenueStatistics> {
+		try {
+			const rolling = new GetRollingYearRevenuesUseCase(this.repository);
+			const revenueData = await rolling.execute();
 
-      const stats = computeStatistics(revenueData);
+			const stats = computeStatistics(revenueData);
 
-      return stats;
-    } catch (error) {
-      logger.error("execute revenue stats failed", error);
-      return createEmptyStatistics();
-    }
-  }
+			return stats;
+		} catch (error) {
+			logger.error("execute revenue stats failed", error);
+			return createEmptyStatistics();
+		}
+	}
 }

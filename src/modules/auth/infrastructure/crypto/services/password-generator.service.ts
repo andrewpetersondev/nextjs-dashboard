@@ -10,13 +10,13 @@ import { makeRandomPassword } from "@/modules/auth/domain/auth-user/policies/pas
  * @implements {PasswordGeneratorContract}
  */
 export class PasswordGeneratorService implements PasswordGeneratorContract {
-  /**
-   * Generates a random password of the specified length.
-   *
-   * @param length - The desired length of the password.
-   * @returns A randomly generated password string.
-   */
-  generate(length: number): string {
-    return makeRandomPassword(length);
-  }
+	/**
+	 * Generates a random password of the specified length.
+	 *
+	 * @param length - The desired length of the password.
+	 * @returns A randomly generated password string.
+	 */
+	generate(length: number): string {
+		return makeRandomPassword(length);
+	}
 }

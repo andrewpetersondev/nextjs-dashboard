@@ -5,8 +5,8 @@ import type { SessionTokenServiceContract } from "@/modules/auth/application/ses
 import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/shared/helpers/session-cookie-ops.helper";
 import {
-  AUTH_OPERATIONS,
-  AUTH_USE_CASE_NAMES,
+	AUTH_OPERATIONS,
+	AUTH_USE_CASE_NAMES,
 } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
@@ -23,120 +23,120 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * to the session store (e.g., setting a cookie).
  */
 export class EstablishSessionUseCase {
-  private readonly logger: LoggingClientContract;
-  private readonly sessionStore: SessionStoreContract;
-  private readonly sessionTokenService: SessionTokenServiceContract;
+	private readonly logger: LoggingClientContract;
+	private readonly sessionStore: SessionStoreContract;
+	private readonly sessionTokenService: SessionTokenServiceContract;
 
-  /**
-   * @param deps - Dependencies required for session establishment.
-   */
-  constructor(deps: SessionUseCaseDeps) {
-    this.logger = makeAuthUseCaseLoggerHelper(
-      deps.logger,
-      AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,
-    );
-    this.sessionStore = deps.sessionStore;
-    this.sessionTokenService = deps.sessionTokenService;
-  }
+	/**
+	 * @param deps - Dependencies required for session establishment.
+	 */
+	constructor(deps: SessionUseCaseDeps) {
+		this.logger = makeAuthUseCaseLoggerHelper(
+			deps.logger,
+			AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,
+		);
+		this.sessionStore = deps.sessionStore;
+		this.sessionTokenService = deps.sessionTokenService;
+	}
 
-  /**
-   * Executes the session establishment logic.
-   *
-   * @param user - The user principal for whom the session is being established.
-   * @returns A Result containing the session principal or an AppError.
-   *
-   * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
-   */
-  // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
-  execute(
-    user: SessionPrincipalDto,
-  ): Promise<Result<SessionPrincipalDto, AppError>> {
-    return safeExecute(
-      // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
-      async () => {
-        const tracker = new PerformanceTracker();
+	/**
+	 * Executes the session establishment logic.
+	 *
+	 * @param user - The user principal for whom the session is being established.
+	 * @returns A Result containing the session principal or an AppError.
+	 *
+	 * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
+	 */
+	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+	execute(
+		user: SessionPrincipalDto,
+	): Promise<Result<SessionPrincipalDto, AppError>> {
+		return safeExecute(
+			// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+			async () => {
+				const tracker = new PerformanceTracker();
 
-        const issuedResult = await tracker.measure(
-          "sessionTokenService.issue",
-          () =>
-            this.sessionTokenService.issue({
-              role: user.role,
-              userId: user.id,
-            }),
-        );
+				const issuedResult = await tracker.measure(
+					"sessionTokenService.issue",
+					() =>
+						this.sessionTokenService.issue({
+							role: user.role,
+							userId: user.id,
+						}),
+				);
 
-        if (!issuedResult.ok) {
-          this.logger.operation(
-            "warn",
-            "Session establishment failed at token issuance",
-            {
-              duration: tracker.getTotalDuration(),
-              operationContext: "auth:use-case",
-              operationIdentifiers: { role: user.role, userId: user.id },
-              operationName: "establish-session.token.failed",
-              timings: tracker.getAllTimings(),
-            },
-          );
-          return issuedResult;
-        }
+				if (!issuedResult.ok) {
+					this.logger.operation(
+						"warn",
+						"Session establishment failed at token issuance",
+						{
+							duration: tracker.getTotalDuration(),
+							operationContext: "auth:use-case",
+							operationIdentifiers: { role: user.role, userId: user.id },
+							operationName: "establish-session.token.failed",
+							timings: tracker.getAllTimings(),
+						},
+					);
+					return issuedResult;
+				}
 
-        const { expiresAtMs, token } = issuedResult.value;
+				const { expiresAtMs, token } = issuedResult.value;
 
-        const cookieResult = await tracker.measure(
-          "sessionStore.setCookie",
-          () =>
-            setSessionCookieAndLogHelper(
-              {
-                logger: this.logger,
-                sessionCookieAdapter: this.sessionStore,
-              },
-              {
-                expiresAtMs,
-                identifiers: {
-                  role: user.role,
-                  userId: user.id,
-                },
-                message: "Session established",
-                operationName: AUTH_OPERATIONS.SESSION_ESTABLISH_SUCCESS,
-                token,
-              },
-            ),
-        );
+				const cookieResult = await tracker.measure(
+					"sessionStore.setCookie",
+					() =>
+						setSessionCookieAndLogHelper(
+							{
+								logger: this.logger,
+								sessionCookieAdapter: this.sessionStore,
+							},
+							{
+								expiresAtMs,
+								identifiers: {
+									role: user.role,
+									userId: user.id,
+								},
+								message: "Session established",
+								operationName: AUTH_OPERATIONS.SESSION_ESTABLISH_SUCCESS,
+								token,
+							},
+						),
+				);
 
-        if (!cookieResult.ok) {
-          this.logger.operation(
-            "warn",
-            "Session establishment failed at cookie setting",
-            {
-              duration: tracker.getTotalDuration(),
-              operationContext: "auth:use-case",
-              operationIdentifiers: { role: user.role, userId: user.id },
-              operationName: "establish-session.cookie.failed",
-              timings: tracker.getAllTimings(),
-            },
-          );
-          return Err(cookieResult.error);
-        }
+				if (!cookieResult.ok) {
+					this.logger.operation(
+						"warn",
+						"Session establishment failed at cookie setting",
+						{
+							duration: tracker.getTotalDuration(),
+							operationContext: "auth:use-case",
+							operationIdentifiers: { role: user.role, userId: user.id },
+							operationName: "establish-session.cookie.failed",
+							timings: tracker.getAllTimings(),
+						},
+					);
+					return Err(cookieResult.error);
+				}
 
-        this.logger.operation(
-          "info",
-          "Session establishment completed successfully",
-          {
-            duration: tracker.getTotalDuration(),
-            operationContext: "auth:use-case",
-            operationIdentifiers: { role: user.role, userId: user.id },
-            operationName: "establish-session.success",
-            timings: tracker.getAllTimings(),
-          },
-        );
+				this.logger.operation(
+					"info",
+					"Session establishment completed successfully",
+					{
+						duration: tracker.getTotalDuration(),
+						operationContext: "auth:use-case",
+						operationIdentifiers: { role: user.role, userId: user.id },
+						operationName: "establish-session.success",
+						timings: tracker.getAllTimings(),
+					},
+				);
 
-        return Ok(user);
-      },
-      {
-        logger: this.logger,
-        message: "An unexpected error occurred while establishing the session.",
-        operation: AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,
-      },
-    );
-  }
+				return Ok(user);
+			},
+			{
+				logger: this.logger,
+				message: "An unexpected error occurred while establishing the session.",
+				operation: AUTH_USE_CASE_NAMES.ESTABLISH_SESSION,
+			},
+		);
+	}
 }

@@ -8,9 +8,9 @@ import type { SignupRequestDto } from "@/modules/auth/presentation/authn/transpo
  * @returns The signup command.
  */
 export function toSignupCommand(input: SignupRequestDto): SignupCommand {
-  return {
-    email: input.email,
-    password: input.password,
-    username: input.username,
-  };
+	return {
+		email: input.email,
+		password: input.password,
+		username: input.username,
+	};
 }

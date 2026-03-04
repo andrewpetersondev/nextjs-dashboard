@@ -1,6 +1,6 @@
 import type {
-  DenseFieldErrorMap,
-  FormErrors,
+	DenseFieldErrorMap,
+	FormErrors,
 } from "@/shared/forms/core/types/field-error.types";
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 
@@ -8,10 +8,10 @@ import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.
  * Loose shape matching a ZodError for flattening.
  */
 export type ZodErrorLike = {
-  readonly issues: readonly {
-    readonly path: readonly (string | number | symbol)[];
-    readonly message: string;
-  }[];
+	readonly issues: readonly {
+		readonly path: readonly (string | number | symbol)[];
+		readonly message: string;
+	}[];
 };
 
 /**
@@ -21,8 +21,8 @@ export type ZodErrorLike = {
  * @typeParam M - Error message type.
  */
 export type ValidationErrors<T extends string, M = string> = {
-  readonly fieldErrors: DenseFieldErrorMap<T, M>;
-  readonly formErrors: FormErrors;
+	readonly fieldErrors: DenseFieldErrorMap<T, M>;
+	readonly formErrors: FormErrors;
 };
 
 /**
@@ -31,8 +31,8 @@ export type ValidationErrors<T extends string, M = string> = {
  * @typeParam T - Field name literal union.
  */
 export type FormValidationMetadata<T extends string> = ValidationErrors<
-  T,
-  string
+	T,
+	string
 > & {
-  readonly formData: SparseFieldValueMap<T, string>;
+	readonly formData: SparseFieldValueMap<T, string>;
 };

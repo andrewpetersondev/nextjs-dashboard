@@ -12,7 +12,7 @@ import { createPeriod } from "@/shared/primitives/period/period.factory";
  * @returns A `Result<Period, AppError>` representing success or an `AppError`.
  */
 const toPeriodResult = (value: unknown): Result<Period, AppError> =>
-  createPeriod(value);
+	createPeriod(value);
 
 /**
  * Normalize an input into a branded `Period`.
@@ -25,9 +25,9 @@ const toPeriodResult = (value: unknown): Result<Period, AppError> =>
  * @throws {AppError} When validation fails.
  */
 export function toPeriod(input: Date | string): Period {
-  const r = toPeriodResult(input);
-  if (r.ok) {
-    return r.value;
-  }
-  throw r.error;
+	const r = toPeriodResult(input);
+	if (r.ok) {
+		return r.value;
+	}
+	throw r.error;
 }

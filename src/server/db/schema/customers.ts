@@ -3,13 +3,13 @@ import type { CustomerId } from "@/modules/customers/domain/types/customer-id.br
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const customers = pgTable("customers", {
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  id: uuid("id").defaultRandom().primaryKey().$type<CustomerId>(),
-  imageUrl: varchar("image_url", { length: 255 }).notNull(),
-  name: varchar("name", { length: 255 }).notNull(),
-  sensitiveData: varchar("sensitive_data", { length: 255 })
-    .notNull()
-    .default("cantTouchThis"),
+	email: varchar("email", { length: 255 }).notNull().unique(),
+	id: uuid("id").defaultRandom().primaryKey().$type<CustomerId>(),
+	imageUrl: varchar("image_url", { length: 255 }).notNull(),
+	name: varchar("name", { length: 255 }).notNull(),
+	sensitiveData: varchar("sensitive_data", { length: 255 })
+		.notNull()
+		.default("cantTouchThis"),
 });
 
 export type CustomerRow = typeof customers.$inferSelect;

@@ -23,41 +23,41 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @throws {@link AppError} if the database returns an empty result set or on unexpected database errors.
  */
 export async function insertUserDal(
-  db: AppDatabase,
-  input: AuthUserCreateDto,
-  logger: LoggingClientContract,
+	db: AppDatabase,
+	input: AuthUserCreateDto,
+	logger: LoggingClientContract,
 ): Promise<Result<UserRow, AppError>> {
-  const { email, password, role, username } = input;
+	const { email, password, role, username } = input;
 
-  return await executeDalResult<UserRow>(
-    async (): Promise<UserRow> => {
-      const [userRow] = await db
-        .insert(users)
-        .values({ email, password, role, username } satisfies NewUserRow)
-        .returning();
+	return await executeDalResult<UserRow>(
+		async (): Promise<UserRow> => {
+			const [userRow] = await db
+				.insert(users)
+				.values({ email, password, role, username } satisfies NewUserRow)
+				.returning();
 
-      if (!userRow) {
-        throw makeAppError(APP_ERROR_KEYS.integrity, {
-          cause: "Database returned empty result set for insert",
-          message: "Insert did not return a row",
-          metadata: { pgCode: PG_CODES.UNEXPECTED_INTERNAL_ERROR },
-        });
-      }
+			if (!userRow) {
+				throw makeAppError(APP_ERROR_KEYS.integrity, {
+					cause: "Database returned empty result set for insert",
+					message: "Insert did not return a row",
+					metadata: { pgCode: PG_CODES.UNEXPECTED_INTERNAL_ERROR },
+				});
+			}
 
-      logger.operation("info", "User row inserted", {
-        operationContext: "auth:dal",
-        operationIdentifiers: { email, role, userId: userRow.id, username },
-        operationName: "insertUser.success",
-      });
+			logger.operation("info", "User row inserted", {
+				operationContext: "auth:dal",
+				operationIdentifiers: { email, role, userId: userRow.id, username },
+				operationName: "insertUser.success",
+			});
 
-      return userRow;
-    },
-    {
-      entity: "user",
-      identifiers: { email, username },
-      operation: "insertUser",
-    },
-    logger,
-    { operationContext: "auth:dal" },
-  );
+			return userRow;
+		},
+		{
+			entity: "user",
+			identifiers: { email, username },
+			operation: "insertUser",
+		},
+		logger,
+		{ operationContext: "auth:dal" },
+	);
 }

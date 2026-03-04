@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { normalizeUsername } from "@/shared/policies/username/normalize.username";
 import {
-  USERNAME_MAX_LENGTH,
-  USERNAME_MAX_LENGTH_ERROR,
-  USERNAME_MIN_LENGTH,
-  USERNAME_MIN_LENGTH_ERROR,
+	USERNAME_MAX_LENGTH,
+	USERNAME_MAX_LENGTH_ERROR,
+	USERNAME_MIN_LENGTH,
+	USERNAME_MIN_LENGTH_ERROR,
 } from "@/shared/policies/username/username-policy";
 
 /**
@@ -14,15 +14,15 @@ import {
  */
 // biome-ignore lint/nursery/useExplicitType: <fix later>
 export const UsernameSchema = z
-  .string()
-  .transform(normalizeUsername)
-  .pipe(
-    z
-      .string()
-      .min(USERNAME_MIN_LENGTH, {
-        error: USERNAME_MIN_LENGTH_ERROR,
-      })
-      .max(USERNAME_MAX_LENGTH, {
-        error: USERNAME_MAX_LENGTH_ERROR,
-      }),
-  );
+	.string()
+	.transform(normalizeUsername)
+	.pipe(
+		z
+			.string()
+			.min(USERNAME_MIN_LENGTH, {
+				error: USERNAME_MIN_LENGTH_ERROR,
+			})
+			.max(USERNAME_MAX_LENGTH, {
+				error: USERNAME_MAX_LENGTH_ERROR,
+			}),
+	);

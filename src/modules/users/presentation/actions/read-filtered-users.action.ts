@@ -8,11 +8,11 @@ import { unwrapOrNull } from "@/shared/core/result/result";
  * Server action to fetch filtered users for the users table.
  */
 export async function readFilteredUsersAction(
-  query: string = "",
-  currentPage: number = 1,
+	query: string = "",
+	currentPage: number = 1,
 ): Promise<UserDto[]> {
-  const db = getAppDb();
-  const service = createUserService(db);
-  const result = await service.readFilteredUsers(query, currentPage);
-  return unwrapOrNull(result) ?? [];
+	const db = getAppDb();
+	const service = createUserService(db);
+	const result = await service.readFilteredUsers(query, currentPage);
+	return unwrapOrNull(result) ?? [];
 }

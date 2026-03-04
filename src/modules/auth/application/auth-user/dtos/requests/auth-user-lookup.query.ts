@@ -1,3 +1,3 @@
 export interface AuthUserLookupQuery {
-  readonly email: string;
+	readonly email: string;
 }

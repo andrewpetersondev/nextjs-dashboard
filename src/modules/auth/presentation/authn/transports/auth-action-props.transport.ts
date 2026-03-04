@@ -8,8 +8,8 @@ import type { FormAction } from "@/shared/forms/core/types/form-action.dto";
  * @template T - The type of form fields, either {@link LoginField} or {@link SignupField}.
  */
 export interface AuthActionProps<T extends LoginField | SignupField> {
-  /**
-   * The server action to be executed upon form submission.
-   */
-  action: FormAction<T, never>;
+	/**
+	 * The server action to be executed upon form submission.
+	 */
+	action: FormAction<T, never>;
 }

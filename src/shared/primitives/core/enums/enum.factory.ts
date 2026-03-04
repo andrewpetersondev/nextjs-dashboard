@@ -13,29 +13,29 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A factory function that validates unknown values against the enum
  */
 export const createEnumValidator = <T extends string>(
-  enumName: string,
-  enumValues: readonly T[],
+	enumName: string,
+	enumValues: readonly T[],
 ) => {
-  return (value: unknown): Result<T, AppError> => {
-    if (typeof value !== "string") {
-      return Err(
-        makeAppError(APP_ERROR_KEYS.validation, {
-          cause: "",
-          message: `Invalid ${enumName}: expected string, got ${typeof value}`,
-          metadata: {},
-        }),
-      );
-    }
-    const candidate = value as T;
-    if (enumValues.includes(candidate)) {
-      return Ok(candidate);
-    }
-    return Err(
-      makeAppError(APP_ERROR_KEYS.validation, {
-        cause: "",
-        message: `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
-        metadata: {},
-      }),
-    );
-  };
+	return (value: unknown): Result<T, AppError> => {
+		if (typeof value !== "string") {
+			return Err(
+				makeAppError(APP_ERROR_KEYS.validation, {
+					cause: "",
+					message: `Invalid ${enumName}: expected string, got ${typeof value}`,
+					metadata: {},
+				}),
+			);
+		}
+		const candidate = value as T;
+		if (enumValues.includes(candidate)) {
+			return Ok(candidate);
+		}
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "",
+				message: `Invalid ${enumName}: "${value}". Allowed values: ${enumValues.join(", ")}`,
+				metadata: {},
+			}),
+		);
+	};
 };

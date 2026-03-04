@@ -36,14 +36,14 @@ const FORWARDED_FOR_REGEX: RegExp = /for="?(\[?[^;\],"]+]?)/i;
  * const ua = getHeaderValue(req.headers, "user-agent", "unknown");
  */
 function getHeaderValue(
-  headersList: Headers,
-  name: string,
-  fallback: string = "unknown",
+	headersList: Headers,
+	name: string,
+	fallback: string = "unknown",
 ): string {
-  const raw = headersList.get(name) ?? "";
-  const [first = ""] = raw.split(",");
-  const value = first.trim();
-  return value === "" ? fallback : value;
+	const raw = headersList.get(name) ?? "";
+	const [first = ""] = raw.split(",");
+	const value = first.trim();
+	return value === "" ? fallback : value;
 }
 
 /**
@@ -61,9 +61,9 @@ function getHeaderValue(
  * // returns: "192.0.2.43"
  */
 function extractIpFromForwarded(forwardedValue: string): string | null {
-  const [entry = ""] = forwardedValue.split(",");
-  const match = FORWARDED_FOR_REGEX.exec(entry);
-  return match?.[1] ?? null;
+	const [entry = ""] = forwardedValue.split(",");
+	const match = FORWARDED_FOR_REGEX.exec(entry);
+	return match?.[1] ?? null;
 }
 
 /**
@@ -80,25 +80,25 @@ function extractIpFromForwarded(forwardedValue: string): string | null {
  * @internal
  */
 function getFirstIp(headersList: Headers): string {
-  const forwarded = getHeaderValue(headersList, "forwarded", "");
-  if (forwarded) {
-    const ip = extractIpFromForwarded(forwarded);
-    if (ip !== null && ip.trim() !== "") {
-      return ip.trim();
-    }
-  }
+	const forwarded = getHeaderValue(headersList, "forwarded", "");
+	if (forwarded) {
+		const ip = extractIpFromForwarded(forwarded);
+		if (ip !== null && ip.trim() !== "") {
+			return ip.trim();
+		}
+	}
 
-  const xff = getHeaderValue(headersList, "x-forwarded-for", "");
-  if (xff) {
-    return xff;
-  }
+	const xff = getHeaderValue(headersList, "x-forwarded-for", "");
+	if (xff) {
+		return xff;
+	}
 
-  const realIp = getHeaderValue(headersList, "x-real-ip", "");
-  if (realIp) {
-    return realIp;
-  }
+	const realIp = getHeaderValue(headersList, "x-real-ip", "");
+	if (realIp) {
+		return realIp;
+	}
 
-  return "unknown";
+	return "unknown";
 }
 
 /**
@@ -115,12 +115,12 @@ function getFirstIp(headersList: Headers): string {
  * const { ip, userAgent } = await getRequestMetadata();
  */
 export async function getRequestMetadata(): Promise<{
-  ip: string;
-  userAgent: string;
+	ip: string;
+	userAgent: string;
 }> {
-  const headersList = await headers();
-  return {
-    ip: getFirstIp(headersList),
-    userAgent: getHeaderValue(headersList, "user-agent", "unknown"),
-  };
+	const headersList = await headers();
+	return {
+		ip: getFirstIp(headersList),
+		userAgent: getHeaderValue(headersList, "user-agent", "unknown"),
+	};
 }

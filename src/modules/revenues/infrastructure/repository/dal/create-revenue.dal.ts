@@ -1,8 +1,8 @@
 import "server-only";
 
 import type {
-  RevenueCreateEntity,
-  RevenueEntity,
+	RevenueCreateEntity,
+	RevenueEntity,
 } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
@@ -17,15 +17,15 @@ import { upsertRevenueDal } from "./upsert-revenue.dal";
  * @throws Error if revenue data is invalid.
  */
 export async function createRevenueDal(
-  db: AppDatabase,
-  revenue: RevenueCreateEntity,
+	db: AppDatabase,
+	revenue: RevenueCreateEntity,
 ): Promise<RevenueEntity> {
-  if (!revenue) {
-    throw makeAppError(APP_ERROR_KEYS.validation, {
-      cause: "",
-      message: "Revenue data is required",
-      metadata: {},
-    });
-  }
-  return await upsertRevenueDal(db, revenue);
+	if (!revenue) {
+		throw makeAppError(APP_ERROR_KEYS.validation, {
+			cause: "",
+			message: "Revenue data is required",
+			metadata: {},
+		});
+	}
+	return await upsertRevenueDal(db, revenue);
 }

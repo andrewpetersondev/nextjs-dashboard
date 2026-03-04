@@ -8,11 +8,11 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @param useCase - The camelCase name of the use case (e.g., "getSession").
  */
 export function makeAuthUseCaseLoggerHelper(
-  logger: LoggingClientContract,
-  useCase: string,
+	logger: LoggingClientContract,
+	useCase: string,
 ): LoggingClientContract {
-  return logger.child({
-    scope: AUTH_LOG_CONTEXTS.USE_CASE,
-    useCase,
-  });
+	return logger.child({
+		scope: AUTH_LOG_CONTEXTS.USE_CASE,
+		useCase,
+	});
 }
