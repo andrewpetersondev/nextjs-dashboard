@@ -1,11 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
 
-  "entry": [
-    "src/app/**/*.{ts,tsx}",
-
-    "devtools/**/*.{ts,tsx}"
-  ],
+  "entry": ["src/app/**/*.{ts,tsx}"],
 
   "ignore": ["cypress/**", "cypress.config.ts", "drizzle.config.ts"],
   "project": ["./tsconfig.json", "**/*.{ts,tsx}"]
