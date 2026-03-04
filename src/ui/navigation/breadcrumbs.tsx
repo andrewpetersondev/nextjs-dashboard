@@ -14,6 +14,14 @@ interface Breadcrumb {
 const BREADCRUMB_SEPARATOR = "/";
 
 /**
+ * Builds a stable React key for a breadcrumb item.
+ * Avoids array-index keys to prevent subtle UI bugs when items are inserted/removed/reordered.
+ */
+function makeBreadcrumbKey(breadcrumb: Breadcrumb): string {
+  return `${breadcrumb.href}::${breadcrumb.label}`;
+}
+
+/**
  * Breadcrumb navigation component.
  * @param props - Component props
  * @param props.breadcrumbs - List of breadcrumb items
@@ -25,13 +33,13 @@ export const Breadcrumbs = ({
 }): JSX.Element => (
   <nav aria-label="Breadcrumb" className="mb-6 block">
     <ol className="flex text-xl md:text-2xl">
-      {breadcrumbs.map((breadcrumb, index) => {
+      {breadcrumbs.map((breadcrumb) => {
         const isActive = Boolean(breadcrumb.active);
         return (
           <li
             aria-current={isActive ? "page" : undefined}
             className={cn(isActive ? "text-text-active" : "text-text-primary")}
-            key={`${breadcrumb.href}-${index}`}
+            key={makeBreadcrumbKey(breadcrumb)}
           >
             <Link
               aria-disabled={isActive}
@@ -40,7 +48,7 @@ export const Breadcrumbs = ({
             >
               {breadcrumb.label}
             </Link>
-            {index < breadcrumbs.length - 1 && (
+            {breadcrumb !== breadcrumbs.at(-1) && (
               <span aria-hidden="true" className="mx-3 inline-block">
                 {BREADCRUMB_SEPARATOR}
               </span>
