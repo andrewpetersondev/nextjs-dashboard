@@ -3,70 +3,32 @@
 		"allowJs": false,
 		"allowUnreachableCode": false,
 		"alwaysStrict": true,
-		"baseUrl": "./",
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"incremental": true,
-		"isolatedModules": true,
 		"jsx": "react-jsx",
-		//    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		"noEmit": true,
-		"noFallthroughCasesInSwitch": true,
 		"noImplicitAny": true,
 		"noImplicitOverride": true,
-		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		//    "noPropertyAccessFromIndexSignature": true,
-		"noUncheckedIndexedAccess": true,
 		//    "noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"paths": {
-			"@/*": ["./src/*"]
-		},
 		"plugins": [
 			{
 				"name": "next"
 			}
 		],
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"strict": true,
 		"strictBindCallApply": true,
 		"strictBuiltinIteratorReturn": true,
 		"strictFunctionTypes": true,
 		"strictNullChecks": true,
-		"strictPropertyInitialization": true,
-		"target": "ES2024",
-		"useDefineForClassFields": true,
-		"useUnknownInCatchVariables": true
+		"strictPropertyInitialization": true
 	},
-	"exclude": [
-		"./.aiassistant",
-		"./.github",
-		"./.junie",
-		"node_modules",
-		".next",
-		"out",
-		"build",
-		"dist",
-		"storage",
-		"docs",
-		"cypress",
-		"coverage",
-		"**/*.spec.ts",
-		"**/*.spec.tsx",
-		"**/*.cy.ts",
-		"**/*.cy.tsx"
-	],
+	"exclude": ["node_modules", "**/*.test.ts"],
+	"extends": "./tsconfig.base.json",
 	"include": [
 		"next-env.d.ts",
-		"**/*.ts",
-		"**/*.tsx",
-		"**/*.mts",
 		".next/types/**/*.ts",
-		".next/dev/types/**/*.ts"
+		".next/dev/types/**/*.ts",
+		"src/**/*"
 	]
 }

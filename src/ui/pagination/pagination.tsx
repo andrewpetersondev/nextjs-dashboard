@@ -4,6 +4,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { JSX } from "react";
+import type { UrlObject } from "url";
 import { generatePagination } from "@/ui/pagination/generate-pagination";
 import { cn } from "@/ui/utils/cn";
 
@@ -13,7 +14,7 @@ function PaginationNumber({
 	page,
 	position,
 }: {
-	href: string;
+	href: UrlObject;
 	isActive: boolean;
 	page: number | string;
 	position?: "first" | "last" | "middle" | "single";
@@ -44,7 +45,7 @@ function PaginationArrow({
 	isDisabled,
 }: {
 	direction: "left" | "right";
-	href: string;
+	href: UrlObject;
 	isDisabled?: boolean;
 }): JSX.Element {
 	const className = cn(
@@ -73,19 +74,31 @@ function PaginationArrow({
 	);
 }
 
+function toQueryObject(params: URLSearchParams): Record<string, string> {
+	const out: Record<string, string> = {};
+	for (const [key, value] of params.entries()) {
+		out[key] = value;
+	}
+	return out;
+}
+
 export function Pagination({
 	totalPages,
 }: {
 	totalPages: number;
 }): JSX.Element {
-	const pathname = usePathname();
+	const pathname: string = usePathname();
 	const searchParams = useSearchParams();
 	const currentPage = Number(searchParams.get("page")) || 1;
 
-	const createPageUrl = (pageNumber: number | string): string => {
+	const createPageHref = (pageNumber: number | string): UrlObject => {
 		const params = new URLSearchParams(searchParams);
 		params.set("page", pageNumber.toString());
-		return `${pathname}?${params.toString()}`;
+
+		return {
+			pathname,
+			query: toQueryObject(params),
+		};
 	};
 
 	const allPages = generatePagination(currentPage, totalPages);
@@ -94,7 +107,7 @@ export function Pagination({
 		<div className="inline-flex">
 			<PaginationArrow
 				direction="left"
-				href={createPageUrl(currentPage - 1)}
+				href={createPageHref(currentPage - 1)}
 				isDisabled={currentPage <= 1}
 			/>
 
@@ -117,7 +130,7 @@ export function Pagination({
 
 					return (
 						<PaginationNumber
-							href={createPageUrl(page)}
+							href={createPageHref(page)}
 							isActive={currentPage === page}
 							// biome-ignore lint/suspicious/noArrayIndexKey: TODO FIND A BETTER SOLUTION LATER
 							key={`${page}-${index}`} // Use index to handle duplicate ellipses if any
@@ -130,7 +143,7 @@ export function Pagination({
 
 			<PaginationArrow
 				direction="right"
-				href={createPageUrl(currentPage + 1)}
+				href={createPageHref(currentPage + 1)}
 				isDisabled={currentPage >= totalPages}
 			/>
 		</div>

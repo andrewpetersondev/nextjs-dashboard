@@ -6,6 +6,7 @@ import {
 	LockClosedIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
+import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, JSX, SVGProps } from "react";
@@ -30,7 +31,7 @@ type NavLinksProps = {
 };
 
 type NavLink = {
-	href: string;
+	href: Route;
 	icon: ComponentType<SVGProps<SVGSVGElement>>;
 	name: string;
 };

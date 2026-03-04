@@ -1,6 +1,7 @@
 "use client";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import type { Route } from "next";
 import {
 	type ReadonlyURLSearchParams,
 	usePathname,
@@ -34,7 +35,13 @@ export function SearchBoxMolecule({
 		} else {
 			params.delete("query");
 		}
-		replace(`${pathname}?${params.toString()}`);
+
+		const queryString = params.toString();
+		const nextHref = (
+			queryString ? `${pathname}?${queryString}` : pathname
+		) as Route;
+
+		replace(nextHref);
 	}, DEBOUNCE_MS);
 
 	return (

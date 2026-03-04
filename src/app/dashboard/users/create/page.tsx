@@ -24,7 +24,7 @@ export default function Page(): JSX.Element {
 					},
 					{
 						active: true,
-						href: `${ROUTES.dashboard.createUser}`,
+						href: ROUTES.dashboard.createUser(),
 						label: "Create User",
 					},
 				]}

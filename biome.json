@@ -39,6 +39,7 @@
 			"./package.json",
 			"./postcss.config.mjs",
 			"./tsconfig.json",
+			"./tsconfig.base.json",
 			"./vitest.config.ts",
 			"./vitest.setup.ts",
 			"!!**/*.{js,jsx}",

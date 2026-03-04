@@ -1,13 +1,17 @@
+import type { Route } from "next";
 import Link from "next/link";
 import type { JSX } from "react";
+import type { UrlObject } from "url";
 import { cn } from "@/ui/utils/cn";
+
+type LinkHref = Route | UrlObject;
 
 /**
  * Represents a single breadcrumb item.
  */
 interface Breadcrumb {
 	active?: boolean;
-	href: string;
+	href: LinkHref;
 	label: string;
 }
 
@@ -18,7 +22,11 @@ const BREADCRUMB_SEPARATOR = "/";
  * Avoids array-index keys to prevent subtle UI bugs when items are inserted/removed/reordered.
  */
 function makeBreadcrumbKey(breadcrumb: Breadcrumb): string {
-	return `${breadcrumb.href}::${breadcrumb.label}`;
+	const hrefKey =
+		typeof breadcrumb.href === "string"
+			? breadcrumb.href
+			: breadcrumb.href.pathname;
+	return `${hrefKey ?? ""}::${breadcrumb.label}`;
 }
 
 /**

@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import { readUserAction } from "@/modules/users/presentation/actions/read-user.action";
 import { EditUserForm } from "@/modules/users/presentation/forms/edit-user-form";
+import { ROUTES } from "@/shared/routing/routes";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditUserPageParams {
@@ -39,10 +40,10 @@ export default async function Page(
 		<main>
 			<Breadcrumbs
 				breadcrumbs={[
-					{ href: "/dashboard/users", label: "Users" },
+					{ href: ROUTES.dashboard.users, label: "Users" },
 					{
 						active: true,
-						href: `/dashboard/users/${id}/edit`,
+						href: ROUTES.dashboard.userEdit(id),
 						label: "Edit User",
 					},
 				]}

@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import type { JSX } from "react";
 import { cn } from "@/ui/utils/cn";
@@ -6,7 +7,7 @@ type LinkPromptProps = {
 	/** The text prompt before the link (e.g. "Not a member?") */
 	prompt: string;
 	/** The URL the link points to */
-	href: string;
+	href: Route;
 	/** The text for the clickable link (e.g. "Sign up here") */
 	linkText: string;
 	/** Optional additional classes */

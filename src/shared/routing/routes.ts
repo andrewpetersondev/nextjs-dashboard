@@ -1,9 +1,11 @@
 // Centralized route constants and helpers.
 // Keep this file small, dependency-free, and broadly reusable.
 
+import type { Route } from "next";
+
 // Types
-type StaticPath = `/${string}`;
-type DynamicBuilder = (...args: string[]) => StaticPath;
+type StaticPath = Route;
+type DynamicBuilder = (...args: string[]) => Route;
 
 // Reusable regex/constants
 const TRAILING_SLASH_REGEX: RegExp = /\/+$/;
@@ -29,25 +31,28 @@ type RoutesShape = Readonly<{
 
 // Core route map (preserved keys/shape for compatibility)
 // biome-ignore lint/style/useExportsLast: fine for now
-export const ROUTES: RoutesShape = {
+// biome-ignore lint/nursery/useExplicitType: TODO: HIGH PRIORITY REFACTOR FOR NEXT ROUTES
+export const ROUTES = {
 	auth: {
 		login: "/auth/login",
 		signup: "/auth/signup",
 	},
 	dashboard: {
-		createInvoice: () => "/dashboard/invoices/create",
-		createUser: () => "/dashboard/users/create",
+		createInvoice: () => "/dashboard/invoices/create" as Route,
+		createUser: () => "/dashboard/users/create" as Route,
 		customers: "/dashboard/customers",
-		invoice: (id: string) => `/dashboard/invoices/${encodeURIComponent(id)}`,
+		invoice: (id: string) =>
+			`/dashboard/invoices/${encodeURIComponent(id)}` as Route,
 		invoiceEdit: (id: string) =>
-			`/dashboard/invoices/${encodeURIComponent(id)}/edit`,
+			`/dashboard/invoices/${encodeURIComponent(id)}/edit` as Route,
 		invoices: "/dashboard/invoices",
 		root: "/dashboard",
-		userEdit: (id: string) => `/dashboard/users/${encodeURIComponent(id)}/edit`,
+		userEdit: (id: string) =>
+			`/dashboard/users/${encodeURIComponent(id)}/edit` as Route,
 		users: "/dashboard/users",
 	},
 	root: "/",
-} as const;
+} as const satisfies RoutesShape;
 
 // Middleware/shared guards
 
@@ -69,13 +74,13 @@ const PUBLIC_ROUTES: ReadonlySet<StaticPath> = new Set<StaticPath>([
 export function normalizePath(path: string): StaticPath {
 	const trimmed = path.trim();
 	if (!trimmed) {
-		return "/" as const;
+		return "/" as Route;
 	}
 	const withLeading = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
 	if (withLeading === "/") {
-		return "/" as const;
+		return "/" as Route;
 	}
-	return (withLeading.replace(TRAILING_SLASH_REGEX, "") || "/") as StaticPath;
+	return (withLeading.replace(TRAILING_SLASH_REGEX, "") || "/") as Route;
 }
 
 /**

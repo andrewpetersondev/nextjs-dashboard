@@ -1,8 +1,9 @@
+import type { Route } from "next";
 import Link from "next/link";
 import type { JSX, ReactNode } from "react";
 
 interface FormActionRowProps {
-	cancelHref: string;
+	cancelHref: Route;
 	cancelLabel?: string;
 	children: ReactNode;
 	className?: string;

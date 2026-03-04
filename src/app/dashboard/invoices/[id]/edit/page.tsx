@@ -6,6 +6,7 @@ import { readCustomersAction } from "@/modules/customers/infrastructure/actions/
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { readInvoiceByIdAction } from "@/modules/invoices/infrastructure/actions/read-invoice-by-id.action";
 import { EditInvoiceForm } from "@/modules/invoices/presentation/components/forms/edit-invoice-form";
+import { ROUTES } from "@/shared/routing/routes";
 import { H1 } from "@/ui/atoms/headings";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
@@ -43,10 +44,10 @@ export default async function Page(
 		<main>
 			<Breadcrumbs
 				breadcrumbs={[
-					{ href: "/dashboard/invoices", label: "Invoices" },
+					{ href: ROUTES.dashboard.invoices, label: "Invoices" },
 					{
 						active: true,
-						href: `/dashboard/invoices/${id}/edit`,
+						href: ROUTES.dashboard.invoiceEdit(id),
 						label: "Edit Invoice",
 					},
 				]}
