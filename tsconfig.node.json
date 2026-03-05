@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"lib": ["esnext"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"tsBuildInfoFile": "./tsconfig.node.tsbuildinfo",
+		"types": ["node"]
+	},
+	"exclude": ["node_modules", "**/*.test.ts", "**/*.cy.ts"],
+	"extends": "./tsconfig.base.json",
+	"include": [
+		"cypress.config.ts",
+		"drizzle.config.ts",
+		"next.config.ts",
+		"vitest.config.ts",
+		"vitest.setup.ts",
+		"devtools/**/*"
+	]
+}

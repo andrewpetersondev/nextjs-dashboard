@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
 	},
 	output: "standalone",
 	typedRoutes: true,
+	typescript: {
+		ignoreBuildErrors: false,
+		tsconfigPath: "./tsconfig.json",
+	},
 };
 
 export default nextConfig;

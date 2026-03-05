@@ -40,11 +40,11 @@ storage
 # ======================================================
 # BUILD / OUTPUT FILES
 # ======================================================
-.next
-node_modules
-next-env.d.ts
-pnpm-lock.yaml
-tsconfig.tsbuildinfo
+# .next
+# node_modules
+# next-env.d.ts
+# pnpm-lock.yaml
+# tsconfig.tsbuildinfo
 
 # ======================================================
 # PATTERNS & EXTENSIONS
@@ -57,6 +57,7 @@ tsconfig.tsbuildinfo
 *.sh
 *.txt
 *.yaml
+*.tsbuildinfo
 
 # ======================================================
 # DOCKER
