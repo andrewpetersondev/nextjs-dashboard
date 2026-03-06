@@ -1,8 +1,12 @@
 {
 	"$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+	"assist": {
+		"enabled": true
+	},
 	"extends": "//",
 	"files": {
-		"includes": ["**/*.{ts,tsx,css,json}", "../cypress.config.ts"]
+		"ignoreUnknown": true,
+		"includes": ["../cypress.config.ts", "**", "!**/*.js", "!**/*.jsx"]
 	},
 	"formatter": {
 		"enabled": true

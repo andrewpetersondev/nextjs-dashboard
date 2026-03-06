@@ -21,12 +21,13 @@ const env: string = (
 ).toLowerCase();
 console.log("env:", env);
 
+// biome-ignore lint/style/noNestedTernary: adjust
 const scope = env === "test" ? "test" : env === "production" ? "prod" : "dev";
 console.log("scope:", scope);
 
 export default defineConfig({
-	dbCredentials: { url },
 	casing: "snake_case",
+	dbCredentials: { url },
 	dialect: "postgresql",
 	out: `./drizzle/migrations/${scope}/`,
 	schema: "./database/schema",
