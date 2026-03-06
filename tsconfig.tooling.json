@@ -1,10 +1,4 @@
 {
-	"compilerOptions": {
-		"lib": ["esnext"],
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"types": ["node"]
-	},
-	"extends": "./tsconfig.base.json",
-	"include": ["drizzle.config.ts", "next.config.ts", "database/**/*"]
+	"extends": "./tsconfig.node.json",
+	"include": ["drizzle.config.ts", "next.config.ts"]
 }

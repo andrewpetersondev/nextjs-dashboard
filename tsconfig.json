@@ -1,11 +1,7 @@
 {
 	"compilerOptions": {
-		"allowJs": false,
-		"allowUnreachableCode": false,
 		"jsx": "react-jsx",
 		"lib": ["dom", "dom.iterable", "esnext"],
-		"module": "esnext",
-		"moduleResolution": "bundler",
 		"plugins": [
 			{
 				"name": "next"
@@ -13,7 +9,7 @@
 		]
 	},
 	"exclude": ["src/**/__tests__/**/*", "src/**/*.test.ts", "src/**/*.spec.ts"],
-	"extends": "./tsconfig.base.json",
+	"extends": "./tsconfig.web.json",
 	"include": [
 		"next-env.d.ts",
 		".next/types/**/*.ts",

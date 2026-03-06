@@ -86,11 +86,13 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"type:gen": "next typegen && pnpm typecheck:app",
-		"typecheck": "pnpm typecheck:app && pnpm typecheck:tooling && pnpm typecheck:test && pnpm typecheck:cypress",
+		"typecheck": "pnpm typecheck:app && pnpm typecheck:tooling && pnpm typecheck:database && pnpm typecheck:devtools && pnpm typecheck:test && pnpm typecheck:cypress",
 		"typecheck:app": "tsc -p tsconfig.json --noEmit",
 		"typecheck:cypress": "tsc -p cypress/tsconfig.json --noEmit",
-		"typecheck:test": "tsc -p tsconfig.vitest.json --noEmit",
-		"typecheck:tooling": "tsc -p tsconfig.tooling.json --noEmit && tsc -p devtools/tsconfig.json --noEmit"
+		"typecheck:database": "tsc -p tsconfig.database.json --noEmit",
+		"typecheck:devtools": "tsc -p devtools/tsconfig.json --noEmit",
+		"typecheck:tooling": "tsc -p tsconfig.tooling.json --noEmit",
+		"typecheck:vitest": "tsc -p tsconfig.vitest.json --noEmit"
 	},
 	"type": "module",
 	"version": "0.1.0"

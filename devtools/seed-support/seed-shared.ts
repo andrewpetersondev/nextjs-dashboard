@@ -1,4 +1,4 @@
-import type { invoices } from "@database/schema/invoices";
+import type { invoices } from "@database/schema/invoices.js";
 import type { Period } from "@/shared/primitives/period/period.brand.js";
 import { SEED_CONFIG } from "./constants.js";
 import { generateMonthlyPeriods } from "./utils.js";

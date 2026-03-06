@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"allowJs": false,
+		"allowUnreachableCode": false,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"sourceMap": false
+	},
+	"extends": "./tsconfig.base.json"
+}

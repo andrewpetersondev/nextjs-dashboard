@@ -1,4 +1,4 @@
-import { users } from "@database/schema/users";
+import { users } from "@database/schema/users.js";
 import type { Hash } from "@/server/crypto/hashing/hashing.value.js";
 import {
 	USER_ROLE,

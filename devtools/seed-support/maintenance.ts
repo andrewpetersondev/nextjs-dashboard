@@ -1,8 +1,8 @@
-import { customers } from "@database/schema/customers";
-import { demoUserCounters } from "@database/schema/demo-users";
-import { invoices } from "@database/schema/invoices";
-import { revenues } from "@database/schema/revenues";
-import { users } from "@database/schema/users";
+import { customers } from "@database/schema/customers.js";
+import { demoUserCounters } from "@database/schema/demo-users.js";
+import { invoices } from "@database/schema/invoices.js";
+import { revenues } from "@database/schema/revenues.js";
+import { users } from "@database/schema/users.js";
 import { sql } from "drizzle-orm";
 import { nodeDb } from "../cli/node-db.js";
 import { firstRow } from "./pg-utils.js";

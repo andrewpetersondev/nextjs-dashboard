@@ -1,11 +1,14 @@
 {
 	"compilerOptions": {
-		"lib": ["esnext"],
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"types": ["node"]
+		"baseUrl": "..",
+		"paths": {
+			"@/*": ["src/*"],
+			"@cypress/*": ["cypress/*"],
+			"@database/*": ["database/*"],
+			"@devtools/*": ["devtools/*"]
+		}
 	},
 	"exclude": ["**/*.test.ts", "**/*.spec.ts"],
-	"extends": "../tsconfig.base.json",
-	"include": ["./**/*", "../database/**/*"]
+	"extends": "../tsconfig.node.json",
+	"include": ["./**/*"]
 }

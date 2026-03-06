@@ -1,4 +1,4 @@
-import { users } from "@database/schema/users";
+import { users } from "@database/schema/users.js";
 import { inArray, like, or } from "drizzle-orm";
 import { toUserId } from "@/modules/users/domain/user-id.mappers.js";
 import { nodeDb } from "../cli/node-db.js";

@@ -1,6 +1,6 @@
-import { customers } from "@database/schema/customers";
-import { demoUserCounters } from "@database/schema/demo-users";
-import { revenues } from "@database/schema/revenues";
+import { customers } from "@database/schema/customers.js";
+import { demoUserCounters } from "@database/schema/demo-users.js";
+import { revenues } from "@database/schema/revenues.js";
 import { sql } from "drizzle-orm";
 import { SEED_CONFIG } from "./constants.js";
 import { customersData, periodDates, roles } from "./seed-shared.js";

@@ -1,4 +1,4 @@
-import { users } from "@database/schema/users";
+import { users } from "@database/schema/users.js";
 import { eq } from "drizzle-orm";
 import { nodeDb } from "../cli/node-db.js";
 

@@ -1,0 +1,6 @@
+{
+	"compilerOptions": {
+		"lib": ["esnext"]
+	},
+	"extends": "./tsconfig.web.json"
+}

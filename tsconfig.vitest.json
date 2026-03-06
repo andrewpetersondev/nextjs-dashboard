@@ -1,14 +1,8 @@
 {
 	"compilerOptions": {
-		"allowJs": false,
-		"allowUnreachableCode": false,
-		"lib": ["esnext"],
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"sourceMap": false,
 		"types": ["vitest/globals", "node"]
 	},
-	"extends": "./tsconfig.base.json",
+	"extends": "./tsconfig.test.json",
 	"include": [
 		"vitest.config.ts",
 		"vitest.setup.ts",

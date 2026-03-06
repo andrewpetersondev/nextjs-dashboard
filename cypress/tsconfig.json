@@ -1,13 +1,15 @@
 {
 	"compilerOptions": {
-		"allowJs": false,
-		"allowUnreachableCode": false,
+		"baseUrl": "..",
 		"lib": ["dom", "esnext"],
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"sourceMap": false,
+		"paths": {
+			"@/*": ["src/*"],
+			"@cypress/*": ["cypress/*"],
+			"@database/*": ["database/*"],
+			"@devtools/*": ["devtools/*"]
+		},
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": "../tsconfig.base.json",
+	"extends": "../tsconfig.test.json",
 	"include": ["../cypress.config.ts", "./**/*"]
 }

@@ -1,4 +1,4 @@
-import { users } from "@database/schema/users";
+import { users } from "@database/schema/users.js";
 import { sql } from "drizzle-orm";
 import { nodeDb } from "../cli/node-db.js";
 import { firstRow } from "../seed-support/pg-utils.js";
