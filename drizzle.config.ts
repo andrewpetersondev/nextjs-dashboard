@@ -1,3 +1,4 @@
+import process from "node:process";
 import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle.config.ts ...");
@@ -20,8 +21,6 @@ const env: string = (
 ).toLowerCase();
 console.log("env:", env);
 
-// biome-ignore lint/style/noNestedTernary: <easy to follow>
-// biome-ignore lint/nursery/useExplicitType: <fix later>
 const scope = env === "test" ? "test" : env === "production" ? "prod" : "dev";
 console.log("scope:", scope);
 

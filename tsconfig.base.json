@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"baseUrl": "./",
+		"baseUrl": ".",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"incremental": true,
@@ -11,8 +11,12 @@
 		"noImplicitReturns": true,
 		"noUncheckedIndexedAccess": true,
 		"noUnusedParameters": true,
+		//    "noPropertyAccessFromIndexSignature": true,
+		//    "noUnusedLocals": true,
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["src/*"],
+			"@cypress/*": ["cypress/*"],
+			"@devtools/*": ["devtools/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,

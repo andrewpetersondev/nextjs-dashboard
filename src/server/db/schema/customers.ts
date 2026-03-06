@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
-import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
+import type { CustomerId } from "./schema.types";
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const customers = pgTable("customers", {

@@ -1,4 +1,4 @@
-import type { nodeDb } from "../cli/node-db";
+import type { nodeDb } from "../cli/node-db.js";
 
 /**
  * Transaction type derived from the db.transaction callback.

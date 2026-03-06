@@ -1,4 +1,5 @@
-import { resetDatabase } from "./reset-db";
+import process from "node:process";
+import { resetDatabase } from "./reset-db.js";
 
 console.log("reset-cli.ts ...");
 

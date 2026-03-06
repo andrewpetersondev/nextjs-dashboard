@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
-import { SEED_CONFIG } from "./constants";
+import type { Hash } from "@/server/crypto/hashing/hashing.value.js";
+import { SEED_CONFIG } from "./constants.js";
 
 /**
  * Pure mapping to brand a trusted hash string.

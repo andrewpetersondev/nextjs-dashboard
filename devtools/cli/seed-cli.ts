@@ -1,4 +1,5 @@
-import { databaseSeed } from "./seed-db";
+import process from "node:process";
+import { databaseSeed } from "./seed-db.js";
 
 console.log("seed-cli.ts ...");
 

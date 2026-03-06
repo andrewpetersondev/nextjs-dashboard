@@ -1,9 +1,6 @@
 import { integer, pgTable, serial } from "drizzle-orm/pg-core";
-import { userRolePgEnum } from "@/server/db/schema/users";
-import {
-	GUEST_ROLE,
-	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
+import { GUEST_ROLE, type UserRole } from "./schema.constants";
+import { userRolePgEnum } from "./users";
 
 // biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const demoUserCounters = pgTable("demo_user_counters", {

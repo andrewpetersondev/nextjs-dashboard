@@ -2,17 +2,34 @@
 	"$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
 	"extends": "//",
 	"files": {
-		"includes": ["./**/*.{ts,tsx,css,json}"]
+		"includes": ["**/*.{ts,tsx,css,json}", "../cypress.config.ts"]
+	},
+	"formatter": {
+		"enabled": true
 	},
 	"javascript": {
 		"globals": ["cy", "Cypress"]
 	},
 	"linter": {
+		"enabled": true,
 		"rules": {
+			"complexity": {
+				"noExcessiveLinesPerFunction": "off"
+			},
 			"nursery": {
 				"useExplicitType": "off"
 			}
 		}
 	},
+	"overrides": [
+		{
+			"includes": ["support/commands.ts"],
+			"linter": {
+				"rules": {
+					"style": "off"
+				}
+			}
+		}
+	],
 	"root": false
 }

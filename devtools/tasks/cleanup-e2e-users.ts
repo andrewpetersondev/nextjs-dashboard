@@ -1,7 +1,7 @@
 import { inArray, like, or } from "drizzle-orm";
-import { toUserId } from "@/modules/users/domain/user-id.mappers";
-import { users } from "@/server/db/schema/users";
-import { nodeDb } from "../cli/node-db";
+import { toUserId } from "@/modules/users/domain/user-id.mappers.js";
+import { users } from "@/server/db/schema/users.js";
+import { nodeDb } from "../cli/node-db.js";
 
 /** Delete E2E users and their sessions (email/username starting with e2e_). */
 export async function cleanupE2eUsers(): Promise<void> {

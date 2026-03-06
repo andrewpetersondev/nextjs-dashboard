@@ -8,13 +8,12 @@
  */
 
 import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import type { UserId } from "@/modules/users/domain/types/user-id.brand";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import {
 	DEFAULT_USER_ROLE,
 	USER_ROLES,
 	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
+} from "./schema.constants";
+import type { Hash, UserId } from "./schema.types";
 
 // biome-ignore lint/nursery/useExplicitType: not easy to fix
 export const userRolePgEnum = pgEnum("role", USER_ROLES);

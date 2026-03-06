@@ -1,7 +1,7 @@
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
+import type { Hash } from "./src/server/crypto/hashing/hashing.value";
 import { defineConfig } from "cypress";
-import dotenv from "dotenv";
-import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
+import * as dotenv from "dotenv";
+import type { UserRole } from "./src/shared/policies/user-role/user-role.constants";
 // Removed: importing env-cli at module load time breaks Knip/Node because of tsconfig path aliases.
 // import { CYPRESS_BASE_URL } from "./devtools/config/env-cli";
 

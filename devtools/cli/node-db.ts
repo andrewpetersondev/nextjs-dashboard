@@ -2,19 +2,18 @@
  * @file node-db.ts
  * @description Singleton database connection for Node.js. Attempts to consolidate all database connections in one place.
  */
-/** biome-ignore-all lint/nursery/useExplicitType: fix later */
 
 import {
 	drizzle,
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "../config/env-cli";
+import { DATABASE_URL } from "../config/env-cli.js";
 
 console.log("node-db.ts ...");
 
 // Ensure env is loaded by the process/runner before this import
-// const { DATABASE_URL } = await import("../config/env-cli");
+// const { DATABASE_URL } = await import("../config/env-cli.js");
 
 console.log("Using DATABASE_URL:", DATABASE_URL);
 

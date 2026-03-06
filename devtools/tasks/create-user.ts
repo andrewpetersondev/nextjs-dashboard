@@ -1,11 +1,11 @@
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
-import { users } from "@/server/db/schema/users";
+import type { Hash } from "@/server/crypto/hashing/hashing.value.js";
+import { users } from "@/server/db/schema/users.js";
 import {
 	USER_ROLE,
 	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
-import { nodeDb } from "../cli/node-db";
-import { hashPassword } from "../seed-support/utils";
+} from "@/shared/policies/user-role/user-role.constants.js";
+import { nodeDb } from "../cli/node-db.js";
+import { hashPassword } from "../seed-support/utils.js";
 
 export async function createUser(user: {
 	email: string;

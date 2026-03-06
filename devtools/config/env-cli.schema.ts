@@ -1,7 +1,13 @@
 import { z } from "zod";
-import { DatabaseEnvironmentSchema } from "@/shared/core/config/schemas/env-schemas";
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
+const DATABASE_ENVIRONMENT_TUPLE = [
+	"development",
+	"production",
+	"test",
+] as const;
+
+const DatabaseEnvironmentSchema = z.enum(DATABASE_ENVIRONMENT_TUPLE);
+
 export const ToolingEnvShape = z.object({
 	cypressBaseUrl: z.url(),
 	databaseEnv: DatabaseEnvironmentSchema,

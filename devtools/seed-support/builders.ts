@@ -1,21 +1,21 @@
-import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
-import type { invoices } from "@/server/db/schema/invoices";
+import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers.js";
+import type { Hash } from "@/server/crypto/hashing/hashing.value.js";
+import type { invoices } from "@/server/db/schema/invoices.js";
 import {
 	ADMIN_ROLE,
 	GUEST_ROLE,
 	USER_ROLE,
 	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
-import type { Period } from "@/shared/primitives/period/period.brand";
-import { SEED_CONFIG } from "./constants";
-import { type NewInvoice, periods } from "./seed-shared";
+} from "@/shared/policies/user-role/user-role.constants.js";
+import type { Period } from "@/shared/primitives/period/period.brand.js";
+import { SEED_CONFIG } from "./constants.js";
+import { type NewInvoice, periods } from "./seed-shared.js";
 import {
 	generateInvoiceAmount,
 	hashPassword,
 	randomInvoiceStatus,
 	validatePeriod,
-} from "./utils";
+} from "./utils.js";
 
 /**
  * Build demo users with hashed passwords.

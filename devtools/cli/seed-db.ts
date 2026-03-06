@@ -1,18 +1,18 @@
-import { invoices } from "@/server/db/schema/invoices";
-import { type NewUserRow, users } from "@/server/db/schema/users";
+import { invoices } from "@/server/db/schema/invoices.js";
+import { type NewUserRow, users } from "@/server/db/schema/users.js";
 import {
 	buildRandomInvoiceRows,
 	buildUserSeed,
-} from "../seed-support/builders";
+} from "../seed-support/builders.js";
 import {
 	aggregateRevenues,
 	fetchCustomerIds,
 	insertCustomers,
 	insertDemoCounters,
 	insertRevenues,
-} from "../seed-support/inserts";
-import { ensureResetOrEmpty } from "../seed-support/maintenance";
-import { nodeDb } from "./node-db";
+} from "../seed-support/inserts.js";
+import { ensureResetOrEmpty } from "../seed-support/maintenance.js";
+import { nodeDb } from "./node-db.js";
 
 console.log("seed-db.ts ...");
 

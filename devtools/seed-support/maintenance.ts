@@ -1,11 +1,11 @@
 import { sql } from "drizzle-orm";
-import { customers } from "@/server/db/schema/customers";
-import { demoUserCounters } from "@/server/db/schema/demo-users";
-import { invoices } from "@/server/db/schema/invoices";
-import { revenues } from "@/server/db/schema/revenues";
-import { users } from "@/server/db/schema/users";
-import { nodeDb } from "../cli/node-db";
-import { firstRow } from "./pg-utils";
+import { customers } from "@/server/db/schema/customers.js";
+import { demoUserCounters } from "@/server/db/schema/demo-users.js";
+import { invoices } from "@/server/db/schema/invoices.js";
+import { revenues } from "@/server/db/schema/revenues.js";
+import { users } from "@/server/db/schema/users.js";
+import { nodeDb } from "../cli/node-db.js";
+import { firstRow } from "./pg-utils.js";
 
 /**
  * Check if all relevant tables are empty.

@@ -9,15 +9,10 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
-import {
-	INVOICE_STATUSES,
-	type InvoiceStatus,
-} from "@/modules/invoices/domain/statuses/invoice.statuses";
-import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
-import { customers } from "@/server/db/schema/customers";
-import { revenues } from "@/server/db/schema/revenues";
-import type { Period } from "@/shared/primitives/period/period.brand";
+import { customers } from "./customers";
+import { revenues } from "./revenues";
+import { INVOICE_STATUSES, type InvoiceStatus } from "./schema.constants";
+import type { CustomerId, InvoiceId, Period } from "./schema.types";
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const statusEnum = pgEnum("status", INVOICE_STATUSES);

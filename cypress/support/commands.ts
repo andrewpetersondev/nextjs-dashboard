@@ -1,5 +1,4 @@
 /// <reference types="cypress" />
-/** biome-ignore-all lint/style/noNamespace: <temp> */
 
 import type { LoginCreds, SignupCreds } from "../e2e/shared/auth-forms";
 import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../e2e/shared/paths";

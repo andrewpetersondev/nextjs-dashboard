@@ -1,0 +1,23 @@
+{
+	"$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+	"extends": "//",
+	"files": {
+		"includes": ["**/*.ts", "**/*.tsx", "**/*.json", "../drizzle.config.ts"]
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"correctness": {
+				"noNodejsModules": "off",
+				"noProcessGlobal": "off"
+			},
+			"nursery": {
+				"useExplicitType": "off"
+			},
+			"style": {
+				"noProcessEnv": "off"
+			}
+		}
+	},
+	"root": false
+}

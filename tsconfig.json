@@ -6,9 +6,6 @@
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		"noImplicitOverride": true,
-		//    "noPropertyAccessFromIndexSignature": true,
-		//    "noUnusedLocals": true,
 		"plugins": [
 			{
 				"name": "next"
