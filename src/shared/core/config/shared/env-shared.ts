@@ -26,7 +26,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  * @returns A Result containing the validated NodeEnvironment or an AppError.
  */
 function getNodeEnvResult(): Result<NodeEnvironment, AppError> {
-	if (typeof window !== "undefined") {
+	if (typeof globalThis === "object" && "window" in globalThis) {
 		return getPublicNodeEnvResult();
 	}
 	const raw = getEnvVariable("NODE_ENV");

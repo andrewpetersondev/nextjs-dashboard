@@ -2,18 +2,12 @@
 	"compilerOptions": {
 		"allowJs": false,
 		"allowUnreachableCode": false,
-		"lib": ["esnext"],
+		"lib": ["dom", "esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		"sourceMap": false,
-		"types": ["vitest/globals", "node"]
+		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
 	"extends": "./tsconfig.base.json",
-	"include": [
-		"vitest.config.ts",
-		"vitest.setup.ts",
-		"src/**/__tests__/**/*",
-		"src/**/*.test.ts",
-		"src/**/*.spec.ts"
-	]
+	"include": ["cypress.config.ts", "cypress/**/*"]
 }

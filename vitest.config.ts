@@ -1,10 +1,9 @@
-import { fileURLToPath, URL } from "node:url";
-import react from "@vitejs/plugin-react";
+import { fileURLToPath } from "node:url";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	plugins: [tsconfigPaths({ projects: ["./tsconfig.vitest.json"] }), react()],
+	plugins: [tsconfigPaths({ projects: ["./tsconfig.json"] })],
 	resolve: {
 		alias: {
 			"@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -17,7 +16,7 @@ export default defineConfig({
 		environment: "node",
 		exclude: ["**/dist/**", "**/*.js", "**/*.mjs"],
 		globals: true,
-		include: ["./src/**/*.{test,spec}.{ts,tsx}"],
+		include: ["./src/**/*.test.ts", "./src/**/*.spec.ts"],
 		setupFiles: ["./vitest.setup.ts"],
 	},
 });
