@@ -9,11 +9,12 @@ import {
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
+import { DATABASE_URL } from "../config/env-cli";
 
 console.log("node-db.ts ...");
 
 // Ensure env is loaded by the process/runner before this import
-const { DATABASE_URL } = await import("../config/env-cli.js");
+// const { DATABASE_URL } = await import("../config/env-cli");
 
 console.log("Using DATABASE_URL:", DATABASE_URL);
 

@@ -23,11 +23,11 @@ import {
 export class AppError<
 	T extends AppErrorMetadata = AppErrorMetadata,
 > extends Error {
-	readonly cause: AppError | Error | string;
+	override readonly cause: AppError | Error | string;
 	readonly definitionDescription: string;
 	readonly key: AppErrorKey;
 	readonly layer: AppErrorLayer;
-	readonly message: string;
+	override readonly message: string;
 	readonly metadata: T;
 	readonly retryable: boolean;
 	readonly severity: AppErrorSeverity;

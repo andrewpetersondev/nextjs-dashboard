@@ -1,7 +1,7 @@
+import type { UrlObject } from "node:url";
 import type { Route } from "next";
 import Link from "next/link";
 import type { JSX } from "react";
-import type { UrlObject } from "url";
 import { cn } from "@/ui/utils/cn";
 
 type LinkHref = Route | UrlObject;

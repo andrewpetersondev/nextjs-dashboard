@@ -1,10 +1,10 @@
 "use client";
 
+import type { UrlObject } from "node:url";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { JSX } from "react";
-import type { UrlObject } from "url";
 import { generatePagination } from "@/ui/pagination/generate-pagination";
 import { cn } from "@/ui/utils/cn";
 
