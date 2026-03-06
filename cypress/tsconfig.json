@@ -8,6 +8,6 @@
 		"sourceMap": false,
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": "./tsconfig.base.json",
-	"include": ["cypress.config.ts", "cypress/**/*"]
+	"extends": "../tsconfig.base.json",
+	"include": ["../cypress.config.ts", "./**/*"]
 }

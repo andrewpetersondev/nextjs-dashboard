@@ -88,7 +88,7 @@
 		"type:gen": "next typegen && pnpm typecheck:app",
 		"typecheck": "pnpm typecheck:app && pnpm typecheck:node && pnpm typecheck:test && pnpm typecheck:cypress",
 		"typecheck:app": "tsc -p tsconfig.json --noEmit",
-		"typecheck:cypress": "tsc -p tsconfig.cypress.json --noEmit",
+		"typecheck:cypress": "tsc -p cypress/tsconfig.json --noEmit",
 		"typecheck:node": "tsc -p tsconfig.node.json --noEmit",
 		"typecheck:test": "tsc -p tsconfig.vitest.json --noEmit"
 	},

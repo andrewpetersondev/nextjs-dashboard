@@ -1,32 +1,21 @@
 # Project Root
-
 .idea/
 .vscode/
 .next/
 node_modules/
 storage/
-.env.development.local
-.env.production.local
-.env.test.local
 next-env.d.ts
 *.tsbuildinfo
 
+# Generated JavaScript/source maps kept out of git intentionally
 *.js
 *.map
 
-# ================================
 # Testing and Coverage
-# ================================
-cypress/videos
-cypress/screenshots
-cypress/downloads
-cypress/reports
-cypress.config.js
-cypress.config.js.map
-cypress/**/*.js
-cypress/**/*.jsx
-cypress/**/*.js.map
-cypress/**/*.jsx.map
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+cypress/reports/
 cypress/.html-report/
 cypress/.nyc_output/
 .html-report/
@@ -36,32 +25,24 @@ coverage/
 .tap/
 .jest/
 
-# ================================
-# Tooling (Docker, Secrets, Vault, Vercel)
-# ================================
+# Secrets and Local Environment
 .vercel/
 password.txt
 postgres-certs/
 secrets/
-*.txt
 .vault-token
 .vault/
 vault/
-vault.env
-vault*.env
-vault/*.env
-vault/*.json
 .env
 .env.local
-.env*
-.env.*
+.env.development.local
+.env.production.local
+.env.test.local
 .envrc
 .direnv/
 
 
-# ================================
 # Build Artifacts
-# ================================
 .out/
 build/
 dist/
@@ -70,12 +51,9 @@ logs/
 .cache/
 .eslintcache
 .stylelintcache
-tsconfig.tsbuildinfo
 
 
-# ================================
-# Postgres (local data/dumps)
-# ================================
+# Postgres local data/dumps
 pgdata/
 postgres-data/
 docker/postgres-data/
@@ -85,30 +63,30 @@ backups/
 *.dump
 *.psql
 
-# ================================
-# Suggested additions
-# ================================
+
+# OS / Editor / Misc
 .DS_Store
 Thumbs.db
 .history/
 .fleet/
+
+# Certificates / keys
 *.pem
 *.key
 *.crt
 *.pfx
 *.p12
 *.der
+
+# Package manager / archives / temp files
 .pnp
 .pnp.*
-package-lock.json
-yarn.lock
 *.tgz
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 *.log
-logs/*.log
 .node_repl_history
 tmp/
 temp/

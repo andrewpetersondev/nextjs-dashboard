@@ -1,21 +1,5 @@
-# ======================================================
-# PROJECT / IDE FILES
-# ======================================================
-.github
-.idea
-.vscode
-
-# ======================================================
-# PATTERNS & EXTENSIONS
-# ======================================================
-.env
-.env.*
 .env*
-*.js
-*.map
-*.sh
-*.txt
-*.yaml
-*.tsbuildinfo
-Dockerfile
-Dockerfile.*
+node_modules
+.next
+coverage
+*.log

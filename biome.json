@@ -31,6 +31,8 @@
 	},
 	"files": {
 		"includes": [
+			"cypress/biome.json",
+			"./cypress/tsconfig.json",
 			"./devtools/**/*.{ts,tsx,css,json}",
 			"./src/**/*.{ts,tsx,css,json}",
 			"./drizzle.config.ts",
@@ -40,7 +42,6 @@
 			"./postcss.config.mjs",
 			"./tsconfig.base.json",
 			"./tsconfig.json",
-			"./tsconfig.cypress.json",
 			"./tsconfig.node.json",
 			"./tsconfig.vitest.json",
 			"./vitest.config.ts",

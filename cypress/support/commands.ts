@@ -10,9 +10,9 @@ import { TWENTY_SECONDS } from "../e2e/shared/times";
 declare global {
 	namespace Cypress {
 		interface Chainable {
-			dbSeed(): Chainable<null>;
 			dbReset(): Chainable<null>;
 			dbResetAndSeed(): Chainable<null>;
+			dbSeed(): Chainable<null>;
 			logEnv(): Chainable<void>;
 			login(creds: LoginCreds): Chainable<void>;
 			loginAsDemoAdmin(): Chainable<void>;
