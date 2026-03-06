@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/style/noProcessEnv: <temp> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <temp> */
 import { defineConfig } from "drizzle-kit";
 
 console.log("drizzle.config.ts ...");

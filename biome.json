@@ -376,6 +376,10 @@
 				"src/server/**/*.{ts,tsx}",
 				"src/shared/core/config/**/*.ts",
 				"src/server/config/**/*.ts",
+				"devtools/**",
+				"cypress.config.ts",
+				"drizzle.config.ts",
+				"next.config.ts",
 				"vitest.config.ts"
 			],
 			"linter": {

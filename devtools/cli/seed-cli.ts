@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/noProcessGlobal: <cli only> */
 import { databaseSeed } from "./seed-db";
 
 console.log("seed-cli.ts ...");

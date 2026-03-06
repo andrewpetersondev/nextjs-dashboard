@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/style/noProcessEnv: <env config> */
-/** biome-ignore-all lint/correctness/noProcessGlobal: <env config> */
 // Use a relative import here because this file is loaded by tooling (Knip/Cypress/Node)
 // which may not understand tsconfig path aliases like "@/*".
 import { getDatabaseEnv } from "../../src/shared/core/config/shared/env-shared";
