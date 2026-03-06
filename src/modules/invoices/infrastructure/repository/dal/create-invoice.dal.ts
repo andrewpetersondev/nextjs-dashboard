@@ -1,5 +1,7 @@
 import "server-only";
 
+import { invoices } from "@database/schema/invoices";
+import { revenues } from "@database/schema/revenues";
 import type {
 	InvoiceEntity,
 	InvoiceServiceEntity,
@@ -7,8 +9,6 @@ import type {
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { rawDbToInvoiceEntity } from "@/modules/invoices/infrastructure/adapters/mappers/invoice.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { invoices } from "@/server/db/schema/invoices";
-import { revenues } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";

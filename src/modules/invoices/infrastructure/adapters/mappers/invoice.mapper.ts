@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { InvoiceRow } from "@database/schema/invoices";
 import { isValid } from "date-fns";
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 import type {
@@ -9,7 +10,6 @@ import type {
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
 import { validateInvoiceStatus } from "@/modules/invoices/domain/invoice-status.validator";
-import type { InvoiceRow } from "@/server/db/schema/invoices";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { invoices } from "@database/schema/invoices";
 import { eq } from "drizzle-orm";
 import type {
 	InvoiceEntity,
@@ -9,7 +10,6 @@ import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 import { rawDbToInvoiceEntity } from "@/modules/invoices/infrastructure/adapters/mappers/invoice.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { invoices } from "@/server/db/schema/invoices";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 /**

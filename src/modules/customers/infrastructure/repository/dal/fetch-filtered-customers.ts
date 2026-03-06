@@ -1,11 +1,11 @@
 import "server-only";
 
+import { customers } from "@database/schema/customers";
+import { invoices } from "@database/schema/invoices";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerAggregatesRowRaw } from "@/modules/customers/domain/types";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { customers } from "@/server/db/schema/customers";
-import { invoices } from "@/server/db/schema/invoices";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 

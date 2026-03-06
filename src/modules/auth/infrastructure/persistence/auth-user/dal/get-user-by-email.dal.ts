@@ -1,7 +1,7 @@
 import "server-only";
+import { type UserRow, users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { type UserRow, users } from "@/server/db/schema/users";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { executeDalResult } from "@/shared/core/errors/server/adapters/dal/execute-dal-result";
 import type { Result } from "@/shared/core/result/result.dto";

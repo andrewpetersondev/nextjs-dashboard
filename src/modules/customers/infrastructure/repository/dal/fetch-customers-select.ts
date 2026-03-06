@@ -1,10 +1,11 @@
 import "server-only";
 
+import { customers } from "@database/schema/customers";
+import { schema } from "@database/schema/schema.aggregate";
 import { asc } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerSelectRowRaw } from "@/modules/customers/domain/types";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { customers } from "@/server/db/schema/customers";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
@@ -18,7 +19,7 @@ export async function fetchCustomersSelectDal(
 	try {
 		return await db
 			.select({
-				id: customers.id,
+				id: schema.customers.id,
 				name: customers.name,
 			})
 			.from(customers)

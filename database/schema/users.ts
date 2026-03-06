@@ -12,8 +12,8 @@ import {
 	DEFAULT_USER_ROLE,
 	USER_ROLES,
 	type UserRole,
-} from "./schema.constants";
-import type { Hash, UserId } from "./schema.types";
+} from "./schema.constants.js";
+import type { Hash, UserId } from "./schema.types.js";
 
 // biome-ignore lint/nursery/useExplicitType: not easy to fix
 export const userRolePgEnum = pgEnum("role", USER_ROLES);

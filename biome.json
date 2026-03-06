@@ -105,6 +105,7 @@
 				"noGlobalDirnameFilename": "on",
 				"noNodejsModules": "on",
 				"noProcessGlobal": "on",
+				"noUndeclaredDependencies": "off",
 				"noUndeclaredVariables": "on",
 				"noUnresolvedImports": "off",
 				"noUnusedFunctionParameters": "on",

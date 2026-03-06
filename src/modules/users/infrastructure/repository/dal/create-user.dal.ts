@@ -1,11 +1,11 @@
 import "server-only";
+import { type NewUserRow, users } from "@database/schema/users";
 import type {
 	CreateUserProps,
 	UserEntity,
 } from "@/modules/users/domain/entities/user.entity";
 import { toUserEntity } from "@/modules/users/infrastructure/mappers/to-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { type NewUserRow, users } from "@/server/db/schema/users";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { normalizeUnknownError } from "@/shared/core/errors/core/factories/app-error.factory";

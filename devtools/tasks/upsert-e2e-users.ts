@@ -1,5 +1,5 @@
+import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
-import { users } from "@/server/db/schema/users.js";
 import {
 	USER_ROLE,
 	type UserRole,

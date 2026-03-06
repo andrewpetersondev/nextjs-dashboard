@@ -6,5 +6,5 @@
 		"types": ["node"]
 	},
 	"extends": "./tsconfig.base.json",
-	"include": ["drizzle.config.ts", "next.config.ts"]
+	"include": ["drizzle.config.ts", "next.config.ts", "database/**/*"]
 }

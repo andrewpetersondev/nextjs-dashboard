@@ -25,9 +25,9 @@ const scope = env === "test" ? "test" : env === "production" ? "prod" : "dev";
 console.log("scope:", scope);
 
 export default defineConfig({
-	casing: "snake_case",
 	dbCredentials: { url },
+	casing: "snake_case",
 	dialect: "postgresql",
 	out: `./drizzle/migrations/${scope}/`,
-	schema: "./src/server/db/schema",
+	schema: "./database/schema",
 });

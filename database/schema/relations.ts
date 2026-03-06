@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
-import { customers } from "./customers";
-import { demoUserCounters } from "./demo-users";
-import { invoices } from "./invoices";
-import { revenues } from "./revenues";
+import { customers } from "./customers.js";
+import { demoUserCounters } from "./demo-users.js";
+import { invoices } from "./invoices.js";
+import { revenues } from "./revenues.js";
 
 // biome-ignore lint/nursery/useExplicitType: fix
 export const customersRelations = relations(customers, ({ many }) => ({

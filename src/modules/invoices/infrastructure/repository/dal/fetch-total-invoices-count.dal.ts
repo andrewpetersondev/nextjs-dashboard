@@ -1,8 +1,8 @@
 import "server-only";
 
+import { invoices } from "@database/schema/invoices";
 import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { invoices } from "@/server/db/schema/invoices";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 

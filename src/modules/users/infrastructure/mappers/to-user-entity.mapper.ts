@@ -1,7 +1,7 @@
+import type { UserRow } from "@database/schema/users";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
-import type { UserRow } from "@/server/db/schema/users";
 
 /**
  * Map a database user row to a domain user entity.

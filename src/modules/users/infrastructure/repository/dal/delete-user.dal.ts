@@ -1,10 +1,10 @@
 import "server-only";
+import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import { toUserEntity } from "@/modules/users/infrastructure/mappers/to-user-entity.mapper";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { users } from "@/server/db/schema/users";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { normalizeUnknownError } from "@/shared/core/errors/core/factories/app-error.factory";

@@ -5,7 +5,7 @@
 import {
 	USER_ROLE,
 	type UserRole,
-} from "../../../src/shared/policies/user-role/user-role.constants";
+} from "@/shared/policies/user-role/user-role.constants";
 import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
 
 /**

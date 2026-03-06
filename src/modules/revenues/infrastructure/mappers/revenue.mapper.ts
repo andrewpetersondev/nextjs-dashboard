@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { RevenueRow } from "@database/schema/revenues";
 import { isValid } from "date-fns";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { toRevenueId } from "@/modules/revenues/domain/revenue-id.mappers";
@@ -9,7 +10,6 @@ import {
 	isNonNegativeNumber,
 	validateCondition,
 } from "@/modules/revenues/infrastructure/utils/validation";
-import type { RevenueRow } from "@/server/db/schema/revenues";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { toPeriod } from "@/shared/primitives/period/period.mappers";

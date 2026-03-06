@@ -1,5 +1,5 @@
+import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
-import { users } from "@/server/db/schema/users.js";
 import { nodeDb } from "../cli/node-db.js";
 
 export async function deleteUser(email: string): Promise<void> {

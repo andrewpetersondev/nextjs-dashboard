@@ -1,6 +1,6 @@
+import type { invoices } from "@database/schema/invoices.js";
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers.js";
 import type { Hash } from "@/server/crypto/hashing/hashing.value.js";
-import type { invoices } from "@/server/db/schema/invoices.js";
 import {
 	ADMIN_ROLE,
 	GUEST_ROLE,

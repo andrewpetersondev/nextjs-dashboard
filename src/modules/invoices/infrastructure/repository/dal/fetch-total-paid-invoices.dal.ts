@@ -1,9 +1,9 @@
 import "server-only";
 
+import { invoices } from "@database/schema/invoices";
 import { eq, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { invoices } from "@/server/db/schema/invoices";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
 export async function fetchTotalPaidInvoicesDal(

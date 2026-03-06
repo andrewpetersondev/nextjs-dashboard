@@ -7,5 +7,5 @@
 	},
 	"exclude": ["**/*.test.ts", "**/*.spec.ts"],
 	"extends": "../tsconfig.base.json",
-	"include": ["./**/*"]
+	"include": ["./**/*", "../database/**/*"]
 }

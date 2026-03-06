@@ -1,10 +1,10 @@
 import "server-only";
 
+import { customers } from "@database/schema/customers";
+import { invoices } from "@database/schema/invoices";
 import { count, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { customers } from "@/server/db/schema/customers";
-import { invoices } from "@/server/db/schema/invoices";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
 
