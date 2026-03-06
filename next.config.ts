@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
 	typedRoutes: true,
 	typescript: {
 		ignoreBuildErrors: false,
-		tsconfigPath: "tsconfig.next.json",
+		tsconfigPath: "tsconfig.json",
 	},
 };
 
