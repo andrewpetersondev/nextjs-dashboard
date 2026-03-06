@@ -1,14 +1,18 @@
 {
 	"compilerOptions": {
 		"baseUrl": "..",
+		"lib": ["esnext"],
+		"module": "esnext",
+		"moduleResolution": "bundler",
 		"paths": {
 			"@/*": ["src/*"],
 			"@cypress/*": ["cypress/*"],
 			"@database/*": ["database/*"],
 			"@devtools/*": ["devtools/*"]
-		}
+		},
+		"types": ["node"]
 	},
 	"exclude": ["**/*.test.ts", "**/*.spec.ts"],
-	"extends": "../tsconfig.node.json",
+	"extends": "../tsconfig.base.json",
 	"include": ["./**/*"]
 }

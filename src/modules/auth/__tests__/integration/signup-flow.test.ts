@@ -1,3 +1,4 @@
+import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runAndCaptureRedirectPath } from "@/modules/auth/__tests__/integration/_test-utils_/next-redirect";
@@ -5,7 +6,6 @@ import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.a
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import { getAppDb } from "@/server/db/db.connection";
-import { users } from "@/server/db/schema/users";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
