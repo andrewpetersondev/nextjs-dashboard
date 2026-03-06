@@ -375,7 +375,8 @@
 			"includes": [
 				"src/server/**/*.{ts,tsx}",
 				"src/shared/core/config/**/*.ts",
-				"src/server/config/**/*.ts"
+				"src/server/config/**/*.ts",
+				"vitest.config.ts"
 			],
 			"linter": {
 				"rules": {
