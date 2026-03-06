@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"lib": ["esnext"],
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"types": ["node"]
+	},
+	"extends": "./tsconfig.base.json",
+	"include": ["drizzle.config.ts", "next.config.ts"]
+}

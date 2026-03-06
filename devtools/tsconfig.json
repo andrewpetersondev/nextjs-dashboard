@@ -6,6 +6,6 @@
 		"types": ["node"]
 	},
 	"exclude": ["**/*.test.ts", "**/*.spec.ts"],
-	"extends": "./tsconfig.base.json",
-	"include": ["drizzle.config.ts", "next.config.ts", "devtools/**/*"]
+	"extends": "../tsconfig.base.json",
+	"include": ["./**/*"]
 }
