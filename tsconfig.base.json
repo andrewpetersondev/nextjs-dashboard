@@ -23,7 +23,6 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "ES2024",
-		"useDefineForClassFields": true,
-		"useUnknownInCatchVariables": true
+		"useDefineForClassFields": true
 	}
 }

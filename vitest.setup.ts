@@ -32,7 +32,6 @@ vi.mock("next/cache", () => ({
 	revalidateTag: vi.fn(),
 }));
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
 const mockCookies = {
 	delete: vi.fn(),
 	get: vi.fn(),
