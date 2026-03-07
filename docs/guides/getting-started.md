@@ -37,21 +37,21 @@ Run migrations and seeds for your target environment.
 **Development:**
 
 ```sh
-pnpm db:generate:migrate:dev
+pnpm db:push:dev
 pnpm db:seed:dev
 ```
 
 **Test:**
 
 ```sh
-pnpm db:generate:migrate:test
+pnpm db:push:test
 pnpm db:seed:test
 ```
 
 **Production:**
 
 ```sh
-pnpm db:generate:migrate:prod
+pnpm db:push:prod
 pnpm db:seed:prod
 ```
 
@@ -66,7 +66,7 @@ pnpm dev
 **Production-like (standalone build):**
 
 ```sh
-pnpm standalone
+pnpm serve:standalone
 ```
 
 Or, if already built:
@@ -80,8 +80,8 @@ pnpm start:standalone
 ```sh
 pnpm build:test      # Build with test env
 pnpm serve:test      # Serve with test env
-pnpm cyp:open        # Open Cypress interactive runner
-pnpm cyp:e2e:headless  # Run Cypress headless
+pnpm e2e:open        # Open Cypress interactive runner
+pnpm e2e:run  # Run Cypress headless
 ```
 
 See [docs/guides/testing.md](./testing.md) for the full E2E workflow.

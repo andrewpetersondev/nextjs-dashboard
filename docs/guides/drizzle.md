@@ -15,9 +15,9 @@ TypeScript CLI scripts in `devtools/`.
 **Generate and run migrations:**
 
 ```sh
-pnpm db:generate:migrate:dev    # development
-pnpm db:generate:migrate:test   # test
-pnpm db:generate:migrate:prod   # production
+pnpm db:push:dev    # development
+pnpm db:push:test   # test
+pnpm db:push:prod   # production
 ```
 
 **Seed data:**

@@ -66,7 +66,7 @@ pnpm dev
 Build and start in standalone production mode:
 
 ```bash
-pnpm standalone
+pnpm serve:standalone
 ```
 
 Or, if already built:
@@ -80,13 +80,13 @@ pnpm start:standalone
 Generate and apply migrations for the test environment:
 
 ```bash
-pnpm db:generate:migrate:test
+pnpm db:push:test
 ```
 
 For development:
 
 ```bash
-pnpm db:generate:migrate:dev
+pnpm db:push:dev
 ```
 
 See [docs/guides/drizzle.md](./guides/drizzle.md) for the full list of database commands.

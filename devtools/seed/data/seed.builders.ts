@@ -1,10 +1,9 @@
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
-import type { Period } from "@/shared/primitives/period/period.brand";
 import { hashPassword } from "../../users/hash-password";
-import { validatePeriod } from "../seed-periods";
+import { buildInvoiceDateForPeriod } from "../seed-periods";
 import { SEED_CONFIG } from "./seed.constants";
-import type { NewInvoice, SeedUserRow } from "./seed.types";
-import { seedUsers } from "./seed.users";
+import type { NewInvoice, SeedCustomerIdRow, SeedUserRow } from "./seed.types";
+import { seedUserInputs } from "./seed.users";
 
 function generateInvoiceAmount(): number {
 	const r = Math.random();
@@ -49,45 +48,31 @@ function randomInvoiceStatus(): "pending" | "paid" {
 		: "paid";
 }
 
-function randomItem<T>(items: ReadonlyArray<T>): T | undefined {
-	return items[Math.floor(Math.random() * items.length)];
-}
-
-function buildInvoiceDateForPeriod(period: string): {
-	readonly invoiceDate: Date;
-	readonly revenuePeriod: Period;
-} {
-	validatePeriod(period);
-
-	const revenuePeriod = new Date(`${period}T00:00:00.000Z`) as Period;
-	const [year, month] = period.split("-").map(Number);
-
-	if (
-		!(year && month) ||
-		month < SEED_CONFIG.minMonth ||
-		month > SEED_CONFIG.monthsInYear
-	) {
-		throw new Error(`Invalid period format: ${period}. Expected YYYY-MM-DD`);
+function pickRandomItem<T>(items: ReadonlyArray<T>): T {
+	if (items.length === 0) {
+		throw new Error("pickRandomItem requires at least one item");
 	}
 
-	const daysInMonth = new Date(year, month, 0).getDate();
-	const randomDay =
-		Math.floor(Math.random() * daysInMonth) + SEED_CONFIG.firstDayOfMonth;
-	const invoiceDate = new Date(Date.UTC(year, month - 1, randomDay));
+	const index = Math.floor(Math.random() * items.length);
+	const item = items.at(index);
 
-	return { invoiceDate, revenuePeriod };
+	if (item === undefined) {
+		throw new Error(`No item found at index ${index}`);
+	}
+
+	return item;
 }
 
 /**
  * Build demo users with hashed passwords.
  */
-export async function buildUserSeed(): Promise<ReadonlyArray<SeedUserRow>> {
+export function buildUserSeed(): Promise<ReadonlyArray<SeedUserRow>> {
 	return Promise.all(
-		seedUsers.map(async (user) => ({
-			email: user.email,
-			password: await hashPassword(user.password),
-			role: user.role,
-			username: user.username,
+		seedUserInputs.map(async ({ email, password, role, username }) => ({
+			email,
+			password: await hashPassword(password),
+			role,
+			username,
 		})),
 	);
 }
@@ -96,7 +81,7 @@ export async function buildUserSeed(): Promise<ReadonlyArray<SeedUserRow>> {
  * Build randomized invoice rows based on existing customers and available periods.
  */
 export function buildRandomInvoiceRows(
-	existingCustomers: ReadonlyArray<{ readonly id: string }>,
+	existingCustomers: ReadonlyArray<SeedCustomerIdRow>,
 	availablePeriods: ReadonlyArray<string>,
 ): NewInvoice[] {
 	if (existingCustomers.length === 0) {
@@ -106,27 +91,17 @@ export function buildRandomInvoiceRows(
 		throw new Error("buildRandomInvoiceRows requires at least one period");
 	}
 
-	const invoiceRows: NewInvoice[] = [];
-	for (let i = 0; i < SEED_CONFIG.invoiceCount; i++) {
-		const customer = randomItem(existingCustomers);
-		const period = randomItem(availablePeriods);
-
-		if (!customer?.id) {
-			throw new Error(`Invalid customer at index ${i}`);
-		}
-		if (!period) {
-			throw new Error(`Invalid period at index ${i}`);
-		}
-
+	return Array.from({ length: SEED_CONFIG.invoiceCount }, () => {
+		const customer = pickRandomItem(existingCustomers);
+		const period = pickRandomItem(availablePeriods);
 		const { invoiceDate, revenuePeriod } = buildInvoiceDateForPeriod(period);
 
-		invoiceRows.push({
+		return {
 			amount: generateInvoiceAmount(),
 			customerId: toCustomerId(customer.id),
 			date: invoiceDate,
 			revenuePeriod,
 			status: randomInvoiceStatus(),
-		} as NewInvoice);
-	}
-	return invoiceRows;
+		} as NewInvoice;
+	});
 }

@@ -16,7 +16,7 @@ Static analysis and formatting.
 - `pnpm biome:check` — run Biome checks (lint + format).
 - `pnpm biome:format` — format files with Biome.
 - `pnpm biome:summary` — print a compact check report.
-- `pnpm type:gen` — generate Next.js types and run TypeScript type checking (no emit).
+- `pnpm typegen` — generate Next.js types and run TypeScript type checking (no emit).
 - `pnpm typecheck` — run TypeScript type checking only.
 
 ---
@@ -30,7 +30,7 @@ Build and run the app.
 - `pnpm build:test` — build the app using the test environment.
 - `pnpm start` — run the production server (requires a prior build).
 - `pnpm start:standalone` — prepare assets and start the standalone server output.
-- `pnpm standalone` — clean, build, and run the standalone server in one step.
+- `pnpm serve:standalone` — clean, build, and run the standalone server in one step.
 - `pnpm serve:test` — start the standalone server using the test environment.
 
 ---
@@ -39,9 +39,8 @@ Build and run the app.
 
 End-to-end testing.
 
-- `pnpm cyp:open` — open the Cypress interactive runner.
-- `pnpm cyp:e2e:headless` — run Cypress E2E in headless mode.
-- `pnpm e2e:run` — run Cypress E2E using the test environment.
+- `pnpm e2e:open` — open the Cypress interactive runner.
+- `pnpm e2e:run` — run Cypress E2E in headless mode.
 
 ---
 
@@ -49,9 +48,9 @@ End-to-end testing.
 
 Migrations, seeding, and resets per environment.
 
-- `pnpm db:generate:migrate:dev` — generate and apply migrations (development).
-- `pnpm db:generate:migrate:test` — generate and apply migrations (test).
-- `pnpm db:generate:migrate:prod` — generate and apply migrations (production).
+- `pnpm db:push:dev` — generate and apply migrations (development).
+- `pnpm db:push:test` — generate and apply migrations (test).
+- `pnpm db:push:prod` — generate and apply migrations (production).
 - `pnpm db:seed:dev` — seed the development database.
 - `pnpm db:seed:test` — seed the test database.
 - `pnpm db:seed:prod` — seed the production database.
@@ -87,7 +86,7 @@ Load a specific `.env.*.local` file before running a command.
 
 ```sh
 pnpm install
-pnpm db:generate:migrate:dev
+pnpm db:push:dev
 pnpm db:seed:dev
 pnpm dev
 ```
@@ -95,11 +94,11 @@ pnpm dev
 **Prepare and run E2E locally:**
 
 ```sh
-pnpm db:generate:migrate:test
+pnpm db:push:test
 pnpm db:seed:test
 pnpm build:test
 pnpm serve:test   # keep running in a separate terminal
-pnpm cyp:open
+pnpm e2e:open
 ```
 
 **One-shot E2E run:**

@@ -1,5 +1,5 @@
 import type { Period } from "@/shared/primitives/period/period.brand";
-import { generateMonthlyPeriods } from "../seed-periods";
+import { generateMonthlyPeriods, toPeriodDate } from "../seed-periods";
 import { SEED_CONFIG } from "./seed.constants";
 
 /**
@@ -10,6 +10,6 @@ export const periods: readonly string[] = generateMonthlyPeriods(
 	SEED_CONFIG.generateMonthlyPeriodsCount,
 );
 
-export const periodDates: ReadonlyArray<Date & Period> = periods.map(
-	(period) => new Date(`${period}T00:00:00.000Z`) as Date & Period,
+export const periodDates: ReadonlyArray<Date & Period> = periods.map((period) =>
+	toPeriodDate(period),
 );

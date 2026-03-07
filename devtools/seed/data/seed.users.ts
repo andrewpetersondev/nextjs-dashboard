@@ -4,21 +4,21 @@ import {
 	USER_ROLE,
 	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
+import type { SeedUserInput } from "./seed.types";
 
 /**
  * Seed roles used for demo users.
  */
-export const roles = ["ADMIN", "GUEST", "USER"] as const;
+export const roles: ReadonlyArray<UserRole> = [
+	ADMIN_ROLE,
+	GUEST_ROLE,
+	USER_ROLE,
+];
 
 /**
  * Plain demo user seed input data before password hashing.
  */
-export const seedUsers: ReadonlyArray<{
-	readonly email: string;
-	readonly password: string;
-	readonly role: UserRole;
-	readonly username: string;
-}> = [
+export const seedUserInputs: ReadonlyArray<SeedUserInput> = [
 	{
 		email: "user@user.com",
 		password: "UserPassword123!",

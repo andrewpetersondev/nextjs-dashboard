@@ -12,8 +12,8 @@ This guide summarizes how Cypress is set up and how to run tests locally and in 
 ## Running Locally
 
 ```sh
-pnpm cyp:open            # Open interactive runner
-pnpm cyp:e2e:headless    # Run headless
+pnpm e2e:open            # Open interactive runner
+pnpm e2e:run    # Run headless
 ```
 
 ## Preconditions
@@ -21,7 +21,7 @@ pnpm cyp:e2e:headless    # Run headless
 Use the test environment for consistency:
 
 ```sh
-pnpm db:generate:migrate:test
+pnpm db:push:test
 pnpm db:seed:test
 pnpm build:test
 pnpm serve:test
@@ -44,7 +44,7 @@ cy.checkA11y()
 
 ## CI Usage
 
-- Run `pnpm cyp:e2e:headless` after ensuring the app is served with the test env.
+- Run `pnpm e2e:run` after ensuring the app is served with the test env.
 - Artifacts (videos/screenshots) are configured by Cypress defaults; adjust in `cypress.config.ts` if needed.
 
 ## Notes

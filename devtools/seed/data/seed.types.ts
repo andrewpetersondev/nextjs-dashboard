@@ -13,9 +13,26 @@ export type Tx = Parameters<Parameters<typeof nodeDb.transaction>[0]>[0];
  */
 export type NewInvoice = typeof invoices.$inferInsert;
 
+export interface SeedUserInput {
+	readonly email: string;
+	readonly password: string;
+	readonly role: UserRole;
+	readonly username: string;
+}
+
 export interface SeedUserRow {
 	readonly email: string;
 	readonly password: Hash;
 	readonly role: UserRole;
 	readonly username: string;
+}
+
+export interface SeedCustomer {
+	readonly email: string;
+	readonly imageUrl: string;
+	readonly name: string;
+}
+
+export interface SeedCustomerIdRow {
+	readonly id: string;
 }

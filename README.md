@@ -68,17 +68,17 @@ nextjs-dashboard/
    Run against your desired environment using dotenv-powered helpers:
     - Development
       ```sh
-      pnpm db:generate:migrate:dev
+      pnpm db:push:dev
       pnpm db:seed:dev
       ```
     - Test
       ```sh
-      pnpm db:generate:migrate:test
+      pnpm db:push:test
       pnpm db:seed:test
       ```
     - Production (ensure variables are set correctly)
       ```sh
-      pnpm db:generate:migrate:prod
+      pnpm db:push:prod
       pnpm db:seed:prod
       ```
 
@@ -89,7 +89,7 @@ nextjs-dashboard/
       ```
     - Build + start (standalone):
       ```sh
-      pnpm standalone
+      pnpm serve:standalone
       # or, if already built
       pnpm start:standalone
       ```
@@ -108,11 +108,11 @@ nextjs-dashboard/
 
 - Open Cypress (E2E):
   ```sh
-  pnpm cyp:open
+  pnpm e2e:open
   ```
 - Run Cypress headless (CI-friendly):
   ```sh
-  pnpm cyp:e2e:headless
+  pnpm e2e:run
   ```
 
 Accessibility checks via cypress-axe are integrated in tests where applicable.

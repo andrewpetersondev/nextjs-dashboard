@@ -1,11 +1,9 @@
+import type { SeedCustomer } from "./seed.types";
+
 /**
  * Demo customers data used during seeding.
  */
-export const customersData: ReadonlyArray<{
-	readonly name: string;
-	readonly email: string;
-	readonly imageUrl: string;
-}> = [
+export const customersData: ReadonlyArray<SeedCustomer> = [
 	{
 		email: "evil@rabbit.com",
 		imageUrl: "/customers/evil-rabbit.png",

@@ -5,7 +5,7 @@ import { sql } from "drizzle-orm";
 import { SEED_CONFIG } from "./data/seed.constants";
 import { customersData } from "./data/seed.customers";
 import { periodDates } from "./data/seed.periods.data";
-import type { Tx } from "./data/seed.types";
+import type { SeedCustomerIdRow, Tx } from "./data/seed.types";
 import { roles } from "./data/seed.users";
 
 /** Insert revenues rows for each period. */
@@ -49,12 +49,12 @@ export async function insertCustomers(tx: Tx): Promise<void> {
 /** Fetch all customer ids after insertion. */
 export async function fetchCustomerIds(
 	tx: Tx,
-): Promise<ReadonlyArray<{ readonly id: string }>> {
+): Promise<ReadonlyArray<SeedCustomerIdRow>> {
 	const rows = await tx.select({ id: customers.id }).from(customers);
 	if (rows.length === 0) {
 		throw new Error("No customers found after seeding customers.");
 	}
-	return rows as ReadonlyArray<{ readonly id: string }>;
+	return rows as ReadonlyArray<SeedCustomerIdRow>;
 }
 
 /** Insert demo counters for each role. */
