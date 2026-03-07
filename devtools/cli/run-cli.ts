@@ -1,21 +1,23 @@
 import process from "node:process";
 
+interface RunCliOptions {
+	readonly errorLabel: string;
+	readonly successMessage: string;
+}
+
 /**
- * Wraps a CLI task and handles errors.
- * Unifies seed and reset CLI tasks.
- * @param task
- * @param successMessage
+ * Wraps a CLI task and handles success/error reporting.
  */
 export async function runCli(
 	task: () => Promise<void>,
-	successMessage: string,
+	{ successMessage, errorLabel }: RunCliOptions,
 ): Promise<void> {
 	try {
 		await task();
 		console.log(successMessage);
 		process.exit(0);
 	} catch (error) {
-		console.error(error);
+		console.error(`${errorLabel}:`, error);
 		process.exit(1);
 	}
 }

@@ -1,18 +1,3 @@
-import type { invoices } from "@database/schema/invoices";
-import type { Period } from "@/shared/primitives/period/period.brand";
-import { SEED_CONFIG } from "./seed.constants";
-import { generateMonthlyPeriods } from "./seed.generators";
-
-/**
- * NewInvoice insert type from schema.
- */
-export type NewInvoice = typeof invoices.$inferInsert;
-
-/**
- * Seed roles used for demo users.
- */
-export const roles = ["ADMIN", "GUEST", "USER"] as const;
-
 /**
  * Demo customers data used during seeding.
  */
@@ -52,15 +37,3 @@ export const customersData: ReadonlyArray<{
 		name: "Balazs Orban",
 	},
 ] as const;
-
-/**
- * Generated seed periods and corresponding Date values.
- */
-export const periods: readonly string[] = generateMonthlyPeriods(
-	"2024-01-01",
-	SEED_CONFIG.generateMonthlyPeriodsCount,
-);
-
-export const periodDates: ReadonlyArray<Date & Period> = periods.map(
-	(p) => new Date(`${p}T00:00:00.000Z`) as Date & Period,
-);

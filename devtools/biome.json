@@ -1,0 +1,20 @@
+{
+	"$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+	"extends": "//",
+	"files": {
+		"includes": ["**", "!**/*.js", "!**/*.jsx"]
+	},
+	"linter": {
+		"rules": {
+			"complexity": {
+				"noVoid": "off"
+			},
+			"correctness": {
+				"noNodejsModules": "off"
+			},
+			"nursery": {
+				"useExplicitType": "off"
+			}
+		}
+	}
+}

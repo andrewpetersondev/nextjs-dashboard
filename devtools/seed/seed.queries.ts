@@ -3,8 +3,10 @@ import { demoUserCounters } from "@database/schema/demo-users";
 import { revenues } from "@database/schema/revenues";
 import { sql } from "drizzle-orm";
 import { SEED_CONFIG } from "./data/seed.constants";
-import { customersData, periodDates, roles } from "./data/seed.fixtures";
+import { customersData } from "./data/seed.customers";
+import { periodDates } from "./data/seed.periods.data";
 import type { Tx } from "./data/seed.types";
+import { roles } from "./data/seed.users";
 
 /** Insert revenues rows for each period. */
 export async function insertRevenues(tx: Tx): Promise<void> {
