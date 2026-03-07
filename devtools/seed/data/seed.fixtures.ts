@@ -1,7 +1,7 @@
-import type { invoices } from "@database/schema/invoices.js";
-import type { Period } from "@/shared/primitives/period/period.brand.js";
-import { SEED_CONFIG } from "./constants.js";
-import { generateMonthlyPeriods } from "./utils.js";
+import type { invoices } from "@database/schema/invoices";
+import type { Period } from "@/shared/primitives/period/period.brand";
+import { SEED_CONFIG } from "./seed.constants";
+import { generateMonthlyPeriods } from "./seed.generators";
 
 /**
  * NewInvoice insert type from schema.

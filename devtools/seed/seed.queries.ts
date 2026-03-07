@@ -1,10 +1,10 @@
-import { customers } from "@database/schema/customers.js";
-import { demoUserCounters } from "@database/schema/demo-users.js";
-import { revenues } from "@database/schema/revenues.js";
+import { customers } from "@database/schema/customers";
+import { demoUserCounters } from "@database/schema/demo-users";
+import { revenues } from "@database/schema/revenues";
 import { sql } from "drizzle-orm";
-import { SEED_CONFIG } from "./constants.js";
-import { customersData, periodDates, roles } from "./seed-shared.js";
-import type { Tx } from "./types.js";
+import { SEED_CONFIG } from "./data/seed.constants";
+import { customersData, periodDates, roles } from "./data/seed.fixtures";
+import type { Tx } from "./data/seed.types";
 
 /** Insert revenues rows for each period. */
 export async function insertRevenues(tx: Tx): Promise<void> {

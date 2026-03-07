@@ -17,7 +17,7 @@ export default defineConfig({
 			// Ensure .env.test.local is loaded before reading env
 			dotenv.config({ path: ".env.test.local" });
 
-			const env = await import("./devtools/config/env-cli");
+			const env = await import("@devtools/config/tooling-env");
 
 			// Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
 			// baseUrl is not in the cypress env variables so it is not accessed with config.env.baseUrl but instead with config.baseUrl
@@ -51,10 +51,10 @@ export default defineConfig({
 			// Database setup/teardown tasks
 			on("task", {
 				async "db:cleanup"() {
-					const { cleanupE2eUsers } = await import(
-						"./devtools/tasks/cleanup-e2e-users"
+					const { cleanupE2eUsersTask } = await import(
+						"@devtools/users/cleanup-e2e-users.task"
 					);
-					await cleanupE2eUsers();
+					await cleanupE2eUsersTask();
 					return null;
 				},
 				async "db:createUser"(user: {
@@ -63,14 +63,18 @@ export default defineConfig({
 					username: string;
 					role?: UserRole;
 				}) {
-					const { createUser } = await import("./devtools/tasks/create-user");
-					await createUser(user);
+					const { createUserTask } = await import(
+						"@devtools/users/create-user.task"
+					);
+					await createUserTask(user);
 					return null;
 				},
 
 				async "db:deleteUser"(email: string) {
-					const { deleteUser } = await import("./devtools/tasks/delete-user");
-					await deleteUser(email);
+					const { deleteUserTask } = await import(
+						"@devtools/users/delete-user.task"
+					);
+					await deleteUserTask(email);
 					return null;
 				},
 				async "db:reset"() {
@@ -85,15 +89,17 @@ export default defineConfig({
 					username?: string;
 					role?: UserRole;
 				}) {
-					const { upsertE2eUser } = await import(
-						"./devtools/tasks/upsert-e2e-users"
+					const { upsertE2eUserTask } = await import(
+						"@devtools/users/upsert-e2e-user.task"
 					);
-					await upsertE2eUser(user);
+					await upsertE2eUserTask(user);
 					return null;
 				},
 				async "db:userExists"(email: string) {
-					const { userExists } = await import("./devtools/tasks/user-exists");
-					return userExists(email);
+					const { userExistsTask } = await import(
+						"@devtools/users/user-exists.task"
+					);
+					return userExistsTask(email);
 				},
 			});
 			return config;

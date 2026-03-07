@@ -1,6 +1,6 @@
-import { schema } from "@database/schema/schema.aggregate.js";
+import { schema } from "@database/schema/schema.aggregate";
 import { reset } from "drizzle-seed";
-import { nodeDb } from "./node-db.js";
+import { nodeDb } from "../shared/db/node-db";
 
 console.log("reset-db.ts ...");
 

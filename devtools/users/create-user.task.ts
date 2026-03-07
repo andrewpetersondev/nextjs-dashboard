@@ -1,13 +1,13 @@
-import { users } from "@database/schema/users.js";
-import type { Hash } from "@/server/crypto/hashing/hashing.value.js";
+import { users } from "@database/schema/users";
+import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import {
 	USER_ROLE,
 	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants.js";
-import { nodeDb } from "../cli/node-db.js";
-import { hashPassword } from "../seed-support/utils.js";
+} from "@/shared/policies/user-role/user-role.constants";
+import { nodeDb } from "../shared/db/node-db";
+import { hashPassword } from "./hash-password";
 
-export async function createUser(user: {
+export async function createUserTask(user: {
 	email: string;
 	password: Hash;
 	username: string;

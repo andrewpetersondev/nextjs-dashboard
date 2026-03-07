@@ -8,7 +8,7 @@ import {
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "../config/env-cli.js";
+import { DATABASE_URL } from "../../config/tooling-env";
 
 console.log("node-db.ts ...");
 
