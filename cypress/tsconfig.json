@@ -3,13 +3,19 @@
 		"baseUrl": "..",
 		"lib": ["dom", "esnext"],
 		"paths": {
-			"@/*": ["src/*"],
-			"@cypress/*": ["cypress/*"],
-			"@database/*": ["database/*"],
-			"@devtools/*": ["devtools/*"]
+			"@/*": ["./src/*"],
+			"@cypress/*": ["./cypress/*"],
+			"@database/*": ["./database/*"],
+			"@devtools/*": ["./devtools/*"]
 		},
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
 	"extends": "../tsconfig.test.json",
-	"include": ["../cypress.config.ts", "./**/*"]
+	"include": [
+		"../cypress.config.ts",
+		"./**/*.ts",
+		"./**/*.tsx",
+		"./**/*.mts",
+		"./**/*.cts"
+	]
 }

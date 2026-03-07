@@ -14,10 +14,10 @@
 		//    "noPropertyAccessFromIndexSignature": true,
 		//    "noUnusedLocals": true,
 		"paths": {
-			"@/*": ["src/*"],
-			"@cypress/*": ["cypress/*"],
-			"@database/*": ["database/*"],
-			"@devtools/*": ["devtools/*"]
+			"@/*": ["./src/*"],
+			"@cypress/*": ["./cypress/*"],
+			"@database/*": ["./database/*"],
+			"@devtools/*": ["./devtools/*"]
 		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,

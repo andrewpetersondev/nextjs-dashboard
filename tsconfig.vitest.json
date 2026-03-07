@@ -4,10 +4,11 @@
 	},
 	"extends": "./tsconfig.test.json",
 	"include": [
-		"vitest.config.ts",
-		"vitest.setup.ts",
-		"src/**/__tests__/**/*",
-		"src/**/*.test.ts",
-		"src/**/*.spec.ts"
+		"./vitest.config.ts",
+		"./vitest.setup.ts",
+		"./src/**/__tests__/**/*",
+		"./src/**/__tests__/**/*.ts",
+		"./src/**/*.test.ts",
+		"./src/**/*.spec.ts"
 	]
 }

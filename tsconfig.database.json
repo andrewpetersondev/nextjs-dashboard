@@ -1,4 +1,8 @@
 {
 	"extends": "./tsconfig.node.json",
-	"include": ["database/**/*"]
+	"include": [
+		"./database/**/*.ts",
+		"./database/**/*.mts",
+		"./database/**/*.cts"
+	]
 }

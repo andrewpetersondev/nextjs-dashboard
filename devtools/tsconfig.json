@@ -4,15 +4,9 @@
 		"lib": ["esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		"paths": {
-			"@/*": ["src/*"],
-			"@cypress/*": ["cypress/*"],
-			"@database/*": ["database/*"],
-			"@devtools/*": ["devtools/*"]
-		},
 		"types": ["node"]
 	},
-	"exclude": ["**/*.test.ts", "**/*.spec.ts"],
+	"exclude": ["./**/*.test.ts", "./**/*.spec.ts"],
 	"extends": "../tsconfig.base.json",
-	"include": ["./**/*"]
+	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.mts", "./**/*.cts"]
 }
