@@ -1,41 +1,41 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1757249801773,
-      "tag": "0000_breezy_bloodstrike",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1757576134446,
-      "tag": "0001_tiresome_pixie",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1758354439086,
-      "tag": "0002_empty_crystal",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1767009717974,
-      "tag": "0003_demonic_azazel",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1770380903932,
-      "tag": "0004_round_anthem",
-      "breakpoints": true
-    }
-  ]
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"breakpoints": true,
+			"idx": 0,
+			"tag": "0000_breezy_bloodstrike",
+			"version": "7",
+			"when": 1757249801773
+		},
+		{
+			"breakpoints": true,
+			"idx": 1,
+			"tag": "0001_tiresome_pixie",
+			"version": "7",
+			"when": 1757576134446
+		},
+		{
+			"breakpoints": true,
+			"idx": 2,
+			"tag": "0002_empty_crystal",
+			"version": "7",
+			"when": 1758354439086
+		},
+		{
+			"breakpoints": true,
+			"idx": 3,
+			"tag": "0003_demonic_azazel",
+			"version": "7",
+			"when": 1767009717974
+		},
+		{
+			"breakpoints": true,
+			"idx": 4,
+			"tag": "0004_round_anthem",
+			"version": "7",
+			"when": 1770380903932
+		}
+	],
+	"version": "7"
 }

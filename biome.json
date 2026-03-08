@@ -1,5 +1,5 @@
 {
-	"$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
 	"assist": {
 		"actions": {
 			"recommended": true,
@@ -13,7 +13,8 @@
 				"useSortedProperties": "on"
 			}
 		},
-		"enabled": true
+		"enabled": true,
+		"includes": ["**", "!**/*.js", "!**/*.jsx"]
 	},
 	"css": {
 		"assist": {
@@ -31,31 +32,11 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": [
-			"./src/**",
-			"./devtools/**",
-			"./knip.json",
-			"./cypress/biome.json",
-			"./cypress.config.ts",
-			"./drizzle.config.ts",
-			"./next.config.ts",
-			"./package.json",
-			"./postcss.config.mjs",
-			"./tsconfig.base.json",
-			"./tsconfig.database.json",
-			"./tsconfig.json",
-			"./tsconfig.node.json",
-			"./tsconfig.test.json",
-			"./tsconfig.tooling.json",
-			"./tsconfig.vitest.json",
-			"./tsconfig.web.json",
-			"./vitest.config.ts",
-			"./vitest.setup.ts",
-			"!!**/*.{js,jsx}"
-		]
+		"includes": ["**", "!**/*.js", "!**/*.jsx"]
 	},
 	"formatter": {
-		"enabled": true
+		"enabled": true,
+		"includes": ["**", "!**/*.js", "!**/*.jsx"]
 	},
 	"javascript": {
 		"assist": {
@@ -91,6 +72,7 @@
 			"types": "all"
 		},
 		"enabled": true,
+		"includes": ["**", "!**/*.js", "!**/*.jsx", "!**/*.map"],
 		"rules": {
 			"a11y": {
 				"noNoninteractiveElementInteractions": "on",

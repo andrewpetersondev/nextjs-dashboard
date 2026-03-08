@@ -9,8 +9,8 @@ import {
 	timestamp,
 	uuid,
 } from "drizzle-orm/pg-core";
-import { REVENUE_SOURCES, type RevenueSource } from "./schema.constants.js";
-import type { Period, RevenueId } from "./schema.types.js";
+import { REVENUE_SOURCES, type RevenueSource } from "./schema.constants";
+import type { Period, RevenueId } from "./schema.types";
 
 // biome-ignore lint/nursery/useExplicitType: fix
 const calculationSourceEnum = pgEnum("calculation_source", REVENUE_SOURCES);

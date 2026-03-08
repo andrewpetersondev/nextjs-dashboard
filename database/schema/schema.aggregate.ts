@@ -1,8 +1,8 @@
-import { customers } from "./customers.js";
-import { demoUserCounters } from "./demo-users.js";
-import { invoices } from "./invoices.js";
-import { revenues } from "./revenues.js";
-import { users } from "./users.js";
+import { customers } from "./customers";
+import { demoUserCounters } from "./demo-users";
+import { invoices } from "./invoices";
+import { revenues } from "./revenues";
+import { users } from "./users";
 
 /**
  * Combined schema object for drizzle() initialization.

@@ -1,41 +1,41 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1757249906262,
-      "tag": "0000_glamorous_deathbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1757580607413,
-      "tag": "0001_mighty_firelord",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1758354749053,
-      "tag": "0002_nebulous_phil_sheldon",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1767009740038,
-      "tag": "0003_clumsy_thaddeus_ross",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1770380915535,
-      "tag": "0004_supreme_sphinx",
-      "breakpoints": true
-    }
-  ]
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"breakpoints": true,
+			"idx": 0,
+			"tag": "0000_glamorous_deathbird",
+			"version": "7",
+			"when": 1757249906262
+		},
+		{
+			"breakpoints": true,
+			"idx": 1,
+			"tag": "0001_mighty_firelord",
+			"version": "7",
+			"when": 1757580607413
+		},
+		{
+			"breakpoints": true,
+			"idx": 2,
+			"tag": "0002_nebulous_phil_sheldon",
+			"version": "7",
+			"when": 1758354749053
+		},
+		{
+			"breakpoints": true,
+			"idx": 3,
+			"tag": "0003_clumsy_thaddeus_ross",
+			"version": "7",
+			"when": 1767009740038
+		},
+		{
+			"breakpoints": true,
+			"idx": 4,
+			"tag": "0004_supreme_sphinx",
+			"version": "7",
+			"when": 1770380915535
+		}
+	],
+	"version": "7"
 }
