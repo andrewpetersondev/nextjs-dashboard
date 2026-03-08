@@ -78,6 +78,12 @@ importers:
       '@tsconfig/bases':
         specifier: ^1.0.23
         version: 1.0.23
+      '@tsconfig/cypress':
+        specifier: ^1.0.5
+        version: 1.0.5
+      '@tsconfig/next':
+        specifier: ^2.0.6
+        version: 2.0.6
       '@tsconfig/node-lts':
         specifier: ^24.0.0
         version: 24.0.0
@@ -1054,6 +1060,12 @@ packages:
 
   '@tsconfig/bases@1.0.23':
     resolution: {integrity: sha512-9DY5I2D/MC7/ug10yRx11pxFSTbAgvrueOkrFqeoJZAUxK68761RLvfUJcTK4HmEtmHblJ3yHGbTlozo690gKA==}
+
+  '@tsconfig/cypress@1.0.5':
+    resolution: {integrity: sha512-PuJziX+4ACg0oiDc7g6bK8L2Od6or7USCXaIbCq79UACtGUESe5fZWu6Ijk/DhN/FzQ1GlOic6CGmJu+crbL1A==}
+
+  '@tsconfig/next@2.0.6':
+    resolution: {integrity: sha512-C6eZoNyAMKv2UvzDZqcp8zXPviu6W4Ev1KUbqfmaMSZuq+tmbtTWaqxTif/yaui8WCEcRlQrHC8q9tNzBclHOw==}
 
   '@tsconfig/node-lts@24.0.0':
     resolution: {integrity: sha512-8mSTqWwCd6aQpvxSrpQlMoA9RiUZSs7bYhL5qsLXIIaN9HQaINeoydrRu/Y7/fws4bvfuyhs0BRnW9/NI8tySg==}
@@ -3293,6 +3305,10 @@ snapshots:
       pretty-format: 27.5.1
 
   '@tsconfig/bases@1.0.23': {}
+
+  '@tsconfig/cypress@1.0.5': {}
+
+  '@tsconfig/next@2.0.6': {}
 
   '@tsconfig/node-lts@24.0.0': {}
 

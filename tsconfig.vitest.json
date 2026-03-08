@@ -1,5 +1,7 @@
 {
+	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
+		"composite": true,
 		"types": ["vitest/globals", "node"]
 	},
 	"extends": "./tsconfig.test.json",
@@ -10,5 +12,13 @@
 		"./src/**/__tests__/**/*.ts",
 		"./src/**/*.test.ts",
 		"./src/**/*.spec.ts"
+	],
+	"references": [
+		{
+			"path": "./tsconfig.app.json"
+		},
+		{
+			"path": "./tsconfig.database.json"
+		}
 	]
 }

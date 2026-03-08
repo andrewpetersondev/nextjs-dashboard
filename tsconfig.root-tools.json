@@ -4,9 +4,5 @@
 		"composite": true
 	},
 	"extends": "./tsconfig.node.json",
-	"include": [
-		"./database/**/*.ts",
-		"./database/**/*.mts",
-		"./database/**/*.cts"
-	]
+	"include": ["./drizzle.config.ts", "./next.config.ts"]
 }

@@ -1,6 +1,8 @@
 {
+	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
 		"baseUrl": "..",
+		"composite": true,
 		"lib": ["esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
@@ -8,5 +10,6 @@
 	},
 	"exclude": ["./**/*.test.ts", "./**/*.spec.ts"],
 	"extends": "../tsconfig.base.json",
-	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.mts", "./**/*.cts"]
+	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.mts", "./**/*.cts"],
+	"references": [{ "path": "../tsconfig.database.json" }]
 }

@@ -1,21 +1,25 @@
 {
+	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
 		"baseUrl": "..",
+		"composite": true,
 		"lib": ["dom", "esnext"],
-		"paths": {
-			"@/*": ["./src/*"],
-			"@cypress/*": ["./cypress/*"],
-			"@database/*": ["./database/*"],
-			"@devtools/*": ["./devtools/*"]
-		},
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": "../tsconfig.test.json",
+	"extends": ["../tsconfig.test.json", "@tsconfig/cypress/tsconfig.json"],
 	"include": [
 		"../cypress.config.ts",
 		"./**/*.ts",
 		"./**/*.tsx",
 		"./**/*.mts",
 		"./**/*.cts"
+	],
+	"references": [
+		{
+			"path": "../tsconfig.app.json"
+		},
+		{
+			"path": "../devtools"
+		}
 	]
 }
