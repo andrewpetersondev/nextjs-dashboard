@@ -9,7 +9,7 @@
 		"types": ["node"]
 	},
 	"exclude": ["./**/*.test.ts", "./**/*.spec.ts"],
-	"extends": "../tsconfig.base.json",
+	"extends": ["../tsconfig.base.json"],
 	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.mts", "./**/*.cts"],
 	"references": [{ "path": "../tsconfig.database.json" }]
 }

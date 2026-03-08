@@ -3,6 +3,6 @@
 	"compilerOptions": {
 		"composite": true
 	},
-	"extends": "./tsconfig.node.json",
+	"extends": ["./tsconfig.node.json"],
 	"include": ["./drizzle.config.ts", "./next.config.ts"]
 }

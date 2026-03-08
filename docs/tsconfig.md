@@ -1,85 +1,266 @@
 # TypeScript config strategy
 
-## Goal
+## Mental model
 
-Refactor the repo into a solution-style TypeScript setup with:
+Use these three questions:
 
-- one root solution config
-- clear leaf-project configs
-- shared inheritance layers
-- eventual project references between real projects only
+1. **Where does the code run?**  
+   That is the **runtime**.
 
-## Current direction
+2. **What role does this config play in the stack?**  
+   That is the **layer**.
 
-### Root solution
+3. **Which config actually owns these files?**  
+   That is the **leaf project**.
 
-`tsconfig.json` should represent the repo, not the app.
+## Quick definitions
 
-It should:
+### Runtime
 
-- own no source files
-- use `files: []`
-- keep only references to real projects
-- avoid referencing inheritance-only configs
+Runtime means the execution environment.
 
-Referenced projects currently include:
+Examples:
 
-- `./cypress`
-- `./devtools`
-- `./tsconfig.app.json`
-- `./tsconfig.database.json`
-- `./tsconfig.root-tools.json`
-- `./tsconfig.vitest.json`
+- browser / Next app
+- Node
+- Vitest
+- Cypress
 
-## Ownership rules
+Runtime affects settings like:
 
-### App project
-
-`tsconfig.app.json` owns app-source files:
-
-- `src/**`
-- `next-env.d.ts`
-- Next-generated type files
-
-It should not own root Node config files.
-
-### Root tools project
-
-`tsconfig.root-tools.json` owns root-level Node-executed config/tooling files, such as:
-
-- `next.config.ts`
-- `drizzle.config.ts`
+- `lib`
+- `types`
+- `module`
+- `moduleResolution`
+- `jsx`
+- framework plugins
 
 Rule:
 
-- if a file is executed as config/tooling by Node, it belongs here
-- if a file is part of the app source graph, it belongs in the app config
+- if a setting changes based on where code runs, it is a runtime concern
 
-### Vitest project
+### Layer
 
-`tsconfig.vitest.json` owns the Vitest boundary:
+Layer means the architectural role of a `tsconfig`.
 
-- `vitest.config.ts`
-- `vitest.setup.ts`
-- test files under `src`
+Examples:
 
-### Cypress project
+- solution layer
+- base policy layer
+- Node runtime layer
+- test runtime layer
+- leaf project layer
 
-`cypress/tsconfig.json` owns the Cypress boundary:
+Rule:
 
-- `cypress.config.ts`
-- Cypress test/support files
+- a layer explains **why the config exists**
+- a layer does **not** necessarily own files
 
-## Keep in mind
+### Leaf project
 
-The root `tsconfig.json` should describe the project graph, not the inheritance graph.
+A leaf project is a real TypeScript project that owns files.
 
-That means:
+Typical signs:
 
-- reference real projects
-- do not reference base configs just because other configs extend them
+- has `include`
+- may have `exclude`
+- may be `composite`
+- may have `references`
 
-## Likely next steps
+Rule:
 
-- review whether each referenced project is reference-ready
-- later add project-to-project references where real dependencies exist
+- if a config owns real files, it is a leaf project
+
+## Repo model
+
+### `tsconfig.json`
+
+**Role:** solution layer  
+**Owns files:** no  
+**Purpose:** describe the repo project graph
+
+Should contain:
+
+- `files: []`
+- `references`
+
+Should not contain:
+
+- `include`
+- `exclude`
+- runtime settings
+
+## `tsconfig.base.json`
+
+**Role:** base policy layer  
+**Owns files:** no  
+**Purpose:** shared repo-wide rules
+
+Should contain:
+
+- aliases like `baseUrl` and `paths`
+- strictness and safety rules
+- repo-wide non-runtime defaults
+
+Good examples:
+
+- `strict`
+- `noEmit`
+- `isolatedModules`
+- `skipLibCheck`
+- `resolveJsonModule`
+
+Should not contain:
+
+- `lib`
+- `module`
+- `moduleResolution`
+- `jsx`
+- `types`
+- Node-only or browser-only assumptions
+
+Rule:
+
+- if it depends on runtime, it usually does not belong here
+
+## `tsconfig.node.json`
+
+**Role:** Node runtime layer  
+**Owns files:** no  
+**Purpose:** shared Node settings for Node-executed projects
+
+Should contain:
+
+- Node runtime defaults
+- `@tsconfig/node-lts`
+- Node-specific compiler settings
+
+Good examples:
+
+- `types: ["node"]`
+- Node `module`
+- Node `moduleResolution`
+- Node `lib`
+
+Should not contain:
+
+- file ownership
+- app-only settings
+
+## `tsconfig.app.json`
+
+**Role:** app runtime layer + leaf project  
+**Owns files:** yes  
+**Purpose:** own the Next app source boundary
+
+Owns:
+
+- `src/**`
+- `next-env.d.ts`
+- Next-generated types
+
+Should contain:
+
+- app `include`
+- app `exclude`
+- app-only overrides
+- `@tsconfig/next`
+- references needed by the app
+
+Rule:
+
+- if a file is part of the app source graph, it belongs here
+
+## `tsconfig.test.json`
+
+**Role:** test runtime layer  
+**Owns files:** no  
+**Purpose:** shared test defaults for test projects
+
+Should contain:
+
+- only small test-wide adjustments shared by multiple test leafs
+
+Should not contain:
+
+- `include`
+- file ownership
+- tool-specific settings unless all test projects need them
+
+Rule:
+
+- keep this file small
+
+## Other leaf projects
+
+### `tsconfig.database.json`
+
+Owns database code.
+
+### `tsconfig.root-tools.json`
+
+Owns root Node-run config/tooling files.
+
+### `devtools/tsconfig.json`
+
+Owns `devtools/**`.
+
+### `tsconfig.vitest.json`
+
+Owns Vitest config, setup, and Vitest test files.
+
+### `cypress/tsconfig.json`
+
+Owns Cypress config, support, and Cypress test files.
+
+## Fast decision rules
+
+### For a setting
+
+Ask:
+
+1. Is this true for the whole repo?  
+   -> put it in `tsconfig.base.json`
+
+2. Is this true for all Node-executed code?  
+   -> put it in `tsconfig.node.json`
+
+3. Is this true only for the app?  
+   -> put it in `tsconfig.app.json`
+
+4. Is this true only for shared test behavior?  
+   -> put it in `tsconfig.test.json`
+
+### For file ownership
+
+Ask:
+
+1. Which project should own this file?
+2. Where does this file run?
+3. Does another config already own it?
+
+Rule:
+
+- every file should have one clear owning leaf project
+
+## Short summary
+
+- **runtime** = where code runs
+- **layer** = why the config exists
+- **leaf** = which config owns files
+
+In this repo:
+
+- `tsconfig.json` = solution layer
+- `tsconfig.base.json` = base policy layer
+- `tsconfig.node.json` = Node runtime layer
+- `tsconfig.test.json` = test runtime layer
+- `tsconfig.app.json` = app runtime layer + app leaf project
+
+## One-line rule
+
+Put:
+
+- **shared policy** in base
+- **runtime behavior** in runtime layers
+- **file ownership** in leaf projects

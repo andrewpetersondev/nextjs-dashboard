@@ -2,9 +2,9 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
 		"lib": ["esnext"],
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
 		"types": ["node"]
 	},
-	"extends": "./tsconfig.base.json"
+	"extends": ["@tsconfig/node-lts/tsconfig.json", "./tsconfig.base.json"]
 }

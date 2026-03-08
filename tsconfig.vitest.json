@@ -4,7 +4,7 @@
 		"composite": true,
 		"types": ["vitest/globals", "node"]
 	},
-	"extends": "./tsconfig.test.json",
+	"extends": ["./tsconfig.test.json"],
 	"include": [
 		"./vitest.config.ts",
 		"./vitest.setup.ts",
