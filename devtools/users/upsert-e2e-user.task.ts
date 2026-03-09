@@ -1,4 +1,4 @@
-import { schema } from "@database/schema/schema.aggregate";
+import { users } from "@database/schema";
 import { eq } from "drizzle-orm";
 import {
 	USER_ROLE,
@@ -36,9 +36,9 @@ export async function upsertE2eUserTask(user: {
 
 	await nodeDb.transaction(async (tx) => {
 		const existing = await tx
-			.select({ id: schema.users.id })
-			.from(schema.users)
-			.where(eq(schema.users.email, normalizedEmail))
+			.select({ id: users.id })
+			.from(users)
+			.where(eq(users.email, normalizedEmail))
 			.limit(1);
 
 		if (existing.length > 0) {
@@ -49,14 +49,14 @@ export async function upsertE2eUserTask(user: {
 			const userId = row.id;
 
 			await tx
-				.update(schema.users)
+				.update(users)
 				.set({ password: hashed, role, username })
-				.where(eq(schema.users.id, userId));
+				.where(eq(users.id, userId));
 		} else {
 			const inserted = await tx
-				.insert(schema.users)
+				.insert(users)
 				.values([{ email: normalizedEmail, password: hashed, role, username }])
-				.returning({ id: schema.users.id });
+				.returning({ id: users.id });
 
 			if (inserted.length === 0 || !inserted[0]?.id) {
 				throw new Error("Failed to insert E2E user");

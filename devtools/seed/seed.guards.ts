@@ -1,4 +1,10 @@
-import { schema } from "@database/schema/schema.aggregate";
+import {
+	customers,
+	demoUserCounters,
+	invoices,
+	revenues,
+	users,
+} from "@database/schema";
 import { sql } from "drizzle-orm";
 import { nodeDb } from "../shared/db/node-db";
 import { firstRow } from "../shared/db/pg-result.utils";
@@ -8,13 +14,11 @@ import { firstRow } from "../shared/db/pg-result.utils";
  */
 async function isEmpty(): Promise<boolean> {
 	const checks = await Promise.all([
-		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${schema.users}) AS v`),
-		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${schema.customers}) AS v`),
-		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${schema.invoices}) AS v`),
-		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${schema.revenues}) AS v`),
-		nodeDb.execute(
-			sql`SELECT EXISTS(SELECT 1 FROM ${schema.demoUserCounters}) AS v`,
-		),
+		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users}) AS v`),
+		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${customers}) AS v`),
+		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${invoices}) AS v`),
+		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${revenues}) AS v`),
+		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters}) AS v`),
 	]);
 	return checks.every((r) => firstRow<{ v: boolean }>(r)?.v === false);
 }

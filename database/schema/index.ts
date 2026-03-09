@@ -1,6 +1,8 @@
 /** biome-ignore-all lint/performance/noBarrelFile: standardizing exports from database */
 export type { CustomerRow } from "./customers";
 export { customers } from "./customers";
+export type { _DemoUserCounterRow } from "./demo-users";
+export { demoUserCounters } from "./demo-users";
 export type { InvoiceRow } from "./invoices";
 export { invoices } from "./invoices";
 export type { RevenueRow } from "./revenues";

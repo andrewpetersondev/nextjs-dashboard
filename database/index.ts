@@ -6,4 +6,12 @@ export type {
 	RevenueRow,
 	UserRow,
 } from "./schema";
-export { customers, invoices, revenues, schema, users } from "./schema";
+
+export {
+	customers,
+	demoUserCounters,
+	invoices,
+	revenues,
+	schema,
+	users,
+} from "./schema";
