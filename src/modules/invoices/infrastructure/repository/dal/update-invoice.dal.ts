@@ -1,6 +1,5 @@
 import "server-only";
-
-import { invoices } from "@database/schema/invoices";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq } from "drizzle-orm";
 import type {
 	InvoiceEntity,
@@ -35,9 +34,9 @@ export async function updateInvoiceDal(
 	}
 
 	const [updated] = await db
-		.update(invoices)
+		.update(schema.invoices)
 		.set(updateData)
-		.where(eq(invoices.id, id))
+		.where(eq(schema.invoices.id, id))
 		.returning();
 
 	if (!updated) {

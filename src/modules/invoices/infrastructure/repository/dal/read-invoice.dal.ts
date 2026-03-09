@@ -1,6 +1,5 @@
 import "server-only";
-
-import { invoices } from "@database/schema/invoices";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq } from "drizzle-orm";
 import type { InvoiceEntity } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
@@ -29,7 +28,10 @@ export async function readInvoiceDal(
 		});
 	}
 
-	const [data] = await db.select().from(invoices).where(eq(invoices.id, id));
+	const [data] = await db
+		.select()
+		.from(schema.invoices)
+		.where(eq(schema.invoices.id, id));
 
 	if (!data) {
 		throw makeAppError("database", {

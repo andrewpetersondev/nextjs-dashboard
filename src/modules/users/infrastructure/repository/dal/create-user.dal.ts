@@ -1,5 +1,6 @@
 import "server-only";
-import { type NewUserRow, users } from "@database/schema/users";
+import { schema } from "@database/schema/schema.aggregate";
+import type { NewUserRow } from "@database/schema/users";
 import type {
 	CreateUserProps,
 	UserEntity,
@@ -35,7 +36,7 @@ export async function createUserDal(
 			username,
 		};
 
-		const [userRow] = await db.insert(users).values(newUser).returning();
+		const [userRow] = await db.insert(schema.users).values(newUser).returning();
 		return Ok(userRow ? toUserEntity(userRow) : null);
 	} catch (error) {
 		logger.error("Failed to create a user in the database.", {

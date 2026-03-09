@@ -1,6 +1,4 @@
-import { customers } from "@database/schema/customers";
-import { demoUserCounters } from "@database/schema/demo-users";
-import { revenues } from "@database/schema/revenues";
+import { schema } from "@database/schema/schema.aggregate";
 import { sql } from "drizzle-orm";
 import { SEED_CONFIG } from "./data/seed.constants";
 import { customersData } from "./data/seed.customers";
@@ -11,7 +9,7 @@ import { roles } from "./data/seed.users";
 /** Insert revenues rows for each period. */
 export async function insertRevenues(tx: Tx): Promise<void> {
 	await tx
-		.insert(revenues)
+		.insert(schema.revenues)
 		.values(
 			periodDates.map((periodDate) => ({
 				calculationSource: "seed" as const,
@@ -31,13 +29,13 @@ export async function insertRevenues(tx: Tx): Promise<void> {
 				totalPendingAmount: 0,
 				updatedAt: new Date(),
 			},
-			target: revenues.period,
+			target: schema.revenues.period,
 		});
 }
 
 /** Insert demo customers. */
 export async function insertCustomers(tx: Tx): Promise<void> {
-	await tx.insert(customers).values(
+	await tx.insert(schema.customers).values(
 		customersData.map((c) => ({
 			email: c.email,
 			imageUrl: c.imageUrl,
@@ -50,7 +48,9 @@ export async function insertCustomers(tx: Tx): Promise<void> {
 export async function fetchCustomerIds(
 	tx: Tx,
 ): Promise<ReadonlyArray<SeedCustomerIdRow>> {
-	const rows = await tx.select({ id: customers.id }).from(customers);
+	const rows = await tx
+		.select({ id: schema.customers.id })
+		.from(schema.customers);
 	if (rows.length === 0) {
 		throw new Error("No customers found after seeding customers.");
 	}
@@ -59,7 +59,7 @@ export async function fetchCustomerIds(
 
 /** Insert demo counters for each role. */
 export async function insertDemoCounters(tx: Tx): Promise<void> {
-	await tx.insert(demoUserCounters).values(
+	await tx.insert(schema.demoUserCounters).values(
 		roles.map((role) => ({
 			count:
 				Math.floor(

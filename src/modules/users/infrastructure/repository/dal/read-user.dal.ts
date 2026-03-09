@@ -1,5 +1,5 @@
 import "server-only";
-import { users } from "@database/schema/users";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
@@ -27,8 +27,8 @@ export async function readUserDal(
 		// Fetch raw DB row, not UserEntity
 		const [userRow] = await db
 			.select()
-			.from(users)
-			.where(eq(users.id, id))
+			.from(schema.users)
+			.where(eq(schema.users.id, id))
 			.limit(1);
 
 		if (!userRow) {

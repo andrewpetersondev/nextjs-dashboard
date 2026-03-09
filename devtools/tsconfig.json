@@ -3,13 +3,19 @@
 	"compilerOptions": {
 		"baseUrl": "..",
 		"composite": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
 		"lib": ["esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
+		"noEmit": false,
 		"types": ["node"]
 	},
 	"exclude": ["./**/*.test.ts", "./**/*.spec.ts"],
 	"extends": ["../tsconfig.base.json"],
 	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.mts", "./**/*.cts"],
-	"references": [{ "path": "../tsconfig.database.json" }]
+	"references": [
+		{ "path": "../tsconfig.database.json" },
+		{ "path": "../tsconfig.app.json" }
+	]
 }

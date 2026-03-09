@@ -1,5 +1,5 @@
 import "server-only";
-import { users } from "@database/schema/users";
+import { schema } from "@database/schema/schema.aggregate";
 import { asc, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/constants/user.constants";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
@@ -31,14 +31,14 @@ export async function readFilteredUsersDal(
 		// Fetch raw DB rows matching the query
 		const userRows = await db
 			.select()
-			.from(users)
+			.from(schema.users)
 			.where(
 				or(
-					ilike(users.username, `%${query}%`),
-					ilike(users.email, `%${query}%`),
+					ilike(schema.users.username, `%${query}%`),
+					ilike(schema.users.email, `%${query}%`),
 				),
 			)
-			.orderBy(asc(users.username))
+			.orderBy(asc(schema.users.username))
 			.limit(ITEMS_PER_PAGE_USERS)
 			.offset(offset);
 

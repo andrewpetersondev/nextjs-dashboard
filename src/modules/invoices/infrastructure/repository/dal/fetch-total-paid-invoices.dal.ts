@@ -1,6 +1,5 @@
 import "server-only";
-
-import { invoices } from "@database/schema/invoices";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -12,11 +11,11 @@ export async function fetchTotalPaidInvoicesDal(
 	const paid = await db
 		.select({
 			value: sql<number>`sum(
-            ${invoices.amount}
+            ${schema.invoices.amount}
             )`,
 		})
-		.from(invoices)
-		.where(eq(invoices.status, "paid"))
+		.from(schema.invoices)
+		.where(eq(schema.invoices.status, "paid"))
 		.then((rows) => rows[0]?.value ?? 0);
 
 	if (paid === undefined) {

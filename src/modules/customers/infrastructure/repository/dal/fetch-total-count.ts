@@ -1,6 +1,6 @@
 import "server-only";
 
-import { customers } from "@database/schema/customers";
+import { schema } from "@database/schema/schema.aggregate";
 import { count } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -14,8 +14,8 @@ export async function fetchTotalCustomersCountDal(
 	db: AppDatabase,
 ): Promise<number> {
 	const value = await db
-		.select({ value: count(customers.id) })
-		.from(customers)
+		.select({ value: count(schema.customers.id) })
+		.from(schema.customers)
 		.then((rows) => rows[0]?.value ?? 0);
 
 	if (value === undefined) {

@@ -32,7 +32,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!**/*.js", "!**/*.jsx"]
+		"includes": ["**", "!**/*.d.ts", "!**/*.js", "!**/*.jsx"]
 	},
 	"formatter": {
 		"enabled": true,

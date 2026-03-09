@@ -1,6 +1,6 @@
 import "server-only";
-
-import { type RevenueRow, revenues } from "@database/schema/revenues";
+import type { RevenueRow } from "@database/schema/revenues";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
@@ -33,8 +33,8 @@ export async function readRevenueDal(
 
 	const data: RevenueRow | undefined = await db
 		.select()
-		.from(revenues)
-		.where(eq(revenues.id, id))
+		.from(schema.revenues)
+		.where(eq(schema.revenues.id, id))
 		.limit(1)
 		.then((rows) => rows[0]);
 

@@ -1,6 +1,6 @@
 import "server-only";
-
-import { type RevenueRow, revenues } from "@database/schema/revenues";
+import type { RevenueRow } from "@database/schema/revenues";
+import { schema } from "@database/schema/schema.aggregate";
 import { and, desc, gte, lte } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowsToEntities } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
@@ -36,14 +36,14 @@ export async function findRevenuesByDateRangeDal(
 
 	const revenueRows = (await db
 		.select()
-		.from(revenues)
+		.from(schema.revenues)
 		.where(
 			and(
-				gte(revenues.period, toPeriod(startPeriod)),
-				lte(revenues.period, toPeriod(endPeriod)),
+				gte(schema.revenues.period, toPeriod(startPeriod)),
+				lte(schema.revenues.period, toPeriod(endPeriod)),
 			),
 		)
-		.orderBy(desc(revenues.period))) as RevenueRow[];
+		.orderBy(desc(schema.revenues.period))) as RevenueRow[];
 
 	if (!revenueRows) {
 		throw makeUnexpectedError("", {

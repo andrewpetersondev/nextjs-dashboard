@@ -10,6 +10,7 @@ next-env.d.ts
 # Generated JavaScript/source maps kept out of git intentionally
 *.js
 *.map
+*.d.ts
 
 # Testing and Coverage
 cypress/videos/

@@ -1,4 +1,4 @@
-import { users } from "@database/schema/users";
+import { schema } from "@database/schema/schema.aggregate";
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import {
 	USER_ROLE,
@@ -25,5 +25,5 @@ export async function createUserTask(user: {
 
 	const password = await hashPassword(user.password);
 
-	await nodeDb.insert(users).values({ email, password, role, username });
+	await nodeDb.insert(schema.users).values({ email, password, role, username });
 }

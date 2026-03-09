@@ -1,5 +1,6 @@
 import "server-only";
-import { type NewUserRow, type UserRow, users } from "@database/schema/users";
+import { schema } from "@database/schema/schema.aggregate";
+import type { NewUserRow, UserRow } from "@database/schema/users";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
@@ -32,7 +33,7 @@ export async function insertUserDal(
 	return await executeDalResult<UserRow>(
 		async (): Promise<UserRow> => {
 			const [userRow] = await db
-				.insert(users)
+				.insert(schema.users)
 				.values({ email, password, role, username } satisfies NewUserRow)
 				.returning();
 

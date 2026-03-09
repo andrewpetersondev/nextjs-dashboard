@@ -1,5 +1,5 @@
 import "server-only";
-import { demoUserCounters } from "@database/schema/demo-users";
+import { schema } from "@database/schema/schema.aggregate";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
@@ -30,7 +30,7 @@ export async function incrementDemoUserCounterDal(
 ): Promise<Result<number, AppError>> {
 	try {
 		const [counterRow] = await db
-			.insert(demoUserCounters)
+			.insert(schema.demoUserCounters)
 			.values({ count: 1, role })
 			.returning();
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { users } from "@database/schema/users";
+import { schema } from "@database/schema/schema.aggregate";
 import { count, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/constants/user.constants";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -24,12 +24,12 @@ export async function readUsersPageCountDal(
 	try {
 		// Use Drizzle ORM to count users matching the query
 		const [{ count: total } = { count: 0 }] = await db
-			.select({ count: count(users.id) })
-			.from(users)
+			.select({ count: count(schema.users.id) })
+			.from(schema.users)
 			.where(
 				or(
-					ilike(users.username, `%${query}%`),
-					ilike(users.email, `%${query}%`),
+					ilike(schema.users.username, `%${query}%`),
+					ilike(schema.users.email, `%${query}%`),
 				),
 			);
 

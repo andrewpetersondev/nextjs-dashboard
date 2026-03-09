@@ -1,7 +1,5 @@
 import "server-only";
-
-import { customers } from "@database/schema/customers";
-import { invoices } from "@database/schema/invoices";
+import { schema } from "@database/schema/schema.aggregate";
 import { count, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -22,26 +20,29 @@ export async function fetchInvoicesPagesDal(
 	// Count invoices matching the search query
 	const [{ count: total = 0 } = { count: 0 }] = await db
 		.select({
-			count: count(invoices.id),
+			count: count(schema.invoices.id),
 		})
-		.from(invoices)
-		.innerJoin(customers, eq(invoices.customerId, customers.id))
+		.from(schema.invoices)
+		.innerJoin(
+			schema.customers,
+			eq(schema.invoices.customerId, schema.customers.id),
+		)
 		.where(
 			or(
-				ilike(customers.name, `%${query}%`),
-				ilike(customers.email, `%${query}%`),
+				ilike(schema.customers.name, `%${query}%`),
+				ilike(schema.customers.email, `%${query}%`),
 				ilike(
-					sql<string>`${invoices.amount}
+					sql<string>`${schema.invoices.amount}
                 ::text`,
 					`%${query}%`,
 				),
 				ilike(
-					sql<string>`${invoices.date}
+					sql<string>`${schema.invoices.date}
                 ::text`,
 					`%${query}%`,
 				),
 				ilike(
-					sql<string>`${invoices.status}
+					sql<string>`${schema.invoices.status}
                 ::text`,
 					`%${query}%`,
 				),

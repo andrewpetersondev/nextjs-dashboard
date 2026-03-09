@@ -1,4 +1,4 @@
-import type { invoices } from "@database/schema/invoices";
+import type { schema } from "@database/schema/schema.aggregate";
 import type { UserRole } from "@database/schema/schema.constants";
 import type { Hash } from "@database/schema/schema.types";
 import type { nodeDb } from "../../shared/db/node-db";
@@ -11,7 +11,7 @@ export type Tx = Parameters<Parameters<typeof nodeDb.transaction>[0]>[0];
 /**
  * New invoice insert type from schema.
  */
-export type NewInvoice = typeof invoices.$inferInsert;
+export type NewInvoice = typeof schema.invoices.$inferInsert;
 
 export interface SeedUserInput {
 	readonly email: string;

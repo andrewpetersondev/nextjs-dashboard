@@ -1,6 +1,5 @@
 import "server-only";
-
-import { revenues } from "@database/schema/revenues";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq } from "drizzle-orm";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -29,8 +28,8 @@ export async function deleteRevenueDal(
 	}
 
 	const result = await db
-		.delete(revenues)
-		.where(eq(revenues.id, id))
+		.delete(schema.revenues)
+		.where(eq(schema.revenues.id, id))
 		.returning();
 
 	if (!result) {

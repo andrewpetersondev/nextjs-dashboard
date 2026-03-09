@@ -1,5 +1,6 @@
 import "server-only";
-import { type RevenueRow, revenues } from "@database/schema/revenues";
+import type { RevenueRow } from "@database/schema/revenues";
+import { schema } from "@database/schema/schema.aggregate";
 import { eq } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowToEntity } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";
@@ -33,8 +34,8 @@ export async function findRevenueByPeriodDal(
 
 	const data: RevenueRow | undefined = await db
 		.select()
-		.from(revenues)
-		.where(eq(revenues.period, toPeriod(period)))
+		.from(schema.revenues)
+		.where(eq(schema.revenues.period, toPeriod(period)))
 		.limit(1)
 		.then((rows) => rows[0]);
 

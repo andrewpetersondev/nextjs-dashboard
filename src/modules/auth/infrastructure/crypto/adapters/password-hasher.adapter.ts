@@ -1,7 +1,6 @@
 import "server-only";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { BcryptPasswordService } from "@/modules/auth/infrastructure/crypto/services/bcrypt-password.service";
-
 import type { Hash } from "@/server/crypto/hashing/hashing.value";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { makeUnexpectedError } from "@/shared/core/errors/core/factories/app-error.factory";
