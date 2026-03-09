@@ -108,7 +108,7 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"typecheck": "pnpm typecheck:app && pnpm typecheck:tooling && pnpm typecheck:database && pnpm typecheck:devtools && pnpm typecheck:vitest && pnpm typecheck:cypress",
-		"typecheck:app": "tsc --project tsconfig.json --noEmit",
+		"typecheck:app": "tsc --project tsconfig.app.json --noEmit",
 		"typecheck:cypress": "tsc --project cypress/tsconfig.json --noEmit",
 		"typecheck:database": "tsc --project tsconfig.database.json --noEmit",
 		"typecheck:devtools": "tsc --project devtools/tsconfig.json --noEmit",
