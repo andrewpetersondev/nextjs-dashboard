@@ -133,7 +133,7 @@ describe("Auth Error Propagation Integration", () => {
 				limit: vi.fn().mockResolvedValue([
 					{
 						email: "test@example.com",
-						id: "user-123",
+						id: "12345678-1234-4234-a234-123456789012",
 						password: "hashed_password", // We also need to mock hasher.compare to return true
 						role: "USER",
 						username: "testuser",

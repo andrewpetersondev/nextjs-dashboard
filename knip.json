@@ -1,5 +1,10 @@
 {
 	"$schema": "https://unpkg.com/knip@5/schema.json",
-	"entry": ["src/app/**/*.{ts,tsx}"],
+	"entry": [
+		"src/app/**/*.{ts,tsx}",
+		"src/modules/**/__tests__/**/*.{test,spec}.{ts,tsx}",
+		"devtools/cli/**/*.cli.ts",
+		"cypress.config.ts"
+	],
 	"project": ["src/**", "devtools/**", "cypress/**"]
 }
