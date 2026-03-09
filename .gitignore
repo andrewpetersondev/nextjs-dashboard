@@ -1,18 +1,30 @@
-# Project Root
-.idea/
-.vscode/
-.next/
+# Dependencies
 node_modules/
-storage/
+.pnp
+.pnp.*
+.pnpm-store/
+.yarn/
+
+# Next.js and Build Artifacts
+.next/
+out/
+.out/
+build/
+dist/
+.turbo/
 next-env.d.ts
 *.tsbuildinfo
-
-# Generated JavaScript/source maps kept out of git intentionally
-*.js
-*.map
-*.d.ts
+*.tsbuild
+.swc/
+.cache/
 
 # Testing and Coverage
+coverage/
+.nyc_output/
+.tap/
+.jest/
+.eslintcache
+.stylelintcache
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
@@ -20,41 +32,24 @@ cypress/reports/
 cypress/.html-report/
 cypress/.nyc_output/
 .html-report/
-coverage/
-.swc/
-.nyc_output/
-.tap/
-.jest/
 
 # Secrets and Local Environment
-.vercel/
-password.txt
-postgres-certs/
-secrets/
-.vault-token
-.vault/
-vault/
 .env
 .env.local
 .env.development.local
-.env.production.local
 .env.test.local
+.env.production.local
 .envrc
 .direnv/
+.vercel/
+.vault/
+.vault-token
+vault/
+secrets/
+password.txt
 
-
-# Build Artifacts
-.out/
-build/
-dist/
-.turbo/
-logs/
-.cache/
-.eslintcache
-.stylelintcache
-
-
-# Postgres local data/dumps
+# Databases and Certificates
+# Postgres
 pgdata/
 postgres-data/
 docker/postgres-data/
@@ -63,15 +58,9 @@ dumps/
 backups/
 *.dump
 *.psql
+postgres-certs/
 
-
-# OS / Editor / Misc
-.DS_Store
-Thumbs.db
-.history/
-.fleet/
-
-# Certificates / keys
+# Certificates / Keys
 *.pem
 *.key
 *.crt
@@ -79,17 +68,33 @@ Thumbs.db
 *.p12
 *.der
 
-# Package manager / archives / temp files
-.pnp
-.pnp.*
+# Generated Files
+*.js
+*.map
+*.d.ts
+!next-env.d.ts
+vitest.config.d.ts
+cypress.config.d.ts
+drizzle.config.d.ts
+next.config.d.ts
+
+# OS / Editor / Misc
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+storage/
+.history/
+.fleet/
+.node_repl_history
+
+# Logs and Temp
+logs/
+*.log
 *.tgz
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-*.log
-.node_repl_history
 tmp/
 temp/
-.pnpm-store/
-.yarn/
