@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { invoices } from "@database/schema";
 import { count } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
@@ -15,8 +15,8 @@ export async function fetchTotalInvoicesCountDal(
 ): Promise<number> {
 	try {
 		const [result] = await db
-			.select({ value: count(schema.invoices.id) })
-			.from(schema.invoices);
+			.select({ value: count(invoices.id) })
+			.from(invoices);
 
 		return result?.value ?? 0;
 	} catch (error) {

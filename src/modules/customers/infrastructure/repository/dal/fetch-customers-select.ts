@@ -1,6 +1,5 @@
 import "server-only";
-
-import { schema } from "@database/schema/schema.aggregate";
+import { customers } from "@database/schema";
 import { asc } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerSelectRowRaw } from "@/modules/customers/domain/types";
@@ -18,11 +17,11 @@ export async function fetchCustomersSelectDal(
 	try {
 		return await db
 			.select({
-				id: schema.customers.id,
-				name: schema.customers.name,
+				id: customers.id,
+				name: customers.name,
 			})
-			.from(schema.customers)
-			.orderBy(asc(schema.customers.name));
+			.from(customers)
+			.orderBy(asc(customers.name));
 	} catch (error) {
 		// Use structured logging in production
 		console.error("Database Error:", error);

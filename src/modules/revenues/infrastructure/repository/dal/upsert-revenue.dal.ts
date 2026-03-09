@@ -1,6 +1,5 @@
 import "server-only";
-import type { RevenueRow } from "@database/schema/revenues";
-import { schema } from "@database/schema/schema.aggregate";
+import { type RevenueRow, revenues } from "@database/schema";
 import type {
 	RevenueCreateEntity,
 	RevenueEntity,
@@ -44,7 +43,7 @@ export async function upsertRevenueDal(
 
 	try {
 		const [data] = (await db
-			.insert(schema.revenues)
+			.insert(revenues)
 			.values({
 				...revenueData,
 				createdAt: revenueData.createdAt || now,
@@ -59,7 +58,7 @@ export async function upsertRevenueDal(
 					totalPendingAmount: revenueData.totalPendingAmount,
 					updatedAt: now,
 				},
-				target: schema.revenues.period,
+				target: revenues.period,
 			})
 			.returning()) as RevenueRow[];
 		if (!data) {

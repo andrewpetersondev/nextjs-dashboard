@@ -1,4 +1,4 @@
-import { users } from "@database/schema/users";
+import { users } from "@database/schema";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runAndCaptureRedirectPath } from "@/modules/auth/__tests__/integration/_test-utils_/next-redirect";

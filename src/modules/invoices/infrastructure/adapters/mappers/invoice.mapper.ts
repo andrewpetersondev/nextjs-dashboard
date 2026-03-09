@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { InvoiceRow } from "@database/schema/invoices";
+import type { InvoiceRow } from "@database/schema";
 import { isValid } from "date-fns";
 import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
 import type {

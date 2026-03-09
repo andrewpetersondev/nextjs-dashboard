@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { customers, invoices } from "@database/schema";
 import { desc, eq } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
@@ -19,23 +19,20 @@ export async function fetchLatestInvoicesDal(
 ): Promise<InvoiceListFilter[]> {
 	const data: InvoiceListFilter[] = await db
 		.select({
-			amount: schema.invoices.amount,
-			customerId: schema.invoices.customerId,
-			date: schema.invoices.date,
-			email: schema.customers.email,
-			id: schema.invoices.id,
-			imageUrl: schema.customers.imageUrl,
-			name: schema.customers.name,
-			revenuePeriod: schema.invoices.revenuePeriod,
-			sensitiveData: schema.invoices.sensitiveData,
-			status: schema.invoices.status,
+			amount: invoices.amount,
+			customerId: invoices.customerId,
+			date: invoices.date,
+			email: customers.email,
+			id: invoices.id,
+			imageUrl: customers.imageUrl,
+			name: customers.name,
+			revenuePeriod: invoices.revenuePeriod,
+			sensitiveData: invoices.sensitiveData,
+			status: invoices.status,
 		})
-		.from(schema.invoices)
-		.innerJoin(
-			schema.customers,
-			eq(schema.invoices.customerId, schema.customers.id),
-		)
-		.orderBy(desc(schema.invoices.date))
+		.from(invoices)
+		.innerJoin(customers, eq(invoices.customerId, customers.id))
+		.orderBy(desc(invoices.date))
 		.limit(limit);
 
 	// TODO: Refactor. Empty result does not mean that an error occurred.

@@ -1,6 +1,5 @@
 import "server-only";
-import type { RevenueRow } from "@database/schema/revenues";
-import { schema } from "@database/schema/schema.aggregate";
+import { type RevenueRow, revenues } from "@database/schema";
 import { eq } from "drizzle-orm";
 import type {
 	RevenueEntity,
@@ -39,7 +38,7 @@ export async function updateRevenueDal(
 	const now = new Date();
 
 	const [data] = (await db
-		.update(schema.revenues)
+		.update(revenues)
 		.set({
 			calculationSource: revenue.calculationSource,
 			invoiceCount: revenue.invoiceCount,
@@ -48,7 +47,7 @@ export async function updateRevenueDal(
 			totalPendingAmount: revenue.totalPendingAmount,
 			updatedAt: now,
 		})
-		.where(eq(schema.revenues.id, id))
+		.where(eq(revenues.id, id))
 		.returning()) as RevenueRow[];
 
 	if (!data) {

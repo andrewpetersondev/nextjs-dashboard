@@ -1,6 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
-import type { UserRow } from "@database/schema/users";
+import { type UserRow, users } from "@database/schema";
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
@@ -28,8 +27,8 @@ export async function getUserByEmailDal(
 		async (): Promise<UserRow | null> => {
 			const [userRow] = await db
 				.select()
-				.from(schema.users)
-				.where(eq(schema.users.email, email))
+				.from(users)
+				.where(eq(users.email, email))
 				.limit(1);
 
 			if (!userRow) {

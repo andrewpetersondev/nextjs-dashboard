@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { invoices, revenues } from "@database/schema";
 import type {
 	InvoiceEntity,
 	InvoiceServiceEntity,
@@ -26,13 +26,13 @@ export async function createInvoiceDal(
 		// Upsert the revenue period row so FK doesn't fail.
 		// Only period is required here; other fields use defaults.
 		await tx
-			.insert(schema.revenues)
+			.insert(revenues)
 			.values({ period: toPeriod(input.revenuePeriod) })
-			.onConflictDoNothing({ target: schema.revenues.period });
+			.onConflictDoNothing({ target: revenues.period });
 
 		// Insert the invoice including revenuePeriod.
 		const [createdInvoice] = await tx
-			.insert(schema.invoices)
+			.insert(invoices)
 			.values(input)
 			.returning();
 

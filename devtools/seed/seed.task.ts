@@ -1,5 +1,5 @@
+import type { NewUserRow } from "@database/schema";
 import { schema } from "@database/schema/schema.aggregate";
-import type { NewUserRow } from "@database/schema/users";
 import { nodeDb } from "../shared/db/node-db";
 import { buildRandomInvoiceRows, buildUserSeed } from "./data/seed.builders";
 import { periods } from "./data/seed.periods.data";

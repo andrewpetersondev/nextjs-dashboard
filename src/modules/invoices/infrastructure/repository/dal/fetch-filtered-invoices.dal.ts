@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { customers, invoices } from "@database/schema";
 import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
@@ -24,44 +24,41 @@ export async function fetchFilteredInvoicesDal(
 
 	const data: InvoiceListFilter[] = await db
 		.select({
-			amount: schema.invoices.amount,
-			customerId: schema.invoices.customerId,
-			date: schema.invoices.date,
-			email: schema.customers.email,
-			id: schema.invoices.id,
-			imageUrl: schema.customers.imageUrl,
-			name: schema.customers.name,
-			revenuePeriod: schema.invoices.revenuePeriod,
-			sensitiveData: schema.invoices.sensitiveData,
-			status: schema.invoices.status,
+			amount: invoices.amount,
+			customerId: invoices.customerId,
+			date: invoices.date,
+			email: customers.email,
+			id: invoices.id,
+			imageUrl: customers.imageUrl,
+			name: customers.name,
+			revenuePeriod: invoices.revenuePeriod,
+			sensitiveData: invoices.sensitiveData,
+			status: invoices.status,
 		})
-		.from(schema.invoices)
-		.innerJoin(
-			schema.customers,
-			eq(schema.invoices.customerId, schema.customers.id),
-		)
+		.from(invoices)
+		.innerJoin(customers, eq(invoices.customerId, customers.id))
 		.where(
 			or(
-				ilike(schema.customers.name, `%${query}%`),
-				ilike(schema.customers.email, `%${query}%`),
+				ilike(customers.name, `%${query}%`),
+				ilike(customers.email, `%${query}%`),
 				ilike(
-					sql<string>`${schema.invoices.amount}
+					sql<string>`${invoices.amount}
                 ::text`,
 					`%${query}%`,
 				),
 				ilike(
-					sql<string>`${schema.invoices.date}
+					sql<string>`${invoices.date}
                 ::text`,
 					`%${query}%`,
 				),
 				ilike(
-					sql<string>`${schema.invoices.status}
+					sql<string>`${invoices.status}
                 ::text`,
 					`%${query}%`,
 				),
 			),
 		)
-		.orderBy(desc(schema.invoices.date))
+		.orderBy(desc(invoices.date))
 		.limit(ITEMS_PER_PAGE)
 		.offset(offset);
 

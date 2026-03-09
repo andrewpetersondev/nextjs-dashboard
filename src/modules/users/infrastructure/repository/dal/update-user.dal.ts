@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { users } from "@database/schema";
 import { eq } from "drizzle-orm";
 import type {
 	UpdateUserProps,
@@ -35,9 +35,9 @@ export async function updateUserDal(
 	try {
 		// Always fetch raw DB row, then map to UserEntity for type safety
 		const [userRow] = await db
-			.update(schema.users)
+			.update(users)
 			.set(patch)
-			.where(eq(schema.users.id, id))
+			.where(eq(users.id, id))
 			.returning();
 
 		if (!userRow) {

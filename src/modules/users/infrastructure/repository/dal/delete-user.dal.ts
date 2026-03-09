@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { users } from "@database/schema";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
@@ -26,8 +26,8 @@ export async function deleteUserDal(
 	try {
 		// Fetch raw DB row, not UserEntity
 		const [deletedRow] = await db
-			.delete(schema.users)
-			.where(eq(schema.users.id, userId))
+			.delete(users)
+			.where(eq(users.id, userId))
 			.returning();
 
 		if (!deletedRow) {

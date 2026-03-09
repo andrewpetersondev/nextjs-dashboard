@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database/schema/schema.aggregate";
+import { invoices } from "@database/schema";
 import { eq } from "drizzle-orm";
 import type { InvoiceEntity } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
@@ -30,8 +30,8 @@ export async function deleteInvoiceDal(
 
 	// db operations
 	const [deletedInvoice] = await db
-		.delete(schema.invoices)
-		.where(eq(schema.invoices.id, id))
+		.delete(invoices)
+		.where(eq(invoices.id, id))
 		.returning();
 
 	// Check if deletion was successful. Throw error. Propagates up to  Actions layer.

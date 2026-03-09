@@ -1,6 +1,5 @@
 import "server-only";
-
-import { schema } from "@database/schema/schema.aggregate";
+import { customers, invoices } from "@database/schema";
 import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerAggregatesRowRaw } from "@/modules/customers/domain/types";
@@ -19,45 +18,42 @@ export async function fetchFilteredCustomersDal(
 	try {
 		return await db
 			.select({
-				email: schema.customers.email,
-				id: schema.customers.id,
-				imageUrl: schema.customers.imageUrl,
-				name: schema.customers.name,
-				totalInvoices: count(schema.invoices.id),
+				email: customers.email,
+				id: customers.id,
+				imageUrl: customers.imageUrl,
+				name: customers.name,
+				totalInvoices: count(invoices.id),
 				totalPaid: sql<number | null>`sum(
-            ${schema.invoices.amount}
+            ${invoices.amount}
             )
             FILTER
             (
             WHERE
-            ${schema.invoices.status}
+            ${invoices.status}
             =
             'paid'
             )`,
 				totalPending: sql<number | null>`sum(
-            ${schema.invoices.amount}
+            ${invoices.amount}
             )
             FILTER
             (
             WHERE
-            ${schema.invoices.status}
+            ${invoices.status}
             =
             'pending'
             )`,
 			})
-			.from(schema.customers)
-			.leftJoin(
-				schema.invoices,
-				eq(schema.customers.id, schema.invoices.customerId),
-			)
+			.from(customers)
+			.leftJoin(invoices, eq(customers.id, invoices.customerId))
 			.where(
 				or(
-					ilike(schema.customers.name, `%${query}%`),
-					ilike(schema.customers.email, `%${query}%`),
+					ilike(customers.name, `%${query}%`),
+					ilike(customers.email, `%${query}%`),
 				),
 			)
-			.groupBy(schema.customers.id)
-			.orderBy(asc(schema.customers.name));
+			.groupBy(customers.id)
+			.orderBy(asc(customers.name));
 	} catch (error) {
 		// Use structured logging in production
 		console.error("Fetch Filtered Customers Error:", error);
