@@ -4,7 +4,7 @@ import {
 	invoices,
 	revenues,
 	users,
-} from "@database/schema";
+} from "@database";
 import { sql } from "drizzle-orm";
 import { nodeDb } from "../shared/db/node-db";
 import { firstRow } from "../shared/db/pg-result.utils";

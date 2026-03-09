@@ -1,4 +1,4 @@
-import { customers, demoUserCounters, revenues } from "@database/schema";
+import { customers, demoUserCounters, revenues } from "@database";
 import { sql } from "drizzle-orm";
 import { SEED_CONFIG } from "./data/seed.constants";
 import { customersData } from "./data/seed.customers";

@@ -1,5 +1,5 @@
 import "server-only";
-import { users } from "@database/schema";
+import { users } from "@database";
 import { eq } from "drizzle-orm";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";

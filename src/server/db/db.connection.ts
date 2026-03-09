@@ -1,36 +1,11 @@
-/**
- * Database connection (server-only).
- *
- * Purpose:
- * - Exposes a singleton Drizzle ORM instance typed with the application schema.
- * - Centralizes connection creation and config (naming/casing).
- *
- * Usage:
- * - Import getAppDb() in server code (actions, services, repositories).
- * - Do not import from client components.
- *
- * Environment:
- * - DATABASE_URL is resolved via the server env module.
- *
- * Notes:
- * - Connection is memoized to avoid multiple pool/clients in a single runtime.
- * - Uses snake_case casing to match table/column names.
- *
- * Shared application database connection factory using Drizzle ORM.
- *
- * Notes:
- * - Prefer this module in runtime code. Do not import dev-/test-database helpers.
- * - The database URL is resolved centrally in config/environment.ts.
- */
-
 import "server-only";
+import type { schema as appSchema } from "@database";
 import {
 	drizzle,
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 import { DATABASE_URL } from "@/shared/core/config/server/env-server";
-import type { schema as appSchema } from "../../../database/schema/schema.aggregate";
 
 let appDbSingleton: AppDatabase | null = null;
 

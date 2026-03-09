@@ -1,6 +1,4 @@
-import type { invoices } from "@database/schema";
-import type { UserRole } from "@database/schema/schema.constants";
-import type { Hash } from "@database/schema/schema.types";
+import type { Hash, invoices, UserRole } from "@database";
 import type { nodeDb } from "../../shared/db/node-db";
 
 /**

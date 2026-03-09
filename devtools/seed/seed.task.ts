@@ -1,4 +1,4 @@
-import { invoices, type NewUserRow, users } from "@database/schema";
+import { invoices, type NewUserRow, users } from "@database";
 import { nodeDb } from "../shared/db/node-db";
 import { buildRandomInvoiceRows, buildUserSeed } from "./data/seed.builders";
 import { periods } from "./data/seed.periods.data";

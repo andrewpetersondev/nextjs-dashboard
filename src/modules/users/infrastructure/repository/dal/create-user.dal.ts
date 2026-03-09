@@ -1,5 +1,5 @@
 import "server-only";
-import { type NewUserRow, users } from "@database/schema";
+import { type NewUserRow, users } from "@database";
 import type {
 	CreateUserProps,
 	UserEntity,

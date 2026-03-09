@@ -1,4 +1,4 @@
-import type { CustomerRow } from "@database/schema";
+import type { CustomerRow } from "@database";
 import type { CustomerId } from "@/modules/customers/domain/types/customer-id.brand";
 
 /**

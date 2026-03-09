@@ -1,5 +1,5 @@
 import "server-only";
-import { invoices, revenues } from "@database/schema";
+import { invoices, revenues } from "@database";
 import type {
 	InvoiceEntity,
 	InvoiceServiceEntity,

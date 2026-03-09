@@ -1,5 +1,5 @@
 import "server-only";
-import { invoices } from "@database/schema";
+import { invoices } from "@database";
 import { eq } from "drizzle-orm";
 import type {
 	InvoiceEntity,

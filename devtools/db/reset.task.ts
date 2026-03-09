@@ -1,4 +1,4 @@
-import { schema } from "@database/schema/schema.aggregate";
+import { schema } from "@database";
 import { reset } from "drizzle-seed";
 import { nodeDb } from "../shared/db/node-db";
 
