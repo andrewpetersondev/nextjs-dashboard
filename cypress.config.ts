@@ -60,7 +60,7 @@ export default defineConfig({
 					email: string;
 					password: Hash;
 					username: string;
-					role?: UserRole;
+					role: UserRole;
 				}) {
 					const { createUserTask } = await import("@devtools");
 					await createUserTask(user);
@@ -81,8 +81,8 @@ export default defineConfig({
 				async "db:setup"(user: {
 					email: string;
 					password: string;
-					username?: string;
-					role?: UserRole;
+					username: string;
+					role: UserRole;
 				}) {
 					const { upsertE2eUserTask } = await import("@devtools");
 					await upsertE2eUserTask(user);

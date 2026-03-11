@@ -1,24 +1,33 @@
-import { type Hash, USER_ROLE, type UserRole, users } from "@database";
+import { type UserRole, users } from "@database";
 import { nodeDb } from "@devtools/shared/db/node-db";
+import {
+	normalizeUserEmail,
+	normalizeUsername,
+	normalizeUserPassword,
+} from "@devtools/shared/user-input.mapper";
 import { hashPassword } from "@devtools/users/hash-password";
 
 export async function createUserTask(user: {
 	email: string;
-	password: Hash;
+	password: string;
+	role: UserRole;
 	username: string;
-	role?: UserRole;
 }): Promise<void> {
 	if (!user) {
 		throw new Error("createUser requires a user object");
 	}
-	const email = user.email?.trim().toLowerCase();
-	const username = user.username?.trim();
-	const role = user.role ?? USER_ROLE;
-	if (!(email && user.password && username)) {
-		throw new Error("createUser requires email, password, and username");
-	}
 
-	const password = await hashPassword(user.password);
+	const email = normalizeUserEmail(user.email);
+	const password = normalizeUserPassword(user.password);
+	const role = user.role;
+	const username = normalizeUsername(user.username);
 
-	await nodeDb.insert(users).values({ email, password, role, username });
+	const hashedPassword = await hashPassword(password);
+
+	await nodeDb.insert(users).values({
+		email,
+		password: hashedPassword,
+		role,
+		username,
+	});
 }

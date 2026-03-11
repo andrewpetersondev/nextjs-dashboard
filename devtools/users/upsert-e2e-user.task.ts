@@ -1,5 +1,11 @@
-import { USER_ROLE, type UserRole, users } from "@database";
+import { type UserRole, users } from "@database";
 import { nodeDb } from "@devtools/shared/db/node-db";
+import {
+	normalizeUserEmail,
+	normalizeUserPassword,
+	toUsernameFromEmail,
+	validateRequiredUserTaskInput,
+} from "@devtools/shared/user-input.mapper";
 import { hashPassword } from "@devtools/users/hash-password";
 import { eq } from "drizzle-orm";
 
@@ -7,28 +13,20 @@ import { eq } from "drizzle-orm";
 export async function upsertE2eUserTask(user: {
 	email: string;
 	password: string;
-	role?: UserRole;
+	role: UserRole;
 }): Promise<void> {
 	if (!user) {
 		throw new Error("upsertE2EUser requires user object");
 	}
 
-	if (!(user.email && user.password)) {
-		throw new Error("upsertE2EUser requires email and password");
-	}
+	validateRequiredUserTaskInput(user);
 
-	const normalizedEmail = user.email.trim().toLowerCase();
+	const normalizedEmail = normalizeUserEmail(user.email);
+	const normalizedPassword = normalizeUserPassword(user.password);
+	const username = toUsernameFromEmail(normalizedEmail);
+	const role = user.role;
 
-	const atIndex = normalizedEmail.indexOf("@");
-
-	const baseName =
-		atIndex >= 0 ? normalizedEmail.slice(0, atIndex) : normalizedEmail;
-
-	const username = baseName.replace(/[^a-zA-Z0-9_]/g, "_");
-
-	const role = user.role ?? USER_ROLE;
-
-	const hashed = await hashPassword(user.password);
+	const hashed = await hashPassword(normalizedPassword);
 
 	await nodeDb.transaction(async (tx) => {
 		const existing = await tx

@@ -10,13 +10,6 @@ import {
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
 
-console.log("node-db.ts ...");
-
-// Ensure env is loaded by the process/runner before this import
-// const { DATABASE_URL } = await import("../config/env-cli.js");
-
-console.log("Using DATABASE_URL:", DATABASE_URL);
-
 let dbSingleton:
 	| (NodePgDatabase & { readonly $client: NodePgClient })
 	| undefined;

@@ -14,6 +14,11 @@ export {
 	GUEST_ROLE,
 	USER_ROLE,
 } from "@database/schema/schema.constants";
-export type { Hash, Period } from "@database/schema/schema.types";
+export type {
+	CustomerId,
+	Hash,
+	Period,
+	UserId,
+} from "@database/schema/schema.types";
 export type { NewUserRow, UserRow } from "@database/schema/users";
 export { users } from "@database/schema/users";

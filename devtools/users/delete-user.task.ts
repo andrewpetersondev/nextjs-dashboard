@@ -1,8 +1,10 @@
 import { users } from "@database";
 import { nodeDb } from "@devtools/shared/db/node-db";
+import { normalizeUserEmail } from "@devtools/shared/user-input.mapper";
 import { eq } from "drizzle-orm";
 
 export async function deleteUserTask(email: string): Promise<void> {
-	console.log("deleteUser", email);
-	await nodeDb.delete(users).where(eq(users.email, email));
+	const normalizedEmail = normalizeUserEmail(email);
+
+	await nodeDb.delete(users).where(eq(users.email, normalizedEmail));
 }

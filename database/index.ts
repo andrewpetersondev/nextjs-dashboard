@@ -1,11 +1,13 @@
 /** biome-ignore-all lint/performance/noBarrelFile: standardizing exports from database */
 export type {
+	CustomerId,
 	CustomerRow,
 	Hash,
 	InvoiceRow,
 	NewUserRow,
 	Period,
 	RevenueRow,
+	UserId,
 	UserRole,
 	UserRow,
 } from "@database/schema";

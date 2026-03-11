@@ -13,7 +13,7 @@
 			"@devtools/*": ["./devtools/*"]
 		}
 	},
-	"exclude": ["node_modules", "out", "dist"],
+	"exclude": ["cypress", "cypress.config.ts", "node_modules", "out", "dist"],
 	"extends": [
 		"@tsconfig/bases/recommended",
 		"@tsconfig/bases/strictest",

@@ -6,8 +6,8 @@ import type {
 } from "@devtools/seed/data/seed.types";
 import { seedUserInputs } from "@devtools/seed/data/seed.users";
 import { buildInvoiceDateForPeriod } from "@devtools/seed/seed-periods";
+import { toCustomerId } from "@devtools/shared/id.mapper";
 import { hashPassword } from "@devtools/users/hash-password";
-import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers"; // TODO: REMOVE CODE FROM SRC
 
 function generateInvoiceAmount(): number {
 	const r = Math.random();
