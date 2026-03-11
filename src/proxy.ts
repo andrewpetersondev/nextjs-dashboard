@@ -7,14 +7,15 @@ import { authorizeRequestHelper } from "@/modules/auth/application/shared/helper
 import { sessionTokenServiceFactory } from "@/modules/auth/infrastructure/composition/factories/session/session-token-service.factory";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
 import {
-	isAdminRoute as isAdminRouteHelper,
-	isProtectedRoute as isProtectedRouteHelper,
-	isPublicRoute as isPublicRouteHelper,
+	isAdminRoute,
+	isProtectedRoute,
+	isPublicRoute,
 	normalizePath,
 	ROUTES,
 } from "@/shared/routing/routes";
 import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
 export default async function proxy(req: NextRequest): Promise<NextResponse> {
 	/**
 	 * Unique identifier for the current request.
@@ -43,12 +44,12 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
 	const path = normalizePath(req.nextUrl.pathname);
 
 	// Option B: Compute mutually exclusive flags
-	const isAdminRoute = isAdminRouteHelper(path);
-	const isProtectedRoute = !isAdminRoute && isProtectedRouteHelper(path);
-	const isPublicRoute =
-		!(isAdminRoute || isProtectedRoute) && isPublicRouteHelper(path);
+	const isAdminRouteFlag = isAdminRoute(path);
+	const isProtectedRouteFlag = !isAdminRouteFlag && isProtectedRoute(path);
+	const isPublicRouteFlag =
+		!(isAdminRouteFlag || isProtectedRouteFlag) && isPublicRoute(path);
 
-	if (!(isProtectedRoute || isAdminRoute || isPublicRoute)) {
+	if (!(isProtectedRouteFlag || isAdminRouteFlag || isPublicRouteFlag)) {
 		return NextResponse.next();
 	}
 
@@ -56,7 +57,13 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
 	const sessionTokenService = sessionTokenServiceFactory(logger);
 
 	const outcome = await authorizeRequestHelper(
-		{ cookie, isAdminRoute, isProtectedRoute, isPublicRoute, path },
+		{
+			cookie,
+			isAdminRoute: isAdminRouteFlag,
+			isProtectedRoute: isProtectedRouteFlag,
+			isPublicRoute: isPublicRouteFlag,
+			path,
+		},
 		{
 			routes: {
 				dashboardRoot: ROUTES.dashboard.root,
