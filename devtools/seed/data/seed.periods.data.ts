@@ -1,6 +1,9 @@
-import type { Period } from "@/shared/primitives/period/period.brand";
-import { generateMonthlyPeriods, toPeriodDate } from "../seed-periods";
-import { SEED_CONFIG } from "./seed.constants";
+import type { Period } from "@database";
+import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
+import {
+	generateMonthlyPeriods,
+	toPeriodDate,
+} from "@devtools/seed/seed-periods";
 
 /**
  * Generated seed periods and corresponding Date values.

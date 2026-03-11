@@ -1,5 +1,5 @@
-import { resetDatabase } from "../db/reset.task";
-import { runCli } from "./run-cli";
+import { runCli } from "@devtools/cli/run-cli";
+import { resetDatabase } from "@devtools/db/reset.task";
 
 console.log("reset-cli.ts ...");
 

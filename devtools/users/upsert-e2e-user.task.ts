@@ -1,11 +1,7 @@
-import { users } from "@database";
+import { USER_ROLE, type UserRole, users } from "@database";
+import { nodeDb } from "@devtools/shared/db/node-db";
+import { hashPassword } from "@devtools/users/hash-password";
 import { eq } from "drizzle-orm";
-import {
-	USER_ROLE,
-	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
-import { nodeDb } from "../shared/db/node-db";
-import { hashPassword } from "./hash-password";
 
 /** Upsert an E2E user and invalidate existing sessions. */
 export async function upsertE2eUserTask(user: {

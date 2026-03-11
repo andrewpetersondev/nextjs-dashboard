@@ -5,9 +5,9 @@ import {
 	revenues,
 	users,
 } from "@database";
+import { nodeDb } from "@devtools/shared/db/node-db";
+import { firstRow } from "@devtools/shared/db/pg-result.utils";
 import { sql } from "drizzle-orm";
-import { nodeDb } from "../shared/db/node-db";
-import { firstRow } from "../shared/db/pg-result.utils";
 
 /**
  * Check if all relevant tables are empty.

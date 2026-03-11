@@ -1,5 +1,5 @@
-import type { Period } from "@/shared/primitives/period/period.brand";
-import { SEED_CONFIG } from "./data/seed.constants";
+import type { Period } from "@database";
+import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
 
 /**
  * Validates that a period string represents the first day of a month.

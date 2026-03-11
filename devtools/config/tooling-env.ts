@@ -1,5 +1,5 @@
 import process from "node:process";
-import { ToolingEnvShape } from "./tooling-env.schema";
+import { ToolingEnvShape } from "@devtools/config/tooling-env.schema";
 
 // Build a normalized object from process.env (use UPPER_SNAKE names)
 const envToValidate = {

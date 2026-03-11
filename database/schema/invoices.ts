@@ -1,3 +1,14 @@
+import { customers } from "@database/schema/customers";
+import { revenues } from "@database/schema/revenues";
+import {
+	INVOICE_STATUSES,
+	type InvoiceStatus,
+} from "@database/schema/schema.constants";
+import type {
+	CustomerId,
+	InvoiceId,
+	Period,
+} from "@database/schema/schema.types";
 import { sql } from "drizzle-orm";
 import {
 	bigint,
@@ -9,15 +20,9 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { customers } from "./customers";
-import { revenues } from "./revenues";
-import { INVOICE_STATUSES, type InvoiceStatus } from "./schema.constants";
-import type { CustomerId, InvoiceId, Period } from "./schema.types";
 
-// biome-ignore lint/nursery/useExplicitType: fix
 const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
-// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const invoices = pgTable(
 	"invoices",
 	{

@@ -345,7 +345,11 @@
 							"options": {
 								"patterns": [
 									{
-										"group": ["@database/schema", "@/server/db/**"],
+										"group": [
+											"@database",
+											"@database/schema",
+											"@/server/db/**"
+										],
 										"message": "Client/UI code must not import DB schema files. Use types safe for client viewing."
 									}
 								]

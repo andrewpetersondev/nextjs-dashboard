@@ -9,6 +9,7 @@
 			"@cypress/*": ["./cypress/*"],
 			"@database": ["./database/index.ts"],
 			"@database/*": ["./database/*"],
+			"@devtools": ["./devtools/index.ts"],
 			"@devtools/*": ["./devtools/*"]
 		}
 	},

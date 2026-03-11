@@ -1,9 +1,13 @@
-import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers";
-import { hashPassword } from "../../users/hash-password";
-import { buildInvoiceDateForPeriod } from "../seed-periods";
-import { SEED_CONFIG } from "./seed.constants";
-import type { NewInvoice, SeedCustomerIdRow, SeedUserRow } from "./seed.types";
-import { seedUserInputs } from "./seed.users";
+import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
+import type {
+	NewInvoice,
+	SeedCustomerIdRow,
+	SeedUserRow,
+} from "@devtools/seed/data/seed.types";
+import { seedUserInputs } from "@devtools/seed/data/seed.users";
+import { buildInvoiceDateForPeriod } from "@devtools/seed/seed-periods";
+import { hashPassword } from "@devtools/users/hash-password";
+import { toCustomerId } from "@/modules/customers/domain/customer-id.mappers"; // TODO: REMOVE CODE FROM SRC
 
 function generateInvoiceAmount(): number {
 	const r = Math.random();

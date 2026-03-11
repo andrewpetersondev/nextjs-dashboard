@@ -1,5 +1,5 @@
 import type { Hash, invoices, UserRole } from "@database";
-import type { nodeDb } from "../../shared/db/node-db";
+import type { nodeDb } from "@devtools/shared/db/node-db";
 
 /**
  * Transaction type derived from the db.transaction callback.

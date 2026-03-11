@@ -7,18 +7,16 @@
  * - Indexes are added for common joins/filters.
  */
 
-import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import {
 	DEFAULT_USER_ROLE,
 	USER_ROLES,
 	type UserRole,
-} from "./schema.constants";
-import type { Hash, UserId } from "./schema.types";
+} from "@database/schema/schema.constants";
+import type { Hash, UserId } from "@database/schema/schema.types";
+import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-// biome-ignore lint/nursery/useExplicitType: not easy to fix
 export const userRolePgEnum = pgEnum("role", USER_ROLES);
 
-// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const users = pgTable("users", {
 	email: varchar("email", { length: 255 }).notNull().unique(),
 	emailVerified: timestamp("email_verified", { mode: "date" }),

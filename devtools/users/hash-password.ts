@@ -1,6 +1,6 @@
+import type { Hash } from "@database";
+import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
 import bcryptjs from "bcryptjs";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
-import { SEED_CONFIG } from "../seed/data/seed.constants";
 
 /**
  * Pure mapping to brand a trusted hash string.

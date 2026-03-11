@@ -3,12 +3,12 @@
  * @description Singleton database connection for Node.js. Attempts to consolidate all database connections in one place.
  */
 
+import { DATABASE_URL } from "@devtools/config/tooling-env";
 import {
 	drizzle,
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "../../config/tooling-env";
 
 console.log("node-db.ts ...");
 

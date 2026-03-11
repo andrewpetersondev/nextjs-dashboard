@@ -1,0 +1,22 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+	"extends": "//",
+	"files": {
+		"ignoreUnknown": true,
+		"includes": ["**", "!**/*.js", "!**/*.jsx"]
+	},
+	"linter": {
+		"rules": {
+			"complexity": {
+				"noVoid": "off"
+			},
+			"correctness": {
+				"noNodejsModules": "off"
+			},
+			"nursery": {
+				"useExplicitType": "off"
+			}
+		}
+	},
+	"root": false
+}

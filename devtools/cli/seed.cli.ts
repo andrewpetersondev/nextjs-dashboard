@@ -1,5 +1,5 @@
-import { databaseSeed } from "../seed/seed.task";
-import { runCli } from "./run-cli";
+import { runCli } from "@devtools/cli/run-cli";
+import { databaseSeed } from "@devtools/seed/seed.task";
 
 console.log("seed-cli.ts ...");
 

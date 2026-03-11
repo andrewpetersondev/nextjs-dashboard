@@ -1,4 +1,4 @@
-import type { SeedCustomer } from "./seed.types";
+import type { SeedCustomer } from "@devtools/seed/data/seed.types";
 
 /**
  * Demo customers data used during seeding.

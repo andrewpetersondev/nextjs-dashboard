@@ -1,6 +1,6 @@
 import { users } from "@database";
+import { nodeDb } from "@devtools/shared/db/node-db";
 import { eq } from "drizzle-orm";
-import { nodeDb } from "../shared/db/node-db";
 
 export async function deleteUserTask(email: string): Promise<void> {
 	console.log("deleteUser", email);

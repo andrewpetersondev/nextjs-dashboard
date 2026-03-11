@@ -1,8 +1,8 @@
-import { customers } from "./customers";
-import { demoUserCounters } from "./demo-users";
-import { invoices } from "./invoices";
-import { revenues } from "./revenues";
-import { users } from "./users";
+import { customers } from "@database/schema/customers";
+import { demoUserCounters } from "@database/schema/demo-users";
+import { invoices } from "@database/schema/invoices";
+import { revenues } from "@database/schema/revenues";
+import { users } from "@database/schema/users";
 
 /**
  * Combined schema object for drizzle() initialization.

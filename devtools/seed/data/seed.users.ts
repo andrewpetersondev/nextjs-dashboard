@@ -1,10 +1,5 @@
-import {
-	ADMIN_ROLE,
-	GUEST_ROLE,
-	USER_ROLE,
-	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
-import type { SeedUserInput } from "./seed.types";
+import { ADMIN_ROLE, GUEST_ROLE, USER_ROLE, type UserRole } from "@database";
+import type { SeedUserInput } from "@devtools/seed/data/seed.types";
 
 /**
  * Seed roles used for demo users.

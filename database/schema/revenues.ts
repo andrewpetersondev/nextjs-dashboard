@@ -1,3 +1,8 @@
+import {
+	REVENUE_SOURCES,
+	type RevenueSource,
+} from "@database/schema/schema.constants";
+import type { Period, RevenueId } from "@database/schema/schema.types";
 import { sql } from "drizzle-orm";
 import {
 	bigint,
@@ -9,13 +14,9 @@ import {
 	timestamp,
 	uuid,
 } from "drizzle-orm/pg-core";
-import { REVENUE_SOURCES, type RevenueSource } from "./schema.constants";
-import type { Period, RevenueId } from "./schema.types";
 
-// biome-ignore lint/nursery/useExplicitType: fix
 const calculationSourceEnum = pgEnum("calculation_source", REVENUE_SOURCES);
 
-// biome-ignore lint/nursery/useExplicitType: Drizzle schema tables rely on inference for precise column types.
 export const revenues = pgTable(
 	"revenues",
 	{

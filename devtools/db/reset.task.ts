@@ -1,6 +1,6 @@
 import { schema } from "@database";
+import { nodeDb } from "@devtools/shared/db/node-db";
 import { reset } from "drizzle-seed";
-import { nodeDb } from "../shared/db/node-db";
 
 console.log("reset-db.ts ...");
 
