@@ -2,6 +2,7 @@ import { COMMON_SEL, INVOICES_SEL } from "@cypress/e2e/shared/selectors";
 
 const error = /invalid|must be/i;
 
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix this
 describe("Update Invoice", () => {
 	// You can replace this with your actual data factory or task
 	// Prefer fast, deterministic seeds via cy.task to keep tests stable.

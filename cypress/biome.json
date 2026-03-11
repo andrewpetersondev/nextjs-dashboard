@@ -5,17 +5,13 @@
 		"ignoreUnknown": true,
 		"includes": ["../cypress.config.ts", "**", "!**/*.js", "!**/*.jsx"]
 	},
-	"formatter": {
-		"enabled": true
-	},
 	"javascript": {
 		"globals": ["cy", "Cypress"]
 	},
 	"linter": {
-		"enabled": true,
 		"rules": {
 			"complexity": {
-				"noExcessiveLinesPerFunction": "off"
+				"noExcessiveLinesPerFunction": "info"
 			},
 			"nursery": {
 				"useExplicitType": "off"
@@ -27,7 +23,9 @@
 			"includes": ["support/commands.ts"],
 			"linter": {
 				"rules": {
-					"style": "off"
+					"style": {
+						"noNamespace": "off"
+					}
 				}
 			}
 		}
