@@ -72,7 +72,6 @@ postgres-certs/
 *.js
 *.map
 *.d.ts
-!next-env.d.ts
 vitest.config.d.ts
 cypress.config.d.ts
 drizzle.config.d.ts

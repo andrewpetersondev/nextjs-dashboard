@@ -19,11 +19,6 @@
 		"plugins": [{ "name": "next" }],
 		"sourceMap": false
 	},
-	"exclude": [
-		"./src/**/__tests__/**/*",
-		"./src/**/*.test.ts",
-		"./src/**/*.spec.ts"
-	],
 	"extends": ["@tsconfig/next/tsconfig.json", "./tsconfig.base.json"],
 	"include": [
 		"./next-env.d.ts",
@@ -32,7 +27,8 @@
 		"./src/**/*.ts",
 		"./src/**/*.tsx",
 		"./src/**/*.mts",
-		"./src/**/*.cts"
+		"./src/**/*.cts",
+		"next.config.ts"
 	],
 	"references": [{ "path": "./tsconfig.database.json" }]
 }

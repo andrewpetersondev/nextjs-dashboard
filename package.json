@@ -116,7 +116,6 @@
 		"typecheck:cypress": "tsc --project cypress/tsconfig.json --noEmit",
 		"typecheck:database": "tsc --project tsconfig.database.json --noEmit",
 		"typecheck:devtools": "tsc --project devtools/tsconfig.json --noEmit",
-		"typecheck:tooling": "tsc --project tsconfig.root-tools.json --noEmit",
 		"typecheck:vitest": "tsc --project tsconfig.vitest.json --noEmit"
 	},
 	"type": "module",

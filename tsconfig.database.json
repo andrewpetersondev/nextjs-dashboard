@@ -1,9 +1,6 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
-		"composite": true,
-		"declaration": true,
-		"emitDeclarationOnly": true,
 		"noEmit": false
 	},
 	"extends": ["./tsconfig.node.json"],

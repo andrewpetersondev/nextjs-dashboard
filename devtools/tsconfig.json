@@ -3,8 +3,6 @@
 	"compilerOptions": {
 		"baseUrl": "..",
 		"composite": true,
-		"declaration": true,
-		"emitDeclarationOnly": true,
 		"lib": ["esnext"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
@@ -13,7 +11,13 @@
 	},
 	"exclude": ["./**/*.test.ts", "./**/*.spec.ts"],
 	"extends": ["../tsconfig.base.json"],
-	"include": ["./**/*.ts", "./**/*.tsx", "./**/*.mts", "./**/*.cts"],
+	"include": [
+		"./**/*.ts",
+		"./**/*.tsx",
+		"./**/*.mts",
+		"./**/*.cts",
+		"../drizzle.config.ts"
+	],
 	"references": [
 		{ "path": "../tsconfig.database.json" },
 		{ "path": "../tsconfig.app.json" }

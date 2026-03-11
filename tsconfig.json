@@ -6,7 +6,6 @@
 		{ "path": "./devtools" },
 		{ "path": "./tsconfig.app.json" },
 		{ "path": "./tsconfig.database.json" },
-		{ "path": "./tsconfig.root-tools.json" },
 		{ "path": "./tsconfig.vitest.json" }
 	]
 }

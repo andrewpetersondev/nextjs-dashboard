@@ -6,7 +6,7 @@
 		"lib": ["dom", "esnext"],
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": ["@tsconfig/cypress/tsconfig.json", "../tsconfig.test.json"],
+	"extends": ["@tsconfig/cypress/tsconfig.json", "../tsconfig.app.json"],
 	"include": [
 		"../cypress.config.ts",
 		"./**/*.ts",

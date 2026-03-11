@@ -4,12 +4,10 @@
 		"composite": true,
 		"types": ["vitest/globals", "node"]
 	},
-	"extends": ["./tsconfig.test.json"],
+	"extends": ["./tsconfig.app.json"],
 	"include": [
 		"./vitest.config.ts",
 		"./vitest.setup.ts",
-		"./src/**/__tests__/**/*",
-		"./src/**/__tests__/**/*.ts",
 		"./src/**/*.test.ts",
 		"./src/**/*.spec.ts"
 	],
