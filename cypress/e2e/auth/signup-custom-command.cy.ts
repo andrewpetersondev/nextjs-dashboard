@@ -1,8 +1,8 @@
-import { DASHBOARD_PATH, LOGIN_PATH } from "../shared/paths";
-import { UI_MATCHERS_REGEX } from "../shared/regex";
-import { AUTH_SEL } from "../shared/selectors";
-import { DEFAULT_TIMEOUT } from "../shared/times";
-import { createTestUser } from "../shared/users";
+import { DASHBOARD_PATH, LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
+import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { DEFAULT_TIMEOUT } from "@cypress/e2e/shared/times";
+import { createTestUser } from "@cypress/e2e/shared/users";
 
 describe("Signup → Sign out → Login flow", () => {
 	const user = createTestUser();

@@ -1,5 +1,5 @@
-import { TEN_SECONDS } from "../shared/times";
-import { DEMO_USER } from "../shared/users";
+import { TEN_SECONDS } from "@cypress/e2e/shared/times";
+import { DEMO_USER } from "@cypress/e2e/shared/users";
 
 describe("Signup custom command via Auth Form", () => {
 	const { username, email, password } = DEMO_USER;

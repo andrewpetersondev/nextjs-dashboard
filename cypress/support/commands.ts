@@ -1,10 +1,14 @@
 /// <reference types="cypress" />
 
-import type { LoginCreds, SignupCreds } from "../e2e/shared/auth-forms";
-import { DASHBOARD_PATH, LOGIN_PATH, SIGNUP_PATH } from "../e2e/shared/paths";
-import { UI_MATCHERS_REGEX } from "../e2e/shared/regex";
-import { AUTH_SEL } from "../e2e/shared/selectors";
-import { TWENTY_SECONDS } from "../e2e/shared/times";
+import type { LoginCreds, SignupCreds } from "@cypress/e2e/shared/auth-forms";
+import {
+	DASHBOARD_PATH,
+	LOGIN_PATH,
+	SIGNUP_PATH,
+} from "@cypress/e2e/shared/paths";
+import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
+import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { TWENTY_SECONDS } from "@cypress/e2e/shared/times";
 
 declare global {
 	namespace Cypress {

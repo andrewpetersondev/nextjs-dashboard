@@ -1,7 +1,7 @@
-import { LOGIN_PATH } from "../shared/paths";
-import { LOGIN_REGEX } from "../shared/regex";
-import { AUTH_SEL } from "../shared/selectors";
-import { DEFAULT_TIMEOUT } from "../shared/times";
+import { LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import { LOGIN_REGEX } from "@cypress/e2e/shared/regex";
+import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { DEFAULT_TIMEOUT } from "@cypress/e2e/shared/times";
 
 describe("Login Form (E2E) - useId integration", () => {
 	beforeEach(() => {

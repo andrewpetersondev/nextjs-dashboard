@@ -1,8 +1,8 @@
 import { defineConfig } from "cypress";
 // biome-ignore lint/performance/noNamespaceImport: this is expected in node
 import * as dotenv from "dotenv";
-import type { Hash } from "./src/server/crypto/hashing/hashing.value";
-import type { UserRole } from "./src/shared/policies/user-role/user-role.constants";
+import type { UserRole } from "./database/schema/schema.constants";
+import type { Hash } from "./database/schema/schema.types";
 
 export default defineConfig({
 	e2e: {
@@ -17,6 +17,7 @@ export default defineConfig({
 			// Ensure .env.test.local is loaded before reading env
 			dotenv.config({ path: ".env.test.local" });
 
+			// TODO: How do I configure the barrel file in devtools?
 			const env = await import("@devtools/config/tooling-env");
 
 			// Set Cypress config values from env. baseUrl is a fallback and overridden by the value in .env.test.local
@@ -51,9 +52,7 @@ export default defineConfig({
 			// Database setup/teardown tasks
 			on("task", {
 				async "db:cleanup"() {
-					const { cleanupE2eUsersTask } = await import(
-						"@devtools/users/cleanup-e2e-users.task"
-					);
+					const { cleanupE2eUsersTask } = await import("@devtools");
 					await cleanupE2eUsersTask();
 					return null;
 				},
@@ -63,17 +62,13 @@ export default defineConfig({
 					username: string;
 					role?: UserRole;
 				}) {
-					const { createUserTask } = await import(
-						"@devtools/users/create-user.task"
-					);
+					const { createUserTask } = await import("@devtools");
 					await createUserTask(user);
 					return null;
 				},
 
 				async "db:deleteUser"(email: string) {
-					const { deleteUserTask } = await import(
-						"@devtools/users/delete-user.task"
-					);
+					const { deleteUserTask } = await import("@devtools");
 					await deleteUserTask(email);
 					return null;
 				},
@@ -89,16 +84,12 @@ export default defineConfig({
 					username?: string;
 					role?: UserRole;
 				}) {
-					const { upsertE2eUserTask } = await import(
-						"@devtools/users/upsert-e2e-user.task"
-					);
+					const { upsertE2eUserTask } = await import("@devtools");
 					await upsertE2eUserTask(user);
 					return null;
 				},
 				async "db:userExists"(email: string) {
-					const { userExistsTask } = await import(
-						"@devtools/users/user-exists.task"
-					);
+					const { userExistsTask } = await import("@devtools");
 					return userExistsTask(email);
 				},
 			});

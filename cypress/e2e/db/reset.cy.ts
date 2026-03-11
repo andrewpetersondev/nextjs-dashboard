@@ -1,4 +1,4 @@
-import { STATUS_CODES } from "../shared/status-codes";
+import { STATUS_CODES } from "@cypress/e2e/shared/status-codes";
 
 describe("Reset DB", () => {
 	it("should reset the database via API and return ok: true", () => {

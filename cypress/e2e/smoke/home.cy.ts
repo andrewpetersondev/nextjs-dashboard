@@ -1,7 +1,7 @@
-import { BASE_URL, LOGIN_PATH } from "../shared/paths";
-import { UI_MATCHERS_REGEX } from "../shared/regex";
-import { AUTH_SEL } from "../shared/selectors";
-import { EXTERNAL_URLS } from "../shared/urls";
+import { BASE_URL, LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
+import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { EXTERNAL_URLS } from "@cypress/e2e/shared/urls";
 
 describe("Home smoke test", () => {
 	it("loads homepage and navigates to login", () => {

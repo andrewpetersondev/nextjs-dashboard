@@ -1,4 +1,4 @@
-import { DASHBOARD_USERS_PATH } from "../shared/paths";
+import { DASHBOARD_USERS_PATH } from "@cypress/e2e/shared/paths";
 
 describe("Login as Demo Admin", () => {
 	it("visits a path restricted to Admins", () => {

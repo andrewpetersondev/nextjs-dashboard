@@ -1,5 +1,5 @@
-import { DASHBOARD_PATH, LOGIN_PATH } from "../shared/paths";
-import { UI_MATCHERS_REGEX } from "../shared/regex";
+import { DASHBOARD_PATH, LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
 
 describe("Access control", () => {
 	it("redirects unauthenticated user from dashboard to login", () => {

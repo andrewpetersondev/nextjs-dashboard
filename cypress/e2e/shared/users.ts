@@ -2,11 +2,8 @@
  * Utility functions for generating test user data in Cypress E2E tests.
  * Provides consistent user creation across different test scenarios.
  */
-import {
-	USER_ROLE,
-	type UserRole,
-} from "@/shared/policies/user-role/user-role.constants";
-import { E2E_ID_MODULUS, type TestUser } from "./auth-forms";
+import { E2E_ID_MODULUS, type TestUser } from "@cypress/e2e/shared/auth-forms";
+import { USER_ROLE, type UserRole } from "@database";
 
 /**
  * Readonly credentials for a pre-seeded demo account (used in certain tests or docs).

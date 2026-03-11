@@ -1,6 +1,6 @@
-import { DASHBOARD_PATH } from "../shared/paths";
-import { TEN_SECONDS } from "../shared/times";
-import { DEMO_USER } from "../shared/users";
+import { DASHBOARD_PATH } from "@cypress/e2e/shared/paths";
+import { TEN_SECONDS } from "@cypress/e2e/shared/times";
+import { DEMO_USER } from "@cypress/e2e/shared/users";
 
 describe("Signup custom command via Auth Form", () => {
 	const { username, email, password } = DEMO_USER;

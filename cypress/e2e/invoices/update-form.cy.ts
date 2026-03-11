@@ -1,4 +1,4 @@
-import { COMMON_SEL, INVOICES_SEL } from "../shared/selectors";
+import { COMMON_SEL, INVOICES_SEL } from "@cypress/e2e/shared/selectors";
 
 const error = /invalid|must be/i;
 

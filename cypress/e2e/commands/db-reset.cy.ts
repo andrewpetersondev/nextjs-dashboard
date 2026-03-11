@@ -1,4 +1,4 @@
-import { createTestUser } from "../shared/users";
+import { createTestUser } from "@cypress/e2e/shared/users";
 
 describe("task: db:reset", () => {
 	it("clears users (verified by db:userExists)", () => {

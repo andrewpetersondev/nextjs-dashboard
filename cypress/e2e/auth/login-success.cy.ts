@@ -1,5 +1,5 @@
-import { UI_MATCHERS_REGEX } from "../shared/regex";
-import { createTestUser } from "../shared/users";
+import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
+import { createTestUser } from "@cypress/e2e/shared/users";
 
 describe("Login success flow", () => {
 	it("logs in and reaches dashboard UI", () => {

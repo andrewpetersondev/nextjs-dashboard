@@ -2,10 +2,10 @@ import {
 	ERROR_MESSAGES_REGEX,
 	INVALID_EMAIL,
 	INVALID_PASSWORD,
-} from "../shared/auth-forms";
-import { DASHBOARD_PATH, LOGIN_PATH } from "../shared/paths";
-import { AUTH_SEL } from "../shared/selectors";
-import { createTestUser } from "../shared/users";
+} from "@cypress/e2e/shared/auth-forms";
+import { DASHBOARD_PATH, LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { createTestUser } from "@cypress/e2e/shared/users";
 
 describe("Authentication Server Actions", () => {
 	it("should create user account via server action", () => {

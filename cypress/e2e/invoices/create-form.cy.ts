@@ -1,6 +1,10 @@
-import { CREATE_INVOICE_PATH } from "../shared/paths";
-import { COMMON_SEL, CUSTOMERS_SEL, INVOICES_SEL } from "../shared/selectors";
-import { DEFAULT_TIMEOUT } from "../shared/times";
+import { CREATE_INVOICE_PATH } from "@cypress/e2e/shared/paths";
+import {
+	COMMON_SEL,
+	CUSTOMERS_SEL,
+	INVOICES_SEL,
+} from "@cypress/e2e/shared/selectors";
+import { DEFAULT_TIMEOUT } from "@cypress/e2e/shared/times";
 
 describe("Invoices - Create via Server Action Form", () => {
 	beforeEach(() => {

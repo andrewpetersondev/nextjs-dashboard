@@ -5,7 +5,7 @@
 		"composite": true,
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": ["@tsconfig/cypress/tsconfig.json", "../tsconfig.json"],
+	"extends": ["@tsconfig/bases/cypress", "../tsconfig.json"],
 	"include": [
 		"../cypress.config.ts",
 		"./**/*.ts",
@@ -13,5 +13,5 @@
 		"../database/**/*.ts",
 		"../devtools/**/*.ts"
 	],
-	"references": [{ "path": "../tsconfig.json" }]
+	"sourceMap": true
 }

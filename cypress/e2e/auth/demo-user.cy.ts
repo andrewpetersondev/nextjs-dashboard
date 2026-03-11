@@ -1,4 +1,7 @@
-import { ADMIN_DASHBOARD_H1, UI_MATCHERS_REGEX } from "../shared/regex";
+import {
+	ADMIN_DASHBOARD_H1,
+	UI_MATCHERS_REGEX,
+} from "@cypress/e2e/shared/regex";
 
 describe("Demo users login", () => {
 	it("logs in as demo user via custom command", () => {

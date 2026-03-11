@@ -1,6 +1,9 @@
-import { ADMIN_USERS_PATH, DASHBOARD_USERS_PATH } from "../shared/paths";
-import { UI_MATCHERS_REGEX } from "../shared/regex";
-import { STATUS_CODES } from "../shared/status-codes";
+import {
+	ADMIN_USERS_PATH,
+	DASHBOARD_USERS_PATH,
+} from "@cypress/e2e/shared/paths";
+import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
+import { STATUS_CODES } from "@cypress/e2e/shared/status-codes";
 
 describe("Server Action Authorization", () => {
 	it("should prevent unauthorized access to admin actions", () => {
