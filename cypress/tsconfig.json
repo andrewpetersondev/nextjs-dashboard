@@ -3,23 +3,15 @@
 	"compilerOptions": {
 		"baseUrl": "..",
 		"composite": true,
-		"lib": ["dom", "esnext"],
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": ["@tsconfig/cypress/tsconfig.json", "../tsconfig.app.json"],
+	"extends": ["@tsconfig/cypress/tsconfig.json", "../tsconfig.json"],
 	"include": [
 		"../cypress.config.ts",
 		"./**/*.ts",
 		"./**/*.tsx",
-		"./**/*.mts",
-		"./**/*.cts"
+		"../database/**/*.ts",
+		"../devtools/**/*.ts"
 	],
-	"references": [
-		{
-			"path": "../tsconfig.app.json"
-		},
-		{
-			"path": "../devtools"
-		}
-	]
+	"references": [{ "path": "../tsconfig.json" }]
 }

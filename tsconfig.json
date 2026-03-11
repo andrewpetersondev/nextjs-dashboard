@@ -1,11 +1,46 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"files": [],
-	"references": [
-		{ "path": "./cypress" },
-		{ "path": "./devtools" },
-		{ "path": "./tsconfig.app.json" },
-		{ "path": "./tsconfig.database.json" },
-		{ "path": "./tsconfig.vitest.json" }
-	]
+	"compilerOptions": {
+		"exactOptionalPropertyTypes": false,
+		"noPropertyAccessFromIndexSignature": false,
+		"noUnusedLocals": false,
+		"paths": {
+			"@/*": ["./src/*"],
+			"@cypress/*": ["./cypress/*"],
+			"@database": ["./database/index.ts"],
+			"@database/*": ["./database/*"],
+			"@devtools/*": ["./devtools/*"]
+		}
+	},
+	"exclude": ["cypress", "node_modules", "out", "dist"],
+	"extends": [
+		"@tsconfig/bases/recommended",
+		"@tsconfig/bases/strictest",
+		"@tsconfig/bases/node-lts",
+		"@tsconfig/bases/node-ts",
+		"@tsconfig/bases/node24",
+		"@tsconfig/bases/next"
+	],
+	"include": [
+		"next-env.d.ts",
+		".next/types/**/*.ts",
+		".next/dev/types/**/*.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"**/*.mts",
+		"**/*.js",
+		"**/*.jsx",
+		"**/*.mjs"
+	],
+	"jsx": "react-jsx",
+	"lib": [
+		"esnext",
+		"dom",
+		"dom.iterable",
+		"esnext.Array",
+		"esnext.Collection",
+		"esnext.Iterator",
+		"esnext.Promise"
+	],
+	"target": "esnext"
 }
