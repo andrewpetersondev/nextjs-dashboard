@@ -3,7 +3,7 @@
 	"extends": "//",
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["../cypress.config.ts", "**", "!**/*.js", "!**/*.jsx"]
+		"includes": ["../cypress.config.ts", "cypress/**", "!**/*.js", "!**/*.jsx"]
 	},
 	"javascript": {
 		"globals": ["cy", "Cypress"]
@@ -13,8 +13,14 @@
 			"complexity": {
 				"noExcessiveLinesPerFunction": "info"
 			},
+			"correctness": {
+				"noNodejsModules": "off"
+			},
 			"nursery": {
 				"useExplicitType": "off"
+			},
+			"performance": {
+				"noNamespaceImport": "off"
 			}
 		}
 	},

@@ -1,17 +1,19 @@
+// biome-ignore-all assist/source/useSortedKeys: order matters in tsconfig files
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": ["../tsconfig.json"],
 	"compilerOptions": {
-		"baseUrl": "..",
-		"composite": true,
+		"lib": ["es2020", "dom"],
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"sourceMap": true,
+		"target": "es2020",
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
-	"extends": ["@tsconfig/bases/cypress", "../tsconfig.json"],
 	"include": [
 		"../cypress.config.ts",
 		"./**/*.ts",
 		"./**/*.tsx",
-		"../database/**/*.ts",
-		"../devtools/**/*.ts"
-	],
-	"sourceMap": true
+		"../database/**/*.ts"
+	]
 }

@@ -32,7 +32,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!**/*.d.ts", "!**/*.js", "!**/*.jsx"]
+		"includes": ["**", "!**/*.d.ts", "!**/*.js", "!**/*.jsx", "!**/*.map"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -378,6 +378,9 @@
 					},
 					"nursery": {
 						"useExplicitType": "off"
+					},
+					"performance": {
+						"noNamespaceImport": "off"
 					},
 					"style": {
 						"noProcessEnv": "off"

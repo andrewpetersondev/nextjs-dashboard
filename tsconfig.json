@@ -1,19 +1,6 @@
+// biome-ignore-all assist/source/useSortedKeys: order matters in tsconfig files
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"compilerOptions": {
-		"exactOptionalPropertyTypes": false,
-		"noPropertyAccessFromIndexSignature": false,
-		"noUnusedLocals": false,
-		"paths": {
-			"@/*": ["./src/*"],
-			"@cypress/*": ["./cypress/*"],
-			"@database": ["./database/index.ts"],
-			"@database/*": ["./database/*"],
-			"@devtools": ["./devtools/index.ts"],
-			"@devtools/*": ["./devtools/*"]
-		}
-	},
-	"exclude": ["cypress", "cypress.config.ts", "node_modules", "out", "dist"],
 	"extends": [
 		"@tsconfig/bases/recommended",
 		"@tsconfig/bases/strictest",
@@ -22,26 +9,33 @@
 		"@tsconfig/bases/node24",
 		"@tsconfig/bases/next"
 	],
+	"compilerOptions": {
+		"exactOptionalPropertyTypes": false, // disabling from strictest base
+		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
+		"noUnusedLocals": false, // disabling from strictest base
+		"jsx": "react-jsx", // default setting from create next app
+		"paths": {
+			"@/*": ["./src/*"],
+			"@cypress/*": ["./cypress/*"],
+			"@database": ["./database/index.ts"],
+			"@database/*": ["./database/*"],
+			"@devtools": ["./devtools/index.ts"],
+			"@devtools/*": ["./devtools/*"]
+		},
+		"target": "esnext" // if module is nodenext, then target must be esnext
+	},
 	"include": [
 		"next-env.d.ts",
 		".next/types/**/*.ts",
 		".next/dev/types/**/*.ts",
-		"**/*.ts",
-		"**/*.tsx",
-		"**/*.mts",
-		"**/*.js",
-		"**/*.jsx",
-		"**/*.mjs"
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"database/**/*.ts",
+		"devtools/**/*.ts",
+		"drizzle.config.ts",
+		"next.config.ts",
+		"vitest.config.ts",
+		"vitest.setup.ts"
 	],
-	"jsx": "react-jsx",
-	"lib": [
-		"esnext",
-		"dom",
-		"dom.iterable",
-		"esnext.Array",
-		"esnext.Collection",
-		"esnext.Iterator",
-		"esnext.Promise"
-	],
-	"target": "esnext"
+	"exclude": ["dist", "node_modules", "out"]
 }
