@@ -108,11 +108,11 @@ nextjs-dashboard/
 
 - Open Cypress (E2E):
   ```sh
-  pnpm e2e:open
+  pnpm cy:e2e:open
   ```
 - Run Cypress headless (CI-friendly):
   ```sh
-  pnpm e2e:run
+  pnpm cy:e2e:run
   ```
 
 Accessibility checks via cypress-axe are integrated in tests where applicable.

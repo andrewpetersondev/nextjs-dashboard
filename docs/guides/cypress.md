@@ -12,8 +12,8 @@ This guide summarizes how Cypress is set up and how to run tests locally and in 
 ## Running Locally
 
 ```sh
-pnpm e2e:open            # Open interactive runner
-pnpm e2e:run    # Run headless
+pnpm cy:e2e:open            # Open interactive runner
+pnpm cy:e2e:run    # Run headless
 ```
 
 ## Preconditions
@@ -44,7 +44,7 @@ cy.checkA11y()
 
 ## CI Usage
 
-- Run `pnpm e2e:run` after ensuring the app is served with the test env.
+- Run `pnpm cy:e2e:run` after ensuring the app is served with the test env.
 - Artifacts (videos/screenshots) are configured by Cypress defaults; adjust in `cypress.config.ts` if needed.
 
 ## Notes

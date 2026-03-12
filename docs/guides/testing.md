@@ -7,8 +7,8 @@ This project uses Cypress for end-to-end (E2E) testing. Accessibility checks via
 ```sh
 pnpm build:test          # Build with test env
 pnpm serve:test          # Serve with test env
-pnpm e2e:open            # Open Cypress interactive runner
-pnpm e2e:run    # Run Cypress headless
+pnpm cy:e2e:open            # Open Cypress interactive runner
+pnpm cy:e2e:run    # Run Cypress headless
 ```
 
 ## Typical Local E2E Workflow
@@ -30,7 +30,7 @@ pnpm e2e:run    # Run Cypress headless
 3. Run Cypress:
 
    ```sh
-   pnpm e2e:open
+   pnpm cy:e2e:open
    ```
 
 ## Conventions
@@ -45,7 +45,7 @@ The project includes `cypress-axe` and `axe-core`. Add `cy.injectAxe()` and `cy.
 
 ## CI Notes
 
-- Use the headless run: `pnpm e2e:run`.
+- Use the headless run: `pnpm cy:e2e:run`.
 - Ensure the app is built and served with the test env before running Cypress in CI.
 
 ## Troubleshooting

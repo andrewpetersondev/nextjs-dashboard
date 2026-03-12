@@ -39,8 +39,8 @@ Build and run the app.
 
 End-to-end testing.
 
-- `pnpm e2e:open` — open the Cypress interactive runner.
-- `pnpm e2e:run` — run Cypress E2E in headless mode.
+- `pnpm cy:e2e:open` — open the Cypress interactive runner.
+- `pnpm cy:e2e:run` — run Cypress E2E in headless mode.
 
 ---
 
@@ -98,13 +98,13 @@ pnpm db:push:test
 pnpm db:seed:test
 pnpm build:test
 pnpm serve:test   # keep running in a separate terminal
-pnpm e2e:open
+pnpm cy:e2e:open
 ```
 
 **One-shot E2E run:**
 
 ```sh
-pnpm e2e:run
+pnpm cy:e2e:run
 ```
 
 **Reset dev database and start fresh:**

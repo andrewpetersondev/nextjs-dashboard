@@ -80,8 +80,8 @@ pnpm start:standalone
 ```sh
 pnpm build:test      # Build with test env
 pnpm serve:test      # Serve with test env
-pnpm e2e:open        # Open Cypress interactive runner
-pnpm e2e:run  # Run Cypress headless
+pnpm cy:e2e:open        # Open Cypress interactive runner
+pnpm cy:e2e:run  # Run Cypress headless
 ```
 
 See [docs/guides/testing.md](./testing.md) for the full E2E workflow.
