@@ -14,6 +14,7 @@
 		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
 		"noUnusedLocals": false, // disabling from strictest base
 		"jsx": "react-jsx", // default setting from create next app
+		"baseUrl": ".", // need for path aliases
 		"paths": {
 			"@/*": ["./src/*"],
 			"@cypress/*": ["./cypress/*"],

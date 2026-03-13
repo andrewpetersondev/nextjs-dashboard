@@ -3,11 +3,11 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": ["../tsconfig.json"],
 	"compilerOptions": {
-		"lib": ["es2020", "dom"],
+		"lib": ["esnext", "dom"],
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		//		"sourceMap": true,
-		"target": "es2020",
+		"target": "esnext",
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
 	},
 	"include": [
