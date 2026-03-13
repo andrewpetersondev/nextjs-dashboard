@@ -1,5 +1,5 @@
 import process from "node:process";
-import { CypressEnvShape } from "./cypress-env.schema";
+import { CypressEnvShape } from "@cypress/node/config/cypress-env.schema";
 
 const envToValidate = {
 	cypressBaseUrl: process.env.CYPRESS_BASE_URL,

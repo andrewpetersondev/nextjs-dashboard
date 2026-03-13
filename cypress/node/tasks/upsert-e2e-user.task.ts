@@ -1,13 +1,13 @@
-import { type Hash, type UserRole, users } from "@database";
-import bcryptjs from "bcryptjs";
-import { eq } from "drizzle-orm";
-import { nodeDb } from "../../db/node-db";
+import { nodeDb } from "@cypress/db/node-db";
 import {
 	normalizeUserEmail,
 	normalizeUserPassword,
 	toUsernameFromEmail,
 	validateRequiredUserTaskInput,
-} from "../../shared/user-input.mapper";
+} from "@cypress/shared/user-input.mapper";
+import { type Hash, type UserRole, users } from "@database";
+import bcryptjs from "bcryptjs";
+import { eq } from "drizzle-orm";
 
 function toHash(value: string): Hash {
 	return value as unknown as Hash;

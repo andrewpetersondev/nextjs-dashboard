@@ -1,9 +1,9 @@
+import { DATABASE_URL } from "@cypress/node/config/cypress-env";
 import {
 	drizzle,
 	type NodePgClient,
 	type NodePgDatabase,
 } from "drizzle-orm/node-postgres";
-import { DATABASE_URL } from "../node/config/cypress-env";
 
 let dbSingleton:
 	| (NodePgDatabase & { readonly $client: NodePgClient })

@@ -1,8 +1,8 @@
+import { nodeDb } from "@cypress/db/node-db";
+import { firstRow } from "@cypress/db/pg-result.utils";
+import { normalizeUserEmail } from "@cypress/shared/user-input.mapper";
 import { users } from "@database";
 import { sql } from "drizzle-orm";
-import { nodeDb } from "../../db/node-db";
-import { firstRow } from "../../db/pg-result.utils";
-import { normalizeUserEmail } from "../../shared/user-input.mapper";
 
 /** Check if a user exists by email. */
 export async function userExistsTask(email: string): Promise<boolean> {

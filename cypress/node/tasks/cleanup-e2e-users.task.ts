@@ -1,7 +1,7 @@
+import { nodeDb } from "@cypress/db/node-db";
+import { toUserId } from "@cypress/shared/id.mapper";
 import { users } from "@database";
 import { inArray, like, or } from "drizzle-orm";
-import { nodeDb } from "../../db/node-db";
-import { toUserId } from "../../shared/id.mapper";
 
 /** Delete E2E users (email/username starting with e2e_). */
 export async function cleanupE2eUsersTask(): Promise<void> {
