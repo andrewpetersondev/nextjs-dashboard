@@ -26,6 +26,13 @@ declare global {
 	}
 }
 
+const assertOnDashboard = () => {
+	cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+		"include",
+		DASHBOARD_PATH,
+	);
+};
+
 Cypress.Commands.add("dbReset", () => {
 	return cy.task("db:reset") as Cypress.Chainable<null>;
 });
@@ -52,10 +59,7 @@ Cypress.Commands.add("login", ({ email, password }: LoginCreds) => {
 	cy.get(AUTH_SEL.loginPassword).type(password);
 	cy.get(AUTH_SEL.loginSubmit).click();
 
-	cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
-		"include",
-		DASHBOARD_PATH,
-	);
+	assertOnDashboard();
 });
 
 Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
@@ -66,10 +70,7 @@ Cypress.Commands.add("signup", ({ username, email, password }: SignupCreds) => {
 	cy.get(AUTH_SEL.signupPassword).type(password);
 	cy.get(AUTH_SEL.signupSubmit).click();
 
-	cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
-		"include",
-		DASHBOARD_PATH,
-	);
+	assertOnDashboard();
 });
 
 Cypress.Commands.add("loginAsDemoUser", () => {
@@ -77,10 +78,8 @@ Cypress.Commands.add("loginAsDemoUser", () => {
 	cy.findByRole("button", {
 		name: UI_MATCHERS_REGEX.loginDemoUserButton,
 	}).click();
-	cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
-		"include",
-		DASHBOARD_PATH,
-	);
+
+	assertOnDashboard();
 });
 
 Cypress.Commands.add("loginAsDemoAdmin", () => {
@@ -88,18 +87,13 @@ Cypress.Commands.add("loginAsDemoAdmin", () => {
 	cy.findByRole("button", {
 		name: UI_MATCHERS_REGEX.loginDemoAdminButton,
 	}).click();
-	cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
-		"include",
-		DASHBOARD_PATH,
-	);
+
+	assertOnDashboard();
 });
 
-// Ensure we always land on dashboard before attempting to logout via the form
 Cypress.Commands.add("logoutViaForm", () => {
 	cy.visit(DASHBOARD_PATH);
-	// Handle both cases:
-	// - Still authenticated: we're on /dashboard, click "Sign Out" and wait for home screen.
-	// - Already logged out: redirect from /dashboard to home, just assert home screen.
+
 	cy.location("pathname", { timeout: TWENTY_SECONDS }).then((pathname) => {
 		if (pathname.includes(DASHBOARD_PATH)) {
 			cy.findByRole("button", {

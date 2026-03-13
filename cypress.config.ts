@@ -10,7 +10,7 @@ import { registerCypressTasks } from "./cypress/node/tasks/register-tasks";
 
 export default defineConfig({
 	e2e: {
-		baseUrl: "http://localhost:3000",
+		baseUrl: "http://localhost:3001",
 
 		// biome-ignore lint/suspicious/useAwait: setupNodeEvents may remain async for future async setup
 		async setupNodeEvents(on, config) {

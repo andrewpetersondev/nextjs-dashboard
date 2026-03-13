@@ -9,7 +9,7 @@ import type { Result } from "@/shared/core/result/result.dto";
  */
 const ENV_VARIABLES_TUPLE = [
 	"AUTH_BCRYPT_SALT_ROUNDS",
-	"CYPRESS_BASE_URL",
+	// "CYPRESS_BASE_URL", // TODO: why is this here? consider removing
 	"DATABASE_ENV",
 	"DATABASE_URL",
 	"LOG_LEVEL",
