@@ -387,6 +387,26 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["src/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["@devtools", "@cypress"],
+										"message": "src code can not import from these modules"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
 		}
 	],
 	"root": true,
