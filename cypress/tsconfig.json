@@ -3,12 +3,13 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": ["../tsconfig.json"],
 	"compilerOptions": {
-		"lib": ["esnext", "dom"],
+		// Modules
 		"module": "esnext",
 		"moduleResolution": "bundler",
-		//		"sourceMap": true,
-		"target": "esnext",
-		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"]
+		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"],
+		// Language and Environment
+		"lib": ["esnext", "dom"],
+		"target": "esnext"
 	},
 	"include": [
 		"../cypress.config.ts",

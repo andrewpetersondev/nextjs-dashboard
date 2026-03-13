@@ -10,10 +10,11 @@
 		"@tsconfig/bases/next"
 	],
 	"compilerOptions": {
+		// Type Checking Options
 		"exactOptionalPropertyTypes": false, // disabling from strictest base
 		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
 		"noUnusedLocals": false, // disabling from strictest base
-		"jsx": "react-jsx", // default setting from create next app
+		// Modules
 		"baseUrl": ".", // need for path aliases
 		"paths": {
 			"@/*": ["./src/*"],
@@ -23,6 +24,8 @@
 			"@devtools": ["./devtools/index.ts"],
 			"@devtools/*": ["./devtools/*"]
 		},
+		// Language and Environment
+		"jsx": "react-jsx", // default setting from create next app
 		"target": "esnext" // if module is nodenext, then target must be esnext
 	},
 	"include": [
