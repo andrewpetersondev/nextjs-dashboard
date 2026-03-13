@@ -35,6 +35,13 @@
 			"tag": "0004_supreme_sphinx",
 			"version": "7",
 			"when": 1770380915535
+		},
+		{
+			"breakpoints": true,
+			"idx": 5,
+			"tag": "0005_minor_strong_guy",
+			"version": "7",
+			"when": 1773434117450
 		}
 	],
 	"version": "7"

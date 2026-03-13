@@ -5,7 +5,9 @@ import {
 	toUsernameFromEmail,
 	validateRequiredUserTaskInput,
 } from "@cypress/shared/user-input.mapper";
-import { type Hash, type UserRole, users } from "@database";
+import type { UserRole } from "@database/schema/schema.constants";
+import type { Hash } from "@database/schema/schema.types";
+import { users } from "@database/schema/users";
 import bcryptjs from "bcryptjs";
 import { eq } from "drizzle-orm";
 

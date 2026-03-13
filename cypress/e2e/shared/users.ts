@@ -3,7 +3,7 @@
  * Provides consistent user creation across different test scenarios.
  */
 import { E2E_ID_MODULUS, type TestUser } from "@cypress/e2e/shared/auth-forms";
-import { USER_ROLE, type UserRole } from "@database";
+import { USER_ROLE, type UserRole } from "@database/schema/schema.constants";
 
 /**
  * Readonly credentials for a pre-seeded demo account (used in certain tests or docs).

@@ -4,7 +4,7 @@ import { deleteUserTask } from "@cypress/node/tasks/delete-user.task";
 import { upsertE2eUserTask } from "@cypress/node/tasks/upsert-e2e-user.task";
 import { userExistsTask } from "@cypress/node/tasks/user-exists.task";
 import { toUsernameFromEmail } from "@cypress/shared/user-input.mapper";
-import type { UserRole } from "@database";
+import type { UserRole } from "@database/schema/schema.constants";
 
 type CreateUserTaskInput = {
 	email: string;

@@ -72,7 +72,7 @@
 		"clean:all": "pnpm clean && pnpm clean:generated && pnpm clean:deps",
 		"clean:deps": "rimraf node_modules",
 		"clean:generated": "rimraf --glob \"**/*.{js,map,tsbuildinfo}\"",
-		"cy:e2e": "pnpm env:test:pnpm start-server-and-test \"next dev -p 3001\" http://localhost:3001 cy:e2e:run",
+		"cy:e2e": "pnpm env:test:pnpm start-server-and-test next:dev:test http://localhost:3001 cy:e2e:run",
 		"cy:e2e:ci": "pnpm cy:e2e",
 		"cy:e2e:open": "pnpm env:test:pnpm cypress open --e2e",
 		"cy:e2e:run": "pnpm env:test:pnpm cypress run --e2e",

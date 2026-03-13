@@ -1,4 +1,4 @@
-import type { UserRole } from "@database";
+import type { UserRole } from "@database/schema/schema.constants";
 
 /**
  * Normalize and validate an email string for Cypress DB tasks.
