@@ -1,5 +1,5 @@
 import "server-only";
-import { customers } from "@database";
+import { customers } from "@database/schema/customers";
 import { asc } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerSelectRowRaw } from "@/modules/customers/domain/types";

@@ -1,5 +1,5 @@
 import "server-only";
-import { schema } from "@database";
+import { schema } from "@database/schema/schema.aggregate";
 import { reset } from "drizzle-seed";
 import { NextResponse } from "next/server";
 import { getAppDb } from "@/server/db/db.connection";

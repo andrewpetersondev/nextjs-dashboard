@@ -1,4 +1,9 @@
-import { ADMIN_ROLE, GUEST_ROLE, USER_ROLE, type UserRole } from "@database";
+import {
+	ADMIN_ROLE,
+	GUEST_ROLE,
+	USER_ROLE,
+	type UserRole,
+} from "@database/schema/schema.constants";
 import type { SeedUserInput } from "@devtools/seed/data/seed.types";
 
 /**

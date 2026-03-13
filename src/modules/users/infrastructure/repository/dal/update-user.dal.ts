@@ -1,5 +1,5 @@
 import "server-only";
-import { users } from "@database";
+import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import type {
 	UpdateUserProps,

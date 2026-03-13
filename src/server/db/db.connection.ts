@@ -1,5 +1,5 @@
 import "server-only";
-import type { schema as appSchema } from "@database";
+import type { schema as appSchema } from "@database/schema/schema.aggregate";
 import {
 	drizzle,
 	type NodePgClient,

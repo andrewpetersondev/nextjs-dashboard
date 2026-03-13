@@ -1,4 +1,4 @@
-import { type NewUserRow, users } from "@database";
+import { type NewUserRow, users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runAndCaptureRedirectPath } from "@/modules/auth/__tests__/integration/_test-utils_/next-redirect";

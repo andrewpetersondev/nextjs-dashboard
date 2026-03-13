@@ -1,5 +1,5 @@
 import "server-only";
-import { type RevenueRow, revenues } from "@database";
+import { type RevenueRow, revenues } from "@database/schema/revenues";
 import { and, desc, gte, lte } from "drizzle-orm";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { mapRevenueRowsToEntities } from "@/modules/revenues/infrastructure/mappers/revenue.mapper";

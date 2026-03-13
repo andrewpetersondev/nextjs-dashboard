@@ -1,5 +1,5 @@
 import "server-only";
-import { type RevenueRow, revenues } from "@database";
+import { type RevenueRow, revenues } from "@database/schema/revenues";
 import { eq } from "drizzle-orm";
 import type {
 	RevenueEntity,

@@ -1,6 +1,5 @@
 import "server-only";
-
-import type { RevenueRow } from "@database";
+import type { RevenueRow } from "@database/schema/revenues";
 import { isValid } from "date-fns";
 import type { RevenueEntity } from "@/modules/revenues/domain/entities/revenue.entity";
 import { toRevenueId } from "@/modules/revenues/domain/revenue-id.mappers";

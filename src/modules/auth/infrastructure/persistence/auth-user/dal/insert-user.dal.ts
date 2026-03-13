@@ -1,5 +1,5 @@
 import "server-only";
-import { type NewUserRow, type UserRow, users } from "@database";
+import { type NewUserRow, type UserRow, users } from "@database/schema/users";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";

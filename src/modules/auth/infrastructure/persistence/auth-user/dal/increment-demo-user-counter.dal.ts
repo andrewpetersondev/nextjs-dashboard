@@ -1,5 +1,5 @@
 import "server-only";
-import { demoUserCounters } from "@database";
+import { demoUserCounters } from "@database/schema/demo-users";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";

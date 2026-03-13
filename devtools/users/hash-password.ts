@@ -1,4 +1,4 @@
-import type { Hash } from "@database";
+import type { Hash } from "@database/schema/schema.types";
 import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
 import bcryptjs from "bcryptjs";
 

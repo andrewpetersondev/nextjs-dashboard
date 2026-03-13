@@ -1,7 +1,7 @@
 import { nodeDb } from "@cypress/db/node-db";
 import { firstRow } from "@cypress/db/pg-result.utils";
 import { normalizeUserEmail } from "@cypress/shared/user-input.mapper";
-import { users } from "@database";
+import { users } from "@database/schema/users";
 import { sql } from "drizzle-orm";
 
 /** Check if a user exists by email. */

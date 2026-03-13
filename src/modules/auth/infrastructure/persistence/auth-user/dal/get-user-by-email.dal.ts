@@ -1,5 +1,5 @@
 import "server-only";
-import { type UserRow, users } from "@database";
+import { type UserRow, users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";

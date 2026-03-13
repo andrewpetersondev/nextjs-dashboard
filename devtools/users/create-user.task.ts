@@ -1,4 +1,5 @@
-import { type UserRole, users } from "@database";
+import type { UserRole } from "@database/schema/schema.constants";
+import { users } from "@database/schema/users";
 import { nodeDb } from "@devtools/shared/db/node-db";
 import {
 	normalizeUserEmail,

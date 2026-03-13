@@ -1,4 +1,6 @@
-import { customers, demoUserCounters, revenues } from "@database";
+import { customers } from "@database/schema/customers";
+import { demoUserCounters } from "@database/schema/demo-users";
+import { revenues } from "@database/schema/revenues";
 import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
 import { customersData } from "@devtools/seed/data/seed.customers";
 import { periodDates } from "@devtools/seed/data/seed.periods.data";

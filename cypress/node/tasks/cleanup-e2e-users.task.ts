@@ -1,6 +1,6 @@
 import { nodeDb } from "@cypress/db/node-db";
 import { toUserId } from "@cypress/shared/id.mapper";
-import { users } from "@database";
+import { users } from "@database/schema/users";
 import { inArray, like, or } from "drizzle-orm";
 
 /** Delete E2E users (email/username starting with e2e_). */

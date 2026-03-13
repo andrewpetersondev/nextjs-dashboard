@@ -1,4 +1,4 @@
-import type { Period } from "@database";
+import type { Period } from "@database/schema/schema.types";
 import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
 
 /**

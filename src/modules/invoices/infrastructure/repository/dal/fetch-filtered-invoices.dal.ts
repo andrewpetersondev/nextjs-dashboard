@@ -1,5 +1,6 @@
 import "server-only";
-import { customers, invoices } from "@database";
+import { customers } from "@database/schema/customers";
+import { invoices } from "@database/schema/invoices";
 import { desc, eq, ilike, or, sql } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";

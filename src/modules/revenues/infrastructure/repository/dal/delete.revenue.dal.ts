@@ -1,5 +1,5 @@
 import "server-only";
-import { revenues } from "@database";
+import { revenues } from "@database/schema/revenues";
 import { eq } from "drizzle-orm";
 import type { RevenueId } from "@/modules/revenues/domain/types/revenue-id.brand";
 import type { AppDatabase } from "@/server/db/db.connection";

@@ -1,4 +1,4 @@
-import { users } from "@database";
+import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";

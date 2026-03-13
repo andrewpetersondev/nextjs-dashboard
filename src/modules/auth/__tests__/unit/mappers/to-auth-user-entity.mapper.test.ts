@@ -1,4 +1,4 @@
-import type { UserRow } from "@database";
+import type { UserRow } from "@database/schema/users";
 import { describe, expect, it } from "vitest";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";

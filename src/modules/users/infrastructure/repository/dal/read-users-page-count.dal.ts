@@ -1,5 +1,5 @@
 import "server-only";
-import { users } from "@database";
+import { users } from "@database/schema/users";
 import { count, ilike, or } from "drizzle-orm";
 import { ITEMS_PER_PAGE_USERS } from "@/modules/users/domain/constants/user.constants";
 import type { AppDatabase } from "@/server/db/db.connection";

@@ -1,4 +1,5 @@
-import { invoices, type NewUserRow, users } from "@database";
+import { invoices } from "@database/schema/invoices";
+import { type NewUserRow, users } from "@database/schema/users";
 import {
 	buildRandomInvoiceRows,
 	buildUserSeed,

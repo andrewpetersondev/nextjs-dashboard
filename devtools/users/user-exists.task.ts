@@ -1,4 +1,4 @@
-import { users } from "@database";
+import { users } from "@database/schema/users";
 import { nodeDb } from "@devtools/shared/db/node-db";
 import { firstRow } from "@devtools/shared/db/pg-result.utils";
 import { normalizeUserEmail } from "@devtools/shared/user-input.mapper";
