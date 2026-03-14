@@ -1,7 +1,6 @@
 "use client";
-
 import { type JSX, useEffect } from "react";
-import { H2 } from "@/ui/atoms/headings";
+import { H2, H3 } from "@/ui/atoms/headings";
 
 export default function InvoicesError({
 	error,
@@ -17,6 +16,7 @@ export default function InvoicesError({
 	return (
 		<main className="flex h-full flex-col items-center justify-center">
 			<H2 className="text-center">Something went wrong!</H2>
+			<H3 className="text-center">User Error</H3>
 			<button
 				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
 				onClick={(): void => reset()}

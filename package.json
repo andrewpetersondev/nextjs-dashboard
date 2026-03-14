@@ -112,7 +112,7 @@
 		"next:build:standalone": "pnpm clean && pnpm next:build",
 		"next:build:test": "pnpm env:test next build",
 		"next:dev": "next dev",
-		"next:dev:test": "pnpm env:test next dev -p 3001",
+		"next:dev:test": "pnpm env:test next dev --port 3001",
 		"next:start": "next start",
 		"next:start:standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
 		"next:typegen": "next typegen && pnpm typecheck:app",

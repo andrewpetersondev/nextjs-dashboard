@@ -13,6 +13,7 @@ export default function GlobalError({
 		<html lang="en-US">
 			<body>
 				<h2>Something went wrong!</h2>
+				<h3 className="text-center">Global Error</h3>
 				<p>{error.message}</p>
 				{/** biome-ignore lint/a11y/useButtonType: <default> */}
 				<button onClick={(): void => reset()}>Try again</button>
