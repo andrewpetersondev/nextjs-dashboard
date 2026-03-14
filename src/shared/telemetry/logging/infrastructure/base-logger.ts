@@ -114,7 +114,7 @@ export abstract class BaseLogger {
 		}
 
 		const redactedData =
-			safeData !== undefined ? (redactLogData(safeData) as T) : undefined;
+			safeData === undefined ? undefined : (redactLogData(safeData) as T);
 
 		const metadata = { ...processMetadata, ...this.bindings };
 		const hasMetadata = Object.keys(metadata).length > 0;

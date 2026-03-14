@@ -124,5 +124,5 @@ function _validateEnv(
  * Server-only by placement. Returns `undefined` if `process` is not available.
  */
 export function getProcessId(): number | undefined {
-	return typeof process !== "undefined" ? process.pid : undefined;
+	return typeof process === "undefined" ? undefined : process.pid;
 }
