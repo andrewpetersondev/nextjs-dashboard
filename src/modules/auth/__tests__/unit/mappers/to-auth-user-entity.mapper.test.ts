@@ -17,7 +17,6 @@ import { toHash } from "@/server/crypto/hashing/hashing.value";
 describe("toAuthUserEntity Mapper", () => {
 	const createTestUserRow = (overrides: Partial<UserRow> = {}): UserRow => ({
 		email: "test@example.com",
-		emailVerified: null,
 		id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
 		password: toHash("$2a$10$hashedpassword"),
 		role: "USER",

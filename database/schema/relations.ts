@@ -2,7 +2,6 @@ import { customers } from "@database/schema/customers";
 import { demoUserCounters } from "@database/schema/demo-users";
 import { invoices } from "@database/schema/invoices";
 import { revenues } from "@database/schema/revenues";
-
 import { relations } from "drizzle-orm";
 
 export const customersRelations = relations(customers, ({ many }) => ({

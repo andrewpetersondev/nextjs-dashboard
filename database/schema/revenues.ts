@@ -15,7 +15,10 @@ import {
 	uuid,
 } from "drizzle-orm/pg-core";
 
-const calculationSourceEnum = pgEnum("calculation_source", REVENUE_SOURCES);
+export const calculationSourceEnum = pgEnum(
+	"calculation_source",
+	REVENUE_SOURCES,
+);
 
 export const revenues = pgTable(
 	"revenues",

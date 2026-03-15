@@ -21,7 +21,7 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 
-const statusEnum = pgEnum("status", INVOICE_STATUSES);
+export const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
 export const invoices = pgTable(
 	"invoices",

@@ -13,13 +13,12 @@ import {
 	type UserRole,
 } from "@database/schema/schema.constants";
 import type { Hash, UserId } from "@database/schema/schema.types";
-import { pgEnum, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const userRolePgEnum = pgEnum("role", USER_ROLES);
 
 export const users = pgTable("users", {
 	email: varchar("email", { length: 255 }).notNull().unique(),
-	emailVerified: timestamp("email_verified", { mode: "date" }),
 	id: uuid("id").defaultRandom().primaryKey().$type<UserId>(),
 	password: varchar("password", { length: 255 }).notNull().$type<Hash>(),
 	// TODO: THIS SETS A DEFAULT WHICH IS DISCOURAGED
