@@ -37,11 +37,11 @@
 			"when": 1770380911099
 		},
 		{
+			"breakpoints": true,
 			"idx": 5,
-			"version": "7",
-			"when": 1773563935718,
 			"tag": "0005_hesitant_sauron",
-			"breakpoints": true
+			"version": "7",
+			"when": 1773563935718
 		}
 	],
 	"version": "7"

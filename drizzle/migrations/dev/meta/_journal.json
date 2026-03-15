@@ -37,11 +37,11 @@
 			"when": 1770380903932
 		},
 		{
+			"breakpoints": true,
 			"idx": 5,
-			"version": "7",
-			"when": 1773563900903,
 			"tag": "0005_serious_doomsday",
-			"breakpoints": true
+			"version": "7",
+			"when": 1773563900903
 		}
 	],
 	"version": "7"
