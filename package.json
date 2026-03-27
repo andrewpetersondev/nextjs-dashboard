@@ -2,7 +2,7 @@
 	"$schema": "https://json.schemastore.org/package",
 	"dependencies": {
 		"@heroicons/react": "^2.2.0",
-		"@next/env": "16.1.7",
+		"@next/env": "16.2.1",
 		"@types/node": "^25.5.0",
 		"@types/pg": "^8.20.0",
 		"bcryptjs": "^3.0.3",
@@ -13,7 +13,7 @@
 		"drizzle-orm": "^0.45.2",
 		"drizzle-zod": "^0.8.3",
 		"jose": "^6.2.2",
-		"next": "16.1.7",
+		"next": "16.2.1",
 		"pg": "^8.20.0",
 		"react": "19.2.4",
 		"react-dom": "19.2.4",
