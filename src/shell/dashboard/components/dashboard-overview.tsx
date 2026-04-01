@@ -21,7 +21,7 @@ interface DashboardProps {
  * @param props - DashboardProps
  * @returns The dashboard JSX element.
  */
-export const Dashboard = ({
+export const DashboardOverview = ({
 	dashboardCardData,
 	latestInvoices,
 	title,

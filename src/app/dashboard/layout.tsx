@@ -1,7 +1,7 @@
 import type { JSX, ReactNode } from "react";
 import { logoutAction } from "@/modules/auth/presentation/authn/actions/logout.action";
 import { SessionRefresh } from "@/modules/auth/presentation/session/features/session-refresh";
-import { SideNav } from "@/shell/dashboard/components/sidenav";
+import { DashboardSidebar } from "@/shell/dashboard/components/dashboard-sidebar";
 
 const ROOT_LAYOUT_CLASS =
 	"flex h-screen flex-col md:flex-row md:overflow-hidden";
@@ -15,7 +15,7 @@ export default function DashboardLayout({
 		<section aria-label="Dashboard Layout" className={ROOT_LAYOUT_CLASS}>
 			<SessionRefresh />
 			<aside aria-label="Sidebar Navigation" className={SIDENAV_WRAPPER_CLASS}>
-				<SideNav logoutAction={logoutAction} />
+				<DashboardSidebar logoutAction={logoutAction} />
 			</aside>
 			<main className={MAIN_CONTENT_CLASS} tabIndex={-1}>
 				{children}

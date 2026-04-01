@@ -13,7 +13,7 @@ import {
 } from "@/shared/policies/user-role/user-role.constants";
 import { normalizeUserRole } from "@/shared/policies/user-role/user-role.parser";
 import { formatCurrency } from "@/shared/primitives/money/convert";
-import { Dashboard } from "@/shell/dashboard/components/dashboard";
+import { DashboardOverview } from "@/shell/dashboard/components/dashboard-overview";
 import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";
 
@@ -59,7 +59,7 @@ export default async function Page(): Promise<JSX.Element> {
 	const commonContent = (
 		<main>
 			<MiddlewareCard />
-			<Dashboard
+			<DashboardOverview
 				dashboardCardData={dashboardData.cards}
 				latestInvoices={dashboardData.latestInvoices}
 				title={title}

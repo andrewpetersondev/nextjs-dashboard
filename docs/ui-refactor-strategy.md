@@ -92,6 +92,49 @@ Examples:
   `presentation/wrappers/`
 - `src/ui/layouts/...` should eventually become `src/ui/wrappers/...` or another non-route term
 
+### Concrete renaming opportunities to queue
+
+These are good candidates for the first naming pass because they currently blur route-layout language,
+shared-ui language, or shell language.
+
+- `src/modules/auth/presentation/authn/components/shared/layout/`
+    - Rename folder to `shared/templates/` or `shared/wrappers/`
+    - Reason: `layout` collides with App Router terminology, while this code is feature-local presentation
+- `src/modules/auth/presentation/authn/components/shared/layout/auth-page-wrapper.tsx`
+    - Preferred rename: `auth-page-template.tsx`
+    - Acceptable alternative: `auth-page-frame.tsx`
+    - Reason: it provides a standard auth page structure, not a Next.js route layout
+- `AuthPageWrapper`
+    - Preferred rename: `AuthPageTemplate`
+    - Acceptable alternative: `AuthPageFrame`
+    - Reason: the component is a reusable feature-level page scaffold
+- Any future `src/ui/layouts/...` directory
+    - Preferred rename: `src/ui/wrappers/...`
+    - Acceptable alternative: `src/ui/frames/...`
+    - Reason: shared UI should avoid `layout` unless the file is an actual App Router layout file
+- `src/shell/dashboard/components/sidenav.tsx`
+    - Preferred rename: `dashboard-sidebar.tsx`
+    - Reason: `sidebar` is a clearer shell/chrome term than the more generic `sidenav`
+- `SideNav`
+    - Preferred rename: `DashboardSidebar`
+    - Reason: the shell layer should use explicit app-chrome names when the component is dashboard-owned
+- `src/shell/dashboard/components/nav-links-wrapper.tsx`
+    - Preferred rename: `dashboard-nav.tsx` or `dashboard-nav-links.tsx`
+    - Reason: `wrapper` is vague unless the file is truly only a structural wrapper
+- `NavLinksWrapper`
+    - Preferred rename: `DashboardNav` or `DashboardNavLinks`
+    - Reason: the new name explains whether the component owns navigation content instead of just wrapping it
+- `src/shell/dashboard/components/dashboard.tsx`
+    - Preferred rename: `dashboard-overview.tsx` or `dashboard-screen.tsx`
+    - Reason: `dashboard` is too broad inside a folder already named `dashboard`; the file appears to model a specific
+      composed screen
+- `Dashboard`
+    - Preferred rename: `DashboardOverview` or `DashboardScreen`
+    - Reason: component names should reveal whether they are app-shell compositions, pages, or generic widgets
+
+Use these as review prompts, not mandatory immediate moves. Rename only when the new name clarifies ownership,
+scope, or App Router terminology.
+
 ## Decision Framework
 
 When placing a TSX file, use this order:

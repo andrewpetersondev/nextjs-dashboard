@@ -11,7 +11,7 @@ interface AuthPageWrapperProps {
  * Shared layout wrapper for authentication pages (Login, Signup, etc.).
  * Handles the centering, responsive width, and standard header.
  */
-export function AuthPageWrapper({
+export function AuthPageTemplate({
 	children,
 	title,
 }: AuthPageWrapperProps): JSX.Element {

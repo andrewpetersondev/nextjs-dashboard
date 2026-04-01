@@ -1,20 +1,20 @@
 import type { JSX } from "react";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
 import { LoginCard } from "@/modules/auth/presentation/authn/components/cards/login-card";
-import { AuthPageWrapper } from "@/modules/auth/presentation/authn/components/shared/layout/auth-page-wrapper";
+import { AuthPageTemplate } from "@/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template";
 import { LOGIN_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
 import { ROUTES } from "@/shared/routing/routes";
 import { LinkPrompt } from "@/ui/molecules/link-prompt";
 
 export default function LoginPage(): JSX.Element {
 	return (
-		<AuthPageWrapper title={LOGIN_HEADING}>
+		<AuthPageTemplate title={LOGIN_HEADING}>
 			<LoginCard action={loginAction} />
 			<LinkPrompt
 				href={ROUTES.auth.signup}
 				linkText="Sign up here"
 				prompt="Not a member?"
 			/>
-		</AuthPageWrapper>
+		</AuthPageTemplate>
 	);
 }

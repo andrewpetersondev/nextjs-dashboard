@@ -2,14 +2,16 @@ import Link from "next/link";
 import type { JSX } from "react";
 import { LogoutForm } from "@/modules/auth/presentation/authn/components/forms/logout-form";
 import { ROUTES } from "@/shared/routing/routes";
-import { NavLinksWrapper } from "@/shell/dashboard/components/nav-links-wrapper";
+import { DashboardNavLinks } from "@/shell/dashboard/components/dashboard-nav-links";
 import { AcmeLogo } from "@/ui/brand/acme-logo";
 
 interface SideNavProps {
 	readonly logoutAction: () => Promise<void>;
 }
 
-export const SideNav = ({ logoutAction }: SideNavProps): JSX.Element => {
+export const DashboardSidebar = ({
+	logoutAction,
+}: SideNavProps): JSX.Element => {
 	return (
 		<nav
 			aria-label="Dashboard sidebar"
@@ -25,7 +27,7 @@ export const SideNav = ({ logoutAction }: SideNavProps): JSX.Element => {
 				<AcmeLogo />
 			</Link>
 			<div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-				<NavLinksWrapper />
+				<DashboardNavLinks />
 				<div
 					aria-hidden="true"
 					className="hidden h-auto w-full grow rounded-md bg-bg-secondary md:block"

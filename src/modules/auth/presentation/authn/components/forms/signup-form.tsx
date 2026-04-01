@@ -6,8 +6,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
 import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/feedback/auth-form-feedback";
-import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/layout/auth-actions-row";
-import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/layout/form-row.wrapper";
+import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/wrappers/auth-actions-row";
+import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/wrappers/form-row.wrapper";
 import type { AuthActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
 import { SIGNUP_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
