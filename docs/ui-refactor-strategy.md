@@ -16,7 +16,8 @@
 Put code in `src/app` only when it is part of the App Router contract or needs to live beside a route segment.
 
 - Allowed here:
-    - `page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`, `route.ts`
+    - `page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `error.tsx`, `global-error.tsx`, `not-found.tsx`,
+      `default.tsx`, `route.ts`
     - route-group organization like `(dashboard)`
     - private colocation folders like `_components` or `_lib` when something is route-local and should not become shared
 - Keep `src/app` files thin:
@@ -70,12 +71,16 @@ Put code in `src/shell` when it composes multiple features or provides applicati
 
 ## Naming Rules
 
-### Reserve `layout` for Next.js route layouts
+### Reserve `layout.tsx` and bare `template.tsx` for Next.js route files
 
-In this codebase, `layout.tsx` should mean an App Router layout file.
+In this codebase, `layout.tsx` should mean an App Router layout file, and bare `template.tsx` should mean an App
+Router template file.
 
 - Keep the term `layout` for files such as `src/app/layout.tsx` or `src/app/dashboard/layout.tsx`.
+- Keep bare `template.tsx` only for real route templates under `src/app`.
 - Avoid using `layout` for generic wrappers under `src/ui` or `src/modules/*/presentation`.
+- Outside `src/app`, prefer descriptive names like `auth-page-template.tsx` over ambiguous convention-like names such as
+  `layout.tsx` or `template.tsx`.
 
 ### Prefer other names for non-route wrappers
 
@@ -92,48 +97,126 @@ Examples:
   `presentation/wrappers/`
 - `src/ui/layouts/...` should eventually become `src/ui/wrappers/...` or another non-route term
 
-### Concrete renaming opportunities to queue
+### Naming outcomes already reflected in the repo
 
-These are good candidates for the first naming pass because they currently blur route-layout language,
-shared-ui language, or shell language.
+These examples are now useful as naming references because the repo already reflects them:
 
-- `src/modules/auth/presentation/authn/components/shared/layout/`
-    - Rename folder to `shared/templates/` or `shared/wrappers/`
-    - Reason: `layout` collides with App Router terminology, while this code is feature-local presentation
-- `src/modules/auth/presentation/authn/components/shared/layout/auth-page-wrapper.tsx`
-    - Preferred rename: `auth-page-template.tsx`
-    - Acceptable alternative: `auth-page-frame.tsx`
-    - Reason: it provides a standard auth page structure, not a Next.js route layout
-- `AuthPageWrapper`
-    - Preferred rename: `AuthPageTemplate`
-    - Acceptable alternative: `AuthPageFrame`
-    - Reason: the component is a reusable feature-level page scaffold
-- Any future `src/ui/layouts/...` directory
-    - Preferred rename: `src/ui/wrappers/...`
-    - Acceptable alternative: `src/ui/frames/...`
-    - Reason: shared UI should avoid `layout` unless the file is an actual App Router layout file
-- `src/shell/dashboard/components/sidenav.tsx`
-    - Preferred rename: `dashboard-sidebar.tsx`
-    - Reason: `sidebar` is a clearer shell/chrome term than the more generic `sidenav`
-- `SideNav`
-    - Preferred rename: `DashboardSidebar`
-    - Reason: the shell layer should use explicit app-chrome names when the component is dashboard-owned
-- `src/shell/dashboard/components/nav-links-wrapper.tsx`
-    - Preferred rename: `dashboard-nav.tsx` or `dashboard-nav-links.tsx`
-    - Reason: `wrapper` is vague unless the file is truly only a structural wrapper
-- `NavLinksWrapper`
-    - Preferred rename: `DashboardNav` or `DashboardNavLinks`
-    - Reason: the new name explains whether the component owns navigation content instead of just wrapping it
-- `src/shell/dashboard/components/dashboard.tsx`
-    - Preferred rename: `dashboard-overview.tsx` or `dashboard-screen.tsx`
-    - Reason: `dashboard` is too broad inside a folder already named `dashboard`; the file appears to model a specific
-      composed screen
-- `Dashboard`
-    - Preferred rename: `DashboardOverview` or `DashboardScreen`
-    - Reason: component names should reveal whether they are app-shell compositions, pages, or generic widgets
+- `src/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template.tsx`
+    - Use as the reference shape for a feature-level page scaffold.
+    - Reason: it avoids App Router `layout.tsx` naming while still making template ownership explicit.
+- `AuthPageTemplate`
+    - Use as the preferred auth page scaffold name.
+    - Reason: it reads as feature presentation, not as a route convention file.
+- `src/shell/dashboard/components/dashboard-sidebar.tsx`
+    - Use as the reference shell name for dashboard chrome.
+    - Reason: `sidebar` is clearer than older `sidenav` wording when the component owns dashboard navigation chrome.
+- `DashboardSidebar`
+    - Use as the preferred component name for the dashboard shell sidebar.
+    - Reason: the shell layer benefits from explicit app-chrome names.
+- `src/shell/dashboard/components/dashboard-nav-links.tsx`
+    - Use as the reference name when a file owns dashboard navigation content.
+    - Reason: it is more descriptive than vague wrapper terminology.
+- `DashboardNavLinks`
+    - Use as the preferred component name for dashboard navigation link composition.
+    - Reason: the name describes ownership and purpose directly.
+- `src/shell/dashboard/components/dashboard-overview.tsx`
+    - Use as the reference name for the composed overview screen inside dashboard shell.
+    - Reason: it is more precise than a redundant file named only `dashboard.tsx` inside a `dashboard` folder.
+- `DashboardOverview`
+    - Use as the preferred component name for the dashboard overview composition.
+    - Reason: the name communicates that the component is a specific screen-level shell composition.
 
-Use these as review prompts, not mandatory immediate moves. Rename only when the new name clarifies ownership,
-scope, or App Router terminology.
+Use these as reference points for future naming. Rename only when the new name clarifies ownership, scope, or App
+Router terminology.
+
+## Current Repository Placement Examples
+
+Use the current codebase as the reference for what should stay where.
+
+### Good examples to preserve
+
+- `src/app/layout.tsx`
+    - Keep in `src/app` because it is the root App Router layout and owns route-level metadata and chrome entry.
+- `src/app/dashboard/layout.tsx`
+    - Keep in `src/app` because it is a real route layout that delegates rendering to shell and feature code.
+- `src/app/auth/login/page.tsx`
+    - Keep in `src/app` because it is the route entrypoint, but keep it thin and continue delegating to feature
+      presentation.
+- `src/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template.tsx`
+    - Keep in auth presentation because it is a feature-local page template, not app-wide shell.
+- `src/shell/dashboard/components/dashboard-sidebar.tsx`
+    - Keep in `src/shell` because it composes branding, navigation, and auth logout into dashboard chrome.
+- `src/ui/molecules/page-header.tsx`
+    - Keep in `src/ui` as long as it stays feature-neutral and does not absorb auth-specific behavior.
+
+### Signals that a file is in the wrong layer
+
+- Move out of `src/ui` when the file name, props, or copy includes feature words like `auth`, `invoice`, `user`, or
+  `dashboard`.
+- Move out of `src/modules/*/presentation` when multiple features start importing it as a general-purpose building
+  block.
+- Move out of `src/shell` when the file stops composing multiple features and becomes a low-level visual primitive.
+- Move out of `src/app` when the file is not a Next.js route convention file and is not truly route-local.
+
+## Incremental Move Queue
+
+These are the next practical moves to make the strategy operational without forcing a rewrite.
+
+### Pass A: stabilize the auth feature as the reference example
+
+- Keep `src/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template.tsx` as the naming reference
+  for
+  non-route page wrappers.
+- Prefer future auth page-level wrappers under `presentation/templates/` when they define page structure and under
+  `presentation/wrappers/` when they are narrower structural helpers.
+- Keep actions such as `login.action.ts` and `logout.action.ts` in auth presentation because they directly serve feature
+  UI flows.
+- Avoid moving auth-specific prompts, cards, or forms into `src/ui` unless they lose auth language completely.
+
+### Pass B: align other features to the same presentation vocabulary
+
+- `src/modules/invoices/presentation`
+    - Keep `actions/`, `components/`, and `forms/` as the base structure.
+    - Keep `templates/` available for future invoice page scaffolds, but do not populate it until an invoice-specific
+      page template actually emerges.
+    - Keep table variants and invoice-specific links inside invoice presentation instead of promoting them to shared UI.
+- `src/modules/users/presentation`
+    - Keep user forms and tables feature-local.
+    - Prefer `components/` for user-specific selectors and panels, even when they look visually generic.
+    - Keep `templates/` reserved for a reusable user page scaffold, but leave it empty unless create/edit screens truly
+      converge.
+
+### Pass C: tighten shell boundaries
+
+- Keep dashboard navigation and sidebar chrome in `src/shell/dashboard/components`.
+- Keep `src/shell/dashboard/frames/` reserved for larger shell-owned compositions, such as a reusable dashboard
+  workspace frame, rather than filling it with one-off wrappers.
+- Do not move feature-owned widgets into shell just because they render inside the dashboard.
+
+### Pass D: protect `src/ui` from semantic creep
+
+- Keep neutral building blocks like `PageHeader` in `src/ui` only while their API stays generic.
+- If `PageHeader` or similar molecules gain auth-only defaults, invoice-specific actions, or dashboard-only copy, split
+  those into feature-level wrappers that compose the shared UI primitive.
+- Prefer adding thin feature wrappers in `src/modules/*/presentation` over stuffing branching feature behavior into
+  shared UI.
+
+## Placement Checklist For New TSX Files
+
+Before creating a new component, answer these questions in order:
+
+1. Is this file a real Next.js route artifact such as `page.tsx`, `layout.tsx`, `loading.tsx`, or a route-local
+   `_components` helper?
+    - Yes → place it in `src/app`.
+2. Does the component speak in one feature's language or orchestrate one feature's workflow?
+    - Yes → place it in `src/modules/<feature>/presentation`.
+3. Does it compose app chrome or multiple features into one surface?
+    - Yes → place it in `src/shell`.
+4. Could the same component be reused in another app without bringing feature semantics along?
+    - Yes → place it in `src/ui`.
+
+If you still hesitate after step 4, default to the more specific owner first. It is easier to promote a component from
+feature-local to shared later than to clean feature semantics out of `src/ui` after they spread.
 
 ## Decision Framework
 
@@ -153,6 +236,12 @@ If a file seems to fit more than one place, prefer the most specific ownership:
 - feature-specific beats shared
 - app-shell composition beats generic UI
 - route contract beats all other concerns when the file is a real Next.js convention file
+
+Also keep this naming distinction in mind:
+
+- `layout.tsx` and bare `template.tsx` are App Router conventions and belong in `src/app`
+- `templates/` as a folder under feature presentation is still acceptable for descriptive, non-route page scaffolds
+- descriptive filenames like `auth-page-template.tsx` are clearer than generic filenames like `template.tsx`
 
 ## Target Folder Taxonomy
 
