@@ -1,9 +1,9 @@
 import type { JSX } from "react";
 import { verifySessionOptimistic } from "@/modules/auth/presentation/session/actions/verify-session-optimistic.action";
-import { readTotalCustomersCountAction } from "@/modules/customers/infrastructure/actions/read-total-customers-count.action";
+import { readTotalCustomersCountAction } from "@/modules/customers/presentation/actions/read-total-customers-count.action";
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
-import { readInvoicesSummaryAction } from "@/modules/invoices/infrastructure/actions/read-invoices-summary.action";
-import { readLatestInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-latest-invoices.action";
+import { readInvoicesSummaryAction } from "@/modules/invoices/presentation/actions/read-invoices-summary.action";
+import { readLatestInvoicesAction } from "@/modules/invoices/presentation/actions/read-latest-invoices.action";
 import { getAppDb } from "@/server/db/db.connection";
 import {
 	ADMIN_ROLE,

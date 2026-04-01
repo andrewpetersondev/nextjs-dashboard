@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { deleteInvoiceAction } from "@/modules/invoices/infrastructure/actions/delete-invoice.action";
+import { deleteInvoiceAction } from "@/modules/invoices/presentation/actions/delete-invoice.action";
 
 /**
  * Form server action for deleting an invoice.

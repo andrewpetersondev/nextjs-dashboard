@@ -7,12 +7,12 @@ import {
 	type UpdateInvoicePayload,
 	UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
-import { updateInvoiceAction } from "@/modules/invoices/infrastructure/actions/update-invoice.action";
-import { CustomerSelect } from "@/modules/invoices/presentation/components/forms/customer-select";
-import { InvoiceAmountInput } from "@/modules/invoices/presentation/components/forms/invoice-amount-input";
-import { InvoiceDate } from "@/modules/invoices/presentation/components/forms/invoice-date";
-import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/components/forms/invoice-status-radio-group";
-import { SensitiveData } from "@/modules/invoices/presentation/components/forms/sensitive-data";
+import { updateInvoiceAction } from "@/modules/invoices/presentation/actions/update-invoice.action";
+import { CustomerSelect } from "@/modules/invoices/presentation/forms/customer-select";
+import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoice-amount-input";
+import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
+import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/forms/invoice-status-radio-group";
+import { SensitiveData } from "@/modules/invoices/presentation/forms/sensitive-data";
 import type {
 	DenseFieldErrorMap,
 	FieldError,

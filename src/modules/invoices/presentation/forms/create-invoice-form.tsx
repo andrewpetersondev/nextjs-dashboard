@@ -8,12 +8,12 @@ import {
 	type CreateInvoicePayload,
 	CreateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
-import { createInvoiceAction } from "@/modules/invoices/infrastructure/actions/create-invoice.action";
-import { CustomerSelect } from "@/modules/invoices/presentation/components/forms/customer-select";
-import { InvoiceAmountInput } from "@/modules/invoices/presentation/components/forms/invoice-amount-input";
-import { InvoiceDate } from "@/modules/invoices/presentation/components/forms/invoice-date";
-import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/components/forms/invoice-status-radio-group";
-import { SensitiveData } from "@/modules/invoices/presentation/components/forms/sensitive-data";
+import { createInvoiceAction } from "@/modules/invoices/presentation/actions/create-invoice.action";
+import { CustomerSelect } from "@/modules/invoices/presentation/forms/customer-select";
+import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoice-amount-input";
+import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
+import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/forms/invoice-status-radio-group";
+import { SensitiveData } from "@/modules/invoices/presentation/forms/sensitive-data";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";

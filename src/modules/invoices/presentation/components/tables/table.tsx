@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
-import { readFilteredInvoicesAction } from "@/modules/invoices/infrastructure/actions/read-filtered-invoices.action";
+import { readFilteredInvoicesAction } from "@/modules/invoices/presentation/actions/read-filtered-invoices.action";
 import { DesktopTable } from "@/modules/invoices/presentation/components/tables/desktop-table";
 import { MobileTable } from "@/modules/invoices/presentation/components/tables/mobile-table";
 
