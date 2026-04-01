@@ -1,5 +1,4 @@
 "use client";
-
 import { type JSX, useActionState, useEffect, useId, useRef } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { getCurrentIsoDate } from "@/modules/invoices/domain/invoice.date-utils";
@@ -9,6 +8,7 @@ import {
 	CreateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { createInvoiceAction } from "@/modules/invoices/presentation/actions/create-invoice.action";
+import { INVOICE_FORM_CANCEL_LABEL } from "@/modules/invoices/presentation/constants/invoice-form.constants";
 import { CustomerSelect } from "@/modules/invoices/presentation/forms/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
@@ -129,7 +129,10 @@ export function CreateInvoiceForm({
 					/>
 				</div>
 
-				<FormActionRow cancelHref={ROUTES.dashboard.invoices}>
+				<FormActionRow
+					cancelHref={ROUTES.dashboard.invoices}
+					cancelLabel={INVOICE_FORM_CANCEL_LABEL}
+				>
 					<SubmitButtonMolecule
 						data-cy="create-invoice-submit-button"
 						label="Create Invoice"

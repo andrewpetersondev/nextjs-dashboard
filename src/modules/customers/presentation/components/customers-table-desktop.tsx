@@ -2,6 +2,13 @@ import type { JSX } from "react";
 import { CUSTOMER_TABLE_HEADERS } from "@/modules/customers/domain/constants";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
 import { CustomersTableDesktopRow } from "@/modules/customers/presentation/components/customers-table-desktop-row";
+import {
+	Table,
+	TableBody,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/ui/atoms/table";
 
 /**
  * Table column definitions for customer data.
@@ -41,24 +48,28 @@ export function CustomersTableDesktop({
 	customers: FormattedCustomersTableRow[];
 }): JSX.Element {
 	return (
-		<table
-			className="hidden min-w-full rounded-md text-text-primary md:table"
+		<Table
+			className="hidden min-w-full rounded-md md:table"
 			data-cy="customers-table"
 		>
-			<thead className="rounded-md bg-bg-accent text-left font-normal text-sm">
-				<tr>
+			<TableHeader className="rounded-md bg-bg-accent font-normal text-sm">
+				<TableRow className="hover:bg-transparent">
 					{TABLE_COLUMNS.map(({ key, label }) => (
-						<th className={getHeaderCellClass(key)} key={key} scope="col">
+						<TableHead
+							className={getHeaderCellClass(key)}
+							key={key}
+							scope="col"
+						>
 							{label}
-						</th>
+						</TableHead>
 					))}
-				</tr>
-			</thead>
-			<tbody className="divide-y divide-bg-accent bg-bg-primary text-text-primary">
+				</TableRow>
+			</TableHeader>
+			<TableBody className="divide-y divide-bg-accent">
 				{customers.map((customer) => (
 					<CustomersTableDesktopRow customer={customer} key={customer.id} />
 				))}
-			</tbody>
-		</table>
+			</TableBody>
+		</Table>
 	);
 }

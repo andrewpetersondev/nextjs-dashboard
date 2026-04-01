@@ -8,6 +8,7 @@ import {
 	UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { updateInvoiceAction } from "@/modules/invoices/presentation/actions/update-invoice.action";
+import { INVOICE_FORM_CANCEL_LABEL } from "@/modules/invoices/presentation/constants/invoice-form.constants";
 import { CustomerSelect } from "@/modules/invoices/presentation/forms/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
@@ -138,7 +139,10 @@ export const EditInvoiceForm = ({
 					errors={denseErrors}
 					pending={pending}
 				/>
-				<FormActionRow cancelHref={ROUTES.dashboard.invoices}>
+				<FormActionRow
+					cancelHref={ROUTES.dashboard.invoices}
+					cancelLabel={INVOICE_FORM_CANCEL_LABEL}
+				>
 					<SubmitButtonMolecule
 						data-cy="edit-invoice-submit-button"
 						label="Edit Invoice"

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
+import { TableCell, TableRow } from "@/ui/atoms/table";
 import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
 /**
@@ -18,11 +19,11 @@ export function CustomersTableDesktopRow({
 	customer,
 }: CustomerTableRowProps): JSX.Element {
 	return (
-		<tr
+		<TableRow
 			className="group cursor-pointer hover:bg-bg-active"
 			data-cy="customer-row"
 		>
-			<td className="whitespace-nowrap py-5 pr-3 pl-4 text-sm text-text-primary group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
+			<TableCell className="whitespace-nowrap py-5 pr-3 pl-4 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
 				<div className="flex items-center gap-3">
 					<Image
 						alt={`${customer.name}'s profile picture`}
@@ -34,17 +35,19 @@ export function CustomersTableDesktopRow({
 					/>
 					<p>{customer.name}</p>
 				</div>
-			</td>
-			<td className="whitespace-nowrap px-4 py-5 text-sm">{customer.email}</td>
-			<td className="whitespace-nowrap px-4 py-5 text-sm">
+			</TableCell>
+			<TableCell className="whitespace-nowrap px-4 py-5 text-sm">
+				{customer.email}
+			</TableCell>
+			<TableCell className="whitespace-nowrap px-4 py-5 text-sm">
 				{customer.totalInvoices}
-			</td>
-			<td className="whitespace-nowrap px-4 py-5 text-sm">
+			</TableCell>
+			<TableCell className="whitespace-nowrap px-4 py-5 text-sm">
 				{customer.totalPending}
-			</td>
-			<td className="whitespace-nowrap px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+			</TableCell>
+			<TableCell className="whitespace-nowrap px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
 				{customer.totalPaid}
-			</td>
-		</tr>
+			</TableCell>
+		</TableRow>
 	);
 }

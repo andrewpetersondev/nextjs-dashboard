@@ -8,6 +8,7 @@ import { type JSX, useActionState, useId } from "react";
 import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { createUserAction } from "@/modules/users/presentation/actions/create-user.action";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
+import { USER_FORM_CANCEL_LABEL } from "@/modules/users/presentation/constants/user-form.constants";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
@@ -45,7 +46,7 @@ function CreateUserFormFields({
 				disabled={disabled}
 				error={errors?.username as readonly [string, ...string[]] | undefined}
 				icon={
-					<UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+					<UserIcon className="pointer-events-none ml-2 h-4.5 w-4.5 text-text-accent" />
 				}
 				id={usernameId}
 				label="Username"
@@ -60,7 +61,7 @@ function CreateUserFormFields({
 				disabled={disabled}
 				error={errors?.email as readonly [string, ...string[]] | undefined}
 				icon={
-					<AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+					<AtSymbolIcon className="pointer-events-none ml-2 h-4.5 w-4.5 text-text-accent" />
 				}
 				id={emailId}
 				label="Email address"
@@ -76,7 +77,7 @@ function CreateUserFormFields({
 				disabled={disabled}
 				error={errors?.password as readonly [string, ...string[]] | undefined}
 				icon={
-					<LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+					<LockClosedIcon className="pointer-events-none ml-2 h-4.5 w-4.5 text-text-accent" />
 				}
 				id={passwordId}
 				label="Password"
@@ -116,7 +117,10 @@ export function CreateUserForm(): JSX.Element {
 			</section>
 			<form action={action} autoComplete="off">
 				<CreateUserFormFields disabled={pending} errors={fieldErrors} />
-				<FormActionRow cancelHref={ROUTES.dashboard.users}>
+				<FormActionRow
+					cancelHref={ROUTES.dashboard.users}
+					cancelLabel={USER_FORM_CANCEL_LABEL}
+				>
 					<SubmitButtonMolecule label="Create User" pending={pending} />
 				</FormActionRow>
 			</form>

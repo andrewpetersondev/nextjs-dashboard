@@ -7,21 +7,21 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 }
 
 /**
- * Accessible and reusable label component.
+ * Accessible label primitive for form controls.
  */
 export function LabelAtom({
-	text,
-	htmlFor,
 	className,
 	dataCy,
+	htmlFor,
+	text,
 	...rest
 }: LabelProps): JSX.Element {
 	return (
 		<label
+			{...rest}
 			className={cn("mb-2 block font-medium text-sm", className)}
 			data-cy={dataCy}
 			htmlFor={htmlFor}
-			{...rest}
 		>
 			{text}
 		</label>

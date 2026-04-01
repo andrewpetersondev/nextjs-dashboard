@@ -1,23 +1,14 @@
 import type { JSX } from "react";
 
-/**
- * Props for the FieldError component.
- */
 interface FieldErrorProps {
-	dataCy?: string | undefined;
-	/** Dense errors: always an array (possibly empty). */
+	dataCy?: string;
 	error?: readonly string[] | undefined;
 	id?: string;
 	label?: string;
 }
 
 /**
- * FieldError displays field-level validation errors in a consistent, accessible format.
- *
- * Renders nothing when the provided dense error array is empty or undefined.
- *
- * @param props - The properties for the component.
- * @returns Rendered error messages as a list, or null if no errors are present.
+ * Field-level validation feedback.
  */
 export function FieldErrorComponent({
 	dataCy,
@@ -30,12 +21,18 @@ export function FieldErrorComponent({
 	}
 
 	return (
-		<div className="text-text-error" data-cy={dataCy} id={id} role="alert">
-			{label && <p>{label}</p>}
-			<ul>
+		<div
+			aria-live="polite"
+			className="mt-2 text-sm text-text-error"
+			data-cy={dataCy}
+			id={id}
+			role="alert"
+		>
+			{label ? <p className="font-semibold">{label}</p> : null}
+			<ul className="list-disc space-y-1 pl-5">
 				{error.map((message, index) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: TODO FIND A BETTER SOLUTION LATER
-					<li key={`${message}-${index}`}>- {message}</li>
+					// biome-ignore lint/suspicious/noArrayIndexKey: error items are message-only and may repeat
+					<li key={`${message}-${index}`}>{message}</li>
 				))}
 			</ul>
 		</div>

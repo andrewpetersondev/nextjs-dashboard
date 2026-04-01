@@ -1,48 +1,39 @@
-import type { FC } from "react";
+import type { JSX } from "react";
 import { cn } from "@/ui/utils/cn";
 
 interface FormAlertProps {
-	/** Optional additional classes */
 	className?: string;
-	/** Optional cypress data attribute */
 	dataCy?: string;
-	/** The message to display. If undefined/empty, nothing renders. */
 	message?: string;
-	/**
-	 * Type of alert. Defaults to 'error'.
-	 * 'error' renders red text, 'success' renders green (or primary/secondary depending on system).
-	 * Currently, the implementation follows the original design (error text).
-	 */
 	type?: "error" | "success";
 }
 
 /**
- * FormAlert
- * Displays a form-level message (typically server errors or success messages).
- * Rendered with aria-live for accessibility.
+ * Inline form alert for submission feedback.
  */
-export const FormAlert: FC<FormAlertProps> = ({
+export function FormAlert({
+	className,
+	dataCy = "form-alert",
 	message,
 	type = "error",
-	dataCy = "form-alert",
-	className,
-}: FormAlertProps) => {
+}: FormAlertProps): JSX.Element {
 	return (
 		<div
 			aria-atomic="true"
 			aria-live="polite"
-			className={cn("flex h-8 items-end space-x-1", className)}
+			className={cn("min-h-8 text-sm", className)}
 		>
-			{message && (
+			{message ? (
 				<p
 					className={cn(
+						"font-medium",
 						type === "error" ? "text-text-error" : "text-text-primary",
 					)}
 					data-cy={dataCy}
 				>
 					{message}
 				</p>
-			)}
+			) : null}
 		</div>
 	);
-};
+}

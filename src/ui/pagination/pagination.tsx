@@ -20,13 +20,13 @@ function PaginationNumber({
 	position?: "first" | "last" | "middle" | "single";
 }): JSX.Element {
 	const className = cn(
-		"flex h-10 w-10 items-center justify-center text-sm border",
+		"flex h-10 w-10 items-center justify-center border text-sm",
 		{
 			"hover:bg-bg-hover": !isActive && position !== "middle",
 			"rounded-l-md": position === "first" || position === "single",
 			"rounded-r-md": position === "last" || position === "single",
 			"text-text-disabled": position === "middle",
-			"z-10 bg-bg-active border-bg-active text-text-inverse": isActive,
+			"z-10 border-bg-active bg-bg-active text-text-inverse": isActive,
 		},
 	);
 
@@ -76,9 +76,11 @@ function PaginationArrow({
 
 function toQueryObject(params: URLSearchParams): Record<string, string> {
 	const out: Record<string, string> = {};
+
 	for (const [key, value] of params.entries()) {
 		out[key] = value;
 	}
+
 	return out;
 }
 
@@ -89,7 +91,7 @@ export function Pagination({
 }): JSX.Element {
 	const pathname: string = usePathname();
 	const searchParams = useSearchParams();
-	const currentPage = Number(searchParams.get("page")) || 1;
+	const currentPage: number = Number(searchParams.get("page")) || 1;
 
 	const createPageHref = (pageNumber: number | string): UrlObject => {
 		const params = new URLSearchParams(searchParams);
@@ -132,8 +134,8 @@ export function Pagination({
 						<PaginationNumber
 							href={createPageHref(page)}
 							isActive={currentPage === page}
-							// biome-ignore lint/suspicious/noArrayIndexKey: TODO FIND A BETTER SOLUTION LATER
-							key={`${page}-${index}`} // Use index to handle duplicate ellipses if any
+							// biome-ignore lint/suspicious/noArrayIndexKey: duplicate ellipses may appear
+							key={`${page}-${index}`}
 							page={page}
 							position={position}
 						/>

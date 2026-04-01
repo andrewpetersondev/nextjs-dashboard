@@ -31,18 +31,20 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export function ButtonAtom({
 	children,
 	className,
-	variant = "primary", // Default to primary
-	size = "md",
+	disabled,
+	fullWidth = false,
 	isLoading = false,
 	loadingText,
-	fullWidth = false,
-	disabled,
+	size = "md",
+	variant = "primary",
 	...rest
 }: ButtonProps): JSX.Element {
+	const isDisabled: boolean = isLoading || Boolean(disabled);
+
 	return (
 		<button
 			{...rest}
-			aria-disabled={isLoading || rest["aria-disabled"]}
+			aria-disabled={isDisabled}
 			className={cn(
 				"flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none",
 				"active:bg-bg-active active:text-text-active",
@@ -53,7 +55,7 @@ export function ButtonAtom({
 				fullWidth && "w-full",
 				className,
 			)}
-			disabled={isLoading || disabled}
+			disabled={isDisabled}
 		>
 			{isLoading && loadingText ? loadingText : children}
 		</button>

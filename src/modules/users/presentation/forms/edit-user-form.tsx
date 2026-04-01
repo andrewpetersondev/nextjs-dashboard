@@ -17,6 +17,7 @@ import { EditUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { updateUserAction } from "@/modules/users/presentation/actions/update-user.action";
 import { UserInfoPanel } from "@/modules/users/presentation/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
+import { USER_FORM_CANCEL_LABEL } from "@/modules/users/presentation/constants/user-form.constants";
 import { isValidationMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
@@ -54,7 +55,7 @@ function EditUserFormFields({
 				disabled={disabled}
 				error={errors?.username}
 				icon={
-					<UserIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+					<UserIcon className="pointer-events-none ml-2 h-4.5 w-4.5 text-text-accent" />
 				}
 				id={usernameId}
 				label="Username"
@@ -70,7 +71,7 @@ function EditUserFormFields({
 				disabled={disabled}
 				error={errors?.email}
 				icon={
-					<AtSymbolIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+					<AtSymbolIcon className="pointer-events-none ml-2 h-4.5 w-4.5 text-text-accent" />
 				}
 				id={emailId}
 				label="Email address"
@@ -80,13 +81,14 @@ function EditUserFormFields({
 				type="email"
 			/>
 
+			{/* TODO: LEAVING PASSWORD BLANK WILL CAUSE AN ERROR */}
 			<InputFieldMolecule
 				autoComplete="off"
 				dataCy="user-password-input"
 				disabled={disabled}
 				error={errors?.password}
 				icon={
-					<LockClosedIcon className="pointer-events-none ml-2 h-[18px] w-[18px] text-text-accent" />
+					<LockClosedIcon className="pointer-events-none ml-2 h-4.5 w-4.5 text-text-accent" />
 				}
 				id={passwordId}
 				label="Password (leave blank to keep current)"
@@ -151,7 +153,10 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 					errors={fieldErrors}
 					values={user}
 				/>
-				<FormActionRow cancelHref={ROUTES.dashboard.users}>
+				<FormActionRow
+					cancelHref={ROUTES.dashboard.users}
+					cancelLabel={USER_FORM_CANCEL_LABEL}
+				>
 					<SubmitButtonMolecule label="Save Changes" pending={pending} />
 				</FormActionRow>
 			</form>

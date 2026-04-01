@@ -8,6 +8,14 @@ import {
 } from "@/modules/invoices/presentation/components/invoice-links";
 import { InvoiceStatusComponent } from "@/modules/invoices/presentation/components/tables/status";
 import { formatCurrency } from "@/shared/primitives/money/convert";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/ui/atoms/table";
 
 export const DesktopTable = ({
 	invoices,
@@ -15,38 +23,38 @@ export const DesktopTable = ({
 	invoices: InvoiceListFilter[];
 }): JSX.Element => {
 	return (
-		<table className="hidden min-w-full text-text-primary md:table">
-			<thead className="rounded-lg text-left font-normal text-sm">
-				<tr>
-					<th className="px-4 py-5 font-medium sm:pl-6" scope="col">
+		<Table className="hidden min-w-full md:table">
+			<TableHeader className="rounded-lg font-normal text-sm">
+				<TableRow className="hover:bg-transparent">
+					<TableHead className="px-4 py-5 font-medium sm:pl-6" scope="col">
 						Customer
-					</th>
-					<th className="px-3 py-5 font-medium" scope="col">
+					</TableHead>
+					<TableHead className="px-3 py-5 font-medium" scope="col">
 						Email
-					</th>
-					<th className="px-3 py-5 font-medium" scope="col">
+					</TableHead>
+					<TableHead className="px-3 py-5 font-medium" scope="col">
 						Amount
-					</th>
-					<th className="px-3 py-5 font-medium" scope="col">
+					</TableHead>
+					<TableHead className="px-3 py-5 font-medium" scope="col">
 						Date
-					</th>
-					<th className="px-3 py-5 font-medium" scope="col">
+					</TableHead>
+					<TableHead className="px-3 py-5 font-medium" scope="col">
 						Status
-					</th>
-					<th className="relative py-3 pr-3 pl-6" scope="col">
+					</TableHead>
+					<TableHead className="relative py-3 pr-3 pl-6" scope="col">
 						<span className="sr-only">Edit</span>
-					</th>
-				</tr>
-			</thead>
-			<tbody className="bg-bg-primary">
+					</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
 				{invoices?.map(
 					(invoice): JSX.Element => (
-						<tr
+						<TableRow
 							className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
 							data-cy="invoice-row"
 							key={invoice.id}
 						>
-							<td className="whitespace-nowrap py-3 pr-3 pl-6">
+							<TableCell className="whitespace-nowrap py-3 pr-3 pl-6">
 								<div className="flex items-center gap-3">
 									<Image
 										alt={`${invoice.name}'s profile picture`}
@@ -57,27 +65,29 @@ export const DesktopTable = ({
 									/>
 									<p>{invoice.name}</p>
 								</div>
-							</td>
-							<td className="whitespace-nowrap px-3 py-3">{invoice.email}</td>
-							<td className="whitespace-nowrap px-3 py-3">
+							</TableCell>
+							<TableCell className="whitespace-nowrap px-3 py-3">
+								{invoice.email}
+							</TableCell>
+							<TableCell className="whitespace-nowrap px-3 py-3">
 								{formatCurrency(invoice.amount)}
-							</td>
-							<td className="whitespace-nowrap px-3 py-3">
+							</TableCell>
+							<TableCell className="whitespace-nowrap px-3 py-3">
 								{formatInvoiceDateLocalized(invoice.date.toISOString())}
-							</td>
-							<td className="whitespace-nowrap px-3 py-3">
+							</TableCell>
+							<TableCell className="whitespace-nowrap px-3 py-3">
 								<InvoiceStatusComponent status={invoice.status} />
-							</td>
-							<td className="whitespace-nowrap py-3 pr-3 pl-6">
+							</TableCell>
+							<TableCell className="whitespace-nowrap py-3 pr-3 pl-6">
 								<div className="flex justify-end gap-3">
 									<UpdateInvoiceLink id={invoice.id} />
 									<DeleteInvoiceButton id={invoice.id} />
 								</div>
-							</td>
-						</tr>
+							</TableCell>
+						</TableRow>
 					),
 				)}
-			</tbody>
-		</table>
+			</TableBody>
+		</Table>
 	);
 };

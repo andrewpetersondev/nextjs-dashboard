@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { JSX } from "react";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 
 interface ErrorMessageProps {
@@ -8,33 +8,33 @@ interface ErrorMessageProps {
 	label?: string;
 }
 
-export const ErrorMessage: FC<ErrorMessageProps> = ({
+/**
+ * Form error renderer for dense validation messages.
+ */
+export function ErrorMessage({
 	dataCy,
 	error,
 	id,
 	label,
-}: ErrorMessageProps) => {
-	// With FormFieldError being a non-empty array, if error is provided it must have items.
-	if (!error) {
+}: ErrorMessageProps): JSX.Element | null {
+	if (!error || error.length === 0) {
 		return null;
 	}
-
-	const errors = error;
 
 	return (
 		<div
 			aria-live="assertive"
-			className="text-text-error"
+			className="mt-2 text-sm text-text-error"
 			data-cy={dataCy}
 			id={id}
 			role="alert"
 		>
-			{label && <p className="font-semibold">{label}</p>}
-			<ul>
-				{errors.map((err) => (
-					<li key={err}>- {err}</li>
+			{label ? <p className="font-semibold">{label}</p> : null}
+			<ul className="list-disc space-y-1 pl-5">
+				{error.map((err) => (
+					<li key={err}>{err}</li>
 				))}
 			</ul>
 		</div>
 	);
-};
+}
