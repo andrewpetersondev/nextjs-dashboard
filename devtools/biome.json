@@ -15,6 +15,9 @@
 			},
 			"nursery": {
 				"useExplicitType": "off"
+			},
+			"style": {
+				"noProcessEnv": "off"
 			}
 		}
 	},

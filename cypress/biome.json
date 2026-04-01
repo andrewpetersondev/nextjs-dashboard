@@ -21,6 +21,9 @@
 			},
 			"performance": {
 				"noNamespaceImport": "off"
+			},
+			"style": {
+				"noProcessEnv": "off"
 			}
 		}
 	},
