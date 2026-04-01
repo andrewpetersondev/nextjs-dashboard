@@ -36,7 +36,8 @@
 	},
 	"formatter": {
 		"enabled": true,
-		"includes": ["**", "!**/*.js", "!**/*.jsx"]
+		"includes": ["**", "!**/*.js", "!**/*.jsx"],
+		"trailingNewline": true
 	},
 	"javascript": {
 		"assist": {
