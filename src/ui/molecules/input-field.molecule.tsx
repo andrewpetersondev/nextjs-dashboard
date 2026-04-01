@@ -1,8 +1,8 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
 import { LabelAtom } from "@/ui/atoms/label.atom";
-import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
 import { cn } from "@/ui/utils/cn";
+import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
 /**
  * Props for the InputField component.

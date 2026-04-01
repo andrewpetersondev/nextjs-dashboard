@@ -3,7 +3,7 @@ import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import { ErrorMessage } from "@/ui/forms/components/fields/error-message";
-import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
+import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
 /**
  * Props for InvoiceStatusRadioGroup.

@@ -4,8 +4,8 @@ import {
 	SelectMenuAtom,
 	type SelectMenuProps,
 } from "@/ui/atoms/select-menu.atom";
-import { InputFieldCardWrapper } from "@/ui/layouts/input-field-card.wrapper";
 import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
+import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
 interface SelectFieldProps<T extends { id: string; name: string }>
 	extends SelectMenuProps<T> {
