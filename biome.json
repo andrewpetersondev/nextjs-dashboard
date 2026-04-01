@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
 	"assist": {
 		"actions": {
 			"recommended": true,
@@ -65,6 +65,7 @@
 	},
 	"linter": {
 		"domains": {
+			"drizzle": "all",
 			"next": "all",
 			"project": "all",
 			"react": "all",
