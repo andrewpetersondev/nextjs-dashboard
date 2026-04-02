@@ -1,6 +1,6 @@
 import type { JSX, ReactNode } from "react";
 import { BRAND_LOGO_SRC } from "@/ui/brand/brand.constants";
-import { PageHeader } from "@/ui/molecules/page-header";
+import { PageHeaderMolecule } from "@/ui/molecules/page-header.molecule";
 
 interface AuthPageWrapperProps {
 	children: ReactNode;
@@ -18,7 +18,7 @@ export function AuthPageTemplate({
 	return (
 		<main className="h-full">
 			<div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-				<PageHeader logoSrc={BRAND_LOGO_SRC} title={title} />
+				<PageHeaderMolecule logoSrc={BRAND_LOGO_SRC} title={title} />
 				<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
 					{children}
 				</div>

@@ -4,7 +4,7 @@ import {
 	SelectMenuAtom,
 	type SelectMenuProps,
 } from "@/ui/atoms/select-menu.atom";
-import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
+import { FieldErrorComponentMolecule } from "@/ui/molecules/field-error-component.molecule";
 import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
 interface SelectFieldProps<T extends { id: string; name: string }>
@@ -38,7 +38,7 @@ export function SelectFieldMolecule<T extends { id: string; name: string }>(
 					{...rest}
 				/>
 				{hasError && (
-					<FieldErrorComponent
+					<FieldErrorComponentMolecule
 						dataCy={dataCy ? `${dataCy}-errors` : undefined}
 						error={error}
 						id={errorId}

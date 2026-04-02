@@ -7,9 +7,9 @@ import {
 	InvoicesTableSkeleton,
 } from "@/modules/invoices/presentation/components/invoices.skeletons";
 import { InvoicesTable } from "@/modules/invoices/presentation/components/tables/table";
-import { H1 } from "@/ui/atoms/headings";
+import { H1 } from "@/ui/atoms/headings.atom";
 import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
-import { Pagination } from "@/ui/pagination/pagination";
+import { Pagination } from "@/ui/navigation/pagination/pagination";
 
 interface InvoicesSearchParams {
 	page?: string;

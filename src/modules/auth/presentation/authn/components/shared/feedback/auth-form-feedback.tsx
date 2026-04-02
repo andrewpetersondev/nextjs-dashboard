@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { FormAlert } from "@/ui/molecules/form-alert";
+import { FormAlertMolecule } from "@/ui/molecules/form-alert.molecule";
 
 interface AuthFormFeedbackProps<F extends string> {
 	readonly state: FormResult<F>;
@@ -19,7 +19,7 @@ export function AuthFormFeedback<F extends string>({
 		}
 
 		return (
-			<FormAlert
+			<FormAlertMolecule
 				dataCy="auth-server-message-success"
 				message={state.value.message}
 				type="success"
@@ -32,7 +32,7 @@ export function AuthFormFeedback<F extends string>({
 	}
 
 	return (
-		<FormAlert
+		<FormAlertMolecule
 			dataCy="auth-server-message-error"
 			message={state.error.message}
 			type="error"

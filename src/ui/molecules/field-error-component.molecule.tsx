@@ -10,7 +10,7 @@ interface FieldErrorProps {
 /**
  * Field-level validation feedback.
  */
-export function FieldErrorComponent({
+export function FieldErrorComponentMolecule({
 	dataCy,
 	error,
 	id,

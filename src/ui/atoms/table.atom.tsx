@@ -5,7 +5,7 @@ import { cn } from "@/ui/utils/cn";
  * Responsive table wrapper.
  */
 // biome-ignore lint/style/useExportsLast: this follows convention
-export function Table({
+export function TableAtom({
 	className,
 	...props
 }: ComponentProps<"table">): JSX.Element {
@@ -22,7 +22,7 @@ export function Table({
 	);
 }
 
-Table.displayName = "Table";
+TableAtom.displayName = "Table";
 
 /**
  * Table head section.

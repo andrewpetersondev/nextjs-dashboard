@@ -23,9 +23,9 @@ import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { CENTS_IN_DOLLAR } from "@/shared/primitives/money/money.constants";
 import { ROUTES } from "@/shared/routing/routes";
-import { FormActionRow } from "@/ui/forms/components/layout/form-action-row";
+import { FormActionRow } from "@/ui/forms/components/wrappers/form-action-row";
 import { useAutoHideAlert } from "@/ui/hooks/useAutoHideAlert";
-import { ServerMessage } from "@/ui/molecules/server-message";
+import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 // Helper: build the server action expected by useActionState
@@ -150,7 +150,7 @@ export const EditInvoiceForm = ({
 					/>
 				</FormActionRow>
 			</form>
-			<ServerMessage showAlert={showAlert} state={state} />
+			<ServerMessageMolecule showAlert={showAlert} state={state} />
 		</div>
 	);
 };

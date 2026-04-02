@@ -6,7 +6,7 @@ import {
 	PAGINATION_START_EDGE,
 	SECOND_PAGE,
 	THIRD_PAGE,
-} from "@/ui/pagination/pagination.constants";
+} from "@/ui/navigation/pagination/pagination.constants";
 
 export const generatePagination = (
 	currentPage: number,

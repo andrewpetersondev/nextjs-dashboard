@@ -7,7 +7,7 @@ import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto"
 import { readInvoiceByIdAction } from "@/modules/invoices/presentation/actions/read-invoice-by-id.action";
 import { EditInvoiceForm } from "@/modules/invoices/presentation/forms/edit-invoice-form";
 import { ROUTES } from "@/shared/routing/routes";
-import { H1 } from "@/ui/atoms/headings";
+import { H1 } from "@/ui/atoms/headings.atom";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
 interface EditInvoicePageParams {

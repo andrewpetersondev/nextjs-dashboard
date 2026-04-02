@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes, JSX, ReactNode } from "react";
 import { LabelAtom } from "@/ui/atoms/label.atom";
-import { FieldErrorComponent } from "@/ui/molecules/field-error-component";
+import { FieldErrorComponentMolecule } from "@/ui/molecules/field-error-component.molecule";
 import { cn } from "@/ui/utils/cn";
 import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
@@ -61,7 +61,7 @@ export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
 				</div>
 				{/* Only render FieldError if error is defined and non-empty */}
 				{hasError && (
-					<FieldErrorComponent
+					<FieldErrorComponentMolecule
 						dataCy={dataCy ? `${dataCy}-errors` : undefined}
 						error={error}
 						id={describedById ?? `${id}-errors`}

@@ -6,7 +6,7 @@ import { RevenueChart } from "@/modules/revenues/presentation/components/revenue
 import { RevenueChartSkeleton } from "@/modules/revenues/presentation/components/revenue-chart.skeleton";
 import { CardWrapper } from "@/shell/dashboard/components/cards";
 import type { DashboardCardData } from "@/shell/dashboard/types";
-import { H1 } from "@/ui/atoms/headings";
+import { H1 } from "@/ui/atoms/headings.atom";
 import { CardsSkeleton } from "@/ui/skeletons/skeletons";
 
 interface DashboardProps {

@@ -1,6 +1,6 @@
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { H1 } from "@/ui/atoms/headings";
+import { H1 } from "@/ui/atoms/headings.atom";
 
 /**
  * AcmeLogo component displays the Acme brand logo.

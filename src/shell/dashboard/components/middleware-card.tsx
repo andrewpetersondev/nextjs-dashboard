@@ -6,7 +6,7 @@ import {
 	USER_ROLES,
 	type UserRole,
 } from "@/shared/policies/user-role/user-role.constants";
-import { H6 } from "@/ui/atoms/headings";
+import { H6 } from "@/ui/atoms/headings.atom";
 
 const allowedRoles: readonly UserRole[] = USER_ROLES;
 

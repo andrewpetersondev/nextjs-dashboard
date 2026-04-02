@@ -5,7 +5,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { JSX } from "react";
-import { generatePagination } from "@/ui/pagination/generate-pagination";
+import { generatePagination } from "@/ui/navigation/pagination/generate-pagination";
 import { cn } from "@/ui/utils/cn";
 
 function PaginationNumber({

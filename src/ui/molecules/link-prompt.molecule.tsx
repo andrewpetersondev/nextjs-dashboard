@@ -19,7 +19,7 @@ type LinkPromptProps = {
  * Displays a prompt message followed by a highlighted link.
  * Commonly used for switching between Login/Signup forms.
  */
-export function LinkPrompt({
+export function LinkPromptMolecule({
 	prompt,
 	href,
 	linkText,

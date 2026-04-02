@@ -18,7 +18,7 @@ interface PageHeaderProps {
  * A reusable header molecule with an optional logo and title.
  * commonly used at the top of card-based layouts or auth pages.
  */
-export const PageHeader: FC<PageHeaderProps> = ({
+export const PageHeaderMolecule: FC<PageHeaderProps> = ({
 	title,
 	children,
 	logoSrc,

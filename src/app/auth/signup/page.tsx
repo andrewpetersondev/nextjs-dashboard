@@ -4,13 +4,13 @@ import { SignupCard } from "@/modules/auth/presentation/authn/components/cards/s
 import { AuthPageTemplate } from "@/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template";
 import { SIGNUP_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
 import { ROUTES } from "@/shared/routing/routes";
-import { LinkPrompt } from "@/ui/molecules/link-prompt";
+import { LinkPromptMolecule } from "@/ui/molecules/link-prompt.molecule";
 
 export default function SignupPage(): JSX.Element {
 	return (
 		<AuthPageTemplate title={SIGNUP_HEADING}>
 			<SignupCard action={signupAction} />
-			<LinkPrompt
+			<LinkPromptMolecule
 				href={ROUTES.auth.login}
 				linkText="Log in here"
 				prompt="Already a member?"

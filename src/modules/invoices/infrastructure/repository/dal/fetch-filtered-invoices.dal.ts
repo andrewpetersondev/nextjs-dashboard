@@ -6,7 +6,7 @@ import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
-import { ITEMS_PER_PAGE } from "@/ui/pagination/pagination.constants";
+import { ITEMS_PER_PAGE } from "@/ui/navigation/pagination/pagination.constants";
 
 /**
  * Fetches filtered invoices with pagination and customer information.

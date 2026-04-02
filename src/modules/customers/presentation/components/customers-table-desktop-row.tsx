@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { JSX } from "react";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
-import { TableCell, TableRow } from "@/ui/atoms/table";
+import { TableCell, TableRow } from "@/ui/atoms/table.atom";
 import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
 
 /**

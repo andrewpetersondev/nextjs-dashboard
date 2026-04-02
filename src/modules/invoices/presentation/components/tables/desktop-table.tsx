@@ -9,13 +9,13 @@ import {
 import { InvoiceStatusComponent } from "@/modules/invoices/presentation/components/tables/status";
 import { formatCurrency } from "@/shared/primitives/money/convert";
 import {
-	Table,
+	TableAtom,
 	TableBody,
 	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/ui/atoms/table";
+} from "@/ui/atoms/table.atom";
 
 export const DesktopTable = ({
 	invoices,
@@ -23,7 +23,7 @@ export const DesktopTable = ({
 	invoices: InvoiceListFilter[];
 }): JSX.Element => {
 	return (
-		<Table className="hidden min-w-full md:table">
+		<TableAtom className="hidden min-w-full md:table">
 			<TableHeader className="rounded-lg font-normal text-sm">
 				<TableRow className="hover:bg-transparent">
 					<TableHead className="px-4 py-5 font-medium sm:pl-6" scope="col">
@@ -88,6 +88,6 @@ export const DesktopTable = ({
 					),
 				)}
 			</TableBody>
-		</Table>
+		</TableAtom>
 	);
 };

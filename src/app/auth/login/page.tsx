@@ -4,13 +4,13 @@ import { LoginCard } from "@/modules/auth/presentation/authn/components/cards/lo
 import { AuthPageTemplate } from "@/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template";
 import { LOGIN_HEADING } from "@/modules/auth/presentation/constants/auth.tokens";
 import { ROUTES } from "@/shared/routing/routes";
-import { LinkPrompt } from "@/ui/molecules/link-prompt";
+import { LinkPromptMolecule } from "@/ui/molecules/link-prompt.molecule";
 
 export default function LoginPage(): JSX.Element {
 	return (
 		<AuthPageTemplate title={LOGIN_HEADING}>
 			<LoginCard action={loginAction} />
-			<LinkPrompt
+			<LinkPromptMolecule
 				href={ROUTES.auth.signup}
 				linkText="Sign up here"
 				prompt="Not a member?"

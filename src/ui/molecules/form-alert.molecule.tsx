@@ -11,7 +11,7 @@ interface FormAlertProps {
 /**
  * Inline form alert for submission feedback.
  */
-export function FormAlert({
+export function FormAlertMolecule({
 	className,
 	dataCy = "form-alert",
 	message,

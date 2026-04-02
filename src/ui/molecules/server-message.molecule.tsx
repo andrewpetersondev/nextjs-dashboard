@@ -91,7 +91,7 @@ function extractMessageAndSuccess<Tdata>(
  * - Conditional styling based on success state
  * - Integrates with form submission flow
  */
-export function ServerMessage<Tdata>({
+export function ServerMessageMolecule<Tdata>({
 	state,
 	showAlert,
 }: ServerMessageProps<Tdata>): JSX.Element {

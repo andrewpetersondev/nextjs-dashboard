@@ -3,12 +3,12 @@ import { CUSTOMER_TABLE_HEADERS } from "@/modules/customers/domain/constants";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
 import { CustomersTableDesktopRow } from "@/modules/customers/presentation/components/customers-table-desktop-row";
 import {
-	Table,
+	TableAtom,
 	TableBody,
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/ui/atoms/table";
+} from "@/ui/atoms/table.atom";
 
 /**
  * Table column definitions for customer data.
@@ -48,7 +48,7 @@ export function CustomersTableDesktop({
 	customers: FormattedCustomersTableRow[];
 }): JSX.Element {
 	return (
-		<Table
+		<TableAtom
 			className="hidden min-w-full rounded-md md:table"
 			data-cy="customers-table"
 		>
@@ -70,6 +70,6 @@ export function CustomersTableDesktop({
 					<CustomersTableDesktopRow customer={customer} key={customer.id} />
 				))}
 			</TableBody>
-		</Table>
+		</TableAtom>
 	);
 }

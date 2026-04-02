@@ -4,9 +4,9 @@ import { InvoicesSearchSkeleton } from "@/modules/invoices/presentation/componen
 import { readUsersPageCountAction } from "@/modules/users/presentation/actions/read-users-page-count.action";
 import { UsersTable } from "@/modules/users/presentation/components/tables/users-table";
 import { CreateUserLink } from "@/modules/users/presentation/components/user-action-buttons";
-import { H1 } from "@/ui/atoms/headings";
+import { H1 } from "@/ui/atoms/headings.atom";
 import { SearchBoxMolecule } from "@/ui/molecules/search-box.molecule";
-import { Pagination } from "@/ui/pagination/pagination";
+import { Pagination } from "@/ui/navigation/pagination/pagination";
 
 interface UsersSearchParams {
 	page?: string;
