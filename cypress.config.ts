@@ -64,6 +64,8 @@ export default defineConfig({
 
 			return config;
 		},
+		specPattern: "cypress/e2e/**/*.cy.{ts,tsx}",
+		supportFile: "cypress/support/e2e.ts",
 	},
 	env: {},
 	video: false,
