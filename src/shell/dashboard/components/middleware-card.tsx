@@ -27,7 +27,9 @@ export async function MiddlewareCard(): Promise<JSX.Element> {
 				<p>Role: {role} in eyegrab font</p>
 			</li>
 			<li>
-				<H6>{authy ? "Authorized" : "Not Authorized"} in tektur font</H6>
+				<H6 font="body">
+					{authy ? "Authorized" : "Not Authorized"} in body font
+				</H6>
 			</li>
 			<li>in notosans font</li>
 		</ul>

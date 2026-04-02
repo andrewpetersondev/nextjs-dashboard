@@ -1,5 +1,5 @@
 import React from "react";
-import { tektur } from "@/ui/styles/fonts";
+import { notoSans, tektur } from "@/ui/styles/fonts";
 import { cn } from "@/ui/utils/cn";
 
 const headingStyles = {
@@ -14,6 +14,7 @@ const headingStyles = {
 type HeadingProps = React.HTMLAttributes<HTMLHeadingElement> & {
 	className?: string;
 	children?: React.ReactNode;
+	font?: "body" | "display" | "inherit";
 };
 
 type HeadingTag = keyof typeof headingStyles;
@@ -26,14 +27,20 @@ type HeadingComponent = React.ForwardRefExoticComponent<
  * Factory for heading components.
  */
 function createHeading<T extends HeadingTag>(tag: T): HeadingComponent {
+	const fontClasses = {
+		body: notoSans.className,
+		display: tektur.className,
+		inherit: "",
+	} as const;
+
 	// biome-ignore lint/suspicious/noReactForwardRef: forwardRef is intentional for UI primitives
 	const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
-		({ className, children, ...props }, ref) =>
+		({ className, children, font = "display", ...props }, ref) =>
 			React.createElement(
 				tag,
 				{
 					...props,
-					className: cn(tektur.className, headingStyles[tag], className),
+					className: cn(fontClasses[font], headingStyles[tag], className),
 					ref,
 				},
 				children,
@@ -46,6 +53,6 @@ function createHeading<T extends HeadingTag>(tag: T): HeadingComponent {
 export const H1: HeadingComponent = createHeading("h1");
 export const H2: HeadingComponent = createHeading("h2");
 export const H3: HeadingComponent = createHeading("h3");
-export const H4: HeadingComponent = createHeading("h4");
-export const H5: HeadingComponent = createHeading("h5");
+// export const H4: HeadingComponent = createHeading("h4");
+// export const H5: HeadingComponent = createHeading("h5");
 export const H6: HeadingComponent = createHeading("h6");
