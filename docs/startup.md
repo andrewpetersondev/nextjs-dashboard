@@ -60,7 +60,7 @@ docker exec -it dashboard-postgres psql -U {your_postgres_user} -c "CREATE DATAB
 Start the development server:
 
 ```bash
-pnpm dev
+pnpm next:dev
 ```
 
 Build and start in standalone production mode:
@@ -72,7 +72,7 @@ pnpm serve:standalone
 Or, if already built:
 
 ```bash
-pnpm start:standalone
+pnpm next:start:standalone
 ```
 
 ## Drizzle Kit

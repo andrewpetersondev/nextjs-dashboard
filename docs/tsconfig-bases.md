@@ -154,13 +154,13 @@
     ]
   },
   "include": [
-    "next-env.d.ts",
+    "../next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "../node_modules"
   ]
 }
 ```

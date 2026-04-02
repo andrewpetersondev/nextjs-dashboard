@@ -3,7 +3,7 @@
 A modern dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS. It includes
 authentication, middleware-based route protection, database migrations/seeding, and end-to-end tests with Cypress.
 
-Last updated: 2026-03-03
+Last updated: 2026-04-02
 
 ## Tech Stack
 
@@ -85,20 +85,20 @@ nextjs-dashboard/
 4. Start the app
     - Development server (Turbopack):
       ```sh
-      pnpm dev
+      pnpm next:dev
       ```
     - Build + start (standalone):
       ```sh
       pnpm serve:standalone
       # or, if already built
-      pnpm start:standalone
+      pnpm next:start:standalone
       ```
 
 ## Testing
 
 - Build App:
   ```sh
-  pnpm build:test
+  pnpm next:build:test
   ```
 - Start App:
 
@@ -121,11 +121,11 @@ Accessibility checks via cypress-axe are integrated in tests where applicable.
 
 - Formatting and checks (Biome):
     - "pnpm biome:format" — format code
-    - "pnpm biome:check" — run checks
+    - "pnpm biome:lint" — run checks
     - "pnpm biome:summary" — summary reporter
 - Clean builds:
     - "pnpm clean" — remove .next
-    - "pnpm clean:all" — clean + node_modules (will require reinstall)
+    - "pnpm clean:all" — clean .next, generated files, and node_modules (will require reinstall)
 - Env helpers (wrap commands with specific env files):
     - env:dev, env:test, env:prod
 
@@ -144,7 +144,7 @@ See package.json for the full list of scripts.
 
 - Build uses Turbopack. If you hit unexpected behavior, try a clean build:
   ```sh
-  pnpm clean && pnpm build
+  pnpm clean && pnpm next:build
   ```
 - Database issues: confirm DATABASE_URL and that migrations have run.
 - Auth issues: ensure SESSION_SECRET is set and consistent across processes.

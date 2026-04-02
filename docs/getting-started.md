@@ -60,7 +60,7 @@ pnpm db:seed:prod
 **Development (Turbopack):**
 
 ```sh
-pnpm dev
+pnpm next:dev
 ```
 
 **Production-like (standalone build):**
@@ -72,13 +72,13 @@ pnpm serve:standalone
 Or, if already built:
 
 ```sh
-pnpm start:standalone
+pnpm next:start:standalone
 ```
 
 ## 5. Running Tests
 
 ```sh
-pnpm build:test      # Build with test env
+pnpm next:build:test # Build with test env
 pnpm serve:test      # Serve with test env
 pnpm cy:e2e:open        # Open Cypress interactive runner
 pnpm cy:e2e:run  # Run Cypress headless
@@ -88,6 +88,6 @@ See [docs/guides/testing.md](testing.md) for the full E2E workflow.
 
 ## Tips
 
-- If you see build anomalies, try `pnpm clean` then `pnpm build`.
+- If you see build anomalies, try `pnpm clean` then `pnpm next:build`.
 - Ensure `DATABASE_URL` points to a reachable database and that migrations have run.
 - Auth requires `SESSION_SECRET` to be set and consistent across processes.

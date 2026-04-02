@@ -5,7 +5,7 @@ This project uses Cypress for end-to-end (E2E) testing. Accessibility checks via
 ## Quick Commands
 
 ```sh
-pnpm build:test          # Build with test env
+pnpm next:build:test     # Build with test env
 pnpm serve:test          # Serve with test env
 pnpm cy:e2e:open            # Open Cypress interactive runner
 pnpm cy:e2e:run    # Run Cypress headless
@@ -23,7 +23,7 @@ pnpm cy:e2e:run    # Run Cypress headless
 2. Build and serve the app using the test environment:
 
    ```sh
-   pnpm build:test
+   pnpm next:build:test
    pnpm serve:test
    ```
 

@@ -23,7 +23,7 @@ Use the test environment for consistency:
 ```sh
 pnpm db:push:test
 pnpm db:seed:test
-pnpm build:test
+pnpm next:build:test
 pnpm serve:test
 ```
 
