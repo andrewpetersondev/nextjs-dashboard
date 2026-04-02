@@ -9,7 +9,9 @@
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"],
 		// Language and Environment
 		"lib": ["esnext", "dom"],
-		"target": "esnext"
+		"target": "esnext",
+		// Silence TS5101 for deprecated options inherited at runtime (e.g. downlevelIteration)
+		"ignoreDeprecations": "6.0"
 	},
 	"include": [
 		"../cypress.config.ts",
