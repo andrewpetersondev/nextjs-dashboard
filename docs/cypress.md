@@ -49,4 +49,4 @@ cy.checkA11y()
 
 ## Notes
 
-- See [docs/guides/testing.md](./testing.md) for the end-to-end workflow and troubleshooting tips.
+- See [docs/guides/testing.md](testing.md) for the end-to-end workflow and troubleshooting tips.

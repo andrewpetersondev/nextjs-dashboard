@@ -89,4 +89,4 @@ For development:
 pnpm db:push:dev
 ```
 
-See [docs/guides/drizzle.md](./guides/drizzle.md) for the full list of database commands.
+See [docs/guides/drizzle.md](drizzle.md) for the full list of database commands.

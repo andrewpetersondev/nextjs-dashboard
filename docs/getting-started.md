@@ -84,7 +84,7 @@ pnpm cy:e2e:open        # Open Cypress interactive runner
 pnpm cy:e2e:run  # Run Cypress headless
 ```
 
-See [docs/guides/testing.md](./testing.md) for the full E2E workflow.
+See [docs/guides/testing.md](testing.md) for the full E2E workflow.
 
 ## Tips
 

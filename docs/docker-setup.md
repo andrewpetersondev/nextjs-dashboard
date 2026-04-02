@@ -50,4 +50,4 @@ docker exec -it dashboard-postgres psql -U postgres -c "CREATE DATABASE prod_db;
 
 ## Step 4: Set Up Schema
 
-Use [drizzle.md](./guides/drizzle.md) to push the schema to the database.
+Use [drizzle.md](drizzle.md) to push the schema to the database.
