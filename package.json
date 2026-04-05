@@ -75,7 +75,7 @@
 		"check": "pnpm biome:lint && pnpm typecheck && pnpm next:typegen && pnpm test && pnpm cy:e2e",
 		"check:fast": "pnpm biome:lint && pnpm typecheck && pnpm next:typegen",
 		"check:repo": "pnpm check && pnpm knip",
-		"clean": "rimraf .next",
+		"clean": "rimraf .next && pnpm clean:generated",
 		"clean:all": "pnpm clean && pnpm clean:generated && pnpm clean:deps",
 		"clean:deps": "rimraf node_modules",
 		"clean:generated": "rimraf --glob \"**/*.{js,map,tsbuildinfo}\"",
