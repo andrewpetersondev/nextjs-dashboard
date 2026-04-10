@@ -15,7 +15,7 @@
 		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
 		"noUnusedLocals": false, // disabling from strictest base
 		// Modules
-		//		"baseUrl": ".", // need for path aliases
+		"baseUrl": ".", // need for path aliases
 		"paths": {
 			"@/*": ["./src/*"],
 			"@cypress/*": ["./cypress/*"],

@@ -1,10 +1,10 @@
 import process from "node:process";
-import { CypressEnvShape } from "@cypress/node/config/cypress-env.schema";
+import { CypressEnvShape } from "./cypress-env.schema";
 
 const envToValidate = {
-	cypressBaseUrl: process.env.CYPRESS_BASE_URL,
 	databaseEnv: process.env.DATABASE_ENV,
 	databaseUrl: process.env.DATABASE_URL,
+	port: process.env.PORT,
 	sessionSecret: process.env.SESSION_SECRET,
 };
 
@@ -17,7 +17,7 @@ if (!parsed.success) {
 	);
 }
 
-export const CYPRESS_BASE_URL: string = parsed.data.cypressBaseUrl;
+export const CYPRESS_BASE_URL: string = `http://localhost:${parsed.data.port}`;
 export const DATABASE_ENV = parsed.data.databaseEnv;
 export const DATABASE_URL: string = parsed.data.databaseUrl;
 export const SESSION_SECRET: string = parsed.data.sessionSecret;

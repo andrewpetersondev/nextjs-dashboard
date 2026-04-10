@@ -9,8 +9,9 @@ const DATABASE_ENVIRONMENT_TUPLE = [
 const DatabaseEnvironmentSchema = z.enum(DATABASE_ENVIRONMENT_TUPLE);
 
 export const CypressEnvShape = z.object({
-	cypressBaseUrl: z.url(),
 	databaseEnv: DatabaseEnvironmentSchema,
 	databaseUrl: z.string().min(1),
+	// biome-ignore lint/style/noMagicNumbers: good enough
+	port: z.coerce.number().int().min(1).max(65_535),
 	sessionSecret: z.string().min(1),
 });

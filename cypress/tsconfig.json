@@ -4,6 +4,7 @@
 	"extends": ["../tsconfig.json"],
 	"compilerOptions": {
 		// Modules
+		"baseUrl": "..",
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"],

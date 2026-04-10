@@ -4,7 +4,18 @@
 		"src/app/**/*.{ts,tsx}",
 		"src/modules/**/__tests__/**/*.{test,spec}.{ts,tsx}",
 		"devtools/cli/**/*.cli.ts",
-		"cypress.config.ts"
+		"cypress.config.ts",
+		"cypress/**/*.cy.{ts,tsx}",
+		"cypress/support/**/*.{ts,tsx}",
+		"next.config.ts",
+		"drizzle.config.ts",
+		"vitest.config.ts",
+		"postcss.config.mjs"
 	],
-	"project": ["src/**", "devtools/**", "cypress/**"]
+	"project": [
+		"src/**/*.{ts,tsx}",
+		"devtools/**/*.{ts,tsx}",
+		"cypress/**/*.{ts,tsx}",
+		"*.{ts,mjs}"
+	]
 }
