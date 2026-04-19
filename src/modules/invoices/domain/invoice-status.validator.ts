@@ -6,7 +6,6 @@ import { createEnumValidator } from "@/shared/primitives/core/enums/enum.factory
  * @param status - The status value to validate
  * @returns Result<InvoiceStatus, AppError>
  */
-// biome-ignore lint/nursery/useExplicitType: fix
 export const validateInvoiceStatus = createEnumValidator(
 	"InvoiceStatus",
 	INVOICE_STATUSES,

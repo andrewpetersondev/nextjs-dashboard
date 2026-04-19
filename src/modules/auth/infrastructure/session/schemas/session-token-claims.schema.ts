@@ -58,7 +58,6 @@ const SubSchema: ZodUUID = z.uuid();
 /**
  * Validates the raw session token payload (e.g., JWT claims) after verification.
  */
-// biome-ignore lint/nursery/useExplicitType: fix
 export const SessionTokenClaimsSchema = z.object({
 	exp: ExpSchema,
 	iat: IatSchema,

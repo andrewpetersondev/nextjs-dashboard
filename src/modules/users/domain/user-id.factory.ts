@@ -10,7 +10,6 @@ import { createIdFactory } from "@/shared/primitives/core/id/id.factory";
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded UserId or an AppError
  */
-// biome-ignore lint/nursery/useExplicitType: fix
 export const createUserId = createIdFactory<typeof USER_ID_BRAND, UserId>(
 	USER_ID_BRAND,
 	"UserId",

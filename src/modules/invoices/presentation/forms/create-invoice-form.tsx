@@ -24,7 +24,6 @@ import { useFormMessage } from "@/ui/forms/hooks/use-form-message";
 import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
-// biome-ignore lint/nursery/useExplicitType: fix
 const INITIAL_STATE = makeInitialFormState<CreateInvoiceFieldNames>(
 	Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],
 );

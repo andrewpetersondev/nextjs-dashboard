@@ -31,7 +31,6 @@ let processMetadata: Record<string, unknown> = {};
  * Redactor for log payloads, built on the core redaction system.
  * Configured with strict defaults to avoid drift.
  */
-// biome-ignore lint/nursery/useExplicitType: fix
 const redactLogData = createRedactor({
 	extraKeys: [],
 	mask: DEFAULT_MASK,

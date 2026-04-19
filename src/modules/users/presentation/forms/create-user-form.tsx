@@ -22,7 +22,6 @@ import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 type CreateUserFieldNames = "email" | "password" | "role" | "username";
 
-// biome-ignore lint/nursery/useExplicitType: fix
 const INITIAL_STATE = makeInitialFormState<CreateUserFieldNames>(
 	Object.keys(CreateUserFormSchema.shape) as readonly CreateUserFieldNames[],
 );

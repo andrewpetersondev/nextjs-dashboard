@@ -22,7 +22,6 @@ import { ROUTES } from "@/shared/routing/routes";
  * @returns A promise resolving to the {@link SessionVerificationDto}.
  * @redirects {ROUTES.auth.login} if the session is invalid or missing.
  */
-// biome-ignore lint/nursery/useExplicitType: fix later
 export const verifySessionOptimistic = cache(
 	async (): Promise<SessionVerificationDto> => {
 		const auth = await makeAuthComposition();

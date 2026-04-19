@@ -5,7 +5,6 @@ import { toUserId } from "@/modules/users/domain/user-id.mappers";
 /**
  * UserId boundary schema (UUID string ⇄ branded UserId).
  */
-// biome-ignore lint/nursery/useExplicitType: <fix later>
 export const UserIdSchema = z.codec(z.uuid(), z.custom<UserId>(), {
 	decode: (id: string) => toUserId(id),
 	encode: (userId: UserId) => String(userId),

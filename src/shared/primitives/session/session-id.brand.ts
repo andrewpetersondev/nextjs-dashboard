@@ -19,7 +19,6 @@ type SessionId = Brand<string, typeof SESSION_ID_BRAND>;
  * @param value - The value to convert (must be a valid UUID)
  * @returns A Result containing the branded SessionId or an AppError
  */
-// biome-ignore lint/nursery/useExplicitType: fix
 const createSessionId = createIdFactory<typeof SESSION_ID_BRAND, SessionId>(
 	SESSION_ID_BRAND,
 	"SessionId",
