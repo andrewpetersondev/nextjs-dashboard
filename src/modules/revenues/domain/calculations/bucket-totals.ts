@@ -12,7 +12,7 @@ type MoveBetweenArgs = Readonly<{
 }>;
 
 function clampNonNegative(value: number): number {
-	return value < 0 ? 0 : value;
+	return Math.max(value, 0);
 }
 
 export type BucketTotals = Readonly<{
