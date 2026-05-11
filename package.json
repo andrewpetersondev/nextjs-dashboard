@@ -54,7 +54,7 @@
 	"private": true,
 	"scripts": {
 		"biome:format": "biome format --write",
-		"biome:format:check": "biome format --write=false .",
+		"biome:format:check": "biome format .",
 		"biome:lint": "biome check",
 		"biome:lint:fix": "biome check --write",
 		"biome:summary": "biome check --reporter=summary",
