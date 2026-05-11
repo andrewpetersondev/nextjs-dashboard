@@ -1,5 +1,11 @@
 {
-	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"$schema": "https://unpkg.com/knip@6/schema.json",
+	"cypress": {
+		"config": []
+	},
+	"drizzle": {
+		"config": []
+	},
 	"entry": [
 		"src/app/**/*.{ts,tsx}",
 		"src/modules/**/__tests__/**/*.{test,spec}.{ts,tsx}",
@@ -7,10 +13,7 @@
 		"cypress.config.ts",
 		"cypress/**/*.cy.{ts,tsx}",
 		"cypress/support/**/*.{ts,tsx}",
-		"next.config.ts",
-		"drizzle.config.ts",
-		"vitest.config.ts",
-		"postcss.config.mjs"
+		"drizzle.config.ts"
 	],
 	"project": [
 		"src/**/*.{ts,tsx}",
