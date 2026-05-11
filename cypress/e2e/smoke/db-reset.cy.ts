@@ -1,4 +1,4 @@
-import { createTestUser } from "@cypress/e2e/shared/users";
+import { createTestUser, DEMO_USER } from "@cypress/e2e/shared/users";
 
 describe("task: db:reset", () => {
 	it("clears users (verified by db:userExists)", () => {
@@ -13,22 +13,16 @@ describe("task: db:reset", () => {
 	});
 });
 
-// TypeScript
 describe("Invoices", () => {
-	const user = createTestUser();
+	const loginCreds = { email: DEMO_USER.email, password: DEMO_USER.password };
 
 	before(() => {
-		// You can also use cy.dbResetAndSeed() if you prefer one call:
-		// cy.dbResetAndSeed();
 		cy.dbReset();
 		cy.dbSeed();
 	});
 
 	beforeEach(() => {
-		// If you rely on session caching:
-		// cy.session("login", () => { cy.loginProgrammatically(); });
-		// Or just log in
-		cy.login(user);
+		cy.login(loginCreds);
 	});
 
 	it("shows seeded invoices", () => {

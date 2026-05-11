@@ -17,7 +17,6 @@ export const AUTH_SEL = {
 	//  For a "pure" fundamental level, lean more heavily on Testing Library queries (which you already have installed).
 	//  Instead of cy.get('#email'), use cy.findByLabelText(/email/i). This makes tests less dependent on code structure
 	//  and more on user experience.
-	loginEmailV2: "[findByLabelText(/email/i)]",
 	loginPassword: '[data-cy="login-password-input"]',
 	loginSubmit: '[data-cy="login-submit-button"]',
 	nextjsCourseLink: '[data-testid="nextjs-course-link"]',
