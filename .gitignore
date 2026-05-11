@@ -76,6 +76,7 @@ vitest.config.d.ts
 cypress.config.d.ts
 drizzle.config.d.ts
 next.config.d.ts
+.claude/worktrees
 
 # OS / Editor / Misc
 .DS_Store
