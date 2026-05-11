@@ -15,6 +15,8 @@
 		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
 		"noUnusedLocals": false, // disabling from strictest base
 		// Modules
+		"baseUrl": ".", // required for Cypress to resolve path aliases via webpack
+		"ignoreDeprecations": "6.0", // silences TS5101 for baseUrl
 		"paths": {
 			"@/*": ["./src/*"],
 			"@cypress/*": ["./cypress/*"],

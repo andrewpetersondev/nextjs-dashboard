@@ -14,7 +14,8 @@ describe("Access control", () => {
 	it("redirects authenticated user away from login to dashboard", () => {
 		cy.loginAsDemoUser();
 
-		// Visiting login should bounce to dashboard
+		// Visiting login while authenticated should bounce to dashboard
+		cy.visit(LOGIN_PATH);
 		cy.url().should("include", DASHBOARD_PATH);
 		cy.findByRole("heading", { name: UI_MATCHERS_REGEX.dashboardH1 }).should(
 			"be.visible",

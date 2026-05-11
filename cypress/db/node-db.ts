@@ -21,10 +21,6 @@ function createNodeDb(connectionString: string) {
 }
 
 function getNodeDb() {
-	if (!DATABASE_URL) {
-		throw new Error("DATABASE_URL is not set.");
-	}
-
 	if (!dbSingleton) {
 		dbSingleton = createNodeDb(DATABASE_URL);
 	}
