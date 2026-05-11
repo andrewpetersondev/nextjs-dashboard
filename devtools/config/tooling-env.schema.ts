@@ -9,7 +9,6 @@ const DATABASE_ENVIRONMENT_TUPLE = [
 const DatabaseEnvironmentSchema = z.enum(DATABASE_ENVIRONMENT_TUPLE);
 
 export const ToolingEnvShape = z.object({
-	cypressBaseUrl: z.url(),
 	databaseEnv: DatabaseEnvironmentSchema,
 	databaseUrl: z.string().min(1),
 	sessionSecret: z.string().min(1),
