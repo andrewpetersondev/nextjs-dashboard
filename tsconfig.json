@@ -37,6 +37,7 @@
 		"devtools/**/*.ts",
 		"drizzle.config.ts",
 		"next.config.ts",
+		"test-support/**/*.ts",
 		"vitest.config.ts",
 		"vitest.setup.ts"
 	],
