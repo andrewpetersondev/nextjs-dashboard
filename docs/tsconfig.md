@@ -28,40 +28,33 @@ Use these three questions:
 
 ## Repo map
 
-| Config                     | Layer                | Runtime      | Owns files | Purpose                          |
-|----------------------------|----------------------|--------------|------------|----------------------------------|
-| `tsconfig.json`            | Solution             | None         | No         | Describes the repo project graph |
-| `tsconfig.base.json`       | Base policy          | None         | No         | Shared repo-wide compiler policy |
-| `tsconfig.node.json`       | Runtime layer        | Node         | No         | Shared Node defaults             |
-| `tsconfig.test.json`       | Runtime layer        | Test         | No         | Shared test defaults             |
-| `tsconfig.app.json`        | Runtime layer + leaf | Next/browser | Yes        | Owns app source files            |
-| `tsconfig.database.json`   | Leaf                 | Node         | Yes        | Owns database code               |
-| `tsconfig.root-tools.json` | Leaf                 | Node         | Yes        | Owns root config/tool files      |
-| `devtools/tsconfig.json`   | Leaf                 | Node         | Yes        | Owns `devtools/**`               |
-| `tsconfig.vitest.json`     | Leaf                 | Vitest       | Yes        | Owns Vitest files                |
-| `cypress/tsconfig.json`    | Leaf                 | Cypress      | Yes        | Owns Cypress files               |
+| Config                  | Layer       | Runtime            | Owns files | Purpose                                                           |
+|-------------------------|-------------|--------------------|------------|-------------------------------------------------------------------|
+| `tsconfig.json`         | Root config | Next + Node + test | Yes        | Owns app, database, root tooling, and Vitest infrastructure files |
+| `cypress/tsconfig.json` | Leaf        | Cypress            | Yes        | Owns Cypress files                                                |
 
 ## What goes where
 
-| Config               | Should contain                                                           | Should not contain                                               |
-|----------------------|--------------------------------------------------------------------------|------------------------------------------------------------------|
-| `tsconfig.json`      | `files: []`, `references`                                                | `include`, `exclude`, runtime options                            |
-| `tsconfig.base.json` | aliases, strictness, safety rules, non-runtime defaults                  | `lib`, `module`, `moduleResolution`, `jsx`, `types`              |
-| `tsconfig.node.json` | Node defaults, `@tsconfig/node-lts`, Node compiler options               | file ownership, app-only options                                 |
-| `tsconfig.app.json`  | app `include`/`exclude`, app overrides, `@tsconfig/next`, app references | root tooling ownership, Cypress ownership, Vitest-only ownership |
-| `tsconfig.test.json` | small shared test adjustments                                            | `include`, tool-specific ownership                               |
+| Config                  | Should contain                                                             | Should not contain                               |
+|-------------------------|----------------------------------------------------------------------------|--------------------------------------------------|
+| `tsconfig.json`         | root ownership, shared aliases, Next/Node/test-compatible compiler options | Cypress-only ownership                           |
+| `cypress/tsconfig.json` | Cypress config, support, and E2E test ownership                            | app, database, root tooling, or Vitest ownership |
 
 ## File ownership guide
 
-| File type                                       | Owner                      |
-|-------------------------------------------------|----------------------------|
-| App code under `src/**`                         | `tsconfig.app.json`        |
-| `next-env.d.ts` and Next-generated app types    | `tsconfig.app.json`        |
-| Root Node-run config/tool files                 | `tsconfig.root-tools.json` |
-| Database code                                   | `tsconfig.database.json`   |
-| Files under `devtools/**`                       | `devtools/tsconfig.json`   |
-| Vitest config, setup, and Vitest test files     | `tsconfig.vitest.json`     |
-| Cypress config, support, and Cypress test files | `cypress/tsconfig.json`    |
+| File type                                       | Owner                   |
+|-------------------------------------------------|-------------------------|
+| App code under `src/**`                         | `tsconfig.json`         |
+| `next-env.d.ts` and Next-generated app types    | `tsconfig.json`         |
+| Root Node-run config/tool files                 | `tsconfig.json`         |
+| Database code                                   | `tsconfig.json`         |
+| Files under `devtools/**`                       | `tsconfig.json`         |
+| Vitest config, setup, and test-support files    | `tsconfig.json`         |
+| Cypress config, support, and Cypress test files | `cypress/tsconfig.json` |
+
+Vitest infrastructure intentionally stays in the root config rather than a dedicated
+`tsconfig.vitest.json`. The single root config matches the Next.js TypeScript setup and avoids IDE ownership conflicts
+for files that share app, Node, and test concerns.
 
 ## Runtime signals
 

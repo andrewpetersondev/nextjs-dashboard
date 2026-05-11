@@ -98,10 +98,14 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm check` — run lint, typecheck, typegen, tests, and E2E.
 - `pnpm check:fast` — run lint, typecheck, and typegen only.
 - `pnpm check:repo` — run full check plus knip.
-- `pnpm test` — run unit/integration tests (Vitest).
-- `pnpm test:coverage` — run tests with coverage.
-- `pnpm test:ui` — open Vitest UI.
-- `pnpm test:watch` — run Vitest in watch mode.
+- `pnpm test` — run unit/integration tests (Vitest) with the test environment.
+- `pnpm test:coverage` — run tests with coverage using the test environment.
+- `pnpm test:ui` — open Vitest UI with the test environment.
+- `pnpm test:watch` — run Vitest in watch mode with the test environment.
+
+Vitest environment variables are loaded by the `test:*` scripts via `env:test`; `vitest.setup.ts` only registers global
+test mocks. If DB-backed integration tests continue to run in the same `pnpm test` command as unit tests, revisit Vitest
+`coverage`, `pool`/isolation, and explicit integration-test behavior so the default test command remains predictable.
 
 ---
 
