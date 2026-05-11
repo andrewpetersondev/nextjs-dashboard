@@ -1,6 +1,6 @@
 ---
 apply: by file patterns
-patterns: src/**/*.tsx, src/**/*.ts
+patterns: src/**/*.tsx, src/**/presentation/**/*.ts
 ---
 
 # UI Design Standards

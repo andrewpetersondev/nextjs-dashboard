@@ -1,6 +1,6 @@
 ---
 apply: by file patterns
-patterns: src/modules/**/*.ts
+patterns: src/modules/**/*.ts, src/modules/**/*.tsx
 ---
 
 # Clean Architecture Standards
