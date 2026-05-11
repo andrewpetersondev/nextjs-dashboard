@@ -651,28 +651,16 @@ export async function getUserByIdDal(
 ): Promise<Result<UserRow | null, AppError>> { ... }
 
 // get-user-by-email.dal.ts
-export async function getUserByEmailDal(...): Promise<
-
-...>
-{ ... }
+export async function getUserByEmailDal(...): Promise<Result<UserRow | null, AppError>> { ... }
 
 // insert-user.dal.ts
-export async function insertUserDal(...): Promise<
-
-...>
-{ ... }
+export async function insertUserDal(...): Promise<Result<UserRow, AppError>> { ... }
 
 // update-user-email.dal.ts
-export async function updateUserEmailDal(...): Promise<
-
-...>
-{ ... }
+export async function updateUserEmailDal(...): Promise<Result<UserRow, AppError>> { ... }
 
 // delete-user.dal.ts
-export async function deleteUserDal(...): Promise<
-
-...>
-{ ... }
+export async function deleteUserDal(...): Promise<Result<void, AppError>> { ... }
 ```
 
 **DAL Verb Vocabulary**:
@@ -757,7 +745,7 @@ src/
 **Organization**:
 
 - **Co-located**: Place test file next to source file (preferred for small tests)
-- \***\*tests** folder\*\*: Use for suites with multiple test files or fixtures
+- **`__tests__` folder**: Use for suites with multiple test files or fixtures
 
 ---
 
