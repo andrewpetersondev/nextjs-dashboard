@@ -1,4 +1,5 @@
 import { nodeDb } from "@cypress/db/node-db";
+import { AUTH_BCRYPT_SALT_ROUNDS } from "@cypress/node/config/cypress-env";
 import {
 	normalizeUserEmail,
 	normalizeUsername,
@@ -14,7 +15,7 @@ function toHash(value: string): Hash {
 }
 
 async function hashPassword(password: string): Promise<Hash> {
-	const salt = await bcryptjs.genSalt(10);
+	const salt = await bcryptjs.genSalt(AUTH_BCRYPT_SALT_ROUNDS);
 	const hashedPassword = await bcryptjs.hash(password, salt);
 	return toHash(hashedPassword);
 }

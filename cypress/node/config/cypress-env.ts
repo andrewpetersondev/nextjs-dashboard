@@ -2,6 +2,7 @@ import process from "node:process";
 import { CypressEnvShape } from "./cypress-env.schema";
 
 const envToValidate = {
+	authBcryptSaltRounds: process.env.AUTH_BCRYPT_SALT_ROUNDS,
 	databaseEnv: process.env.DATABASE_ENV,
 	databaseUrl: process.env.DATABASE_URL,
 	port: process.env.PORT,
@@ -17,6 +18,7 @@ if (!parsed.success) {
 	);
 }
 
+export const AUTH_BCRYPT_SALT_ROUNDS: number = parsed.data.authBcryptSaltRounds;
 export const CYPRESS_BASE_URL: string = `http://localhost:${parsed.data.port}`;
 export const DATABASE_ENV = parsed.data.databaseEnv;
 export const DATABASE_URL: string = parsed.data.databaseUrl;

@@ -9,6 +9,7 @@ const DATABASE_ENVIRONMENT_TUPLE = [
 const DatabaseEnvironmentSchema = z.enum(DATABASE_ENVIRONMENT_TUPLE);
 
 export const CypressEnvShape = z.object({
+	authBcryptSaltRounds: z.coerce.number().int().positive(),
 	databaseEnv: DatabaseEnvironmentSchema,
 	databaseUrl: z.string().min(1),
 	// biome-ignore lint/style/noMagicNumbers: good enough
