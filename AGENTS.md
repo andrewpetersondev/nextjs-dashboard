@@ -20,6 +20,10 @@ outdated — the docs are the source of truth.
 For detailed architecture, naming, error-handling, and UI rules, also consult the Markdown files in
 `.aiassistant/rules/` when they are relevant to the files you are changing.
 
+The rule files include `apply: by file patterns` frontmatter — this is a JetBrains AI Assistant feature for
+scoped application. Other tools (Claude, Junie, ChatGPT) should apply the rules by judgment based on the
+files being changed, not by parsing the frontmatter.
+
 ## Useful commands
 
 - Fast validation: `pnpm check:fast`
