@@ -1,3 +1,4 @@
+# Keep in sync with .aiignore — both files must have identical content.
 node_modules/
 .next/
 out/
