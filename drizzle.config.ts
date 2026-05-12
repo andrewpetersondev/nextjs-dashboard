@@ -1,29 +1,25 @@
 import process from "node:process";
 import { defineConfig } from "drizzle-kit";
 
-console.log("drizzle.config.ts ...");
-
-// TODO: IMPORT THE ENV VARIABLES FROM ENV-TOOLING OR SHOULD I JUST ALLOW USING PROCESS FOR CLI
-
 const url: string | undefined = process.env.DATABASE_URL;
-
-console.log("DATABASE_URL:", url);
 
 if (!url) {
 	throw new Error("DATABASE_URL is not set.");
 }
 
-// Determine environment for migrations folder
 const env: string = (
 	process.env.DATABASE_ENV ??
 	process.env.NODE_ENV ??
 	"development"
 ).toLowerCase();
-console.log("env:", env);
 
-// biome-ignore lint/style/noNestedTernary: adjust
-const scope = env === "test" ? "test" : env === "production" ? "prod" : "dev";
-console.log("scope:", scope);
+const migrationScopeByEnv: Record<string, "dev" | "prod" | "test"> = {
+	development: "dev",
+	production: "prod",
+	test: "test",
+};
+
+const scope = migrationScopeByEnv[env] ?? "dev";
 
 export default defineConfig({
 	casing: "snake_case",
