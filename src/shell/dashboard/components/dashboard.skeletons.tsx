@@ -1,6 +1,5 @@
 import type { JSX } from "react";
 import { LatestInvoicesSkeleton } from "@/modules/invoices/presentation/components/invoices.skeletons";
-import { RevenueChartSkeleton } from "@/modules/revenues/presentation/components/revenue-chart.skeleton";
 import { CardSkeleton } from "@/ui/skeletons/skeletons";
 import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
@@ -16,8 +15,7 @@ export function DashboardSkeleton(): JSX.Element {
 				<CardSkeleton />
 				<CardSkeleton />
 			</div>
-			<div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-				<RevenueChartSkeleton />
+			<div className="mt-6">
 				<LatestInvoicesSkeleton />
 			</div>
 		</div>

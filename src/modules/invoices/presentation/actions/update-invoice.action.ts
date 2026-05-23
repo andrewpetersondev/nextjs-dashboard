@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import {
@@ -11,10 +10,6 @@ import {
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
-import {
-	type BaseInvoiceEvent,
-	INVOICE_EVENTS,
-} from "@/server/events/invoice-event.types";
 import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
@@ -27,21 +22,6 @@ import {
 } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
-
-// Publish "invoice updated" domain event
-async function publishUpdatedEvent(
-	previousInvoice: InvoiceDto,
-	updatedInvoice: InvoiceDto,
-): Promise<void> {
-	const { EventBus } = await import("@/server/events/event-bus");
-	await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.updated, {
-		eventId: crypto.randomUUID(),
-		eventTimestamp: new Date().toISOString(),
-		invoice: updatedInvoice,
-		operation: "invoice_updated",
-		previousInvoice,
-	});
-}
 
 function handleActionError(id: string, error: unknown): FormResult<never> {
 	logger.error(INVOICE_MSG.serviceError, {
@@ -123,19 +103,12 @@ export async function updateInvoiceAction(
 
 		const service = new InvoiceService(new InvoiceRepository(getAppDb()));
 
-		const previousResult = await service.readInvoice(id);
-		if (!previousResult.ok) {
-			return handleActionError(id, previousResult.error);
-		}
-		const previousInvoice = previousResult.value;
-
 		const updateResult = await service.updateInvoice(id, parsed.data);
 		if (!updateResult.ok) {
 			return handleActionError(id, updateResult.error);
 		}
 		const updatedInvoice = updateResult.value;
 
-		await publishUpdatedEvent(previousInvoice, updatedInvoice);
 		revalidatePath(ROUTES.dashboard.root);
 
 		return makeFormOk(

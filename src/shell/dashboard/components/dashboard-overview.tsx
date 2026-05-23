@@ -2,8 +2,6 @@ import { type JSX, Suspense } from "react";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import { LatestInvoicesSkeleton } from "@/modules/invoices/presentation/components/invoices.skeletons";
 import { LatestInvoices } from "@/modules/invoices/presentation/components/latest/latest-invoices";
-import { RevenueChart } from "@/modules/revenues/presentation/components/revenue-chart";
-import { RevenueChartSkeleton } from "@/modules/revenues/presentation/components/revenue-chart.skeleton";
 import { CardWrapper } from "@/shell/dashboard/components/cards";
 import type { DashboardCardData } from "@/shell/dashboard/types";
 import { H1 } from "@/ui/atoms/headings.atom";
@@ -35,10 +33,7 @@ export const DashboardOverview = ({
 					<CardWrapper data={dashboardCardData} />
 				</Suspense>
 			</div>
-			<div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-				<Suspense fallback={<RevenueChartSkeleton />}>
-					<RevenueChart />
-				</Suspense>
+			<div className="mt-6">
 				<Suspense fallback={<LatestInvoicesSkeleton />}>
 					<LatestInvoices latestInvoices={latestInvoices} />
 				</Suspense>

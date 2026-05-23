@@ -6,10 +6,6 @@ import { InvoiceService } from "@/modules/invoices/application/services/invoice.
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
-import {
-	type BaseInvoiceEvent,
-	INVOICE_EVENTS,
-} from "@/server/events/invoice-event.types";
 import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
@@ -56,15 +52,6 @@ export async function deleteInvoiceAction(
 		}
 
 		const invoice: InvoiceDto = deleteResult.value;
-
-		// Publish event (may throw) and revalidate cache
-		const { EventBus } = await import("@/server/events/event-bus");
-		await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.deleted, {
-			eventId: crypto.randomUUID(),
-			eventTimestamp: new Date().toISOString(),
-			invoice,
-			operation: "invoice_deleted",
-		});
 
 		revalidatePath(ROUTES.dashboard.root);
 
