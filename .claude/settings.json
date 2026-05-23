@@ -21,7 +21,19 @@
     ],
     "deny": [
       "Bash(cat .env*)",
-      "Bash(grep * .env*)"
+      "Bash(grep * .env*)",
+      "Bash(rm -rf*)",
+      "Bash(rm -fr*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -fd*)",
+      "Bash(git clean -f*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push --mirror*)",
+      "Bash(git branch -D*)",
+      "Bash(git checkout main*)",
+      "Bash(pnpm db:reset*)",
+      "Bash(drizzle-kit drop*)"
     ]
   }
 }
