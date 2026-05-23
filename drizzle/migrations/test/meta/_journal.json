@@ -42,6 +42,13 @@
 			"tag": "0005_lumpy_impossible_man",
 			"version": "7",
 			"when": 1773564011324
+		},
+		{
+			"breakpoints": true,
+			"idx": 6,
+			"tag": "0006_secret_red_skull",
+			"version": "7",
+			"when": 1779545516254
 		}
 	],
 	"version": "7"

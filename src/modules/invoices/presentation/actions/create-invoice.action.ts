@@ -12,10 +12,6 @@ import {
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
-import {
-	type BaseInvoiceEvent,
-	INVOICE_EVENTS,
-} from "@/server/events/invoice-event.types";
 import { isAppError } from "@/shared/core/errors/core/app-error.entity";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
@@ -74,16 +70,6 @@ export async function createInvoiceAction(
 				message: toInvoiceErrorMessage(result.error),
 			});
 		}
-
-		const invoice = result.value;
-
-		const { EventBus } = await import("@/server/events/event-bus");
-		await EventBus.publish<BaseInvoiceEvent>(INVOICE_EVENTS.created, {
-			eventId: crypto.randomUUID(),
-			eventTimestamp: new Date().toISOString(),
-			invoice,
-			operation: "invoice_created",
-		});
 
 		// 3. Success: Revalidate but do NOT redirect so the form can show the success message
 		revalidatePath(ROUTES.dashboard.invoices);
