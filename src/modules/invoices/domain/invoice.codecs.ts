@@ -1,5 +1,4 @@
-import { periodKey } from "@/modules/revenues/domain/time/period";
-
+import { format } from "date-fns";
 import type { Period } from "@/shared/primitives/period/period.brand";
 
 /**
@@ -17,5 +16,5 @@ export function encodeInvoiceDateToIso(date: Date): string {
  * @returns ISO date string in YYYY-MM-01 format
  */
 export function encodePeriodToFirstDay(period: Period): string {
-	return `${periodKey(period)}-01`;
+	return `${format(period as unknown as Date, "yyyy-MM")}-01`;
 }
