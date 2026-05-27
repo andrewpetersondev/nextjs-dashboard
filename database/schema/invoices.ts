@@ -1,5 +1,4 @@
 import { customers } from "@database/schema/customers";
-import { revenues } from "@database/schema/revenues";
 import {
 	INVOICE_STATUSES,
 	type InvoiceStatus,
@@ -36,7 +35,6 @@ export const invoices = pgTable(
 		id: uuid("id").defaultRandom().primaryKey().$type<InvoiceId>(),
 		revenuePeriod: date("revenue_period", { mode: "date" })
 			.notNull()
-			.references(() => revenues.period, { onDelete: "restrict" })
 			.$type<Period>(),
 		sensitiveData: varchar("sensitive_data", { length: 255 })
 			.notNull()

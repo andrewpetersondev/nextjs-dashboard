@@ -1,7 +1,6 @@
 import { customers } from "@database/schema/customers";
 import { demoUserCounters } from "@database/schema/demo-users";
 import { invoices } from "@database/schema/invoices";
-import { revenues } from "@database/schema/revenues";
 import { users } from "@database/schema/users";
 import { nodeDb } from "@devtools/shared/db/node-db";
 import { firstRow } from "@devtools/shared/db/pg-result.utils";
@@ -15,7 +14,6 @@ async function isEmpty(): Promise<boolean> {
 		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${users}) AS v`),
 		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${customers}) AS v`),
 		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${invoices}) AS v`),
-		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${revenues}) AS v`),
 		nodeDb.execute(sql`SELECT EXISTS(SELECT 1 FROM ${demoUserCounters}) AS v`),
 	]);
 	return checks.every((r) => firstRow<{ v: boolean }>(r)?.v === false);
