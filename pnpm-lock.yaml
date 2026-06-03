@@ -120,8 +120,8 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
       start-server-and-test:
-        specifier: ^3.0.5
-        version: 3.0.5
+        specifier: ^3.0.6
+        version: 3.0.6
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
@@ -2444,8 +2444,8 @@ packages:
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
-  start-server-and-test@3.0.5:
-    resolution: {integrity: sha512-2SvI2UR+rVM4FQ3GqEnjjfVATln6JgJGsZjRRyAqgl1EI6fJFH5zVCawqJLcmU9vBxwI0ZX9i3M+GFpY+sxWcw==}
+  start-server-and-test@3.0.6:
+    resolution: {integrity: sha512-rgEVH+MKOCVB63R50WS1DXD/fJ4A07aGw/9J6MxkO88ZPOewa4VukGEuayinTdt+feKefeynw/iDJBzn+tW4Jw==}
     engines: {node: ^22 || >=24}
     hasBin: true
 
@@ -4780,10 +4780,9 @@ snapshots:
 
   stackback@0.0.2: {}
 
-  start-server-and-test@3.0.5:
+  start-server-and-test@3.0.6:
     dependencies:
       arg: 5.0.2
-      bluebird: 3.7.2
       check-more-types: 2.24.0
       debug: 4.4.3(supports-color@8.1.1)
       execa: 5.1.1
