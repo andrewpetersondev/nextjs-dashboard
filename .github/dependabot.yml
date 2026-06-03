@@ -1,0 +1,21 @@
+# Dependabot keeps dependencies up to date by opening small, reviewable PRs.
+# This is a config file (not an Actions workflow), but it's one of the most
+# essential basics for any GitHub repo.
+# Docs: https://docs.github.com/code-security/dependabot/dependabot-version-updates
+
+version: 2
+updates:
+  # Keep your app/library dependencies (package.json + pnpm-lock.yaml) current.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  # Keep the action versions used inside .github/workflows current
+  # (e.g. actions/checkout@v4, pnpm/action-setup@v4).
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

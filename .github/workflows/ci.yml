@@ -1,0 +1,68 @@
+# Continuous Integration (CI)
+#
+# Runs fast, dependency-free checks on every push to `main` and every pull
+# request that targets `main`. These are the same checks as `pnpm check:fast`
+# (lint + type-check + Next.js typegen), so if that passes on your machine,
+# this should pass here too.
+#
+# Note: tests, the production build, and Cypress e2e are intentionally NOT here.
+# They need a real database + secret env vars and would fail in a plain CI run.
+# See the README / your `pnpm check` script for how to run those locally.
+
+name: CI
+
+# When should this workflow run?
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# If you push again before a run finishes, cancel the old run (saves CI minutes).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: this workflow only needs to read the repository.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint & type-check
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out your repository code onto the runner.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install pnpm. The version is read automatically from the
+      #    "packageManager" field in package.json, so it stays in sync.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      # 3. Install Node.js and cache the pnpm store so installs are faster.
+      #    (pnpm must be set up BEFORE this step for the cache to work.)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26" # matches "engines.node" in package.json
+          cache: pnpm
+
+      # 4. Install dependencies exactly as pinned in pnpm-lock.yaml.
+      #    --frozen-lockfile fails the build if the lockfile is out of date.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. Lint, formatting, and import-order checks (Biome).
+      - name: Lint
+        run: pnpm biome:lint
+
+      # 6. TypeScript type-checking.
+      - name: Type-check
+        run: pnpm typecheck
+
+      # 7. Generate Next.js route types and type-check the app against them.
+      - name: Next.js typegen
+        run: pnpm next:typegen
