@@ -40,7 +40,7 @@ jobs:
       # 2. Install pnpm. The version is read automatically from the
       #    "packageManager" field in package.json, so it stays in sync.
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       # 3. Install Node.js and cache the pnpm store so installs are faster.
       #    (pnpm must be set up BEFORE this step for the cache to work.)
