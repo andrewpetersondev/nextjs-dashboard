@@ -35,7 +35,7 @@ jobs:
     steps:
       # 1. Check out your repository code onto the runner.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # 2. Install pnpm. The version is read automatically from the
       #    "packageManager" field in package.json, so it stays in sync.
