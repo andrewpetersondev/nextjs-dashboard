@@ -1,39 +1,39 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(pnpm biome:*)",
-      "Bash(pnpm typecheck*)",
-      "Bash(pnpm next:typegen)",
-      "Bash(pnpm check*)",
-      "Bash(pnpm test*)",
-      "Bash(pnpm knip)",
-      "Bash(pnpm db:*)",
-      "Bash(pnpm next:dev*)",
-      "Bash(pnpm clean*)",
-      "Bash(git status)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(git show*)",
-      "Bash(git branch*)",
-      "Bash(git stash list)",
-      "Bash(find . *)",
-      "Bash(grep *)"
-    ],
-    "deny": [
-      "Bash(cat .env*)",
-      "Bash(grep * .env*)",
-      "Bash(rm -rf*)",
-      "Bash(rm -fr*)",
-      "Bash(git reset --hard*)",
-      "Bash(git clean -fd*)",
-      "Bash(git clean -f*)",
-      "Bash(git push --force*)",
-      "Bash(git push -f*)",
-      "Bash(git push --mirror*)",
-      "Bash(git branch -D*)",
-      "Bash(git checkout main*)",
-      "Bash(pnpm db:reset*)",
-      "Bash(drizzle-kit drop*)"
-    ]
-  }
+	"permissions": {
+		"allow": [
+			"Bash(pnpm biome:*)",
+			"Bash(pnpm typecheck*)",
+			"Bash(pnpm next:typegen)",
+			"Bash(pnpm check*)",
+			"Bash(pnpm test*)",
+			"Bash(pnpm knip)",
+			"Bash(pnpm db:*)",
+			"Bash(pnpm next:dev*)",
+			"Bash(pnpm clean*)",
+			"Bash(git status)",
+			"Bash(git diff*)",
+			"Bash(git log*)",
+			"Bash(git show*)",
+			"Bash(git branch*)",
+			"Bash(git stash list)",
+			"Bash(find . *)",
+			"Bash(grep *)"
+		],
+		"deny": [
+			"Bash(cat .env*)",
+			"Bash(grep * .env*)",
+			"Bash(rm -rf*)",
+			"Bash(rm -fr*)",
+			"Bash(git reset --hard*)",
+			"Bash(git clean -fd*)",
+			"Bash(git clean -f*)",
+			"Bash(git push --force*)",
+			"Bash(git push -f*)",
+			"Bash(git push --mirror*)",
+			"Bash(git branch -D*)",
+			"Bash(git checkout main*)",
+			"Bash(pnpm db:reset*)",
+			"Bash(drizzle-kit drop*)"
+		]
+	}
 }
