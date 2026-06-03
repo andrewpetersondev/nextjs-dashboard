@@ -13,7 +13,7 @@ onlyBuiltDependencies:
 
 overrides:
   esbuild: ^0.25.0
-  vite: ^7.3.2
+  vite: ^7.3.5
   postcss: ^8.5.10
 
 sideEffectsCache: false
