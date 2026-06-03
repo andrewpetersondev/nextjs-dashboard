@@ -10,7 +10,11 @@ const toUndefinedIfEmptyString = (v: unknown) =>
 
 // biome-ignore lint/nursery/useExplicitType: fix later
 function optionalEdit<T extends z.ZodType>(schema: T) {
-	return z.preprocess(toUndefinedIfEmptyString, schema).optional();
+	// Empty string means "leave unchanged": preprocess turns "" into undefined,
+	// and the inner .optional() accepts that undefined. Without the inner
+	// optional, a blank field would feed undefined into the required base schema
+	// and fail validation. The outer .optional() lets the key be absent entirely.
+	return z.preprocess(toUndefinedIfEmptyString, schema.optional()).optional();
 }
 
 /**
