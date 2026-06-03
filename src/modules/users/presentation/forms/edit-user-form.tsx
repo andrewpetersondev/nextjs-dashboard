@@ -81,7 +81,6 @@ function EditUserFormFields({
 				type="email"
 			/>
 
-			{/* TODO: LEAVING PASSWORD BLANK WILL CAUSE AN ERROR */}
 			<InputFieldMolecule
 				autoComplete="off"
 				dataCy="user-password-input"
