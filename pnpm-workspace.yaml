@@ -1,6 +1,11 @@
 packages:
   - .
 
+allowBuilds:
+  cypress: true
+  esbuild: true
+  sharp: true
+
 onlyBuiltDependencies:
   - cypress
   - esbuild
@@ -8,5 +13,7 @@ onlyBuiltDependencies:
 
 overrides:
   esbuild: ^0.25.0
+  vite: ^7.3.2
+  postcss: ^8.5.10
 
 sideEffectsCache: false
