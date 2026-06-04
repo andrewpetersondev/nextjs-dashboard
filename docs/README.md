@@ -29,8 +29,7 @@ project-wide docs.
 |---|---|
 | [package-json-scripts-guide.md](package-json-scripts-guide.md) | "What does this `pnpm <script>` actually do?" |
 | [knip.md](knip.md) | "How do I find unused exports, files, and dependencies?" |
-| [tsconfig.md](tsconfig.md) | "Which `tsconfig` owns this file, and where does a compiler option belong?" |
-| [tsconfig-bases.md](tsconfig-bases.md) | "What base compiler options are we choosing between?" |
+| [tsconfig.md](tsconfig.md) | "How are the TypeScript projects organized, which config owns a file, and where does a compiler option belong?" |
 
 ## Architecture & design
 
