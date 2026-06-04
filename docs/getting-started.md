@@ -16,23 +16,19 @@ pnpm install
 
 ## 2. Configure Environment
 
-Create the appropriate `.env` files at the project root. Common files:
+Copy [`.env.example.local`](../.env.example.local) to one file per environment, then fill in real values:
 
-- `.env.development.local`
-- `.env.test.local`
-- `.env.production.local`
+- `.env.development.local` — `DATABASE_ENV=development`, `DATABASE_URL` ending in `/dev_db`
+- `.env.test.local` — `DATABASE_ENV=test`, `DATABASE_URL` ending in `/test_db`
+- `.env.production.local` — `DATABASE_ENV=production`, `DATABASE_URL` ending in `/prod_db`
 
-Minimal variables (adjust to your setup):
-
-```
-DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
-SESSION_SECRET=change-me
-NODE_ENV=development
-```
+At minimum each file needs a reachable `DATABASE_URL` and a `SESSION_SECRET`; see the example for the full list.
 
 ## 3. Prepare the Database
 
-Run migrations and seeds for your target environment.
+First, stand up PostgreSQL and create the per-environment databases — see [database-setup.md](database-setup.md). If you already have a database, make sure your `DATABASE_URL` points at it.
+
+Then run migrations and seeds for your target environment.
 
 **Development:**
 
@@ -84,7 +80,7 @@ pnpm cy:e2e:open        # Open Cypress interactive runner
 pnpm cy:e2e:run  # Run Cypress headless
 ```
 
-See [docs/guides/testing.md](testing.md) for the full E2E workflow.
+See [testing.md](testing.md) for the full E2E workflow.
 
 ## Tips
 
