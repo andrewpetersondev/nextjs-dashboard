@@ -83,7 +83,7 @@ When data crosses the domain → application boundary, sensitive fields should b
 
 For the full chain, see:
 
-- `src/modules/auth/notes/flows/data-transformations.md`
+- `src/modules/auth/application/shared/mappers/mapper-chains.ts`
 - `src/modules/auth/application/shared/mappers/mapper-registry.ts`
 
 ---
