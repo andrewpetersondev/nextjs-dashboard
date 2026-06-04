@@ -37,7 +37,7 @@ flowchart TD
     browser["Browser<br/>React Server + Client Components"]
 
     subgraph host["Vercel"]
-        next["Next.js 16 App Router<br/>· Server Components — render pages<br/>· Server Actions — handle mutations<br/>· Middleware — guard routes"]
+        next["Next.js 16 App Router<br/>· Server Components — render pages<br/>· Server Actions — handle mutations<br/>· Middleware (proxy.ts) — guard routes"]
     end
 
     db[("Neon Postgres<br/>users · customers · invoices")]
