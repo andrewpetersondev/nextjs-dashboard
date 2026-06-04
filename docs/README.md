@@ -39,7 +39,6 @@ project-wide docs.
 | [shared-architecture.md](shared-architecture.md) | "What belongs in `src/shared`, and how is it organized?" |
 | [ui-refactor-strategy.md](ui-refactor-strategy.md) | "Does this component go in `src/app`, `src/ui`, or a module's `presentation`?" |
 | [when-to-use-app-error.md](when-to-use-app-error.md) | "Should this failure be an `AppError` or a domain policy outcome?" |
-| [jwt-claims-decoupling-summary.md](jwt-claims-decoupling-summary.md) | "How were JWT claims decoupled from application and domain logic?" |
 | [diagrams/](diagrams/) | The visual companion — sequence, ERD, C4, state, and layering diagrams. See its [README](diagrams/README.md). |
 
 ## Keeping them honest

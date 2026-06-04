@@ -292,7 +292,7 @@ field errors so the UI can render them deterministically.
 
 ### Step 9: Session Establishment
 
-**Same as Login Flow** - See [login-flow.md](./login-flow.md) for details
+**Same as Login Flow** - See [auth-login-flow.md](../../../../../docs/diagrams/auth-login-flow.md) for details
 
 1. Map to SessionPrincipalDto
 2. Generate JWT token
@@ -593,7 +593,7 @@ FormResult {
 
 ### Session Establishment
 
-- See [login-flow.md](./login-flow.md) for session establishment details
+- See [auth-login-flow.md](../../../../../docs/diagrams/auth-login-flow.md) for session establishment details
 
 ---
 
