@@ -84,8 +84,8 @@ flowchart TD
 - **The gate runs on the edge, with no database.** Authorization here rests
   entirely on the **signed JWT in the cookie** — decode, verify, read `sub` and
   `role`. No DB round-trip, which is what keeps middleware fast. (The deeper
-  question of *what the JWT is trusted to carry* is its own write-up:
-  [`jwt-claims-decoupling-summary.md`](../jwt-claims-decoupling-summary.md).)
+  question of *what the JWT is trusted to carry* is its own decision:
+  [ADR-005 — JWT for session tokens](../../src/modules/auth/notes/adr/005-use-jwt-for-session-tokens.md).)
 
 ## The files behind the boxes
 
