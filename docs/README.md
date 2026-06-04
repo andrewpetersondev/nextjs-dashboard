@@ -36,7 +36,7 @@ project-wide docs.
 | Doc | The question it answers |
 |---|---|
 | [project-structure.md](project-structure.md) | "Where does this code belong, and which layer may import which?" |
-| [SHARED.ARCHITECTURE.md](SHARED.ARCHITECTURE.md) | "What belongs in `src/shared`, and how is it organized?" |
+| [shared-architecture.md](shared-architecture.md) | "What belongs in `src/shared`, and how is it organized?" |
 | [ui-refactor-strategy.md](ui-refactor-strategy.md) | "Does this component go in `src/app`, `src/ui`, or a module's `presentation`?" |
 | [when-to-use-app-error.md](when-to-use-app-error.md) | "Should this failure be an `AppError` or a domain policy outcome?" |
 | [jwt-claims-decoupling-summary.md](jwt-claims-decoupling-summary.md) | "How were JWT claims decoupled from application and domain logic?" |
