@@ -5,11 +5,9 @@
 > [login diagram](auth-login-flow.md) shows the *sequence* of a single login; this
 > shows the **state machine** that governs the session afterwards.
 
-There's a prose companion to this in
-[`session-lifecycle.md`](../../src/modules/auth/notes/flows/session-lifecycle.md)
-(the "why"); this is the picture (the "what"). Where the two disagree on numbers,
-**trust the picture** — it was read straight from the constants (see the note at
-the bottom).
+This is the picture (the *what*); the decision behind it — *why* sessions are
+stateless JWTs — is [ADR-005](../../src/modules/auth/notes/adr/005-use-jwt-for-session-tokens.md).
+The numbers below were read straight from the constants.
 
 ## The states
 
@@ -99,6 +97,6 @@ exchange for weaker instant-revocation. See
 
 ---
 
-> **Drift caught while drawing this.** The prose companion still says sessions last
-> *7 days*; the code says **15 minutes**. Numbers in docs rot — these were taken
-> from the constants on 2026-06-04. If you change a constant, change this table.
+> **Keep this honest.** These numbers were read straight from the constants on
+> 2026-06-04 (`SESSION_DURATION_SEC` and friends). Numbers in docs rot — if you
+> change a constant, change this table.

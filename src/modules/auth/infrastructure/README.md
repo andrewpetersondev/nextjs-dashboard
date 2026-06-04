@@ -550,8 +550,8 @@ describe("AuthUserRepository", () => {
 ## Related Documentation
 
 - **[Application Layer](../application/README.md)**: Contracts that infrastructure implements
-- **[Session Lifecycle](../notes/flows/session-lifecycle.md)**: Complete session flow
-- **[Error Handling](../notes/flows/error-handling.md)**: Error transformation rules
+- **[Session Lifecycle](../../../../docs/diagrams/session-lifecycle.md)**: Session state machine (diagram)
+- **[Error Handling](../../../../docs/diagrams/error-handling-flow.md)**: Error handling flow (diagram)
 
 ---
 

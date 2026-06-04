@@ -96,4 +96,4 @@ This codebase uses `Result<T, AppError>` pervasively.
 - Domain-related validation should surface as `AppError` at the appropriate boundary (often in application-layer
   validators).
 
-For details, see `src/modules/auth/notes/flows/error-handling.md`.
+For details, see the [error-handling flow diagram](../../../../docs/diagrams/error-handling-flow.md).

@@ -533,9 +533,9 @@ export function pgUniqueViolationToSignupConflictError(
 
 - **[mapper-registry.ts](../../application/shared/mappers/mapper-registry.ts)** - Complete mapper registry
 - **[mapper-chains.ts](../../application/shared/mappers/mapper-chains.ts)** - Transformation chains by flow
-- **[login-flow.md](./login-flow.md)** - Login flow with transformations
+- **[auth-login-flow.md](../../../../../docs/diagrams/auth-login-flow.md)** - Login flow (diagram)
 - **[signup-flow.md](./signup-flow.md)** - Signup flow with transformations
-- **[error-handling.md](./error-handling.md)** - Error transformation details
+- **[error-handling-flow.md](../../../../../docs/diagrams/error-handling-flow.md)** - Error transformation (diagram)
 
 ---
 

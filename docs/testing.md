@@ -1,54 +1,98 @@
 # Testing
 
-This project uses Cypress for end-to-end (E2E) testing. Accessibility checks via cypress-axe can be enabled in tests.
+The dashboard has two layers of tests, and both run under the **test environment**
+(`.env.test.local`):
 
-## Quick Commands
+| Layer | Tool | Command | What it covers |
+|---|---|---|---|
+| Unit + integration | Vitest | `pnpm test` | Logic, mappers, services, and full-stack flows through the layers |
+| End-to-end (E2E) | Cypress | `pnpm cy:e2e` | The running app in a real browser, including accessibility |
+
+Before running either, make sure the **test database** exists and is migrated — see
+[database-setup.md](database-setup.md). The integration tests and all E2E specs
+talk to `test_db`.
+
+## Unit & integration tests (Vitest)
+
+Config: [`vitest.config.ts`](../vitest.config.ts) · setup: [`vitest.setup.ts`](../vitest.setup.ts)
 
 ```sh
-pnpm next:build:test     # Build with test env
-pnpm serve:test          # Serve with test env
-pnpm cy:e2e:open            # Open Cypress interactive runner
-pnpm cy:e2e:run    # Run Cypress headless
+pnpm test            # run once (test env)
+pnpm test:watch      # re-run on change
+pnpm test:ui         # Vitest UI
+pnpm test:coverage   # run once with coverage
 ```
 
-## Typical Local E2E Workflow
+**Where tests live** — beside the code they cover, in `__tests__/` folders:
 
-1. Prepare the test database:
+- `__tests__/unit/…` — pure logic with dependencies mocked. No database needed.
+- `__tests__/integration/…` — exercise multiple layers together (presentation →
+  application → infrastructure → DB). **These connect to the real `test_db`**, so
+  Postgres must be running and migrated (`pnpm db:push:test`) before `pnpm test`.
 
-   ```sh
-   pnpm db:push:test
-   pnpm db:seed:test
-   ```
+**Conventions:**
 
-2. Build and serve the app using the test environment:
+- Test files are named `*.test.ts` / `*.spec.ts`, anywhere under `src/`.
+- `globals: true` — `describe` / `it` / `expect` are available without importing.
+- The environment is `node`; Next.js server APIs (`next/navigation`, `next/cache`,
+  `next/headers`, and the `server-only` guard) are mocked centrally in
+  `vitest.setup.ts`, so server modules import cleanly in tests.
 
-   ```sh
-   pnpm next:build:test
-   pnpm serve:test
-   ```
+## End-to-end tests (Cypress)
 
-3. Run Cypress:
+Config: [`cypress.config.ts`](../cypress.config.ts) · specs: `cypress/e2e/**/*.cy.ts` ·
+support: `cypress/support/e2e.ts`. Cypress v15, wired up with
+`@testing-library/cypress` and `cypress-axe`.
 
-   ```sh
-   pnpm cy:e2e:open
-   ```
+**The easy way — one command (boots the server for you):**
 
-## Conventions
+```sh
+pnpm cy:e2e               # headless: start dev server (test env), run specs, exit
+pnpm cy:open:with-server  # interactive: same, but opens the Cypress runner
+```
 
-- Specs live under `cypress/e2e`.
-- Custom commands and support files are under `cypress/support`.
-- Prefer `data-testid` or role-based queries (via `@testing-library/cypress`) for resilient selectors.
+These use `start-server-and-test` to launch `next:dev:test`, wait for it to come
+up, then run Cypress — no second terminal needed.
 
-## Accessibility
+**Manual — if the app is already running:**
 
-The project includes `cypress-axe` and `axe-core`. Add `cy.injectAxe()` and `cy.checkA11y()` in specs as needed.
+```sh
+pnpm cy:server      # terminal 1: start the test-env dev server
+pnpm cy:e2e:open    # terminal 2: open the runner …
+pnpm cy:e2e:run     # … or run headless
+```
 
-## CI Notes
+For a production-like target, run `pnpm serve:test` (standalone build) instead of
+`cy:server`.
 
-- Use the headless run: `pnpm cy:e2e:run`.
-- Ensure the app is built and served with the test env before running Cypress in CI.
+### Selectors
+
+- Prefer role-based queries via `@testing-library/cypress`.
+- Fall back to `data-testid` when roles don't apply; avoid brittle CSS-class selectors.
+
+### Accessibility
+
+`cypress-axe` / `axe-core` are available. In a spec:
+
+```ts
+cy.visit("/some-page")
+cy.injectAxe()
+cy.checkA11y()
+```
+
+## CI
+
+- Unit / integration: `pnpm test` (needs the migrated `test_db`).
+- E2E headless: `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) — it boots the server itself.
+- Cypress records no video by default (`video: false` in `cypress.config.ts`).
 
 ## Troubleshooting
 
-- If Cypress can't reach the app, verify `pnpm serve:test` is running and the `baseUrl` matches `cypress.config.ts`.
-- For DB-related failures, confirm `DATABASE_URL` for test and that seeds ran.
+- **`pnpm test` can't connect / hangs** — the integration tests need `test_db`.
+  Confirm Postgres is up, `pnpm db:push:test` has run, and `.env.test.local`'s
+  `DATABASE_URL` is reachable.
+- **Cypress can't reach the app** — confirm the server is running and that `PORT`
+  and `CYPRESS_BASE_URL` in `.env.test.local` agree (the auto-server path derives
+  its wait-URL from `PORT`).
+- **Odd `cypress.config.js` behavior** — the `cy:*` scripts run `cy:clean` first;
+  `pnpm cy:clean` removes the generated file if it gets stale.
