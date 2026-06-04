@@ -1,4 +1,4 @@
-# SRC/SHARED ARCHITECTURE
+# `src/shared` architecture
 
 ## What a `src/shared` folder is *for*
 

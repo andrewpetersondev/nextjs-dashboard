@@ -2,7 +2,7 @@
 
 A **visual** companion to the prose docs in this folder
 ([../project-structure.md](../project-structure.md) and
-[../SHARED.ARCHITECTURE.md](../SHARED.ARCHITECTURE.md)). The prose explains the
+[../shared-architecture.md](../shared-architecture.md)). The prose explains the
 rules; these diagrams show the shapes. They exist for a simple reason: no one
 can hold a whole system in their head — we draw so we don't have to.
 
