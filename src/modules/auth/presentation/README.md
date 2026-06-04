@@ -478,8 +478,7 @@ describe("loginAction", () => {
 ## Related Documentation
 
 - **[Application Layer](../application/README.md)**: Workflows called by Server Actions
-- **[Login Flow](../../../../docs/diagrams/auth-login-flow.md)**: Login flow (diagram)
-- **[Signup Flow](../notes/flows/signup-flow.md)**: Complete signup flow
+- **[Auth Flows](../../../../docs/diagrams/auth-login-flow.md)**: Login, signup & session-check flows (diagram)
 - **[Error Handling](../../../../docs/diagrams/error-handling-flow.md)**: Error handling flow (diagram)
 
 ---
