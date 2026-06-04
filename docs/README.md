@@ -41,6 +41,23 @@ project-wide docs.
 | [when-to-use-app-error.md](when-to-use-app-error.md) | "Should this failure be an `AppError` or a domain policy outcome?" |
 | [diagrams/](diagrams/) | The visual companion — sequence, ERD, C4, state, and layering diagrams. See its [README](diagrams/README.md). |
 
+## Architecture decisions (ADRs)
+
+Numbered, immutable records of *why* a design choice was made — its context, the
+decision, and the consequences. They live beside the code that embodies them, in
+[`src/modules/auth/notes/adr/`](../src/modules/auth/notes/adr/). They grew out of
+the auth module, but several capture patterns — `Result` types, branded IDs, the
+command / query split — that the rest of the codebase follows too.
+
+| ADR | The question it answers |
+|---|---|
+| [001 — Result type for error handling](../src/modules/auth/notes/adr/001-use-result-type-for-error-handling.md) | "Why do functions return `Result<T, E>` instead of throwing exceptions?" |
+| [002 — Separate commands and queries](../src/modules/auth/notes/adr/002-separate-commands-and-queries.md) | "Why are state-changing use cases kept apart from read-only queries?" |
+| [003 — Branded types for IDs](../src/modules/auth/notes/adr/003-use-branded-types-for-ids.md) | "Why is a `UserId` a branded type and not a plain `string`?" |
+| [004 — Strip passwords at the application boundary](../src/modules/auth/notes/adr/004-strip-passwords-at-application-boundary.md) | "Where do password hashes get dropped as data moves up the layers?" |
+| [005 — JWT for session tokens](../src/modules/auth/notes/adr/005-use-jwt-for-session-tokens.md) | "Why stateless JWT-in-cookie sessions instead of a server-side store?" |
+| [006 — Prevent credential enumeration](../src/modules/auth/notes/adr/006-prevent-credential-enumeration.md) | "How does login avoid leaking whether an email is registered?" |
+
 ## Keeping them honest
 
 Treat every doc here as a **snapshot**, not a contract. When you change a flow, a
