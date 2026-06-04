@@ -319,7 +319,7 @@ describe("loginWorkflow", () => {
 - **[Flow Documentation](../notes/flows/README.md)**: Complete flow diagrams (login, signup, session)
 - **[Mapper Registry](./shared/mappers/mapper-registry.ts)**: All mappers and their purposes
 - **[Mapper Chains](./shared/mappers/mapper-chains.ts)**: Data transformation chains by flow
-- **[Error Handling](../notes/flows/error-handling.md)**: Comprehensive error handling guide
+- **[Error Handling](../../../../docs/diagrams/error-handling-flow.md)**: Error handling flow (diagram)
 
 ---
 
