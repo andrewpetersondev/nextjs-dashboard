@@ -19,6 +19,10 @@ in a PR, and sitting right next to the code it describes.
 | [module-layers.md](module-layers.md) | "How is a module layered, and which way do dependencies point?" | Layered flowchart |
 | [auth-login-flow.md](auth-login-flow.md) | "Step by step, what happens when someone logs in?" | Sequence |
 | [request-flow-update-user.md](request-flow-update-user.md) | "How does a form submission travel through the layers?" | Sequence |
+| [error-handling-flow.md](error-handling-flow.md) | "How does a failure travel from the database to a red field error — without a `throw`?" | Sequence + type map |
+| [route-authorization.md](route-authorization.md) | "Before a page renders, what decides whether I'm allowed in?" | Sequence + decision |
+| [session-lifecycle.md](session-lifecycle.md) | "What states can a session be in, and what moves it between them?" | State machine |
+| [dependency-injection.md](dependency-injection.md) | "How do application contracts and infrastructure implementations actually get connected?" | Component graph |
 
 ## Pick the question first
 
@@ -60,6 +64,10 @@ A wrong diagram is worse than no diagram. When you change a flow or a table,
 either update the relevant file here, or ask Claude to regenerate it from the
 current code (e.g. *"redraw the login sequence from the actual auth module"*).
 
-These were generated on **2026-06-03** from the code on branch
-`claude/gallant-mccarthy-f13a40`. Treat them as a snapshot — verify against the
-code before trusting a fine detail.
+The first five were generated on **2026-06-03** (branch
+`claude/gallant-mccarthy-f13a40`); the last four — error handling, route
+authorization, session lifecycle, dependency injection — were added on
+**2026-06-04** (branch `claude/tender-shaw-ffdd33`), each verified against the
+code at the time (drawing the session diagram even turned up a stale "7 day"
+figure in the prose that should have read 15 minutes). Treat them all as a
+snapshot — verify against the code before trusting a fine detail.
