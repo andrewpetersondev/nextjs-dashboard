@@ -5,9 +5,11 @@ rules and the setup; the diagrams in [diagrams/](diagrams/) show the shapes. If
 you're new, start with [getting-started.md](getting-started.md) and work down.
 
 Each entry says *what question it answers*, so you can scan for the one you have.
-Module-level detail lives next to the code — every folder under `src/modules/**`
-and `src/shared/**` has its own `README.md`. This folder is for the cross-cutting,
-project-wide docs.
+Some of the code is documented in place, too: many folders under `src/modules/**`
+and `src/shared/**` carry a local `README.md` — most thoroughly the `auth` module,
+which documents each of its layers; the other feature modules — `invoices`,
+`users`, `customers`, and `banner` — each have a module-level overview. This
+folder is for the cross-cutting, project-wide docs.
 
 ## Getting started & local setup
 
