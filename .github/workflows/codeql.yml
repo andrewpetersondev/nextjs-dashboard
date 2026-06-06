@@ -1,0 +1,56 @@
+# CodeQL — GitHub's static analysis (SAST) for security vulnerabilities.
+#
+# Scans the JavaScript/TypeScript in this repo for common security bugs
+# (injection, unsafe deserialization, path traversal, etc.) and reports
+# findings in the repository's "Security" tab. Free for public repositories.
+#
+# Runs on pushes to main, on PRs to main, and on a weekly schedule — the
+# schedule matters because newly-published CodeQL queries can flag issues in
+# code that hasn't changed since the last push.
+# Docs: https://docs.github.com/code-security/code-scanning
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Mondays at 04:27 UTC. Off the top of the hour on purpose — GitHub asks
+    # you not to schedule at :00 to avoid the cron stampede.
+    - cron: "27 4 * * 1"
+
+# If you push again before a scan finishes, cancel the old one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+
+    # Least privilege: code scanning reads the code and writes its results
+    # back to the Security tab. (On a PRIVATE repo you'd also add
+    # `actions: read`; it isn't needed for public repos.)
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # Initialise CodeQL for JS/TS. `build-mode: none` is correct for
+      # interpreted languages — there's nothing to compile.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:javascript-typescript"
