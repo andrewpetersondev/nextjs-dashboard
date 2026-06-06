@@ -15,7 +15,6 @@ import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form
  * through all layers (presentation → application → infrastructure → database)
  * and back to the UI.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("Login Flow Integration", () => {
 	const TEST_EMAIL = "integration-test@example.com";
 	const TEST_PASSWORD = "TestPassword123!";
@@ -100,7 +99,6 @@ describe("Login Flow Integration", () => {
 		});
 	});
 
-	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 	describe("Authentication and Validation Errors", () => {
 		it("should return validation errors for invalid input format", async () => {
 			const formData = createLoginFormData("invalid-email", TEST_PASSWORD);

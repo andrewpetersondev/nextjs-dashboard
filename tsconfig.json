@@ -21,7 +21,8 @@
 			"@/*": ["./src/*"],
 			"@cypress/*": ["./cypress/*"],
 			"@database/*": ["./database/*"],
-			"@devtools/*": ["./devtools/*"]
+			"@devtools/*": ["./devtools/*"],
+			"@test-support/*": ["./test-support/*"]
 		},
 		// Language and Environment
 		"types": ["node", "react", "react-dom", "next", "pg"], // TypeScript v6 defaults to [] so I have to set it explicitly
