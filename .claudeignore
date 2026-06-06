@@ -13,7 +13,6 @@ cypress/downloads/
 logs/
 tmp/
 temp/
-pnpm-lock.yaml
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 *.log
