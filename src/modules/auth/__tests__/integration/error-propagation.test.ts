@@ -38,9 +38,6 @@ describe("Auth Error Propagation Integration", () => {
 		});
 
 		it("should propagate DB constraint violation during signup as a conflict error", async () => {
-			const db = getAppDb();
-			const originalInsert = db.insert;
-
 			// A Postgres unique violation (code 23505)
 			const pgError = new Error(
 				"duplicate key value violates unique constraint",
@@ -50,9 +47,16 @@ describe("Auth Error Propagation Integration", () => {
 			// biome-ignore lint/suspicious/noExplicitAny: augmenting a native Error with pg fields
 			(pgError as any).constraint = "users_email_unique";
 
-			vi.spyOn(db, "insert").mockImplementationOnce(() => {
-				throw pgError;
-			});
+			// signup inserts inside a transaction, so spy the prototype
+			// (NodePgTransaction extends PgDatabase). Spying the db instance would
+			// miss the tx insert, the violation would never fire, and signup would
+			// actually succeed (redirect) instead of returning a conflict.
+			const { PgDatabase } = await import("drizzle-orm/pg-core");
+			const insertSpy = vi
+				.spyOn(PgDatabase.prototype, "insert")
+				.mockImplementation(() => {
+					throw pgError;
+				});
 
 			const result = await signupAction({} as FormResult<unknown>, authForm());
 
@@ -67,7 +71,8 @@ describe("Auth Error Propagation Integration", () => {
 					/already in use|exists|conflict|unique/,
 				);
 			}
-			db.insert = originalInsert;
+
+			insertSpy.mockRestore();
 		});
 	});
 
