@@ -1,0 +1,41 @@
+# Dependency Review — blocks pull requests that introduce vulnerable or
+# disallowed dependencies BEFORE they reach main.
+#
+# This complements Dependabot: Dependabot opens PRs to *update* existing
+# dependencies, while this inspects the dependency changes *introduced by* a
+# PR and fails the check if one pulls in a known vulnerability. Uses the
+# GitHub Advisory Database + dependency graph; free on public repositories.
+# Docs: https://docs.github.com/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
+
+name: Dependency review
+
+# Only meaningful on PRs — it diffs the base branch against the PR's deps.
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  # Lets the action post its summary as a comment on the PR.
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Review dependency changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v5
+        with:
+          # Fail the PR when an added dependency has a vulnerability of this
+          # severity or higher. Bump to "moderate" later if you want it stricter.
+          fail-on-severity: high
+          # Post the summary as a PR comment only when something is flagged.
+          comment-summary-in-pr: on-failure
