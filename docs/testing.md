@@ -44,6 +44,10 @@ Config: [`cypress.config.ts`](../cypress.config.ts) · specs: `cypress/e2e/**/*.
 support: `cypress/support/e2e.ts`. Cypress v15, wired up with
 `@testing-library/cypress` and `cypress-axe`.
 
+For how the suite is built — the two-process (browser ↔ Node task) model, the
+database reset/seed lifecycle, custom commands, and known rough edges — see
+[`cypress/README.md`](../cypress/README.md).
+
 **What to cover** — [`checklist.md`](../cypress/e2e/checklist.md) is a practical
 guide to the E2E paths worth having as the suite grows: smoke + auth, CRUD,
 resilience, accessibility, and Cypress hygiene.

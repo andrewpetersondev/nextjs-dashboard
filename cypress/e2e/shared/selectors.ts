@@ -1,14 +1,14 @@
 // Common, reusable selectors across features
 export const COMMON_SEL = {
 	addItemButton: '[data-cy="add-item-button"]',
-	confirmDeleteButton: '[data-cy="confirm-delete-button"]',
 	dateInput: '[data-cy="date-input"]',
 	deleteItemButton: '[data-cy="delete-item-button"]',
 	editItemButton: '[data-cy="edit-item-button"]',
-	itemDescriptionInput: '[data-cy="item-description-input"]',
-	itemNameInput: '[data-cy="item-name-input"]',
-	saveItemButton: '[data-cy="save-item-button"]',
 	sensitiveDataInput: '[data-cy="sensitive-data-input"]',
+	// Server-action feedback rendered by ServerMessageMolecule (shared by
+	// the create and edit forms). The molecule emits these data-cy values.
+	serverMessageError: '[data-cy="server-message-error"]',
+	serverMessageSuccess: '[data-cy="server-message-success"]',
 } as const satisfies Readonly<Record<string, string>>;
 
 // Auth-related selectors (login/signup)
@@ -27,17 +27,14 @@ export const AUTH_SEL = {
 	toLoginButton: '[data-testid="login-button"]',
 } as const satisfies Readonly<Record<string, string>>;
 
-// Invoice feature selectors
+// Invoice feature selectors.
+// Note: success/error feedback uses COMMON_SEL.serverMessage* (shared molecule).
 export const INVOICES_SEL = {
-	createInvoiceErrorMessage: '[data-cy="create-invoice-error-message"]',
 	createInvoiceSubmitButton: '[data-cy="create-invoice-submit-button"]',
-	createInvoiceSuccessMessage: '[data-cy="create-invoice-success-message"]',
 	editInvoiceSubmitButton: '[data-cy="edit-invoice-submit-button"]',
 	invoiceAmountInput: '[data-cy="amount-input"]',
-	invoiceCreateButton: '[data-cy="create-invoice-submit-button"]',
 	invoiceCustomerSelect: '[data-cy="customer-select"]',
 	invoiceRow: '[data-cy="invoice-row"]',
-	invoiceSensitiveDataInput: '[data-cy="sensitive-data-input"]',
 	invoiceStatusPaid: "#paid",
 	invoiceStatusPending: "#pending",
 	invoiceStatusRadioGroup: '[data-cy="invoice-status-radio-group"]',
