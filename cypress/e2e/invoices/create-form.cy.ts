@@ -7,32 +7,36 @@ import {
 import { DEFAULT_TIMEOUT } from "@cypress/e2e/shared/times";
 
 describe("Invoices - Create via Server Action Form", () => {
+	before(() => {
+		// Deterministic state: seeded customers (for the select) and demo admin.
+		cy.dbResetAndSeed();
+	});
+
 	beforeEach(() => {
 		cy.loginAsDemoAdmin();
 	});
 
-	it("creates an invoice from the form and displays the server message", () => {
+	it("creates an invoice from the form and shows the success message", () => {
 		cy.visit(CREATE_INVOICE_PATH);
 
-		// Fill in the form
-		//  AutoFills the current date. leave it as it is for now.
+		// Date auto-fills with today; leave it as-is.
 		cy.get(COMMON_SEL.dateInput).should("be.visible");
 		cy.get(COMMON_SEL.sensitiveDataInput).clear();
 		cy.get(COMMON_SEL.sensitiveDataInput).type("confidential info");
 		cy.get(CUSTOMERS_SEL.customerSelect).should("be.visible").select(1);
 		cy.get(INVOICES_SEL.invoiceAmountInput).type("500");
-		cy.get("#paid").click();
+		cy.get(INVOICES_SEL.invoiceStatusPaid).click();
 
 		cy.get(INVOICES_SEL.createInvoiceSubmitButton).click();
 
-		// Remain on create-page (as currently expected in this flow)
+		// Create revalidates but does NOT redirect, so we stay on the create page.
 		cy.location("pathname", { timeout: DEFAULT_TIMEOUT }).should(
 			"eq",
 			CREATE_INVOICE_PATH,
 		);
 
-		// Assert the server message appears (success)
-		cy.get(INVOICES_SEL.createInvoiceSuccessMessage, {
+		// ServerMessageMolecule renders the success feedback.
+		cy.get(COMMON_SEL.serverMessageSuccess, {
 			timeout: DEFAULT_TIMEOUT,
 		}).should("be.visible");
 	});

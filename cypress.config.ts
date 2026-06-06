@@ -8,7 +8,6 @@ import {
 import { registerCypressTasks } from "./cypress/node/tasks/register-tasks";
 
 export default defineConfig({
-	allowCypressEnv: false,
 	e2e: {
 		baseUrl: CYPRESS_BASE_URL,
 

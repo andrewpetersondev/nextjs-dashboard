@@ -32,6 +32,7 @@ export function createTestUser(): TestUser {
 	return {
 		email: `e2e_${timestamp}@example.com`,
 		password: "Password123!",
+		role: USER_ROLE,
 		timestamp,
 		username: `e2e_user_${timestamp}`,
 	} as const as TestUser;
