@@ -100,4 +100,14 @@ describe("Login success flow", () => {
 			name: UI_MATCHERS_REGEX.dashboardH1,
 		}).should("be.visible");
 	});
+
+	it("logs in with a task-provisioned user (no signup form)", () => {
+		const user = createTestUser();
+		cy.task("db:setup", user);
+		cy.login({ email: user.email, password: user.password });
+		cy.findByRole("heading", {
+			level: 1,
+			name: UI_MATCHERS_REGEX.dashboardH1,
+		}).should("be.visible");
+	});
 });

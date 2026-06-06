@@ -94,11 +94,11 @@ task** (Drizzle). Knowing which you're using explains most "why can't I read
 ```
 cypress/
 ├── e2e/                       # Browser-side specs + their shared constants
-│   ├── auth/                  #   login, signup, access-control, demo-user
-│   ├── invoices/              #   create / update / delete via server-action forms
+│   ├── auth/                  #   login, logout, signup, demo-user, access-control
+│   ├── invoices/              #   create / update / delete / list via the UI
 │   ├── server-actions/        #   auth + authorization action behavior
-│   ├── db/                    #   reset (HTTP route) + seed (Node task) sanity checks
-│   ├── smoke/                 #   fast happy-path + DB-task checks
+│   ├── db/                    #   DB task + route sanity checks (reset, seed, setup, …)
+│   ├── smoke/                 #   genuinely fast checks: home nav + a11y, env validation
 │   ├── shared/                #   constants reused across specs (no cy.* calls):
 │   │   ├── paths.ts           #     app route paths (LOGIN_PATH, INVOICES_PATH, …)
 │   │   ├── selectors.ts       #     data-cy selectors (COMMON / AUTH / INVOICES / CUSTOMERS)
@@ -307,8 +307,6 @@ Kept honest on purpose — a doc that hides the warts isn't worth much.
 - **Test-user uniqueness is timestamp-based.** `createTestUser()` uses
   `Date.now() % 99_999_999`, and a few specs call it at module scope (reused across
   retries). Collision-prone under fast/retried runs; a stronger suffix would help.
-- **`smoke/` overlaps `auth/`.** Several "smoke" specs run full signup→logout→login
-  journeys rather than quick smoke checks — naming drift, not a bug.
 - **`db:reset` is HTTP, `db:seed` is a Node task.** Both target the same `test_db`,
   so it's correct, but the asymmetry is intentional (no seed route exists).
 
