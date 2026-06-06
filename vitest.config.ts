@@ -15,6 +15,7 @@ const alias = {
 	"@cypress": path.resolve(rootDir, "cypress"),
 	"@database": path.resolve(rootDir, "database"),
 	"@devtools": path.resolve(rootDir, "devtools"),
+	"@test-support": path.resolve(rootDir, "test-support"),
 };
 
 /**

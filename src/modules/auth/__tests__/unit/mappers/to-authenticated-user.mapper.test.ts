@@ -1,6 +1,6 @@
+import { makeAuthUserEntity } from "@test-support/fixtures/user.fixtures";
 import { describe, expect, it } from "vitest";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
-import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 
@@ -14,28 +14,14 @@ import { toHash } from "@/server/crypto/hashing/hashing.value";
  * Layer: Domain → Application
  * Security: Removes password hash (security boundary)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("toAuthenticatedUserDto Mapper", () => {
-	const createTestAuthUserEntity = (
-		overrides: Partial<AuthUserEntity> = {},
-	): AuthUserEntity => ({
-		email: "test@example.com",
-		id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
-		password: toHash("$2a$10$hashedpassword"),
-		role: "USER",
-		username: "testuser",
-		...overrides,
-	});
-
 	describe("Security Boundary - Password Stripping", () => {
 		it("should strictly strip password hash and only include safe fields", () => {
-			// Arrange
-			const entity = createTestAuthUserEntity();
+			const entity = makeAuthUserEntity();
 
-			// Act
 			const dto = toAuthenticatedUserDto(entity);
 
-			// Assert: Password MUST NOT be present
+			// Password MUST NOT be present
 			expect(dto).not.toHaveProperty("password");
 			// @ts-expect-error - password should not exist on DTO type
 			expect(dto.password).toBeUndefined();
@@ -52,7 +38,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
 		});
 
 		it("should handle entity with empty password hash correctly", () => {
-			const entity = createTestAuthUserEntity({ password: toHash("") });
+			const entity = makeAuthUserEntity({ password: toHash("") });
 			const dto = toAuthenticatedUserDto(entity);
 			expect(dto).not.toHaveProperty("password");
 		});
@@ -60,19 +46,16 @@ describe("toAuthenticatedUserDto Mapper", () => {
 
 	describe("Successful Transformations", () => {
 		it("should map all fields correctly with preserved branded types", () => {
-			// Arrange
 			const userId = toUserId("550e8400-e29b-41d4-a716-446655440003");
-			const entity = createTestAuthUserEntity({
+			const entity = makeAuthUserEntity({
 				email: "user+tag@example.com",
 				id: userId,
 				role: "ADMIN",
 				username: "admin_user-123",
 			});
 
-			// Act
 			const dto = toAuthenticatedUserDto(entity);
 
-			// Assert
 			expect(dto).toEqual({
 				email: "user+tag@example.com",
 				id: userId,
@@ -80,7 +63,6 @@ describe("toAuthenticatedUserDto Mapper", () => {
 				username: "admin_user-123",
 			});
 
-			// Type checks
 			expect(typeof dto.email).toBe("string");
 			expect(typeof dto.id).toBe("string");
 		});
@@ -88,20 +70,17 @@ describe("toAuthenticatedUserDto Mapper", () => {
 
 	describe("Data Integrity and Immutability", () => {
 		it("should not modify the original entity and return a new object", () => {
-			// Arrange
-			const entity = createTestAuthUserEntity();
+			const entity = makeAuthUserEntity();
 			const originalEmail = entity.email;
 
-			// Act
 			const dto = toAuthenticatedUserDto(entity);
 
-			// Assert
 			expect(dto).not.toBe(entity);
 			expect(entity.email).toBe(originalEmail);
 		});
 
 		it("should have readonly properties at type level", () => {
-			const entity = createTestAuthUserEntity();
+			const entity = makeAuthUserEntity();
 			const dto = toAuthenticatedUserDto(entity);
 
 			// @ts-expect-error - email is readonly
@@ -112,7 +91,7 @@ describe("toAuthenticatedUserDto Mapper", () => {
 
 	describe("Edge Cases", () => {
 		it("should handle minimum valid field lengths", () => {
-			const entity = createTestAuthUserEntity({
+			const entity = makeAuthUserEntity({
 				email: "a@b.c",
 				username: "u",
 			});
@@ -122,13 +101,9 @@ describe("toAuthenticatedUserDto Mapper", () => {
 		});
 
 		it("should handle extreme field lengths", () => {
-			const longEmail = `${
-				// biome-ignore lint/style/noMagicNumbers: allowed in tests
-				"a".repeat(100)
-			}@example.com`;
-			// biome-ignore lint/style/noMagicNumbers: allowed in tests
+			const longEmail = `${"a".repeat(100)}@example.com`;
 			const longUsername = "u".repeat(50);
-			const entity = createTestAuthUserEntity({
+			const entity = makeAuthUserEntity({
 				email: longEmail,
 				username: longUsername,
 			});

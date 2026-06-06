@@ -16,7 +16,6 @@ vi.mock("@/server/config/env-server", () => ({
 	SESSION_SECRET: "test-secret-at-least-32-chars-long-!!!",
 }));
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: how can i address this?
 describe("Session Rotation Integration", () => {
 	// biome-ignore lint/suspicious/noExplicitAny: is this okay?
 	let mockCookies: any;

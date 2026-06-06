@@ -12,7 +12,6 @@ import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form
 /**
  * Integration tests for the complete signup flow.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: how can i fix this?
 describe("Signup Flow Integration", () => {
 	const TEST_EMAIL = "signup-test@example.com";
 	const TEST_PASSWORD = "TestPassword123!";
@@ -69,7 +68,6 @@ describe("Signup Flow Integration", () => {
 		});
 	});
 
-	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: how can i address this?
 	describe("Signup Errors", () => {
 		it("should return validation errors for invalid input", async () => {
 			const formData = createSignupFormData("not-an-email", "short", "");
@@ -106,7 +104,6 @@ describe("Signup Flow Integration", () => {
 				expect(payload.fieldErrors?.email).toBeDefined();
 				expect(payload.fieldErrors.email.length).toBeGreaterThan(0);
 				expect(payload.fieldErrors.email[0]?.toLowerCase()).toMatch(
-					// biome-ignore lint/performance/useTopLevelRegex: TODO EXTRACT LATER
 					/already|use|exists|unique|conflict/,
 				);
 			}
@@ -138,7 +135,6 @@ describe("Signup Flow Integration", () => {
 				const firstFormError = payload.formErrors[0];
 				expect(firstFormError).toBeDefined();
 				expect(firstFormError?.toLowerCase()).toMatch(
-					// biome-ignore lint/performance/useTopLevelRegex: TODO EXTRACT REGEX
 					/database insert failed|unexpected|error|unique|conflict/,
 				);
 			}

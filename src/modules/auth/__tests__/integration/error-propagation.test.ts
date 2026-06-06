@@ -6,7 +6,6 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: how can i fix this?
 describe("Auth Error Propagation Integration", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -24,7 +23,6 @@ describe("Auth Error Propagation Integration", () => {
 		return formData;
 	};
 
-	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
 	describe("Database Errors", () => {
 		it("should propagate DB connection failure during login as a form-level error", async () => {
 			const db = getAppDb();
@@ -79,7 +77,6 @@ describe("Auth Error Propagation Integration", () => {
 				const firstFormError = payload.formErrors[0];
 				expect(firstFormError).toBeDefined();
 				expect(firstFormError?.toLowerCase()).toMatch(
-					// biome-ignore lint/performance/useTopLevelRegex: TODO extract later
 					/already in use|exists|conflict|unique/,
 				);
 			}
@@ -87,7 +84,6 @@ describe("Auth Error Propagation Integration", () => {
 		});
 	});
 
-	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: how can i fix this?
 	describe("Infrastructure Service Errors", () => {
 		it("should handle hashing failure during signup gracefully", async () => {
 			// We need to mock the hasher used in SignupUseCase
@@ -110,7 +106,6 @@ describe("Auth Error Propagation Integration", () => {
 				const payload = formErrorPayloadMapper(result.error);
 				// Be flexible with message content as it might be 'CPU exhausted' or a wrapped message
 				expect(payload.message.toLowerCase()).toMatch(
-					// biome-ignore lint/performance/useTopLevelRegex: TODO extract later
 					/failed|exhausted|unexpected/,
 				);
 			}
