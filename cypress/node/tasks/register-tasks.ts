@@ -1,6 +1,7 @@
 import { cleanupE2eUsersTask } from "@cypress/node/tasks/cleanup-e2e-users.task";
 import { createUserTask } from "@cypress/node/tasks/create-user.task";
 import { deleteUserTask } from "@cypress/node/tasks/delete-user.task";
+import { seedDatabaseTask } from "@cypress/node/tasks/seed-database.task";
 import { upsertE2eUserTask } from "@cypress/node/tasks/upsert-e2e-user.task";
 import { userExistsTask } from "@cypress/node/tasks/user-exists.task";
 import { toUsernameFromEmail } from "@cypress/shared/user-input.mapper";
@@ -68,7 +69,10 @@ export function registerCypressTasks(
 			return await callOkJson("/api/db/reset");
 		},
 		async "db:seed"() {
-			return await callOkJson("/api/db/seed");
+			// Seeds directly via drizzle (no /api/db/seed route exists).
+			// Requires an empty DB, so callers reset first (cy.dbResetAndSeed).
+			await seedDatabaseTask();
+			return null;
 		},
 
 		async "db:setup"(user: SetupUserTaskInput) {
