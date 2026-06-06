@@ -1,10 +1,10 @@
+import { toUsernameFromEmail } from "@cypress/node/mappers/user-input.mapper";
 import { cleanupE2eUsersTask } from "@cypress/node/tasks/cleanup-e2e-users.task";
 import { createUserTask } from "@cypress/node/tasks/create-user.task";
 import { deleteUserTask } from "@cypress/node/tasks/delete-user.task";
 import { seedDatabaseTask } from "@cypress/node/tasks/seed-database.task";
 import { upsertE2eUserTask } from "@cypress/node/tasks/upsert-e2e-user.task";
 import { userExistsTask } from "@cypress/node/tasks/user-exists.task";
-import { toUsernameFromEmail } from "@cypress/shared/user-input.mapper";
 import type { UserRole } from "@database/schema/schema.constants";
 
 type CreateUserTaskInput = {

@@ -77,9 +77,10 @@ flowchart LR
 
 - **Browser side** (`e2e/`, `support/`) — the specs and custom commands. This is
   where `cy.*` lives. It cannot touch the database or filesystem directly.
-- **Node side** (`node/`, `db/`, `shared/`) — registered via `setupNodeEvents`.
-  This is where `cy.task(...)` handlers run, with a direct Drizzle connection for
-  fast, deterministic data setup (create/seed/cleanup users).
+- **Node side** (`node/`) — registered via `setupNodeEvents`. This is where
+  `cy.task(...)` handlers run, with a direct Drizzle connection for fast,
+  deterministic data setup (create/seed/cleanup users). All Node-side code —
+  config, db access, input mappers, and the tasks themselves — lives under here.
 
 A spec reaches Postgres two ways: indirectly **through the app** (a real HTTP
 request or server action, e.g. `/api/db/reset`), or directly **through a Node
@@ -113,10 +114,16 @@ cypress/
 │   ├── e2e.ts                 #   testing-library + cypress-axe wiring
 │   └── commands.ts            #   custom commands (see "Custom commands" below)
 │
-├── node/                      # Node process (setupNodeEvents) — real DB/env access
+├── node/                      # Node process (setupNodeEvents) — all real DB/env access
 │   ├── config/
 │   │   ├── cypress-env.ts     #   reads + exports validated env (throws on bad config)
 │   │   └── cypress-env.schema.ts  # Zod shape for the env
+│   ├── db/                    #   Node-side database access
+│   │   ├── node-db.ts         #     drizzle node-postgres singleton (uses DATABASE_URL)
+│   │   └── pg-result.utils.ts #     firstRow() result helper
+│   ├── mappers/               #   input mappers used by the tasks (was cypress/shared/)
+│   │   ├── id.mapper.ts       #     UUID validation → branded UserId / CustomerId
+│   │   └── user-input.mapper.ts  # email / username / password normalization
 │   └── tasks/                 #   cy.task handlers (one file per task):
 │       ├── register-tasks.ts  #     maps task names → fns; wires db:reset (HTTP) + db:seed
 │       ├── create-user.task.ts        # db:createUser
@@ -125,14 +132,6 @@ cypress/
 │       ├── user-exists.task.ts        # db:userExists
 │       ├── cleanup-e2e-users.task.ts  # db:cleanup (deletes e2e_* users)
 │       └── seed-database.task.ts      # db:seed → devtools databaseSeed()
-│
-├── db/                        # Node-side database access
-│   ├── node-db.ts             #   drizzle node-postgres singleton (uses DATABASE_URL)
-│   └── pg-result.utils.ts     #   firstRow() result helper
-│
-├── shared/                    # Node-side input mappers used by the tasks
-│   ├── id.mapper.ts           #   UUID validation → branded UserId / CustomerId
-│   └── user-input.mapper.ts   #   email / username / password normalization
 │
 ├── tsconfig.json              # extends root; types: cypress, node, testing-library, axe
 └── biome.json                 # cypress-scoped lint (cy / Cypress as globals)

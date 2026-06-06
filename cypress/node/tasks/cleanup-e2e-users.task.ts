@@ -1,5 +1,5 @@
-import { nodeDb } from "@cypress/db/node-db";
-import { toUserId } from "@cypress/shared/id.mapper";
+import { nodeDb } from "@cypress/node/db/node-db";
+import { toUserId } from "@cypress/node/mappers/id.mapper";
 import { users } from "@database/schema/users";
 import { inArray, like, or } from "drizzle-orm";
 
