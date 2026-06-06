@@ -16,12 +16,13 @@
 			"Bash(git show*)",
 			"Bash(git branch*)",
 			"Bash(git stash list)",
-			"Bash(find . *)",
 			"Bash(grep *)"
 		],
 		"deny": [
 			"Bash(cat .env*)",
+			"Bash(cat ./.env*)",
 			"Bash(grep * .env*)",
+			"Bash(grep * ./.env*)",
 			"Bash(rm -rf*)",
 			"Bash(rm -fr*)",
 			"Bash(git reset --hard*)",
@@ -31,9 +32,30 @@
 			"Bash(git push -f*)",
 			"Bash(git push --mirror*)",
 			"Bash(git branch -D*)",
+			"Bash(git branch -d*)",
+			"Bash(git stash drop*)",
+			"Bash(git stash clear*)",
 			"Bash(git checkout main*)",
 			"Bash(pnpm db:reset*)",
-			"Bash(drizzle-kit drop*)"
+			"Bash(pnpm db:drop*)",
+			"Bash(pnpm db:wipe*)",
+			"Bash(drizzle-kit drop*)",
+			"Read(**/.env)",
+			"Read(**/.env.*)",
+			"Write(**/.env)",
+			"Write(**/.env.*)",
+			"Edit(**/.env)",
+			"Edit(**/.env.*)",
+			"Read(./node_modules/**)",
+			"Read(./.next/**)",
+			"Read(./out/**)",
+			"Read(./dist/**)",
+			"Read(./build/**)",
+			"Read(./coverage/**)",
+			"Read(./.turbo/**)",
+			"Read(./.vercel/**)",
+			"Read(**/*.pem)",
+			"Read(**/*.key)"
 		]
 	}
 }
