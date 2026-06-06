@@ -14,9 +14,9 @@ name: CI
 # When should this workflow run?
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 # If you push again before a run finishes, cancel the old run (saves CI minutes).
 concurrency:
