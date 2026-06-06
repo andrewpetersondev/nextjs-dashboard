@@ -1,54 +1,30 @@
-import { beforeEach, describe, expect, it, type Mocked, vi } from "vitest";
-import type { UserRepositoryContract } from "@/modules/users/application/contracts/user-repository.contract";
+import {
+	makeUserEntity,
+	TEST_EMAIL,
+	TEST_PASSWORD,
+	TEST_PASSWORD_HASH,
+	TEST_USERNAME,
+} from "@test-support/fixtures/user.fixtures";
+import { makeMockHashingService } from "@test-support/mocks/hashing.mock";
+import { makeMockLogger } from "@test-support/mocks/logger.mock";
+import { makeMockUserRepository } from "@test-support/mocks/user-repository.mock";
+import { beforeEach, describe, expect, it } from "vitest";
 import { UserService } from "@/modules/users/application/services/user.service";
-import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
-import { toUserId } from "@/modules/users/domain/user-id.mappers";
-import type { HashingService } from "@/server/crypto/hashing/hashing.service";
-import type { Hash } from "@/server/crypto/hashing/hashing.value";
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/result/result";
-import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
 describe("UserService", () => {
+	const mockUser = makeUserEntity();
 	let userService: UserService;
-	let mockRepo: Mocked<UserRepositoryContract>;
-	let mockHasher: Mocked<HashingService>;
-	let mockLogger: Mocked<LoggingClientContract>;
-
-	const mockUser: UserEntity = {
-		email: "test@example.com",
-		id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
-		password: "hashed-password" as Hash,
-		role: "USER",
-		sensitiveData: "some-data",
-		username: "testuser",
-	};
+	let mockRepo: ReturnType<typeof makeMockUserRepository>;
+	let mockHasher: ReturnType<typeof makeMockHashingService>;
+	let mockLogger: ReturnType<typeof makeMockLogger>;
 
 	beforeEach(() => {
-		mockRepo = {
-			create: vi.fn(),
-			delete: vi.fn(),
-			readById: vi.fn(),
-			readFilteredUsers: vi.fn(),
-			readPageCount: vi.fn(),
-			update: vi.fn(),
-			withTransaction: vi.fn(),
-			// biome-ignore lint/suspicious/noExplicitAny: fix
-		} as any;
-
-		mockHasher = {
-			compare: vi.fn(),
-			hash: vi.fn().mockResolvedValue("hashed-password"),
-			// biome-ignore lint/suspicious/noExplicitAny: fix
-		} as any;
-
-		mockLogger = {
-			child: vi.fn().mockReturnThis(),
-			error: vi.fn(),
-			info: vi.fn(),
-			// biome-ignore lint/suspicious/noExplicitAny: fix
-		} as any;
-
+		mockRepo = makeMockUserRepository();
+		mockHasher = makeMockHashingService();
+		mockHasher.hash.mockResolvedValue(TEST_PASSWORD_HASH);
+		mockLogger = makeMockLogger();
 		userService = new UserService(mockRepo, mockHasher, mockLogger);
 	});
 
@@ -77,8 +53,10 @@ describe("UserService", () => {
 		});
 
 		it("should return Err when repo fails", async () => {
-			// biome-ignore lint/suspicious/noExplicitAny: fix
-			const dbError = { key: "database", message: "DB Error" } as any;
+			const dbError = {
+				key: "database",
+				message: "DB Error",
+			} as unknown as AppError;
 			mockRepo.readById.mockResolvedValue(Err(dbError));
 
 			const result = await userService.readUserById(mockUser.id);
@@ -92,10 +70,10 @@ describe("UserService", () => {
 
 	describe("createUser", () => {
 		const createData = {
-			email: "new@example.com",
-			password: "password123",
+			email: TEST_EMAIL,
+			password: TEST_PASSWORD,
 			role: "USER" as const,
-			username: "newuser",
+			username: TEST_USERNAME,
 		};
 
 		it("should return Ok(UserDto) when user is created successfully", async () => {
@@ -109,8 +87,10 @@ describe("UserService", () => {
 		});
 
 		it("should return Err when repo fails to create", async () => {
-			// biome-ignore lint/suspicious/noExplicitAny: fix
-			const dbError = { key: "database", message: "DB Error" } as any;
+			const dbError = {
+				key: "database",
+				message: "DB Error",
+			} as unknown as AppError;
 			mockRepo.create.mockResolvedValue(Err(dbError));
 
 			const result = await userService.createUser(createData);

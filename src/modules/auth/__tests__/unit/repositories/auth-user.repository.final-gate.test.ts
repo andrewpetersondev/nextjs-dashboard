@@ -1,7 +1,7 @@
+import { makeMockLogger } from "@test-support/mocks/logger.mock";
 import { describe, expect, it, vi } from "vitest";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
-import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 vi.mock(
 	"@/modules/auth/infrastructure/persistence/auth-user/dal/insert-user.dal",
@@ -21,23 +21,12 @@ describe("AuthUserRepository.signup final-gate validation", () => {
 		);
 
 		const fakeDb = {};
-		const fakeLogger: LoggingClientContract = {
-			child: () => fakeLogger,
-			debug: vi.fn(),
-			error: vi.fn(),
-			errorWithDetails: vi.fn(),
-			info: vi.fn(),
-			operation: vi.fn(),
-			trace: vi.fn(),
-			warn: vi.fn(),
-			withContext: () => fakeLogger,
-			withRequest: () => fakeLogger,
-		};
+		const logger = makeMockLogger();
 
 		const repo = new AuthUserRepository(
-			// biome-ignore lint/suspicious/noExplicitAny: test double
+			// biome-ignore lint/suspicious/noExplicitAny: minimal DB double; signup must reject before the DB is ever touched
 			fakeDb as any,
-			fakeLogger,
+			logger,
 			"request-id",
 		);
 

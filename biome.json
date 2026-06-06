@@ -405,6 +405,26 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": [
+				"test-support/**",
+				"src/**/__tests__/**",
+				"src/**/*.{test,spec}.{ts,tsx}"
+			],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noExcessiveLinesPerFunction": "off"
+					},
+					"performance": {
+						"useTopLevelRegex": "off"
+					},
+					"style": {
+						"noMagicNumbers": "off"
+					}
+				}
+			}
 		}
 	],
 	"root": true,
