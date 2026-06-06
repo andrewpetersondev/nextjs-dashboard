@@ -1,4 +1,6 @@
-# Keep in sync with .claudeignore — both files must have identical content.
+# === Identical content shared with .claudeignore (.gitignore syntax) ===
+
+# Dependencies & build output
 node_modules/
 .next/
 out/
@@ -7,27 +9,39 @@ dist/
 .turbo/
 .cache/
 coverage/
+*.tsbuildinfo
+.npmrc
+
+# Cypress artifacts
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
+
+# Logs & temp
 logs/
+*.log
 tmp/
 temp/
-tsconfig.tsbuildinfo
-*.tsbuildinfo
-*.log
-.env
-.env.*.local
-.env.local
+
+# Env / secrets
+.env*
+!.env.example
+
+# Deploy
 .vercel/
+
+# Database dumps & backups
 db_dumps/
 dumps/
 backups/
 *.dump
 *.psql
+
+# Keys & certificates
 *.pem
 *.key
 *.crt
 *.pfx
 *.p12
+*.p8
 *.der
