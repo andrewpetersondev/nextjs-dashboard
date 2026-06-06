@@ -1,5 +1,5 @@
-import { nodeDb } from "@cypress/db/node-db";
-import { normalizeUserEmail } from "@cypress/shared/user-input.mapper";
+import { nodeDb } from "@cypress/node/db/node-db";
+import { normalizeUserEmail } from "@cypress/node/mappers/user-input.mapper";
 import { users } from "@database/schema/users";
 import { eq } from "drizzle-orm";
 

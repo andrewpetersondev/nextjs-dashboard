@@ -77,9 +77,10 @@ flowchart LR
 
 - **Browser side** (`e2e/`, `support/`) — the specs and custom commands. This is
   where `cy.*` lives. It cannot touch the database or filesystem directly.
-- **Node side** (`node/`, `db/`, `shared/`) — registered via `setupNodeEvents`.
-  This is where `cy.task(...)` handlers run, with a direct Drizzle connection for
-  fast, deterministic data setup (create/seed/cleanup users).
+- **Node side** (`node/`) — registered via `setupNodeEvents`. This is where
+  `cy.task(...)` handlers run, with a direct Drizzle connection for fast,
+  deterministic data setup (create/seed/cleanup users). All Node-side code —
+  config, db access, input mappers, and the tasks themselves — lives under here.
 
 A spec reaches Postgres two ways: indirectly **through the app** (a real HTTP
 request or server action, e.g. `/api/db/reset`), or directly **through a Node
@@ -93,11 +94,11 @@ task** (Drizzle). Knowing which you're using explains most "why can't I read
 ```
 cypress/
 ├── e2e/                       # Browser-side specs + their shared constants
-│   ├── auth/                  #   login, signup, access-control, demo-user
-│   ├── invoices/              #   create / update / delete via server-action forms
+│   ├── auth/                  #   login, logout, signup, demo-user, access-control
+│   ├── invoices/              #   create / update / delete / list via the UI
 │   ├── server-actions/        #   auth + authorization action behavior
-│   ├── db/                    #   reset (HTTP route) + seed (Node task) sanity checks
-│   ├── smoke/                 #   fast happy-path + DB-task checks
+│   ├── db/                    #   DB task + route sanity checks (reset, seed, setup, …)
+│   ├── smoke/                 #   genuinely fast checks: home nav + a11y, env validation
 │   ├── shared/                #   constants reused across specs (no cy.* calls):
 │   │   ├── paths.ts           #     app route paths (LOGIN_PATH, INVOICES_PATH, …)
 │   │   ├── selectors.ts       #     data-cy selectors (COMMON / AUTH / INVOICES / CUSTOMERS)
@@ -113,10 +114,16 @@ cypress/
 │   ├── e2e.ts                 #   testing-library + cypress-axe wiring
 │   └── commands.ts            #   custom commands (see "Custom commands" below)
 │
-├── node/                      # Node process (setupNodeEvents) — real DB/env access
+├── node/                      # Node process (setupNodeEvents) — all real DB/env access
 │   ├── config/
 │   │   ├── cypress-env.ts     #   reads + exports validated env (throws on bad config)
 │   │   └── cypress-env.schema.ts  # Zod shape for the env
+│   ├── db/                    #   Node-side database access
+│   │   ├── node-db.ts         #     drizzle node-postgres singleton (uses DATABASE_URL)
+│   │   └── pg-result.utils.ts #     firstRow() result helper
+│   ├── mappers/               #   input mappers used by the tasks (was cypress/shared/)
+│   │   ├── id.mapper.ts       #     UUID validation → branded UserId / CustomerId
+│   │   └── user-input.mapper.ts  # email / username / password normalization
 │   └── tasks/                 #   cy.task handlers (one file per task):
 │       ├── register-tasks.ts  #     maps task names → fns; wires db:reset (HTTP) + db:seed
 │       ├── create-user.task.ts        # db:createUser
@@ -125,14 +132,6 @@ cypress/
 │       ├── user-exists.task.ts        # db:userExists
 │       ├── cleanup-e2e-users.task.ts  # db:cleanup (deletes e2e_* users)
 │       └── seed-database.task.ts      # db:seed → devtools databaseSeed()
-│
-├── db/                        # Node-side database access
-│   ├── node-db.ts             #   drizzle node-postgres singleton (uses DATABASE_URL)
-│   └── pg-result.utils.ts     #   firstRow() result helper
-│
-├── shared/                    # Node-side input mappers used by the tasks
-│   ├── id.mapper.ts           #   UUID validation → branded UserId / CustomerId
-│   └── user-input.mapper.ts   #   email / username / password normalization
 │
 ├── tsconfig.json              # extends root; types: cypress, node, testing-library, axe
 └── biome.json                 # cypress-scoped lint (cy / Cypress as globals)
@@ -308,8 +307,6 @@ Kept honest on purpose — a doc that hides the warts isn't worth much.
 - **Test-user uniqueness is timestamp-based.** `createTestUser()` uses
   `Date.now() % 99_999_999`, and a few specs call it at module scope (reused across
   retries). Collision-prone under fast/retried runs; a stronger suffix would help.
-- **`smoke/` overlaps `auth/`.** Several "smoke" specs run full signup→logout→login
-  journeys rather than quick smoke checks — naming drift, not a bug.
 - **`db:reset` is HTTP, `db:seed` is a Node task.** Both target the same `test_db`,
   so it's correct, but the asymmetry is intentional (no seed route exists).
 

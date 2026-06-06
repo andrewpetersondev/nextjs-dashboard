@@ -1,10 +1,10 @@
-import { nodeDb } from "@cypress/db/node-db";
 import { AUTH_BCRYPT_SALT_ROUNDS } from "@cypress/node/config/cypress-env";
+import { nodeDb } from "@cypress/node/db/node-db";
 import {
 	normalizeUserEmail,
 	normalizeUsername,
 	normalizeUserPassword,
-} from "@cypress/shared/user-input.mapper";
+} from "@cypress/node/mappers/user-input.mapper";
 import type { UserRole } from "@database/schema/schema.constants";
 import type { Hash } from "@database/schema/schema.types";
 import { users } from "@database/schema/users";

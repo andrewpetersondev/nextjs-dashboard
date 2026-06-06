@@ -1,4 +1,8 @@
-import { DASHBOARD_PATH, LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import {
+	DASHBOARD_PATH,
+	DASHBOARD_USERS_PATH,
+	LOGIN_PATH,
+} from "@cypress/e2e/shared/paths";
 import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
 
 describe("Access control", () => {
@@ -20,5 +24,17 @@ describe("Access control", () => {
 		cy.findByRole("heading", { name: UI_MATCHERS_REGEX.dashboardH1 }).should(
 			"be.visible",
 		);
+	});
+
+	it("lets a demo admin reach the admin-only users page", () => {
+		cy.loginAsDemoAdmin();
+		cy.visit(DASHBOARD_USERS_PATH);
+		cy.location("pathname").should("eq", DASHBOARD_USERS_PATH);
+	});
+
+	it("redirects a non-admin user away from the admin-only users page", () => {
+		cy.loginAsDemoUser();
+		cy.visit(DASHBOARD_USERS_PATH);
+		cy.location("pathname").should("eq", DASHBOARD_PATH);
 	});
 });
