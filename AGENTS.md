@@ -39,3 +39,4 @@ files being changed, not by parsing the frontmatter.
 - Do not read, print, or commit local environment files such as `.env*.local`.
 - Avoid sending generated artifacts, dependency folders, build output, logs, coverage, or database dumps to AI tools.
 - Treat `database/`, `drizzle/`, and `devtools/` as project code, not disposable generated output.
+- These rules are enforced for AI tools by `.aiignore` / `.claudeignore` (what gets indexed) and `.claude/settings.json` (Claude Code tool permissions). Keep all three in sync when adding new secret or artifact paths.
