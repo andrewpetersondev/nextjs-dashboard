@@ -1,3 +1,5 @@
+import type { UserRole } from "@database/schema/schema.constants";
+
 export const E2E_ID_MODULUS = 99_999_999 as const;
 
 export const INVALID_EMAIL: string = "invalid@example.com";
@@ -22,6 +24,7 @@ export type LoginCreds = {
 export interface TestUser {
 	readonly email: string;
 	readonly password: string;
+	readonly role: UserRole;
 	readonly timestamp: number;
 	readonly username: string;
 }
