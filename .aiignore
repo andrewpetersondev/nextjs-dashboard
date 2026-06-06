@@ -1,4 +1,4 @@
-# === Identical content shared with .claudeignore (.gitignore syntax) ===
+# === Shared ignore list — keep identical between .aiignore and .claudeignore (.gitignore syntax) ===
 
 # Dependencies & build output
 node_modules/
@@ -26,11 +26,21 @@ temp/
 # Env / secrets
 .env*
 !.env.example
+.envrc
+.direnv/
+.vault/
+.vault-token
+vault/
+secrets/
+password.txt
 
 # Deploy
 .vercel/
 
-# Database dumps & backups
+# Database data, dumps & backups
+pgdata/
+postgres-data/
+docker/postgres-data/
 db_dumps/
 dumps/
 backups/
@@ -38,6 +48,7 @@ backups/
 *.psql
 
 # Keys & certificates
+postgres-certs/
 *.pem
 *.key
 *.crt
