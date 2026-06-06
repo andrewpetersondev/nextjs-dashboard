@@ -31,7 +31,10 @@ files being changed, not by parsing the frontmatter.
 - Repo validation: `pnpm check:repo`
 - Format check: `pnpm biome:format:check`
 - Lint/typecheck/typegen: `pnpm biome:lint`, `pnpm typecheck`, `pnpm next:typegen`
-- Unit tests: `pnpm test`
+- Unit tests (no DB; runs anywhere): `pnpm test` (alias for `pnpm test:unit`)
+- Integration tests (needs the test database): `pnpm test:integration`
+- All Vitest tests (unit + integration): `pnpm test:all`
+- Coverage (unit lane): `pnpm test:coverage`
 - E2E tests: `pnpm cy:e2e`
 
 ## Safety and context

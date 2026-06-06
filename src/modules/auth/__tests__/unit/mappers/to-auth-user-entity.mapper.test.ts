@@ -1,4 +1,4 @@
-import type { UserRow } from "@database/schema/users";
+import { makeUserRow } from "@test-support/fixtures/user.fixtures";
 import { describe, expect, it } from "vitest";
 import { toAuthUserEntity } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/to-auth-user-entity.mapper";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
@@ -13,27 +13,13 @@ import { toHash } from "@/server/crypto/hashing/hashing.value";
  * Transformation: UserRow → AuthUserEntity
  * Layer: Infrastructure → Domain
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: FIX LATER
 describe("toAuthUserEntity Mapper", () => {
-	const createTestUserRow = (overrides: Partial<UserRow> = {}): UserRow => ({
-		email: "test@example.com",
-		id: toUserId("550e8400-e29b-41d4-a716-446655440000"),
-		password: toHash("$2a$10$hashedpassword"),
-		role: "USER",
-		sensitiveData: "cantTouchThis",
-		username: "testuser",
-		...overrides,
-	});
-
 	describe("Successful Transformations", () => {
 		it("should map a valid user row to AuthUserEntity with branded types", () => {
-			// Arrange
-			const userRow = createTestUserRow();
+			const userRow = makeUserRow();
 
-			// Act
 			const entity = toAuthUserEntity(userRow);
 
-			// Assert
 			expect(entity).toEqual({
 				email: userRow.email,
 				id: toUserId(userRow.id),
@@ -48,8 +34,8 @@ describe("toAuthUserEntity Mapper", () => {
 		});
 
 		it("should correctly parse and map different user roles", () => {
-			const adminRow = createTestUserRow({ role: "ADMIN" });
-			const userRow = createTestUserRow({ role: "USER" });
+			const adminRow = makeUserRow({ role: "ADMIN" });
+			const userRow = makeUserRow({ role: "USER" });
 
 			expect(toAuthUserEntity(adminRow).role).toBe("ADMIN");
 			expect(toAuthUserEntity(userRow).role).toBe("USER");
@@ -58,13 +44,10 @@ describe("toAuthUserEntity Mapper", () => {
 
 	describe("Security and Data Integrity", () => {
 		it("should only include auth-related fields and strip database-specific ones", () => {
-			// Arrange
-			const userRow = createTestUserRow();
+			const userRow = makeUserRow();
 
-			// Act
 			const entity = toAuthUserEntity(userRow);
 
-			// Assert
 			const expectedKeys = ["email", "id", "password", "role", "username"];
 			expect(Object.keys(entity).sort()).toEqual(expectedKeys.sort());
 			expect(entity).not.toHaveProperty("sensitiveData");
@@ -73,7 +56,7 @@ describe("toAuthUserEntity Mapper", () => {
 
 		it("should preserve the exact password hash string (branded as Hash)", () => {
 			const passwordHash = "$2a$10$verylonghashstring";
-			const userRow = createTestUserRow({ password: toHash(passwordHash) });
+			const userRow = makeUserRow({ password: toHash(passwordHash) });
 
 			const entity = toAuthUserEntity(userRow);
 
@@ -81,7 +64,7 @@ describe("toAuthUserEntity Mapper", () => {
 		});
 
 		it("should not modify the original input object", () => {
-			const userRow = createTestUserRow();
+			const userRow = makeUserRow();
 			const rowCopy = { ...userRow };
 
 			toAuthUserEntity(userRow);
@@ -92,7 +75,7 @@ describe("toAuthUserEntity Mapper", () => {
 
 	describe("Edge Cases", () => {
 		it("should handle special characters in email and username", () => {
-			const userRow = createTestUserRow({
+			const userRow = makeUserRow({
 				email: "user+tag@sub.example.com",
 				username: "test_user.123",
 			});

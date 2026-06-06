@@ -1,3 +1,8 @@
+import {
+	TEST_EMAIL,
+	TEST_PASSWORD,
+	TEST_USERNAME,
+} from "@test-support/fixtures/user.fixtures";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import {
 	USER_ERROR_MESSAGES,
@@ -5,10 +10,12 @@ import {
 } from "@/modules/users/domain/constants/user.constants";
 import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
+import { createUserAction } from "@/modules/users/presentation/actions/create-user.action";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
+import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import {
 	makeFormError,
 	makeFormOk,
@@ -16,7 +23,6 @@ import {
 import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { validateForm } from "@/shared/forms/server/validate-form";
-import { createUserAction } from "../create-user.action";
 
 vi.mock("@/shared/forms/server/validate-form");
 vi.mock("@/modules/users/infrastructure/factories/user-service.factory");
@@ -24,8 +30,10 @@ vi.mock("@/server/db/db.connection");
 vi.mock(
 	"@/shared/forms/logic/factories/form-result.factory",
 	async (importOriginal) => {
-		// biome-ignore lint/suspicious/noExplicitAny: fix
-		const actual = await importOriginal<any>();
+		const actual =
+			await importOriginal<
+				typeof import("@/shared/forms/logic/factories/form-result.factory")
+			>();
 		return {
 			...actual,
 			makeFormError: vi.fn(actual.makeFormError),
@@ -34,11 +42,9 @@ vi.mock(
 	},
 );
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: TODO
 describe("createUserAction", () => {
 	const mockFields = resolveCanonicalFieldNames(CreateUserFormSchema);
-	// biome-ignore lint/suspicious/noExplicitAny: fix
-	const prevState = {} as any;
+	const prevState = {} as FormResult<unknown>;
 	const formData = new FormData();
 
 	const mockService = {
@@ -53,10 +59,10 @@ describe("createUserAction", () => {
 
 	it("should return success when user is created successfully", async () => {
 		const validData = {
-			email: "test@example.com",
-			password: "password123",
+			email: TEST_EMAIL,
+			password: TEST_PASSWORD,
 			role: "USER" as const,
-			username: "testuser",
+			username: TEST_USERNAME,
 		};
 
 		(validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
@@ -91,10 +97,10 @@ describe("createUserAction", () => {
 
 	it("should return form error when service.createUser fails", async () => {
 		const validData = {
-			email: "test@example.com",
-			password: "password123",
+			email: TEST_EMAIL,
+			password: TEST_PASSWORD,
 			role: "USER" as const,
-			username: "testuser",
+			username: TEST_USERNAME,
 		};
 
 		(validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
