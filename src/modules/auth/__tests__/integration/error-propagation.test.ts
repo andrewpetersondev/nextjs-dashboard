@@ -1,3 +1,4 @@
+import { buildFormData } from "@test-support/forms/form-data";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
 import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.action";
@@ -11,17 +12,10 @@ describe("Auth Error Propagation Integration", () => {
 		vi.clearAllMocks();
 	});
 
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
-	const createFormData = (
+	const authForm = (
 		email = "test@example.com",
 		password = "Password123!",
-	) => {
-		const formData = new FormData();
-		formData.append("email", email);
-		formData.append("password", password);
-		formData.append("username", "testuser");
-		return formData;
-	};
+	): FormData => buildFormData({ email, password, username: "testuser" });
 
 	describe("Database Errors", () => {
 		it("should propagate DB connection failure during login as a form-level error", async () => {
@@ -31,10 +25,7 @@ describe("Auth Error Propagation Integration", () => {
 				throw new Error("Connection refused");
 			});
 
-			const result = await loginAction(
-				{} as FormResult<unknown>,
-				createFormData(),
-			);
+			const result = await loginAction({} as FormResult<unknown>, authForm());
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
@@ -50,24 +41,20 @@ describe("Auth Error Propagation Integration", () => {
 			const db = getAppDb();
 			const originalInsert = db.insert;
 
-			// Mock a Postgres unique violation (code 23505)
-			// It must have APP_ERROR_KEYS.integrity for the mapper to work
+			// A Postgres unique violation (code 23505)
 			const pgError = new Error(
 				"duplicate key value violates unique constraint",
 			);
-			// biome-ignore lint/suspicious/noExplicitAny: is this okay?
+			// biome-ignore lint/suspicious/noExplicitAny: augmenting a native Error with pg fields
 			(pgError as any).code = "23505";
-			// biome-ignore lint/suspicious/noExplicitAny: is this okay?
+			// biome-ignore lint/suspicious/noExplicitAny: augmenting a native Error with pg fields
 			(pgError as any).constraint = "users_email_unique";
 
 			vi.spyOn(db, "insert").mockImplementationOnce(() => {
 				throw pgError;
 			});
 
-			const result = await signupAction(
-				{} as FormResult<unknown>,
-				createFormData(),
-			);
+			const result = await signupAction({} as FormResult<unknown>, authForm());
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
@@ -86,8 +73,7 @@ describe("Auth Error Propagation Integration", () => {
 
 	describe("Infrastructure Service Errors", () => {
 		it("should handle hashing failure during signup gracefully", async () => {
-			// We need to mock the hasher used in SignupUseCase
-			// Since it's injected via makeAuthComposition, we can mock the module
+			// The hasher is injected via makeAuthComposition, so mock the module.
 			const { BcryptPasswordService } = await import(
 				"@/modules/auth/infrastructure/crypto/services/bcrypt-password.service"
 			);
@@ -95,16 +81,13 @@ describe("Auth Error Propagation Integration", () => {
 				new Error("CPU exhausted"),
 			);
 
-			const result = await signupAction(
-				{} as FormResult<unknown>,
-				createFormData(),
-			);
+			const result = await signupAction({} as FormResult<unknown>, authForm());
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
 				expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
 				const payload = formErrorPayloadMapper(result.error);
-				// Be flexible with message content as it might be 'CPU exhausted' or a wrapped message
+				// Message may be 'CPU exhausted' or a wrapped variant.
 				expect(payload.message.toLowerCase()).toMatch(
 					/failed|exhausted|unexpected/,
 				);
@@ -120,7 +103,7 @@ describe("Auth Error Propagation Integration", () => {
 				"sign",
 			).mockRejectedValueOnce(new Error("Keystore unavailable"));
 
-			// Ensure user is found so it proceeds to session establishment
+			// Ensure user is found so it proceeds to session establishment.
 			const db = getAppDb();
 			const originalSelect = db.select;
 			vi.spyOn(db, "select").mockReturnValue({
@@ -129,13 +112,13 @@ describe("Auth Error Propagation Integration", () => {
 					{
 						email: "test@example.com",
 						id: "12345678-1234-4234-a234-123456789012",
-						password: "hashed_password", // We also need to mock hasher.compare to return true
+						password: "hashed_password",
 						role: "USER",
 						username: "testuser",
 					},
 				]),
 				where: vi.fn().mockReturnThis(),
-				// biome-ignore lint/suspicious/noExplicitAny: is this okay?
+				// biome-ignore lint/suspicious/noExplicitAny: partial drizzle query-builder stub
 			} as any);
 
 			const { BcryptPasswordService } = await import(
@@ -144,17 +127,13 @@ describe("Auth Error Propagation Integration", () => {
 			vi.spyOn(BcryptPasswordService.prototype, "compare").mockResolvedValue({
 				ok: true,
 				value: true,
-				// biome-ignore lint/suspicious/noExplicitAny: is this okay?
+				// biome-ignore lint/suspicious/noExplicitAny: minimal Result stub
 			} as any);
 
-			const result = await loginAction(
-				{} as FormResult<unknown>,
-				createFormData(),
-			);
+			const result = await loginAction({} as FormResult<unknown>, authForm());
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
-				// It should be wrapped in safeExecute in LoginWorkflow or EstablishSessionUseCase
 				const payload = formErrorPayloadMapper(result.error);
 				expect(payload.message).toContain("unexpected error occurred");
 			}

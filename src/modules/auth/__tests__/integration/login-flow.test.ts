@@ -1,7 +1,8 @@
 import { type NewUserRow, users } from "@database/schema/users";
+import { buildFormData } from "@test-support/forms/form-data";
+import { runAndCaptureRedirectPath } from "@test-support/next-redirect";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { runAndCaptureRedirectPath } from "@/modules/auth/__tests__/integration/_test-utils_/next-redirect";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import { getAppDb } from "@/server/db/db.connection";
@@ -21,39 +22,8 @@ describe("Login Flow Integration", () => {
 	const TEST_USERNAME = "integrationtestuser";
 	let testUserId: string;
 
-	// Helpers
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
-	const createLoginFormData = (
-		email = TEST_EMAIL,
-		password = TEST_PASSWORD,
-	) => {
-		const formData = new FormData();
-		formData.append("email", email);
-		formData.append("password", password);
-		return formData;
-	};
-
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
-	const expectRedirectTo = async (
-		// biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
-		action: Promise<any>,
-		expectedPath: string,
-	) => {
-		try {
-			await action;
-			// biome-ignore lint/suspicious/noMisplacedAssertion: i think this is fine because it is called from inside it()
-			expect.fail("Expected redirect to throw NEXT_REDIRECT");
-			// biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
-		} catch (error: any) {
-			if (error.message === "NEXT_REDIRECT") {
-				const { redirect: mockRedirect } = await import("next/navigation");
-				// biome-ignore lint/suspicious/noMisplacedAssertion: i think this is fine because it is called from inside it()
-				expect(mockRedirect).toHaveBeenCalledWith(expectedPath);
-				return;
-			}
-			throw error;
-		}
-	};
+	const loginForm = (email = TEST_EMAIL, password = TEST_PASSWORD): FormData =>
+		buildFormData({ email, password });
 
 	beforeEach(async () => {
 		const db = getAppDb();
@@ -79,7 +49,7 @@ describe("Login Flow Integration", () => {
 	afterEach(async () => {
 		const db = getAppDb();
 		if (testUserId) {
-			// biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
+			// biome-ignore lint/suspicious/noExplicitAny: branded UserId column vs plain string id
 			await db.delete(users).where(eq(users.id, testUserId as any));
 		}
 		vi.clearAllMocks();
@@ -87,10 +57,8 @@ describe("Login Flow Integration", () => {
 
 	describe("Successful Login", () => {
 		it("should complete full flow and redirect to dashboard", async () => {
-			const formData = createLoginFormData();
-
 			const redirectedTo = await runAndCaptureRedirectPath(
-				loginAction({} as FormResult<unknown>, formData),
+				loginAction({} as FormResult<unknown>, loginForm()),
 			);
 			expect(redirectedTo).toBe("/dashboard");
 
@@ -101,9 +69,10 @@ describe("Login Flow Integration", () => {
 
 	describe("Authentication and Validation Errors", () => {
 		it("should return validation errors for invalid input format", async () => {
-			const formData = createLoginFormData("invalid-email", TEST_PASSWORD);
-
-			const result = await loginAction({} as FormResult<unknown>, formData);
+			const result = await loginAction(
+				{} as FormResult<unknown>,
+				loginForm("invalid-email", TEST_PASSWORD),
+			);
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
@@ -129,9 +98,11 @@ describe("Login Flow Integration", () => {
 			const messages: string[] = [];
 
 			for (const c of cases) {
-				const formData = createLoginFormData(c.email, c.password);
-				// biome-ignore lint/performance/noAwaitInLoops: keep until better solution comes
-				const result = await loginAction({} as FormResult<unknown>, formData);
+				// biome-ignore lint/performance/noAwaitInLoops: cases run sequentially by design
+				const result = await loginAction(
+					{} as FormResult<unknown>,
+					loginForm(c.email, c.password),
+				);
 
 				expect(result.ok, `Expected failure for ${c.name}`).toBe(false);
 				if (!result.ok) {
@@ -153,8 +124,7 @@ describe("Login Flow Integration", () => {
 				throw new Error("Database connection failed");
 			});
 
-			const formData = createLoginFormData();
-			const result = await loginAction({} as FormResult<unknown>, formData);
+			const result = await loginAction({} as FormResult<unknown>, loginForm());
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
@@ -168,22 +138,13 @@ describe("Login Flow Integration", () => {
 
 	describe("Cross-Cutting Concerns", () => {
 		it("should enforce security boundaries and track performance", async () => {
-			// This test exercises the flow to verify that performance tracking and
-			// security boundaries (like mapper chains) are active.
-			// Since we can't easily inspect the internal session storage or tracker
-			// in this integration test without deep mocking, we verify the successful
-			// completion of the flow which depends on these components.
-
-			const formData = createLoginFormData();
-
-			// We use the successful flow as a proxy for verifying the chain
-			// If any mapper in the chain (UserRow -> Entity -> DTO -> Principal -> JWT)
-			// failed or leaked sensitive data in a way that caused an exception,
-			// this test would fail.
-			await expectRedirectTo(
-				loginAction({} as FormResult<unknown>, formData),
-				"/dashboard",
+			// We use the successful redirect as a proxy for the whole chain: if any
+			// mapper (UserRow → Entity → DTO → Principal → JWT) failed or leaked
+			// sensitive data in a way that threw, this test would fail.
+			const redirectedTo = await runAndCaptureRedirectPath(
+				loginAction({} as FormResult<unknown>, loginForm()),
 			);
+			expect(redirectedTo).toBe("/dashboard");
 		});
 	});
 });
