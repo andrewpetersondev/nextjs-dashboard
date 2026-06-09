@@ -1,8 +1,6 @@
 # === Shared ignore list — keep identical between .aiignore and .claudeignore (.gitignore syntax) ===
 
 # Dependencies & build output
-node_modules/
-.next/
 out/
 build/
 dist/
