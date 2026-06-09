@@ -1,9 +1,13 @@
 # Next.js Dashboard
 
+[![CI](https://github.com/andrewpetersondev/nextjs-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/andrewpetersondev/nextjs-dashboard/actions/workflows/ci.yml)
+
 A modern dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS. It includes
 authentication, middleware-based route protection, database migrations/seeding, and end-to-end tests with Cypress.
 
-Last updated: 2026-04-02
+> **Live demo:** _add your Vercel URL here_ &nbsp;·&nbsp; **Demo login:** `admin@admin.com` / `AdminPassword123!`
+>
+> Run it yourself in one command: `docker compose up --build` → http://localhost:3000. See [Deployment](#deployment).
 
 ## Tech Stack
 
@@ -93,6 +97,31 @@ nextjs-dashboard/
       # or, if already built
       pnpm next:start:standalone
       ```
+
+## Deployment
+
+This app runs two ways from the same codebase — a managed deploy (Vercel + Neon)
+and a fully self-hosted Docker stack — with no platform lock-in. Full walkthrough,
+including the environment-variable contract, is in the
+**[deployment guide](docs/deployment.md)**.
+
+Self-host the whole thing (Postgres + schema + seed + app) in one command:
+
+```sh
+docker compose up --build
+# open http://localhost:3000/auth/login — sign in as admin@admin.com / AdminPassword123!
+```
+
+Seeded demo logins:
+
+| Role  | Email             | Password           |
+|-------|-------------------|--------------------|
+| Admin | admin@admin.com   | `AdminPassword123!` |
+| User  | user@user.com     | `UserPassword123!`  |
+| Guest | guest@guest.com   | `GuestPassword123!` |
+
+A `/api/health` endpoint returns `{ "status": "ok", "db": "up" }` for uptime
+checks and container health probes.
 
 ## Testing
 
