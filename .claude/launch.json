@@ -1,0 +1,29 @@
+{
+	"configurations": [
+		{
+			"name": "Next.js Dev",
+			"port": 3000,
+			"runtimeArgs": ["next:dev"],
+			"runtimeExecutable": "pnpm"
+		},
+		{
+			"name": "Next.js Dev (Test env)",
+			"port": 3000,
+			"runtimeArgs": ["next:dev:test"],
+			"runtimeExecutable": "pnpm"
+		},
+		{
+			"name": "Drizzle Studio (Dev)",
+			"port": 4983,
+			"runtimeArgs": ["db:studio:dev"],
+			"runtimeExecutable": "pnpm"
+		},
+		{
+			"name": "Drizzle Studio (Test)",
+			"port": 4983,
+			"runtimeArgs": ["db:studio:test"],
+			"runtimeExecutable": "pnpm"
+		}
+	],
+	"version": "0.0.1"
+}
