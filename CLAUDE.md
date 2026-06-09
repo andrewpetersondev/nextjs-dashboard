@@ -1,7 +1,7 @@
 # Claude project instructions
 
 Follow the shared repository instructions in `AGENTS.md`.
-Also consult relevant detailed project standards in `.aiassistant/rules/`.
+Also consult relevant detailed project standards in `docs/standards/`.
 
 ## Claude-specific context
 
@@ -11,10 +11,15 @@ Project-level slash commands are defined in `.claude/commands/`:
 
 | Command | Runs |
 |---|---|
-| `/check` | `pnpm check:fast` — lint + typecheck + typegen |
-| `/check-full` | `pnpm check` — full suite including tests and e2e |
-| `/lint` | `pnpm biome:lint && pnpm biome:format:check` |
-| `/test` | `pnpm test` — unit tests only |
+| `/check` | `pnpm check:fast` — lint + typecheck + typegen (report-only) |
+| `/check-full` | `pnpm check` — full suite including unit tests and e2e (report-only) |
+| `/lint` | `pnpm biome:lint && pnpm biome:format:check` (report-only) |
+| `/fix` | `pnpm biome:lint:fix` then `pnpm biome:lint` — auto-fix lint/format, report residue |
+| `/test` | `pnpm test` — unit tests only (report-only) |
+| `/coverage` | `pnpm test:coverage` — vitest unit coverage summary (report-only) |
+| `/e2e` | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only) |
+
+Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome (it does not hand-edit).
 
 ### Worktrees
 
@@ -24,6 +29,6 @@ Claude Code may check out work in a git worktree under `.claude/worktrees/`. Cha
 
 Project-level memory is stored in `~/.claude/projects/.../memory/`. It persists context across conversations (user preferences, feedback, project state). Check it when resuming prior work.
 
-### `.aiassistant/rules/` frontmatter
+### Project standards (`docs/standards/`)
 
-The rule files in `.aiassistant/rules/` include `apply: by file patterns` frontmatter. This is a JetBrains AI Assistant feature for scoped application. Claude does not enforce it automatically — use your judgment to apply the relevant rules based on the files you are editing.
+Detailed architecture, error-handling, naming, and UI standards live in `docs/standards/`. Apply the relevant ones by judgment, based on the files you are editing.
