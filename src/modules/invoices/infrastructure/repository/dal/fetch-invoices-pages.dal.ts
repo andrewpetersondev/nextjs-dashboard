@@ -2,9 +2,7 @@ import "server-only";
 import { customers } from "@database/schema/customers";
 import { invoices } from "@database/schema/invoices";
 import { count, eq, ilike, or, sql } from "drizzle-orm";
-import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { ITEMS_PER_PAGE } from "@/ui/navigation/pagination/pagination.constants";
 
 /**
@@ -47,15 +45,8 @@ export async function fetchInvoicesPagesDal(
 			),
 		);
 
-	// TODO: Refactor. Empty result does not mean that an error occurred.
-	if (!total || total < 0) {
-		throw makeAppError("database", {
-			cause: "",
-			message: INVOICE_MSG.fetchPagesFailed,
-			metadata: {},
-		});
-	}
-
+	// A zero count means "no matches", not a failure — count() never returns a
+	// negative or null. Math.max below already yields the 1-page floor.
 	// Always return at least 1 page for UX consistency
 	const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 

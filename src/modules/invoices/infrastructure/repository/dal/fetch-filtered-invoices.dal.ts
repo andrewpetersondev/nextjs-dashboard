@@ -2,10 +2,8 @@ import "server-only";
 import { customers } from "@database/schema/customers";
 import { invoices } from "@database/schema/invoices";
 import { desc, eq, ilike, or, sql } from "drizzle-orm";
-import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import type { AppDatabase } from "@/server/db/db.connection";
-import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { ITEMS_PER_PAGE } from "@/ui/navigation/pagination/pagination.constants";
 
 /**
@@ -63,14 +61,8 @@ export async function fetchFilteredInvoicesDal(
 		.limit(ITEMS_PER_PAGE)
 		.offset(offset);
 
-	// TODO: Refactor. Empty result does not mean that an error occurred.
-	if (!data || data.length === 0) {
-		throw makeAppError("database", {
-			cause: "",
-			message: INVOICE_MSG.fetchFilteredFailed,
-			metadata: {},
-		});
-	}
-
+	// An empty result is a valid "no matches" outcome, not an error. Drizzle's
+	// .select() always returns an array, so returning it directly lets the
+	// caller render an empty table instead of an error boundary.
 	return data;
 }
