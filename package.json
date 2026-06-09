@@ -26,7 +26,7 @@
 		"@tsconfig/bases": "^1.0.25",
 		"@types/node": "^25.9.2",
 		"@types/pg": "^8.20.0",
-		"@types/react": "19.2.16",
+		"@types/react": "19.2.17",
 		"@types/react-dom": "19.2.3",
 		"@vitest/coverage-v8": "4.1.8",
 		"@vitest/ui": "4.1.8",
