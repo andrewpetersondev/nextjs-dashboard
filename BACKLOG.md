@@ -26,6 +26,7 @@ this file is the deliberate workaround.)
   consider coverage thresholds once breadth lands.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
+- [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
 
 ## Done
 
