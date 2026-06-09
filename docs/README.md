@@ -59,6 +59,7 @@ command / query split — that the rest of the codebase follows too.
 | [004 — Strip passwords at the application boundary](../src/modules/auth/notes/adr/004-strip-passwords-at-application-boundary.md) | "Where do password hashes get dropped as data moves up the layers?" |
 | [005 — JWT for session tokens](../src/modules/auth/notes/adr/005-use-jwt-for-session-tokens.md) | "Why stateless JWT-in-cookie sessions instead of a server-side store?" |
 | [006 — Prevent credential enumeration](../src/modules/auth/notes/adr/006-prevent-credential-enumeration.md) | "How does login avoid leaking whether an email is registered?" |
+| [007 — Enforce action-level authorization](../src/modules/auth/notes/adr/007-enforce-action-level-authorization.md) | "Why do server actions check auth themselves when the middleware already gates routes?" |
 
 ## Keeping them honest
 
