@@ -1,4 +1,5 @@
 "use server";
+import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import {
 	USER_ERROR_MESSAGES,
 	USER_SUCCESS_MESSAGES,
@@ -28,6 +29,10 @@ export async function createUserAction(
 	_prevState: FormResult<unknown>,
 	formData: FormData,
 ): Promise<FormResult<unknown>> {
+	// Authorization: user management is admin-only. Kept above the try/catch so
+	// the redirect for a non-admin/anonymous caller is not swallowed.
+	await requireAdmin();
+
 	const db = getAppDb();
 
 	const allowed = resolveCanonicalFieldNames<
