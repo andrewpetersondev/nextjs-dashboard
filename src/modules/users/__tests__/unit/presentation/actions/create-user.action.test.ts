@@ -4,6 +4,7 @@ import {
 	TEST_USERNAME,
 } from "@test-support/fixtures/user.fixtures";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import {
 	USER_ERROR_MESSAGES,
 	USER_SUCCESS_MESSAGES,
@@ -27,6 +28,16 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 vi.mock("@/shared/forms/server/validate-form");
 vi.mock("@/modules/users/infrastructure/factories/user-service.factory");
 vi.mock("@/server/db/db.connection");
+vi.mock(
+	"@/modules/auth/presentation/session/guards/session-access.guard",
+	() => ({
+		requireAdmin: vi.fn().mockResolvedValue({
+			isAuthorized: true,
+			role: "ADMIN",
+			userId: "admin-1",
+		}),
+	}),
+);
 vi.mock(
 	"@/shared/forms/logic/factories/form-result.factory",
 	async (importOriginal) => {
@@ -134,5 +145,21 @@ describe("createUserAction", () => {
 			expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
 			expect(result.error.message).toBe(USER_ERROR_MESSAGES.unexpected);
 		}
+	});
+
+	it("enforces admin authorization before creating a user", async () => {
+		const validData = {
+			email: TEST_EMAIL,
+			password: TEST_PASSWORD,
+			role: "USER" as const,
+			username: TEST_USERNAME,
+		};
+
+		(validateForm as Mock).mockResolvedValue(makeFormOk(validData, ""));
+		mockService.createUser.mockResolvedValue(Ok({ id: "1", ...validData }));
+
+		await createUserAction(prevState, formData);
+
+		expect(requireAdmin).toHaveBeenCalledTimes(1);
 	});
 });

@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import {
 	USER_ERROR_MESSAGES,
@@ -117,6 +118,10 @@ export async function updateUserAction(
 	_prevState: FormResult<unknown>,
 	formData: FormData,
 ): Promise<FormResult<unknown>> {
+	// Authorization: user management is admin-only. Kept above the try/catch so
+	// the redirect for a non-admin/anonymous caller is not swallowed.
+	await requireAdmin();
+
 	const fields = resolveCanonicalFieldNames<
 		EditUserData,
 		EditUserFormFieldNames

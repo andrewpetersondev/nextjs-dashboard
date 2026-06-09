@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireSession } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import {
@@ -62,6 +63,10 @@ export async function updateInvoiceAction(
 	id: string,
 	formData: FormData,
 ): Promise<FormResult<UpdateInvoicePayload>> {
+	// Authorization: any authenticated user may manage invoices. Kept above the
+	// try/catch so a no-session redirect propagates instead of being caught.
+	await requireSession();
+
 	try {
 		const input = {
 			amount: formData.get("amount"),

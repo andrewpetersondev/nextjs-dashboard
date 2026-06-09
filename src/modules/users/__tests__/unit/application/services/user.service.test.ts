@@ -98,4 +98,36 @@ describe("UserService", () => {
 			expect(result.ok).toBe(false);
 		});
 	});
+
+	describe("updateUser", () => {
+		// Regression coverage for "leave password blank to keep current": a patch
+		// without a password must skip hashing and forward the other fields as-is.
+		it("does not hash and forwards the patch when no password is provided", async () => {
+			mockRepo.update.mockResolvedValue(Ok(mockUser));
+
+			const result = await userService.updateUser(mockUser.id, {
+				username: "new-name",
+			});
+
+			expect(result.ok).toBe(true);
+			expect(mockHasher.hash).not.toHaveBeenCalled();
+			expect(mockRepo.update).toHaveBeenCalledWith(mockUser.id, {
+				username: "new-name",
+			});
+		});
+
+		it("hashes the password before forwarding when a new one is provided", async () => {
+			mockRepo.update.mockResolvedValue(Ok(mockUser));
+
+			const result = await userService.updateUser(mockUser.id, {
+				password: TEST_PASSWORD,
+			});
+
+			expect(result.ok).toBe(true);
+			expect(mockHasher.hash).toHaveBeenCalledWith(TEST_PASSWORD);
+			expect(mockRepo.update).toHaveBeenCalledWith(mockUser.id, {
+				password: TEST_PASSWORD_HASH,
+			});
+		});
+	});
 });

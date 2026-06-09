@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireSession } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
@@ -24,6 +25,10 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
 export async function deleteInvoiceAction(
 	id: string,
 ): Promise<Result<InvoiceDto, AppError>> {
+	// Authorization: any authenticated user may manage invoices. Kept above the
+	// try/catch so a no-session redirect propagates instead of being caught.
+	await requireSession();
+
 	try {
 		// Input validation -> return Err instead of throwing
 		if (!id) {
