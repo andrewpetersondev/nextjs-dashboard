@@ -1,8 +1,3 @@
----
-apply: by file patterns
-patterns: src/**
----
-
 # Naming Conventions & Organization
 
 Standardized naming to ensure predictability, discoverability, and easy refactoring.

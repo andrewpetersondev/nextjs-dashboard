@@ -1,6 +1,6 @@
 # AI assistant project rules
 
-These instructions apply to AI Assistant, Junie, Claude, and ChatGPT when working in this repository.
+These instructions apply to AI Assistant, Claude, and ChatGPT when working in this repository.
 
 ## Project basics
 
@@ -18,11 +18,8 @@ outdated — the docs are the source of truth.
 ## Detailed project standards
 
 For detailed architecture, naming, error-handling, and UI rules, also consult the Markdown files in
-`.aiassistant/rules/` when they are relevant to the files you are changing.
-
-The rule files include `apply: by file patterns` frontmatter — this is a JetBrains AI Assistant feature for
-scoped application. Other tools (Claude, Junie, ChatGPT) should apply the rules by judgment based on the
-files being changed, not by parsing the frontmatter.
+`docs/standards/` when they are relevant to the files you are changing. Apply each by judgment, based on
+the files you are touching.
 
 ## Useful commands
 

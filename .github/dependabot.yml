@@ -11,11 +11,28 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(dev-deps)"
+    # Batch low-risk minor/patch bumps into two PRs (prod + dev) to cut noise.
+    # Major bumps stay as individual PRs so they get careful review (+ codemods).
+    groups:
+      prod-minor-patch:
+        dependency-type: production
+        update-types: ["minor", "patch"]
+      dev-minor-patch:
+        dependency-type: development
+        update-types: ["minor", "patch"]
 
   # Keep the action versions used inside .github/workflows current
-  # (e.g. actions/checkout@v4, pnpm/action-setup@v4).
+  # (e.g. actions/checkout, pnpm/action-setup), batched into one PR.
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    groups:
+      github-actions:
+        patterns: ["*"]
