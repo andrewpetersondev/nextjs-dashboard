@@ -132,9 +132,11 @@ presentation/
 │       ├── login.transport.ts
 │       └── signup.transport.ts
 │
-├── session/                        # Session UI
+├── session/                        # Session UI + authorization guards
 │   ├── actions/
 │   │   └── verify-session-optimistic.action.ts
+│   ├── guards/                     # Server-action authorization
+│   │   └── session-access.guard.ts # requireSession() / requireAdmin()
 │   ├── components/                 # (Empty - future session UI)
 │   └── features/
 │       └── session-refresh.tsx
@@ -224,6 +226,33 @@ Terminates current session.
 **Input:** None  
 **Success:** Redirect to login  
 **Errors:** Session termination failed
+
+---
+
+## Authorization Guards
+
+Server Actions are independently invocable RPC endpoints — a crafted request can
+reach an action without going through the page that hosts it — so the route
+checks in `proxy.ts` (middleware) are not sufficient on their own. The guards in
+[`session/guards/session-access.guard.ts`](session/guards/session-access.guard.ts)
+make each sensitive action enforce its own authorization (defense in depth).
+
+| Guard | Requires | Redirects when denied | Used by |
+|---|---|---|---|
+| `requireSession()` | any valid session | login | invoice mutations (create / update / delete) |
+| `requireAdmin()` | an **admin** session | login (anon) · dashboard root (non-admin) | every user action — create / update / delete **and** the user reads (PII) |
+
+Both reuse `verifySessionOptimistic()` (the canonical session check, wrapped in
+React `cache`), so there is one source of truth for "is there a session" and
+repeated guard calls in a request collapse to a single verification.
+
+**Placement matters:** call the guard **above** the action's `try/catch`. A denied
+guard signals by `redirect()`-ing (a thrown `NEXT_REDIRECT`); inside a `try` that
+catches everything, that throw would be swallowed and reported as a generic error.
+See [ADR-007](../notes/adr/007-enforce-action-level-authorization.md) for the
+decision, and the
+[route-authorization diagram](../../../../docs/diagrams/route-authorization.md)
+for how this layers under the route gate.
 
 ---
 
@@ -478,6 +507,7 @@ describe("loginAction", () => {
 ## Related Documentation
 
 - **[Application Layer](../application/README.md)**: Workflows called by Server Actions
+- **[Route authorization](../../../../docs/diagrams/route-authorization.md)**: The edge-middleware route gate; the action guards above are the second layer
 - **[Auth Flows](../../../../docs/diagrams/auth-login-flow.md)**: Login, signup & session-check flows (diagram)
 - **[Error Handling](../../../../docs/diagrams/error-handling-flow.md)**: Error handling flow (diagram)
 
@@ -631,5 +661,5 @@ Changes to Server Action signatures or form field names are breaking changes. Co
 
 ---
 
-**Last Updated**: 2026-02-01  
+**Last Updated**: 2026-06-09  
 **Maintainer**: Auth Module Team

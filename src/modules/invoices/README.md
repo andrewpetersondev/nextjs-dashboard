@@ -162,6 +162,16 @@ won't type-check where an ID is expected. Convert at the boundary with
   `translator()` (`domain/i18n/`); domain/infra errors are mapped to a message via
   `toInvoiceErrorMessage()`.
 
+### Authorization
+
+The three mutations (create / update / delete) call `requireSession()` at the top
+of their action, above the `try/catch` — Server Actions are invocable on their
+own, so the route middleware isn't enough. The **reads** (filtered list, page
+count, latest, totals) are deliberately left unguarded at the action level: they
+sit behind the dashboard route gate and are lower-sensitivity. See the auth
+module's [authorization guards](../auth/presentation/README.md#authorization-guards)
+and [ADR-007](../auth/notes/adr/007-enforce-action-level-authorization.md).
+
 ---
 
 ## Layer responsibilities
@@ -246,4 +256,4 @@ Kept honest on purpose — a doc that hides the warts isn't worth much.
 
 ---
 
-**Last updated:** 2026-06-04
+**Last updated:** 2026-06-09
