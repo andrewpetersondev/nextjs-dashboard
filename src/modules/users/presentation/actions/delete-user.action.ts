@@ -25,22 +25,19 @@ export async function deleteUserAction(id: string): Promise<FormResult<never>> {
 
 		const result = await service.deleteUser(toUserId(id));
 
-		if (result.ok) {
-			revalidatePath(ROUTES.dashboard.users);
-			redirect(ROUTES.dashboard.users);
+		if (!result.ok) {
+			return makeFormError<"_root">({
+				fieldErrors: {
+					_root: [
+						result.error.message || USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
+					],
+				},
+				formData: {} as Readonly<Partial<Record<"_root", string>>>,
+				formErrors: [],
+				key: APP_ERROR_KEYS.not_found,
+				message: USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
+			});
 		}
-
-		return makeFormError<"_root">({
-			fieldErrors: {
-				_root: [
-					result.error.message || USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
-				],
-			},
-			formData: {} as Readonly<Partial<Record<"_root", string>>>,
-			formErrors: [],
-			key: APP_ERROR_KEYS.not_found,
-			message: USER_ERROR_MESSAGES.notFoundOrDeleteFailed,
-		});
 	} catch (_error: unknown) {
 		return makeFormError<"_root">({
 			fieldErrors: { _root: [USER_ERROR_MESSAGES.unexpected] },
@@ -50,4 +47,11 @@ export async function deleteUserAction(id: string): Promise<FormResult<never>> {
 			message: USER_ERROR_MESSAGES.unexpected,
 		});
 	}
+
+	// Success path: revalidate + redirect OUTSIDE the try/catch. Next's
+	// redirect() signals by throwing a NEXT_REDIRECT control-flow error; keeping
+	// it out of the try prevents the catch above from swallowing that signal and
+	// returning an "unexpected" FormResult on what is actually the success path.
+	revalidatePath(ROUTES.dashboard.users);
+	redirect(ROUTES.dashboard.users);
 }
