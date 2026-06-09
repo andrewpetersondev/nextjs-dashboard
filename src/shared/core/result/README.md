@@ -1,164 +1,87 @@
-# Result Pattern Utilities
+# Result pattern
 
-A professional, type-safe implementation of the Result pattern for TypeScript, designed to eliminate exceptions in favor
-of explicit error handling.
+A small, type-safe success/error wrapper used across the codebase to make
+failure explicit in return types instead of relying on `throw` / `try`-`catch`.
 
-## Core Philosophy
+## Philosophy
 
-The `Result` pattern replaces `throw` and `try/catch` with a predictable return type that represents either success (
-`Ok`) or failure (`Err`). This promotes:
+`Result<TValue, TError>` is a discriminated union of `Ok` (success) and `Err`
+(failure). Callers narrow on the `ok` flag, which forces the error case to be
+handled:
 
-- **Exhaustiveness**: TypeScript forces you to handle the error case.
-- **Discoverability**: Functions explicitly declare what errors they can return.
-- **Safety**: No more unhandled runtime exceptions from forgotten catch blocks.
+- **Exhaustiveness** — TypeScript makes you check `ok` before reaching `.value`
+  or `.error`.
+- **Discoverability** — a function's return type states which errors it can
+  produce.
+- **Safety** — no unhandled exceptions from forgotten `catch` blocks.
 
----
+## API
 
-## Module Overview
+This module deliberately exposes a minimal surface. There is no barrel file —
+import directly from the specific module:
 
-The library is split into logical modules to maintain a clean API and small bundle size:
+| Import                                                    | From                                  | Purpose                                                            |
+| -------------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
+| `Ok`, `Err`, `unwrapOrNull`                              | `@/shared/core/result/result`         | Construct results; non-throwing unwrap to `value \| null`.        |
+| `Result`, `OkResult`, `ErrResult`, `OkType`, `ErrType`   | `@/shared/core/result/result.dto`     | Types.                                                             |
+| `safeExecute`                                            | `@/shared/core/result/safe-execute`   | Run an async thunk, converting thrown values into a logged `Err`. |
 
-- `integrations/safe-execute.ts`: Application-level integration for logging and error normalization.
-- `result.async.ts`: Asynchronous transformation operators and `pipeAsync`.
-- `result.collection.ts`: Utilities for working with arrays or iterables of Results.
-- `result.factory.ts`: Creation utilities (Entry points from other data types).
-- `result.operators.ts`: Synchronous transformation operators (map, flatMap, tap).
-- `result.ts`: Core primitives and type guards.
-- `result.types.ts`: Shared TypeScript types and interfaces.
+### Creating and reading results
 
----
-
-## Importing
-
-This project avoids a barrel file. Import directly from the specific module you need:
-
-```typescript
-import {Ok, Err, isOk, isErr} from '@/shared/results/result';
-import {fromNullable, tryCatch} from '@/shared/results/result.factory';
-import {map, flatMap, match} from '@/shared/results/result.operators';
-import {mapAsync, pipeAsync, tapAsync} from '@/shared/results/result.async';
-import {collectAll, collectTuple} from '@/shared/results/result.collection';
-```
-
----
-
-## Basic Usage
-
-### Creating Results
-
-```typescript
-import {Ok, Err} from '@/shared/results/result';
+```ts
+import { makeUnexpectedError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { Err, Ok } from "@/shared/core/result/result";
 
 const success = Ok(42);
-const failure = Err({code: 'NOT_FOUND', message: 'User not found'});
-```
+const failure = Err(makeUnexpectedError(cause, { message: "Something failed" }));
 
-### Checking Results
-
-```typescript
-import {isOk, isErr} from '@/shared/results/result';
-
-if (isOk(result)) {
-    console.log(result.value);
+// Narrow on the `ok` discriminant — there are no isOk/isErr helpers.
+if (result.ok) {
+  // result.value is available here
 } else {
-    console.error(result.error);
+  // result.error is available here (always an AppError)
 }
 ```
 
----
+> `Err` accepts an `AppError` instance (a class built via the error factories in
+> `@/shared/core/errors`), **not** a plain `{ code, message }` object.
 
-## Factory Utilities (`result.factory.ts`)
+### safeExecute
 
-Utilities for wrapping existing logic into the Result domain.
+```ts
+import { safeExecute } from "@/shared/core/result/safe-execute";
 
-```typescript
-import {fromNullable, tryCatch} from '@/shared/results/result.factory';
-
-// From a nullable value
-const res1 = fromNullable(maybeUser, () => ({code: 'NOT_FOUND', message: '...'}));
-
-// From a throwing function
-const res2 = tryCatch(
-    () => JSON.parse(jsonString),
-    (err) => ({code: 'PARSE_ERROR', message: String(err)})
-);
+const result = await safeExecute(() => myDomainOperation(), {
+  logger,
+  message: "Failed to fetch user data",
+  operation: "GetUserData",
+});
 ```
 
----
+A resolved `Ok`/`Err` is returned verbatim with no logging. A _thrown_ `AppError`
+is logged and returned as-is; any other thrown value is normalized to an
+`unexpected` `AppError` and logged.
 
-## Synchronous Operators (`result.operators.ts`)
+## Dormant combinator modules
 
-Transformation utilities that work on Results. Most operators are curried for use in pipelines.
+This module also ships a fuller combinator library that is **not currently
+exported or imported by anything** — every function is module-private:
 
-```typescript
-import {map, flatMap, tap, match} from '@/shared/results/result.operators';
-// import { pipe } from '@/shared/utils/pipe'; // If a pipe utility is available
+- `result.factory.ts` — constructors (`tryCatch`, `fromNullable`,
+  `fromPredicate`, `fromGuard`, `fromCondition`, `tryCatchAsync`).
+- `result.operators.ts` — sync transforms (`map`, `flatMap`, `mapErr`, `tap`,
+  `unwrapOr` / `unwrapOrElse`, `match`, …).
+- `result.async.ts` — async mirrors plus a typed multi-step `pipeAsync`.
+- `result.collection.ts` — aggregation (`collectAll`, `collectTuple`,
+  `firstOkOrElse`, `iterateOk`).
 
-const result = map(n => n * 2)(Ok(10));
-
-// Extracting values
-const output = match(
-    result,
-    (val) => `Success: ${val}`,
-    (err) => `Error: ${err.message}`
-);
-```
-
----
-
-## Asynchronous Operators (`result.async.ts`)
-
-Utilities for handling Promises and asynchronous flows.
-
-```typescript
-import {mapAsync, pipeAsync, tapAsync} from '@/shared/results/result.async';
-
-const result = await pipeAsync(
-    Ok("user_id_123"),
-    async (r) => mapAsync(async (id: string) => await fetchUser(id))(r),
-    async (r) => tapAsync(async (user: User) => await logVisit(user.id))(r)
-);
-```
-
----
-
-## Working with Collections (`result.collection.ts`)
-
-Utilities for processing multiple Results at once.
-
-```typescript
-import {collectAll, collectTuple} from '@/shared/results/result.collection';
-
-// Combine an array of Results into a single Result
-const results = [Ok(1), Ok(2), Ok(3)];
-const allOk = collectAll(results); // Result<readonly number[], AppError>
-
-// Combine heterogeneous Results into a tuple
-const tuple = collectTuple(Ok(1), Ok("hello")); // Result<readonly [number, string], AppError>
-```
-
----
-
-## Safe Execution Integration (`integrations/safe-execute.ts`)
-
-A high-level utility for executing operations with automatic logging and normalization.
-
-```typescript
-import {safeExecute} from '@/shared/results/integrations/safe-execute';
-
-const result = await safeExecute(
-    async () => await myDomainOperation(),
-    {
-        logger,
-        operation: 'GetUserData',
-        message: 'Failed to fetch user data'
-    }
-);
-```
-
----
+They're kept dormant as a ready-made foundation for railway-oriented error
+handling, to be wired up (exported + tested) if and when a real caller needs
+them. Until then they intentionally surface as unused files in `pnpm knip`. If
+that day never comes, delete them — git preserves the full implementation.
 
 ## Tooling
 
-- Use `pnpm biome:check` to run linting/formatting diagnostics.
-- Use `pnpm typecheck` to run TypeScript checks.
+- `pnpm biome:check` — lint/format diagnostics.
+- `pnpm typecheck` — TypeScript checks.
+```
