@@ -1,0 +1,40 @@
+# Keep the build context small and free of secrets / build artifacts.
+
+# Dependencies and build output (reinstalled/rebuilt inside the image)
+node_modules
+.next
+out
+build
+coverage
+
+# Secrets and local env (env is injected at runtime, never baked in)
+.env
+.env.*
+!.env.example.local
+
+# VCS and tooling
+.git
+.gitignore
+.github
+.claude
+.aiassistant
+.idea
+.vscode
+
+# Tests and e2e (not needed to build the production server)
+cypress
+**/*.test.ts
+**/*.spec.ts
+vitest.config.ts
+vitest.workspace.ts
+
+# Docs and misc
+docs
+diagrams
+*.md
+!README.md
+Dockerfile
+.dockerignore
+docker-compose.yml
+npm-debug.log*
+.DS_Store
