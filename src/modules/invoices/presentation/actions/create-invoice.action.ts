@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { requireSession } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { toInvoiceErrorMessage } from "@/modules/invoices/application/utils/error-messages";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
@@ -32,6 +33,10 @@ export async function createInvoiceAction(
 	_prevState: FormResult<CreateInvoicePayload>,
 	formData: FormData,
 ): Promise<FormResult<CreateInvoicePayload>> {
+	// Authorization: any authenticated user may manage invoices. Kept above the
+	// try/catch below so a no-session redirect propagates instead of being caught.
+	await requireSession();
+
 	// 1. Parse Input: Leverage infrastructure for consistent extraction
 	const rawInput = resolveRawFieldPayload(formData, CREATE_INVOICE_FIELDS_LIST);
 	const parsed = CreateInvoiceSchema.safeParse(rawInput);
