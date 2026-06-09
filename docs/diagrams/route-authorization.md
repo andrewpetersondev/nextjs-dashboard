@@ -106,3 +106,28 @@ layer **before** that: the edge gate that runs on every navigation and decides
 whether the request is even allowed through. Same JWT, different moment — the gate
 is the bouncer at the door; the optimistic check is the host double-checking your
 wristband once you're inside.
+
+## A second layer: server actions guard themselves
+
+The gate above protects **navigations** — it decides whether a *page* may render.
+But Next.js Server Actions are independently invocable RPC endpoints: a crafted
+request can call an action without ever loading the page that hosts it, so the
+gate alone doesn't protect them. Each sensitive action therefore enforces its own
+authorization as a second layer (defense in depth), via two guards in
+[`session-access.guard.ts`](../../src/modules/auth/presentation/session/guards/session-access.guard.ts):
+
+- **`requireSession()`** — any valid session; used by the invoice mutations.
+- **`requireAdmin()`** — an admin session; used by every user action (the
+  mutations *and* the PII-exposing reads).
+
+Both reuse the same `verifySessionOptimistic()` check the gate's optimistic
+sibling uses, so there's one source of truth for the session. The reasoning — why
+actions need their own check, and why a denial `redirect()`s rather than rendering
+`forbidden()` — is in
+[ADR-007](../../src/modules/auth/notes/adr/007-enforce-action-level-authorization.md);
+the auth module's
+[presentation README](../../src/modules/auth/presentation/README.md#authorization-guards)
+documents the guards in detail.
+
+> So: the **gate** stops you at the door (route), and the **guards** check your
+> wristband again at each ride (action). Same session, two enforcement points.

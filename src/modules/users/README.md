@@ -147,6 +147,17 @@ They share the same user records and the same shared primitives
 `@/shared/policies/{email,password,username}`), but neither imports the other's
 use-cases.
 
+### Authorization: admin-only, enforced per action
+
+Every server action in this module — the create / update / delete commands **and**
+the three reads (which expose user PII) — calls `requireAdmin()` at the top, above
+its `try/catch`. The `/dashboard/users` route is already admin-gated by the
+middleware, but actions are independently invocable, so each one re-checks. The
+`delete-user-form` wrapper inherits the guard by delegating to the guarded delete
+action. See the auth module's
+[authorization guards](../auth/presentation/README.md#authorization-guards) and
+[ADR-007](../auth/notes/adr/007-enforce-action-level-authorization.md).
+
 ### Ports and adapters (dependency inversion)
 
 The service depends only on `UserRepositoryContract`, never on a concrete class.
@@ -278,4 +289,4 @@ in the service, the DAL functions, and the update/delete actions are not yet uni
 
 ---
 
-**Last updated:** 2026-06-04
+**Last updated:** 2026-06-09
