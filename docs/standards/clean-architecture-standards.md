@@ -1,8 +1,3 @@
----
-apply: by file patterns
-patterns: src/modules/**/*.ts, src/modules/**/*.tsx
----
-
 # Clean Architecture Standards
 
 Rules for maintaining strict architectural boundaries and ensuring business logic remains independent of frameworks and

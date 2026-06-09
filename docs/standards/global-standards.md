@@ -1,8 +1,3 @@
----
-apply: by file patterns
-patterns: src/**
----
-
 # Global Standards
 
 General rules for API compatibility, code style, and project organization.

@@ -31,6 +31,7 @@ temp/
 vault/
 secrets/
 password.txt
+*.secret
 
 # Deploy
 .vercel/

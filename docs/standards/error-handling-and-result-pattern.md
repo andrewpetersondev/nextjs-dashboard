@@ -1,8 +1,3 @@
----
-apply: by file patterns
-patterns: src/shared/errors/**/*.ts, src/modules/**/*.ts, src/modules/**/*.tsx
----
-
 # Error Handling & Result Pattern
 
 The project treats failures as first-class citizens using a "Result-first" approach.

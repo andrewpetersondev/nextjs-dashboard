@@ -43,6 +43,18 @@ folder is for the cross-cutting, project-wide docs.
 | [when-to-use-app-error.md](when-to-use-app-error.md) | "Should this failure be an `AppError` or a domain policy outcome?" |
 | [diagrams/](diagrams/) | The visual companion — sequence, ERD, C4, state, and layering diagrams. See its [README](diagrams/README.md). |
 
+## Coding standards
+
+Detailed, opinionated standards in [standards/](standards/), consulted by AI assistants and humans alike (relocated from the old `.aiassistant/rules/`). Apply each by judgment, based on the files you're touching.
+
+| Doc | The question it answers |
+|---|---|
+| [standards/global-standards.md](standards/global-standards.md) | "What are the baseline API-compatibility, code-style, and data-integrity rules?" |
+| [standards/clean-architecture-standards.md](standards/clean-architecture-standards.md) | "What are the strict layer boundaries and dependency rules?" |
+| [standards/error-handling-and-result-pattern.md](standards/error-handling-and-result-pattern.md) | "How do the `Result` pattern and `AppError` model work?" |
+| [standards/naming-conventions-and-organization.md](standards/naming-conventions-and-organization.md) | "What are the naming suffixes and file-organization conventions?" |
+| [standards/ui-design-standards.md](standards/ui-design-standards.md) | "What UI principles and accessibility checklist should the UI follow?" |
+
 ## Architecture decisions (ADRs)
 
 Numbered, immutable records of *why* a design choice was made — its context, the
