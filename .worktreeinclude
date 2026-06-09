@@ -1,0 +1,6 @@
+# Local env files (gitignored) auto-copied into each new Claude Code worktree.
+# Uses .gitignore syntax; only files that match AND are gitignored get copied,
+# so tracked files are never duplicated.
+.env.development.local
+.env.production.local
+.env.test.local
