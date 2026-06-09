@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
@@ -14,6 +15,10 @@ import { ROUTES } from "@/shared/routing/routes";
  * Deletes a user by ID, revalidates and redirects.
  */
 export async function deleteUserAction(id: string): Promise<FormResult<never>> {
+	// Authorization: user management is admin-only. Kept above the try/catch so
+	// the redirect for a non-admin/anonymous caller is not swallowed.
+	await requireAdmin();
+
 	try {
 		const db = getAppDb();
 		const service = createUserService(db);
