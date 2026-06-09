@@ -16,7 +16,8 @@
 			"Bash(git show*)",
 			"Bash(git branch*)",
 			"Bash(git stash list)",
-			"Bash(grep *)"
+			"Bash(grep *)",
+			"Read(./**)"
 		],
 		"deny": [
 			"Bash(cat .env*)",
@@ -64,7 +65,7 @@
 			"Read(**/.vault-token)",
 			"Write(**/.vault-token)",
 			"Edit(**/.vault-token)",
-			"Read(./node_modules/**)",
+			"Read(**/*.secret)",
 			"Read(./.next/**)",
 			"Read(./out/**)",
 			"Read(./dist/**)",

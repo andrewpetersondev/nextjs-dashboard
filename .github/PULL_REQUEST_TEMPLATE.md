@@ -22,7 +22,7 @@
 
 ## Checklist
 
-- [ ] Follows the rules in `AGENTS.md` and `.aiassistant/rules/`
+- [ ] Follows the rules in `AGENTS.md` and `docs/standards/`
 - [ ] No secrets, `.env*` files, or generated artifacts committed
 - [ ] Docs / README updated if behaviour or setup changed
 - [ ] Focused change — preserves existing patterns and user-authored work

@@ -47,6 +47,7 @@ cypress/.nyc_output/
 vault/
 secrets/
 password.txt
+*.secret
 
 # Databases and Certificates
 # Postgres

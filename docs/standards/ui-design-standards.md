@@ -1,8 +1,3 @@
----
-apply: by file patterns
-patterns: src/**/*.tsx, src/**/presentation/**/*.ts
----
-
 # UI Design Standards
 
 These rules define how the user interface should feel, behave, and evolve across the product.
