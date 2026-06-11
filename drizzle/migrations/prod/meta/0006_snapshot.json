@@ -1,326 +1,309 @@
 {
-  "id": "1c0dc68b-4985-4792-93c0-c5da4c14e979",
-  "prevId": "5c5276e8-8bdb-4539-84a7-bf048398562f",
-  "version": "7",
-  "dialect": "postgresql",
-  "tables": {
-    "public.customers": {
-      "name": "customers",
-      "schema": "",
-      "columns": {
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "image_url": {
-          "name": "image_url",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "sensitive_data": {
-          "name": "sensitive_data",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'cantTouchThis'"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "customers_email_unique": {
-          "name": "customers_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.demo_user_counters": {
-      "name": "demo_user_counters",
-      "schema": "",
-      "columns": {
-        "count": {
-          "name": "count",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "role": {
-          "name": "role",
-          "type": "role",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'GUEST'"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.invoices": {
-      "name": "invoices",
-      "schema": "",
-      "columns": {
-        "amount": {
-          "name": "amount",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "customer_id": {
-          "name": "customer_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "date": {
-          "name": "date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "revenue_period": {
-          "name": "revenue_period",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "sensitive_data": {
-          "name": "sensitive_data",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'cantTouchThis'"
-        },
-        "status": {
-          "name": "status",
-          "type": "status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
-        }
-      },
-      "indexes": {
-        "invoices_customer_id_idx": {
-          "name": "invoices_customer_id_idx",
-          "columns": [
-            {
-              "expression": "customer_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "invoices_revenue_period_idx": {
-          "name": "invoices_revenue_period_idx",
-          "columns": [
-            {
-              "expression": "revenue_period",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "invoices_customer_id_status_idx": {
-          "name": "invoices_customer_id_status_idx",
-          "columns": [
-            {
-              "expression": "customer_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "status",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "invoices_customer_id_customers_id_fk": {
-          "name": "invoices_customer_id_customers_id_fk",
-          "tableFrom": "invoices",
-          "tableTo": "customers",
-          "columnsFrom": [
-            "customer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {
-        "invoices_amount_non_negative": {
-          "name": "invoices_amount_non_negative",
-          "value": "\"invoices\".\"amount\" >= 0"
-        },
-        "invoices_revenue_period_matches_date": {
-          "name": "invoices_revenue_period_matches_date",
-          "value": "\"invoices\".\"revenue_period\" = date_trunc('month',\"invoices\".\"date\")::date"
-        }
-      },
-      "isRLSEnabled": false
-    },
-    "public.users": {
-      "name": "users",
-      "schema": "",
-      "columns": {
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "password": {
-          "name": "password",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "role": {
-          "name": "role",
-          "type": "role",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'USER'"
-        },
-        "sensitive_data": {
-          "name": "sensitive_data",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'cantTouchThis'"
-        },
-        "username": {
-          "name": "username",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
-        },
-        "users_username_unique": {
-          "name": "users_username_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    }
-  },
-  "enums": {
-    "public.status": {
-      "name": "status",
-      "schema": "public",
-      "values": [
-        "pending",
-        "paid"
-      ]
-    },
-    "public.role": {
-      "name": "role",
-      "schema": "public",
-      "values": [
-        "ADMIN",
-        "GUEST",
-        "USER"
-      ]
-    }
-  },
-  "schemas": {},
-  "sequences": {},
-  "roles": {},
-  "policies": {},
-  "views": {},
-  "_meta": {
-    "columns": {},
-    "schemas": {},
-    "tables": {}
-  }
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	},
+	"dialect": "postgresql",
+	"enums": {
+		"public.role": {
+			"name": "role",
+			"schema": "public",
+			"values": ["ADMIN", "GUEST", "USER"]
+		},
+		"public.status": {
+			"name": "status",
+			"schema": "public",
+			"values": ["pending", "paid"]
+		}
+	},
+	"id": "1c0dc68b-4985-4792-93c0-c5da4c14e979",
+	"policies": {},
+	"prevId": "5c5276e8-8bdb-4539-84a7-bf048398562f",
+	"roles": {},
+	"schemas": {},
+	"sequences": {},
+	"tables": {
+		"public.customers": {
+			"checkConstraints": {},
+			"columns": {
+				"email": {
+					"name": "email",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"image_url": {
+					"name": "image_url",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"name": {
+					"name": "name",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"sensitive_data": {
+					"default": "'cantTouchThis'",
+					"name": "sensitive_data",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {},
+			"indexes": {},
+			"isRLSEnabled": false,
+			"name": "customers",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {
+				"customers_email_unique": {
+					"columns": ["email"],
+					"name": "customers_email_unique",
+					"nullsNotDistinct": false
+				}
+			}
+		},
+		"public.demo_user_counters": {
+			"checkConstraints": {},
+			"columns": {
+				"count": {
+					"default": 0,
+					"name": "count",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "integer"
+				},
+				"id": {
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "serial"
+				},
+				"role": {
+					"default": "'GUEST'",
+					"name": "role",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "role",
+					"typeSchema": "public"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {},
+			"indexes": {},
+			"isRLSEnabled": false,
+			"name": "demo_user_counters",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.invoices": {
+			"checkConstraints": {
+				"invoices_amount_non_negative": {
+					"name": "invoices_amount_non_negative",
+					"value": "\"invoices\".\"amount\" >= 0"
+				},
+				"invoices_revenue_period_matches_date": {
+					"name": "invoices_revenue_period_matches_date",
+					"value": "\"invoices\".\"revenue_period\" = date_trunc('month',\"invoices\".\"date\")::date"
+				}
+			},
+			"columns": {
+				"amount": {
+					"name": "amount",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "bigint"
+				},
+				"customer_id": {
+					"name": "customer_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"date": {
+					"name": "date",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "date"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"revenue_period": {
+					"name": "revenue_period",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "date"
+				},
+				"sensitive_data": {
+					"default": "'cantTouchThis'",
+					"name": "sensitive_data",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"status": {
+					"default": "'pending'",
+					"name": "status",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "status",
+					"typeSchema": "public"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"invoices_customer_id_customers_id_fk": {
+					"columnsFrom": ["customer_id"],
+					"columnsTo": ["id"],
+					"name": "invoices_customer_id_customers_id_fk",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "invoices",
+					"tableTo": "customers"
+				}
+			},
+			"indexes": {
+				"invoices_customer_id_idx": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "customer_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "invoices_customer_id_idx",
+					"with": {}
+				},
+				"invoices_customer_id_status_idx": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "customer_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "status",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "invoices_customer_id_status_idx",
+					"with": {}
+				},
+				"invoices_revenue_period_idx": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "revenue_period",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "invoices_revenue_period_idx",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "invoices",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.users": {
+			"checkConstraints": {},
+			"columns": {
+				"email": {
+					"name": "email",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"password": {
+					"name": "password",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"role": {
+					"default": "'USER'",
+					"name": "role",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "role",
+					"typeSchema": "public"
+				},
+				"sensitive_data": {
+					"default": "'cantTouchThis'",
+					"name": "sensitive_data",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(255)"
+				},
+				"username": {
+					"name": "username",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar(50)"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {},
+			"indexes": {},
+			"isRLSEnabled": false,
+			"name": "users",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {
+				"users_email_unique": {
+					"columns": ["email"],
+					"name": "users_email_unique",
+					"nullsNotDistinct": false
+				},
+				"users_username_unique": {
+					"columns": ["username"],
+					"name": "users_username_unique",
+					"nullsNotDistinct": false
+				}
+			}
+		}
+	},
+	"version": "7",
+	"views": {}
 }
