@@ -1,9 +1,13 @@
 import { mapGenericAuthError } from "@/modules/auth/presentation/authn/mappers/map-generic-auth.error";
-import { LOGIN_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/login.form.schema";
+import {
+	LOGIN_ECHO_FIELDS_LIST,
+	LOGIN_FIELDS_LIST,
+} from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
+import { selectEchoedFieldValues } from "@/shared/forms/logic/mappers/field-value-map.mapper";
 import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 const LOGIN_CREDENTIALS_ERROR_MESSAGE =
@@ -52,6 +56,9 @@ function mapLoginInvalidCredentialsError(
  * Returns `FormResult<never>` because this mapper is intended for error scenarios
  * only (it never returns a success state).
  *
+ * Only fields in `LOGIN_ECHO_FIELDS_LIST` are echoed back in error metadata;
+ * the submitted password never leaves the server.
+ *
  * @param error - The application error encountered during login.
  * @param formData - The data submitted with the login form.
  * @returns A {@link FormResult} containing the mapped errors.
@@ -60,9 +67,14 @@ export function toLoginFormResult(
 	error: AppError,
 	formData: LoginFormData,
 ): FormResult<never> {
+	const echoed = selectEchoedFieldValues<LoginField>(
+		formData,
+		LOGIN_ECHO_FIELDS_LIST,
+	);
+
 	if (error.key === "invalid_credentials") {
-		return mapLoginInvalidCredentialsError(error, formData);
+		return mapLoginInvalidCredentialsError(error, echoed);
 	}
 
-	return mapGenericAuthError(error, formData, LOGIN_FIELDS_LIST);
+	return mapGenericAuthError(error, echoed, LOGIN_FIELDS_LIST);
 }

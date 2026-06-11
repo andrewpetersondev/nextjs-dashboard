@@ -7,6 +7,12 @@ import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.
  * @typeParam K - A string literal union of keys from `T` representing field names.
  */
 export interface FormValidationOptions<T, K extends keyof T & string> {
+	/**
+	 * Fields safe to echo back to the client in error metadata (`formData`)
+	 * for repopulation after a failed submit. Anything not listed — passwords
+	 * in particular — never leaves the server. Defaults to echoing nothing.
+	 */
+	readonly echoFields?: readonly K[];
 	readonly fields?: readonly K[];
 	readonly loggerContext?: string;
 	readonly messages?: {

@@ -1,6 +1,9 @@
 import "server-only";
 import { mapGenericAuthError } from "@/modules/auth/presentation/authn/mappers/map-generic-auth.error";
-import { SIGNUP_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
+import {
+	SIGNUP_ECHO_FIELDS_LIST,
+	SIGNUP_FIELDS_LIST,
+} from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
@@ -16,6 +19,7 @@ import type {
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import { toFormErrResult } from "@/shared/forms/logic/factories/form-result.factory";
 import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
+import { selectEchoedFieldValues } from "@/shared/forms/logic/mappers/field-value-map.mapper";
 
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;
 
@@ -34,6 +38,9 @@ const ALREADY_IN_USE_FIELD_ERRORS: FieldError<string> = Object.freeze([
  * Returns `FormResult<never>` because this mapper is intended for error scenarios
  * only (it never returns a success state).
  *
+ * Only fields in `SIGNUP_ECHO_FIELDS_LIST` are echoed back in error metadata;
+ * the submitted password never leaves the server.
+ *
  * @param error - The application error encountered during signup.
  * @param formData - The data submitted with the signup form.
  * @returns A {@link FormResult} containing the mapped errors.
@@ -42,6 +49,11 @@ export function toSignupFormResult(
 	error: AppError,
 	formData: SignupFormData,
 ): FormResult<never> {
+	const echoed = selectEchoedFieldValues<SignupField>(
+		formData,
+		SIGNUP_ECHO_FIELDS_LIST,
+	);
+
 	if (
 		isPgMetadata(error.metadata) &&
 		error.metadata.pgCode === PG_CODES.UNIQUE_VIOLATION
@@ -84,7 +96,7 @@ export function toSignupFormResult(
 					...error.metadata,
 					constraint,
 					fieldErrors,
-					formData,
+					formData: echoed,
 					formErrors: Object.freeze([]),
 					pgCode: PG_CODES.UNIQUE_VIOLATION,
 				}),
@@ -92,5 +104,5 @@ export function toSignupFormResult(
 		);
 	}
 
-	return mapGenericAuthError(error, formData, SIGNUP_FIELDS_LIST);
+	return mapGenericAuthError(error, echoed, SIGNUP_FIELDS_LIST);
 }
