@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
@@ -22,11 +22,14 @@ const _isFormOk = <TData>(
 };
 
 /**
- * Type guard: checks if an AppError contains form validation details.
+ * Type guard: checks if an AppError (entity or serialized DTO) contains form
+ * validation details.
  */
 export function isFormValidationError<TFields extends string>(
-	error: AppError,
-): error is AppError & { readonly metadata: FormValidationMetadata<TFields> } {
+	error: AppErrorLike,
+): error is AppErrorLike & {
+	readonly metadata: FormValidationMetadata<TFields>;
+} {
 	return (
 		error.key === APP_ERROR_KEYS.validation &&
 		error.metadata !== undefined &&

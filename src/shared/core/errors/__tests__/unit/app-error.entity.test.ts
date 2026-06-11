@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-	_isAppErrorDto,
 	AppError,
 	isAppError,
+	isAppErrorDto,
 } from "@/shared/core/errors/core/app-error.entity";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
@@ -93,11 +93,11 @@ describe("AppError entity", () => {
 		});
 	});
 
-	describe("_isAppErrorDto", () => {
+	describe("isAppErrorDto", () => {
 		it("accepts a real DTO and the minimal valid shape", () => {
-			expect(_isAppErrorDto(makeConflict().toDto())).toBe(true);
+			expect(isAppErrorDto(makeConflict().toDto())).toBe(true);
 			expect(
-				_isAppErrorDto({ _isAppError: true, key: "conflict", message: "m" }),
+				isAppErrorDto({ _isAppError: true, key: "conflict", message: "m" }),
 			).toBe(true);
 		});
 
@@ -108,7 +108,7 @@ describe("AppError entity", () => {
 			null,
 			"x",
 		])("rejects invalid DTO shape %p", (value) => {
-			expect(_isAppErrorDto(value)).toBe(false);
+			expect(isAppErrorDto(value)).toBe(false);
 		});
 	});
 });
