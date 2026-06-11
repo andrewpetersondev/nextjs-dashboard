@@ -22,18 +22,24 @@ this file is the deliberate workaround.)
   known quirks (key coupling, sensitive echo, payload-mapper overlap) ahead of the
   boundary redesign. _Lock behavior first, refactor behind the tests._
 - [ ] **Forms/error boundary cleanup** — friction points surfaced while fixing Server
-  Action serialization (PR #41, 2026-06-11). Small independent PRs, in roughly this
-  order; full context in memory (`project_forms_error_refactor`):
-  - [ ] **Tri-state form state** — `useActionState` initial value is a fake validation
-    `AppError` (`cause: "INITIAL_STATE"`, empty message) because `FormResult` has no
-    idle member. Model `idle | ok | err`, delete the hack in
-    `src/shared/forms/logic/factories/form-state.factory.ts`, simplify form branching.
+  Action serialization (PR #41, 2026-06-11). Roadmap: shrink (#45–47) → lock (#48) →
+  decide → reshape. Small independent PRs, in roughly this order; full context in
+  memory (`project_forms_error_refactor`):
+  - [x] **Decide boundary state type** _(2026-06-11)_ — ADR 001 in
+    `src/shared/forms/notes/adr/` (status: Proposed, awaiting review) merges the old
+    "tri-state form state" and "FormResult vs Result" items into one decision:
+    `FormResult` stays a boundary DTO union (core `Result` keeps its
+    `TError extends AppError` constraint), and idle is modeled as `null` via
+    `FormState<T> = FormResult<T> | null` — no fake `INITIAL_STATE` error.
+  - [ ] **Implement FormState (reshape, slice 1)** — per ADR 001: `null` initial state
+    in the 7 `useActionState` forms, widen `FormAction`/action `prevState` types,
+    early-return on `null` in feedback components, delete `form-state.factory.ts` +
+    its tests (deliberate lock-protocol edit), update
+    `docs/standards/error-handling-and-result-pattern.md` + forms notes README in the
+    same PR.
   - [ ] **Stop echoing sensitive fields** — failed submits echo submitted values
     (including login/signup passwords) back to the client in `metadata.formData`
     (`validateForm`, auth mappers). Same-user only, but allowlist what gets echoed.
-  - [ ] **Decide FormResult vs Result** — `Result`'s `TError extends AppError`
-    constraint forced `FormResult` to fork into its own union (PR #41). Either loosen
-    the generic or formally document FormResult as a boundary DTO type.
   - [ ] **One validation funnel** — auth/users use `validateForm`; create-invoice does
     inline `safeParse`; update-invoice hand-flattens Zod errors. Unify on `validateForm`.
   - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any

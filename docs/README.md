@@ -58,10 +58,12 @@ Detailed, opinionated standards in [standards/](standards/), consulted by AI ass
 ## Architecture decisions (ADRs)
 
 Numbered, immutable records of *why* a design choice was made — its context, the
-decision, and the consequences. They live beside the code that embodies them, in
-[`src/modules/auth/notes/adr/`](../src/modules/auth/notes/adr/). They grew out of
-the auth module, but several capture patterns — `Result` types, branded IDs, the
-command / query split — that the rest of the codebase follows too.
+decision, and the consequences. They live beside the code that embodies them,
+numbered per module. They grew out of the auth module, but several capture
+patterns — `Result` types, branded IDs, the command / query split — that the
+rest of the codebase follows too.
+
+### Auth module — [`src/modules/auth/notes/adr/`](../src/modules/auth/notes/adr/)
 
 | ADR | The question it answers |
 |---|---|
@@ -72,6 +74,12 @@ command / query split — that the rest of the codebase follows too.
 | [005 — JWT for session tokens](../src/modules/auth/notes/adr/005-use-jwt-for-session-tokens.md) | "Why stateless JWT-in-cookie sessions instead of a server-side store?" |
 | [006 — Prevent credential enumeration](../src/modules/auth/notes/adr/006-prevent-credential-enumeration.md) | "How does login avoid leaking whether an email is registered?" |
 | [007 — Enforce action-level authorization](../src/modules/auth/notes/adr/007-enforce-action-level-authorization.md) | "Why do server actions check auth themselves when the middleware already gates routes?" |
+
+### Shared forms module — [`src/shared/forms/notes/adr/`](../src/shared/forms/notes/adr/)
+
+| ADR | The question it answers |
+|---|---|
+| [001 — Model form state as a boundary DTO with null idle](../src/shared/forms/notes/adr/001-model-form-state-as-boundary-dto-with-null-idle.md) *(proposed)* | "Why is form state `FormResult<T> \| null` instead of a `Result` variant with an idle member?" |
 
 ## Keeping them honest
 
