@@ -14,7 +14,10 @@ import {
 import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
 import { isAppError } from "@/shared/core/errors/core/app-error.entity";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import {
 	makeFormError,
 	makeFormOk,
@@ -30,7 +33,7 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function createInvoiceAction(
-	_prevState: FormResult<CreateInvoicePayload>,
+	_prevState: FormState<CreateInvoicePayload>,
 	formData: FormData,
 ): Promise<FormResult<CreateInvoicePayload>> {
 	// Authorization: any authenticated user may manage invoices. Kept above the

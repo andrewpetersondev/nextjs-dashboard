@@ -18,9 +18,12 @@ import type {
 	DenseFieldErrorMap,
 	FieldError,
 } from "@/shared/forms/core/types/field-error.types";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 import { CENTS_IN_DOLLAR } from "@/shared/primitives/money/money.constants";
 import { ROUTES } from "@/shared/routing/routes";
 import { FormActionRow } from "@/ui/forms/components/wrappers/form-action-row";
@@ -28,10 +31,16 @@ import { useAutoHideAlert } from "@/ui/hooks/useAutoHideAlert";
 import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
+// Dense all-empty map for renders with no submission errors (idle is null).
+const EMPTY_ERRORS = makeEmptyDenseFieldErrorMap<
+	UpdateInvoiceFieldNames,
+	string
+>(Object.keys(UpdateInvoiceSchema.shape) as readonly UpdateInvoiceFieldNames[]);
+
 // Helper: build the server action expected by useActionState
 function createWrappedUpdateAction(invoiceId: string) {
 	return async (
-		prevState: FormResult<UpdateInvoicePayload>,
+		prevState: FormState<UpdateInvoicePayload>,
 		formData: FormData,
 	): Promise<FormResult<UpdateInvoicePayload>> =>
 		await updateInvoiceAction(prevState, invoiceId, formData);
@@ -97,38 +106,29 @@ export const EditInvoiceForm = ({
 	customers: CustomerField[];
 	errors?: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
 }): JSX.Element => {
-	const initialState = makeInitialFormState<UpdateInvoiceFieldNames>(
-		Object.keys(
-			UpdateInvoiceSchema.shape,
-		) as readonly UpdateInvoiceFieldNames[],
-	);
-
 	const [state, action, pending] = useActionState<
-		FormResult<UpdateInvoicePayload>,
+		FormState<UpdateInvoicePayload>,
 		FormData
-	>(createWrappedUpdateAction(invoice.id), initialState);
+	>(createWrappedUpdateAction(invoice.id), null);
 	const currentInvoice: EditInvoiceViewModel =
-		state.ok && state.value.data
+		state?.ok && state.value.data
 			? ({ ...invoice, ...state.value.data } as EditInvoiceViewModel)
 			: invoice;
 
-	const message = state.ok ? state.value.message : state.error.message;
+	let message: string | undefined;
+	if (state !== null) {
+		message = state.ok ? state.value.message : state.error.message;
+	}
 
 	const showAlert = useAutoHideAlert(message || "");
 
-	const stateFieldErrors = state.ok
-		? undefined
-		: extractFieldErrors<UpdateInvoiceFieldNames>(state.error);
-
-	const emptyErrors = initialState.ok
-		? undefined
-		: extractFieldErrors<UpdateInvoiceFieldNames>(initialState.error);
+	const stateFieldErrors =
+		state && !state.ok
+			? extractFieldErrors<UpdateInvoiceFieldNames>(state.error)
+			: undefined;
 
 	const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string> =
-		externalErrors ??
-		stateFieldErrors ??
-		emptyErrors ??
-		({} as DenseFieldErrorMap<UpdateInvoiceFieldNames, string>);
+		externalErrors ?? stateFieldErrors ?? EMPTY_ERRORS;
 
 	return (
 		<div>

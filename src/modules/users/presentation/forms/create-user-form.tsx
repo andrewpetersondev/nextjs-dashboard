@@ -5,12 +5,10 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { type JSX, useActionState, useId } from "react";
-import { CreateUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { createUserAction } from "@/modules/users/presentation/actions/create-user.action";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
 import { USER_FORM_CANCEL_LABEL } from "@/modules/users/presentation/constants/user-form.constants";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import type { FormState } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { ROUTES } from "@/shared/routing/routes";
 import { H1 } from "@/ui/atoms/headings.atom";
@@ -21,10 +19,6 @@ import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 type CreateUserFieldNames = "email" | "password" | "role" | "username";
-
-const INITIAL_STATE = makeInitialFormState<CreateUserFieldNames>(
-	Object.keys(CreateUserFormSchema.shape) as readonly CreateUserFieldNames[],
-);
 
 function CreateUserFormFields({
 	disabled = false,
@@ -97,16 +91,17 @@ function CreateUserFormFields({
 }
 
 export function CreateUserForm(): JSX.Element {
-	const [state, action, pending] = useActionState<
-		FormResult<unknown>,
-		FormData
-	>(createUserAction, INITIAL_STATE);
+	const [state, action, pending] = useActionState<FormState<unknown>, FormData>(
+		createUserAction,
+		null,
+	);
 
 	const showAlert = useFormMessage(state);
 
-	const fieldErrors = state.ok
-		? undefined
-		: extractFieldErrors<CreateUserFieldNames>(state.error);
+	const fieldErrors =
+		state && !state.ok
+			? extractFieldErrors<CreateUserFieldNames>(state.error)
+			: undefined;
 
 	return (
 		<div>

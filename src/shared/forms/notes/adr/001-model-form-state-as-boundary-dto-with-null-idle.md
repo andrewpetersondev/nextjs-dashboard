@@ -2,8 +2,10 @@
 
 ## Status
 
-Proposed (2026-06-11) — step 3 ("decide") of the forms/error cleanup roadmap:
-shrink (PRs #45–47) → lock (PR #48) → **decide** → reshape.
+Accepted (2026-06-11) — step 3 ("decide") of the forms/error cleanup roadmap:
+shrink (PRs #45–47) → lock (PR #48) → **decide** (PR #49) → reshape
+(implemented by the `FormState` / null-idle slice; `form-state.factory.ts`,
+linked below as context, was deleted by it).
 
 ## Context
 

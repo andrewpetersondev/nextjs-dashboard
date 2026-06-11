@@ -2,18 +2,15 @@ import type { JSX } from "react";
 import { isAppErrorDto } from "@/shared/core/errors/core/app-error.entity";
 import type {
 	FormResult,
+	FormState,
 	FormSuccessPayload,
 } from "@/shared/forms/core/types/form-result.dto";
 
 /**
- * Extracts message and success status from various result types.
- *
- * @remarks
- * - Supports FormResult (with FormSuccess shape) and generic Result types
- * - Safely navigates nested message properties
- * - Returns undefined for message if not found (no forced fallbacks)
+ * State accepted by the molecule: `null` until the first submission (idle),
+ * then a FormResult.
  */
-type ServerMessageState<Tdata> = FormResult<Tdata>;
+type ServerMessageState<Tdata> = FormState<Tdata>;
 
 type ServerMessageProps<Tdata> = Readonly<{
 	readonly showAlert: boolean;
@@ -42,9 +39,7 @@ function isFormSuccess<Tdata>(
  * - Returns success=true/false and optional message
  * - Never throws; returns sensible defaults
  */
-function extractMessageAndSuccess<Tdata>(
-	state: ServerMessageState<Tdata>,
-): Readonly<{
+function extractMessageAndSuccess<Tdata>(state: FormResult<Tdata>): Readonly<{
 	readonly message: string | undefined;
 	readonly success: boolean;
 }> {
@@ -95,6 +90,11 @@ export function ServerMessageMolecule<Tdata>({
 	state,
 	showAlert,
 }: ServerMessageProps<Tdata>): JSX.Element {
+	// Idle: render only the layout placeholder, no message to show yet.
+	if (state === null) {
+		return <div className="relative min-h-[56px]" />;
+	}
+
 	const { message, success } = extractMessageAndSuccess(state);
 
 	const baseStyles =
