@@ -54,6 +54,12 @@ this file is the deliberate workaround.)
   - [ ] Remove `AUTH_SECRET`/`AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` from
     `.env.example.local` and any real env files — auth.js holdovers, zero references
     in code since the custom jose/bcrypt auth replaced it.
+- [ ] **Per-env migration drift guard** — prod's migration set was missing the
+  `revenues` DROP (dev/test had their 0006; prod stopped at 0005), so the first truly
+  fresh production DB (Neon, 2026-06-11) was created with an obsolete FK and
+  `db:seed:prod` failed with 23503. Three independent migration folders make this
+  drift invisible. Either collapse to a single migration set, or add a CI check that
+  the three `meta/_journal.json`/latest snapshots describe the same final schema.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
