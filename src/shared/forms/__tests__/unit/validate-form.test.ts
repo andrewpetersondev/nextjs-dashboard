@@ -16,10 +16,9 @@ vi.mock(
  *
  * `validateForm` is the intended single entry point from FormData to a
  * FormResult (BACKLOG: "One validation funnel"). Pinned: the ok path with
- * default and custom messages, dense field errors on failure, the verbatim
- * echo of submitted values — including passwords — into error metadata
- * (BACKLOG: "Stop echoing sensitive fields"), and the unknown-error path for
- * throwing refinements.
+ * default and custom messages, dense field errors on failure, the echo
+ * allowlist contract — nothing is echoed into error metadata unless listed
+ * in `echoFields` — and the unknown-error path for throwing refinements.
  */
 describe("validateForm", () => {
 	const schema = z.object({
@@ -64,9 +63,7 @@ describe("validateForm", () => {
 		}
 	});
 
-	it("echoes every submitted value into metadata — including the password", async () => {
-		// Same-user echo, but still hygiene: BACKLOG "Stop echoing sensitive
-		// fields" wants an allowlist here. Pinned as-is until then.
+	it("echoes nothing into metadata by default — submitted values stay server-side", async () => {
 		const formData = buildFormData({
 			email: "a@b.c",
 			password: "hunter2",
@@ -77,9 +74,46 @@ describe("validateForm", () => {
 		expect(result.ok).toBe(false);
 		if (!result.ok) {
 			expect(result.error.metadata).toEqual(
-				expect.objectContaining({
-					formData: { email: "a@b.c", password: "hunter2" },
-				}),
+				expect.objectContaining({ formData: {} }),
+			);
+			expect(JSON.stringify(result)).not.toContain("hunter2");
+		}
+	});
+
+	it("echoes only the fields allowlisted via echoFields", async () => {
+		const formData = buildFormData({
+			email: "a@b.c",
+			password: "hunter2",
+		});
+
+		const result = await validateForm(formData, schema, undefined, {
+			echoFields: ["email"],
+		});
+
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error.metadata).toEqual(
+				expect.objectContaining({ formData: { email: "a@b.c" } }),
+			);
+			expect(JSON.stringify(result)).not.toContain("hunter2");
+		}
+	});
+
+	it("applies the echo allowlist to an explicit raw payload too", async () => {
+		const result = await validateForm(
+			buildFormData({}),
+			schema,
+			["email", "password"],
+			{
+				echoFields: ["email"],
+				raw: { email: "a@b.c", password: "x" },
+			},
+		);
+
+		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.error.metadata).toEqual(
+				expect.objectContaining({ formData: { email: "a@b.c" } }),
 			);
 		}
 	});

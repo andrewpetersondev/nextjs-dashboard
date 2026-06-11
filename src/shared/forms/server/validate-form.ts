@@ -24,6 +24,9 @@ import { resolveRawFieldPayload } from "@/shared/forms/server/utils/form-data.ut
  * - Resolves validation options and canonical field names.
  * - Extracts raw payload from `FormData`.
  * - Calls `schema.safeParseAsync` and maps Zod errors to form field errors when validation fails.
+ * - On failure, echoes only `options.echoFields` back in `metadata.formData`
+ *   (default: none), so submitted values never round-trip to the client
+ *   unless explicitly allowlisted.
  */
 export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 	formData: FormData,
@@ -32,6 +35,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 	options: FormValidationOptions<Tin, Tfieldnames> = {},
 ): Promise<FormResult<Tin>> {
 	const {
+		echoFields,
 		fields: explicitFields,
 		loggerContext = "FormValidation",
 		messages: {
@@ -49,6 +53,14 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 
 	const raw = resolveRawFieldPayload(formData, fields, explicitRaw);
 
+	// Only allowlisted fields are echoed into error metadata; the full raw
+	// payload stays server-side.
+	const echoed = resolveRawFieldPayload(
+		formData,
+		echoFields ?? [],
+		explicitRaw,
+	);
+
 	let parsed: Awaited<ReturnType<typeof schema.safeParseAsync>>;
 	try {
 		parsed = await schema.safeParseAsync(raw);
@@ -57,7 +69,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 		return formValidationErrorFactory<Tfieldnames>(e, loggerContext, {
 			failureMessage,
 			fields,
-			formData: raw,
+			formData: echoed,
 		});
 	}
 
@@ -69,7 +81,7 @@ export async function validateForm<Tin, Tfieldnames extends keyof Tin & string>(
 			{
 				failureMessage,
 				fields,
-				formData: raw,
+				formData: echoed,
 			},
 		);
 	}

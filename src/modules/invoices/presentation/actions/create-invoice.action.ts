@@ -50,7 +50,9 @@ export async function createInvoiceAction(
 				parsed.error,
 				CREATE_INVOICE_FIELDS_LIST,
 			),
-			formData: rawInput,
+			// No echo: nothing repopulates from invoice error metadata, and the
+			// raw payload includes sensitiveData.
+			formData: {},
 			formErrors: [],
 			key: "validation",
 			message: translator(INVOICE_MSG.validationFailed),
@@ -72,7 +74,7 @@ export async function createInvoiceAction(
 					sensitiveData: [],
 					status: [],
 				},
-				formData: rawInput,
+				formData: {},
 				formErrors: [],
 				key: isAppError(result.error) ? result.error.key : "unknown",
 				message: toInvoiceErrorMessage(result.error),

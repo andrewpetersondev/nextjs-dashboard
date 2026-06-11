@@ -5,6 +5,7 @@ import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/a
 import { toLoginCommand } from "@/modules/auth/presentation/authn/adapters/to-login-command.adapter";
 import { toLoginFormResult } from "@/modules/auth/presentation/authn/mappers/to-login-form-result.mapper";
 import {
+	LOGIN_ECHO_FIELDS_LIST,
 	LOGIN_FIELDS_LIST,
 	LoginFormSchema,
 	type LoginRequestDto,
@@ -56,7 +57,9 @@ export async function loginAction(
 	});
 
 	const validated = await tracker.measure("validation", () =>
-		validateForm(formData, LoginFormSchema, LOGIN_FIELDS_LIST),
+		validateForm(formData, LoginFormSchema, LOGIN_FIELDS_LIST, {
+			echoFields: LOGIN_ECHO_FIELDS_LIST,
+		}),
 	);
 
 	if (!validated.ok) {

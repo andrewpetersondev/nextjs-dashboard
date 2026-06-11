@@ -102,7 +102,9 @@ export async function updateInvoiceAction(
 
 			return makeFormError<UpdateInvoiceFieldNames>({
 				fieldErrors: dense,
-				formData: input as Partial<Record<UpdateInvoiceFieldNames, string>>,
+				// No echo: nothing repopulates from invoice error metadata, and the
+				// raw payload includes sensitiveData.
+				formData: {},
 				formErrors: [],
 				key: "validation",
 				message: INVOICE_MSG.validationFailed,
