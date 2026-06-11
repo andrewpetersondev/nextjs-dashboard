@@ -17,7 +17,29 @@ this file is the deliberate workaround.)
 - [ ] **Live deploy** — Vercel + Neon account setup: create projects, set env vars,
   run prod migrate + seed, paste the live URL into the README.
 - [ ] **Vitest Phase 3** — remaining breadth (`server`, invoices/customers domain) and
-  consider coverage thresholds once breadth lands.
+  consider coverage thresholds once breadth lands. _Do this before the forms/error
+  boundary cleanup below — lock behavior first, refactor behind the tests._
+- [ ] **Forms/error boundary cleanup** — friction points surfaced while fixing Server
+  Action serialization (PR #41, 2026-06-11). Small independent PRs, in roughly this
+  order; full context in memory (`project_forms_error_refactor`):
+  - [ ] **Tri-state form state** — `useActionState` initial value is a fake validation
+    `AppError` (`cause: "INITIAL_STATE"`, empty message) because `FormResult` has no
+    idle member. Model `idle | ok | err`, delete the hack in
+    `src/shared/forms/logic/factories/form-state.factory.ts`, simplify form branching.
+  - [ ] **Stop echoing sensitive fields** — failed submits echo submitted values
+    (including login/signup passwords) back to the client in `metadata.formData`
+    (`validateForm`, auth mappers). Same-user only, but allowlist what gets echoed.
+  - [ ] **Decide FormResult vs Result** — `Result`'s `TError extends AppError`
+    constraint forced `FormResult` to fork into its own union (PR #41). Either loosen
+    the generic or formally document FormResult as a boundary DTO type.
+  - [ ] **One validation funnel** — auth/users use `validateForm`; create-invoice does
+    inline `safeParse`; update-invoice hand-flattens Zod errors. Unify on `validateForm`.
+  - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any
+    error key, but extractors only honor `validation` | `conflict`; a `database`-keyed
+    form error silently drops its field errors (`form-error.inspector.ts`).
+  - [ ] **Dead-seam sweep** — `AppError.fromDto` (test-only), `_isFormErr`/`_isFormOk`/
+    `_isOk`/`_isErr` guards, parked result combinators decision, `retryable` removal
+    TODO, and the overlap TODO in `form-error-payload.mapper.ts`.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
