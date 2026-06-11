@@ -3,9 +3,23 @@ import { schema } from "@database/schema/schema.aggregate";
 import { reset } from "drizzle-seed";
 import { NextResponse } from "next/server";
 import { getAppDb } from "@/server/db/db.connection";
+import { isTestDatabaseEnvironment } from "@/shared/core/config/shared/env-shared";
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
-export async function GET() {
+/**
+ * Test-only route that truncates every table (drizzle-seed `reset`).
+ *
+ * Cypress e2e calls this between specs against a server started with
+ * `.env.test.local`. Outside the test database environment the route
+ * answers 404 so a deployed instance never exposes a destructive endpoint.
+ */
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+export async function GET(): Promise<NextResponse> {
+	if (!isTestDatabaseEnvironment()) {
+		return new NextResponse(null, { status: 404 });
+	}
+
 	try {
 		await reset(getAppDb(), schema);
 		return NextResponse.json({ action: "reset", ok: true });
