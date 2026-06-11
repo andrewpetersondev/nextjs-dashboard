@@ -10,7 +10,7 @@ type DbErrorMetadata = Readonly<{
 /**
  * Base Postgres metadata requiring a specific error code.
  */
-export type PgErrorMetadataBase = DbErrorMetadata &
+type PgErrorMetadataBase = DbErrorMetadata &
 	Readonly<{
 		pgCode: string;
 	}>;
