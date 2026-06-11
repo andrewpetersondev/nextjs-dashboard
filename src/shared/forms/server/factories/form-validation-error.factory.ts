@@ -31,6 +31,10 @@ function mapToValidationErrors<T extends string>(
 
 /**
  * Internal helper to log and wrap validation errors.
+ *
+ * @remarks
+ * `formData` becomes client-visible `metadata.formData`; callers must pass
+ * only values already allowlisted for echo (see `FormValidationOptions.echoFields`).
  */
 export function formValidationErrorFactory<Tfieldnames extends string>(
 	error: unknown,

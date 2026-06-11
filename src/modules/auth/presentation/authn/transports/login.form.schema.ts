@@ -24,3 +24,10 @@ export type LoginRequestDto = z.output<typeof LoginFormSchema>;
 
 export const LOGIN_FIELDS_LIST: readonly (keyof LoginRequestDto & string)[] =
 	toSchemaKeys(LoginFormSchema);
+
+/**
+ * Fields safe to echo back in error metadata for repopulation after a
+ * failed submit. Deliberately excludes `password`.
+ */
+export const LOGIN_ECHO_FIELDS_LIST: readonly (keyof LoginRequestDto &
+	string)[] = ["email"];

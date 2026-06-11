@@ -5,6 +5,7 @@ import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/a
 import { toSignupCommand } from "@/modules/auth/presentation/authn/adapters/to-signup-command.adapter";
 import { toSignupFormResult } from "@/modules/auth/presentation/authn/mappers/to-signup-form-result.mapper";
 import {
+	SIGNUP_ECHO_FIELDS_LIST,
 	SIGNUP_FIELDS_LIST,
 	SignupFormSchema,
 	type SignupRequestDto,
@@ -59,7 +60,9 @@ export async function signupAction(
 	});
 
 	const validated = await tracker.measure("validation", () =>
-		validateForm(formData, SignupFormSchema, fields),
+		validateForm(formData, SignupFormSchema, fields, {
+			echoFields: SIGNUP_ECHO_FIELDS_LIST,
+		}),
 	);
 
 	if (!validated.ok) {
