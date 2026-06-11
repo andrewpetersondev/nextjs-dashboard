@@ -1,9 +1,9 @@
 import type { ZodObject, ZodRawShape } from "zod";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
-import { Err } from "@/shared/core/result/result";
 import { EMPTY_FORM_ERRORS } from "@/shared/forms/core/constants";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { toFormErrResult } from "@/shared/forms/logic/factories/form-result.factory";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 
@@ -11,6 +11,10 @@ import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-
  * Creates the initial form state with empty field errors.
  * This is technically a "failed" result (Err) to satisfy useActionState requirements
  * before the first submission, but with empty messages.
+ *
+ * The state is a plain serializable object (error as DTO): Next.js encodes the
+ * initial state into the rendered form for progressive enhancement, which fails
+ * on class instances.
  */
 export function makeInitialFormState<T extends string>(
 	fieldNames: readonly T[],
@@ -28,7 +32,7 @@ export function makeInitialFormState<T extends string>(
 		}),
 	});
 
-	return Err(error);
+	return toFormErrResult(error);
 }
 
 /**

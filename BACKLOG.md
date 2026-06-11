@@ -7,12 +7,6 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Server Action serialization** — the initial `useActionState` state in the auth
-  and invoice server actions carries an `Error` instance, so Next.js logs *"Failed to
-  serialize an action for progressive enhancement."* Forms work with JS, but no-JS
-  progressive enhancement is degraded. Fix: make the initial/error state a plain
-  serializable shape (not an `Error` class). Files: `src/modules/auth/presentation/**`,
-  `src/modules/invoices/presentation/**`. _(Recovered 2026-06-09 from a dismissed task chip.)_
 - [ ] **Weekly codemod routine** — scheduled Claude agent that checks Next.js/Biome
   releases, runs the codemods, verifies with `pnpm check:fast`, and opens a PR.
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
@@ -29,8 +23,12 @@ this file is the deliberate workaround.)
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
 - [ ]  The allowCypressEnv configuration option is enabled. This allows any browser code to read values from
   Cypress.env(). This is insecure and will be removed in a future major version.
--
 
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Server Action serialization** _(2026-06-11)_ — `FormResult` now carries a plain
+  `AppErrorJsonDto` instead of an `AppError` instance across the `useActionState`
+  boundary, so Next.js can serialize form state for progressive enhancement. The
+  *"Failed to serialize an action for progressive enhancement"* warning is gone.

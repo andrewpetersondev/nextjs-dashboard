@@ -1,6 +1,7 @@
+import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
-import { Err, Ok } from "@/shared/core/result/result";
+import { Ok } from "@/shared/core/result/result";
 import type {
 	DenseFieldErrorMap,
 	FormErrors,
@@ -24,10 +25,24 @@ interface FormErrorParams<TFields extends string> {
 }
 
 /**
+ * Wraps an AppError as a failed form result, serializing it to a plain DTO.
+ *
+ * Form results cross the Server Action boundary (`useActionState`), so the
+ * error must be a plain object — an `AppError` instance would break Next.js
+ * serialization for progressive enhancement.
+ *
+ * @param error - The AppError to serialize into the result.
+ * @returns A frozen failed FormResult carrying the error as a DTO.
+ */
+export const toFormErrResult = (error: AppError): FormResult<never> => {
+	return Object.freeze({ error: error.toDto(), ok: false as const });
+};
+
+/**
  * Create a form validation error result.
  *
  * @param params - Error construction parameters including fields and form-level errors.
- * @returns A Result containing an AppError with validation metadata.
+ * @returns A Result containing a serialized AppError with validation metadata.
  */
 export const makeFormError = <TFields extends string>(
 	params: FormErrorParams<TFields>,
@@ -38,7 +53,7 @@ export const makeFormError = <TFields extends string>(
 		formErrors: params.formErrors,
 	});
 
-	return Err(
+	return toFormErrResult(
 		makeAppError(params.key, {
 			cause: "",
 			message: params.message,

@@ -58,3 +58,14 @@ export type AppErrorJsonDto<T extends AppErrorMetadata = AppErrorMetadata> =
 			readonly metadata: T;
 		}
 	>;
+
+/**
+ * Structural supertype satisfied by both the `AppError` entity and its
+ * serialized {@link AppErrorJsonDto}. Use for code that inspects errors on
+ * either side of a Server Action boundary.
+ */
+export type AppErrorLike = Readonly<{
+	readonly key: AppErrorKey;
+	readonly message: string;
+	readonly metadata: AppErrorMetadata;
+}>;

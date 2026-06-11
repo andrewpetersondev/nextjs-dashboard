@@ -1,5 +1,5 @@
-import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { Result } from "@/shared/core/result/result.dto";
+import type { AppErrorJsonDto } from "@/shared/core/errors/core/app-error.dto";
+import type { OkResult } from "@/shared/core/result/result.dto";
 import type {
 	DenseFieldErrorMap,
 	FormErrors,
@@ -45,6 +45,19 @@ export type FormErrorPayload<T extends string> = {
 };
 
 /**
+ * Failed form submission carrying a serialized error.
+ *
+ * The error side holds an {@link AppErrorJsonDto} (plain object), not an
+ * `AppError` instance: form results cross the Server Action boundary via
+ * `useActionState`, and Next.js must be able to serialize them (e.g. for
+ * progressive enhancement of no-JS form posts). Class instances break that.
+ */
+export type FormErrResult = {
+	readonly error: AppErrorJsonDto;
+	readonly ok: false;
+};
+
+/**
  * Result type for form submissions, using standard Result.
  *
  * @typeParam T - The type of the data returned on success.
@@ -55,4 +68,4 @@ export type FormErrorPayload<T extends string> = {
  *   message: "User created successfully."
  * });
  */
-export type FormResult<T> = Result<FormSuccessPayload<T>, AppError>;
+export type FormResult<T> = OkResult<FormSuccessPayload<T>> | FormErrResult;
