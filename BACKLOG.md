@@ -27,6 +27,9 @@ this file is the deliberate workaround.)
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
+- [ ]  The allowCypressEnv configuration option is enabled. This allows any browser code to read values from
+  Cypress.env(). This is insecure and will be removed in a future major version.
+-
 
 ## Done
 
