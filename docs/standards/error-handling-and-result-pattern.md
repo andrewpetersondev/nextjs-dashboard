@@ -19,8 +19,8 @@ Use `Result` from `@/shared/core/result/result.dto` for all **expected failures*
 
 ## Error Modeling
 
-- **Single Source of Truth**: All error types must be defined in `@/shared/errors/catalog/app-error.registry.ts`.
-  - This registry defines the `layer`, `severity`, `retryable` status, and the `metadataSchema` (Zod).
+- **Single Source of Truth**: All error types must be defined in `@/shared/core/errors/core/catalog/app-error.registry.ts`.
+  - This registry defines the `layer`, `severity`, and the `metadataSchema` (Zod).
 - **No Custom Subclasses**: Always use the `AppError` entity.
 - **Error Keys**: Use the `APP_ERROR_KEYS` constants for stability instead of `instanceof` or magic strings.
 - **Throwing**: Use `throw` **only** for programmer errors or invariant violations.

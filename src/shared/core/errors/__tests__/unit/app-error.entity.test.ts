@@ -10,7 +10,7 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * Unit tests for the AppError entity (app-error.entity.ts).
  *
  * AppError is the structured error class threaded through every Result/Err. It
- * derives layer/severity/retryable from the registry, freezes itself and its
+ * derives layer/severity from the registry, freezes itself and its
  * metadata, and serializes via toDto so errors survive the Server Action
  * boundary. These tests pin that contract plus the two type guards.
  */
@@ -29,7 +29,6 @@ describe("AppError entity", () => {
 			expect(error.key).toBe("conflict");
 			expect(error.layer).toBe("API");
 			expect(error.severity).toBe("WARN");
-			expect(error.retryable).toBe(false);
 			expect(error.definitionDescription).toBe("Resource state conflict");
 			expect(error.message).toBe("duplicate key");
 			expect(error.cause).toBe("ctx");
@@ -59,7 +58,6 @@ describe("AppError entity", () => {
 				layer: "API",
 				message: "duplicate key",
 				metadata: { pgCode: "23505" },
-				retryable: false,
 				severity: "WARN",
 			});
 		});
