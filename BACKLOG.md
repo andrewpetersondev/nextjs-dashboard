@@ -61,6 +61,10 @@ this file is the deliberate workaround.)
   `db:seed:prod` failed with 23503. Three independent migration folders make this
   drift invisible. Either collapse to a single migration set, or add a CI check that
   the three `meta/_journal.json`/latest snapshots describe the same final schema.
+- [ ] **knip residue** — unused exports that remain after the dead-seam sweep
+  (pre-existing, not introduced by it): `DalIdentifiers`, `PgErrorMetadataBase`,
+  `FormErrResult`, `ImmutableRecord`, `LogOperationMetadata`, plus duplicate-export
+  pairs `TEN_SECONDS|DEFAULT_TIMEOUT` and `PG_ERROR_MAP|PG_CODE_TO_META`.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
