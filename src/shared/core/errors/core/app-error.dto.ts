@@ -25,8 +25,6 @@ export type AppErrorLayer =
 export type AppErrorDefinition = Readonly<{
 	description: string;
 	layer: AppErrorLayer;
-	// TODO: REMOVE RETRYABLE PROPERTY
-	retryable: boolean;
 	severity: AppErrorSeverity;
 }>;
 

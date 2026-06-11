@@ -29,7 +29,6 @@ export class AppError<
 	readonly layer: AppErrorLayer;
 	override readonly message: string;
 	readonly metadata: T;
-	readonly retryable: boolean;
 	readonly severity: AppErrorSeverity;
 
 	constructor(params: AppErrorParams<T>) {
@@ -43,7 +42,6 @@ export class AppError<
 		this.key = key;
 		this.layer = meta.layer;
 		this.message = message;
-		this.retryable = meta.retryable;
 		this.severity = meta.severity;
 
 		const processedMetadata = validateAndMaybeSanitizeMetadata(key, metadata);
@@ -74,7 +72,6 @@ export class AppError<
 			layer: this.layer,
 			message: this.message,
 			metadata: this.metadata,
-			retryable: this.retryable,
 			severity: this.severity,
 		};
 	}

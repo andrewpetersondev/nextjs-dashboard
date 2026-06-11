@@ -37,9 +37,10 @@ this file is the deliberate workaround.)
   - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any
     error key, but extractors only honor `validation` | `conflict`; a `database`-keyed
     form error silently drops its field errors (`form-error.inspector.ts`).
-  - [ ] **Dead-seam sweep** — `AppError.fromDto` (test-only), `_isFormErr`/`_isFormOk`/
-    `_isOk`/`_isErr` guards, parked result combinators decision, `retryable` removal
-    TODO, and the overlap TODO in `form-error-payload.mapper.ts`.
+  - [ ] **Form error payload overlap** — consolidate `toFormErrorPayload` vs
+    `formErrorPayloadMapper` (TODO in `form-error-payload.mapper.ts`). Production
+    only uses `toFormErrorPayload`; the mapper variant is imported solely by auth
+    integration tests and differs in fallback semantics (`[error.message]`).
 - [ ] **Env hygiene** — surfaced during deploy prep (2026-06-11):
   - [ ] Remove dead `LOG_LEVEL` plumbing — only the unused `_getLogLevel` in
     `env-shared.ts` reads it; the real runtime level comes from
@@ -69,6 +70,11 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Dead-seam sweep** _(2026-06-11)_ — deleted the dormant result combinator
+  modules (4 files, ~965 lines, never exported), orphaned `execute-dal-throw.ts` +
+  `array.guards.ts`, the never-called `_is*` guards, test-only `AppError.fromDto`,
+  and the write-only `retryable` field. Result module: 1,253 → ~240 lines.
 
 - [x] **Server Action serialization** _(2026-06-11)_ — `FormResult` now carries a plain
   `AppErrorJsonDto` instead of an `AppError` instance across the `useActionState`

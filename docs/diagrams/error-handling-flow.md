@@ -25,7 +25,7 @@ flowchart TD
     end
 
     subgraph ae["AppError — the only thing an Err carries"]
-        reg["key → registry lookup<br/>adds layer · severity · retryable · metadata schema<br/>then deep-freezes the error"]
+        reg["key → registry lookup<br/>adds layer · severity · metadata schema<br/>then deep-freezes the error"]
     end
 
     subgraph fr["FormResult — Result, specialised for the UI"]
@@ -41,7 +41,7 @@ flowchart TD
   `Err` (has `error`). Nothing throws; failure is a *value you return*.
 - **`AppError`** is the only error type an `Err` ever holds. Its `key` (one of 13,
   e.g. `conflict`, `validation`, `not_found`) is looked up in a **registry** that
-  stamps on the layer, severity, retry-ability, and the schema its metadata must
+  stamps on the layer, severity, and the schema its metadata must
   match. It's an `Error` subclass, so it still has a stack — but it's structured.
 - **`FormResult`** is `Result` with the success side carrying `{ data, message }`.
 
@@ -61,7 +61,7 @@ sequenceDiagram
     Note over Repo,DAL: the repo runs its query inside executeDalResult,<br/>so the throw is caught at the boundary — not bubbled up
     Repo->>DAL: executeDalResult(thunk)
     DAL->>Norm: catch(err) → normalizePgError(err)
-    Note over Norm: toPgError: 23505 → key "conflict"<br/>makeAppError("conflict", { cause, metadata })<br/>registry adds layer/severity/retryable + freezes
+    Note over Norm: toPgError: 23505 → key "conflict"<br/>makeAppError("conflict", { cause, metadata })<br/>registry adds layer/severity + freezes
     Norm-->>DAL: AppError(conflict)
     DAL->>DAL: logger.error(operation.failed, { error })
     DAL-->>Repo: Err(AppError)
