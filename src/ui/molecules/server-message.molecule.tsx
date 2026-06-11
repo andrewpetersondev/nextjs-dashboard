@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { isAppError } from "@/shared/core/errors/core/app-error.entity";
+import { isAppErrorDto } from "@/shared/core/errors/core/app-error.entity";
 import type {
 	FormResult,
 	FormSuccessPayload,
@@ -65,10 +65,10 @@ function extractMessageAndSuccess<Tdata>(
 		});
 	}
 
-	// Error branch: state.error is AppError
+	// Error branch: state.error is a serialized AppError DTO
 	const error = state.error;
 
-	if (isAppError(error)) {
+	if (isAppErrorDto(error)) {
 		return Object.freeze({
 			message: error.message,
 			success: false,

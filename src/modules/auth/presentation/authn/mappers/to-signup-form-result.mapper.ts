@@ -9,12 +9,12 @@ import { isPgMetadata } from "@/shared/core/errors/core/metadata/error-metadata.
 
 import { PG_CODES } from "@/shared/core/errors/server/adapters/postgres/pg-error.constants";
 import { getPgConstraintFromAppError } from "@/shared/core/errors/server/adapters/postgres/pg-error.utils";
-import { Err } from "@/shared/core/result/result";
 import type {
 	FieldError,
 	SparseFieldErrorMap,
 } from "@/shared/forms/core/types/field-error.types";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import { toFormErrResult } from "@/shared/forms/logic/factories/form-result.factory";
 import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;
@@ -76,7 +76,7 @@ export function toSignupFormResult(
 			SIGNUP_FIELDS_LIST,
 		);
 
-		return Err(
+		return toFormErrResult(
 			makeAppError(APP_ERROR_KEYS.conflict, {
 				cause: error,
 				message: "Value already in use",
