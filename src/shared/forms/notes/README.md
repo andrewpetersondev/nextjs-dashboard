@@ -31,10 +31,14 @@ environment, bridging the gap between Server Actions and client-side UI.
   empty) and "sparse" maps (where only fields with errors are present).
 - **Metadata**: Validation errors carry `FormValidationMetadata`, which includes the dense error map and the echoed form
   data (for re-populating fields).
+- **Echo allowlist**: `metadata.formData` is client-visible, so nothing is echoed unless explicitly allowlisted —
+  `validateForm` echoes only `options.echoFields` (default: none), and mappers building results by hand filter through
+  `selectEchoedFieldValues`. Sensitive values (passwords above all) never round-trip to the client.
 
 #### Best Practices
 
 - Use `validateForm` in Server Actions to ensure consistent error handling and logging.
+- Opt into field echo deliberately: list only safe-to-display fields in `echoFields` (never passwords or secrets).
 - Pass `null` as the `useActionState` initial state; let feedback components (e.g. `useFormMessage` in
   `src/ui/forms/hooks/`) early-return on `null` rather than inventing a fake initial error.
 - Prefer `FieldError` (non-empty array) when representing specific validation failures.

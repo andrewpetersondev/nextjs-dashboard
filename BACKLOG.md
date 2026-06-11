@@ -26,20 +26,22 @@ this file is the deliberate workaround.)
   decide → reshape. Small independent PRs, in roughly this order; full context in
   memory (`project_forms_error_refactor`):
   - [x] **Decide boundary state type** _(2026-06-11)_ — ADR 001 in
-    `src/shared/forms/notes/adr/` (status: Proposed, awaiting review) merges the old
+    `src/shared/forms/notes/adr/` (status: Accepted) merges the old
     "tri-state form state" and "FormResult vs Result" items into one decision:
     `FormResult` stays a boundary DTO union (core `Result` keeps its
     `TError extends AppError` constraint), and idle is modeled as `null` via
     `FormState<T> = FormResult<T> | null` — no fake `INITIAL_STATE` error.
-  - [ ] **Implement FormState (reshape, slice 1)** — per ADR 001: `null` initial state
-    in the 7 `useActionState` forms, widen `FormAction`/action `prevState` types,
-    early-return on `null` in feedback components, delete `form-state.factory.ts` +
-    its tests (deliberate lock-protocol edit), update
-    `docs/standards/error-handling-and-result-pattern.md` + forms notes README in the
-    same PR.
-  - [ ] **Stop echoing sensitive fields** — failed submits echo submitted values
-    (including login/signup passwords) back to the client in `metadata.formData`
-    (`validateForm`, auth mappers). Same-user only, but allowlist what gets echoed.
+  - [x] **Implement FormState (reshape, slice 1)** _(2026-06-11, PR #50)_ — per
+    ADR 001: `null` initial state in the 7 `useActionState` forms, widened
+    `FormAction`/action `prevState` types, early-return on `null` in feedback
+    components, deleted `form-state.factory.ts` + its tests, updated
+    `docs/standards/error-handling-and-result-pattern.md` + forms notes README;
+    ADR status flipped to Accepted in the same PR.
+  - [x] **Stop echoing sensitive fields** _(2026-06-11)_ — `metadata.formData` is
+    now allowlist-only: `validateForm` echoes just `options.echoFields` (default
+    none), auth mappers filter through `selectEchoedFieldValues` (login echoes
+    email; signup echoes email+username; passwords never round-trip), and the
+    invoice actions stopped echoing raw input (incl. `sensitiveData`).
   - [ ] **One validation funnel** — auth/users use `validateForm`; create-invoice does
     inline `safeParse`; update-invoice hand-flattens Zod errors. Unify on `validateForm`.
   - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any

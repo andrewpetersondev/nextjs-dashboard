@@ -16,3 +16,10 @@ export const SignupFormSchema = LoginFormSchema.safeExtend({
 export type SignupRequestDto = z.output<typeof SignupFormSchema>;
 
 export const SIGNUP_FIELDS_LIST = toSchemaKeys(SignupFormSchema);
+
+/**
+ * Fields safe to echo back in error metadata for repopulation after a
+ * failed submit. Deliberately excludes `password`.
+ */
+export const SIGNUP_ECHO_FIELDS_LIST: readonly (keyof SignupRequestDto &
+	string)[] = ["email", "username"];
