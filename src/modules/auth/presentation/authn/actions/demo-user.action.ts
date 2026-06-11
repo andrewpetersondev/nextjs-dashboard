@@ -2,7 +2,10 @@
 import { redirect } from "next/navigation";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
 import {
 	ADMIN_ROLE,
@@ -81,7 +84,7 @@ async function createDemoUserInternal(
  * @redirects {ROUTES.dashboard.root} on success.
  */
 export async function demoUserAction(
-	_prevState: FormResult<never>,
+	_prevState: FormState<never>,
 	_formData: FormData,
 ): Promise<FormResult<never>> {
 	return await createDemoUserInternal(USER_ROLE);
@@ -96,7 +99,7 @@ export async function demoUserAction(
  * @redirects {ROUTES.dashboard.root} on success.
  */
 export async function demoAdminAction(
-	_prevState: FormResult<never>,
+	_prevState: FormState<never>,
 	_formData: FormData,
 ): Promise<FormResult<never>> {
 	return await createDemoUserInternal(ADMIN_ROLE);

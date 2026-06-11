@@ -13,15 +13,16 @@ import {
 	useState,
 } from "react";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
-import { EditUserFormSchema } from "@/modules/users/domain/schemas/user.schema";
 import { updateUserAction } from "@/modules/users/presentation/actions/update-user.action";
 import { UserInfoPanel } from "@/modules/users/presentation/components/user-info-panel";
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
 import { USER_FORM_CANCEL_LABEL } from "@/modules/users/presentation/constants/user-form.constants";
 import { isValidationMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFormStateFromSchema } from "@/shared/forms/logic/factories/form-state.factory";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import { ROUTES } from "@/shared/routing/routes";
 import { TYPING_MS } from "@/shared/time/time.constants";
 import { H1 } from "@/ui/atoms/headings.atom";
@@ -108,19 +109,21 @@ function EditUserFormFields({
 
 export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 	const [showAlert, setShowAlert] = useState(false);
-	const initialState = makeInitialFormStateFromSchema(EditUserFormSchema);
 
 	const updateUserWithId = updateUserAction.bind(null, user.id) as (
-		prevState: FormResult<unknown>,
+		prevState: FormState<unknown>,
 		formData: FormData,
 	) => Promise<FormResult<unknown>>;
 
-	const [state, action, pending] = useActionState<
-		FormResult<unknown>,
-		FormData
-	>(updateUserWithId, initialState);
+	const [state, action, pending] = useActionState<FormState<unknown>, FormData>(
+		updateUserWithId,
+		null,
+	);
 
 	const message = useMemo<string | undefined>(() => {
+		if (state === null) {
+			return;
+		}
 		return state.ok ? state.value.message : state.error.message;
 	}, [state]);
 
@@ -135,7 +138,7 @@ export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 	}, [message]);
 
 	const fieldErrors =
-		!state.ok && isValidationMetadata(state.error.metadata)
+		state && !state.ok && isValidationMetadata(state.error.metadata)
 			? (state.error.metadata.fieldErrors as EditUserFieldErrors)
 			: undefined;
 

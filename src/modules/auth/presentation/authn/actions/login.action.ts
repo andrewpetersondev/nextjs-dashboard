@@ -10,7 +10,10 @@ import {
 	type LoginRequestDto,
 } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
@@ -36,7 +39,7 @@ import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker"
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary requires validation, orchestration, logging, and result mapping
 export async function loginAction(
-	_prevState: FormResult<unknown>,
+	_prevState: FormState<unknown>,
 	formData: FormData,
 ): Promise<FormResult<never>> {
 	const auth = await makeAuthComposition();

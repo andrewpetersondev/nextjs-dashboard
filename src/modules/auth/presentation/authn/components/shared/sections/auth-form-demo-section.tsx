@@ -4,16 +4,19 @@ import {
 	DEMO_ADMIN_LABEL,
 	DEMO_USER_LABEL,
 } from "@/modules/auth/presentation/constants/auth.tokens";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 
 interface AuthFormDemoSectionProps {
 	readonly demoAdminAction: (
-		_prevState: FormResult<never>,
+		_prevState: FormState<never>,
 		formData: FormData,
 	) => Promise<FormResult<never>>;
 	readonly demoAdminText: string;
 	readonly demoUserAction: (
-		_prevState: FormResult<never>,
+		_prevState: FormState<never>,
 		formData: FormData,
 	) => Promise<FormResult<never>>;
 	readonly demoUserText: string;
