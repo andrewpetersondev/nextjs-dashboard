@@ -44,7 +44,7 @@ export type PgCode = (typeof PG_CODES)[keyof typeof PG_CODES];
 /**
  * Registry of known Postgres error codes and their application mappings.
  */
-export const PG_ERROR_MAP: Record<PgCode, PgErrorDefinition> = {
+export const PG_CODE_TO_META: Record<PgCode, PgErrorDefinition> = {
 	[PG_CODES.CHECK_VIOLATION]: {
 		appErrorKey: APP_ERROR_KEYS.integrity,
 		pgCode: PG_CODES.CHECK_VIOLATION,
@@ -86,8 +86,3 @@ export const PG_ERROR_MAP: Record<PgCode, PgErrorDefinition> = {
 		pgCondition: PG_CONDITIONS.pg_unexpected_error,
 	},
 } as const;
-
-/**
- * High-performance lookup mapping PG codes to application error metadata.
- */
-export const PG_CODE_TO_META: Record<PgCode, PgErrorDefinition> = PG_ERROR_MAP;

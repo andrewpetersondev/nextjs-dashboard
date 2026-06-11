@@ -7,6 +7,19 @@ import type {
 import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
 
 /**
+ * Failed form submission carrying a serialized error.
+ *
+ * The error side holds an {@link AppErrorJsonDto} (plain object), not an
+ * `AppError` instance: form results cross the Server Action boundary via
+ * `useActionState`, and Next.js must be able to serialize them (e.g. for
+ * progressive enhancement of no-JS form posts). Class instances break that.
+ */
+type FormErrResult = {
+	readonly error: AppErrorJsonDto;
+	readonly ok: false;
+};
+
+/**
  * Represents a successful form submission payload.
  *
  * @typeParam T - The type of the data returned on success.
@@ -42,19 +55,6 @@ export type FormErrorPayload<T extends string> = {
 	readonly formErrors: FormErrors;
 	readonly message: string;
 	readonly formData: SparseFieldValueMap<T, string>;
-};
-
-/**
- * Failed form submission carrying a serialized error.
- *
- * The error side holds an {@link AppErrorJsonDto} (plain object), not an
- * `AppError` instance: form results cross the Server Action boundary via
- * `useActionState`, and Next.js must be able to serialize them (e.g. for
- * progressive enhancement of no-JS form posts). Class instances break that.
- */
-export type FormErrResult = {
-	readonly error: AppErrorJsonDto;
-	readonly ok: false;
 };
 
 /**
