@@ -17,8 +17,10 @@ this file is the deliberate workaround.)
 - [ ] **Live deploy** — Vercel + Neon account setup: create projects, set env vars,
   run prod migrate + seed, paste the live URL into the README.
 - [ ] **Vitest Phase 3** — remaining breadth (`server`, invoices/customers domain) and
-  consider coverage thresholds once breadth lands. _Do this before the forms/error
-  boundary cleanup below — lock behavior first, refactor behind the tests._
+  consider coverage thresholds once breadth lands. Forms breadth DONE (2026-06-11):
+  68 characterization tests across all 11 testable forms files, pinning the three
+  known quirks (key coupling, sensitive echo, payload-mapper overlap) ahead of the
+  boundary redesign. _Lock behavior first, refactor behind the tests._
 - [ ] **Forms/error boundary cleanup** — friction points surfaced while fixing Server
   Action serialization (PR #41, 2026-06-11). Small independent PRs, in roughly this
   order; full context in memory (`project_forms_error_refactor`):
