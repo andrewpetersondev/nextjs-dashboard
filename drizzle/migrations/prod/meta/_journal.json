@@ -42,6 +42,13 @@
 			"tag": "0005_hesitant_sauron",
 			"version": "7",
 			"when": 1773563935718
+		},
+		{
+			"breakpoints": true,
+			"idx": 6,
+			"tag": "0006_perpetual_the_executioner",
+			"version": "7",
+			"when": 1781184342254
 		}
 	],
 	"version": "7"
