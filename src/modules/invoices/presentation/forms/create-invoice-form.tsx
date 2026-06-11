@@ -2,10 +2,9 @@
 import { type JSX, useActionState, useEffect, useId, useRef } from "react";
 import type { CustomerField } from "@/modules/customers/domain/types";
 import { getCurrentIsoDate } from "@/modules/invoices/domain/invoice.date-utils";
-import {
-	type CreateInvoiceFieldNames,
-	type CreateInvoicePayload,
-	CreateInvoiceSchema,
+import type {
+	CreateInvoiceFieldNames,
+	CreateInvoicePayload,
 } from "@/modules/invoices/domain/schema/invoice.schema";
 import { createInvoiceAction } from "@/modules/invoices/presentation/actions/create-invoice.action";
 import { INVOICE_FORM_CANCEL_LABEL } from "@/modules/invoices/presentation/constants/invoice-form.constants";
@@ -14,8 +13,7 @@ import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoic
 import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/presentation/forms/sensitive-data";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import type { FormState } from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { ROUTES } from "@/shared/routing/routes";
 import { H1 } from "@/ui/atoms/headings.atom";
@@ -23,10 +21,6 @@ import { FormActionRow } from "@/ui/forms/components/wrappers/form-action-row";
 import { useFormMessage } from "@/ui/forms/hooks/use-form-message";
 import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
-
-const INITIAL_STATE = makeInitialFormState<CreateInvoiceFieldNames>(
-	Object.keys(CreateInvoiceSchema.shape) as readonly CreateInvoiceFieldNames[],
-);
 
 function CreateInvoiceFormFields({
 	customers,
@@ -96,22 +90,23 @@ export function CreateInvoiceForm({
 }): JSX.Element {
 	const formRef = useRef<HTMLFormElement>(null);
 	const [state, action, pending] = useActionState<
-		FormResult<CreateInvoicePayload>,
+		FormState<CreateInvoicePayload>,
 		FormData
-	>(createInvoiceAction, INITIAL_STATE);
+	>(createInvoiceAction, null);
 
 	const showAlert = useFormMessage(state);
 
 	// Reset form on success
 	useEffect(() => {
-		if (state.ok && formRef.current) {
+		if (state?.ok && formRef.current) {
 			formRef.current.reset();
 		}
-	}, [state.ok]);
+	}, [state?.ok]);
 
-	const fieldErrors = state.ok
-		? undefined
-		: extractFieldErrors<CreateInvoiceFieldNames>(state.error);
+	const fieldErrors =
+		state && !state.ok
+			? extractFieldErrors<CreateInvoiceFieldNames>(state.error)
+			: undefined;
 
 	return (
 		<div>

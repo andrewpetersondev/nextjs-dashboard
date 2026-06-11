@@ -1,13 +1,15 @@
 "use client";
 import type { FC, JSX } from "react";
 import { useActionState } from "react";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
 interface DemoFormProps {
 	action: (
-		_prevState: FormResult<never>,
+		_prevState: FormState<never>,
 		formData: FormData,
 	) => Promise<FormResult<never>>;
 	label: string;
@@ -23,12 +25,10 @@ export const DemoForm: FC<DemoFormProps> = ({
 	label,
 	action,
 }: DemoFormProps): JSX.Element => {
-	const initialState = makeInitialFormState([]);
-
 	const [state, boundAction, pending] = useActionState<
-		FormResult<never>,
+		FormState<never>,
 		FormData
-	>(action, initialState);
+	>(action, null);
 
 	return (
 		<form action={boundAction} aria-label={label}>
@@ -40,7 +40,7 @@ export const DemoForm: FC<DemoFormProps> = ({
 				pending={pending}
 			/>
 
-			{!state.ok && state.error.message && (
+			{state && !state.ok && state.error.message && (
 				<p className="mt-2 text-sm text-text-error">{state.error.message}</p>
 			)}
 		</form>

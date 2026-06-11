@@ -10,7 +10,10 @@ import {
 	type SignupRequestDto,
 } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
@@ -40,7 +43,7 @@ const fields = SIGNUP_FIELDS_LIST;
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: signup flow is inherently multi-step
 export async function signupAction(
-	_prevState: FormResult<unknown>,
+	_prevState: FormState<unknown>,
 	formData: FormData,
 ): Promise<FormResult<never>> {
 	const auth = await makeAuthComposition();

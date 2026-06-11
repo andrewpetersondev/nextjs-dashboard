@@ -58,7 +58,12 @@ export type FormErrorPayload<T extends string> = {
 };
 
 /**
- * Result type for form submissions, using standard Result.
+ * Boundary DTO union for form submissions (ADR 001).
+ *
+ * Not a variant of core `Result`: it deliberately shares `OkResult` and the
+ * `ok` discriminant so narrowing reads identically everywhere, but its error
+ * side is a plain {@link AppErrorJsonDto} — entities in-process, DTOs at the
+ * `useActionState` edge.
  *
  * @typeParam T - The type of the data returned on success.
  *
@@ -69,3 +74,13 @@ export type FormErrorPayload<T extends string> = {
  * });
  */
 export type FormResult<T> = OkResult<FormSuccessPayload<T>> | FormErrResult;
+
+/**
+ * State crossing the `useActionState` boundary: `null` until the first
+ * submission, then a {@link FormResult}.
+ *
+ * `null` is the idle state (ADR 001) — forms pass it as the initial value,
+ * and actions can never produce it: `FormAction` returns `FormResult`, so the
+ * type system guarantees idle only ever comes from the initial render.
+ */
+export type FormState<T> = FormResult<T> | null;
