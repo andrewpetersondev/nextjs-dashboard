@@ -163,3 +163,14 @@ function _isProdDb(): boolean {
 function _isEnv(...envs: NodeEnvironment[]): boolean {
 	return envs.includes(getNodeEnv());
 }
+
+/**
+ * True only when DATABASE_ENV is explicitly "test".
+ *
+ * Non-throwing by design (unlike {@link getDatabaseEnv}): a missing or
+ * invalid value answers `false`, so callers can use it as a hard gate for
+ * test-only functionality such as the `/api/db/reset` route.
+ */
+export function isTestDatabaseEnvironment(): boolean {
+	return process.env.DATABASE_ENV === "test";
+}
