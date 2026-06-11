@@ -29,7 +29,6 @@ export class AppError<
 	readonly layer: AppErrorLayer;
 	override readonly message: string;
 	readonly metadata: T;
-	readonly retryable: boolean;
 	readonly severity: AppErrorSeverity;
 
 	constructor(params: AppErrorParams<T>) {
@@ -43,7 +42,6 @@ export class AppError<
 		this.key = key;
 		this.layer = meta.layer;
 		this.message = message;
-		this.retryable = meta.retryable;
 		this.severity = meta.severity;
 
 		const processedMetadata = validateAndMaybeSanitizeMetadata(key, metadata);
@@ -74,24 +72,8 @@ export class AppError<
 			layer: this.layer,
 			message: this.message,
 			metadata: this.metadata,
-			retryable: this.retryable,
 			severity: this.severity,
 		};
-	}
-
-	/**
-	 * Reconstructs an AppError instance from a plain object DTO.
-	 * Useful for hydrating errors received from a network request or Server Action.
-	 */
-	static fromDto<TMeta extends AppErrorMetadata = AppErrorMetadata>(
-		dto: AppErrorJsonDto<TMeta>,
-	): AppError<TMeta> {
-		return new AppError<TMeta>({
-			cause: "hydrated",
-			key: dto.key,
-			message: dto.message,
-			metadata: dto.metadata,
-		});
 	}
 }
 

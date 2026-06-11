@@ -9,7 +9,7 @@ The project treats failures as first-class citizens using a "Result-first" appro
 
 ## The Result Pattern
 
-Use `Result<Ok, Err>` from `@/shared/results/result.types` for all **expected failures**.
+Use `Result` from `@/shared/core/result/result.dto` for all **expected failures**.
 
 ### Layer Responsibilities
 
@@ -17,17 +17,10 @@ Use `Result<Ok, Err>` from `@/shared/results/result.types` for all **expected fa
 - **Use Cases**: Compose, map, and wrap results. Orchestrate the flow and map technical infrastructure errors into domain-specific business errors.
 - **Interface Adapters (Actions)**: Unwrap the `Result` and translate it into a UI response (Redirect, Error message, or `AppErrorJsonDto`).
 
-### Async Composition
-
-When composing asynchronous operations, use functional utilities to maintain the `Result` chain:
-
-- **`tapOkAsync` / `tapErrorAsync`**: Execute side effects without altering the result.
-- **`tapOkAsyncSafe` / `tapErrorAsyncSafe`**: Execute side effects and catch potential internal failures, mapping them back to an `AppError` via a provided mapper.
-
 ## Error Modeling
 
-- **Single Source of Truth**: All error types must be defined in `@/shared/errors/catalog/app-error.registry.ts`.
-  - This registry defines the `layer`, `severity`, `retryable` status, and the `metadataSchema` (Zod).
+- **Single Source of Truth**: All error types must be defined in `@/shared/core/errors/core/catalog/app-error.registry.ts`.
+  - This registry defines the `layer`, `severity`, and the `metadataSchema` (Zod).
 - **No Custom Subclasses**: Always use the `AppError` entity.
 - **Error Keys**: Use the `APP_ERROR_KEYS` constants for stability instead of `instanceof` or magic strings.
 - **Throwing**: Use `throw` **only** for programmer errors or invariant violations.
@@ -65,10 +58,6 @@ DAL wrappers are the only place permitted to catch raw database errors.
   - For **expected** failures (e.g., unique constraint violations).
   - Returns `Result<T, AppError>`.
   - Automatically logs the failure with the operation context and identifiers.
-- **`executeDalThrow`**:
-  - For **unexpected** failures (bugs/invariants).
-  - Throws an `AppError` with the `unexpected` key.
-  - Useful when a query _must_ succeed for the system to remain in a valid state.
 
 ## Testing Errors
 

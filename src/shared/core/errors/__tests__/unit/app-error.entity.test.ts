@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-	AppError,
+	type AppError,
 	isAppError,
 	isAppErrorDto,
 } from "@/shared/core/errors/core/app-error.entity";
@@ -10,8 +10,8 @@ import { makeAppError } from "@/shared/core/errors/core/factories/app-error.fact
  * Unit tests for the AppError entity (app-error.entity.ts).
  *
  * AppError is the structured error class threaded through every Result/Err. It
- * derives layer/severity/retryable from the registry, freezes itself and its
- * metadata, and serializes via toDto/fromDto so errors survive the Server Action
+ * derives layer/severity from the registry, freezes itself and its
+ * metadata, and serializes via toDto so errors survive the Server Action
  * boundary. These tests pin that contract plus the two type guards.
  */
 describe("AppError entity", () => {
@@ -29,7 +29,6 @@ describe("AppError entity", () => {
 			expect(error.key).toBe("conflict");
 			expect(error.layer).toBe("API");
 			expect(error.severity).toBe("WARN");
-			expect(error.retryable).toBe(false);
 			expect(error.definitionDescription).toBe("Resource state conflict");
 			expect(error.message).toBe("duplicate key");
 			expect(error.cause).toBe("ctx");
@@ -59,21 +58,8 @@ describe("AppError entity", () => {
 				layer: "API",
 				message: "duplicate key",
 				metadata: { pgCode: "23505" },
-				retryable: false,
 				severity: "WARN",
 			});
-		});
-
-		it("fromDto rehydrates an equivalent AppError (round-trip)", () => {
-			const original = makeConflict();
-
-			const hydrated = AppError.fromDto(original.toDto());
-
-			expect(hydrated).toBeInstanceOf(AppError);
-			expect(hydrated.key).toBe(original.key);
-			expect(hydrated.message).toBe(original.message);
-			expect(hydrated.metadata).toEqual(original.metadata);
-			expect(hydrated.cause).toBe("hydrated");
 		});
 	});
 
