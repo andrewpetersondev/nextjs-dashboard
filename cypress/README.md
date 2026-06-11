@@ -105,7 +105,7 @@ cypress/
 │   │   ├── regex.ts           #     centralized UI text matchers
 │   │   ├── users.ts           #     DEMO_USER + createTestUser()
 │   │   ├── auth-forms.ts      #     credential types, TestUser, error regexes
-│   │   ├── times.ts           #     timeout constants (TEN_SECONDS, …)
+│   │   ├── times.ts           #     timeout constants (DEFAULT_TIMEOUT, …)
 │   │   ├── status-codes.ts    #     HTTP status code map
 │   │   └── urls.ts            #     external URLs referenced in tests
 │   └── checklist.md           #   E2E coverage checklist (aspirational)
