@@ -58,10 +58,6 @@ DAL wrappers are the only place permitted to catch raw database errors.
   - For **expected** failures (e.g., unique constraint violations).
   - Returns `Result<T, AppError>`.
   - Automatically logs the failure with the operation context and identifiers.
-- **`executeDalThrow`**:
-  - For **unexpected** failures (bugs/invariants).
-  - Throws an `AppError` with the `unexpected` key.
-  - Useful when a query _must_ succeed for the system to remain in a valid state.
 
 ## Testing Errors
 

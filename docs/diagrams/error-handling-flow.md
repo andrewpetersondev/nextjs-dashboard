@@ -110,7 +110,7 @@ flowchart LR
 | Hop | File |
 |---|---|
 | `Result` core (`Ok` / `Err`, frozen) | [`result.ts`](../../src/shared/core/result/result.ts) |
-| `AppError` entity + `toDto` / `fromDto` | [`app-error.entity.ts`](../../src/shared/core/errors/core/app-error.entity.ts) |
+| `AppError` entity + `toDto` | [`app-error.entity.ts`](../../src/shared/core/errors/core/app-error.entity.ts) |
 | Error registry (the 13 keys) | [`app-error.registry.ts`](../../src/shared/core/errors/core/catalog/app-error.registry.ts) |
 | DB boundary — catch → `Result` | [`execute-dal-result.ts`](../../src/shared/core/errors/server/adapters/dal/execute-dal-result.ts) |
 | Postgres → `AppError` | [`normalize-pg-error.ts`](../../src/shared/core/errors/server/adapters/postgres/normalize-pg-error.ts) · [`to-pg-error.ts`](../../src/shared/core/errors/server/adapters/postgres/to-pg-error.ts) |

@@ -49,48 +49,11 @@ export function Ok<TValue>(value: TValue): Result<TValue, never> {
  * // result.ok === false
  * // result.error === error
  */
-// biome-ignore lint/style/useExportsLast: blah blah blah
 export function Err<TError extends AppError>(
 	error: TError,
 ): Result<never, TError> {
 	const r = { error, ok: false as const } satisfies ErrResult<TError>;
 	return freezeObject(r);
-}
-
-/**
- * Type guard that narrows a `Result` to an `OkResult`.
- *
- * @typeParam TValue - The success value type.
- * @typeParam TError - The error type, constrained to `AppError`.
- * @param r - The `Result` to test.
- * @returns `true` if `r` is an `OkResult`, otherwise `false`.
- * @example
- * if (isOk(result)) {
- *   // result.value is available
- * }
- */
-function _isOk<TValue, TError extends AppError>(
-	r: Result<TValue, TError>,
-): r is OkResult<TValue> {
-	return r.ok;
-}
-
-/**
- * Type guard that narrows a `Result` to an `ErrResult`.
- *
- * @typeParam TValue - The success value type.
- * @typeParam TError - The error type, constrained to `AppError`.
- * @param r - The `Result` to test.
- * @returns `true` if `r` is an `ErrResult`, otherwise `false`.
- * @example
- * if (isErr(result)) {
- *   // result.error is available
- * }
- */
-function _isErr<TValue, TError extends AppError>(
-	r: Result<TValue, TError>,
-): r is ErrResult<TError> {
-	return !r.ok;
 }
 
 /**
@@ -108,22 +71,4 @@ export function unwrapOrNull<TValue, TError extends AppError>(
 	r: Result<TValue, TError>,
 ): TValue | null {
 	return r.ok ? r.value : null;
-}
-
-/**
- * Convert a `Result` to boolean flags as a tuple.
- *
- * @typeParam TValue - The success value type.
- * @typeParam TError - The error type, constrained to `AppError`.
- * @param r - The `Result` to convert.
- * @returns A readonly tuple `[isOk, isErr]`.
- * @example
- * const [ok, err] = toFlags(result);
- * // ok is true if result is Ok, false otherwise
- * // err is true if result is Err, false otherwise
- */
-function _toFlags<TValue, TError extends AppError>(
-	r: Result<TValue, TError>,
-): readonly [isOk: boolean, isErr: boolean] {
-	return [r.ok, !r.ok] as const;
 }
