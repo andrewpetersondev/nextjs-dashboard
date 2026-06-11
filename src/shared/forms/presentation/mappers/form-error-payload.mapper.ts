@@ -1,4 +1,4 @@
-import type { AppError } from "@/shared/core/errors/core/app-error.entity";
+import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
 import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
 import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
 import {
@@ -11,14 +11,15 @@ import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-
 // TODO: THESE FUNCTIONS OVERLAP AND INDICATE A REFACTOR IS NEEDED
 
 /**
- * Adapts a canonical AppError into a shape the Form UI can consume.
+ * Adapts a canonical AppError (entity or serialized DTO) into a shape the
+ * Form UI can consume.
  *
  * @param error - The AppError from the service/action.
  * @param fields - Optional list of field names to ensure a dense error map.
  * @returns An object containing the top-level message and a map of field errors.
  */
 export function toFormErrorPayload<T extends string>(
-	error: AppError,
+	error: AppErrorLike,
 	fields?: readonly T[],
 ): FormErrorPayload<T> {
 	const fieldErrors = extractFieldErrors<T>(error);
@@ -42,7 +43,7 @@ export function toFormErrorPayload<T extends string>(
  * Essential for UI components to display fieldErrors and formErrors.
  */
 export function formErrorPayloadMapper<F extends string>(
-	error: AppError,
+	error: AppErrorLike,
 ): FormErrorPayload<F> {
 	const formErrors = extractFormErrors(error);
 
