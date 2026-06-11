@@ -23,7 +23,7 @@ import directly from the specific module:
 | Import                                                    | From                                  | Purpose                                                            |
 | -------------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
 | `Ok`, `Err`, `unwrapOrNull`                              | `@/shared/core/result/result`         | Construct results; non-throwing unwrap to `value \| null`.        |
-| `Result`, `OkResult`, `ErrResult`, `OkType`, `ErrType`   | `@/shared/core/result/result.dto`     | Types.                                                             |
+| `Result`, `OkResult`, `ErrResult`   | `@/shared/core/result/result.dto`     | Types.                                                             |
 | `safeExecute`                                            | `@/shared/core/result/safe-execute`   | Run an async thunk, converting thrown values into a logged `Err`. |
 
 ### Creating and reading results
@@ -62,26 +62,7 @@ A resolved `Ok`/`Err` is returned verbatim with no logging. A _thrown_ `AppError
 is logged and returned as-is; any other thrown value is normalized to an
 `unexpected` `AppError` and logged.
 
-## Dormant combinator modules
-
-This module also ships a fuller combinator library that is **not currently
-exported or imported by anything** — every function is module-private:
-
-- `result.factory.ts` — constructors (`tryCatch`, `fromNullable`,
-  `fromPredicate`, `fromGuard`, `fromCondition`, `tryCatchAsync`).
-- `result.operators.ts` — sync transforms (`map`, `flatMap`, `mapErr`, `tap`,
-  `unwrapOr` / `unwrapOrElse`, `match`, …).
-- `result.async.ts` — async mirrors plus a typed multi-step `pipeAsync`.
-- `result.collection.ts` — aggregation (`collectAll`, `collectTuple`,
-  `firstOkOrElse`, `iterateOk`).
-
-They're kept dormant as a ready-made foundation for railway-oriented error
-handling, to be wired up (exported + tested) if and when a real caller needs
-them. Until then they intentionally surface as unused files in `pnpm knip`. If
-that day never comes, delete them — git preserves the full implementation.
-
 ## Tooling
 
 - `pnpm biome:check` — lint/format diagnostics.
 - `pnpm typecheck` — TypeScript checks.
-```

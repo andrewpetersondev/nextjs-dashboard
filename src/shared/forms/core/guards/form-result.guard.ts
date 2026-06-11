@@ -1,25 +1,6 @@
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
 import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
-
-/**
- * Type guard: checks if the form result is an error.
- */
-const _isFormErr = <TData>(
-	result: FormResult<TData>,
-): result is Extract<FormResult<TData>, { ok: false }> => {
-	return !result.ok;
-};
-
-/**
- * Type guard: checks if the form result is successful.
- */
-const _isFormOk = <TData>(
-	result: FormResult<TData>,
-): result is Extract<FormResult<TData>, { ok: true }> => {
-	return result.ok;
-};
 
 /**
  * Type guard: checks if an AppError (entity or serialized DTO) contains form

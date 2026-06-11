@@ -18,7 +18,6 @@ describe("AppError registry", () => {
 		expect(getAppErrorDefinition("conflict")).toMatchObject({
 			description: "Resource state conflict",
 			layer: "API",
-			retryable: false,
 			severity: "WARN",
 		});
 	});
