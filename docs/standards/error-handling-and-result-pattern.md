@@ -17,6 +17,14 @@ Use `Result` from `@/shared/core/result/result.dto` for all **expected failures*
 - **Use Cases**: Compose, map, and wrap results. Orchestrate the flow and map technical infrastructure errors into domain-specific business errors.
 - **Interface Adapters (Actions)**: Unwrap the `Result` and translate it into a UI response (Redirect, Error message, or `AppErrorJsonDto`).
 
+## Form State Boundary (`useActionState`)
+
+Decided in [ADR 001](../../src/shared/forms/notes/adr/001-model-form-state-as-boundary-dto-with-null-idle.md): **entities in-process, DTOs at the edge, `null` idle**.
+
+- **In-process**: compose with `Result<T, AppError>`. The `TError extends AppError` constraint is load-bearing — do not loosen it, and do not migrate internal layers to DTOs.
+- **At the boundary**: `FormResult<T>` is a boundary DTO union, not a `Result` variant. It shares `OkResult` and the `ok` discriminant, but its error side is a serializable `AppErrorJsonDto` (form state must survive Next.js progressive-enhancement serialization).
+- **Idle is `null`**: `FormState<T> = FormResult<T> | null` is the full `useActionState` state. Forms pass `null` as the initial value and feedback components early-return on `null`. Actions take `FormState` as `prevState` but return `FormResult` — a submission can never produce idle.
+
 ## Error Modeling
 
 - **Single Source of Truth**: All error types must be defined in `@/shared/core/errors/core/catalog/app-error.registry.ts`.

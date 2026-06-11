@@ -12,7 +12,10 @@ import {
 import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
 import { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import {
 	makeFormError,
 	makeFormOk,
@@ -59,7 +62,7 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
 
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function updateInvoiceAction(
-	_prevState: FormResult<UpdateInvoicePayload>,
+	_prevState: FormState<UpdateInvoicePayload>,
 	id: string,
 	formData: FormData,
 ): Promise<FormResult<UpdateInvoicePayload>> {

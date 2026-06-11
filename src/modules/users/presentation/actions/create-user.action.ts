@@ -11,7 +11,10 @@ import {
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type {
+	FormResult,
+	FormState,
+} from "@/shared/forms/core/types/form-result.dto";
 import {
 	makeFormError,
 	makeFormOk,
@@ -26,7 +29,7 @@ import { toUserRole } from "@/shared/policies/user-role/user-role.parser";
  */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix
 export async function createUserAction(
-	_prevState: FormResult<unknown>,
+	_prevState: FormState<unknown>,
 	formData: FormData,
 ): Promise<FormResult<unknown>> {
 	// Authorization: user management is admin-only. Kept above the try/catch so

@@ -1,23 +1,24 @@
 import type { JSX } from "react";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type { FormState } from "@/shared/forms/core/types/form-result.dto";
 import { FormAlertMolecule } from "@/ui/molecules/form-alert.molecule";
 
 interface AuthFormFeedbackProps<F extends string> {
-	readonly state: FormResult<F>;
+	readonly state: FormState<F>;
 }
 
 /**
  * Shared server feedback for auth forms.
- * Renders a success or error message if present in the FormResult.
+ * Renders nothing at idle (`state === null`), otherwise a success or error
+ * message from the FormResult.
  */
 export function AuthFormFeedback<F extends string>({
 	state,
 }: AuthFormFeedbackProps<F>): JSX.Element | null {
-	if (state.ok) {
-		if (state.value.message === undefined) {
-			return null;
-		}
+	if (state === null) {
+		return null;
+	}
 
+	if (state.ok) {
 		return (
 			<FormAlertMolecule
 				dataCy="auth-server-message-success"
@@ -25,10 +26,6 @@ export function AuthFormFeedback<F extends string>({
 				type="success"
 			/>
 		);
-	}
-
-	if (state.error.message === undefined) {
-		return null;
 	}
 
 	return (

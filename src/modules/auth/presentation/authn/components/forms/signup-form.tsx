@@ -9,10 +9,8 @@ import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/s
 import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/shared/wrappers/auth-actions-row";
 import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/wrappers/form-row.wrapper";
 import type { AuthActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
-import { SIGNUP_FIELDS_LIST } from "@/modules/auth/presentation/authn/transports/signup.form.schema";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeInitialFormState } from "@/shared/forms/logic/factories/form-state.factory";
+import type { FormState } from "@/shared/forms/core/types/form-result.dto";
 import {
 	extractFieldErrors,
 	extractFieldValues,
@@ -20,9 +18,6 @@ import {
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";
-
-const INITIAL_STATE: FormResult<never> =
-	makeInitialFormState<SignupField>(SIGNUP_FIELDS_LIST);
 
 /**
  * SignupForm component for user registration.
@@ -33,18 +28,19 @@ export function SignupForm({
 	action,
 }: AuthActionProps<SignupField>): JSX.Element {
 	const [state, boundAction, pending] = useActionState<
-		FormResult<never>,
+		FormState<never>,
 		FormData
-	>(action, INITIAL_STATE);
+	>(action, null);
 
 	const baseId = useId();
 	const usernameId = `${baseId}-username`;
 	const emailId = `${baseId}-email`;
 	const passwordId = `${baseId}-password`;
 
-	// Extract form details safely from AppError
-	const fieldErrors = state.ok ? undefined : extractFieldErrors(state.error);
-	const values = state.ok ? undefined : extractFieldValues(state.error);
+	// Extract form details safely from AppError; idle (null) has none.
+	const failure = state && !state.ok ? state : undefined;
+	const fieldErrors = failure ? extractFieldErrors(failure.error) : undefined;
+	const values = failure ? extractFieldValues(failure.error) : undefined;
 
 	return (
 		<>

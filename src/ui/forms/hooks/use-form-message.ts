@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type { FormState } from "@/shared/forms/core/types/form-result.dto";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/time/time.constants";
 
 /**
  * Controls auto-hide visibility for form submission messages.
+ * Idle (`state === null`) has no message, so the alert stays hidden.
  */
-export function useFormMessage<T>(state: FormResult<T>): boolean {
+export function useFormMessage<T>(state: FormState<T>): boolean {
 	const [showAlert, setShowAlert] = useState(false);
 
-	const message: string | undefined = state.ok
-		? state.value.message
-		: state.error.message;
+	let message: string | undefined;
+	if (state !== null) {
+		message = state.ok ? state.value.message : state.error.message;
+	}
 
 	useEffect((): (() => void) | undefined => {
 		if (!message) {

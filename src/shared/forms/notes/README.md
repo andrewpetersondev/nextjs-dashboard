@@ -12,18 +12,21 @@ environment, bridging the gap between Server Actions and client-side UI.
     - `factories/`: Creation of `FormResult` objects.
     - `inspectors/`: Tools for extracting information from schemas and errors.
     - `mappers/`: Conversions between different error map shapes (sparse vs dense).
-- `presentation/`: UI-related components and hooks.
-    - `components/`: React components like `ErrorMessage`.
-    - `hooks/`: React hooks like `useFormMessage`.
-    - `mappers/`: UI-specific data adapters.
+- `presentation/`: UI-specific data adapters (`mappers/`).
 - `server/`: Next.js server-side specific utilities.
     - `validate-form.ts`: The primary entry point for validating `FormData`.
+    - `factories/`: Construction of validation-error form results.
+    - `mappers/`: Zod error flattening.
     - `utils/`: `FormData` extraction and manipulation.
 
 #### Key Concepts
 
-- **FormResult**: A standard `Result` type that either contains a success payload (data + message) or an `AppError` with
-  validation metadata.
+- **FormResult**: The boundary DTO union for the `useActionState` edge
+  ([ADR 001](adr/001-model-form-state-as-boundary-dto-with-null-idle.md)). It deliberately shares `OkResult` and the
+  `ok` discriminant with core `Result`, but it is not a `Result` variant: its error side is a serializable
+  `AppErrorJsonDto` — entities in-process, DTOs at the edge.
+- **FormState**: `FormResult<T> | null`, the full `useActionState` state. `null` is idle (no submission yet); actions
+  return `FormResult`, so idle can only come from the initial render.
 - **Dense vs Sparse Error Maps**: The system distinguishes between "dense" maps (where every field has an array, even if
   empty) and "sparse" maps (where only fields with errors are present).
 - **Metadata**: Validation errors carry `FormValidationMetadata`, which includes the dense error map and the echoed form
@@ -32,5 +35,6 @@ environment, bridging the gap between Server Actions and client-side UI.
 #### Best Practices
 
 - Use `validateForm` in Server Actions to ensure consistent error handling and logging.
-- Use `useFormMessage` in the UI to manage alert visibility.
+- Pass `null` as the `useActionState` initial state; let feedback components (e.g. `useFormMessage` in
+  `src/ui/forms/hooks/`) early-return on `null` rather than inventing a fake initial error.
 - Prefer `FieldError` (non-empty array) when representing specific validation failures.
