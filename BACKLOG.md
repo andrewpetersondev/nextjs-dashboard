@@ -61,10 +61,14 @@ this file is the deliberate workaround.)
   `db:seed:prod` failed with 23503. Three independent migration folders make this
   drift invisible. Either collapse to a single migration set, or add a CI check that
   the three `meta/_journal.json`/latest snapshots describe the same final schema.
-- [ ] **knip residue** — unused exports that remain after the dead-seam sweep
-  (pre-existing, not introduced by it): `DalIdentifiers`, `PgErrorMetadataBase`,
-  `FormErrResult`, `ImmutableRecord`, `LogOperationMetadata`, plus duplicate-export
-  pairs `TEN_SECONDS|DEFAULT_TIMEOUT` and `PG_ERROR_MAP|PG_CODE_TO_META`.
+- [ ] **knip full-report triage** — the earlier "knip residue" list came from a
+  truncated report tail; the full report still shows (all pre-existing): 10 unused
+  files (incl. `crypto.service.ts`, auth `mapper-chains`/`mapper-registry`, and 6
+  devtools task scripts that may be knip-config gaps rather than dead code), 2
+  unused deps + 3 devDeps (`tailwindcss`/`dotenv` likely false positives via
+  configs), and 26 unused exports/types — several look like the same
+  exported-but-internal pattern (`APP_ERROR_REGISTRY`, `AppErrorCoreDescriptor`).
+  Triage each: knip config fix vs. un-export vs. delete.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
@@ -74,6 +78,13 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **knip residue (named seven)** _(2026-06-11)_ — un-exported the five
+  internally-used types (`DalIdentifiers`, `PgErrorMetadataBase`, `FormErrResult`,
+  `ImmutableRecord`, `LogOperationMetadata`) and collapsed both duplicate-export
+  pairs onto the names callers import (`DEFAULT_TIMEOUT`, `PG_CODE_TO_META`).
+  knip's duplicate-exports section is gone; see the full-report triage item above
+  for what remains.
 
 - [x] **Dead-seam sweep** _(2026-06-11)_ — deleted the dormant result combinator
   modules (4 files, ~965 lines, never exported), orphaned `execute-dal-throw.ts` +

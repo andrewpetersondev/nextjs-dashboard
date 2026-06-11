@@ -11,7 +11,16 @@ interface BaseLogEntry {
 	readonly timestamp: string;
 }
 
-export type ImmutableRecord = Readonly<Record<string, unknown>>;
+type ImmutableRecord = Readonly<Record<string, unknown>>;
+
+/**
+ * Operation metadata for DAL/repository pattern logging.
+ */
+interface LogOperationMetadata {
+	readonly operationContext: string;
+	readonly operationIdentifiers: Record<string, unknown>;
+	readonly operationName: string;
+}
 
 /**
  * JSON-serializable representation of a standard Error object.
@@ -47,15 +56,6 @@ export interface LogEntry<T = unknown> extends BaseLogEntry {
 	readonly metadata?: Record<string, unknown>;
 	readonly pid?: number;
 	readonly requestId?: string;
-}
-
-/**
- * Operation metadata for DAL/repository pattern logging.
- */
-export interface LogOperationMetadata {
-	readonly operationContext: string;
-	readonly operationIdentifiers: Record<string, unknown>;
-	readonly operationName: string;
 }
 
 /**
