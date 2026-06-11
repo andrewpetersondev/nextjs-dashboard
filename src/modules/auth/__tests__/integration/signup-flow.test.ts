@@ -96,6 +96,17 @@ describe("Signup Flow Integration", () => {
 				expect(payload.fieldErrors.email[0]?.toLowerCase()).toMatch(
 					/already|use|exists|unique|conflict/,
 				);
+
+				// Boundary hygiene: the conflict DTO must not leak Postgres
+				// internals (raw detail string, table/schema/constraint names).
+				// The metadata carries exactly the form-relevant fields.
+				expect(Object.keys(result.error.metadata).sort()).toEqual([
+					"fieldErrors",
+					"formData",
+					"formErrors",
+					"pgCode",
+				]);
+				expect(JSON.stringify(result.error)).not.toContain("already exists.");
 			}
 		});
 

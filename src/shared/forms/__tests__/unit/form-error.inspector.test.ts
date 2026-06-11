@@ -31,7 +31,8 @@ describe("form-error inspector", () => {
 	});
 
 	// Mirrors production (to-signup-form-result.mapper): a conflict form error
-	// carries the pg metadata plus the form fields.
+	// carries the form fields plus the bare pg code — never raw pg metadata
+	// (detail/table/schema/constraint stay server-side on the cause chain).
 	const conflictError = makeAppError("conflict", {
 		cause: "test",
 		message: "Email already exists.",
