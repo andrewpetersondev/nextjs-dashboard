@@ -40,6 +40,20 @@ this file is the deliberate workaround.)
   - [ ] **Dead-seam sweep** — `AppError.fromDto` (test-only), `_isFormErr`/`_isFormOk`/
     `_isOk`/`_isErr` guards, parked result combinators decision, `retryable` removal
     TODO, and the overlap TODO in `form-error-payload.mapper.ts`.
+- [ ] **Env hygiene** — surfaced during deploy prep (2026-06-11):
+  - [ ] Remove dead `LOG_LEVEL` plumbing — only the unused `_getLogLevel` in
+    `env-shared.ts` reads it; the real runtime level comes from
+    `NEXT_PUBLIC_LOG_LEVEL` (with an `info` fallback in `logging.levels.ts`).
+    Drop the tuple entry and the template line together.
+  - [ ] Drop the per-lookup `console.log` in `env-access.utils.ts`
+    (`Retrieving env var: …`) — it spams production function logs on every request.
+  - [ ] Decide `SESSION_ISSUER`/`SESSION_AUDIENCE` shape — single-literal zod enums
+    make them constants-as-env-vars. Either widen to `z.string().min(1)` so the env
+    actually configures them (renaming later invalidates live sessions), or hardcode
+    them as code constants and drop the env vars.
+  - [ ] Remove `AUTH_SECRET`/`AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` from
+    `.env.example.local` and any real env files — auth.js holdovers, zero references
+    in code since the custom jose/bcrypt auth replaced it.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
