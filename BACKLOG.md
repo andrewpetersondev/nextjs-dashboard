@@ -86,6 +86,15 @@ this file is the deliberate workaround.)
   Triage each: knip config fix vs. un-export vs. delete.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
+- [ ] **e2e port-reuse guard** — `cy:e2e` inherits the session's `PORT` (the
+  `env:test*` scripts run dotenv without `-o`, so an exported `PORT` wins over
+  `.env.test.local`), and start-server-and-test reuses ANY server already
+  answering on that port. With a dev preview running on 3001, two full suite
+  runs (2026-06-11) silently executed against the dev server — `/api/db/reset`
+  404s there, so 7 specs "failed" with no hint of the real cause. Fix ideas:
+  add `-o` to the `env:test*` scripts, pin the cypress PORT, or have
+  `cypress-with-server.cli.ts` verify the responding server's `DATABASE_ENV`
+  (the `smoke/log-env` spec already proves the concept).
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
 - [ ]  The allowCypressEnv configuration option is enabled. This allows any browser code to read values from
   Cypress.env(). This is insecure and will be removed in a future major version.
