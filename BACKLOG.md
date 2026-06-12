@@ -42,8 +42,13 @@ this file is the deliberate workaround.)
     none), auth mappers filter through `selectEchoedFieldValues` (login echoes
     email; signup echoes email+username; passwords never round-trip), and the
     invoice actions stopped echoing raw input (incl. `sensitiveData`).
-  - [ ] **One validation funnel** — auth/users use `validateForm`; create-invoice does
-    inline `safeParse`; update-invoice hand-flattens Zod errors. Unify on `validateForm`.
+  - [x] **One validation funnel** _(2026-06-11)_ — create/update-invoice now go
+    through `validateForm` like auth/users (create dropped its inline `safeParse`;
+    update dropped per-field `formData.get` + hand-flattened Zod errors). The edit
+    form's messages are translated text instead of raw `INVOICE.*` ids (update's
+    AppError branch now says `updateFailed`, not `invalidInput`'s "create" copy),
+    and the stale-skipped update-form Cypress error test is re-enabled — its
+    serialization blocker was fixed back in PR #41.
   - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any
     error key, but extractors only honor `validation` | `conflict`; a `database`-keyed
     form error silently drops its field errors (`form-error.inspector.ts`).
