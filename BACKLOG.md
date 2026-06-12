@@ -42,8 +42,13 @@ this file is the deliberate workaround.)
     none), auth mappers filter through `selectEchoedFieldValues` (login echoes
     email; signup echoes email+username; passwords never round-trip), and the
     invoice actions stopped echoing raw input (incl. `sensitiveData`).
-  - [ ] **One validation funnel** — auth/users use `validateForm`; create-invoice does
-    inline `safeParse`; update-invoice hand-flattens Zod errors. Unify on `validateForm`.
+  - [x] **One validation funnel** _(2026-06-11)_ — create/update-invoice now go
+    through `validateForm` like auth/users (create dropped its inline `safeParse`;
+    update dropped per-field `formData.get` + hand-flattened Zod errors). The edit
+    form's messages are translated text instead of raw `INVOICE.*` ids (update's
+    AppError branch now says `updateFailed`, not `invalidInput`'s "create" copy),
+    and the stale-skipped update-form Cypress error test is re-enabled — its
+    serialization blocker was fixed back in PR #41.
   - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any
     error key, but extractors only honor `validation` | `conflict`; a `database`-keyed
     form error silently drops its field errors (`form-error.inspector.ts`).
@@ -81,6 +86,15 @@ this file is the deliberate workaround.)
   Triage each: knip config fix vs. un-export vs. delete.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
+- [ ] **e2e port-reuse guard** — `cy:e2e` inherits the session's `PORT` (the
+  `env:test*` scripts run dotenv without `-o`, so an exported `PORT` wins over
+  `.env.test.local`), and start-server-and-test reuses ANY server already
+  answering on that port. With a dev preview running on 3001, two full suite
+  runs (2026-06-11) silently executed against the dev server — `/api/db/reset`
+  404s there, so 7 specs "failed" with no hint of the real cause. Fix ideas:
+  add `-o` to the `env:test*` scripts, pin the cypress PORT, or have
+  `cypress-with-server.cli.ts` verify the responding server's `DATABASE_ENV`
+  (the `smoke/log-env` spec already proves the concept).
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
 - [ ]  The allowCypressEnv configuration option is enabled. This allows any browser code to read values from
   Cypress.env(). This is insecure and will be removed in a future major version.

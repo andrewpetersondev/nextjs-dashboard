@@ -23,7 +23,7 @@ import {
 	makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
 import { toDenseFieldErrorMapFromZod } from "@/shared/forms/server/mappers/zod-error.mapper";
-import { resolveRawFieldPayload } from "@/shared/forms/server/utils/form-data.utils";
+import { validateForm } from "@/shared/forms/server/validate-form";
 import { isZodErrorInstance } from "@/shared/policies/zod/zod.guard";
 import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
@@ -40,30 +40,30 @@ export async function createInvoiceAction(
 	// try/catch below so a no-session redirect propagates instead of being caught.
 	await requireSession();
 
-	// 1. Parse Input: Leverage infrastructure for consistent extraction
-	const rawInput = resolveRawFieldPayload(formData, CREATE_INVOICE_FIELDS_LIST);
-	const parsed = CreateInvoiceSchema.safeParse(rawInput);
+	// 1. Validate input through the shared funnel. Echo stays off (the default):
+	// nothing repopulates from invoice error metadata, and the raw payload
+	// includes sensitiveData.
+	const validated = await validateForm(
+		formData,
+		CreateInvoiceSchema,
+		CREATE_INVOICE_FIELDS_LIST,
+		{
+			loggerContext: "createInvoiceAction",
+			messages: { failureMessage: translator(INVOICE_MSG.validationFailed) },
+		},
+	);
 
-	if (!parsed.success) {
-		return makeFormError<CreateInvoiceFieldNames>({
-			fieldErrors: toDenseFieldErrorMapFromZod(
-				parsed.error,
-				CREATE_INVOICE_FIELDS_LIST,
-			),
-			// No echo: nothing repopulates from invoice error metadata, and the
-			// raw payload includes sensitiveData.
-			formData: {},
-			formErrors: [],
-			key: "validation",
-			message: translator(INVOICE_MSG.validationFailed),
-		});
+	if (!validated.ok) {
+		return validated;
 	}
+
+	const payload = validated.value.data;
 
 	// 2. Perform Async Operation
 	try {
 		const repo = new InvoiceRepository(getAppDb());
 		const service = new InvoiceService(repo);
-		const result = await service.createInvoice(parsed.data);
+		const result = await service.createInvoice(payload);
 
 		if (!result.ok) {
 			return makeFormError<CreateInvoiceFieldNames>({
@@ -83,7 +83,7 @@ export async function createInvoiceAction(
 
 		// 3. Success: Revalidate but do NOT redirect so the form can show the success message
 		revalidatePath(ROUTES.dashboard.invoices);
-		return makeFormOk(parsed.data, translator(INVOICE_MSG.createSuccess));
+		return makeFormOk(payload, translator(INVOICE_MSG.createSuccess));
 	} catch (error) {
 		// Decide the top-level user-facing message based on error type
 		const baseMessage = isZodErrorInstance(error)

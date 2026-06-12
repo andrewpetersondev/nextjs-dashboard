@@ -57,3 +57,5 @@ export type EditInvoiceViewModel = z.output<typeof CreateInvoiceSchema> & {
 };
 
 export const CREATE_INVOICE_FIELDS_LIST = toSchemaKeys(CreateInvoiceSchema);
+
+export const UPDATE_INVOICE_FIELDS_LIST = toSchemaKeys(UpdateInvoiceSchema);
