@@ -13,6 +13,8 @@ export const COMMON_SEL = {
 
 // Auth-related selectors (login/signup)
 export const AUTH_SEL = {
+	// Server-action feedback rendered by AuthFormFeedback (FormAlertMolecule).
+	authServerMessageError: '[data-cy="auth-server-message-error"]',
 	loginEmail: '[data-cy="login-email-input"]',
 	//  For a "pure" fundamental level, lean more heavily on Testing Library queries (which you already have installed).
 	//  Instead of cy.get('#email'), use cy.findByLabelText(/email/i). This makes tests less dependent on code structure
