@@ -5,6 +5,7 @@ import {
 } from "@cypress/e2e/shared/auth-forms";
 import { DASHBOARD_PATH, LOGIN_PATH } from "@cypress/e2e/shared/paths";
 import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { DEFAULT_TIMEOUT } from "@cypress/e2e/shared/times";
 import { createTestUser } from "@cypress/e2e/shared/users";
 
 describe("Authentication Server Actions", () => {
@@ -22,20 +23,20 @@ describe("Authentication Server Actions", () => {
 		cy.url().should("include", DASHBOARD_PATH);
 	});
 
-	// SKIPPED: same app bug as the invoice update error test — auth form error
-	// results are AppError class instances that can't serialize across the
-	// server-action boundary, so the "Failed to validate form data" banner never
-	// renders.
-	// biome-ignore lint/suspicious/noSkippedTests: re-enable once form errors are plain serializable objects (tracked)
-	it.skip("should handle login with invalid credentials", () => {
+	it("should handle login with invalid credentials", () => {
 		cy.visit(LOGIN_PATH);
 		cy.get(AUTH_SEL.loginEmail).type(INVALID_EMAIL);
 		cy.get(AUTH_SEL.loginPassword).type(INVALID_PASSWORD);
 
 		cy.get(AUTH_SEL.loginSubmit).click();
 
-		// Assert error UI is shown, and we remain on login
-		cy.findByText(ERROR_MESSAGES_REGEX.failedAuthForm).should("be.visible");
+		// The unified invalid-credentials message renders in the AuthFormFeedback
+		// banner AND as both field errors (no username enumeration), so target
+		// the banner selector rather than findByText (which requires a unique match).
+		cy.get(AUTH_SEL.authServerMessageError, { timeout: DEFAULT_TIMEOUT })
+			.should("be.visible")
+			.invoke("text")
+			.should("match", ERROR_MESSAGES_REGEX.invalidCredentials);
 		cy.url().should("include", LOGIN_PATH);
 	});
 });
