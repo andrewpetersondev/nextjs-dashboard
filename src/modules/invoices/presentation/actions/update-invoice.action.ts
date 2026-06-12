@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { requireSession } from "@/modules/auth/presentation/session/guards/session-access.guard";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import { translator } from "@/modules/invoices/domain/i18n/translator";
 import {
+	UPDATE_INVOICE_FIELDS_LIST,
 	type UpdateInvoiceFieldNames,
 	type UpdateInvoicePayload,
 	UpdateInvoiceSchema,
@@ -20,10 +22,8 @@ import {
 	makeFormError,
 	makeFormOk,
 } from "@/shared/forms/logic/factories/form-result.factory";
-import {
-	selectSparseFieldErrors,
-	toDenseFieldErrorMap,
-} from "@/shared/forms/logic/mappers/field-error-map.mapper";
+import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
+import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
@@ -35,12 +35,11 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
 		message: INVOICE_MSG.serviceError,
 	});
 
-	const schemaFields = Object.keys(
-		UpdateInvoiceSchema.shape,
-	) as readonly UpdateInvoiceFieldNames[];
-
 	return makeFormError<UpdateInvoiceFieldNames>({
-		fieldErrors: toDenseFieldErrorMap({}, schemaFields),
+		fieldErrors: toDenseFieldErrorMap<UpdateInvoiceFieldNames, string>(
+			{},
+			UPDATE_INVOICE_FIELDS_LIST,
+		),
 		formData: {},
 		formErrors: [],
 		key: error instanceof AppError ? error.key : "unknown",
@@ -59,8 +58,6 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
  * @param formData - FormData from the client
  * @returns FormResult with data, errors, message, and success
  */
-
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 export async function updateInvoiceAction(
 	_prevState: FormState<UpdateInvoicePayload>,
 	id: string,
@@ -70,50 +67,27 @@ export async function updateInvoiceAction(
 	// try/catch so a no-session redirect propagates instead of being caught.
 	await requireSession();
 
+	// Validate input through the shared funnel. Echo stays off (the default):
+	// nothing repopulates from invoice error metadata, and the raw payload
+	// includes sensitiveData.
+	const validated = await validateForm(
+		formData,
+		UpdateInvoiceSchema,
+		UPDATE_INVOICE_FIELDS_LIST,
+		{
+			loggerContext: "updateInvoiceAction",
+			messages: { failureMessage: translator(INVOICE_MSG.validationFailed) },
+		},
+	);
+
+	if (!validated.ok) {
+		return validated;
+	}
+
 	try {
-		const input = {
-			amount: formData.get("amount"),
-			customerId: formData.get("customerId"),
-			date: formData.get("date"),
-			sensitiveData: formData.get("sensitiveData"),
-			status: formData.get("status"),
-		};
-		const parsed = UpdateInvoiceSchema.safeParse(input);
-
-		if (!parsed.success) {
-			// Build dense error map aligned with the schema's fields
-			const schemaFields = Object.keys(
-				UpdateInvoiceSchema.shape,
-			) as readonly UpdateInvoiceFieldNames[];
-
-			const zFieldErrors = parsed.error.flatten().fieldErrors as Record<
-				string,
-				readonly string[] | undefined
-			>;
-
-			const sparse = selectSparseFieldErrors<UpdateInvoiceFieldNames, string>(
-				zFieldErrors,
-				schemaFields,
-			);
-			const dense = toDenseFieldErrorMap<UpdateInvoiceFieldNames, string>(
-				sparse,
-				schemaFields,
-			);
-
-			return makeFormError<UpdateInvoiceFieldNames>({
-				fieldErrors: dense,
-				// No echo: nothing repopulates from invoice error metadata, and the
-				// raw payload includes sensitiveData.
-				formData: {},
-				formErrors: [],
-				key: "validation",
-				message: INVOICE_MSG.validationFailed,
-			});
-		}
-
 		const service = new InvoiceService(new InvoiceRepository(getAppDb()));
 
-		const updateResult = await service.updateInvoice(id, parsed.data);
+		const updateResult = await service.updateInvoice(id, validated.value.data);
 		if (!updateResult.ok) {
 			return handleActionError(id, updateResult.error);
 		}
