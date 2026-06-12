@@ -43,10 +43,11 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
 		formData: {},
 		formErrors: [],
 		key: error instanceof AppError ? error.key : "unknown",
-		message:
+		message: translator(
 			error instanceof AppError
-				? INVOICE_MSG.invalidInput
+				? INVOICE_MSG.updateFailed
 				: INVOICE_MSG.serviceError,
+		),
 	});
 }
 
@@ -103,7 +104,7 @@ export async function updateInvoiceAction(
 				sensitiveData: updatedInvoice.sensitiveData,
 				status: updatedInvoice.status,
 			},
-			INVOICE_MSG.updateSuccess,
+			translator(INVOICE_MSG.updateSuccess),
 		);
 	} catch (error) {
 		return handleActionError(id, error);
