@@ -41,11 +41,7 @@ describe("Invoices - Update via Server Action Form", () => {
 		cy.location("pathname").should("include", EDIT_PATH_FRAGMENT);
 	});
 
-	// SKIPPED: blocked by an app bug — form error results are AppError class
-	// instances (makeFormError → Err(makeAppError)), which can't be serialized
-	// across the server-action boundary, so the error banner never renders.
-	// biome-ignore lint/suspicious/noSkippedTests: re-enable once form errors are plain serializable objects (tracked)
-	it.skip("shows an error message when the amount is invalid", () => {
+	it("shows an error message when the amount is invalid", () => {
 		openFirstInvoiceForEdit();
 
 		// Amount must be positive, so 0 fails server-side validation.
