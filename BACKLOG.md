@@ -23,21 +23,33 @@ this file is the deliberate workaround.)
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
       Full context in memory (`project_forms_error_refactor`).
-- [ ] **Env hygiene** — surfaced during deploy prep (2026-06-11):
+- [x] **Env hygiene** _(complete 2026-06-13)_ — surfaced during deploy prep (2026-06-11);
+      all four sub-items below resolved, and Andrew finished the by-hand `.env*` line
+      deletions (`LOG_LEVEL` / `SESSION_ISSUER` / `SESSION_AUDIENCE`):
   - [x] Remove dead `LOG_LEVEL` plumbing _(2026-06-13)_ — deleted `getLogLevelResult` +
         `_getLogLevel` from `env-shared.ts` (and their orphaned `LogLevel`/`LogLevelSchema`
         imports), dropped the `"LOG_LEVEL"` entry from the `env-access.utils.ts` accessor
         tuple, and removed the stale `LOG_LEVEL` bullet from `config/README.md`. Runtime level
-        still comes from `NEXT_PUBLIC_LOG_LEVEL`; `check:fast` green. **Still TODO by hand:**
-        delete `LOG_LEVEL=info` from `.env.example.local` — the deny rule blocks tooling from
-        editing env files.
+        still comes from `NEXT_PUBLIC_LOG_LEVEL`; `check:fast` green. _(By-hand
+        `LOG_LEVEL=info` deletion from `.env.example.local` + real env files done 2026-06-13.)_
   - [x] Drop the per-lookup `console.log` in `env-access.utils.ts` _(2026-06-13)_ —
         removed the `Retrieving env var: …` line. (A second `console.log` on the missing/empty
         path remains, but it only fires on error, not on every lookup.)
-  - [ ] Decide `SESSION_ISSUER`/`SESSION_AUDIENCE` shape — single-literal zod enums
-        make them constants-as-env-vars. Either widen to `z.string().min(1)` so the env
-        actually configures them (renaming later invalidates live sessions), or hardcode
-        them as code constants and drop the env vars.
+  - [x] Decide `SESSION_ISSUER`/`SESSION_AUDIENCE` shape _(2026-06-13)_ — **hardcoded as
+        code constants, dropped the env vars.** They were required env vars locked to
+        single-literal zod enums (`"my-app"`/`"web"`) — constants in disguise. Moved both to
+        `session-jwt.constants.ts` (auth infra), repointed `session-token-codec.factory.ts`,
+        and stripped the `SessionIssuerSchema`/`SessionAudienceSchema` + two `ServerEnvSchema`
+        fields from `env-schemas.ts`, the mappings/exports from `env-server.ts`, and the two
+        `env-access.utils.ts` tuple entries. Values unchanged → behavior-preserving (no live
+        session breaks: JWTs sign/verify identically). Rationale: issuer/audience are stable
+        app identity, not deployment config or secrets; a single env string can't express
+        multiple audiences anyway, so a typed code constant is the better extension point.
+        Also fixed the stale `config/README.md` (server-env list + dead `env-next.ts` path)
+        and dropped the now-dead `SESSION_*` keys from the `session-rotation.test.ts` mock.
+        `check:fast` + unit (222) + session-rotation integration (4) all green. _(By-hand
+        deletion of `SESSION_ISSUER`/`SESSION_AUDIENCE` from `.env.example.local` + real
+        `.env*.local` files done 2026-06-13.)_
   - [x] Remove `AUTH_SECRET`/`AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` from
         `.env.example.local` and any real env files — auth.js holdovers, zero references
         in code since the custom jose/bcrypt auth replaced it. _(Verified done 2026-06-13:

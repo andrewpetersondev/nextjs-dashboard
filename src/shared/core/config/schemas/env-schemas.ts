@@ -7,14 +7,6 @@ const DATABASE_ENVIRONMENT_TUPLE = [
 	"test",
 ] as const;
 const LOG_LEVEL_TUPLE = ["trace", "debug", "info", "warn", "error"] as const;
-const SESSION_ISSUER_TUPLE = ["my-app"] as const;
-const SESSION_AUDIENCE_TUPLE = ["web"] as const;
-
-const SessionIssuerSchema = z.enum(SESSION_ISSUER_TUPLE);
-
-const SessionAudienceSchema = z.enum(SESSION_AUDIENCE_TUPLE);
-
-type _SessionAudience = z.infer<typeof SessionAudienceSchema>;
 
 export const NodeEnvironmentSchema = z.enum(NODE_ENVIRONMENT_TUPLE);
 
@@ -35,7 +27,5 @@ export type LogLevel = z.infer<typeof LogLevelSchema>;
 export const ServerEnvSchema = z.object({
 	authBcryptSaltRounds: z.coerce.number().int().positive(),
 	databaseUrl: z.string().min(1),
-	sessionAudience: SessionAudienceSchema,
-	sessionIssuer: SessionIssuerSchema,
 	sessionSecret: z.string().min(1),
 });

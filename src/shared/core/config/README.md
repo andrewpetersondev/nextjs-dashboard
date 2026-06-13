@@ -12,12 +12,16 @@
 
 ## 2️⃣ Server-Only Environment
 
-- File: `src/server/config/env-next.ts`
+- File: `src/shared/core/config/server/env-server.ts`
 - Depends on `env-shared` for normalization
 - Validates private, runtime-only vars:
   - `DATABASE_URL`
-  - `SESSION_SECRET` / `ISSUER` / `AUDIENCE`
+  - `SESSION_SECRET`
+  - `AUTH_BCRYPT_SALT_ROUNDS`
 - Throws early if required values are missing/invalid
+- Note: the session JWT `issuer`/`audience` are **not** env vars — they are
+  stable code constants in
+  `src/modules/auth/infrastructure/session/config/session-jwt.constants.ts`
 - Caches + freezes values for immutability
 - Exports both constants and a `getServerEnv()` helper
 
