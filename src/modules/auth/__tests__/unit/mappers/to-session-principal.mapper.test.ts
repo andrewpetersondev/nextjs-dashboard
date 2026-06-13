@@ -1,6 +1,5 @@
 import {
 	makeAuthenticatedUserDto,
-	makeUpdateSessionSuccessDto,
 	TEST_USER_ID,
 } from "@test-support/fixtures/user.fixtures";
 import { describe, expect, it } from "vitest";
@@ -13,7 +12,7 @@ import { toUserId } from "@/modules/users/domain/user-id.mappers";
  * This mapper extracts minimal data (id, role) for JWT claims, implementing
  * the principle of least privilege for session tokens.
  *
- * Transformation: AuthenticatedUserDto | UpdateSessionSuccessDto → SessionPrincipalDto
+ * Transformation: AuthenticatedUserDto → SessionPrincipalDto
  * Layer: Application → Application
  * Security: Minimal data for JWT claims (only id and role)
  */
@@ -40,42 +39,16 @@ describe("toSessionPrincipal Mapper", () => {
 			expect(json).not.toContain("sensitive@example.com");
 			expect(json).not.toContain("sensitive_user");
 		});
-
-		it("should strictly include only id and role from UpdateSessionSuccessDto", () => {
-			const input = makeUpdateSessionSuccessDto({
-				expiresAtMs: 999_999,
-				refreshed: true,
-			});
-
-			const principal = toSessionPrincipal(input);
-
-			expect(principal).toEqual({
-				id: TEST_USER_ID,
-				role: "USER",
-			});
-
-			expect(principal).not.toHaveProperty("userId");
-			expect(principal).not.toHaveProperty("expiresAtMs");
-			expect(principal).not.toHaveProperty("refreshed");
-			expect(principal).not.toHaveProperty("reason");
-		});
 	});
 
 	describe("Successful Transformations", () => {
 		it("should handle different roles correctly", () => {
-			const adminInput = makeAuthenticatedUserDto({ role: "ADMIN" });
-			const userInput = makeUpdateSessionSuccessDto({ role: "USER" });
-
-			expect(toSessionPrincipal(adminInput).role).toBe("ADMIN");
-			expect(toSessionPrincipal(userInput).role).toBe("USER");
-		});
-
-		it("should map userId to id field for session updates", () => {
-			const input = makeUpdateSessionSuccessDto({ userId: TEST_USER_ID });
-			const principal = toSessionPrincipal(input);
-
-			expect(principal.id).toBe(TEST_USER_ID);
-			expect(principal).not.toHaveProperty("userId");
+			expect(
+				toSessionPrincipal(makeAuthenticatedUserDto({ role: "ADMIN" })).role,
+			).toBe("ADMIN");
+			expect(
+				toSessionPrincipal(makeAuthenticatedUserDto({ role: "USER" })).role,
+			).toBe("USER");
 		});
 
 		it("should preserve branded types in the output", () => {
@@ -88,22 +61,6 @@ describe("toSessionPrincipal Mapper", () => {
 	});
 
 	describe("Consistency and Data Integrity", () => {
-		it("should produce identical output for same user from different sources", () => {
-			const authDto = makeAuthenticatedUserDto({
-				id: TEST_USER_ID,
-				role: "USER",
-			});
-			const updateDto = makeUpdateSessionSuccessDto({
-				role: "USER",
-				userId: TEST_USER_ID,
-			});
-
-			const principal1 = toSessionPrincipal(authDto);
-			const principal2 = toSessionPrincipal(updateDto);
-
-			expect(principal1).toEqual(principal2);
-		});
-
 		it("should return a new object and not modify the original input", () => {
 			const input = makeAuthenticatedUserDto();
 			const inputCopy = { ...input };
@@ -125,13 +82,6 @@ describe("toSessionPrincipal Mapper", () => {
 			const principal = toSessionPrincipal(input);
 
 			expect(principal.id).toBe(longId);
-		});
-
-		it("should handle minimum valid numeric values in session update", () => {
-			const input = makeUpdateSessionSuccessDto({ expiresAtMs: 0 });
-			const principal = toSessionPrincipal(input);
-
-			expect(principal.id).toBe(TEST_USER_ID);
 		});
 	});
 });
