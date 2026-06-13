@@ -67,9 +67,4 @@ const mockNextHeaders = (): NextHeadersMock => {
 	};
 };
 
-export {
-	createNextRedirectError,
-	mockNextCache,
-	mockNextHeaders,
-	mockNextNavigation,
-};
+export { mockNextCache, mockNextHeaders, mockNextNavigation };
