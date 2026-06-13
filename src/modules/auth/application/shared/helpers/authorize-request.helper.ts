@@ -1,10 +1,10 @@
 import "server-only";
 import type { SessionTokenServiceContract } from "@/modules/auth/application/session/contracts/session-token-service.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
+import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/session/auth-request-authorization.output";
 import { evaluateRouteAccessPolicy } from "@/modules/auth/domain/session/policies/authorization/evaluate-route-access.policy";
 import { tryGetRouteTypePolicy } from "@/modules/auth/domain/session/policies/authorization/get-route-type.policy";
 import { toAuthorizationReasonPolicy } from "@/modules/auth/domain/session/policies/authorization/to-authorization-reason.policy";
-import type { AuthRequestAuthorizationOutcome } from "@/modules/auth/domain/session/types/auth-request-authorization.output";
 import { AUTH_POLICY_REASONS } from "@/modules/auth/domain/shared/constants/auth-policy.constants";
 import {
 	AUTH_REQUEST_REASONS,

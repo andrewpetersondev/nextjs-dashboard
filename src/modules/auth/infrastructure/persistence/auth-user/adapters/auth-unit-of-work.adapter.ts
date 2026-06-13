@@ -3,8 +3,8 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { AuthTxDeps } from "@/modules/auth/application/auth-user/contracts/repositories/auth-tx.deps";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract";
+import { AuthTransactionLogger } from "@/modules/auth/infrastructure/auth-transaction.logger";
 import type { AuthTxDepsFactory } from "@/modules/auth/infrastructure/composition/factories/auth-user/auth-tx-deps.factory";
-import { AuthTransactionLogger } from "@/modules/auth/infrastructure/logging/auth-transaction.logger";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 

@@ -1,5 +1,5 @@
 "use server";
-import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
+import { requireAdmin } from "@/modules/auth/presentation/session/session-access.guard";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { unwrapOrNull } from "@/shared/core/result/result";

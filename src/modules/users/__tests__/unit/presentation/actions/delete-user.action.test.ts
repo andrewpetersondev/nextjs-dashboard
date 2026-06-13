@@ -4,7 +4,7 @@ import {
 } from "@test-support/fixtures/user.fixtures";
 import { runAndCaptureRedirectPath } from "@test-support/next-redirect";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
-import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
+import { requireAdmin } from "@/modules/auth/presentation/session/session-access.guard";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { deleteUserAction } from "@/modules/users/presentation/actions/delete-user.action";
@@ -16,16 +16,13 @@ import { ROUTES } from "@/shared/routing/routes";
 
 vi.mock("@/modules/users/infrastructure/factories/user-service.factory");
 vi.mock("@/server/db/db.connection");
-vi.mock(
-	"@/modules/auth/presentation/session/guards/session-access.guard",
-	() => ({
-		requireAdmin: vi.fn().mockResolvedValue({
-			isAuthorized: true,
-			role: "ADMIN",
-			userId: "admin-1",
-		}),
+vi.mock("@/modules/auth/presentation/session/session-access.guard", () => ({
+	requireAdmin: vi.fn().mockResolvedValue({
+		isAuthorized: true,
+		role: "ADMIN",
+		userId: "admin-1",
 	}),
-);
+}));
 
 describe("deleteUserAction", () => {
 	// deleteUserAction calls the real `toUserId` mapper, which throws on

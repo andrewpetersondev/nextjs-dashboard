@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
+import { requireAdmin } from "@/modules/auth/presentation/session/session-access.guard";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 import {
 	USER_ERROR_MESSAGES,
