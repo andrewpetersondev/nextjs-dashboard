@@ -12,7 +12,6 @@ const ENV_VARIABLES_TUPLE = [
 	// "CYPRESS_BASE_URL", // TODO: why is this here? consider removing
 	"DATABASE_ENV",
 	"DATABASE_URL",
-	"LOG_LEVEL",
 	"NEXT_PUBLIC_LOG_LEVEL",
 	"NEXT_PUBLIC_NODE_ENV",
 	"NODE_ENV",
@@ -32,7 +31,6 @@ type EnvVariables = (typeof ENV_VARIABLES_TUPLE)[number];
 function getEnvVariableResult<K extends EnvVariables>(
 	key: K,
 ): Result<string, AppError> {
-	console.log(`Retrieving env var: ${key}`);
 	const value = process.env[key];
 	if (!value || value.trim() === "") {
 		console.log(`Env var ${key} is missing or empty`);
