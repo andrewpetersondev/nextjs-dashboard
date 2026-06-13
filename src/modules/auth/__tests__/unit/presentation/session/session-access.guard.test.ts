@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/responses/session-verification.dto";
-import { verifySessionOptimistic } from "@/modules/auth/presentation/session/actions/verify-session-optimistic.action";
 import {
 	requireAdmin,
 	requireSession,
-} from "@/modules/auth/presentation/session/guards/session-access.guard";
+} from "@/modules/auth/presentation/session/session-access.guard";
+import { verifySessionOptimistic } from "@/modules/auth/presentation/session/verify-session-optimistic.action";
 import {
 	ADMIN_ROLE,
 	USER_ROLE,
@@ -16,7 +16,7 @@ import { ROUTES } from "@/shared/routing/routes";
 // throws a NEXT_REDIRECT error (mirroring real Next.js). Only the session check
 // the guards delegate to needs a local mock here.
 vi.mock(
-	"@/modules/auth/presentation/session/actions/verify-session-optimistic.action",
+	"@/modules/auth/presentation/session/verify-session-optimistic.action",
 	() => ({ verifySessionOptimistic: vi.fn() }),
 );
 

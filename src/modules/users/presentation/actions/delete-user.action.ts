@@ -1,7 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
+import { requireAdmin } from "@/modules/auth/presentation/session/session-access.guard";
 import { USER_ERROR_MESSAGES } from "@/modules/users/domain/constants/user.constants";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";

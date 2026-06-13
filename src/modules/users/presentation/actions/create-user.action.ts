@@ -1,5 +1,5 @@
 "use server";
-import { requireAdmin } from "@/modules/auth/presentation/session/guards/session-access.guard";
+import { requireAdmin } from "@/modules/auth/presentation/session/session-access.guard";
 import {
 	USER_ERROR_MESSAGES,
 	USER_SUCCESS_MESSAGES,

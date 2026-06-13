@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/session/contracts/session-token-codec.contract";
 import type { SessionTokenClaimsDto } from "@/modules/auth/application/session/dtos/responses/session-token-claims.dto";
-import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/strategies/session-jwt-crypto.strategy";
+import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/session-jwt-crypto.strategy";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
