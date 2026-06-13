@@ -130,6 +130,7 @@ cypress/
 │       ├── upsert-e2e-user.task.ts    # db:setup (idempotent upsert)
 │       ├── delete-user.task.ts        # db:deleteUser
 │       ├── user-exists.task.ts        # db:userExists
+│       ├── db-env.task.ts             # db:env (non-secret DB-env summary)
 │       ├── cleanup-e2e-users.task.ts  # db:cleanup (deletes e2e_* users)
 │       └── seed-database.task.ts      # db:seed → devtools databaseSeed()
 │
@@ -187,14 +188,13 @@ The login form exposes "Login as demo user / admin" buttons, surfaced as the
 Defined in [`support/commands.ts`](support/commands.ts) and typed on
 `Cypress.Chainable`:
 
-| Command                                                | Does                                                |
-| ------------------------------------------------------ | --------------------------------------------------- |
-| `cy.login({ email, password })`                        | fills + submits the login form, asserts dashboard   |
-| `cy.signup({ username, email, password })`             | fills + submits signup, asserts dashboard           |
-| `cy.loginAsDemoUser()` / `cy.loginAsDemoAdmin()`       | clicks the demo-login button                        |
-| `cy.logoutViaForm()`                                   | signs out via the dashboard's Sign Out button       |
-| `cy.dbReset()` / `cy.dbSeed()` / `cy.dbResetAndSeed()` | database lifecycle                                  |
-| `cy.logEnv()`                                          | logs the Cypress env (see the secrets caveat below) |
+| Command                                                | Does                                              |
+| ------------------------------------------------------ | ------------------------------------------------- |
+| `cy.login({ email, password })`                        | fills + submits the login form, asserts dashboard |
+| `cy.signup({ username, email, password })`             | fills + submits signup, asserts dashboard         |
+| `cy.loginAsDemoUser()` / `cy.loginAsDemoAdmin()`       | clicks the demo-login button                      |
+| `cy.logoutViaForm()`                                   | signs out via the dashboard's Sign Out button     |
+| `cy.dbReset()` / `cy.dbSeed()` / `cy.dbResetAndSeed()` | database lifecycle                                |
 
 ### Selectors: prefer `data-cy`
 
@@ -301,9 +301,12 @@ Kept honest on purpose — a doc that hides the warts isn't worth much.
 - **Not in CI yet.** The suite runs locally only — `.github/workflows` has no
   Cypress job. Wiring it in (against a service-container Postgres) is the highest-
   value next step.
-- **`cy.logEnv()` logs secrets.** It prints the full Cypress env, including
-  `SESSION_SECRET` and `DATABASE_URL`, to the command log. Fine locally; redact or
-  drop it before this runs anywhere with retained logs.
+- **Secrets stay Node-side.** `DATABASE_URL` and `SESSION_SECRET` are never
+  written into `config.env`, so they can't be read browser-side via
+  `Cypress.env()` (and can't leak into the command log or screenshots). Specs
+  that need to confirm the target DB use the Node-side `db:env` task, which
+  returns only a non-secret `{ databaseEnv, databaseName }` summary (see
+  `smoke/db-env-guard.cy.ts`).
 - **Test-user uniqueness is timestamp-based.** `createTestUser()` uses
   `Date.now() % 99_999_999`, and a few specs call it at module scope (reused across
   retries). Collision-prone under fast/retried runs; a stronger suffix would help.

@@ -22,4 +22,6 @@ export const AUTH_BCRYPT_SALT_ROUNDS: number = parsed.data.authBcryptSaltRounds;
 export const CYPRESS_BASE_URL: string = `http://localhost:${parsed.data.port}`;
 export const DATABASE_ENV = parsed.data.databaseEnv;
 export const DATABASE_URL: string = parsed.data.databaseUrl;
-export const SESSION_SECRET: string = parsed.data.sessionSecret;
+// `sessionSecret` is still validated above (fail-fast on a misconfigured
+// .env.test.local) but intentionally not exported: Cypress never needs it, and
+// re-exporting it invites leaking it back into browser-side Cypress.env().
