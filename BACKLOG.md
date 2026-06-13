@@ -79,18 +79,27 @@ this file is the deliberate workaround.)
       404s there, so 7 specs "failed" with no hint of the real cause. Fix ideas:
       add `-o` to the `env:test*` scripts, pin the cypress PORT, or have
       `cypress-with-server.cli.ts` verify the responding server's `DATABASE_ENV`
-      (the `smoke/log-env` spec already proves the concept).
+      (the `smoke/db-env-guard` spec already proves the concept).
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
-- [ ] **Secrets readable via `Cypress.env()`** — `cypress.config.ts` writes `DATABASE_URL`
-      and `SESSION_SECRET` into `config.env` (in `setupNodeEvents`), so any browser-side spec
-      code can read them through `Cypress.env()`. (The original note blamed the `allowCypressEnv`
-      option, but that flag isn't actually set — the exposure is the explicit `config.env.*`
-      assignments.) Pass only what specs truly need to the browser; keep DB/secret values
-      Node-side in tasks, or scope them out of `config.env`.
 
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Secrets no longer readable via `Cypress.env()`** _(2026-06-13)_ —
+      `cypress.config.ts` no longer writes `DATABASE_URL`/`SESSION_SECRET`/`DATABASE_ENV`
+      into `config.env`, so browser-side spec code can't read them through `Cypress.env()`
+      (and they can't leak into the command log/screenshots). The env-safety guard that the
+      old `smoke/log-env` spec provided is preserved and strengthened: a new Node-side
+      `db:env` task (`cypress/node/tasks/db-env.task.ts`) returns only a non-secret
+      `{ databaseEnv, databaseName }` summary, and the renamed `smoke/db-env-guard` spec
+      asserts `databaseEnv === "test"` + `databaseName === "test_db"` through it. Also removed
+      the `cy.logEnv()` command (it dumped the entire `Cypress.env()`, secrets included) and
+      stopped exporting `SESSION_SECRET` from `cypress-env.ts` (still validated, just not
+      re-exported). `SESSION_SECRET` stays Node-side for the app server only. Finally set
+      `allowCypressEnv: false` in `cypress.config.ts` — Cypress 15 leaves browser-side
+      `Cypress.env()` enabled by default, so this hard-disables it (defense-in-depth even if a
+      value is added to `config.env` later) and silences the deprecation warning.
 
 - [x] **Forms/error boundary cleanup — roadmap complete** _(2026-06-13)_ — the full
       shrink → lock → decide → reshape roadmap is done. Shrink landed via the dead-seam

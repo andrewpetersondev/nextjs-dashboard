@@ -1,22 +1,23 @@
 import { defineConfig } from "cypress";
-import {
-	CYPRESS_BASE_URL,
-	DATABASE_ENV,
-	DATABASE_URL,
-	SESSION_SECRET,
-} from "./cypress/node/config/cypress-env";
+import { CYPRESS_BASE_URL } from "./cypress/node/config/cypress-env";
 import { registerCypressTasks } from "./cypress/node/tasks/register-tasks";
 
 export default defineConfig({
+	// Hard-disable browser-side `Cypress.env()` (defaults to enabled in Cypress
+	// 15). Specs read no env values directly — DB-env checks go through the
+	// Node-side `db:env` task — so this closes the exposure even if a value is
+	// ever added to `config.env` later. Also silences the deprecation warning.
+	allowCypressEnv: false,
 	e2e: {
 		baseUrl: CYPRESS_BASE_URL,
 
 		setupNodeEvents(on, config) {
 			config.baseUrl = CYPRESS_BASE_URL;
-			config.env.DATABASE_ENV = DATABASE_ENV;
-			config.env.DATABASE_URL = DATABASE_URL;
-			config.env.SESSION_SECRET = SESSION_SECRET;
 
+			// Secrets (DATABASE_URL, SESSION_SECRET) are deliberately NOT written
+			// into config.env — anything there is readable browser-side via
+			// Cypress.env(). DB-env assertions go through the Node-side `db:env`
+			// task, which returns only a non-secret summary.
 			registerCypressTasks(on, config);
 
 			return config;

@@ -1,6 +1,7 @@
 import { toUsernameFromEmail } from "@cypress/node/mappers/user-input.mapper";
 import { cleanupE2eUsersTask } from "@cypress/node/tasks/cleanup-e2e-users.task";
 import { createUserTask } from "@cypress/node/tasks/create-user.task";
+import { dbEnvTask } from "@cypress/node/tasks/db-env.task";
 import { deleteUserTask } from "@cypress/node/tasks/delete-user.task";
 import { seedDatabaseTask } from "@cypress/node/tasks/seed-database.task";
 import { upsertE2eUserTask } from "@cypress/node/tasks/upsert-e2e-user.task";
@@ -64,6 +65,9 @@ export function registerCypressTasks(
 		async "db:deleteUser"(email: string) {
 			await deleteUserTask(email);
 			return null;
+		},
+		"db:env"() {
+			return dbEnvTask();
 		},
 		async "db:reset"() {
 			return await callOkJson("/api/db/reset");
