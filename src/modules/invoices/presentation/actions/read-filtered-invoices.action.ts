@@ -1,6 +1,7 @@
 "use server";
+import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
-import { fetchFilteredInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-filtered-invoices.dal";
+import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
 
 /**
@@ -13,6 +14,12 @@ export async function readFilteredInvoicesAction(
 	query: string = "",
 	currentPage: number = 1,
 ): Promise<InvoiceListFilter[]> {
-	const db = getAppDb();
-	return await fetchFilteredInvoicesDal(db, query, currentPage);
+	const service = new InvoiceService(new InvoiceRepository(getAppDb()));
+	const result = await service.readFilteredInvoices(query, currentPage);
+
+	if (!result.ok) {
+		throw result.error;
+	}
+
+	return result.value;
 }

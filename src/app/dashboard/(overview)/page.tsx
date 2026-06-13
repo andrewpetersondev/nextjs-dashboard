@@ -4,7 +4,6 @@ import { readTotalCustomersCountAction } from "@/modules/customers/presentation/
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
 import { readInvoicesSummaryAction } from "@/modules/invoices/presentation/actions/read-invoices-summary.action";
 import { readLatestInvoicesAction } from "@/modules/invoices/presentation/actions/read-latest-invoices.action";
-import { getAppDb } from "@/server/db/db.connection";
 import {
 	ADMIN_ROLE,
 	GUEST_ROLE,
@@ -25,13 +24,11 @@ export const dynamic = "force-dynamic";
  * Renders role-appropriate dashboard with new invoice schema compatibility.
  */
 export default async function Page(): Promise<JSX.Element> {
-	const db = getAppDb();
-
 	const [session, invoicesSummary, latestInvoices, totalCustomers] =
 		await Promise.all([
 			verifySessionOptimistic(),
-			readInvoicesSummaryAction(db),
-			readLatestInvoicesAction(db, ITEMS_PER_PAGE_INVOICES),
+			readInvoicesSummaryAction(),
+			readLatestInvoicesAction(ITEMS_PER_PAGE_INVOICES),
 			readTotalCustomersCountAction(),
 		]);
 
