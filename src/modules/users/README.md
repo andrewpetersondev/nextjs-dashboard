@@ -4,9 +4,9 @@ The users module is the **admin-facing CRUD for user accounts** — the
 `/dashboard/users` screens where an administrator lists, searches, creates,
 edits, and deletes users and sets their role.
 
-It is **distinct from the `auth` module**: `auth` answers *"who is signing in,
-and is their session valid?"* (login, signup, sessions); `users` answers
-*"manage the people who have accounts."* The two operate on the same user
+It is **distinct from the `auth` module**: `auth` answers _"who is signing in,
+and is their session valid?"_ (login, signup, sessions); `users` answers
+_"manage the people who have accounts."_ The two operate on the same user
 records and share the role, password-hashing, and validation primitives, but
 cover different concerns.
 
@@ -56,9 +56,9 @@ behaviour — see its [rough edges](../invoices/README.md#conventions--known-rou
 
 ## Architecture at a glance
 
-Everything — reads *and* writes — flows through the service:
+Everything — reads _and_ writes — flows through the service:
 
-```
+```text
 Server Action ─▶ createUserService(db)  [factory]
                       │
                       ▼
@@ -81,14 +81,14 @@ The repository is wired as **ports and adapters**:
 
 ### How it compares to the sibling modules
 
-| Concern | `auth` | `users` | `invoices` |
-|---|---|---|---|
-| Application style | CQRS use-cases + workflows | single `UserService` | single `InvoiceService` |
-| Dependency inversion | yes (contracts) | **yes (contract + adapter)** | no (service holds the concrete repo) |
-| Composition | DI composition root | **factory function** | inline in each action |
-| Error model | `Result` end-to-end | **`Result` end-to-end** | service `Result`; repo/DAL throw |
-| Reads | via use-cases | **via the service** | list/aggregate reads bypass the service |
-| Tests | yes | **yes** (service / schema / action) | none yet |
+| Concern              | `auth`                     | `users`                             | `invoices`                              |
+| -------------------- | -------------------------- | ----------------------------------- | --------------------------------------- |
+| Application style    | CQRS use-cases + workflows | single `UserService`                | single `InvoiceService`                 |
+| Dependency inversion | yes (contracts)            | **yes (contract + adapter)**        | no (service holds the concrete repo)    |
+| Composition          | DI composition root        | **factory function**                | inline in each action                   |
+| Error model          | `Result` end-to-end        | **`Result` end-to-end**             | service `Result`; repo/DAL throw        |
+| Reads                | via use-cases              | **via the service**                 | list/aggregate reads bypass the service |
+| Tests                | yes                        | **yes** (service / schema / action) | none yet                                |
 
 `users` sits between `invoices` (simplest) and `auth` (richest): cleaner than
 invoices, lighter than auth.
@@ -97,7 +97,7 @@ invoices, lighter than auth.
 
 ## Directory structure
 
-```
+```text
 users/
 ├── domain/                              # Framework-agnostic core
 │   ├── entities/user.entity.ts          #   UserEntity, CreateUserProps, UpdateUserProps
@@ -185,19 +185,19 @@ exception escaping the service. Actions then turn `Result` into a `FormResult`
 Form schemas (`user.schema.ts`) are composed from the shared policy schemas
 (`EmailSchema`, `PasswordSchema`, `UsernameSchema`, `UserRoleFormSchema`) and use
 `strictObject` to reject unknown keys. The **edit** schema makes every field
-optional with a preprocessing step where an empty string means *"leave
-unchanged"* rather than *"set to empty."* Roles are parsed/validated via
+optional with a preprocessing step where an empty string means _"leave
+unchanged"_ rather than _"set to empty."_ Roles are parsed/validated via
 `toUserRole` from the shared user-role policy.
 
 ### The entity / DTO family
 
-| Type | Shape | Used for |
-|---|---|---|
-| `UserEntity` | full record | the domain truth (includes `password`, `sensitiveData`) |
-| `CreateUserProps` | `{ email, password: Hash, role, username }` | repository create input (password pre-hashed) |
-| `UpdateUserProps` | all fields optional | repository partial update |
-| `UserDto` | `{ id, email, role, username }` | transport to UI/API (no secrets) |
-| `CreateUserData` / `EditUserData` | `z.output` of the form schemas | validated input into the service |
+| Type                              | Shape                                       | Used for                                                |
+| --------------------------------- | ------------------------------------------- | ------------------------------------------------------- |
+| `UserEntity`                      | full record                                 | the domain truth (includes `password`, `sensitiveData`) |
+| `CreateUserProps`                 | `{ email, password: Hash, role, username }` | repository create input (password pre-hashed)           |
+| `UpdateUserProps`                 | all fields optional                         | repository partial update                               |
+| `UserDto`                         | `{ id, email, role, username }`             | transport to UI/API (no secrets)                        |
+| `CreateUserData` / `EditUserData` | `z.output` of the form schemas              | validated input into the service                        |
 
 ### Transactions
 
@@ -209,7 +209,7 @@ contract type. Page size for listings is `ITEMS_PER_PAGE_USERS` (10).
 
 ## Layer responsibilities
 
-- **domain/** — what a user *is*: the entity and its create/update prop shapes, the
+- **domain/** — what a user _is_: the entity and its create/update prop shapes, the
   branded `UserId`, the Zod form schemas, and the message constants. No Next.js, no
   Drizzle.
 - **application/** — the `UserRepositoryContract` port and the `UserService` that

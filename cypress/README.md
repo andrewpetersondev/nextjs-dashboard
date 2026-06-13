@@ -29,14 +29,14 @@ it, and the known rough edges.
 
 ## Overview
 
-| | |
-|---|---|
-| **Runner** | Cypress 15 (`e2e` testing type) |
-| **Specs** | `cypress/e2e/**/*.cy.ts` |
-| **Helpers** | `@testing-library/cypress` (role/text queries) + `cypress-axe` (a11y) |
-| **Server** | `next dev` in test mode, booted via `start-server-and-test` |
+|              |                                                                       |
+| ------------ | --------------------------------------------------------------------- |
+| **Runner**   | Cypress 15 (`e2e` testing type)                                       |
+| **Specs**    | `cypress/e2e/**/*.cy.ts`                                              |
+| **Helpers**  | `@testing-library/cypress` (role/text queries) + `cypress-axe` (a11y) |
+| **Server**   | `next dev` in test mode, booted via `start-server-and-test`           |
 | **Database** | Postgres `test_db` (local Docker `dashboard-postgres` in development) |
-| **Env** | validated from `.env.test.local` with Zod before the run starts |
+| **Env**      | validated from `.env.test.local` with Zod before the run starts       |
 
 Everything is configured from [`cypress.config.ts`](../cypress.config.ts) at the
 repo root, which validates the environment, wires the base URL, and registers the
@@ -46,7 +46,7 @@ Node tasks.
 
 ## Architecture at a glance
 
-There are **two processes**, and a spec can reach the database through *either* of
+There are **two processes**, and a spec can reach the database through _either_ of
 them:
 
 ```mermaid
@@ -91,7 +91,7 @@ task** (Drizzle). Knowing which you're using explains most "why can't I read
 
 ## Directory structure
 
-```
+```text
 cypress/
 ├── e2e/                       # Browser-side specs + their shared constants
 │   ├── auth/                  #   login, logout, signup, demo-user, access-control
@@ -169,9 +169,9 @@ sequenceDiagram
 After a seed you can rely on these demo accounts (from
 [`devtools/seed/data/seed.users.ts`](../devtools/seed/data/seed.users.ts)):
 
-| Account | Email | Role |
-|---|---|---|
-| Demo user | `user@user.com` | `user` |
+| Account    | Email             | Role    |
+| ---------- | ----------------- | ------- |
+| Demo user  | `user@user.com`   | `user`  |
 | Demo admin | `admin@admin.com` | `admin` |
 | Demo guest | `guest@guest.com` | `guest` |
 
@@ -187,14 +187,14 @@ The login form exposes "Login as demo user / admin" buttons, surfaced as the
 Defined in [`support/commands.ts`](support/commands.ts) and typed on
 `Cypress.Chainable`:
 
-| Command | Does |
-|---|---|
-| `cy.login({ email, password })` | fills + submits the login form, asserts dashboard |
-| `cy.signup({ username, email, password })` | fills + submits signup, asserts dashboard |
-| `cy.loginAsDemoUser()` / `cy.loginAsDemoAdmin()` | clicks the demo-login button |
-| `cy.logoutViaForm()` | signs out via the dashboard's Sign Out button |
-| `cy.dbReset()` / `cy.dbSeed()` / `cy.dbResetAndSeed()` | database lifecycle |
-| `cy.logEnv()` | logs the Cypress env (see the secrets caveat below) |
+| Command                                                | Does                                                |
+| ------------------------------------------------------ | --------------------------------------------------- |
+| `cy.login({ email, password })`                        | fills + submits the login form, asserts dashboard   |
+| `cy.signup({ username, email, password })`             | fills + submits signup, asserts dashboard           |
+| `cy.loginAsDemoUser()` / `cy.loginAsDemoAdmin()`       | clicks the demo-login button                        |
+| `cy.logoutViaForm()`                                   | signs out via the dashboard's Sign Out button       |
+| `cy.dbReset()` / `cy.dbSeed()` / `cy.dbResetAndSeed()` | database lifecycle                                  |
+| `cy.logEnv()`                                          | logs the Cypress env (see the secrets caveat below) |
 
 ### Selectors: prefer `data-cy`
 
@@ -206,7 +206,7 @@ emitted by `ServerMessageMolecule`.
 > **Gotcha — the invoices list renders two tables.** A mobile card list
 > (`md:hidden`) and a desktop table (`hidden md:table`) **both** carry
 > `data-cy="invoice-row"` and both render edit/delete buttons. At any viewport
-> only one is visible, so `.first()` / `cy.contains()` can grab the *hidden* copy.
+> only one is visible, so `.first()` / `cy.contains()` can grab the _hidden_ copy.
 > Scope to the visible one: `[data-cy="invoice-row"]:visible`. (See
 > `invoices/delete-form.cy.ts` and `update-form.cy.ts`.)
 
@@ -241,13 +241,13 @@ fast and loud instead of mid-suite.
 
 **Commands** (all load `.env.test.local` automatically):
 
-| Script | What it does |
-|---|---|
-| `pnpm cy:e2e` | clean, boot the test server, run **all** specs headless, tear down |
-| `pnpm cy:open` | same, but opens the interactive Cypress runner |
-| `pnpm cy:run` | run specs against an **already-running** server |
-| `pnpm cy:server` | boot only the Next.js test server |
-| `pnpm typecheck:cypress` | type-check the Cypress project on its own |
+| Script                   | What it does                                                       |
+| ------------------------ | ------------------------------------------------------------------ |
+| `pnpm cy:e2e`            | clean, boot the test server, run **all** specs headless, tear down |
+| `pnpm cy:open`           | same, but opens the interactive Cypress runner                     |
+| `pnpm cy:run`            | run specs against an **already-running** server                    |
+| `pnpm cy:server`         | boot only the Next.js test server                                  |
+| `pnpm typecheck:cypress` | type-check the Cypress project on its own                          |
 
 `pnpm cy:e2e` uses `start-server-and-test` to boot `next dev` (test env), wait for
 the port, run the suite, then kill the server — so it's the one command you need

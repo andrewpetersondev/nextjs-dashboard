@@ -83,7 +83,7 @@ Promise < Result < AuthenticatedUserDto, AppError >> {
 
 ## Directory Structure
 
-```
+```text
 application/
 ├── auth-user/                      # Auth user subdomain
 │   ├── commands/                   # Write operations (login, signup)
@@ -224,7 +224,7 @@ Cross-cutting concerns:
 ## Workflows vs Use Cases
 
 | Aspect           | Use Case                           | Workflow                                           |
-|------------------|------------------------------------|----------------------------------------------------|
+| ---------------- | ---------------------------------- | -------------------------------------------------- |
 | **Scope**        | Single business operation          | Orchestrates multiple use cases                    |
 | **Dependencies** | Infrastructure contracts           | Use cases + services                               |
 | **Example**      | `LoginUseCase` (authenticate user) | `loginWorkflow` (authenticate + establish session) |
@@ -242,7 +242,7 @@ Cross-cutting concerns:
 
 ### **Error Flow**
 
-```
+```text
 Infrastructure Error → AppError → Use Case → Workflow → Presentation
 ```
 
@@ -410,5 +410,5 @@ Changes to contracts or DTOs are breaking changes. Coordinate with:
 
 ---
 
-**Last Updated**: 2026-02-01  
+**Last Updated**: 2026-02-01\
 **Maintainer**: Auth Module Team

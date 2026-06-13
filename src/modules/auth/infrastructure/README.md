@@ -12,7 +12,7 @@ access, cryptography, and JWT operations.
 - [Architecture Principles](#architecture-principles)
 - [Directory Structure](#directory-structure)
 - [Key Components](#key-components)
-- [Composition Root](#composition-root)
+- [Composition Root](#composition-root-composition)
 - [Session Infrastructure](#session-infrastructure)
 - [Persistence Layer](#persistence-layer)
 - [Security Implementations](#security-implementations)
@@ -116,7 +116,7 @@ export class AuthUserRepository {
 
 ## Directory Structure
 
-```
+```text
 infrastructure/
 ├── composition/                    # Dependency Injection
 │   ├── auth.composition.ts         # Main composition root
@@ -255,7 +255,7 @@ export function loginUseCaseFactory(
 
 ### **Session Token Flow**
 
-```
+```text
 SessionService
   └─ EstablishSessionUseCase
       ├─ SessionTokenService.issue()
@@ -651,5 +651,5 @@ Changes to adapters or services that implement application contracts are breakin
 
 ---
 
-**Last Updated**: 2026-02-01  
+**Last Updated**: 2026-02-01\
 **Maintainer**: Auth Module Team

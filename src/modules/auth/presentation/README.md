@@ -97,7 +97,7 @@ export type LoginFormResult = FormResult<LoginField>;
 
 ## Directory Structure
 
-```
+```text
 presentation/
 ├── authn/                          # Authentication UI
 │   ├── actions/                    # Server Actions
@@ -199,32 +199,32 @@ export async function myAction(
 
 Authenticates user and establishes session.
 
-**Input:** Email, password  
-**Success:** Redirect to dashboard  
+**Input:** Email, password\
+**Success:** Redirect to dashboard\
 **Errors:** Invalid credentials, validation errors
 
 #### **signupAction** (`actions/signup.action.ts`)
 
 Registers new user and establishes session.
 
-**Input:** Email, username, password  
-**Success:** Redirect to dashboard  
+**Input:** Email, username, password\
+**Success:** Redirect to dashboard\
 **Errors:** Duplicate email/username, validation errors
 
 #### **demoUserAction** & **demoAdminAction** (`actions/demo-user.action.ts`)
 
 Creates temporary demo user for testing with the corresponding role.
 
-**Input:** None (Role is determined by the action)  
-**Success:** Redirect to dashboard  
+**Input:** None (Role is determined by the action)\
+**Success:** Redirect to dashboard\
 **Errors:** Demo user creation failed
 
 #### **logoutAction** (`actions/logout.action.ts`)
 
 Terminates current session.
 
-**Input:** None  
-**Success:** Redirect to login  
+**Input:** None\
+**Success:** Redirect to login\
 **Errors:** Session termination failed
 
 ---
@@ -237,10 +237,10 @@ checks in `proxy.ts` (middleware) are not sufficient on their own. The guards in
 [`session/guards/session-access.guard.ts`](session/guards/session-access.guard.ts)
 make each sensitive action enforce its own authorization (defense in depth).
 
-| Guard | Requires | Redirects when denied | Used by |
-|---|---|---|---|
-| `requireSession()` | any valid session | login | invoice mutations (create / update / delete) |
-| `requireAdmin()` | an **admin** session | login (anon) · dashboard root (non-admin) | every user action — create / update / delete **and** the user reads (PII) |
+| Guard              | Requires             | Redirects when denied                     | Used by                                                                   |
+| ------------------ | -------------------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| `requireSession()` | any valid session    | login                                     | invoice mutations (create / update / delete)                              |
+| `requireAdmin()`   | an **admin** session | login (anon) · dashboard root (non-admin) | every user action — create / update / delete **and** the user reads (PII) |
 
 Both reuse `verifySessionOptimistic()` (the canonical session check, wrapped in
 React `cache`), so there is one source of truth for "is there a session" and
@@ -260,7 +260,7 @@ for how this layers under the route gate.
 
 ### **Component Hierarchy**
 
-```
+```text
 Page (app/login/page.tsx)
   └─ LoginCard (presentation/authn/components/cards/)
       └─ LoginForm (presentation/authn/components/forms/)
@@ -356,7 +356,7 @@ Two-stage validation:
 />
 ```
 
-2. **Server-side** (always runs):
+1. **Server-side** (always runs):
 
 ```typescript
 const validated = await validateForm(formData, LoginRequestSchema, fields);
@@ -382,7 +382,7 @@ Errors are displayed using `AuthFormFeedback`:
 
 ### **Error Mapping Flow**
 
-```
+```text
 AppError (application layer)
   ↓ toLoginFormResult()
 FormResult<LoginField> (presentation layer)
@@ -661,5 +661,5 @@ Changes to Server Action signatures or form field names are breaking changes. Co
 
 ---
 
-**Last Updated**: 2026-06-09  
+**Last Updated**: 2026-06-09\
 **Maintainer**: Auth Module Team

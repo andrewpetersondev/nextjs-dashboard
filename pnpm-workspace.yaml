@@ -3,11 +3,13 @@ packages:
 
 allowBuilds:
   cypress: true
+  dprint: true
   esbuild: true
   sharp: true
 
 onlyBuiltDependencies:
   - cypress
+  - dprint
   - esbuild
   - sharp
 

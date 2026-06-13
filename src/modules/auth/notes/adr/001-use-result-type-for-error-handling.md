@@ -3,7 +3,7 @@
 ## Status
 
 Accepted
- 
+
 ## Context
 
 Traditional error handling in TypeScript often relies on `try-catch` blocks and throwing exceptions. However, exceptions
