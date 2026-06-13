@@ -14,8 +14,6 @@ this file is the deliberate workaround.)
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
-- [ ] **Live deploy** — Vercel + Neon account setup: create projects, set env vars,
-      run prod migrate + seed, paste the live URL into the README.
 - [ ] **Vitest Phase 3** — remaining breadth (`server`, invoices/customers domain) and
       consider coverage thresholds once breadth lands. Forms breadth DONE (2026-06-11):
       68 characterization tests across all 11 testable forms files, pinning the three
@@ -124,6 +122,15 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Live deploy** _(2026-06-13)_ — the managed Vercel + Neon path is live. The
+      production deployment is promoted and serving at
+      <https://nextjs-dashboard-beige-pi-12.vercel.app/> (verified 200 OK — "Acme"
+      landing page → `admin@admin.com` / `AdminPassword123!` demo login), and the URL is
+      now in the README. Completes deploy Phase 3, building on the Docker standalone
+      stack with `/api/health` + `docs/deployment.md` (#35), the Neon prod DB plus the
+      backfilled `0006` seed fix (#44), and per-PR Vercel previews (#55). Cost: $0 on
+      free tiers.
 
 - [x] **Auth/invoices structure-assessment fixes** _(2026-06-13)_ — applied all 5 fixes
       from the 2026-06-12 module-structure assessment (verdict: **no restructure**; the

@@ -5,7 +5,7 @@
 A modern dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS. It includes
 authentication, middleware-based route protection, database migrations/seeding, and end-to-end tests with Cypress.
 
-> **Live demo:** _add your Vercel URL here_ &nbsp;·&nbsp; **Demo login:** `admin@admin.com` / `AdminPassword123!`
+> **Live demo:** <https://nextjs-dashboard-beige-pi-12.vercel.app/> &nbsp;·&nbsp; **Demo login:** `admin@admin.com` / `AdminPassword123!`
 >
 > Run it yourself in one command: `docker compose up --build` → <http://localhost:3000>. See [Deployment](#deployment).
 
