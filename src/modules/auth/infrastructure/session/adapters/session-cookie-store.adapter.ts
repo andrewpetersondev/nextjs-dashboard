@@ -1,7 +1,7 @@
 import "server-only";
 import type { SessionStoreContract } from "@/modules/auth/application/session/contracts/session-store.contract";
 import { getSessionCookieOptionsConfig } from "@/modules/auth/infrastructure/session/config/session-cookie-options.config";
-import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructure/session/helpers/to-session-cookie-max-age-seconds.helper";
+import { toSessionCookieMaxAgeSecondsHelper } from "@/modules/auth/infrastructure/session/to-session-cookie-max-age-seconds.helper";
 import { SESSION_COOKIE_NAME } from "@/modules/auth/infrastructure/session/types/session-cookie.constants";
 import type { CookieContract } from "@/server/cookies/cookie.contract";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";

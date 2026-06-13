@@ -21,7 +21,7 @@ import {
 	evaluateSessionLifecyclePolicy,
 	requiresRotation,
 	requiresTermination,
-} from "@/modules/auth/domain/session/policies/lifecycle/evaluate-session-lifecycle.policy";
+} from "@/modules/auth/domain/session/policies/evaluate-session-lifecycle.policy";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { Err, Ok } from "@/shared/core/result/result";

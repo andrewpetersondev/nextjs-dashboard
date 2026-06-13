@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireSession } from "@/modules/auth/presentation/session/guards/session-access.guard";
+import { requireSession } from "@/modules/auth/presentation/session/session-access.guard";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";

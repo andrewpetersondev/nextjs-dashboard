@@ -1,7 +1,7 @@
 import "server-only";
 import type { AuthTxDeps } from "@/modules/auth/application/auth-user/contracts/repositories/auth-tx.deps";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/auth-user/adapters/auth-user-repository.adapter";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
