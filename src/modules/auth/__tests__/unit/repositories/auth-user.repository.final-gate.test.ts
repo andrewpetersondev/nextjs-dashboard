@@ -1,7 +1,7 @@
 import { makeMockLogger } from "@test-support/mocks/logger.mock";
 import { describe, expect, it, vi } from "vitest";
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/auth-user.repository";
 
 vi.mock(
 	"@/modules/auth/infrastructure/persistence/auth-user/dal/insert-user.dal",

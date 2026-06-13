@@ -3,7 +3,7 @@ import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth
 import type { AuthUserCreateDto } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-create.dto";
 import type { AuthUserLookupQuery } from "@/modules/auth/application/auth-user/dtos/requests/auth-user-lookup.query";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
-import type { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
+import type { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/auth-user.repository";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 import type { UserRole } from "@/shared/policies/user-role/user-role.constants";

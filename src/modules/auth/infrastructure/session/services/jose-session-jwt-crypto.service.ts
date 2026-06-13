@@ -6,7 +6,7 @@ import {
 	MIN_HS256_KEY_LENGTH,
 } from "@/modules/auth/infrastructure/session/config/session-jwt.constants";
 import { SESSION_TOKEN_CLOCK_TOLERANCE_SEC } from "@/modules/auth/infrastructure/session/config/session-token.constants";
-import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/strategies/session-jwt-crypto.strategy";
+import type { SessionJwtCryptoStrategy } from "@/modules/auth/infrastructure/session/session-jwt-crypto.strategy";
 import type { SessionJwtClaimsTransport } from "@/modules/auth/infrastructure/session/types/session-jwt-claims.transport";
 import type { SessionJwtVerifyOptionsTransport } from "@/modules/auth/infrastructure/session/types/session-jwt-verify-options.transport";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";

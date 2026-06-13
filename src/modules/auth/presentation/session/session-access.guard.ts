@@ -1,7 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import type { SessionVerificationDto } from "@/modules/auth/application/session/dtos/responses/session-verification.dto";
-import { verifySessionOptimistic } from "@/modules/auth/presentation/session/actions/verify-session-optimistic.action";
+import { verifySessionOptimistic } from "@/modules/auth/presentation/session/verify-session-optimistic.action";
 import { ADMIN_ROLE } from "@/shared/policies/user-role/user-role.constants";
 import { ROUTES } from "@/shared/routing/routes";
 

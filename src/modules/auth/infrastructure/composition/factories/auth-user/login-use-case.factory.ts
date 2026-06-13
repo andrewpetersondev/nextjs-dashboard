@@ -3,7 +3,7 @@ import { LoginUseCase } from "@/modules/auth/application/auth-user/commands/logi
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-user-repository.contract";
 import { passwordHasherFactory } from "@/modules/auth/infrastructure/composition/factories/crypto/password-hasher.factory";
 import { AuthUserRepositoryAdapter } from "@/modules/auth/infrastructure/persistence/auth-user/adapters/auth-user-repository.adapter";
-import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/repositories/auth-user.repository";
+import { AuthUserRepository } from "@/modules/auth/infrastructure/persistence/auth-user/auth-user.repository";
 import type { AppDatabase } from "@/server/db/db.connection";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 

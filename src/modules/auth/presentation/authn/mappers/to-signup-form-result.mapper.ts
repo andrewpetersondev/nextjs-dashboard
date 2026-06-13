@@ -74,16 +74,13 @@ export function toSignupFormResult(
 		if (emailConflict) {
 			sparseFieldErrorsMutable.email = ALREADY_IN_USE_FIELD_ERRORS;
 		}
-
 		if (usernameConflict) {
 			sparseFieldErrorsMutable.username = ALREADY_IN_USE_FIELD_ERRORS;
 		}
-
 		if (!(emailConflict || usernameConflict)) {
 			sparseFieldErrorsMutable.email = ALREADY_IN_USE_FIELD_ERRORS;
 			sparseFieldErrorsMutable.username = ALREADY_IN_USE_FIELD_ERRORS;
 		}
-
 		const sparseFieldErrors = Object.freeze(
 			sparseFieldErrorsMutable,
 		) as SparseFieldErrorMap<SignupField, string>;

@@ -1,9 +1,9 @@
 import "server-only";
+import { AuthErrorFactory } from "@/modules/auth/application/auth-user/auth-error.factory";
 import type { AuthUserRepositoryContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-user-repository.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { LoginCommand } from "@/modules/auth/application/auth-user/dtos/requests/login.command";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
-import { AuthErrorFactory } from "@/modules/auth/application/auth-user/errors/auth-error.factory";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import { toAuthenticatedUserDto } from "@/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper";
