@@ -51,20 +51,43 @@ this file is the deliberate workaround.)
       are config/peer false positives), 18 exports + 13 types.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
-- [ ] **e2e port-reuse guard** — `cy:e2e` inherits the session's `PORT` (the
-      `env:test*` scripts run dotenv without `-o`, so an exported `PORT` wins over
-      `.env.test.local`), and start-server-and-test reuses ANY server already
-      answering on that port. With a dev preview running on 3001, two full suite
-      runs (2026-06-11) silently executed against the dev server — `/api/db/reset`
-      404s there, so 7 specs "failed" with no hint of the real cause. Fix ideas:
-      add `-o` to the `env:test*` scripts, pin the cypress PORT, or have
-      `cypress-with-server.cli.ts` verify the responding server's `DATABASE_ENV`
-      (the `smoke/db-env-guard` spec already proves the concept).
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
 
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **e2e port-reuse guard** _(2026-06-13)_ — closed the trap that let `cy:e2e`
+      silently run against the wrong server (the 2026-06-11 incident: 7 specs
+      "failed" with `/api/db/reset` 404s because the suite hit a dev preview, not the
+      test server). Re-auditing the script graph (verified against installed
+      `dotenv-cli@11`/`start-server-and-test@3.0.9` source) showed it was **two
+      distinct bugs**, fixed separately:
+  - **Bug A — wrong port _number_.** The `env:test*` scripts load dotenv without
+    `--override`, so an exported shell `PORT` silently shadows `.env.test.local`'s
+    `PORT` (`dotenv` `populate()` keeps already-set keys). Fix: the harness now
+    **owns the port** — `cypress-with-server.cli.ts` reads `PORT` straight from
+    `.env.test.local` (via `dotenv.parse`), warns if an exported `PORT` differs, and
+    **pins it** in the spawned child env so the server bind, the wait-on probe, and
+    Cypress's `baseUrl` can't diverge. The shared `env:*` wrappers were left
+    untouched (a blanket `-o` is a global precedence change — it's consumed by 37
+    scripts incl. destructive `db:*:prod` and the CI entrypoints — so it was the
+    wrong shape).
+  - **Bug B — wrong server on the _right_ port.** Correcting the old wording:
+    `start-server-and-test` has **no "reuse" feature** — it unconditionally starts
+    its server; the real mechanism is that `wait-on` accepts any 2xx/304 with **no
+    identity check** while `next dev` (no `-p`) steps aside when the port is busy, so
+    a squatter answering the port is used. Fix: a new `cy:preflight` step
+    (`devtools/cli/e2e-preflight.cli.ts`, wired into the harness's test command)
+    asks `/api/health` which DB the live server is on and **aborts before any spec
+    runs** unless `databaseEnv === "test"`. `/api/health` now returns a non-secret
+    `{ databaseEnv, databaseName }` outside production (omitted on the public prod
+    endpoint), reusing the same non-secret derivation as the `smoke/db-env-guard`
+    spec — lifting that check from mid-suite to a fast pre-flight. _Verified live:
+    health returns `databaseEnv` on a 200; preflight refuses a dev server
+    (`databaseEnv=development`, exit 1) and errors cleanly on an unreachable port;
+    `check:fast` green._ Follow-up (unscheduled): `smoke/db-env-guard` could
+    consolidate onto the HTTP endpoint.
 
 - [x] **Env hygiene** _(2026-06-13, PR #67)_ — finished the deploy-prep env cleanup
       (surfaced 2026-06-11). Four fixes: (1) deleted dead `LOG_LEVEL` plumbing

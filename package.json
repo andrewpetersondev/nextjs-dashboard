@@ -72,6 +72,7 @@
 		"cy:e2e:run": "pnpm cy:clean && pnpm env:test:pnpm cypress run --e2e",
 		"cy:open": "pnpm cy:e2e:open",
 		"cy:open:with-server": "pnpm cy:clean && pnpm env:test:pnpm tsx --tsconfig tsconfig.json devtools/cli/cypress-with-server.cli.ts open",
+		"cy:preflight": "pnpm tsx --tsconfig tsconfig.json devtools/cli/e2e-preflight.cli.ts",
 		"cy:run": "pnpm cy:e2e:run",
 		"cy:server": "pnpm next:dev:test",
 		"db:generate:dev": "pnpm env:dev drizzle-kit generate",
