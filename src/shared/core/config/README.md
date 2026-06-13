@@ -17,7 +17,6 @@
 - Validates private, runtime-only vars:
   - `DATABASE_URL`
   - `SESSION_SECRET` / `ISSUER` / `AUDIENCE`
-  - `LOG_LEVEL`
 - Throws early if required values are missing/invalid
 - Caches + freezes values for immutability
 - Exports both constants and a `getServerEnv()` helper
