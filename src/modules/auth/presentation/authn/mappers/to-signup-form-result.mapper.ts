@@ -35,6 +35,11 @@ const ALREADY_IN_USE_FIELD_ERRORS: FieldError<string> = Object.freeze([
  * the same unified error message strategy for security against enumeration,
  * as the existence of an account is typically revealed during the process.
  *
+ * The unique-violation branch builds the client-visible metadata explicitly
+ * (field errors, echoed form data, pg code) instead of forwarding the server
+ * error's metadata, so raw Postgres fields never reach the client. The full
+ * server error is preserved as `cause` for server-side logging.
+ *
  * Returns `FormResult<never>` because this mapper is intended for error scenarios
  * only (it never returns a success state).
  *
@@ -88,13 +93,16 @@ export function toSignupFormResult(
 			SIGNUP_FIELDS_LIST,
 		);
 
+		// The result crosses the Server Action boundary (toDto keeps metadata
+		// verbatim but drops cause), so metadata carries only form-relevant
+		// fields. Postgres internals — detail, table, schema, constraint —
+		// stay server-side on the cause chain. pgCode is kept because
+		// ConflictErrorMetadataSchema requires it.
 		return toFormErrResult(
 			makeAppError(APP_ERROR_KEYS.conflict, {
 				cause: error,
 				message: "Value already in use",
 				metadata: Object.freeze({
-					...error.metadata,
-					constraint,
 					fieldErrors,
 					formData: echoed,
 					formErrors: Object.freeze([]),
