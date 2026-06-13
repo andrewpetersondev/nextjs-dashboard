@@ -7,11 +7,11 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Weekly codemod routine** — scheduled Claude agent that checks Next.js/Biome
-  releases, runs the codemods, verifies with `pnpm check:fast`, and opens a PR.
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
   override automation + grouped dep updates (Dependabot can't do those). Replaces
-  Dependabot; needs the Mend Renovate GitHub App installed.
+  Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
+  2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
+  pnpm/node/override gap; Renovate would still automate grouped updates.)_
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
   `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Live deploy** — Vercel + Neon account setup: create projects, set env vars,
@@ -57,25 +57,33 @@ this file is the deliberate workaround.)
     only uses `toFormErrorPayload`; the mapper variant is imported solely by auth
     integration tests and differs in fallback semantics (`[error.message]`).
 - [ ] **Env hygiene** — surfaced during deploy prep (2026-06-11):
-  - [ ] Remove dead `LOG_LEVEL` plumbing — only the unused `_getLogLevel` in
-    `env-shared.ts` reads it; the real runtime level comes from
-    `NEXT_PUBLIC_LOG_LEVEL` (with an `info` fallback in `logging.levels.ts`).
-    Drop the tuple entry and the template line together.
-  - [ ] Drop the per-lookup `console.log` in `env-access.utils.ts`
-    (`Retrieving env var: …`) — it spams production function logs on every request.
+  - [x] Remove dead `LOG_LEVEL` plumbing _(2026-06-13)_ — deleted `getLogLevelResult` +
+    `_getLogLevel` from `env-shared.ts` (and their orphaned `LogLevel`/`LogLevelSchema`
+    imports), dropped the `"LOG_LEVEL"` entry from the `env-access.utils.ts` accessor
+    tuple, and removed the stale `LOG_LEVEL` bullet from `config/README.md`. Runtime level
+    still comes from `NEXT_PUBLIC_LOG_LEVEL`; `check:fast` green. **Still TODO by hand:**
+    delete `LOG_LEVEL=info` from `.env.example.local` — the deny rule blocks tooling from
+    editing env files.
+  - [x] Drop the per-lookup `console.log` in `env-access.utils.ts` _(2026-06-13)_ —
+    removed the `Retrieving env var: …` line. (A second `console.log` on the missing/empty
+    path remains, but it only fires on error, not on every lookup.)
   - [ ] Decide `SESSION_ISSUER`/`SESSION_AUDIENCE` shape — single-literal zod enums
     make them constants-as-env-vars. Either widen to `z.string().min(1)` so the env
     actually configures them (renaming later invalidates live sessions), or hardcode
     them as code constants and drop the env vars.
-  - [ ] Remove `AUTH_SECRET`/`AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` from
+  - [x] Remove `AUTH_SECRET`/`AUTH_GITHUB_ID`/`AUTH_GITHUB_SECRET` from
     `.env.example.local` and any real env files — auth.js holdovers, zero references
-    in code since the custom jose/bcrypt auth replaced it.
-- [ ] **Per-env migration drift guard** — prod's migration set was missing the
-  `revenues` DROP (dev/test had their 0006; prod stopped at 0005), so the first truly
-  fresh production DB (Neon, 2026-06-11) was created with an obsolete FK and
-  `db:seed:prod` failed with 23503. Three independent migration folders make this
-  drift invisible. Either collapse to a single migration set, or add a CI check that
-  the three `meta/_journal.json`/latest snapshots describe the same final schema.
+    in code since the custom jose/bcrypt auth replaced it. _(Verified done 2026-06-13:
+    absent from `.env.example.local`, zero code references. Double-check your own
+    real `.env*.local` files — tooling can't read those.)_
+- [ ] **Per-env migration drift guard** — _symptom resolved (2026-06-13): prod's missing
+  `revenues` DROP was backfilled — prod now has `0006`, matching dev/test — and the
+  `weekly-maintenance` routine now reports journal drift weekly. Remaining work = the
+  systemic guard._ Three independent migration folders (`drizzle/migrations/{dev,test,prod}`)
+  still let schemas drift silently: the 2026-06-11 miss created a fresh Neon prod DB with an
+  obsolete FK and failed `db:seed:prod` with 23503. Either collapse to a single migration
+  set, or add a CI **gate** that the three `meta/_journal.json`/latest snapshots describe the
+  same final schema (the weekly report is detection, not enforcement).
 - [ ] **knip full-report triage** — the earlier "knip residue" list came from a
   truncated report tail; the full report still shows (all pre-existing): 10 unused
   files (incl. `crypto.service.ts`, auth `mapper-chains`/`mapper-registry`, and 6
@@ -96,12 +104,23 @@ this file is the deliberate workaround.)
   `cypress-with-server.cli.ts` verify the responding server's `DATABASE_ENV`
   (the `smoke/log-env` spec already proves the concept).
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
-- [ ]  The allowCypressEnv configuration option is enabled. This allows any browser code to read values from
-  Cypress.env(). This is insecure and will be removed in a future major version.
+- [ ] **Secrets readable via `Cypress.env()`** — `cypress.config.ts` writes `DATABASE_URL`
+  and `SESSION_SECRET` into `config.env` (in `setupNodeEvents`), so any browser-side spec
+  code can read them through `Cypress.env()`. (The original note blamed the `allowCypressEnv`
+  option, but that flag isn't actually set — the exposure is the explicit `config.env.*`
+  assignments.) Pass only what specs truly need to the browser; keep DB/secret values
+  Node-side in tasks, or scope them out of `config.env`.
 
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Weekly codemod routine** _(2026-06-13)_ — created as a live `/schedule` cloud
+  agent (`weekly-maintenance`, Mondays ~9am Central). Scope expanded past the original
+  Next.js/Biome codemods to also cover dependency-pin blind spots (pnpm/Node/overrides),
+  a migration-drift guard across the three drizzle migration sets, and a knip+`pnpm audit`
+  report — all in one weekly PR; verifies with `check:fast`+unit, never runs e2e, never
+  pushes to main. Full spec: `docs/weekly-maintenance-routine.md`.
 
 - [x] **knip residue (named seven)** _(2026-06-11)_ — un-exported the five
   internally-used types (`DalIdentifiers`, `PgErrorMetadataBase`, `FormErrResult`,

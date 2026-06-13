@@ -2,8 +2,6 @@ import { getPublicNodeEnvResult } from "@/shared/core/config/public/env-public";
 import {
 	type DatabaseEnvironment,
 	DatabaseEnvironmentSchema,
-	type LogLevel,
-	LogLevelSchema,
 	type NodeEnvironment,
 	NodeEnvironmentSchema,
 } from "@/shared/core/config/schemas/env-schemas";
@@ -77,41 +75,6 @@ function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
 		);
 	}
 	return Ok(result.data);
-}
-
-/**
- * Get effective LOG_LEVEL as a Result.
- *
- * @returns A Result containing the validated LogLevel or an AppError.
- */
-function getLogLevelResult(): Result<LogLevel, AppError> {
-	const raw = getEnvVariable("LOG_LEVEL");
-	const result = LogLevelSchema.safeParse(raw);
-	if (!result.success) {
-		return Err(
-			makeAppError(APP_ERROR_KEYS.validation, {
-				cause: "",
-				message: `Invalid LOG_LEVEL value "${raw}": ${result.error.message}`,
-				metadata: {},
-			}),
-		);
-	}
-	return Ok(result.data);
-}
-
-/**
- * Get effective LOG_LEVEL.
- * - Requires LOG_LEVEL to be set and valid
- *
- * @returns The validated LogLevel.
- * @throws {Error} When LOG_LEVEL is invalid.
- */
-function _getLogLevel(): LogLevel {
-	const result = getLogLevelResult();
-	if (result.ok) {
-		return result.value;
-	}
-	throw new Error(result.error.message);
 }
 
 /**
