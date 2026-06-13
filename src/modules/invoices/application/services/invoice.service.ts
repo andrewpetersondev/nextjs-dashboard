@@ -3,8 +3,10 @@ import "server-only";
 import type {
 	InvoiceDto,
 	InvoiceFormDto,
+	InvoicesSummary,
 } from "@/modules/invoices/application/dto/invoice.dto";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
 import {
 	dtoToCreateInvoiceEntity,
@@ -163,5 +165,26 @@ export class InvoiceService {
 			);
 		}
 		return Ok(await this.repo.delete(toInvoiceId(id)));
+	}
+
+	async readFilteredInvoices(
+		query: string,
+		currentPage: number,
+	): Promise<Result<InvoiceListFilter[], AppError>> {
+		return Ok(await this.repo.readFiltered(query, currentPage));
+	}
+
+	async readInvoicesPages(query: string): Promise<Result<number, AppError>> {
+		return Ok(await this.repo.readPagesCount(query));
+	}
+
+	async readLatestInvoices(
+		limit: number,
+	): Promise<Result<InvoiceListFilter[], AppError>> {
+		return Ok(await this.repo.readLatest(limit));
+	}
+
+	async readInvoicesSummary(): Promise<Result<InvoicesSummary, AppError>> {
+		return Ok(await this.repo.readSummary());
 	}
 }
