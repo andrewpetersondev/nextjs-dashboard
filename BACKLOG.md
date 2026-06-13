@@ -86,7 +86,7 @@ this file is the deliberate workaround.)
 
 <!-- Move finished items here with a date, or delete them. -->
 
-- [x] **Secrets no longer readable via `Cypress.env()`** _(2026-06-13)_ —
+- [x] **Secrets no longer readable via `Cypress.env()`** _(2026-06-13, PR #66)_ —
       `cypress.config.ts` no longer writes `DATABASE_URL`/`SESSION_SECRET`/`DATABASE_ENV`
       into `config.env`, so browser-side spec code can't read them through `Cypress.env()`
       (and they can't leak into the command log/screenshots). The env-safety guard that the
