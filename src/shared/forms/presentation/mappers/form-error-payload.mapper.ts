@@ -8,11 +8,19 @@ import {
 } from "@/shared/forms/logic/inspectors/form-error.inspector";
 import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
 
-// TODO: THESE FUNCTIONS OVERLAP AND INDICATE A REFACTOR IS NEEDED
-
 /**
  * Adapts a canonical AppError (entity or serialized DTO) into a shape the
  * Form UI can consume.
+ *
+ * This is the single mapper for turning an error into a form payload — both at
+ * the action boundary (mapping a service error into a `FormResult`) and when
+ * decoding a serialized `FormResult.error` back for the UI/tests. It surfaces
+ * exactly what the error carries: `formErrors` comes straight from the error's
+ * form metadata and is `[]` when there is none. It deliberately does NOT
+ * synthesize a form-level error from `error.message` — callers that want the
+ * message surfaced at the form level (e.g. `mapGenericAuthError`) opt into that
+ * fallback explicitly, so conflicts that map to field-level errors keep
+ * `formErrors` empty rather than echoing the raw message twice.
  *
  * @param error - The AppError from the service/action.
  * @param fields - Optional list of field names to ensure a dense error map.
@@ -34,25 +42,6 @@ export function toFormErrorPayload<T extends string>(
 					(Object.freeze({}) as DenseFieldErrorMap<T, string>)),
 		formData: extractFieldValues<T>(error) ?? Object.freeze({}),
 		formErrors: extractFormErrors(error),
-		message: error.message,
-	};
-}
-
-/**
- * Helper to extract form-specific error payload from a generic Result.
- * Essential for UI components to display fieldErrors and formErrors.
- */
-export function formErrorPayloadMapper<F extends string>(
-	error: AppErrorLike,
-): FormErrorPayload<F> {
-	const formErrors = extractFormErrors(error);
-
-	return {
-		fieldErrors:
-			extractFieldErrors<F>(error) ??
-			(Object.freeze({}) as DenseFieldErrorMap<F, string>),
-		formData: extractFieldValues<F>(error) ?? Object.freeze({}),
-		formErrors: formErrors.length > 0 ? formErrors : [error.message],
 		message: error.message,
 	};
 }

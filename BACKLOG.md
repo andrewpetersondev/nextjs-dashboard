@@ -53,10 +53,16 @@ this file is the deliberate workaround.)
         values and form-level errors instead of silently dropping them (fixes the signup
         unique-violation wiping the typed email/username). A `validation`/`conflict` error
         without form metadata still returns undefined.
-  - [ ] **Form error payload overlap** — consolidate `toFormErrorPayload` vs
-        `formErrorPayloadMapper` (TODO in `form-error-payload.mapper.ts`). Production
-        only uses `toFormErrorPayload`; the mapper variant is imported solely by auth
-        integration tests and differs in fallback semantics (`[error.message]`).
+  - [x] **Form error payload overlap** _(2026-06-13)_ — consolidated onto a single
+        `toFormErrorPayload`; deleted the test-only `formErrorPayloadMapper` (zero
+        production callers) and its `[error.message]` form-error fallback. The fallback
+        was dead for every real input except one integration assertion (signup conflict),
+        where it synthesized a form-level error that production never shows — production
+        surfaces conflicts as FIELD-level errors (`fieldErrors.email`, `formErrors` empty,
+        per `toSignupFormResult`). Realigned that assertion to the field-level channel
+        (matching `signup-flow.test.ts`'s documented contract), migrated the 3 auth
+        integration decoders + the unit test to `toFormErrorPayload`, and removed the TODO.
+        Production behavior unchanged. Unit + auth-integration lanes green; typecheck clean.
 - [ ] **Env hygiene** — surfaced during deploy prep (2026-06-11):
   - [x] Remove dead `LOG_LEVEL` plumbing _(2026-06-13)_ — deleted `getLogLevelResult` +
         `_getLogLevel` from `env-shared.ts` (and their orphaned `LogLevel`/`LogLevelSchema`
