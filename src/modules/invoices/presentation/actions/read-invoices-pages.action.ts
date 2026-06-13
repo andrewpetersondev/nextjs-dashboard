@@ -1,7 +1,8 @@
 "use server";
 
+import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
-import { fetchInvoicesPagesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-invoices-pages.dal";
+import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
 import { getAppDb } from "@/server/db/db.connection";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
@@ -14,9 +15,15 @@ export async function readInvoicesPagesAction(
 	query: string = "",
 ): Promise<number> {
 	try {
-		const db = getAppDb();
 		const sanitizedQuery = query.trim();
-		const totalPages = await fetchInvoicesPagesDal(db, sanitizedQuery);
+		const service = new InvoiceService(new InvoiceRepository(getAppDb()));
+		const result = await service.readInvoicesPages(sanitizedQuery);
+
+		if (!result.ok) {
+			throw result.error;
+		}
+
+		const totalPages = result.value;
 
 		if (!Number.isInteger(totalPages) || totalPages < 1) {
 			logger.error("Invalid totalPages returned from DAL", {

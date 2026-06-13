@@ -1,16 +1,26 @@
 import "server-only";
 
-import type { InvoiceDto } from "@/modules/invoices/application/dto/invoice.dto";
+import type {
+	InvoiceDto,
+	InvoicesSummary,
+} from "@/modules/invoices/application/dto/invoice.dto";
 import type {
 	InvoiceFormPartialEntity,
 	InvoiceServiceEntity,
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 import { entityToInvoiceDto } from "@/modules/invoices/infrastructure/adapters/codecs/invoice-codecs";
 import { BaseRepository } from "@/modules/invoices/infrastructure/repository/base-repository";
 import { createInvoiceDal } from "@/modules/invoices/infrastructure/repository/dal/create-invoice.dal";
 import { deleteInvoiceDal } from "@/modules/invoices/infrastructure/repository/dal/delete-invoice.dal";
+import { fetchFilteredInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-filtered-invoices.dal";
+import { fetchInvoicesPagesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-invoices-pages.dal";
+import { fetchLatestInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-latest-invoices.dal";
+import { fetchTotalInvoicesCountDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-invoices-count.dal";
+import { fetchTotalPaidInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-paid-invoices.dal";
+import { fetchTotalPendingInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-pending-invoices.dal";
 import { readInvoiceDal } from "@/modules/invoices/infrastructure/repository/dal/read-invoice.dal";
 import { updateInvoiceDal } from "@/modules/invoices/infrastructure/repository/dal/update-invoice.dal";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
@@ -133,5 +143,50 @@ export class InvoiceRepository extends BaseRepository<
 
 		// Transform Entity (branded) → DTO (plain)
 		return entityToInvoiceDto(deletedEntity);
+	}
+
+	/**
+	 * Reads the filtered, paginated invoice list for the invoices table.
+	 * @param query - Search query string.
+	 * @param currentPage - 1-based page number.
+	 * @returns Promise resolving to the matching invoice list rows.
+	 */
+	async readFiltered(
+		query: string,
+		currentPage: number,
+	): Promise<InvoiceListFilter[]> {
+		return await fetchFilteredInvoicesDal(this.db, query, currentPage);
+	}
+
+	/**
+	 * Reads the total number of pages for the filtered invoice list.
+	 * @param query - Search query string.
+	 * @returns Promise resolving to the total page count.
+	 */
+	async readPagesCount(query: string): Promise<number> {
+		return await fetchInvoicesPagesDal(this.db, query);
+	}
+
+	/**
+	 * Reads the most recent invoices for the dashboard overview.
+	 * @param limit - Maximum number of invoices to return.
+	 * @returns Promise resolving to the latest invoice list rows.
+	 */
+	async readLatest(limit: number): Promise<InvoiceListFilter[]> {
+		return await fetchLatestInvoicesDal(this.db, limit);
+	}
+
+	/**
+	 * Reads the aggregate invoice totals for the dashboard summary cards.
+	 * @returns Promise resolving to the invoices summary.
+	 */
+	async readSummary(): Promise<InvoicesSummary> {
+		const [totalInvoices, totalPending, totalPaid] = await Promise.all([
+			fetchTotalInvoicesCountDal(this.db),
+			fetchTotalPendingInvoicesDal(this.db),
+			fetchTotalPaidInvoicesDal(this.db),
+		]);
+
+		return { totalInvoices, totalPaid, totalPending };
 	}
 }
