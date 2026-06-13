@@ -1,7 +1,7 @@
 # Claude Code command guide
 
 A personal reference for the `/` command palette in the Claude Code input box —
-curated for *this* project (solo Next.js dashboard), not the full catalog.
+curated for _this_ project (solo Next.js dashboard), not the full catalog.
 
 > The desktop "Code" app shows both **built-in commands** (session/control verbs
 > that ship with Claude Code) and **skills** (a large plugin catalog plus this
@@ -11,13 +11,13 @@ curated for *this* project (solo Next.js dashboard), not the full catalog.
 
 ## By cadence (when to reach for each)
 
-| Cadence | When | Commands |
-|---|---|---|
-| **Per change / pre-PR** ⭐ | before you commit or merge | `/code-review` · `/simplify` · `/security-review` · `/verify` |
-| **Session control** | manage the chat itself | `/clear` · `/compact` · `/model` · `/fast` |
-| **Periodic upkeep** | weekly · as memory grows | `/productivity:update` · `/fewer-permission-prompts` · `consolidate-memory` |
-| **On-demand power** | when the task calls for it | `/schedule` · `/loop` · `/deep-research` · `/run` |
-| **Config (terminal-only)** | *not in this app's box* | `/config` · `/permissions` · `/agents` · `/hooks` · `/doctor` |
+| Cadence                    | When                       | Commands                                                                    |
+| -------------------------- | -------------------------- | --------------------------------------------------------------------------- |
+| **Per change / pre-PR** ⭐ | before you commit or merge | `/code-review` · `/simplify` · `/security-review` · `/verify`               |
+| **Session control**        | manage the chat itself     | `/clear` · `/compact` · `/model` · `/fast`                                  |
+| **Periodic upkeep**        | weekly · as memory grows   | `/productivity:update` · `/fewer-permission-prompts` · `consolidate-memory` |
+| **On-demand power**        | when the task calls for it | `/schedule` · `/loop` · `/deep-research` · `/run`                           |
+| **Config (terminal-only)** | _not in this app's box_    | `/config` · `/permissions` · `/agents` · `/hooks` · `/doctor`               |
 
 ⭐ = run most often.
 
@@ -26,12 +26,12 @@ curated for *this* project (solo Next.js dashboard), not the full catalog.
 The quality loop around every change — fits this project (lots of refactor PRs,
 auth code, tests).
 
-| Command | What it does | When |
-|---|---|---|
-| `/code-review` | Reviews the current diff for **bugs** + cleanups. Effort scales: `low`/`medium` (few, high-confidence) → `high`/`max` (broader) → `ultra` (multi-agent **cloud, billed**). Flags: `--fix` applies findings, `--comment` posts inline on the PR. | before every PR |
-| `/simplify` | Applies reuse / simplification / altitude cleanups. **Quality only — does not hunt bugs.** Pairs with refactor work. | after a feature, before review |
-| `/security-review` | Security pass over the branch's pending changes. | any auth / DB / session-touching diff |
-| `/verify`, `/run` | Launches the app and confirms a change works in-browser (not just green tests). | per feature |
+| Command            | What it does                                                                                                                                                                                                                                    | When                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `/code-review`     | Reviews the current diff for **bugs** + cleanups. Effort scales: `low`/`medium` (few, high-confidence) → `high`/`max` (broader) → `ultra` (multi-agent **cloud, billed**). Flags: `--fix` applies findings, `--comment` posts inline on the PR. | before every PR                       |
+| `/simplify`        | Applies reuse / simplification / altitude cleanups. **Quality only — does not hunt bugs.** Pairs with refactor work.                                                                                                                            | after a feature, before review        |
+| `/security-review` | Security pass over the branch's pending changes.                                                                                                                                                                                                | any auth / DB / session-touching diff |
+| `/verify`, `/run`  | Launches the app and confirms a change works in-browser (not just green tests).                                                                                                                                                                 | per feature                           |
 
 **Key distinction:** `/code-review` finds bugs, `/simplify` improves quality.
 Run review → simplify → verify.
@@ -49,7 +49,7 @@ Run review → simplify → verify.
 ## Must-knows
 
 1. **Some commands aren't in this box.** `/config`, `/permissions`, `/agents`,
-   `/hooks`, `/doctor` open an interactive *terminal* panel — they do nothing in the
+   `/hooks`, `/doctor` open an interactive _terminal_ panel — they do nothing in the
    desktop "Code" app. Use the app's own UI (e.g. the model picker, bottom-right) or
    a `claude` terminal.
 2. **`/clear` vs `/compact`** — the biggest lever on cost/quality in long sessions.
@@ -69,4 +69,5 @@ Run review → simplify → verify.
    skills" backlog item).
 
 ---
+
 _Generated 2026-06-13. Companion: [`weekly-maintenance-routine.md`](weekly-maintenance-routine.md)._

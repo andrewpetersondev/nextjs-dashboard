@@ -3,10 +3,10 @@
 The dashboard has two layers of tests, and both run under the **test environment**
 (`.env.test.local`):
 
-| Layer | Tool | Command | What it covers |
-|---|---|---|---|
-| Unit + integration | Vitest | `pnpm test` | Logic, mappers, services, and full-stack flows through the layers |
-| End-to-end (E2E) | Cypress | `pnpm cy:e2e` | The running app in a real browser, including accessibility |
+| Layer              | Tool    | Command       | What it covers                                                    |
+| ------------------ | ------- | ------------- | ----------------------------------------------------------------- |
+| Unit + integration | Vitest  | `pnpm test`   | Logic, mappers, services, and full-stack flows through the layers |
+| End-to-end (E2E)   | Cypress | `pnpm cy:e2e` | The running app in a real browser, including accessibility        |
 
 Before running either, make sure the **test database** exists and is migrated — see
 [database-setup.md](database-setup.md). The integration tests and all E2E specs

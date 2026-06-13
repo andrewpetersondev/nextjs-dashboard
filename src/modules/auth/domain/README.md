@@ -23,7 +23,7 @@ infrastructure details.
 
 The domain layer is where we define the **truth** of the auth system:
 
-- What an authenticated user *is* (types and invariants)
+- What an authenticated user _is_ (types and invariants)
 - What values are considered valid (e.g., branded IDs, roles)
 - What data is considered sensitive (e.g., password hashes)
 
@@ -52,7 +52,7 @@ The domain layer does **not**:
 
 This layer is intentionally small. Typical contents include:
 
-```
+```text
 domain/
 ├── entities/          # Domain entities (rich data + invariants)
 ├── types/             # Branded types and enums (e.g., UserId, UserRole)

@@ -13,7 +13,7 @@ a React component.
 
 ## Directory structure
 
-```
+```text
 banner/
 ├── domain/banner.constants.ts           # BANNER_DISMISSED_COOKIE ("banner_dismissed_v1"), max-age (180d)
 ├── infrastructure/
@@ -28,7 +28,7 @@ banner/
 
 ## How it works
 
-```
+```text
 Server render ─▶ isBannerDismissed()  → false ⇒ render <OneTimeBanner/>
                                        → true  ⇒ render nothing
 
@@ -49,7 +49,7 @@ User clicks Dismiss ─▶ dismissBannerAction()  ─▶ dismissBanner() sets co
 
 ### Versioned cookie = a re-show switch
 
-The cookie name carries a version suffix (`banner_dismissed_v1`). To show a *new*
+The cookie name carries a version suffix (`banner_dismissed_v1`). To show a _new_
 banner to everyone who already dismissed the old one, **bump the suffix** (e.g.
 `_v2`) — old cookies no longer match, so the banner reappears. The banner copy
 notes this too.
@@ -58,13 +58,13 @@ notes this too.
 
 Set in `banner-cookie.adapter.ts`:
 
-| Option | Value | Why |
-|---|---|---|
-| `httpOnly` | `false` | This is a non-secret UI flag; client JS may read it. |
-| `sameSite` | `lax` | Standard for a first-party preference cookie. |
-| `secure` | `isProd()` | HTTPS-only in production, relaxed in local dev. |
-| `maxAge` | `15_552_000` (180 days) | How long a dismissal sticks. |
-| `path` | `/` | Applies site-wide. |
+| Option     | Value                   | Why                                                  |
+| ---------- | ----------------------- | ---------------------------------------------------- |
+| `httpOnly` | `false`                 | This is a non-secret UI flag; client JS may read it. |
+| `sameSite` | `lax`                   | Standard for a first-party preference cookie.        |
+| `secure`   | `isProd()`              | HTTPS-only in production, relaxed in local dev.      |
+| `maxAge`   | `15_552_000` (180 days) | How long a dismissal sticks.                         |
+| `path`     | `/`                     | Applies site-wide.                                   |
 
 `httpOnly: false` is intentional here — keep it that way only for non-sensitive
 flags like this one.

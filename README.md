@@ -7,7 +7,7 @@ authentication, middleware-based route protection, database migrations/seeding, 
 
 > **Live demo:** _add your Vercel URL here_ &nbsp;·&nbsp; **Demo login:** `admin@admin.com` / `AdminPassword123!`
 >
-> Run it yourself in one command: `docker compose up --build` → http://localhost:3000. See [Deployment](#deployment).
+> Run it yourself in one command: `docker compose up --build` → <http://localhost:3000>. See [Deployment](#deployment).
 
 ## Tech Stack
 
@@ -23,7 +23,7 @@ Note: ESLint is not used in this project, by design.
 
 ## Project Structure
 
-```
+```text
 nextjs-dashboard/
 ├── cypress/                # E2E specs and support
 ├── docs/                   # Additional documentation and guides
@@ -58,45 +58,45 @@ nextjs-dashboard/
 2. Configure environment
 
    Create environment files as needed (these are referenced by scripts):
-    - .env.development.local
-    - .env.test.local
-    - .env.production.local
+   - .env.development.local
+   - .env.test.local
+   - .env.production.local
 
    Typical variables (adapt to your setup):
-    - DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
-    - SESSION_SECRET=change-me
-    - NODE_ENV=development
+   - DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
+   - SESSION_SECRET=change-me
+   - NODE_ENV=development
 
 3. Database: generate, migrate, seed
 
    Run against your desired environment using dotenv-powered helpers:
-    - Development
-      ```sh
-      pnpm db:push:dev
-      pnpm db:seed:dev
-      ```
-    - Test
-      ```sh
-      pnpm db:push:test
-      pnpm db:seed:test
-      ```
-    - Production (ensure variables are set correctly)
-      ```sh
-      pnpm db:push:prod
-      pnpm db:seed:prod
-      ```
+   - Development
+     ```sh
+     pnpm db:push:dev
+     pnpm db:seed:dev
+     ```
+   - Test
+     ```sh
+     pnpm db:push:test
+     pnpm db:seed:test
+     ```
+   - Production (ensure variables are set correctly)
+     ```sh
+     pnpm db:push:prod
+     pnpm db:seed:prod
+     ```
 
 4. Start the app
-    - Development server (Turbopack):
-      ```sh
-      pnpm next:dev
-      ```
-    - Build + start (standalone):
-      ```sh
-      pnpm serve:standalone
-      # or, if already built
-      pnpm next:start:standalone
-      ```
+   - Development server (Turbopack):
+     ```sh
+     pnpm next:dev
+     ```
+   - Build + start (standalone):
+     ```sh
+     pnpm serve:standalone
+     # or, if already built
+     pnpm next:start:standalone
+     ```
 
 ## Deployment
 
@@ -114,11 +114,11 @@ docker compose up --build
 
 Seeded demo logins:
 
-| Role  | Email             | Password           |
-|-------|-------------------|--------------------|
-| Admin | admin@admin.com   | `AdminPassword123!` |
-| User  | user@user.com     | `UserPassword123!`  |
-| Guest | guest@guest.com   | `GuestPassword123!` |
+| Role  | Email             | Password            |
+| ----- | ----------------- | ------------------- |
+| Admin | <admin@admin.com> | `AdminPassword123!` |
+| User  | <user@user.com>   | `UserPassword123!`  |
+| Guest | <guest@guest.com> | `GuestPassword123!` |
 
 A `/api/health` endpoint returns `{ "status": "ok", "db": "up" }` for uptime
 checks and container health probes.
@@ -149,14 +149,14 @@ Accessibility checks via cypress-axe are integrated in tests where applicable.
 ## Useful Scripts
 
 - Formatting and checks (Biome):
-    - "pnpm biome:format" — format code
-    - "pnpm biome:lint" — run checks
-    - "pnpm biome:summary" — summary reporter
+  - "pnpm biome:format" — format code
+  - "pnpm biome:lint" — run checks
+  - "pnpm biome:summary" — summary reporter
 - Clean builds:
-    - "pnpm clean" — remove .next
-    - "pnpm clean:all" — clean .next, generated files, and node_modules (will require reinstall)
+  - "pnpm clean" — remove .next
+  - "pnpm clean:all" — clean .next, generated files, and node_modules (will require reinstall)
 - Env helpers (wrap commands with specific env files):
-    - env:dev, env:test, env:prod
+  - env:dev, env:test, env:prod
 
 See package.json for the full list of scripts.
 
@@ -165,8 +165,8 @@ See package.json for the full list of scripts.
 - TypeScript: strict types everywhere; prefer inference but annotate boundaries.
 - Components: prefer Server Components; use Client Components when necessary (hooks, interactivity).
 - File/function sizing (project guidelines):
-    - Files ≤ 200 lines where practical.
-    - Functions ≤ 50 lines, ≤ 4 parameters, avoid excessive complexity.
+  - Files ≤ 200 lines where practical.
+  - Functions ≤ 50 lines, ≤ 4 parameters, avoid excessive complexity.
 - Secrets: never commit; use environment variables. Vault is not required.
 
 ## Troubleshooting

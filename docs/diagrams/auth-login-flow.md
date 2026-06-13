@@ -1,7 +1,7 @@
 # Auth flows — login, session check, signup
 
-> The question this answers: *"Step by step, what happens when someone logs in,
-> and how does a later request know they're logged in?"* This is the auth module
+> The question this answers: _"Step by step, what happens when someone logs in,
+> and how does a later request know they're logged in?"_ This is the auth module
 > ([`src/modules/auth/`](../../src/modules/auth)) — the most layered part of the
 > codebase, so it's the best one to have a map for.
 
@@ -74,18 +74,18 @@ Same shape as login, with one extra step **first**: create the user.
 
 ## The files behind the boxes
 
-| Box | File |
-|---|---|
-| login.action / signup.action | [`presentation/authn/actions/`](../../src/modules/auth/presentation/authn/actions) |
-| verifySessionOptimistic | [`presentation/session/actions/verify-session-optimistic.action.ts`](../../src/modules/auth/presentation/session/actions/verify-session-optimistic.action.ts) |
-| auth.composition | [`infrastructure/composition/auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts) |
-| login.workflow / LoginUseCase | [`application/auth-user/`](../../src/modules/auth/application/auth-user) |
-| SessionService / ReadSessionUseCase | [`application/session/`](../../src/modules/auth/application/session) + [`infrastructure/session/`](../../src/modules/auth/infrastructure/session) |
-| Bcrypt service | [`infrastructure/crypto/services/bcrypt-password.service.ts`](../../src/modules/auth/infrastructure/crypto/services/bcrypt-password.service.ts) |
+| Box                                 | File                                                                                                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| login.action / signup.action        | [`presentation/authn/actions/`](../../src/modules/auth/presentation/authn/actions)                                                                            |
+| verifySessionOptimistic             | [`presentation/session/actions/verify-session-optimistic.action.ts`](../../src/modules/auth/presentation/session/actions/verify-session-optimistic.action.ts) |
+| auth.composition                    | [`infrastructure/composition/auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts)                                     |
+| login.workflow / LoginUseCase       | [`application/auth-user/`](../../src/modules/auth/application/auth-user)                                                                                      |
+| SessionService / ReadSessionUseCase | [`application/session/`](../../src/modules/auth/application/session) + [`infrastructure/session/`](../../src/modules/auth/infrastructure/session)             |
+| Bcrypt service                      | [`infrastructure/crypto/services/bcrypt-password.service.ts`](../../src/modules/auth/infrastructure/crypto/services/bcrypt-password.service.ts)               |
 
 ## The "why" lives in the ADRs
 
-These diagrams show *what* happens; the decision records explain *why*. They sit
+These diagrams show _what_ happens; the decision records explain _why_. They sit
 in [`src/modules/auth/notes/adr/`](../../src/modules/auth/notes/adr):
 
 - [ADR-001](../../src/modules/auth/notes/adr/001-use-result-type-for-error-handling.md) — return `Result<T, E>` instead of throwing

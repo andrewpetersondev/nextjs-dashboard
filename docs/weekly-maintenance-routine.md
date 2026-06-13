@@ -23,17 +23,17 @@ item, with extra scope recommended below. **Not yet live** — create it with
 
 ### Recommended additions (why each earns its place)
 
-4. **Dependabot's blind spots** _(report, or bump if safe)_ — the pnpm version pin
+1. **Dependabot's blind spots** _(report, or bump if safe)_ — the pnpm version pin
    (`packageManager: pnpm@11.5.3`), Node `.nvmrc` (`26`), and any `overrides` /
    `pnpm-workspace.yaml` overrides. These are exactly what broke CI on 2026-06-11 and
    what Dependabot/this project's current tooling can't bump. **Lockstep rule:** when a
    bumped dependency also appears in an `overrides` block, bump both together.
-5. **Migration drift guard** _(report-only)_ — compare the final snapshot/journal across
+2. **Migration drift guard** _(report-only)_ — compare the final snapshot/journal across
    `drizzle/migrations/{dev,test,prod}/meta/_journal.json`. Flag if the three don't
    describe the same final schema. This is the exact failure that gave a fresh prod DB an
    obsolete FK and a `23503` seed failure (and it's a standing backlog item).
-6. **knip + audit summary** _(report-only, never auto-fix)_ — run `pnpm knip` and
-   `pnpm audit`; summarize *new* dead code (vs. what the backlog already tracks) and any
+3. **knip + audit summary** _(report-only, never auto-fix)_ — run `pnpm knip` and
+   `pnpm audit`; summarize _new_ dead code (vs. what the backlog already tracks) and any
    CVEs in the PR body. Signal without risk.
 
 ### Deliberately left out (keep the cron fast & deterministic)
@@ -48,7 +48,7 @@ item, with extra scope recommended below. **Not yet live** — create it with
 - **Release age ≥ 3 days.** Skip anything released in the last ~72h — the pnpm-11
   fresh-release CI breakage (2026-06-11) is the lesson. Brand-new releases wait a week.
 - **Never push to `main`, never merge, never run `db:*:prod`.** The agent only opens a PR.
-- **No empty PRs.** If there are no code changes *and* no notable report findings, exit
+- **No empty PRs.** If there are no code changes _and_ no notable report findings, exit
   quietly — don't open a PR just to say "nothing this week."
 - **Fail loud, not silent.** If `check:fast` or unit tests can't be made green with a
   minimal fix, open the PR as a **draft** with the failure output captured, so a human decides.
@@ -97,4 +97,5 @@ known gotchas. Never push to main, never merge, never run any db:*:prod script.
 - **Adjust or stop later:** `/schedule` can list, update, or delete existing routines.
 
 ---
+
 _Drafted 2026-06-13. Companion: [`claude-code-command-guide.md`](claude-code-command-guide.md)._

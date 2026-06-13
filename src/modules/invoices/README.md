@@ -51,7 +51,7 @@ interface InvoiceEntity {
 
 Every server action routes through the service — one path shape:
 
-```
+```text
 Server Action ─▶ InvoiceService ─▶ InvoiceRepository ─▶ DAL ─▶ Postgres
 ```
 
@@ -61,12 +61,12 @@ action builds `new InvoiceService(new InvoiceRepository(getAppDb()))` inline.
 
 How invoices differs from the `auth` module — worth knowing up front:
 
-| Concern | `auth` | `invoices` |
-|---|---|---|
-| Application layer | CQRS: commands / queries / workflows | One `InvoiceService` class with CRUD + read methods |
-| Composition | DI composition root + factories | Actions build `new InvoiceService(new InvoiceRepository(getAppDb()))` inline |
-| Repo error style | Returns `Result<T, AppError>` | **Throws** `AppError`; caught in the action's `try/catch` |
-| Reads | Through query use-cases | Through `InvoiceService` read methods |
+| Concern           | `auth`                               | `invoices`                                                                   |
+| ----------------- | ------------------------------------ | ---------------------------------------------------------------------------- |
+| Application layer | CQRS: commands / queries / workflows | One `InvoiceService` class with CRUD + read methods                          |
+| Composition       | DI composition root + factories      | Actions build `new InvoiceService(new InvoiceRepository(getAppDb()))` inline |
+| Repo error style  | Returns `Result<T, AppError>`        | **Throws** `AppError`; caught in the action's `try/catch`                    |
+| Reads             | Through query use-cases              | Through `InvoiceService` read methods                                        |
 
 Neither approach is "wrong" — invoices is simpler than auth and is wired more
 directly. The table is here so the difference doesn't read as an inconsistency.
@@ -75,7 +75,7 @@ directly. The table is here so the difference doesn't read as an inconsistency.
 
 ## Directory structure
 
-```
+```text
 invoices/
 ├── domain/                              # Framework-agnostic core: types, rules, i18n
 │   ├── entities/invoice.entity.ts       #   InvoiceEntity + Service/Form/Partial variants
@@ -127,7 +127,7 @@ to dollars only at the very edge (UI).
 
 - `date` is a `Date` in the entity and an ISO `YYYY-MM-DD` string in the DTO.
 - `revenuePeriod` is a branded `Period`, **derived from `date`** (the first day of
-  its month, transported as `YYYY-MM-01`). It is *not* a form field — the mapper
+  its month, transported as `YYYY-MM-01`). It is _not_ a form field — the mapper
   computes it server-side, which is why `InvoiceFormEntity` / `InvoiceFormDto`
   omit it.
 
@@ -139,16 +139,16 @@ won't type-check where an ID is expected. Convert at the boundary with
 
 ### The entity / DTO family
 
-| Type | Shape | Used for |
-|---|---|---|
-| `InvoiceEntity` | full record | the domain truth (includes `id`, `revenuePeriod`) |
-| `InvoiceServiceEntity` | `Omit<…, "id">` | service layer before the DB assigns an id |
-| `InvoiceFormEntity` | `Omit<…, "id" \| "revenuePeriod">` | a form submission |
-| `InvoiceFormPartialEntity` | `Partial<InvoiceFormEntity>` | partial updates |
-| `InvoiceDto` | plain, serializable | transport to UI/API (amount in cents) |
-| `InvoiceFormDto` | `Omit<InvoiceDto, "id" \| "revenuePeriod">` | form input DTO |
-| `InvoicesSummary` | `{ totalInvoices, totalPaid, totalPending }` | the overview cards |
-| `InvoiceListFilter` | invoice + joined customer fields | the invoices table rows |
+| Type                       | Shape                                        | Used for                                          |
+| -------------------------- | -------------------------------------------- | ------------------------------------------------- |
+| `InvoiceEntity`            | full record                                  | the domain truth (includes `id`, `revenuePeriod`) |
+| `InvoiceServiceEntity`     | `Omit<…, "id">`                              | service layer before the DB assigns an id         |
+| `InvoiceFormEntity`        | `Omit<…, "id" \| "revenuePeriod">`           | a form submission                                 |
+| `InvoiceFormPartialEntity` | `Partial<InvoiceFormEntity>`                 | partial updates                                   |
+| `InvoiceDto`               | plain, serializable                          | transport to UI/API (amount in cents)             |
+| `InvoiceFormDto`           | `Omit<InvoiceDto, "id" \| "revenuePeriod">`  | form input DTO                                    |
+| `InvoicesSummary`          | `{ totalInvoices, totalPaid, totalPending }` | the overview cards                                |
+| `InvoiceListFilter`        | invoice + joined customer fields             | the invoices table rows                           |
 
 ### Validation, forms, and i18n
 
@@ -174,7 +174,7 @@ and [ADR-007](../auth/notes/adr/007-enforce-action-level-authorization.md).
 
 ## Layer responsibilities
 
-- **domain/** — what an invoice *is* and what's always true of it: entity + its
+- **domain/** — what an invoice _is_ and what's always true of it: entity + its
   variants, the `pending|paid` status, branded `InvoiceId`, the Zod schema, date
   utilities, and the i18n message catalog. No Next.js, no Drizzle.
 - **application/** — `InvoiceService` applies business rules (dollars→cents, date

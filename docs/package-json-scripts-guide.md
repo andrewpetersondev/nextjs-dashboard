@@ -23,6 +23,21 @@ Static analysis and formatting.
 - `pnpm typecheck:app` — type-check the app project only (no emit).
 - `pnpm typecheck:cypress` — type-check the Cypress project only (no emit).
 
+> Biome owns JS/TS/JSON here. Markdown is handled separately — see below.
+
+---
+
+## Markdown (Lint and Format)
+
+Markdown is linted by markdownlint-cli2 and formatted by dprint (Biome's Markdown support is still experimental). Config lives in `.markdownlint-cli2.jsonc` and `dprint.json`; the tools have non-overlapping rules (formatting is dprint's, content/style is markdownlint's).
+
+- `pnpm md:lint` — lint Markdown with markdownlint-cli2 (report-only).
+- `pnpm md:lint:fix` — apply markdownlint's safe autofixes.
+- `pnpm md:format:check` — check Markdown formatting with dprint (no writes).
+- `pnpm md:format` — format Markdown with dprint.
+- `pnpm md:check` — lint + format-check together; runs inside `check` and `check:fast`.
+- `pnpm md:fix` — autofix then format (markdownlint first, dprint last, so dprint has final say on whitespace).
+
 ---
 
 ## Next.js (App Lifecycle)

@@ -33,7 +33,7 @@ layer and no writes**, just `domain → infrastructure → presentation`.
 The defining feature is a **three-tier data shaping** pipeline — each tier is a
 distinct type, and each hop has a clear owner:
 
-```
+```text
 Raw DB rows ──(repository)──▶ Server DTOs ──(action)──▶ Formatted UI rows
 CustomerAggregatesRowRaw      CustomerAggregatesServerDto   FormattedCustomersTableRow
   totals: number | null         branded id, totals: number    totals: string (currency)
@@ -48,7 +48,7 @@ CustomerAggregatesRowRaw      CustomerAggregatesServerDto   FormattedCustomersTa
 
 ## Directory structure
 
-```
+```text
 customers/
 ├── domain/                              # Types, branded id, labels, messages
 │   ├── types.ts                         #   Raw / ServerDto / Formatted row types (+ CustomerField)
@@ -87,7 +87,7 @@ The DAL exposes only `fetch*` queries; the repository exposes only `fetchSelect`
 `fetchFilteredCustomersDal` left-joins `invoices` to compute, per customer:
 `totalInvoices` (a `COUNT`), `totalPaid`, and `totalPending` (filtered `SUM`s by
 invoice status). This is the module's one cross-table dependency — it reads the
-`invoices` table but not the invoices *module*.
+`invoices` table but not the invoices _module_.
 
 ### Composition
 
