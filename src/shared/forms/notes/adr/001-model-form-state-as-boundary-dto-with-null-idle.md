@@ -38,7 +38,7 @@ type FormErrResult = { readonly error: AppErrorJsonDto; readonly ok: false };
 export type FormResult<T> = OkResult<FormSuccessPayload<T>> | FormErrResult;
 ```
 
-Note what is *already shared*: the ok side (`OkResult`) and the `ok: boolean`
+Note what is _already shared_: the ok side (`OkResult`) and the `ok: boolean`
 discriminant, so narrowing reads the same on both sides of the boundary. Only
 the error payload differs — entity in-process, DTO on the wire. The fork was
 expedient at the time; nothing on record says whether it is the design or a
@@ -69,7 +69,7 @@ Costs, all in production code today:
   unexpected shapes — anxiety born of a state type that can't be trusted to
   mean what it says.
 - [edit-invoice-form.tsx](../../../../modules/invoices/presentation/forms/edit-invoice-form.tsx)
-  constructs a *second* initial state purely to extract an empty dense error
+  constructs a _second_ initial state purely to extract an empty dense error
   map from inside its fake error (`emptyErrors`), then falls back through
   three nullish coalescings.
 
@@ -129,12 +129,12 @@ never from a submission.
 
 The two layers, side by side:
 
-|               | In-process                                 | `useActionState` boundary              |
-|---------------|--------------------------------------------|----------------------------------------|
-| Type          | `Result<T, AppError>`                      | `FormState<T> = FormResult<T> \| null` |
-| Error payload | `AppError` entity                          | `AppErrorJsonDto` plain object         |
-| Idle          | n/a — results exist only after an operation | `null`                                 |
-| Built by      | `Ok` / `Err` factories                     | `makeFormOk` / `toFormErrResult`, `null` initial |
+|               | In-process                                  | `useActionState` boundary                        |
+| ------------- | ------------------------------------------- | ------------------------------------------------ |
+| Type          | `Result<T, AppError>`                       | `FormState<T> = FormResult<T> \| null`           |
+| Error payload | `AppError` entity                           | `AppErrorJsonDto` plain object                   |
+| Idle          | n/a — results exist only after an operation | `null`                                           |
+| Built by      | `Ok` / `Err` factories                      | `makeFormOk` / `toFormErrResult`, `null` initial |
 
 ## Options Considered
 
@@ -146,7 +146,7 @@ The two layers, side by side:
   "a `Result` means the error side is a real `AppError`" — and loosening it
   trades that global invariant for deleting ~6 local lines. The reuse would be
   nominal anyway: every helper (`Err`, `unwrapOrNull`) is entity-typed, so
-  nothing but the type's *name* gets shared.
+  nothing but the type's _name_ gets shared.
 - **B. Keep the fork, canonize it as a boundary DTO.** **Chosen** — see
   Decision.
 
@@ -159,7 +159,7 @@ The two layers, side by side:
   `status: "idle" | "ok" | "err"` re-discrimination. Honest, but it
   introduces a second discriminant style beside `ok` (or rewrites the whole
   union, its guards, every consumer, and the 68 freshly-pinned
-  characterization tests). It also lets actions *return* idle, which is a
+  characterization tests). It also lets actions _return_ idle, which is a
   state the server can never truthfully be in. More code in a module the
   roadmap is shrinking.
 - **C. `null` idle.** **Chosen** — React-idiomatic, trivially serializable,

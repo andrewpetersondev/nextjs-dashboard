@@ -10,18 +10,18 @@ drivers.
 - `Domain` knows NOTHING about `Application`, `Infrastructure`, or `Presentation`.
 - `Application` knows NOTHING about `Infrastructure` or `Presentation`.
 
-2. **Persistence Ignorance**: The Domain layer must not contain database-specific logic or know how data is stored.
-3. **Library Independence**: Domain entities and core business logic must remain pure TypeScript. Avoid third-party
+1. **Persistence Ignorance**: The Domain layer must not contain database-specific logic or know how data is stored.
+2. **Library Independence**: Domain entities and core business logic must remain pure TypeScript. Avoid third-party
    library dependencies (including Zod) in domain entities and policies.
-4. **Framework Isolation**: `domain/` and `application/` must never import from `next/*`, `react`, or any DB-specific
+3. **Framework Isolation**: `domain/` and `application/` must never import from `next/*`, `react`, or any DB-specific
    libraries (Drizzle, Prisma, etc.).
-5. **Testability**: Business rules must be testable in isolation using mocks for Ports (Contracts). Use Cases should be
+4. **Testability**: Business rules must be testable in isolation using mocks for Ports (Contracts). Use Cases should be
    verifiable using pure Vitest without a browser or database.
 
 ## Layer Responsibilities & Mapping
 
 | Layer            | Responsibility             | Contents                                                                                     |
-|:-----------------|:---------------------------|:---------------------------------------------------------------------------------------------|
+| :--------------- | :------------------------- | :------------------------------------------------------------------------------------------- |
 | `domain`         | Enterprise Business Rules  | Entities (interfaces), Value Objects, Policies (pure functions).                             |
 | `application`    | Application Business Rules | Use Cases, Workflows, DTOs, Contracts (Ports), Schemas (Zod), Mappers, Helpers.              |
 | `infrastructure` | Technical Details          | Repository Implementations, Adapters, DAL, Mappers (row ↔ entity), Framework-specific logic. |
@@ -34,12 +34,12 @@ drivers.
 **Purpose**: Define the **what** of your business—entities and rules—without any side-effect concerns.
 
 - **Allowed Imports**:
-    - Primitives and TypeScript utilities
-    - Shared domain types (`@/shared/domain/`)
+  - Primitives and TypeScript utilities
+  - Shared domain types (`@/shared/domain/`)
 - **Forbidden Imports**:
-    - Application layer (DTOs, schemas, use cases, contracts)
-    - Infrastructure implementations
-    - Zod, Drizzle, Next.js, React
+  - Application layer (DTOs, schemas, use cases, contracts)
+  - Infrastructure implementations
+  - Zod, Drizzle, Next.js, React
 
 **What Belongs Here**:
 
@@ -85,13 +85,13 @@ drivers.
 **Purpose**: Define **application-specific business rules** and orchestrate domain logic to fulfill use cases.
 
 - **Allowed Imports**:
-    - Domain layer (entities, policies)
-    - Shared utilities (`@/shared/`)
-    - Zod for schema validation
+  - Domain layer (entities, policies)
+  - Shared utilities (`@/shared/`)
+  - Zod for schema validation
 - **Forbidden Imports**:
-    - Infrastructure implementations (classes, concrete adapters)
-    - Database libraries (Drizzle, Prisma)
-    - Presentation layer
+  - Infrastructure implementations (classes, concrete adapters)
+  - Database libraries (Drizzle, Prisma)
+  - Presentation layer
 
 **What Belongs Here**:
 
@@ -207,29 +207,29 @@ drivers.
 **What Belongs Here**:
 
 - **Repositories** (`repositories/`): Concrete persistence implementations.
-    - Use the `.repository.ts` suffix.
-    - Handle direct DAL coordination and technology-specific logic (e.g., Drizzle).
+  - Use the `.repository.ts` suffix.
+  - Handle direct DAL coordination and technology-specific logic (e.g., Drizzle).
 
-      ```typescript
-      // ✅ Good: Implements contract, coordinates DAL + mappers
-      export class UserRepository implements UserRepositoryContract {
-        async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
-          const rowResult = await getUserByIdDal(this.db, id, this.logger);
-          if (!rowResult.ok) return rowResult;
-  
-          const entity = rowResult.value ? toUserEntity(rowResult.value) : null;
-          return Ok(entity);
-        }
+    ```typescript
+    // ✅ Good: Implements contract, coordinates DAL + mappers
+    export class UserRepository implements UserRepositoryContract {
+      async findById(id: UserId): Promise<Result<UserEntity | null, AppError>> {
+        const rowResult = await getUserByIdDal(this.db, id, this.logger);
+        if (!rowResult.ok) return rowResult;
+
+        const entity = rowResult.value ? toUserEntity(rowResult.value) : null;
+        return Ok(entity);
       }
-      ```
+    }
+    ```
 
 - **Services** (`services/`): Concrete technical logic implementations.
-    - Use the `.service.ts` suffix for implementations (e.g., `bcrypt-password.service.ts`).
+  - Use the `.service.ts` suffix for implementations (e.g., `bcrypt-password.service.ts`).
 
 - **Adapters** (`adapters/`): Structural bridges between contracts and implementations.
-    - Use the `.adapter.ts` suffix.
-    - Responsibilities: satisfy the contract, delegate to the concrete implementation, and provide a stable boundary for
-      the Application layer to consume.
+  - Use the `.adapter.ts` suffix.
+  - Responsibilities: satisfy the contract, delegate to the concrete implementation, and provide a stable boundary for
+    the Application layer to consume.
 
   ```typescript
   // ✅ Good: Structural bridge satisfied by an implementation
@@ -274,38 +274,38 @@ drivers.
   ```
 
 - **Factories** (`factories/`): Wire up dependencies and construct use cases.
-    - Factories are responsible for instantiating the **Bridge (Adapter)** and injecting the **Implementation** into it.
-    - **Explicit Wiring Rule**: Dependencies must be instantiated separately before being passed to the constructor.
-      Avoid nested instantiation.
+  - Factories are responsible for instantiating the **Bridge (Adapter)** and injecting the **Implementation** into it.
+  - **Explicit Wiring Rule**: Dependencies must be instantiated separately before being passed to the constructor.
+    Avoid nested instantiation.
 
-      ```typescript
-      // ✅ Good: Explicit wiring and assignment
-      export function loginUseCaseFactory(
-        db: AppDatabase,
-        logger: Logger,
-      ): LoginUseCase {
-        const repo = new AuthUserRepository(db, logger);
-        const repoContract: AuthUserRepositoryContract =
-          new AuthUserRepositoryAdapter(repo);
-  
-        const service = new BcryptPasswordService();
-        const hasher = new BcryptPasswordHasherAdapter(service);
-  
-        return new LoginUseCase(repoContract, hasher, logger);
-      }
-  
-      // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
-      export function makeLoginUseCase(
-        db: AppDatabase,
-        logger: Logger,
-      ): LoginUseCase {
-        return new LoginUseCase(
-          new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
-          new BcryptHasherAdapter(new BcryptPasswordService()),
-          logger,
-        );
-      }
-      ```
+    ```typescript
+    // ✅ Good: Explicit wiring and assignment
+    export function loginUseCaseFactory(
+      db: AppDatabase,
+      logger: Logger,
+    ): LoginUseCase {
+      const repo = new AuthUserRepository(db, logger);
+      const repoContract: AuthUserRepositoryContract =
+        new AuthUserRepositoryAdapter(repo);
+
+      const service = new BcryptPasswordService();
+      const hasher = new BcryptPasswordHasherAdapter(service);
+
+      return new LoginUseCase(repoContract, hasher, logger);
+    }
+
+    // ❌ Bad: Nested instantiation makes it harder to debug/trace wiring
+    export function makeLoginUseCase(
+      db: AppDatabase,
+      logger: Logger,
+    ): LoginUseCase {
+      return new LoginUseCase(
+        new AuthUserRepositoryAdapter(new AuthUserRepository(db, logger)),
+        new BcryptHasherAdapter(new BcryptPasswordService()),
+        logger,
+      );
+    }
+    ```
 
 **Additional Rule: Ports vs Infrastructure Seams**
 
@@ -350,13 +350,13 @@ export class UserRepository implements UserRepositoryContract {
 **Purpose**: Adapt application layer to the delivery mechanism (web UI, API, CLI, etc.).
 
 - **Allowed Imports**:
-    - Application layer (use cases, DTOs, schemas)
-    - Shared UI utilities
-    - React, Next.js, framework code
+  - Application layer (use cases, DTOs, schemas)
+  - Shared UI utilities
+  - React, Next.js, framework code
 - **Forbidden Imports**:
-    - Domain entities directly (use DTOs)
-    - Infrastructure implementations
-    - Database code
+  - Domain entities directly (use DTOs)
+  - Infrastructure implementations
+  - Database code
 
 **What Belongs Here**:
 
@@ -389,8 +389,7 @@ export class UserRepository implements UserRepositoryContract {
 
 ## Boundary Crossing & Data Flow
 
-```
-
+```text
 Presentation → Application → Domain ← Infrastructure
     ↓              ↓           ↓           ↓
 Transport     →   DTO    →   Entity  ←   Row
@@ -409,7 +408,7 @@ Transport     →   DTO    →   Entity  ←   Row
 ### Mapping Responsibility Matrix
 
 | From → To            | Layer          | Location                      | Example                     |
-|:---------------------|:---------------|:------------------------------|:----------------------------|
+| :------------------- | :------------- | :---------------------------- | :-------------------------- |
 | Transport → DTO      | Presentation   | Server actions                | `extractFormData()`         |
 | DTO → Entity         | Application    | Use cases / helpers           | `toEntity(dto)`             |
 | Entity → DTO         | Application    | `application/mappers/`        | `toDto(entity)`             |
@@ -500,7 +499,7 @@ export class CreateUserUseCase {
 ### Decision Matrix
 
 | Concern                                         | Pattern      | Location                             |
-|:------------------------------------------------|:-------------|:-------------------------------------|
+| :---------------------------------------------- | :----------- | :----------------------------------- |
 | Pure business rule with no side effects         | **Policy**   | `domain/policies/`                   |
 | Capability requiring side effects (hash, store) | **Service**  | Contract in `application/contracts/` |
 | Orchestration logic reused across use cases     | **Helper**   | `application/helpers/`               |
@@ -615,7 +614,7 @@ export type LoginRequestDto = z.output<typeof LoginRequestSchema>;
 
 ### File Organization
 
-```
+```text
 auth/
   domain/
   application/

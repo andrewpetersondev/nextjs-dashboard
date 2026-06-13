@@ -12,30 +12,30 @@ in a PR, and sitting right next to the code it describes.
 
 ## The diagrams
 
-| File | The question it answers | Diagram type |
-|---|---|---|
-| [c4-architecture.md](c4-architecture.md) | "How is the whole system carved into pieces?" | C4 (context → container → component) |
-| [database-erd.md](database-erd.md) | "What tables exist and how do they relate?" | Entity-relationship |
-| [module-layers.md](module-layers.md) | "How is a module layered, and which way do dependencies point?" | Layered flowchart |
-| [auth-login-flow.md](auth-login-flow.md) | "Step by step, what happens when someone logs in?" | Sequence |
-| [request-flow-update-user.md](request-flow-update-user.md) | "How does a form submission travel through the layers?" | Sequence |
-| [error-handling-flow.md](error-handling-flow.md) | "How does a failure travel from the database to a red field error — without a `throw`?" | Sequence + type map |
-| [route-authorization.md](route-authorization.md) | "Before a page renders, what decides whether I'm allowed in?" | Sequence + decision |
-| [session-lifecycle.md](session-lifecycle.md) | "What states can a session be in, and what moves it between them?" | State machine |
-| [dependency-injection.md](dependency-injection.md) | "How do application contracts and infrastructure implementations actually get connected?" | Component graph |
+| File                                                       | The question it answers                                                                   | Diagram type                         |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------ |
+| [c4-architecture.md](c4-architecture.md)                   | "How is the whole system carved into pieces?"                                             | C4 (context → container → component) |
+| [database-erd.md](database-erd.md)                         | "What tables exist and how do they relate?"                                               | Entity-relationship                  |
+| [module-layers.md](module-layers.md)                       | "How is a module layered, and which way do dependencies point?"                           | Layered flowchart                    |
+| [auth-login-flow.md](auth-login-flow.md)                   | "Step by step, what happens when someone logs in?"                                        | Sequence                             |
+| [request-flow-update-user.md](request-flow-update-user.md) | "How does a form submission travel through the layers?"                                   | Sequence                             |
+| [error-handling-flow.md](error-handling-flow.md)           | "How does a failure travel from the database to a red field error — without a `throw`?"   | Sequence + type map                  |
+| [route-authorization.md](route-authorization.md)           | "Before a page renders, what decides whether I'm allowed in?"                             | Sequence + decision                  |
+| [session-lifecycle.md](session-lifecycle.md)               | "What states can a session be in, and what moves it between them?"                        | State machine                        |
+| [dependency-injection.md](dependency-injection.md)         | "How do application contracts and infrastructure implementations actually get connected?" | Component graph                      |
 
 ## Pick the question first
 
 The one habit that keeps diagrams from turning into spaghetti: **a diagram should
 answer exactly one question.** Decide the question, and the diagram type follows.
 
-| You want to know… | Draw a… |
-|---|---|
-| What calls what, in what order (a request, a bug) | **Sequence diagram** |
-| How the system is split into parts | **C4 / box diagram** |
-| How data changes shape as it moves | **Data-flow / sequence** |
-| What tables exist and how they link | **ERD** |
-| What states a thing can be in | **State diagram** |
+| You want to know…                                 | Draw a…                  |
+| ------------------------------------------------- | ------------------------ |
+| What calls what, in what order (a request, a bug) | **Sequence diagram**     |
+| How the system is split into parts                | **C4 / box diagram**     |
+| How data changes shape as it moves                | **Data-flow / sequence** |
+| What tables exist and how they link               | **ERD**                  |
+| What states a thing can be in                     | **State diagram**        |
 
 ## The C4 model in one minute
 
@@ -44,7 +44,7 @@ levels is what makes architecture pictures confusing.
 
 1. **Context** — the app as a single box, plus who/what touches it (browser, Neon, Vercel).
 2. **Container** — the deployable things: the Next.js app, the Postgres database.
-3. **Component** — *inside* a container: the modules and layers.
+3. **Component** — _inside_ a container: the modules and layers.
 4. **Code** — class/function level. Don't hand-draw this; let WebStorm generate it.
 
 See [c4-architecture.md](c4-architecture.md) for levels 1–3 drawn from this repo.
@@ -62,7 +62,7 @@ See [c4-architecture.md](c4-architecture.md) for levels 1–3 drawn from this re
 
 A wrong diagram is worse than no diagram. When you change a flow or a table,
 either update the relevant file here, or ask Claude to regenerate it from the
-current code (e.g. *"redraw the login sequence from the actual auth module"*).
+current code (e.g. _"redraw the login sequence from the actual auth module"_).
 
 The first five were generated on **2026-06-03** (branch
 `claude/gallant-mccarthy-f13a40`); the last four — error handling, route

@@ -9,24 +9,24 @@ Standardized naming to ensure predictability, discoverability, and easy refactor
 
 - ✅ `LoginRequestDto` in `login-request.dto.ts`
 
-3. **Consumer-Centric Naming**: Use Cases depend on "Contracts".
-    - Avoid tech-leaky words like "Adapter" or "Pg" in Application layer dependency names.
+1. **Consumer-Centric Naming**: Use Cases depend on "Contracts".
+   - Avoid tech-leaky words like "Adapter" or "Pg" in Application layer dependency names.
 
 - ✅ `sessionService: SessionServiceContract`
 
-4. **Contract Location**:
-    - Side-effect contracts (Repositories/Services) live in `application/contracts/`.
-    - Domain remains 100% side-effect free logic.
+1. **Contract Location**:
+   - Side-effect contracts (Repositories/Services) live in `application/contracts/`.
+   - Domain remains 100% side-effect free logic.
 
-5. **Port vs Infrastructure Seam (Anti-Drift Rule)**:
-    - Use `*.contract.ts` / `*Contract` **only** for **Ports** that are imported by `domain/**` or `application/**`.
-    - If an interface/type is used **only inside** `infrastructure/**`, it is **not** a Port. Prefer an explicit
-      Infrastructure seam name like:
-        - `*.strategy.ts` / `*Strategy`
-        - `*.provider.ts` / `*Provider`
-        - `*.client.ts` / `*Client`
-    - Heuristic: if the only references are Infrastructure files (e.g., an Infrastructure adapter + an Infrastructure
-      service), naming it `*Contract` is misleading and will cause “naming drift”.
+2. **Port vs Infrastructure Seam (Anti-Drift Rule)**:
+   - Use `*.contract.ts` / `*Contract` **only** for **Ports** that are imported by `domain/**` or `application/**`.
+   - If an interface/type is used **only inside** `infrastructure/**`, it is **not** a Port. Prefer an explicit
+     Infrastructure seam name like:
+     - `*.strategy.ts` / `*Strategy`
+     - `*.provider.ts` / `*Provider`
+     - `*.client.ts` / `*Client`
+   - Heuristic: if the only references are Infrastructure files (e.g., an Infrastructure adapter + an Infrastructure
+     service), naming it `*Contract` is misleading and will cause “naming drift”.
 
 ---
 
@@ -37,7 +37,7 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 ### Suffix Reference Table
 
 | Suffix           | Meaning                                     | Layer/Boundary         | Example Type Name           | Example File Name                 |
-|:-----------------|:--------------------------------------------|:-----------------------|:----------------------------|:----------------------------------|
+| :--------------- | :------------------------------------------ | :--------------------- | :-------------------------- | :-------------------------------- |
 | `.entity.ts`     | Domain object with identity                 | Domain                 | `UserEntity`                | `user.entity.ts`                  |
 | `.value.ts`      | Value object / Branded primitive            | Domain / Shared        | `Email`, `UserId`           | `email.value.ts`                  |
 | `.policy.ts`     | Pure business rules/logic (no side effects) | Domain                 | N/A (exports functions)     | `password-validation.policy.ts`   |
@@ -63,34 +63,34 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 ### Hard Rules
 
 - **Avoid generic suffixes when a boundary-specific suffix is accurate**
-    - Prefer `.dto.ts`, `.schema.ts`, `.contract.ts`, `.constants.ts`, `.tokens.ts`, etc. when they reflect the file’s
-      role.
+  - Prefer `.dto.ts`, `.schema.ts`, `.contract.ts`, `.constants.ts`, `.tokens.ts`, etc. when they reflect the file’s
+    role.
 
-- **`*.types.ts` is allowed, but only under strict constraints (Anti-Dumping-Ground Rule)**  
-  Use `*.types.ts` only when the file is a **type-only companion module** that does *not* represent a boundary object.
+- **`*.types.ts` is allowed, but only under strict constraints (Anti-Dumping-Ground Rule)**\
+  Use `*.types.ts` only when the file is a **type-only companion module** that does _not_ represent a boundary object.
 
   **Allowed for `*.types.ts`:**
-    - The file exports **only** `type` / `interface` declarations (no runtime exports).
-    - The types are **structural** or **utility** in nature (e.g., helper generics, internal shapes, reusable type-level
-      helpers).
-    - The file is **dependency-light**:
-        - It may import other **type-only** modules.
-        - It must not import runtime modules (anything that would generate JS).
-    - The file should be **narrowly scoped**:
-        - Prefer placing them under a `types/` folder (e.g., `forms/core/types/...`).
+  - The file exports **only** `type` / `interface` declarations (no runtime exports).
+  - The types are **structural** or **utility** in nature (e.g., helper generics, internal shapes, reusable type-level
+    helpers).
+  - The file is **dependency-light**:
+    - It may import other **type-only** modules.
+    - It must not import runtime modules (anything that would generate JS).
+  - The file should be **narrowly scoped**:
+    - Prefer placing them under a `types/` folder (e.g., `forms/core/types/...`).
 
   **Not allowed for `*.types.ts`:**
-    - DTOs, transports, views, schemas, ports/contracts.
-    - “Everything type-related for this feature/capability” mega-files.
-    - Runtime values (constants, functions, classes).
+  - DTOs, transports, views, schemas, ports/contracts.
+  - “Everything type-related for this feature/capability” mega-files.
+  - Runtime values (constants, functions, classes).
 
   **If you’re tempted to put runtime exports in a `*.types.ts` file, it’s a sign the file name is wrong.**
 
 - **Suffix redundancy required for boundary objects**
-    - ✅ `LoginRequestDto` in `login-request.dto.ts`
-    - ✅ `PasswordHasherContract` in `password-hasher.contract.ts`
-    - ❌ `LoginRequest` in `login-request.dto.ts` (missing suffix in type name)
-    - ❌ `LoginRequestDto` in `login-request.ts` (missing suffix in file name)
+  - ✅ `LoginRequestDto` in `login-request.dto.ts`
+  - ✅ `PasswordHasherContract` in `password-hasher.contract.ts`
+  - ❌ `LoginRequest` in `login-request.dto.ts` (missing suffix in type name)
+  - ❌ `LoginRequestDto` in `login-request.ts` (missing suffix in file name)
 
 ---
 
@@ -100,7 +100,7 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 - ✅ `bcrypt-password.service.ts` (Class: `BcryptPasswordService`)
 
-2. **Bridges (Adapters)**: Named after the Contract they satisfy.
+1. **Bridges (Adapters)**: Named after the Contract they satisfy.
 
 - ✅ `password-hasher.adapter.ts` (Satisfies `PasswordHasherContract`)
 
@@ -112,18 +112,18 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ### Intentional vs Generic Naming
 
-| Context                    | ✅ Good (Intentional)   | ❌ Bad (Generic) | Why                           |
-|:---------------------------|:-----------------------|:----------------|:------------------------------|
-| Login input                | `LoginRequestDto`      | `UserDto`       | Reveals it's for login        |
-| Authenticated user output  | `AuthenticatedUserDto` | `UserDto`       | Shows it excludes password    |
-| User lookup query          | `UserLookupQueryDto`   | `UserQueryDto`  | Specific to lookup operation  |
-| Session principal identity | `SessionPrincipalDto`  | `UserDto`       | Minimal identity for sessions |
-| Public user profile        | `PublicUserProfileDto` | `UserDto`       | Public-facing subset          |
+| Context                    | ✅ Good (Intentional)  | ❌ Bad (Generic) | Why                           |
+| :------------------------- | :--------------------- | :--------------- | :---------------------------- |
+| Login input                | `LoginRequestDto`      | `UserDto`        | Reveals it's for login        |
+| Authenticated user output  | `AuthenticatedUserDto` | `UserDto`        | Shows it excludes password    |
+| User lookup query          | `UserLookupQueryDto`   | `UserQueryDto`   | Specific to lookup operation  |
+| Session principal identity | `SessionPrincipalDto`  | `UserDto`        | Minimal identity for sessions |
+| Public user profile        | `PublicUserProfileDto` | `UserDto`        | Public-facing subset          |
 
 ### DTO Naming Patterns
 
 | Pattern                    | Usage                                         | Example                |
-|:---------------------------|:----------------------------------------------|:-----------------------|
+| :------------------------- | :-------------------------------------------- | :--------------------- |
 | `{Action}RequestDto`       | Input to a use case                           | `LoginRequestDto`      |
 | `{Action}ResponseDto`      | Output from a use case (when specific needed) | `LoginResponseDto`     |
 | `{Context}{Entity}Dto`     | Entity subset for specific context            | `AuthenticatedUserDto` |
@@ -149,7 +149,7 @@ Mappers convert data between architectural boundaries. Placement depends on **wh
 ### Mapper Placement Rules
 
 | Conversion              | Layer          | Location                         | Naming Pattern                     | Example                           |
-|:------------------------|:---------------|:---------------------------------|:-----------------------------------|:----------------------------------|
+| :---------------------- | :------------- | :------------------------------- | :--------------------------------- | :-------------------------------- |
 | Transport → DTO         | Presentation   | Inline in actions (rarely files) | N/A                                | `extractFormData(formData)`       |
 | DTO → Entity            | Application    | `application/mappers/`           | `to-{entity}.mapper.ts`            | `to-user-entity.mapper.ts`        |
 | Entity → DTO            | Application    | `application/mappers/`           | `to-{dto}.mapper.ts`               | `to-authenticated-user.mapper.ts` |
@@ -223,7 +223,7 @@ Policies contain pure business logic with no side effects.
 ### File Naming Patterns
 
 | Pattern                       | Usage                                       | Example                                |
-|:------------------------------|:--------------------------------------------|:---------------------------------------|
+| :---------------------------- | :------------------------------------------ | :------------------------------------- |
 | `{domain-concept}.policy.ts`  | Multiple related rules for a domain concept | `password.policy.ts`                   |
 | `{specific-rule}.policy.ts`   | Single-purpose, standalone policy           | `validate-password-strength.policy.ts` |
 | `{action}-{entity}.policy.ts` | Policy governing a specific action          | `evaluate-session-lifecycle.policy.ts` |
@@ -231,13 +231,13 @@ Policies contain pure business logic with no side effects.
 ### Recommendation
 
 - **Multi-function files**: Use domain concept naming (`session.policy.ts`, `authorization.policy.ts`)
-    - Group related rules together
-    - Easier to discover all rules for a concept
+  - Group related rules together
+  - Easier to discover all rules for a concept
 
 - **Single-function files**: Use specific rule naming when:
-    - The policy is complex enough to warrant its own file
-    - It's referenced across multiple other policies
-    - You want to highlight its importance in the architecture
+  - The policy is complex enough to warrant its own file
+  - It's referenced across multiple other policies
+  - You want to highlight its importance in the architecture
 
 ```typescript
 // ✅ Good: Multiple related rules grouped by concept
@@ -272,7 +272,7 @@ Reduce synonym drift by sticking to these standard verbs.
 ### Standard Verb Table
 
 | Verb             | Usage                                           | Returns            | Side Effects | Example                     |
-|:-----------------|:------------------------------------------------|:-------------------|:-------------|:----------------------------|
+| :--------------- | :---------------------------------------------- | :----------------- | :----------- | :-------------------------- |
 | `toX`            | Pure mapping/transformation                     | Transformed value  | None         | `toUserDto(entity)`         |
 | `fromX`          | Reverse transformation (when `to` is ambiguous) | Transformed value  | None         | `fromJson(string)`          |
 | `normalizeX`     | Convert foreign/unsafe input to canonical shape | Normalized value   | None         | `normalizePgError(err)`     |
@@ -294,8 +294,8 @@ Reduce synonym drift by sticking to these standard verbs.
 
 ### Verbs to Avoid
 
-| ❌ Avoid      | ✅ Use Instead  | Reason              |
-|:-------------|:---------------|:--------------------|
+| ❌ Avoid     | ✅ Use Instead | Reason              |
+| :----------- | :------------- | :------------------ |
 | `mapX`       | `toX`          | Ambiguous direction |
 | `convertX`   | `toX`          | Verbose             |
 | `transformX` | `toX`          | Verbose             |
@@ -677,8 +677,8 @@ export async function deleteUserDal(...): Promise<Result<void, AppError>> { ... 
 
 - **Format**: PascalCase always
 - **Suffix Inclusion**: Always include the suffix
-    - ✅ `LoginRequestDto`, `UserEntity`, `PasswordHasherContract`
-    - ❌ `LoginRequest`, `User`, `PasswordHasher`
+  - ✅ `LoginRequestDto`, `UserEntity`, `PasswordHasherContract`
+  - ❌ `LoginRequest`, `User`, `PasswordHasher`
 
 ### Interface vs Type Alias
 
@@ -722,8 +722,7 @@ export interface TokenClaims {...}
 
 **Rule**: Test files must mirror the file they test.
 
-```
-
+```text
 src/
   modules/
     auth/
@@ -794,7 +793,7 @@ export const SESSION_SERVICE = Symbol("SESSION_SERVICE");
 
 ## Folder Organization (Modular Clean Architecture)
 
-```
+```text
 modules/{feature}/
 domain/
 entities/

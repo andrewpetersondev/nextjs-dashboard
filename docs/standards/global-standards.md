@@ -13,11 +13,11 @@ General rules for API compatibility, code style, and project organization.
   configuration).
 - **Explicit Typing**: Always explicitly type function arguments and return values. No `any`.
 - **Documentation**: Use **TSDoc** for describing intent and business context.
-    - Avoid repeating types in `@param` or `@returns` tags that are already defined in TypeScript.
-    - Avoid JSDoc.
+  - Avoid repeating types in `@param` or `@returns` tags that are already defined in TypeScript.
+  - Avoid JSDoc.
 - **Imports**:
-    - Avoid re-exports and barrel files (`index.ts`).
-    - Use absolute paths with `@/` alias.
+  - Avoid re-exports and barrel files (`index.ts`).
+  - Use absolute paths with `@/` alias.
 
 ## Strict Data Integrity
 
@@ -30,13 +30,13 @@ Avoid "drift" caused by silent fallbacks or implicit defaults.
 - **Validation over Defaulting**: Use Zod schemas to validate presence. If a field is optional, it must be explicitly
   handled as `undefined` or `null` throughout the flow.
 - **Minimize Optional Properties**: Avoid optional properties in:
-    - **Error Factories**
-    - **Contexts**
-    - **Metadata**
+  - **Error Factories**
+  - **Contexts**
+  - **Metadata**
 - **When Optional is Necessary**: If a property is genuinely optional:
-    - Mark it explicitly in TypeScript (`property?: Type`) and Zod (`.optional()`).
-    - Document why it's optional and how absent values are handled.
-    - Never silently default; let `undefined` propagate or handle it explicitly at each usage site.
+  - Mark it explicitly in TypeScript (`property?: Type`) and Zod (`.optional()`).
+  - Document why it's optional and how absent values are handled.
+  - Never silently default; let `undefined` propagate or handle it explicitly at each usage site.
 
 ## Project Structure
 
@@ -44,10 +44,10 @@ Organize features using a **Modular Clean Architecture** approach:
 
 - **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design). Shared, stateless components.
 - **Feature Modules**: `@/modules/{feature_name}` (Bounded Contexts).
-    - `domain/`
-    - `application/`
-    - `infrastructure/`
-    - `presentation/`
+  - `domain/`
+  - `application/`
+  - `infrastructure/`
+  - `presentation/`
 - **Shared**: `@/shared/` (cross-cutting concerns: error handling, functional `Result` types, Zod schemas).
 - **Server**: `@/server/` (Global singletons: DB client, logger configuration).
 - **Shell**: `@/shell/` (App-wide layout, providers, and global navigation).
@@ -56,9 +56,9 @@ Organize features using a **Modular Clean Architecture** approach:
 
 - **Isolation**: Modules should be self-contained. Avoid "feature-bleeding".
 - **Cross-Module Imports**:
-    - A module may import from another module's `domain` or `application/dtos`.
-    - NEVER import from another module's `infrastructure` or `presentation` (except shared UI).
-    - Use the `shared` directory for logic used by 3+ modules.
+  - A module may import from another module's `domain` or `application/dtos`.
+  - NEVER import from another module's `infrastructure` or `presentation` (except shared UI).
+  - Use the `shared` directory for logic used by 3+ modules.
 - **Communication**: Prefer asynchronous events (Domain Events) or simple service calls via contracts for cross-module
   interaction to maintain loose coupling.
 
@@ -68,18 +68,18 @@ Server Actions must remain **thin** and framework-focused. They are the bridge b
 Application logic.
 
 - **Allowed Concerns**:
-    - Extracting data from `FormData`.
-    - Retrieving request metadata (IP, User Agent, Cookies).
-    - Initializing observability (Request IDs, Performance Trackers).
-    - Validating input schemas (via Zod/Form Helpers).
-    - Invoking a **single** Use Case or Workflow.
-    - Mapping Domain/Application Results to UI-compatible `FormResult`.
-    - Triggering Next.js navigation (`redirect`, `revalidatePath`).
+  - Extracting data from `FormData`.
+  - Retrieving request metadata (IP, User Agent, Cookies).
+  - Initializing observability (Request IDs, Performance Trackers).
+  - Validating input schemas (via Zod/Form Helpers).
+  - Invoking a **single** Use Case or Workflow.
+  - Mapping Domain/Application Results to UI-compatible `FormResult`.
+  - Triggering Next.js navigation (`redirect`, `revalidatePath`).
 - **Forbidden Concerns**:
-    - Direct Database queries (DAL/Drizzle).
-    - Business logic or complex branching (move to Use Cases).
-    - Manual password hashing or crypto logic.
-    - Instantiating complex Infrastructure classes directly (use Factories).
+  - Direct Database queries (DAL/Drizzle).
+  - Business logic or complex branching (move to Use Cases).
+  - Manual password hashing or crypto logic.
+  - Instantiating complex Infrastructure classes directly (use Factories).
 
 ### `@/server/**` boundary (server-only infrastructure)
 

@@ -1,0 +1,31 @@
+{
+	// markdownlint-cli2 config. Linting only — formatting (whitespace, list/table
+	// layout, emphasis markers, trailing newlines) is owned by dprint (see dprint.json),
+	// so the rules dprint normalizes are disabled here to avoid the two tools fighting.
+	"config": {
+		"default": true,
+
+		// --- Owned by dprint (formatting overlap) ---
+		"MD007": false, // ul-indent — dprint formats list indentation
+		"MD009": false, // no-trailing-spaces — dprint strips trailing whitespace
+		"MD012": false, // no-multiple-blanks — dprint collapses blank lines
+
+		// --- Contentious / structural: intentionally relaxed ---
+		"MD013": false, // line-length — prose is not hard-wrapped (dprint textWrap: maintain)
+		"MD022": false, // blanks-around-headings — dprint enforces
+
+		// --- Content rules kept on, tuned for this repo ---
+		"MD024": { "siblings_only": true }, // duplicate headings ok across sections (ADRs reuse "Context"/"Decision")
+		"MD031": false, // blanks-around-fences — dprint enforces
+		"MD032": false, // blanks-around-lists — dprint enforces
+		"MD033": false, // inline-html — diagrams/docs use occasional raw HTML
+		"MD036": false, // no-emphasis-as-heading — false-positives on the "_Last updated: …_" doc-footer convention
+		"MD041": false, // first-line-heading — docs/ADRs/notes don't all start with an h1
+		"MD047": false, // single-trailing-newline — dprint enforces
+		"MD049": false, // emphasis-style — dprint normalizes emphasis markers
+		"MD060": false // table-column-style — dprint formats tables
+	},
+	"gitignore": true,
+	"globs": ["**/*.md"],
+	"ignores": ["node_modules", ".next", "dist", "coverage"]
+}
