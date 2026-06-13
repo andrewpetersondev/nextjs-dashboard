@@ -216,6 +216,6 @@ Behind the PR #48 characterization tests:
 ## Out of Scope
 
 Decided elsewhere, deliberately not here: the sensitive-field echo allowlist,
-the `toFormErrorPayload` / `formErrorPayloadMapper` consolidation, and
-validation-funnel unification. Each remains its own BACKLOG item under
-"Forms/error boundary cleanup".
+the form-error payload-mapper consolidation (since resolved — `toFormErrorPayload`
+is now the single mapper), and validation-funnel unification. Each was tracked as
+its own BACKLOG item under "Forms/error boundary cleanup".
