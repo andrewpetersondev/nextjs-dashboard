@@ -1,19 +1,17 @@
 import { describe, expect, it } from "vitest";
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
-import {
-	formErrorPayloadMapper,
-	toFormErrorPayload,
-} from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 /**
  * Unit tests for the form error payload mapper (form-error-payload.mapper.ts).
  *
- * Two overlapping exports adapt an AppError for the form UI. Production code
- * uses only `toFormErrorPayload`; `formErrorPayloadMapper` differs in its
- * form-error fallback (`[error.message]`). Both behaviors are pinned so the
- * planned consolidation (BACKLOG: "Form error payload overlap") is a
- * deliberate change, not an accident.
+ * `toFormErrorPayload` is the single mapper that adapts an AppError for the
+ * form UI. The earlier `formErrorPayloadMapper` variant — which synthesized a
+ * form-level error from `error.message` when none was present — was removed in
+ * the "Form error payload overlap" consolidation (BACKLOG). The key behavior
+ * that replaced it is pinned here: a non-form error yields `formErrors: []`,
+ * never `[error.message]`.
  */
 describe("form-error payload mapper", () => {
 	const validationError = makeAppError("validation", {
@@ -57,26 +55,12 @@ describe("form-error payload mapper", () => {
 			expect(Object.isFrozen(payload.fieldErrors)).toBe(true);
 			expect(payload.formData).toEqual({});
 		});
-	});
 
-	describe("formErrorPayloadMapper", () => {
-		it("matches toFormErrorPayload for a validation error with form errors", () => {
-			expect(formErrorPayloadMapper(validationError)).toEqual(
-				toFormErrorPayload(validationError),
-			);
-		});
-
-		it("falls back to [error.message] when there are no form errors (divergence)", () => {
-			// toFormErrorPayload returns [] here; the mapper substitutes the
-			// message — the behavioral difference behind the overlap TODO.
-			const payload = formErrorPayloadMapper(nonFormError);
-
-			expect(payload.formErrors).toEqual(["Nothing here."]);
+		it("never synthesizes a form-level error from the message (no [error.message] fallback)", () => {
+			// The removed formErrorPayloadMapper substituted [error.message]
+			// here; the single mapper surfaces only what the error carries, so a
+			// non-form error has no form-level errors.
 			expect(toFormErrorPayload(nonFormError).formErrors).toEqual([]);
-		});
-
-		it("never builds a dense map — non-form errors get an empty fieldErrors object", () => {
-			expect(formErrorPayloadMapper(nonFormError).fieldErrors).toEqual({});
 		});
 	});
 });
