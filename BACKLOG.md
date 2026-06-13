@@ -19,50 +19,10 @@ this file is the deliberate workaround.)
       68 characterization tests across all 11 testable forms files, pinning the three
       known quirks (key coupling, sensitive echo, payload-mapper overlap) ahead of the
       boundary redesign. _Lock behavior first, refactor behind the tests._
-- [ ] **Forms/error boundary cleanup** — friction points surfaced while fixing Server
-      Action serialization (PR #41, 2026-06-11). Roadmap: shrink (#45–47) → lock (#48) →
-      decide → reshape. Small independent PRs, in roughly this order; full context in
-      memory (`project_forms_error_refactor`):
-  - [x] **Decide boundary state type** _(2026-06-11)_ — ADR 001 in
-        `src/shared/forms/notes/adr/` (status: Accepted) merges the old
-        "tri-state form state" and "FormResult vs Result" items into one decision:
-        `FormResult` stays a boundary DTO union (core `Result` keeps its
-        `TError extends AppError` constraint), and idle is modeled as `null` via
-        `FormState<T> = FormResult<T> | null` — no fake `INITIAL_STATE` error.
-  - [x] **Implement FormState (reshape, slice 1)** _(2026-06-11, PR #50)_ — per
-        ADR 001: `null` initial state in the 7 `useActionState` forms, widened
-        `FormAction`/action `prevState` types, early-return on `null` in feedback
-        components, deleted `form-state.factory.ts` + its tests, updated
-        `docs/standards/error-handling-and-result-pattern.md` + forms notes README;
-        ADR status flipped to Accepted in the same PR.
-  - [x] **Stop echoing sensitive fields** _(2026-06-11)_ — `metadata.formData` is
-        now allowlist-only: `validateForm` echoes just `options.echoFields` (default
-        none), auth mappers filter through `selectEchoedFieldValues` (login echoes
-        email; signup echoes email+username; passwords never round-trip), and the
-        invoice actions stopped echoing raw input (incl. `sensitiveData`).
-  - [x] **One validation funnel** _(2026-06-11)_ — create/update-invoice now go
-        through `validateForm` like auth/users (create dropped its inline `safeParse`;
-        update dropped per-field `formData.get` + hand-flattened Zod errors). The edit
-        form's messages are translated text instead of raw `INVOICE.*` ids (update's
-        AppError branch now says `updateFailed`, not `invalidInput`'s "create" copy),
-        and the stale-skipped update-form Cypress error test is re-enabled — its
-        serialization blocker was fixed back in PR #41.
-  - [x] **Fix field-error key coupling** _(2026-06-13)_ — the inspector extractors and the
-        shared `isFormValidationError` guard now detect form metadata by SHAPE (`fieldErrors`
-        present), key-agnostic: `conflict`/`not_found`/etc. form errors round-trip their echoed
-        values and form-level errors instead of silently dropping them (fixes the signup
-        unique-violation wiping the typed email/username). A `validation`/`conflict` error
-        without form metadata still returns undefined.
-  - [x] **Form error payload overlap** _(2026-06-13)_ — consolidated onto a single
-        `toFormErrorPayload`; deleted the test-only `formErrorPayloadMapper` (zero
-        production callers) and its `[error.message]` form-error fallback. The fallback
-        was dead for every real input except one integration assertion (signup conflict),
-        where it synthesized a form-level error that production never shows — production
-        surfaces conflicts as FIELD-level errors (`fieldErrors.email`, `formErrors` empty,
-        per `toSignupFormResult`). Realigned that assertion to the field-level channel
-        (matching `signup-flow.test.ts`'s documented contract), migrated the 3 auth
-        integration decoders + the unit test to `toFormErrorPayload`, and removed the TODO.
-        Production behavior unchanged. Unit + auth-integration lanes green; typecheck clean.
+- [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
+      (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
+      Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
+      Full context in memory (`project_forms_error_refactor`).
 - [ ] **Env hygiene** — surfaced during deploy prep (2026-06-11):
   - [x] Remove dead `LOG_LEVEL` plumbing _(2026-06-13)_ — deleted `getLogLevelResult` +
         `_getLogLevel` from `env-shared.ts` (and their orphaned `LogLevel`/`LogLevelSchema`
@@ -131,6 +91,18 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Forms/error boundary cleanup — roadmap complete** _(2026-06-13)_ — the full
+      shrink → lock → decide → reshape roadmap is done. Shrink landed via the dead-seam
+      sweep + knip residue entries below (#45–#47); then 68 characterization tests locked
+      behavior (#48); ADR 001 chose `FormResult` as a boundary DTO with `null` idle (#49);
+      the 7 `useActionState` forms moved to `null` initial state (#50); sensitive-field
+      echo became allowlist-only so passwords never round-trip (#51); invoices were routed
+      through one `validateForm` funnel (#52); field-error metadata is now detected by
+      shape, not key (#63); and the two form-error payload mappers were consolidated onto a
+      single `toFormErrorPayload` (#64). Core layering stayed sound — internals were not
+      migrated to DTOs. Remaining work is tracked as the **Forms taxonomy flattening** Open
+      item. Full context in memory (`project_forms_error_refactor`).
 
 - [x] **Live deploy** _(2026-06-13)_ — the managed Vercel + Neon path is live. The
       production deployment is promoted and serving at
