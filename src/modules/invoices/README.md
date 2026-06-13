@@ -49,26 +49,24 @@ interface InvoiceEntity {
 
 ## Architecture at a glance
 
-There are **two distinct paths** through the module:
+Every server action routes through the service — one path shape:
 
 ```
-Command path (single record):
-  Server Action ─▶ InvoiceService ─▶ InvoiceRepository ─▶ DAL ─▶ Postgres
-  (create / read-by-id / update / delete)
-
-Read path (lists & aggregates):
-  Server Action ─▶ DAL ─▶ Postgres
-  (filtered list, page count, latest, totals/summary — bypasses the service)
+Server Action ─▶ InvoiceService ─▶ InvoiceRepository ─▶ DAL ─▶ Postgres
 ```
+
+Both commands (create / read-by-id / update / delete) and list/aggregate
+reads (filtered list, page count, latest, totals/summary) take this path; each
+action builds `new InvoiceService(new InvoiceRepository(getAppDb()))` inline.
 
 How invoices differs from the `auth` module — worth knowing up front:
 
 | Concern | `auth` | `invoices` |
 |---|---|---|
-| Application layer | CQRS: commands / queries / workflows | One `InvoiceService` class with CRUD methods |
+| Application layer | CQRS: commands / queries / workflows | One `InvoiceService` class with CRUD + read methods |
 | Composition | DI composition root + factories | Actions build `new InvoiceService(new InvoiceRepository(getAppDb()))` inline |
 | Repo error style | Returns `Result<T, AppError>` | **Throws** `AppError`; caught in the action's `try/catch` |
-| Reads | Through use-cases | List/aggregate reads call DAL **directly** from the action |
+| Reads | Through query use-cases | Through `InvoiceService` read methods |
 
 Neither approach is "wrong" — invoices is simpler than auth and is wired more
 directly. The table is here so the difference doesn't read as an inconsistency.
@@ -95,7 +93,7 @@ invoices/
 │
 ├── application/                         # Orchestration / business rules
 │   ├── dto/invoice.dto.ts               #   InvoiceDto, InvoiceFormDto, InvoicesSummary
-│   ├── services/invoice.service.ts      #   InvoiceService — CRUD, returns Result<…, AppError>
+│   ├── services/invoice.service.ts      #   InvoiceService — CRUD + list/aggregate reads, returns Result<…, AppError>
 │   └── utils/error-messages.ts          #   toInvoiceErrorMessage()
 │
 ├── infrastructure/                      # Database + data transformation
@@ -104,7 +102,7 @@ invoices/
 │   │   └── mappers/invoice.mapper.ts    #   form → service entity (derives revenuePeriod)
 │   └── repository/
 │       ├── base-repository.ts           #   abstract BaseRepository<TDto, TId, TCreate, TUpdate>
-│       ├── invoice.repository.ts        #   InvoiceRepository — CRUD; throws AppError
+│       ├── invoice.repository.ts        #   InvoiceRepository — CRUD + reads; throws AppError
 │       └── dal/                         #   one function per query (4 CRUD + 6 dashboard reads)
 │
 └── presentation/                        # Next.js server actions + React UI
@@ -206,8 +204,11 @@ and [ADR-007](../auth/notes/adr/007-enforce-action-level-authorization.md).
 ### Lists & aggregates (read path)
 
 `readInvoicesSummaryAction`, `readFilteredInvoicesAction`,
-`readInvoicesPagesAction`, and `readLatestInvoicesAction` skip the service: they
-take (or open) a `db` handle and call their DAL function directly, returning a
+`readInvoicesPagesAction`, and `readLatestInvoicesAction` follow the same path
+as the commands: each builds `new InvoiceService(new InvoiceRepository(getAppDb()))`
+and calls the matching service read method (`readInvoicesSummary` /
+`readFilteredInvoices` / `readInvoicesPages` / `readLatestInvoices`), which the
+repository fulfils via its DAL functions. The action unwraps the `Result` into a
 plain shape (`InvoicesSummary`, `InvoiceListFilter[]`, …). Page size is
 `ITEMS_PER_PAGE_INVOICES` (10).
 
