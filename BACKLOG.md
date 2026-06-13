@@ -125,6 +125,24 @@ this file is the deliberate workaround.)
 
 <!-- Move finished items here with a date, or delete them. -->
 
+- [x] **Auth/invoices structure-assessment fixes** _(2026-06-13)_ — applied all 5 fixes
+  from the 2026-06-12 module-structure assessment (verdict: **no restructure**; the
+  auth/users split is sound). Three PRs, all merged:
+  - **#57** — flattened 18 single-file leaf directories in `auth` (role suffixes already
+    carried the categorization the folders duplicated).
+  - **#58** — narrowed `toSessionPrincipal` to one input type (dropped a dead
+    `UpdateSessionSuccessDto` branch); documented why `SessionPrincipalDto` is id+role
+    only; removed auth's only application→infrastructure import (the demo-user helper's
+    pg-error mapper call was a no-op — the repo already maps it — and the helper moved to
+    `auth-user/commands`).
+  - **#59** — routed the 4 invoices read actions (filtered/pages/latest/summary) through
+    `InvoiceService` instead of importing DALs directly; dropped the non-serializable
+    `db` param from the summary/latest actions.
+
+  Full detail in memory (`project_structure_assessment`). Invoices module README updated
+  to match (single service-routed path). _Not done: the broader `docs/ consolidation`
+  item below (standards-overlap reconciliation) is separate and still open._
+
 - [x] **Weekly codemod routine** _(2026-06-13)_ — created as a live `/schedule` cloud
   agent (`weekly-maintenance`, Mondays ~9am Central). Scope expanded past the original
   Next.js/Biome codemods to also cover dependency-pin blind spots (pnpm/Node/overrides),
