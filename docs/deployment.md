@@ -2,12 +2,12 @@
 
 This app runs two ways, from the same codebase:
 
-| | **A. Managed (Vercel + Neon)** | **B. Self-hosted (Docker)** |
-|---|---|---|
-| Best for | the always-on live demo | proving it runs anywhere, local dev parity |
-| Cost | $0 on free tiers | free locally; ~$4–6/mo on a VPS |
-| Ops | none | yours (host, TLS, backups) |
-| Database | Neon Postgres | Postgres container (or any Postgres) |
+|          | **A. Managed (Vercel + Neon)** | **B. Self-hosted (Docker)**                |
+| -------- | ------------------------------ | ------------------------------------------ |
+| Best for | the always-on live demo        | proving it runs anywhere, local dev parity |
+| Cost     | $0 on free tiers               | free locally; ~$4–6/mo on a VPS            |
+| Ops      | none                           | yours (host, TLS, backups)                 |
+| Database | Neon Postgres                  | Postgres container (or any Postgres)       |
 
 The app is host-agnostic by design: it uses the standard `pg` driver and talks
 to any Postgres over `DATABASE_URL`, has no Vercel-specific APIs, and builds to
@@ -21,25 +21,25 @@ All environments need these. Validation lives in
 `src/shared/core/config/` — the server **fails fast at startup** if any are
 missing or malformed, so set them all.
 
-| Variable | Example | Notes |
-|---|---|---|
-| `DATABASE_URL` | `postgresql://user:pass@host:5432/db` | Neon: append `?sslmode=require` |
-| `SESSION_SECRET` | (long random string) | generate with `openssl rand -base64 48` |
-| `AUTH_BCRYPT_SALT_ROUNDS` | `12` | positive integer |
-| `SESSION_ISSUER` | `my-app` | fixed value |
-| `SESSION_AUDIENCE` | `web` | fixed value |
-| `NODE_ENV` | `production` | |
-| `DATABASE_ENV` | `production` | selects the migration scope |
-| `LOG_LEVEL` | `info` | `trace`\|`debug`\|`info`\|`warn`\|`error` |
-| `NEXT_PUBLIC_NODE_ENV` | `production` | inlined into the client bundle at build |
-| `NEXT_PUBLIC_LOG_LEVEL` | `info` | inlined into the client bundle at build |
+| Variable                  | Example                               | Notes                                     |
+| ------------------------- | ------------------------------------- | ----------------------------------------- |
+| `DATABASE_URL`            | `postgresql://user:pass@host:5432/db` | Neon: append `?sslmode=require`           |
+| `SESSION_SECRET`          | (long random string)                  | generate with `openssl rand -base64 48`   |
+| `AUTH_BCRYPT_SALT_ROUNDS` | `12`                                  | positive integer                          |
+| `SESSION_ISSUER`          | `my-app`                              | fixed value                               |
+| `SESSION_AUDIENCE`        | `web`                                 | fixed value                               |
+| `NODE_ENV`                | `production`                          |                                           |
+| `DATABASE_ENV`            | `production`                          | selects the migration scope               |
+| `LOG_LEVEL`               | `info`                                | `trace`\|`debug`\|`info`\|`warn`\|`error` |
+| `NEXT_PUBLIC_NODE_ENV`    | `production`                          | inlined into the client bundle at build   |
+| `NEXT_PUBLIC_LOG_LEVEL`   | `info`                                | inlined into the client bundle at build   |
 
 **Demo logins** (created by the seed):
 
-| Role | Email | Password |
-|---|---|---|
+| Role  | Email             | Password            |
+| ----- | ----------------- | ------------------- |
 | Admin | `admin@admin.com` | `AdminPassword123!` |
-| User | `user@user.com` | `UserPassword123!` |
+| User  | `user@user.com`   | `UserPassword123!`  |
 | Guest | `guest@guest.com` | `GuestPassword123!` |
 
 ---
@@ -66,7 +66,8 @@ The fastest path to a live URL. Steps marked 🔑 need your accounts.
 6. **README** — add the live URL and CI badge.
 
 Good to know:
-- **Neon free tier scales to zero** when idle, so the *first* request after a
+
+- **Neon free tier scales to zero** when idle, so the _first_ request after a
   quiet period waits ~1s while the DB wakes. Fine for a demo.
 - **Vercel Hobby is non-commercial / personal use only** — a portfolio project
   qualifies. Monetizing it would require Pro.

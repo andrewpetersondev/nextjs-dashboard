@@ -20,11 +20,11 @@ handled:
 This module deliberately exposes a minimal surface. There is no barrel file —
 import directly from the specific module:
 
-| Import                                                    | From                                  | Purpose                                                            |
-| -------------------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------- |
-| `Ok`, `Err`, `unwrapOrNull`                              | `@/shared/core/result/result`         | Construct results; non-throwing unwrap to `value \| null`.        |
-| `Result`, `OkResult`, `ErrResult`   | `@/shared/core/result/result.dto`     | Types.                                                             |
-| `safeExecute`                                            | `@/shared/core/result/safe-execute`   | Run an async thunk, converting thrown values into a logged `Err`. |
+| Import                            | From                                | Purpose                                                           |
+| --------------------------------- | ----------------------------------- | ----------------------------------------------------------------- |
+| `Ok`, `Err`, `unwrapOrNull`       | `@/shared/core/result/result`       | Construct results; non-throwing unwrap to `value \| null`.        |
+| `Result`, `OkResult`, `ErrResult` | `@/shared/core/result/result.dto`   | Types.                                                            |
+| `safeExecute`                     | `@/shared/core/result/safe-execute` | Run an async thunk, converting thrown values into a logged `Err`. |
 
 ### Creating and reading results
 

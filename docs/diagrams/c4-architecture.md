@@ -1,7 +1,7 @@
 # C4 architecture — the map of the territory
 
 Three zoom levels of the same system. Read them top to bottom: each one steps
-*inside* the main box of the previous. (What is C4? See
+_inside_ the main box of the previous. (What is C4? See
 [README.md](README.md#the-c4-model-in-one-minute).)
 
 ---
@@ -88,7 +88,7 @@ flowchart TD
 The **one-way dependency rule** (from
 [../project-structure.md](../project-structure.md)):
 
-```
+```text
 shared / ui  →  modules  →  shell  →  app
 ```
 

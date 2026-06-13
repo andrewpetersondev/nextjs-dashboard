@@ -9,17 +9,21 @@ Also consult relevant detailed project standards in `docs/standards/`.
 
 Project-level slash commands are defined in `.claude/commands/`:
 
-| Command | Runs |
-|---|---|
-| `/check` | `pnpm check:fast` — lint + typecheck + typegen (report-only) |
-| `/check-full` | `pnpm check` — full suite including unit tests and e2e (report-only) |
-| `/lint` | `pnpm biome:lint && pnpm biome:format:check` (report-only) |
-| `/fix` | `pnpm biome:lint:fix` then `pnpm biome:lint` — auto-fix lint/format, report residue |
-| `/test` | `pnpm test` — unit tests only (report-only) |
-| `/coverage` | `pnpm test:coverage` — vitest unit coverage summary (report-only) |
-| `/e2e` | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only) |
+| Command       | Runs                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------- |
+| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)         |
+| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only) |
+| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)      |
+| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue          |
+| `/test`       | `pnpm test` — unit tests only (report-only)                                           |
+| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                     |
+| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)              |
 
-Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome (it does not hand-edit).
+Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit).
+
+### Markdown tooling
+
+Markdown is linted by **markdownlint-cli2** (`.markdownlint-cli2.jsonc`) and formatted by **dprint** (`dprint.json`) — Biome's markdown support is still experimental, so it only owns JS/TS/JSON here. The two tools have non-overlapping responsibilities: formatting rules (whitespace, list/table layout, emphasis markers) are disabled in markdownlint and owned by dprint. Use `pnpm md:check` to verify and `pnpm md:fix` to auto-fix (markdownlint first, dprint last).
 
 ### Worktrees
 

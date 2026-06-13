@@ -6,18 +6,18 @@ environment, bridging the gap between Server Actions and client-side UI.
 #### Directory Structure
 
 - `core/`: Fundamental types, guards, and constants.
-    - `types/`: Modularized types for field errors, field values, and form results.
-    - `guards/`: Type guards for discriminating form results.
+  - `types/`: Modularized types for field errors, field values, and form results.
+  - `guards/`: Type guards for discriminating form results.
 - `logic/`: Framework-agnostic logic for processing form data.
-    - `factories/`: Creation of `FormResult` objects.
-    - `inspectors/`: Tools for extracting information from schemas and errors.
-    - `mappers/`: Conversions between different error map shapes (sparse vs dense).
+  - `factories/`: Creation of `FormResult` objects.
+  - `inspectors/`: Tools for extracting information from schemas and errors.
+  - `mappers/`: Conversions between different error map shapes (sparse vs dense).
 - `presentation/`: UI-specific data adapters (`mappers/`).
 - `server/`: Next.js server-side specific utilities.
-    - `validate-form.ts`: The primary entry point for validating `FormData`.
-    - `factories/`: Construction of validation-error form results.
-    - `mappers/`: Zod error flattening.
-    - `utils/`: `FormData` extraction and manipulation.
+  - `validate-form.ts`: The primary entry point for validating `FormData`.
+  - `factories/`: Construction of validation-error form results.
+  - `mappers/`: Zod error flattening.
+  - `utils/`: `FormData` extraction and manipulation.
 
 #### Key Concepts
 

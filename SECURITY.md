@@ -12,8 +12,8 @@ released or supported older versions.
 
 | Version | Supported |
 | ------- | --------- |
-| `main`  | ✅         |
-| older   | ❌         |
+| `main`  | ✅        |
+| older   | ❌        |
 
 ## Reporting a vulnerability
 

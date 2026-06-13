@@ -1,12 +1,12 @@
 # Dependency injection — where contracts meet implementations
 
-> The question this answers: *"The [module-layers diagram](module-layers.md) says
+> The question this answers: _"The [module-layers diagram](module-layers.md) says
 > 'application code never imports infrastructure directly.' So how do the two ever
-> actually get connected?"* The answer is a single place called the **composition
+> actually get connected?"_ The answer is a single place called the **composition
 > root** ([`auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts)).
 
 This is the mechanism behind the "dependencies point inward" rule. A use case
-depends on an *interface* (a contract); the concrete database/crypto class that
+depends on an _interface_ (a contract); the concrete database/crypto class that
 satisfies that interface is plugged in at runtime — and the plugging happens here,
 nowhere else.
 
@@ -85,12 +85,12 @@ above is the only thing the application layer is allowed to know about.
 
 ## The files behind the boxes
 
-| Box | File |
-|---|---|
-| composition root | [`auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts) |
-| a use-case factory | [`login-use-case.factory.ts`](../../src/modules/auth/infrastructure/composition/factories/auth-user/login-use-case.factory.ts) |
-| the contract (interface) | [`session-service.contract.ts`](../../src/modules/auth/application/session/contracts/session-service.contract.ts) |
-| a concrete implementation | [`session-token.service.ts`](../../src/modules/auth/infrastructure/session/services/session-token.service.ts) |
+| Box                       | File                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| composition root          | [`auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts)                                 |
+| a use-case factory        | [`login-use-case.factory.ts`](../../src/modules/auth/infrastructure/composition/factories/auth-user/login-use-case.factory.ts) |
+| the contract (interface)  | [`session-service.contract.ts`](../../src/modules/auth/application/session/contracts/session-service.contract.ts)              |
+| a concrete implementation | [`session-token.service.ts`](../../src/modules/auth/infrastructure/session/services/session-token.service.ts)                  |
 
 ## The payoff (and the honest cost)
 

@@ -1,7 +1,7 @@
 # Database ERD — tables and relationships
 
-> The question this answers: *"What tables exist, what's in them, and how do they
-> link?"* Drawn from the Drizzle schema in [`database/schema/`](../../database/schema).
+> The question this answers: _"What tables exist, what's in them, and how do they
+> link?"_ Drawn from the Drizzle schema in [`database/schema/`](../../database/schema).
 
 ```mermaid
 erDiagram
