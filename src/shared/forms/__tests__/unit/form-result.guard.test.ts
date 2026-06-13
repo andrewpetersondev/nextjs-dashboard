@@ -6,9 +6,10 @@ import { isFormValidationError } from "@/shared/forms/core/guards/form-result.gu
 /**
  * Unit tests for the form result guard (form-result.guard.ts).
  *
- * `isFormValidationError` is the single live guard: validation key AND a
- * `fieldErrors` property in metadata. Both conditions are pinned — a
- * conflict-keyed form error fails the guard even with identical metadata.
+ * `isFormValidationError` is the single live guard. It is key-AGNOSTIC: it
+ * accepts any AppError (entity or DTO) whose metadata structurally carries a
+ * `fieldErrors` property, regardless of `error.key`. An error without a
+ * `fieldErrors` property still fails the guard.
  */
 describe("isFormValidationError", () => {
 	const formMetadata = {
@@ -47,11 +48,21 @@ describe("isFormValidationError", () => {
 		expect(isFormValidationError(error)).toBe(false);
 	});
 
-	it("rejects a conflict-keyed error even when it carries form metadata", () => {
+	it("accepts a conflict-keyed error that carries form metadata", () => {
 		const error: AppErrorLike = {
 			key: "conflict",
 			message: "Email already exists.",
 			metadata: formMetadata,
+		};
+
+		expect(isFormValidationError(error)).toBe(true);
+	});
+
+	it("rejects a conflict-keyed error without a fieldErrors property", () => {
+		const error: AppErrorLike = {
+			key: "conflict",
+			message: "duplicate key",
+			metadata: { pgCode: "23505" },
 		};
 
 		expect(isFormValidationError(error)).toBe(false);

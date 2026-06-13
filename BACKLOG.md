@@ -47,9 +47,12 @@ this file is the deliberate workaround.)
         AppError branch now says `updateFailed`, not `invalidInput`'s "create" copy),
         and the stale-skipped update-form Cypress error test is re-enabled — its
         serialization blocker was fixed back in PR #41.
-  - [ ] **Fix field-error key coupling** — `makeFormError` stamps form metadata onto any
-        error key, but extractors only honor `validation` | `conflict`; a `database`-keyed
-        form error silently drops its field errors (`form-error.inspector.ts`).
+  - [x] **Fix field-error key coupling** _(2026-06-13)_ — the inspector extractors and the
+        shared `isFormValidationError` guard now detect form metadata by SHAPE (`fieldErrors`
+        present), key-agnostic: `conflict`/`not_found`/etc. form errors round-trip their echoed
+        values and form-level errors instead of silently dropping them (fixes the signup
+        unique-violation wiping the typed email/username). A `validation`/`conflict` error
+        without form metadata still returns undefined.
   - [ ] **Form error payload overlap** — consolidate `toFormErrorPayload` vs
         `formErrorPayloadMapper` (TODO in `form-error-payload.mapper.ts`). Production
         only uses `toFormErrorPayload`; the mapper variant is imported solely by auth

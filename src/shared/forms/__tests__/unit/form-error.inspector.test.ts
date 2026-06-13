@@ -11,11 +11,12 @@ import {
  * Unit tests for the form error inspector (form-error.inspector.ts).
  *
  * The inspectors read form metadata back out of an AppError (entity or
- * serialized DTO). They are key-coupled: `extractFieldErrors` honors
- * `validation | conflict`, while `extractFieldValues` / `extractFormErrors`
- * honor only `validation`. A form error under any other key silently drops
- * its metadata — pinned below; see the "Fix field-error key coupling"
- * BACKLOG item before changing this.
+ * serialized DTO). They are key-AGNOSTIC: any error whose metadata
+ * structurally carries `fieldErrors` is treated as a form error, so
+ * `validation`, `conflict`, and any other metadata-carrying key all
+ * round-trip their field errors, echoed values, and form-level errors
+ * identically. A `validation`/`conflict` error WITHOUT a `fieldErrors`
+ * property still yields undefined / frozen [].
  */
 describe("form-error inspector", () => {
 	const formMetadata = {
@@ -67,10 +68,10 @@ describe("form-error inspector", () => {
 			});
 		});
 
-		it("silently drops field errors for a database-keyed form error (known coupling bug)", () => {
-			// The metadata carries fieldErrors, but the inspector only looks at
-			// the key — BACKLOG: "Fix field-error key coupling".
-			expect(extractFieldErrors(databaseFormError)).toBeUndefined();
+		it("returns field errors for a database-keyed form error (structural read)", () => {
+			expect(extractFieldErrors(databaseFormError)).toEqual({
+				email: ["Required"],
+			});
 		});
 
 		it("returns undefined for a conflict error without form metadata", () => {
@@ -91,8 +92,10 @@ describe("form-error inspector", () => {
 			});
 		});
 
-		it("returns undefined for a conflict-keyed form error (asymmetric with extractFieldErrors)", () => {
-			expect(extractFieldValues(conflictError)).toBeUndefined();
+		it("returns echoed form data for a conflict-keyed form error", () => {
+			expect(extractFieldValues(conflictError)).toEqual({
+				email: "a@b.c",
+			});
 		});
 
 		it("returns undefined when validation metadata has no fieldErrors shape", () => {
@@ -104,6 +107,16 @@ describe("form-error inspector", () => {
 
 			expect(extractFieldValues(bare)).toBeUndefined();
 		});
+
+		it("returns echoed form data for any metadata-carrying key (structural read)", () => {
+			const notFoundForm: AppErrorLike = {
+				key: "not_found",
+				message: "x",
+				metadata: formMetadata,
+			};
+
+			expect(extractFieldValues(notFoundForm)).toEqual({ email: "a@b.c" });
+		});
 	});
 
 	describe("extractFormErrors", () => {
@@ -113,15 +126,16 @@ describe("form-error inspector", () => {
 			]);
 		});
 
-		it("returns a frozen empty array for a conflict-keyed form error (asymmetric)", () => {
-			const formErrors = extractFormErrors(conflictError);
-
-			expect(formErrors).toEqual([]);
-			expect(Object.isFrozen(formErrors)).toBe(true);
+		it("returns form-level errors for a conflict-keyed form error", () => {
+			expect(extractFormErrors(conflictError)).toEqual([
+				"Fix the fields below.",
+			]);
 		});
 
-		it("returns an empty array for a database-keyed form error", () => {
-			expect(extractFormErrors(databaseFormError)).toEqual([]);
+		it("returns form-level errors for a database-keyed form error", () => {
+			expect(extractFormErrors(databaseFormError)).toEqual([
+				"Fix the fields below.",
+			]);
 		});
 	});
 });
