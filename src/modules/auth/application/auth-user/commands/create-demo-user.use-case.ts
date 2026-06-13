@@ -1,10 +1,10 @@
 import "server-only";
+import { createDemoUserTxHelper } from "@/modules/auth/application/auth-user/commands/create-demo-user.tx.helper";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract";
 import type { PasswordGeneratorContract } from "@/modules/auth/application/auth-user/contracts/services/password-generator.contract";
 import type { PasswordHasherContract } from "@/modules/auth/application/auth-user/contracts/services/password-hasher.contract";
 import type { CreateDemoUserCommand } from "@/modules/auth/application/auth-user/dtos/requests/create-demo-user.command";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
-import { createDemoUserTxHelper } from "@/modules/auth/application/shared/helpers/create-demo-user.tx.helper";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";

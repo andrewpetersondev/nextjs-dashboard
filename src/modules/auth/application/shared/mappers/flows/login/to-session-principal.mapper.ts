@@ -1,30 +1,18 @@
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
 import type { SessionPrincipalDto } from "@/modules/auth/application/session/dtos/responses/session-principal.dto";
-import type { UpdateSessionSuccessDto } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 
 /**
- * Maps authentication or session update outputs to a session principal.
+ * Maps an authenticated user to the canonical session principal.
  *
  * @remarks
- * This is a pure mapper (no business rules). It consolidates multiple successful
- * outcomes into the canonical `SessionPrincipalDto` shape.
- *
- * TODO: REFACTOR SO IT CAN ONLY TAKE ONE INPUT TYPE
+ * Pure mapper (no business rules). Extracts the minimal identity (`id`, `role`)
+ * needed for JWT claims — the principle of least privilege for session tokens.
  */
 export function toSessionPrincipal(
-	source: AuthenticatedUserDto | UpdateSessionSuccessDto,
+	source: AuthenticatedUserDto,
 ): SessionPrincipalDto {
-	if ("email" in source) {
-		// Mapping from AuthenticatedUserDto
-		return {
-			id: source.id,
-			role: source.role,
-		};
-	}
-
-	// Mapping from UpdateSessionSuccessDto (already has branded userId)
 	return {
-		id: source.userId,
+		id: source.id,
 		role: source.role,
 	};
 }
