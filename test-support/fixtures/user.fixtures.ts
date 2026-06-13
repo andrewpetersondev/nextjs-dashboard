@@ -1,9 +1,5 @@
 import type { UserRow } from "@database/schema/users";
 import type { AuthenticatedUserDto } from "@/modules/auth/application/auth-user/dtos/responses/authenticated-user.dto";
-import {
-	UPDATE_SESSION_OUTCOME_REASON,
-	type UpdateSessionSuccessDto,
-} from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import type { AuthUserEntity } from "@/modules/auth/domain/auth-user/entities/auth-user.entity";
 import type { UserEntity } from "@/modules/users/domain/entities/user.entity";
 import { toUserId } from "@/modules/users/domain/user-id.mappers";
@@ -74,20 +70,6 @@ export function makeAuthenticatedUserDto(
 		id: TEST_USER_ID,
 		role: "USER",
 		username: TEST_USERNAME,
-		...overrides,
-	};
-}
-
-/** A successful `UpdateSessionSuccessDto` (e.g. a rotated session). */
-export function makeUpdateSessionSuccessDto(
-	overrides: Partial<UpdateSessionSuccessDto> = {},
-): UpdateSessionSuccessDto {
-	return {
-		expiresAtMs: 1_700_000_000_000,
-		reason: UPDATE_SESSION_OUTCOME_REASON.rotated,
-		refreshed: true,
-		role: "USER",
-		userId: TEST_USER_ID,
 		...overrides,
 	};
 }

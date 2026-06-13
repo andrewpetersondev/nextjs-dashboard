@@ -9,7 +9,6 @@ import {
 	makeInvalidDemoCounterFailure,
 	validateDemoUserCounter,
 } from "@/modules/auth/domain/auth-user/policies/registration.policy";
-import { pgUniqueViolationToSignupConflictError } from "@/modules/auth/infrastructure/persistence/auth-user/mappers/pg-unique-violation-to-signup-conflict-error.mapper";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
@@ -17,7 +16,17 @@ import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
 import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
-// TODO: why do i need this pattern? why is it in application?
+/**
+ * Transactional body of the demo-user creation use case.
+ *
+ * @remarks
+ * Lives in the application layer because it orchestrates several application
+ * contracts — the unit of work, password generator/hasher, and a domain policy
+ * — to make demo-user creation atomic (counter increment + signup in one
+ * transaction). It speaks only to contracts and domain code; the repository
+ * behind the unit of work is responsible for translating persistence errors
+ * (e.g. unique violations → conflict) before they cross this boundary.
+ */
 export async function createDemoUserTxHelper(
 	deps: Readonly<{
 		uow: AuthUnitOfWorkContract;
@@ -69,8 +78,7 @@ export async function createDemoUserTxHelper(
 		});
 
 		if (!signupResult.ok) {
-			const mapped = pgUniqueViolationToSignupConflictError(signupResult.error);
-			return Err(mapped ?? signupResult.error);
+			return Err(signupResult.error);
 		}
 
 		return Ok({ entity: signupResult.value, password });
