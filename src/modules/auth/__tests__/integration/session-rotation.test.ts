@@ -8,11 +8,9 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 import { Ok } from "@/shared/core/result/result";
 
 // Mock env-server before other imports that might use it
-vi.mock("@/server/config/env-server", () => ({
+vi.mock("@/shared/core/config/server/env-server", () => ({
 	AUTH_BCRYPT_SALT_ROUNDS: 10,
 	DATABASE_URL: "postgres://user:pass@localhost:5432/db",
-	SESSION_AUDIENCE: "test-audience",
-	SESSION_ISSUER: "test-issuer",
 	SESSION_SECRET: "test-secret-at-least-32-chars-long-!!!",
 }));
 
