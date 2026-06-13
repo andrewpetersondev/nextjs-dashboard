@@ -1,18 +1,20 @@
 "use server";
 import type { InvoicesSummary } from "@/modules/invoices/application/dto/invoice.dto";
-import { fetchTotalInvoicesCountDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-invoices-count.dal";
-import { fetchTotalPaidInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-paid-invoices.dal";
-import { fetchTotalPendingInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-pending-invoices.dal";
-import type { AppDatabase } from "@/server/db/db.connection";
+import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
+import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
+import { getAppDb } from "@/server/db/db.connection";
 
-export async function readInvoicesSummaryAction(
-	db: AppDatabase,
-): Promise<InvoicesSummary> {
-	const [totalInvoices, totalPending, totalPaid] = await Promise.all([
-		fetchTotalInvoicesCountDal(db),
-		fetchTotalPendingInvoicesDal(db),
-		fetchTotalPaidInvoicesDal(db),
-	]);
+/**
+ * Server action to fetch the aggregate invoice totals for the dashboard cards.
+ * @returns The invoices summary (totals for all / paid / pending)
+ */
+export async function readInvoicesSummaryAction(): Promise<InvoicesSummary> {
+	const service = new InvoiceService(new InvoiceRepository(getAppDb()));
+	const result = await service.readInvoicesSummary();
 
-	return { totalInvoices, totalPaid, totalPending };
+	if (!result.ok) {
+		throw result.error;
+	}
+
+	return result.value;
 }

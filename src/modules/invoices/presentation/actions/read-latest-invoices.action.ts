@@ -1,10 +1,23 @@
+"use server";
+import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
-import { fetchLatestInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-latest-invoices.dal";
-import type { AppDatabase } from "@/server/db/db.connection";
+import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/invoice.repository";
+import { getAppDb } from "@/server/db/db.connection";
 
+/**
+ * Server action to fetch the most recent invoices for the dashboard overview.
+ * @param limit - Maximum number of invoices to return
+ * @returns Array of InvoiceListFilter
+ */
 export async function readLatestInvoicesAction(
-	db: AppDatabase,
 	limit: number = 5,
 ): Promise<InvoiceListFilter[]> {
-	return await fetchLatestInvoicesDal(db, limit);
+	const service = new InvoiceService(new InvoiceRepository(getAppDb()));
+	const result = await service.readLatestInvoices(limit);
+
+	if (!result.ok) {
+		throw result.error;
+	}
+
+	return result.value;
 }
