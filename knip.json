@@ -8,17 +8,20 @@
 	},
 	"entry": [
 		"src/app/**/*.{ts,tsx}",
-		"src/modules/**/__tests__/**/*.{test,spec}.{ts,tsx}",
+		"src/**/__tests__/**/*.{test,spec}.{ts,tsx}",
 		"devtools/cli/**/*.cli.ts",
 		"cypress.config.ts",
 		"cypress/**/*.cy.{ts,tsx}",
 		"cypress/support/**/*.{ts,tsx}",
-		"drizzle.config.ts"
+		"drizzle.config.ts",
+		"database/schema/relations.ts"
 	],
 	"project": [
 		"src/**/*.{ts,tsx}",
 		"devtools/**/*.{ts,tsx}",
 		"cypress/**/*.{ts,tsx}",
+		"test-support/**/*.{ts,tsx}",
+		"database/**/*.{ts,tsx}",
 		"*.{ts,mjs}"
 	]
 }

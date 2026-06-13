@@ -92,6 +92,16 @@ this file is the deliberate workaround.)
   configs), and 26 unused exports/types — several look like the same
   exported-but-internal pattern (`APP_ERROR_REGISTRY`, `AppErrorCoreDescriptor`).
   Triage each: knip config fix vs. un-export vs. delete.
+  _Progress 2026-06-13:_ fixed the **config** first — `knip.json` now covers `test-support/`
+  and `database/` (both were part of the TS project but invisible to knip), the test
+  `entry` glob includes `src/shared/**/__tests__`, and `database/schema/relations.ts` is
+  an entry (drizzle reads the schema dir by path, no TS importer); `docs/knip.md` rewritten
+  (runs env-free via `pnpm knip`). That surfaced + pruned a dead cluster: revenues
+  leftovers (`REVENUE_SOURCES`, `RevenueSource`, `RevenueId`) + an over-exported test mock
+  (`createNextRedirectError`). Left deliberately: `statusEnum` (drizzle `pgEnum` — un-export
+  risks migration detection) and the `_`-prefixed `$inferInsert` types (intentional-keep).
+  Remaining: 10 unused files, 2 deps + 3 devDeps (dotenv/tailwindcss/@testing-library/dom
+  are config/peer false positives), 18 exports + 13 types.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
   `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **e2e port-reuse guard** — `cy:e2e` inherits the session's `PORT` (the
