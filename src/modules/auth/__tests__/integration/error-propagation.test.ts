@@ -2,10 +2,11 @@ import { buildFormData } from "@test-support/forms/form-data";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
 import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.action";
+import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { formErrorPayloadMapper } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
 
 describe("Auth Error Propagation Integration", () => {
 	beforeEach(() => {
@@ -29,7 +30,9 @@ describe("Auth Error Propagation Integration", () => {
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
-				const payload = formErrorPayloadMapper(result.error);
+				const payload = toFormErrorPayload(result.error);
+				// mapGenericAuthError surfaces the message at the form level for
+				// non-form errors, so the decoded payload carries one form error.
 				expect(payload.formErrors.length).toBeGreaterThan(0);
 				// It's wrapped in safeExecute which maps to 'unexpected'
 				expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
@@ -63,12 +66,14 @@ describe("Auth Error Propagation Integration", () => {
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
 				expect(result.error.key).toBe(APP_ERROR_KEYS.conflict);
-				const payload = formErrorPayloadMapper(result.error);
-				expect(payload.formErrors.length).toBeGreaterThan(0);
-				const firstFormError = payload.formErrors[0];
-				expect(firstFormError).toBeDefined();
-				expect(firstFormError?.toLowerCase()).toMatch(
-					/already in use|exists|conflict|unique/,
+				// Conflicts surface as FIELD-level errors, not form-level: the
+				// email-unique constraint maps to fieldErrors.email (see
+				// toSignupFormResult), and formErrors stays empty.
+				const payload = toFormErrorPayload<SignupField>(result.error);
+				const emailErrors = payload.fieldErrors.email;
+				expect(emailErrors.length).toBeGreaterThan(0);
+				expect(emailErrors[0]?.toLowerCase()).toMatch(
+					/already|use|exists|conflict|unique/,
 				);
 			}
 
@@ -91,7 +96,7 @@ describe("Auth Error Propagation Integration", () => {
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
 				expect(result.error.key).toBe(APP_ERROR_KEYS.unexpected);
-				const payload = formErrorPayloadMapper(result.error);
+				const payload = toFormErrorPayload(result.error);
 				// Message may be 'CPU exhausted' or a wrapped variant.
 				expect(payload.message.toLowerCase()).toMatch(
 					/failed|exhausted|unexpected/,
@@ -139,7 +144,7 @@ describe("Auth Error Propagation Integration", () => {
 
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
-				const payload = formErrorPayloadMapper(result.error);
+				const payload = toFormErrorPayload(result.error);
 				expect(payload.message).toContain("unexpected error occurred");
 			}
 
