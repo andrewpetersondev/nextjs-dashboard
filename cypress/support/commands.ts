@@ -16,7 +16,6 @@ declare global {
 			dbReset(): Chainable<null>;
 			dbResetAndSeed(): Chainable<null>;
 			dbSeed(): Chainable<null>;
-			logEnv(): Chainable<void>;
 			login(creds: LoginCreds): Chainable<void>;
 			loginAsDemoAdmin(): Chainable<void>;
 			loginAsDemoUser(): Chainable<void>;
@@ -45,11 +44,6 @@ Cypress.Commands.add("dbResetAndSeed", () => {
 	return cy
 		.task("db:reset")
 		.then(() => cy.task("db:seed")) as Cypress.Chainable<null>;
-});
-
-Cypress.Commands.add("logEnv", () => {
-	const env = Cypress.env();
-	cy.log(`Cypress env: ${JSON.stringify(env, null, 2)}`);
 });
 
 Cypress.Commands.add("login", ({ email, password }: LoginCreds) => {
