@@ -22,8 +22,6 @@ function parseServerEnv() {
 		{
 			authBcryptSaltRounds: "AUTH_BCRYPT_SALT_ROUNDS",
 			databaseUrl: "DATABASE_URL",
-			sessionAudience: "SESSION_AUDIENCE",
-			sessionIssuer: "SESSION_ISSUER",
 			sessionSecret: "SESSION_SECRET",
 		},
 		getEnvVariable,
@@ -52,5 +50,3 @@ const env = parseServerEnv();
 export const AUTH_BCRYPT_SALT_ROUNDS: number = env.authBcryptSaltRounds;
 export const DATABASE_URL: string = env.databaseUrl;
 export const SESSION_SECRET: string = env.sessionSecret;
-export const SESSION_ISSUER: "my-app" = env.sessionIssuer;
-export const SESSION_AUDIENCE: "web" = env.sessionAudience;

@@ -1,12 +1,12 @@
 import "server-only";
 import type { SessionTokenCodecContract } from "@/modules/auth/application/session/contracts/session-token-codec.contract";
 import { SessionTokenCodecAdapter } from "@/modules/auth/infrastructure/session/adapters/session-token-codec.adapter";
-import { JoseSessionJwtCryptoService } from "@/modules/auth/infrastructure/session/services/jose-session-jwt-crypto.service";
 import {
 	SESSION_AUDIENCE,
 	SESSION_ISSUER,
-	SESSION_SECRET,
-} from "@/shared/core/config/server/env-server";
+} from "@/modules/auth/infrastructure/session/config/session-jwt.constants";
+import { JoseSessionJwtCryptoService } from "@/modules/auth/infrastructure/session/services/jose-session-jwt-crypto.service";
+import { SESSION_SECRET } from "@/shared/core/config/server/env-server";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
 /**
