@@ -14,11 +14,18 @@ this file is the deliberate workaround.)
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
-- [ ] **Vitest Phase 3** — remaining breadth (`server`, invoices/customers domain) and
-      consider coverage thresholds once breadth lands. Forms breadth DONE (2026-06-11):
-      68 characterization tests across all 11 testable forms files, pinning the three
-      known quirks (key coupling, sensitive echo, payload-mapper overlap) ahead of the
-      boundary redesign. _Lock behavior first, refactor behind the tests._
+- [ ] **Vitest Phase 3** — remaining breadth and coverage thresholds once breadth
+      lands. _Lock behavior first, refactor behind the tests._ Forms breadth DONE
+      (2026-06-11): 68 characterization tests across all 11 testable forms files,
+      pinning the three known quirks (key coupling, sensitive echo, payload-mapper
+      overlap). **Invoices/customers domain breadth DONE (2026-06-14):** 45
+      characterization tests across 9 new files covering both domains' pure logic —
+      invoice date-utils/codecs/status-validator/id-mappers + the two infra
+      mappers/codecs, and customer id-mappers/table-row mapper + the infra mapper
+      (incl. the null-SUM→0 normalization). Also pinned the unit lane to `TZ=UTC`
+      (`vitest.config.ts`) so the invoice date helpers — which mix UTC and local-time
+      ops — are deterministic across machines (unit lane 222 → 267 tests). Remaining:
+      **`server` breadth** (cookie factory, hashing value/service) + coverage thresholds.
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
