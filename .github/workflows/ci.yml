@@ -70,3 +70,10 @@ jobs:
       # 8. Generate Next.js route types and type-check the app against them.
       - name: Next.js typegen
         run: pnpm next:typegen
+
+      # 9. Migration drift gate: assert the dev/test/prod drizzle migration sets
+      #    describe the same final schema. Pure file comparison (no database),
+      #    so it runs in plain CI. Catches the per-env drift that broke prod on
+      #    2026-06-11. See BACKLOG "Per-env migration drift guard".
+      - name: Migration drift
+        run: pnpm db:drift
