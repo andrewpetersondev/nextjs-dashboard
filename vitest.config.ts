@@ -61,8 +61,7 @@ export default defineConfig({
 		 * Coverage is a root-level concern: it aggregates across whichever
 		 * project(s) run. Listing every source file in `include` makes the report
 		 * count files that have no tests yet, so it shows true breadth rather than
-		 * just the slice that happens to be exercised. Thresholds are intentionally
-		 * omitted until we have a baseline — see `test:coverage`.
+		 * just the slice that happens to be exercised.
 		 */
 		coverage: {
 			exclude: [
@@ -75,6 +74,22 @@ export default defineConfig({
 			provider: "v8",
 			reporter: ["text", "html"],
 			reportsDirectory: "./coverage",
+			/**
+			 * Regression floors, not targets. These sit a couple points below the
+			 * 2026-06-14 baseline (stmts 22.53 / branch 20.25 / funcs 20.41 /
+			 * lines 22.44 — low because `include` counts the whole untested
+			 * breadth: UI, actions, repositories, DALs). The buffer keeps trivial
+			 * line-count shifts from breaking CI while still catching real drops.
+			 * Ratchet these up as breadth lands; never down to "fix" a red build.
+			 * Enforced by `pnpm test:coverage`, which CI runs (the unit lane is
+			 * DB-free).
+			 */
+			thresholds: {
+				branches: 18,
+				functions: 18,
+				lines: 20,
+				statements: 20,
+			},
 		},
 
 		globals: true,

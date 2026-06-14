@@ -14,25 +14,6 @@ this file is the deliberate workaround.)
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
-- [ ] **Vitest Phase 3** — remaining breadth and coverage thresholds once breadth
-      lands. _Lock behavior first, refactor behind the tests._ Forms breadth DONE
-      (2026-06-11): 68 characterization tests across all 11 testable forms files,
-      pinning the three known quirks (key coupling, sensitive echo, payload-mapper
-      overlap). **Invoices/customers domain breadth DONE (2026-06-14):** 45
-      characterization tests across 9 new files covering both domains' pure logic —
-      invoice date-utils/codecs/status-validator/id-mappers + the two infra
-      mappers/codecs, and customer id-mappers/table-row mapper + the infra mapper
-      (incl. the null-SUM→0 normalization). Also pinned the unit lane to `TZ=UTC`
-      (`vitest.config.ts`) so the invoice date helpers — which mix UTC and local-time
-      ops — are deterministic across machines (unit lane 222 → 267 tests). **`server`
-      breadth DONE (2026-06-14):** 19 tests across 5 files for the `src/server` ports
-      — `HashingService`/`CookieService` delegation, their factories, the real
-      `BcryptHashingAdapter` (hash↔compare round-trip + infrastructure-AppError
-      wrapping), the `NextJsCookieAdapter` (forwards to mocked `next/headers`), and
-      `toHash` (lane 267 → 286). Deliberately skipped `crypto.service.ts` — it's
-      genuinely unused (confirms the knip dead-file flag; don't lock dead code).
-      Remaining: **coverage thresholds** (capture a baseline, then wire minimums so
-      coverage can't regress).
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
@@ -62,6 +43,25 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Vitest Phase 3** _(2026-06-14)_ — breadth + coverage thresholds, all merged.
+      Characterization tests ("lock behavior first") landed across the suite: forms
+      (68 tests, 2026-06-11, PR #48), invoices/customers domain (45 tests, PR #70),
+      and the `src/server` ports (19 tests, PR #71) — unit lane grew to **286 tests**.
+      Along the way: pinned the unit lane to `TZ=UTC` so the invoice date helpers
+      (which mix UTC and local-time ops) are deterministic across machines; and
+      deliberately left `crypto.service.ts` untested because it's genuinely unused
+      (folded into the knip item). Closed out with **coverage thresholds**: captured
+      the 2026-06-14 baseline (stmts 22.53 / branch 20.25 / funcs 20.41 / lines
+      22.44 — low because coverage `include`s the whole untested breadth) and set
+      regression floors a couple points below it in `vitest.config.ts`
+      (`thresholds: stmts 20 / branch 18 / funcs 18 / lines 20`), to ratchet up over
+      time. Made them enforceable by adding a CI step that runs the **DB-free unit
+      lane with coverage** (`pnpm test:coverage`) — also resolving the long-standing
+      "the unit lane could be a fast CI step" opportunity (CI previously ran
+      `check:fast` only). Verified both ways: passes at the floor; fails when a
+      threshold is raised above current. _Remaining test work, tracked separately:
+      integration-lane deep-DRY (see memory `project_vitest_improvement`)._
 
 - [x] **Per-env migration drift guard** _(2026-06-14)_ — added the enforcement half
       the `weekly-maintenance` routine's drift _report_ was missing. A new env-free CLI,
