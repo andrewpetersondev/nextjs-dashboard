@@ -23,14 +23,6 @@ this file is the deliberate workaround.)
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
       Full context in memory (`project_forms_error_refactor`).
-- [ ] **Per-env migration drift guard** — _symptom resolved (2026-06-13): prod's missing
-      `revenues` DROP was backfilled — prod now has `0006`, matching dev/test — and the
-      `weekly-maintenance` routine now reports journal drift weekly. Remaining work = the
-      systemic guard._ Three independent migration folders (`drizzle/migrations/{dev,test,prod}`)
-      still let schemas drift silently: the 2026-06-11 miss created a fresh Neon prod DB with an
-      obsolete FK and failed `db:seed:prod` with 23503. Either collapse to a single migration
-      set, or add a CI **gate** that the three `meta/_journal.json`/latest snapshots describe the
-      same final schema (the weekly report is detection, not enforcement).
 - [ ] **knip full-report triage** — the earlier "knip residue" list came from a
       truncated report tail; the full report still shows (all pre-existing): 10 unused
       files (incl. `crypto.service.ts`, auth `mapper-chains`/`mapper-registry`, and 6
@@ -56,6 +48,23 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Per-env migration drift guard** _(2026-06-14)_ — added the enforcement half
+      the `weekly-maintenance` routine's drift _report_ was missing. A new env-free CLI,
+      `devtools/cli/migration-drift.cli.ts` (script `pnpm db:drift`), reads the LATEST
+      snapshot of each migration set (`drizzle/migrations/{dev,test,prod}/meta`, keyed by
+      the highest `_journal.json` idx), canonicalizes it (recursively key-sorted; strips
+      per-migration bookkeeping `id`/`prevId`/`_meta`), and asserts all three describe the
+      **same final schema**. On mismatch it exits non-zero and prints the diverging env +
+      the exact differing JSON paths (e.g. `tables.public.invoices.columns.amount.type`);
+      it currently passes since prod was backfilled to `0006`. It's a pure file comparison
+      (no DB, no env vars), so it's wired into `check:fast` **and** as its own CI step in
+      `ci.yml` — the gate the backlog asked for (chose the lighter "assert same end state"
+      option over collapsing to a single migration set). Migration _count_ differences are
+      reported as a non-fatal note, not failed — only the final schema is gated. Verified
+      both ways: green on the aligned tree; fails with the right paths when a prod snapshot
+      column is mutated (then restored). `check:fast` green; knip recognizes the new CLI as
+      an entry (no new finding).
 
 - [x] **e2e port-reuse guard** _(2026-06-13)_ — closed the trap that let `cy:e2e`
       silently run against the wrong server (the 2026-06-11 incident: 7 specs
