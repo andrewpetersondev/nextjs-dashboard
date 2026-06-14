@@ -24,8 +24,15 @@ this file is the deliberate workaround.)
       mappers/codecs, and customer id-mappers/table-row mapper + the infra mapper
       (incl. the null-SUM→0 normalization). Also pinned the unit lane to `TZ=UTC`
       (`vitest.config.ts`) so the invoice date helpers — which mix UTC and local-time
-      ops — are deterministic across machines (unit lane 222 → 267 tests). Remaining:
-      **`server` breadth** (cookie factory, hashing value/service) + coverage thresholds.
+      ops — are deterministic across machines (unit lane 222 → 267 tests). **`server`
+      breadth DONE (2026-06-14):** 19 tests across 5 files for the `src/server` ports
+      — `HashingService`/`CookieService` delegation, their factories, the real
+      `BcryptHashingAdapter` (hash↔compare round-trip + infrastructure-AppError
+      wrapping), the `NextJsCookieAdapter` (forwards to mocked `next/headers`), and
+      `toHash` (lane 267 → 286). Deliberately skipped `crypto.service.ts` — it's
+      genuinely unused (confirms the knip dead-file flag; don't lock dead code).
+      Remaining: **coverage thresholds** (capture a baseline, then wire minimums so
+      coverage can't regress).
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
