@@ -38,6 +38,15 @@ const unitEnv = {
 	SESSION_AUDIENCE: "web",
 	SESSION_ISSUER: "my-app",
 	SESSION_SECRET: "unit-test-session-secret-not-a-real-secret",
+	/**
+	 * Pin the unit lane to UTC so date logic is deterministic everywhere.
+	 * Several invoice helpers mix UTC and local-time operations (`toISOString`
+	 * vs date-fns `format` vs the `new Date(y, m, d)` local constructor), so a
+	 * runner in a negative-offset zone (e.g. US Central) would format the same
+	 * instant as the previous day and the tests would pass in CI but fail
+	 * locally. UTC removes that machine dependence.
+	 */
+	TZ: "UTC",
 } as const;
 
 export default defineConfig({
