@@ -16,9 +16,6 @@ importers:
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.7)
-      '@next/env':
-        specifier: ^16.2.9
-        version: 16.2.9
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -31,9 +28,6 @@ importers:
       drizzle-orm:
         specifier: ^0.45.2
         version: 0.45.2(@types/pg@8.20.0)(pg@8.21.0)
-      drizzle-zod:
-        specifier: ^0.8.3
-        version: 0.8.3(drizzle-orm@0.45.2(@types/pg@8.20.0)(pg@8.21.0))(zod@4.4.3)
       jose:
         specifier: ^6.2.3
         version: 6.2.3
@@ -1839,12 +1833,6 @@ packages:
     peerDependenciesMeta:
       drizzle-orm:
         optional: true
-
-  drizzle-zod@0.8.3:
-    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
-    peerDependencies:
-      drizzle-orm: '>=0.36.0'
-      zod: ^3.25.0 || ^4.0.0
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -4477,11 +4465,6 @@ snapshots:
       pure-rand: 6.1.0
     optionalDependencies:
       drizzle-orm: 0.45.2(@types/pg@8.20.0)(pg@8.21.0)
-
-  drizzle-zod@0.8.3(drizzle-orm@0.45.2(@types/pg@8.20.0)(pg@8.21.0))(zod@4.4.3):
-    dependencies:
-      drizzle-orm: 0.45.2(@types/pg@8.20.0)(pg@8.21.0)
-      zod: 4.4.3
 
   dunder-proto@1.0.1:
     dependencies:

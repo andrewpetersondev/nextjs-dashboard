@@ -17,7 +17,7 @@ export const UPDATE_SESSION_OUTCOME_REASON = {
 	rotated: "rotated",
 } as const;
 
-export type UpdateSessionTerminationNotRotatedDto = Readonly<{
+type UpdateSessionTerminationNotRotatedDto = Readonly<{
 	readonly ageSec: DurationSeconds;
 	readonly maxSec: DurationSeconds;
 	readonly reason:
@@ -26,14 +26,14 @@ export type UpdateSessionTerminationNotRotatedDto = Readonly<{
 	readonly refreshed: false;
 }>;
 
-export type UpdateSessionNoSessionNotRotatedDto = Readonly<{
+type UpdateSessionNoSessionNotRotatedDto = Readonly<{
 	readonly reason:
 		| typeof UPDATE_SESSION_OUTCOME_REASON.invalidOrMissingUser
 		| typeof UPDATE_SESSION_OUTCOME_REASON.noCookie;
 	readonly refreshed: false;
 }>;
 
-export type UpdateSessionNotNeededNotRotatedDto = Readonly<{
+type UpdateSessionNotNeededNotRotatedDto = Readonly<{
 	readonly reason: typeof UPDATE_SESSION_OUTCOME_REASON.notNeeded;
 	readonly refreshed: false;
 	readonly timeLeftSec: TimeDeltaSeconds;
