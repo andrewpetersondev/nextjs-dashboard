@@ -66,4 +66,4 @@ export const invoices = pgTable(
 );
 
 export type InvoiceRow = typeof invoices.$inferSelect;
-export type _NewInvoiceRow = typeof invoices.$inferInsert;
+type _NewInvoiceRow = typeof invoices.$inferInsert;

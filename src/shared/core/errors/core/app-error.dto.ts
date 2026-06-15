@@ -42,7 +42,7 @@ export type UnexpectedErrorParams<
 	readonly overrideMetadata?: T;
 };
 
-export type AppErrorCoreDescriptor = Readonly<
+type AppErrorCoreDescriptor = Readonly<
 	AppErrorDefinition & {
 		readonly key: AppErrorKey;
 	}

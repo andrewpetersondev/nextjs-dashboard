@@ -317,8 +317,6 @@ describe("loginWorkflow", () => {
 ## Related Documentation
 
 - **[Flow Diagrams](../../../../docs/diagrams/auth-login-flow.md)**: Login, signup & session flows (diagram)
-- **[Mapper Registry](./shared/mappers/mapper-registry.ts)**: All mappers and their purposes
-- **[Mapper Chains](./shared/mappers/mapper-chains.ts)**: Data transformation chains by flow
 - **[Error Handling](../../../../docs/diagrams/error-handling-flow.md)**: Error handling flow (diagram)
 
 ---

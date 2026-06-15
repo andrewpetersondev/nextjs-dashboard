@@ -3,15 +3,6 @@ import {
 	USD_CURRENCY,
 	USD_LOCALE,
 } from "@/shared/primitives/money/money.constants";
-import type { Cents, Dollars } from "@/shared/primitives/money/types";
-
-/**
- * Converts monetary values from database cents to display dollars.
- * Shared location so both server and features can use it without crossing boundaries.
- */
-export function convertCentsToDollars(cents: Cents): Dollars {
-	return Math.round(cents / CENTS_IN_DOLLAR);
-}
 
 /**
  * Format a number into a USD currency string.

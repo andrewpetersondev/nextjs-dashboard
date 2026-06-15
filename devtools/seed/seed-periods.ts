@@ -44,14 +44,6 @@ function parsePeriodParts(period: string): {
 }
 
 /**
- * Convert a period string to its branded UTC date value.
- */
-export function toPeriodDate(period: string): Date & Period {
-	validatePeriod(period);
-	return new Date(`${period}T00:00:00.000Z`) as Date & Period;
-}
-
-/**
  * Build a random invoice date within a valid period.
  */
 export function buildInvoiceDateForPeriod(period: string): {
