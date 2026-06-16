@@ -2,12 +2,10 @@
 	"$schema": "https://json.schemastore.org/package",
 	"dependencies": {
 		"@heroicons/react": "^2.2.0",
-		"@next/env": "^16.2.9",
 		"bcryptjs": "^3.0.3",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.4.0",
 		"drizzle-orm": "^0.45.2",
-		"drizzle-zod": "^0.8.3",
 		"jose": "^6.2.3",
 		"next": "^16.2.9",
 		"pg": "^8.21.0",

@@ -1,4 +1,4 @@
-import type { CustomerId, UserId } from "@database/schema/schema.types";
+import type { UserId } from "@database/schema/schema.types";
 
 const UUID_REGEX =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -24,13 +24,6 @@ function validateUuid(value: unknown, label: string): string {
 	}
 
 	return normalizedValue;
-}
-
-/**
- * Convert an arbitrary value to a validated customer id.
- */
-export function toCustomerId(value: unknown): CustomerId {
-	return validateUuid(value, "customer id") as CustomerId;
 }
 
 /**

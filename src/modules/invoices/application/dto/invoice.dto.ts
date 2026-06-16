@@ -2,7 +2,7 @@ import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.s
 
 /** Transport aliases (unambiguous formats) */
 export type IsoDateString = string; // YYYY-MM-DD
-export type PeriodFirstDayString = string; // YYYY-MM-01
+type PeriodFirstDayString = string; // YYYY-MM-01
 
 /**
  * Data Transfer Object for an invoice.

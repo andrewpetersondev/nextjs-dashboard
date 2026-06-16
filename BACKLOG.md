@@ -18,24 +18,13 @@ this file is the deliberate workaround.)
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
       Full context in memory (`project_forms_error_refactor`).
-- [ ] **knip full-report triage** — the earlier "knip residue" list came from a
-      truncated report tail; the full report still shows (all pre-existing): 10 unused
-      files (incl. `crypto.service.ts`, auth `mapper-chains`/`mapper-registry`, and 6
-      devtools task scripts that may be knip-config gaps rather than dead code), 2
-      unused deps + 3 devDeps (`tailwindcss`/`dotenv` likely false positives via
-      configs), and 26 unused exports/types — several look like the same
-      exported-but-internal pattern (`APP_ERROR_REGISTRY`, `AppErrorCoreDescriptor`).
-      Triage each: knip config fix vs. un-export vs. delete.
-      _Progress 2026-06-13:_ fixed the **config** first — `knip.json` now covers `test-support/`
-      and `database/` (both were part of the TS project but invisible to knip), the test
-      `entry` glob includes `src/shared/**/__tests__`, and `database/schema/relations.ts` is
-      an entry (drizzle reads the schema dir by path, no TS importer); `docs/knip.md` rewritten
-      (runs env-free via `pnpm knip`). That surfaced + pruned a dead cluster: revenues
-      leftovers (`REVENUE_SOURCES`, `RevenueSource`, `RevenueId`) + an over-exported test mock
-      (`createNextRedirectError`). Left deliberately: `statusEnum` (drizzle `pgEnum` — un-export
-      risks migration detection) and the `_`-prefixed `$inferInsert` types (intentional-keep).
-      Remaining: 10 unused files, 2 deps + 3 devDeps (dotenv/tailwindcss/@testing-library/dom
-      are config/peer false positives), 18 exports + 13 types.
+- [ ] **Font experiment — finish or drop** — `doto` + `merienda` in `src/ui/styles/fonts.ts`
+      are loaded via `next/font/google` and a `--font-experiment` CSS variable is defined,
+      but the fonts are never applied to any element (the class silently falls back to
+      sans-serif). Decide: wire them in (apply `doto.variable`/`merienda.variable`) or delete
+      the exports + the CSS var. Left deliberately as tracked scaffolding (the only
+      intended-but-unbuilt code surfaced by the 2026-06-14 dead-code triage); both stay
+      visible in `pnpm knip` until decided.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig Version 6** - figure out how to use TSConfig Version 6.
@@ -43,6 +32,36 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **knip full-report triage** _(2026-06-14)_ — completed via a 44-candidate
+      multi-agent triage (each candidate: git archaeology + full-repo reference search +
+      intent search, with every delete verdict adversarially re-verified). Findings split
+      into truly-dead / intended-future / false-positive / intentional-keep, and the result
+      was applied: **knip dropped from 44 findings to 5**, all of which are deliberate keeps.
+      - **Deleted (truly dead — all removed-feature residue):** 10 files —
+      `src/server/crypto/crypto.service.ts`, `src/shared/primitives/session/session-id.brand.ts`,
+      the auth docs pair `mapper-chains.ts`/`mapper-registry.ts` (+ their 4 README links),
+      and the orphaned `devtools/users/` cluster (`user-input.mapper.ts` + 5 `*.task.ts`,
+      duplicates of the live `cypress/node/tasks/*` after the `09241d39` consolidation; kept
+      `devtools/users/hash-password.ts`). Plus dead symbols `convertCentsToDollars`,
+      `ISO_YEAR_MONTH_REGEX`, `periodDates`, `DEFAULT_USER_ROLE` (policies-file dup),
+      `toCustomerId` (cypress copy), `toUserId` (devtools copy), the two `tooling-env`
+      exports `DATABASE_ENV`/`SESSION_SECRET` (kept the `safeParse` fail-fast guard), and
+      the 2 npm deps `@next/env` + `drizzle-zod`. Two cascade orphans my edits exposed were
+      also removed: `src/shared/primitives/money/types.ts` (`Cents`/`Dollars`) and
+      `toPeriodDate`.
+      - **Un-exported (used only in-file; surface reduced, behaviour unchanged):** the 3
+      session brand symbols, `APP_ERROR_REGISTRY`, `AppErrorCoreDescriptor`,
+      `CreateInvoiceInput`/`UpdateInvoiceInput`, `PeriodFirstDayString`, `EditUserFormInput`,
+      the 3 `UpdateSession*NotRotatedDto` union members, and the 5 `_`-prefixed drizzle row
+      types (Biome ignores the `_` prefix when unused).
+      - **knip config:** `ignoreDependencies: ["tailwindcss", "@testing-library/dom"]` (PostCSS
+      + peer-dep false positives knip can't trace).
+      - **Left deliberately flagged (the residual 5):** `statusEnum` (drizzle `pgEnum` —
+      un-export risks migration detection), `TableFooter`/`TableCaption` (UI-kit symmetry;
+      un-export would trip Biome `noUnusedVariables`), and `doto`/`merienda` (tracked in the
+      new **Font experiment** Open item). Verified: `check:fast` green, 286 unit tests pass,
+      migration-drift still OK (dev/test/prod identical schema).
 
 - [x] **Vitest Phase 3** _(2026-06-14)_ — breadth + coverage thresholds, all merged.
       Characterization tests ("lock behavior first") landed across the suite: forms

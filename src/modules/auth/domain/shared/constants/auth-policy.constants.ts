@@ -15,5 +15,5 @@ export const AUTH_POLICY_NAMES = {
 	SESSION_VERIFICATION: "session-verification",
 } as const;
 
-export type _AuthPolicyName =
+type _AuthPolicyName =
 	(typeof AUTH_POLICY_NAMES)[keyof typeof AUTH_POLICY_NAMES];

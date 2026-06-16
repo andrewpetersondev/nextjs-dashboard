@@ -20,6 +20,4 @@ if (!parsed.success) {
 	);
 }
 
-export const DATABASE_ENV = parsed.data.databaseEnv;
 export const DATABASE_URL: string = parsed.data.databaseUrl;
-export const SESSION_SECRET: string = parsed.data.sessionSecret;
