@@ -7,6 +7,20 @@ this file is the deliberate workaround.)
 
 ## Open
 
+- [ ] **Dependency-audit watch (from weekly-maintenance 2026-06-15)** — `pnpm audit`
+      reports 3 advisories, all in **transitive dev/test tooling** (none in runtime
+      deps, nothing shipped to prod): `form-data` **HIGH**
+      ([GHSA-hmw2-7cc7-3qxx](https://github.com/advisories/GHSA-hmw2-7cc7-3qxx),
+      patched `>=4.0.6`) reachable via `cypress` and `start-server-and-test>wait-on>axios`;
+      `js-yaml` moderate ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68),
+      `>=4.1.2`) and `markdown-it` moderate
+      ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq), `>=14.1.2`),
+      both via `markdownlint-cli2`. All three clear once those tools bump their own
+      transitives; decide whether to wait for upstream or add `pnpm.overrides` pins
+      (overrides go in `pnpm-workspace.yaml`, keep lockstep with package.json). Also
+      pending: **biome 2.5.0** (current 2.4.16) was deferred by the weekly routine on
+      2026-06-15 — it published 2026-06-12, right at the 3-day freshness threshold; due
+      to be picked up (with `biome migrate --write`) on the next maintenance run.
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
