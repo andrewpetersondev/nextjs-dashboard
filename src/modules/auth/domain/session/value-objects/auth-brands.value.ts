@@ -1,14 +1,13 @@
 import { type Brand, createBrand } from "@/shared/core/branding/brand";
 
-export const UNIX_SECONDS_BRAND: unique symbol = Symbol("UnixSeconds");
+const UNIX_SECONDS_BRAND: unique symbol = Symbol("UnixSeconds");
 export type UnixSeconds = Brand<number, typeof UNIX_SECONDS_BRAND>;
 
-export const DURATION_SECONDS_BRAND: unique symbol = Symbol("DurationSeconds");
+const DURATION_SECONDS_BRAND: unique symbol = Symbol("DurationSeconds");
 export type DurationSeconds = Brand<number, typeof DURATION_SECONDS_BRAND>;
 
 // Signed time delta in seconds (can be negative), useful for "time left" calculations.
-export const TIME_DELTA_SECONDS_BRAND: unique symbol =
-	Symbol("TimeDeltaSeconds");
+const TIME_DELTA_SECONDS_BRAND: unique symbol = Symbol("TimeDeltaSeconds");
 
 export type TimeDeltaSeconds = Brand<number, typeof TIME_DELTA_SECONDS_BRAND>;
 

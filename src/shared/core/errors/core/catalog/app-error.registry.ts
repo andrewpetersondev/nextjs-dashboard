@@ -46,7 +46,7 @@ export type AppErrorKey = keyof typeof APP_ERROR_KEYS;
  * Maps each AppErrorKey to its architectural layer, severity, and validation schema.
  */
 // biome-ignore lint/nursery/useExplicitType: fix
-export const APP_ERROR_REGISTRY = {
+const APP_ERROR_REGISTRY = {
 	[APP_ERROR_KEYS.conflict]: {
 		description: "Resource state conflict",
 		layer: APP_ERROR_LAYER.API,
