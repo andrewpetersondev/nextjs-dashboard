@@ -10,8 +10,8 @@ scope/summary to use for the commit and PR title.
 Run these steps in order. If a step's precondition fails, STOP and report — do not push ahead.
 
 1. **Branch safety.** Check `git rev-parse --abbrev-ref HEAD` and `git rev-parse --show-toplevel`. Abort if the branch is
-   `main`/`master`, or if the toplevel is the primary checkout rather than a path under `.claude/worktrees/`. This command
-   only ships from a worktree feature branch — never commit to main.
+   `main`/`master`/`develop`, or if the toplevel is the primary checkout rather than a path under `.claude/worktrees/`. This
+   command only ships from a worktree feature branch — never commit directly to the shared `develop`/`main` branches.
 
 2. **Review the diff.** Run `git status` and `git diff` to see exactly what you're about to ship, and summarize it. Flag
    any unrelated noise and ask before bundling unrelated changes into one PR.
@@ -30,8 +30,9 @@ Run these steps in order. If a step's precondition fails, STOP and report — do
 
    `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
 
-6. **Push & open PR.** `git push -u origin HEAD`, then `gh pr create` with a concise title and a body that summarizes the
-   change and references any backlog item. End the body with the 🤖 Generated-with footer. Never force-push.
+6. **Push & open PR.** `git push -u origin HEAD`, then `gh pr create` (base defaults to `develop`, the repo's default
+   branch) with a concise title and a body that summarizes the change and references any backlog item. End the body with
+   the 🤖 Generated-with footer. Never force-push.
 
 7. **Watch CI.** Poll `gh pr checks` until the required checks settle. Report green/red plainly. If red, surface the
    failing job's actual log — do not pipe it through `tail`/`head` (a passing pipe can hide a failing command; see
