@@ -4,6 +4,7 @@ import { reset } from "drizzle-seed";
 import { NextResponse } from "next/server";
 import { getAppDb } from "@/server/db/db.connection";
 import { isTestDatabaseEnvironment } from "@/shared/core/config/shared/env-shared";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Test-only route that truncates every table (drizzle-seed `reset`).
@@ -24,7 +25,10 @@ export async function GET(): Promise<NextResponse> {
 		await reset(getAppDb(), schema);
 		return NextResponse.json({ action: "reset", ok: true });
 	} catch (error) {
-		console.error("Error resetting database:", error);
+		logger.error("Error resetting database", {
+			error: Error.isError(error) ? error.message : "Unknown error",
+			stack: Error.isError(error) ? error.stack : undefined,
+		});
 		return NextResponse.json(
 			{ action: "reset", error: String(error), ok: false },
 			{ status: 500 },

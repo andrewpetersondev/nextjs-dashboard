@@ -7,6 +7,7 @@ import type { CustomerAggregatesRowRaw } from "@/modules/customers/domain/types"
 import type { AppDatabase } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Fetches customers filtered by query for the customers table (raw numeric totals).
@@ -56,8 +57,10 @@ export async function fetchFilteredCustomersDal(
 			.groupBy(customers.id)
 			.orderBy(asc(customers.name));
 	} catch (error) {
-		// Use structured logging in production
-		console.error("Fetch Filtered Customers Error:", error);
+		logger.error("Error fetching filtered customers", {
+			error: Error.isError(error) ? error.message : "Unknown error",
+			stack: Error.isError(error) ? error.stack : undefined,
+		});
 		throw makeAppError(APP_ERROR_KEYS.database, {
 			cause: Error.isError(error)
 				? error
