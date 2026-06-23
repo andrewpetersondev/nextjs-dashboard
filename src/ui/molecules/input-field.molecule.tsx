@@ -60,14 +60,14 @@ export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
 					{icon ? <span aria-hidden="true">{icon}</span> : null}
 				</div>
 				{/* Only render FieldError if error is defined and non-empty */}
-				{hasError && (
+				{hasError ? (
 					<FieldErrorComponentMolecule
 						dataCy={dataCy ? `${dataCy}-errors` : undefined}
 						error={error}
 						id={describedById ?? `${id}-errors`}
 						label={`${label} error:`}
 					/>
-				)}
+				) : null}
 			</div>
 		</InputFieldCardWrapper>
 	);
