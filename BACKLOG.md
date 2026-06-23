@@ -40,6 +40,15 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Worktree/branch cleanup tooling** _(2026-06-23, #88)_ — added a `/clean-worktrees`
+      command (`.claude/commands/clean-worktrees.md`): fetch → classify `[gone]`/merged/empty
+      lanes (verified via `gh` PR state or `ahead=0`) → auto-remove only **clean** worktrees
+      (never `--force`) → emit a paste-ready `git branch -d` block (branch deletion stays denied
+      in `settings.json`, so the human runs it) → report. Skips the current session, `main`, and
+      `archive/*`. Plus a read-only `SessionStart` hook (`.claude/hooks/stale-worktrees.sh`, wired
+      in `settings.json`) that nudges when stale lanes exist and stays silent when clean. Also
+      fixes the `/clean_gone` plugin command's latent bug: it greps `git branch -v`, which never
+      shows `[gone]` (needs `-vv`).
 - [x] **`/ship` command + insights-report tooling docs** _(2026-06-23, #86 + reorder follow-up)_ —
       added `.claude/commands/ship.md` (end-to-end PR loop: branch-safety → review → reconcile →
       `check:fast` gate → commit → push → PR → CI-watch; worktree-only), an AGENTS.md
