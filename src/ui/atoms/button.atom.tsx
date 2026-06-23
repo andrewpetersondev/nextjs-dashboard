@@ -40,6 +40,7 @@ export function ButtonAtom({
 	...rest
 }: ButtonProps): JSX.Element {
 	const isDisabled: boolean = isLoading || Boolean(disabled);
+	const content: ReactNode = isLoading && loadingText ? loadingText : children;
 
 	return (
 		<button
@@ -57,7 +58,7 @@ export function ButtonAtom({
 			)}
 			disabled={isDisabled}
 		>
-			{isLoading && loadingText ? loadingText : children}
+			{content}
 		</button>
 	);
 }

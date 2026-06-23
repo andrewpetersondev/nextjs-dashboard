@@ -26,7 +26,7 @@ export const PageHeaderMolecule: FC<PageHeaderProps> = ({
 }: PageHeaderProps) => {
 	return (
 		<div className="sm:mx-auto sm:w-full sm:max-w-md">
-			{logoSrc && (
+			{logoSrc ? (
 				<Image
 					alt={logoAlt}
 					className="mx-auto h-10 w-auto"
@@ -35,7 +35,7 @@ export const PageHeaderMolecule: FC<PageHeaderProps> = ({
 					src={logoSrc}
 					width={IMAGE_SIZES.medium}
 				/>
-			)}
+			) : null}
 			<h2 className="mt-6 text-center font-bold text-2xl/9 text-text-primary tracking-tight">
 				{title}
 			</h2>
