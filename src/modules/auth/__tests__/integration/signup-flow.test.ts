@@ -65,9 +65,9 @@ describe("Signup Flow Integration", () => {
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
 				const payload = toFormErrorPayload<SignupField>(result.error);
-				expect(payload.fieldErrors?.email).toBeDefined();
-				expect(payload.fieldErrors?.password).toBeDefined();
-				expect(payload.fieldErrors?.username).toBeDefined();
+				expect(payload.fieldErrors.email).toBeDefined();
+				expect(payload.fieldErrors.password).toBeDefined();
+				expect(payload.fieldErrors.username).toBeDefined();
 			}
 		});
 
@@ -91,7 +91,7 @@ describe("Signup Flow Integration", () => {
 			if (!result.ok) {
 				const payload = toFormErrorPayload<SignupField>(result.error);
 				// Server Action contract: conflicts must return field-level errors.
-				expect(payload.fieldErrors?.email).toBeDefined();
+				expect(payload.fieldErrors.email).toBeDefined();
 				expect(payload.fieldErrors.email.length).toBeGreaterThan(0);
 				expect(payload.fieldErrors.email[0]?.toLowerCase()).toMatch(
 					/already|use|exists|unique|conflict/,

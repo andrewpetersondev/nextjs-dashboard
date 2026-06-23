@@ -5,18 +5,6 @@ import type {
 import type { UserId } from "@/modules/users/domain/types/user-id.brand";
 import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 
-/**
- * Centralized reason literals to avoid magic strings across DTOs, builders, and use cases.
- */
-export const UPDATE_SESSION_OUTCOME_REASON = {
-	absoluteLifetimeExceeded: "absolute_lifetime_exceeded",
-	expired: "expired",
-	invalidOrMissingUser: "invalid_or_missing_user",
-	noCookie: "no_cookie",
-	notNeeded: "not_needed",
-	rotated: "rotated",
-} as const;
-
 type UpdateSessionTerminationNotRotatedDto = Readonly<{
 	readonly ageSec: DurationSeconds;
 	readonly maxSec: DurationSeconds;
@@ -38,6 +26,18 @@ type UpdateSessionNotNeededNotRotatedDto = Readonly<{
 	readonly refreshed: false;
 	readonly timeLeftSec: TimeDeltaSeconds;
 }>;
+
+/**
+ * Centralized reason literals to avoid magic strings across DTOs, builders, and use cases.
+ */
+export const UPDATE_SESSION_OUTCOME_REASON = {
+	absoluteLifetimeExceeded: "absolute_lifetime_exceeded",
+	expired: "expired",
+	invalidOrMissingUser: "invalid_or_missing_user",
+	noCookie: "no_cookie",
+	notNeeded: "not_needed",
+	rotated: "rotated",
+} as const;
 
 export type UpdateSessionNotRotatedDto =
 	| UpdateSessionNoSessionNotRotatedDto

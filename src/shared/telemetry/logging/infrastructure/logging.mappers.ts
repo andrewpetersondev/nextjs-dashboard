@@ -7,6 +7,7 @@ import type { SafeErrorShape } from "@/shared/telemetry/logging/core/logger.dto"
  * Map domain `Severity` to `LogLevel` with an exhaustive check.
  */
 function _mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
+	// biome-ignore-start lint/suspicious/noUnnecessaryConditions: Biome mis-resolves the cross-module `keyof typeof` severity union and wrongly flags these cases as unreachable; the switch is exhaustive and correct.
 	switch (severity) {
 		case "WARN":
 			return "warn";
@@ -19,6 +20,7 @@ function _mapSeverityToLogLevel(severity: AppErrorSeverity): LogLevel {
 			return _exhaustive;
 		}
 	}
+	// biome-ignore-end lint/suspicious/noUnnecessaryConditions: end of exhaustive-switch suppression range
 }
 
 /**

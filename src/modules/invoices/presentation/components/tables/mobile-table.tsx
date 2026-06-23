@@ -26,7 +26,7 @@ export const MobileTable = ({
 	return (
 		<div className="md:hidden">
 			{/* Map through invoices and create mobile-friendly cards */}
-			{invoices?.map(
+			{invoices.map(
 				(invoice): JSX.Element => (
 					<div
 						className="mb-2 w-full rounded-md bg-bg-primary p-4"

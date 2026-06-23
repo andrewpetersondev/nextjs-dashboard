@@ -37,6 +37,10 @@ const passwordEdit = optionalEdit(PasswordSchema);
 const roleEdit = optionalEdit(UserRoleFormSchema);
 const usernameEdit = optionalEdit(UsernameSchema);
 
+// UI/view-model types derived from the shared schema
+// Zod Input (pre-parse) - Raw form values
+type EditUserFormInput = z.input<typeof EditUserFormSchema>;
+
 // biome-ignore lint/nursery/useExplicitType: fix later
 export const CreateUserFormSchema = UserFormBaseSchema;
 
@@ -51,10 +55,6 @@ export const EditUserFormSchema = z.strictObject({
 	username: usernameEdit,
 });
 
-// UI/view-model types derived from the shared schema
-
-// Zod Input (pre-parse) - Raw form values
-type EditUserFormInput = z.input<typeof EditUserFormSchema>;
 export type EditUserFormFieldNames = keyof EditUserFormInput;
 
 // Zod Output (post-parse) - Validated domain data

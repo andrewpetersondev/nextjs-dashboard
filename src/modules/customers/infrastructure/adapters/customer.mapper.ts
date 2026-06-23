@@ -32,7 +32,7 @@ export function mapCustomerAggregatesRawToDto(
 		id: toCustomerId(row.id),
 		imageUrl: row.imageUrl,
 		name: row.name,
-		totalInvoices: row.totalInvoices ?? 0,
+		totalInvoices: row.totalInvoices,
 		totalPaid: row.totalPaid ?? 0,
 		totalPending: row.totalPending ?? 0,
 	};

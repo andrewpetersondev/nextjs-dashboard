@@ -63,6 +63,7 @@ function getHeaderValue(
 function extractIpFromForwarded(forwardedValue: string): string | null {
 	const [entry = ""] = forwardedValue.split(",");
 	const match = FORWARDED_FOR_REGEX.exec(entry);
+	// biome-ignore lint/suspicious/noUnnecessaryConditions: RegExp.exec() returns null when there is no match; the optional chain is required (Biome mis-infers the receiver as non-nullish).
 	return match?.[1] ?? null;
 }
 
