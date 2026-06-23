@@ -7,20 +7,17 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Dependency-audit watch (from weekly-maintenance 2026-06-15)** — `pnpm audit`
-      reports 3 advisories, all in **transitive dev/test tooling** (none in runtime
-      deps, nothing shipped to prod): `form-data` **HIGH**
-      ([GHSA-hmw2-7cc7-3qxx](https://github.com/advisories/GHSA-hmw2-7cc7-3qxx),
-      patched `>=4.0.6`) reachable via `cypress` and `start-server-and-test>wait-on>axios`;
-      `js-yaml` moderate ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68),
-      `>=4.1.2`) and `markdown-it` moderate
-      ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq), `>=14.1.2`),
-      both via `markdownlint-cli2`. All three clear once those tools bump their own
-      transitives; decide whether to wait for upstream or add `pnpm.overrides` pins
-      (overrides go in `pnpm-workspace.yaml`, keep lockstep with package.json). Also
-      pending: **biome 2.5.0** (current 2.4.16) was deferred by the weekly routine on
-      2026-06-15 — it published 2026-06-12, right at the 3-day freshness threshold; due
-      to be picked up (with `biome migrate --write`) on the next maintenance run.
+- [ ] **Dependency-audit watch (from weekly-maintenance 2026-06-15; rechecked 2026-06-23)** —
+      `pnpm audit` now reports **2 moderate** advisories, both **transitive dev/test tooling**
+      (none in runtime deps, nothing shipped to prod) and both via `markdownlint-cli2`:
+      `js-yaml` ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68),
+      patched `>=4.1.2`) and `markdown-it`
+      ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq), `>=14.1.2`).
+      Both clear once `markdownlint-cli2` bumps its own transitives; decide whether to wait
+      for upstream or add `pnpm.overrides` pins (overrides go in `pnpm-workspace.yaml`, keep
+      lockstep with package.json). _Resolved since 2026-06-15:_ the `form-data` **HIGH**
+      (GHSA-hmw2-7cc7-3qxx, via `cypress` / `wait-on>axios`) has cleared upstream, and
+      **biome 2.5.0** was adopted (schema 2.5.0 + `preset: recommended`, commit `3fa9400b`).
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
@@ -41,7 +38,11 @@ this file is the deliberate workaround.)
       visible in `pnpm knip` until decided.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
-- [ ] **TSConfig Version 6** — figure out how to use TSConfig Version 6.
+- [ ] **TSConfig modernization for TypeScript 6.0** — TS **6.0.3** is already installed
+      (`package.json` `^6.0.3`) and `pnpm typecheck` (`tsc -b`) is green, so the version bump
+      itself is done. Remaining: modernize `tsconfig.json` for v6 — adopt the new recommended
+      defaults, drop any now-deprecated options, and confirm nothing relied on removed
+      behavior. (Close this item if you consider the bump alone sufficient.)
 - [ ] **Integration lane in CI (optional)** — the e2e job's Postgres-service-container
       pattern (2026-06-23) could also run the integration vitest lane in CI; today only
       the DB-free unit lane runs there. Unscheduled.
@@ -57,6 +58,11 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       Completes the deploy plan. ⚠️ If the ci.yml job names change, update the ruleset's
       required-status-check contexts or merges silently block. Detail: memory
       `project_dashboard_plan`.
+- [x] **Biome deterministic lint + `noConsole`** _(2026-06-23, #78/#79)_ — consolidated the
+      nested `biome.json` into root `overrides` (fixes the 2.5.0 non-deterministic
+      nested-config scan), enabled `noConsole` routing app/DAL console through the structured
+      logger (logger/CLI/config exempt), and cleared all remaining Biome warnings/info.
+      Detail: memory `project_biome_nested_config`.
 - [x] **knip full-report triage** _(2026-06-14)_ — 44 findings → 5 (all deliberate
       keeps) via adversarial multi-agent triage: deleted 10 dead files + dead symbols +
       2 unused deps, un-exported the rest. `check:fast` + 286 unit green.
