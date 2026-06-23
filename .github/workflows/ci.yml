@@ -1,15 +1,18 @@
 # Continuous Integration (CI)
 #
-# Runs fast, dependency-free checks on every push to `main` and every pull
-# request that targets `main`: `pnpm check:fast` (Biome lint + Markdown
-# lint/format + type-check + Next.js typegen) plus the migration-drift gate and
-# the DB-free unit lane with coverage thresholds.
+# Two jobs run on every push to `main` and every pull request targeting `main`:
 #
-# Note: the integration tests, the production build, and Cypress e2e are
-# intentionally NOT here. They need a real database + secret env vars and would
-# fail in a plain CI run. The UNIT lane is different — it injects a dummy env and
-# mocks the DB (see `vitest.config.ts`), so it runs anywhere. See the README /
-# your `pnpm check` script for how to run the rest locally.
+#   • check — fast, dependency-free checks: `pnpm check:fast` (Biome lint +
+#     Markdown lint/format + type-check + Next.js typegen) plus the migration-
+#     drift gate and the DB-free unit lane with coverage thresholds.
+#   • e2e — the Cypress end-to-end suite against a real `next dev` server backed
+#     by an ephemeral Postgres service container. The job recreates the
+#     `.env.test.local` the harness expects from non-secret CI values, so it
+#     needs no configured GitHub secrets.
+#
+# Still intentionally NOT here: the integration vitest lane and the production
+# build. They also need a database/secrets; the e2e job's service-container
+# pattern could bring the integration lane in later if wanted.
 
 name: CI
 
@@ -86,3 +89,86 @@ jobs:
       #     the build.
       - name: Unit tests + coverage
         run: pnpm test:coverage
+
+  e2e:
+    name: E2E (Cypress)
+    runs-on: ubuntu-latest
+    # Generous ceiling: a cold `next dev` (Turbopack compiles routes on first
+    # hit) plus 20 specs. The warm local run is ~35s; this is a safety net.
+    timeout-minutes: 15
+
+    # Ephemeral test database. POSTGRES_DB MUST be `test_db`: the `db-env-guard`
+    # smoke spec asserts databaseName==="test_db", and the e2e preflight asserts
+    # databaseEnv==="test" — both read from /api/health.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d test_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      # Cache the Cypress binary (~/.cache/Cypress). Restored BEFORE install so
+      # the `cypress` postinstall finds it instead of re-downloading every run.
+      - name: Cache Cypress binary
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The e2e harness (cypress-with-server.cli.ts) treats .env.test.local as
+      # the single source of truth for PORT + the DB env. Recreate it from
+      # non-secret CI values; SESSION_SECRET is generated per run (specs never
+      # assert on it, only that it is present and valid).
+      - name: Write .env.test.local
+        run: |
+          {
+            echo "AUTH_BCRYPT_SALT_ROUNDS=12"
+            echo "DATABASE_ENV=test"
+            echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db"
+            echo "NODE_ENV=test"
+            echo "PORT=3000"
+            echo "SESSION_SECRET=$(openssl rand -base64 48)"
+            echo "NEXT_PUBLIC_LOG_LEVEL=info"
+            echo "NEXT_PUBLIC_NODE_ENV=test"
+          } > .env.test.local
+
+      # Apply the committed TEST migrations (drizzle-kit migrate, scope=test):
+      # the production-like path that also exercises the drift-guarded set.
+      - name: Apply test migrations
+        run: pnpm db:migrate:test
+
+      # Seed the demo users/invoices the specs expect.
+      - name: Seed test database
+        run: pnpm db:seed:test
+
+      # Boots `next dev` (test env) on PORT, waits for it, runs the /api/health
+      # identity preflight, then the Cypress suite. start-server-and-test tears
+      # the server down afterward and propagates the suite's exit code.
+      - name: Run Cypress e2e
+        run: pnpm cy:e2e
