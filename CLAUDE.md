@@ -13,11 +13,7 @@ Never delete branches/worktrees or run destructive DB/git commands without expli
 
 ## Worktrees
 
-This project uses MANY worktrees, not a single checkout. Assume branch-per-architecture and a multi-worktree workflow when reasoning about branches, env files, and isolation. Claude Code checks out work in a git worktree under `.claude/worktrees/`; changes committed there go to a separate branch and do not affect `main` until a PR is merged.
-
-## Environment
-
-This is a macOS/zsh environment: `timeout` and bash `mapfile` are unavailable, and shell access to env/secret files is often blocked. Use targeted single commands instead of compound shell pipelines, and poll CI directly rather than wrapping in `timeout`.
+This project runs in git worktrees under `.claude/worktrees/`, not a single checkout — work committed there lives on a separate branch and does not touch `main` until a PR merges. Expect **multiple worktrees at once**: today usually one per Claude Code session, with the intended direction being branch-per-architecture lanes for running several sessions in parallel. Reason about branches, env files, and isolation with that in mind. (Shell/OS specifics live in `AGENTS.md` → "Shell environment".)
 
 ## Claude-specific context
 
@@ -25,16 +21,16 @@ This is a macOS/zsh environment: `timeout` and bash `mapfile` are unavailable, a
 
 Project-level slash commands are defined in `.claude/commands/`:
 
-| Command       | Runs                                                                                   |
-| ------------- | -------------------------------------------------------------------------------------- |
-| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)          |
-| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only)  |
-| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)       |
-| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue           |
-| `/test`       | `pnpm test` — unit tests only (report-only)                                            |
-| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                      |
-| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)               |
-| `/ship`       | gate on `pnpm check:fast`, commit, push, open a PR, watch CI, reconcile BACKLOG/memory |
+| Command       | Runs                                                                                         |
+| ------------- | -------------------------------------------------------------------------------------------- |
+| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)                |
+| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only)        |
+| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)             |
+| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue                 |
+| `/test`       | `pnpm test` — unit tests only (report-only)                                                  |
+| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                            |
+| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)                     |
+| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, push, open a PR, watch CI |
 
 Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` is the one command that writes git history — it commits, pushes, and opens a PR, and only ever runs from a worktree branch, never `main`.
 
