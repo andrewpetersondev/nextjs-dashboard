@@ -50,7 +50,8 @@ When `develop` is in a coherent state you want live:
    `E2E (Cypress)` suite. Both are required on `main`.
 3. Merge → `main` advances → Vercel builds a **production** deploy.
 
-A `/promote` command to script this step is planned; until then it's the manual
+The `/promote` command scripts this step — it opens the `develop → main` PR, runs the full gate,
+watches CI, and hands you the merge (it never merges `main` itself). The manual equivalent is the
 `gh pr create --base main` above.
 
 ## What runs where
@@ -72,6 +73,10 @@ The required-check policy itself lives in GitHub **rulesets** (`Protect Importan
 Branches` → `main`; `Protect develop (integration)` → `develop`), not in this repo.
 If you rename a CI job, update the ruleset's required-status-check contexts or merges
 will silently block.
+
+`develop` also has a persistent **staging URL** you can share or test against —
+`https://nextjs-dashboard-git-develop-andrew-petersons-projects-15cc2fda.vercel.app` — which Vercel
+auto-updates on every push to `develop`.
 
 ## Working in parallel (lanes)
 
