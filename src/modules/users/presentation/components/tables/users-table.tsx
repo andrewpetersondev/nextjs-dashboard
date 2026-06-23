@@ -19,7 +19,7 @@ export async function UsersTable({
 
 	return (
 		<div data-cy="users-table">
-			{users?.map(
+			{users.map(
 				(user: UserDto): JSX.Element => (
 					<div
 						className="mb-2 w-full rounded-md bg-bg-primary p-4"

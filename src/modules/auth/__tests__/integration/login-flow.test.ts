@@ -77,7 +77,7 @@ describe("Login Flow Integration", () => {
 			expect(result.ok).toBe(false);
 			if (!result.ok) {
 				const payload = toFormErrorPayload<LoginField>(result.error);
-				expect(payload.fieldErrors?.email).toBeDefined();
+				expect(payload.fieldErrors.email).toBeDefined();
 			}
 		});
 
