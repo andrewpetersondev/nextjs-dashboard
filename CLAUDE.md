@@ -25,17 +25,18 @@ This is a macOS/zsh environment: `timeout` and bash `mapfile` are unavailable, a
 
 Project-level slash commands are defined in `.claude/commands/`:
 
-| Command       | Runs                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------- |
-| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)         |
-| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only) |
-| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)      |
-| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue          |
-| `/test`       | `pnpm test` — unit tests only (report-only)                                           |
-| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                     |
-| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)              |
+| Command       | Runs                                                                                   |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)          |
+| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only)  |
+| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)       |
+| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue           |
+| `/test`       | `pnpm test` — unit tests only (report-only)                                            |
+| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                      |
+| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)               |
+| `/ship`       | gate on `pnpm check:fast`, commit, push, open a PR, watch CI, reconcile BACKLOG/memory |
 
-Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit).
+Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` is the one command that writes git history — it commits, pushes, and opens a PR, and only ever runs from a worktree branch, never `main`.
 
 ### Markdown tooling
 
