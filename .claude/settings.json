@@ -1,4 +1,16 @@
 {
+	"hooks": {
+		"SessionStart": [
+			{
+				"hooks": [
+					{
+						"command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/stale-worktrees.sh\"",
+						"type": "command"
+					}
+				]
+			}
+		]
+	},
 	"permissions": {
 		"allow": ["Bash(*)", "Read(./**)", "Write(./**)", "Edit(./**)"],
 		"deny": [
