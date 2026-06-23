@@ -40,6 +40,14 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **`/ship` command + insights-report tooling docs** _(2026-06-23, #86 + reorder follow-up)_ —
+      added `.claude/commands/ship.md` (end-to-end PR loop: branch-safety → review → reconcile →
+      `check:fast` gate → commit → push → PR → CI-watch; worktree-only), an AGENTS.md
+      "Shell environment" section (macOS/zsh footguns: no `timeout`/`mapfile`, the `tail`/`head`
+      exit-code mask), and CLAUDE.md workflow/git-safety/worktree context from the report blocks,
+      deduped against AGENTS.md. Sourced from a `/insights` report; its
+      first run (#86) exposed a step-order bug — reconcile ran after the commit — fixed in the
+      follow-up so doc/backlog updates land in the same PR.
 - [x] **Dependency-audit watch: 2 moderate alerts cleared** _(2026-06-23, #85)_ — the two
       transitive dev-tooling quadratic-DoS advisories pulled via `markdownlint-cli2@0.22.1`
       (latest, which pins both exactly so no upstream bump was possible) fixed with
