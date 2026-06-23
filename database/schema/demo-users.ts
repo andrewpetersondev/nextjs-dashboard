@@ -7,6 +7,3 @@ export const demoUserCounters = pgTable("demo_user_counters", {
 	id: serial("id").primaryKey(),
 	role: userRolePgEnum("role").notNull().default(GUEST_ROLE).$type<UserRole>(),
 });
-
-type _DemoUserCounterRow = typeof demoUserCounters.$inferSelect;
-type _NewDemoUserCounterRow = typeof demoUserCounters.$inferInsert;
