@@ -35,6 +35,17 @@ the files you are touching.
 - Coverage (unit lane): `pnpm test:coverage`
 - E2E tests: `pnpm cy:e2e`
 
+## Shell environment
+
+Development happens on macOS with `zsh`. Some GNU/Linux idioms are missing or behave differently — don't assume them:
+
+- `timeout` is not installed. Don't wrap commands in it; to wait on CI, poll `gh run watch` / `gh pr checks` directly.
+- bash-only builtins (e.g. `mapfile`) aren't in `zsh`. Avoid them in one-off commands, or they fail silently.
+- Don't pipe a command you care about through `tail`/`head` — the pipe reports the _last_ command's exit code and hides
+  an upstream failure (a green-looking `head` over a failing test run). Check the raw exit code, or write to a file and read it.
+- Prefer targeted single commands over long compound pipelines. Several destructive/compound forms are blocked by
+  `.claude/settings.json` and will simply fail, so build them up granularly and confirm before anything destructive.
+
 ## Safety and context
 
 - Do not read, print, or commit local environment files such as `.env*.local`.
