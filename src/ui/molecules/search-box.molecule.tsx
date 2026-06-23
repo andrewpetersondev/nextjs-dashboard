@@ -8,7 +8,7 @@ import {
 	useRouter,
 	useSearchParams,
 } from "next/navigation";
-import { type ChangeEvent, type JSX, useId } from "react";
+import { type ChangeEvent, type JSX, useCallback, useId } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { DEBOUNCE_MS } from "@/shared/time/time.constants";
 import { LabelAtom } from "@/ui/atoms/label.atom";
@@ -44,6 +44,13 @@ export function SearchBoxMolecule({
 		replace(nextHref);
 	}, DEBOUNCE_MS);
 
+	const handleChange = useCallback(
+		(e: ChangeEvent<HTMLInputElement>): void => {
+			handleSearch(e.target.value);
+		},
+		[handleSearch],
+	);
+
 	return (
 		<div className="relative flex flex-1 shrink-0">
 			<LabelAtom className="sr-only" htmlFor={inputId} text="Search" />
@@ -58,9 +65,7 @@ export function SearchBoxMolecule({
 				)}
 				defaultValue={searchParams.get("query")?.toString()}
 				id={inputId}
-				onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-					handleSearch(e.target.value);
-				}}
+				onChange={handleChange}
 				placeholder={placeholder}
 				type="search"
 			/>

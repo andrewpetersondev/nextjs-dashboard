@@ -1,11 +1,18 @@
 "use client";
 
-import { type JSX, useState, useTransition } from "react";
+import { type JSX, useCallback, useState, useTransition } from "react";
 import { dismissBannerAction } from "@/modules/banner/presentation/actions/dismiss-banner.action";
 
 export function OneTimeBanner(): JSX.Element | null {
 	const [open, setOpen] = useState(true);
 	const [pending, startTransition] = useTransition();
+
+	const handleDismiss = useCallback((): void => {
+		startTransition(async () => {
+			await dismissBannerAction();
+			setOpen(false);
+		});
+	}, []);
 
 	if (!open) {
 		return null;
@@ -25,12 +32,7 @@ export function OneTimeBanner(): JSX.Element | null {
 				<button
 					className="font-semibold text-sm text-text-secondary hover:text-text-primary"
 					disabled={pending}
-					onClick={() => {
-						startTransition(async () => {
-							await dismissBannerAction();
-							setOpen(false);
-						});
-					}}
+					onClick={handleDismiss}
 					type="button"
 				>
 					{pending ? "Saving…" : "Dismiss"}
