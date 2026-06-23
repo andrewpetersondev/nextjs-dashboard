@@ -7,20 +7,33 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Dependency-audit watch (from weekly-maintenance 2026-06-15)** — `pnpm audit`
-      reports 3 advisories, all in **transitive dev/test tooling** (none in runtime
-      deps, nothing shipped to prod): `form-data` **HIGH**
-      ([GHSA-hmw2-7cc7-3qxx](https://github.com/advisories/GHSA-hmw2-7cc7-3qxx),
-      patched `>=4.0.6`) reachable via `cypress` and `start-server-and-test>wait-on>axios`;
-      `js-yaml` moderate ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68),
-      `>=4.1.2`) and `markdown-it` moderate
-      ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq), `>=14.1.2`),
-      both via `markdownlint-cli2`. All three clear once those tools bump their own
-      transitives; decide whether to wait for upstream or add `pnpm.overrides` pins
-      (overrides go in `pnpm-workspace.yaml`, keep lockstep with package.json). Also
-      pending: **biome 2.5.0** (current 2.4.16) was deferred by the weekly routine on
-      2026-06-15 — it published 2026-06-12, right at the 3-day freshness threshold; due
-      to be picked up (with `biome migrate --write`) on the next maintenance run.
+- [ ] **Biome 2.5.0 lint triage (from weekly-maintenance 2026-06-22, DRAFT PR)** — the
+      routine bumped `@biomejs/biome` 2.4.16 → 2.5.0 and ran `biome migrate --write`
+      (schema bump + relocated the nursery rules that 2.5.0 promoted to stable). The bump
+      surfaces **47 new lint errors** in pre-existing, previously-green code, so the PR is
+      a **DRAFT** pending human triage. Two causes: (a) **new recommended-preset rules** not
+      in our config — `noUnnecessaryConditions` (18), `noJsxPropsBind` (8), `noLeakedRender`
+      (6); (b) **rules we already enable** that 2.5.0 implements more completely —
+      `useExportsLast` (11), `noEqualsToNull` (4), `noContinue` (4), `noVoid` (3). Decide
+      per rule: fix the code (the project's strict-lint ethos favors this) or opt the rule
+      out. The bot deliberately did **not** auto-fix or silently disable rules. Unit tests
+      (286) stayed green; the bump is runtime-neutral.
+- [ ] **Dependency-audit watch (updated weekly-maintenance 2026-06-22)** — `pnpm audit`
+      now reports **10 advisories** (was 3), all still in **transitive dev/test tooling**
+      (none in runtime deps, nothing shipped to prod):
+  - **NEW: `undici` ×6** (3 high / 2 moderate / 1 low; e.g. TLS-cert-validation bypass
+    [GHSA-…], WebSocket DoS, cross-origin routing) via `@vitest/* > vitest > jsdom > undici`,
+    all `<7.28.0`, patched `>=7.28.0`. **Dependabot already opened `dependabot/npm_and_yarn/undici-7.28.0`** —
+    let that PR (or a jsdom/vitest bump) clear them.
+  - **Carried over (still pending upstream):** `form-data` **HIGH**
+    ([GHSA-hmw2-7cc7-3qxx](https://github.com/advisories/GHSA-hmw2-7cc7-3qxx), `>=4.0.6`)
+    via `cypress`; `js-yaml` moderate
+    ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68), `>=4.1.2`)
+    and `markdown-it` moderate
+    ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq), `>=14.1.2`),
+    both via `markdownlint-cli2`. All clear once those tools bump their own transitives;
+    decide whether to wait for upstream or add `pnpm.overrides` pins (overrides go in
+    `pnpm-workspace.yaml`, keep lockstep with package.json).
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
