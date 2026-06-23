@@ -7,11 +7,6 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Lane map doc (branch-model Phase 5)** — write the parallel-session lane map as its own
-      doc: `src/modules/{auth,banner,customers,invoices,users}` + docs + isolated chores are
-      parallel-safe lanes; `src/shared/**` + `src/server/**` are the single-thread kernel (never
-      parallel-edit). Map existing BACKLOG items onto lanes. The remaining piece of the
-      develop/promote migration. Detail: memory `project_branch_model_migration`.
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
@@ -51,7 +46,7 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       (`+ E2E (Cypress)`); `ci.yml` split so the slow E2E runs only for main-targeting PRs (#89);
       branch model + Mermaid diagram documented (#90); Vercel verified (main=production,
       develop=free staging URL); added the `/promote` command + updated CLAUDE.md/AGENTS.md
-      git-safety wording. Remaining: the lane map (see Open). ⚠️ Rulesets pin required-status-check
+      git-safety wording; the lane map landed (`docs/lane-map.md` + diagram). ⚠️ Rulesets pin required-status-check
       contexts to the CI job **names** (`Lint & type-check`, `E2E (Cypress)`) — rename a job and
       merges silently block. Detail: memory `project_branch_model_migration`.
 - [x] **Worktree/branch cleanup tooling** _(2026-06-23, #88)_ — added a `/clean-worktrees`
