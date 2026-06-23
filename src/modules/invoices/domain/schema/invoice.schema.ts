@@ -38,7 +38,6 @@ const InvoiceBaseSchema = z.object({
 	status: invoiceStatusSchema,
 });
 
-// biome-ignore lint/nursery/useExplicitType: fix
 export const CreateInvoiceSchema = InvoiceBaseSchema;
 
 export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();

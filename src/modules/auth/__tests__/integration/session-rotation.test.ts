@@ -31,7 +31,6 @@ describe("Session Rotation Integration", () => {
 		vi.spyOn(SessionCookieStoreAdapter.prototype, "get").mockRestore();
 	});
 
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
 	const createTokenWithDates = async (iat: number, exp: number) => {
 		const auth = await makeAuthComposition();
 		// biome-ignore lint/suspicious/noExplicitAny: is this okay?

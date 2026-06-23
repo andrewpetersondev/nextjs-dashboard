@@ -1,6 +1,5 @@
 "use client";
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
 export default function GlobalError({
 	error,
 	reset,
@@ -16,7 +15,7 @@ export default function GlobalError({
 				<h3 className="text-center">Global Error</h3>
 				<p>{error.message}</p>
 				{/** biome-ignore lint/a11y/useButtonType: <default> */}
-				<button onClick={(): void => reset()}>Try again</button>
+				<button onClick={reset}>Try again</button>
 			</body>
 		</html>
 	);

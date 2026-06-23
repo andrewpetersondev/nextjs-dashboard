@@ -5,21 +5,5 @@
 		"ignoreUnknown": true,
 		"includes": ["**", "!**/*.js", "!**/*.jsx"]
 	},
-	"linter": {
-		"rules": {
-			"complexity": {
-				"noVoid": "off"
-			},
-			"correctness": {
-				"noNodejsModules": "off"
-			},
-			"nursery": {
-				"useExplicitType": "off"
-			},
-			"style": {
-				"noProcessEnv": "off"
-			}
-		}
-	},
 	"root": false
 }

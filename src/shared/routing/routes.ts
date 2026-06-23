@@ -31,7 +31,6 @@ type RoutesShape = Readonly<{
 
 // Core route map (preserved keys/shape for compatibility)
 // biome-ignore lint/style/useExportsLast: fine for now
-// biome-ignore lint/nursery/useExplicitType: TODO: HIGH PRIORITY REFACTOR FOR NEXT ROUTES
 export const ROUTES = {
 	auth: {
 		login: "/auth/login",

@@ -107,14 +107,6 @@ export class InvoiceRepository extends BaseRepository<
 				metadata: {},
 			});
 		}
-		if (!data || typeof data !== "object") {
-			throw makeAppError("validation", {
-				cause: "",
-				message: INVOICE_MSG.invalidInput,
-				metadata: {},
-			});
-		}
-
 		// Call DAL with branded types
 		const updatedEntity = await updateInvoiceDal(this.db, id, data);
 

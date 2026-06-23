@@ -29,10 +29,6 @@ export async function upsertE2eUserTask(user: {
 	role: UserRole;
 	username: string;
 }): Promise<void> {
-	if (!user) {
-		throw new Error("upsertE2EUser requires user object");
-	}
-
 	validateRequiredUserTaskInput(user);
 
 	const normalizedEmail = normalizeUserEmail(user.email);

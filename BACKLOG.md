@@ -7,17 +7,6 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Biome 2.5.0 lint triage (from weekly-maintenance 2026-06-22, DRAFT PR)** — the
-      routine bumped `@biomejs/biome` 2.4.16 → 2.5.0 and ran `biome migrate --write`
-      (schema bump + relocated the nursery rules that 2.5.0 promoted to stable). The bump
-      surfaces **47 new lint errors** in pre-existing, previously-green code, so the PR is
-      a **DRAFT** pending human triage. Two causes: (a) **new recommended-preset rules** not
-      in our config — `noUnnecessaryConditions` (18), `noJsxPropsBind` (8), `noLeakedRender`
-      (6); (b) **rules we already enable** that 2.5.0 implements more completely —
-      `useExportsLast` (11), `noEqualsToNull` (4), `noContinue` (4), `noVoid` (3). Decide
-      per rule: fix the code (the project's strict-lint ethos favors this) or opt the rule
-      out. The bot deliberately did **not** auto-fix or silently disable rules. Unit tests
-      (286) stayed green; the bump is runtime-neutral.
 - [ ] **Dependency-audit watch (updated weekly-maintenance 2026-06-22)** — `pnpm audit`
       now reports **10 advisories** (was 3), all still in **transitive dev/test tooling**
       (none in runtime deps, nothing shipped to prod):
@@ -59,6 +48,33 @@ this file is the deliberate workaround.)
 ## Done
 
 <!-- Move finished items here with a date, or delete them. -->
+
+- [x] **Biome 2.5.0 bump + lint triage** _(2026-06-23)_ — bumped `@biomejs/biome`
+      2.4.16 → 2.5.0 (`biome migrate --write`) and triaged every new finding. **`biome check`
+      is now deterministically 0 errors** (CI green); 286 unit tests pass; typecheck/typegen/
+      drift green. What was done:
+  - **`public/**` excluded from Biome** — 2.5.0 newly lints SVG, so the Next.js template
+    assets tripped `noSvgWithoutTitle` + attribute-sorting (15 errors). Static assets
+    shouldn't be linted.
+  - **`useExplicitType` turned off globally** (was an unstable `nursery` rule). It only ever
+    fired in `cypress/**`+`devtools/**` (25 errors) where the project already wanted it off,
+    and 2.5.0's **per-directory override application is nondeterministic in full-repo scans**
+    (a Biome concurrency bug — verified flaky across repeated runs), so scoping it off per-dir
+    couldn't be made reliable. Removed the 10 now-dead `// biome-ignore …useExplicitType`
+    comments this surfaced.
+  - **App-code warnings fixed:** `noUnnecessaryConditions` (18 — dead guards / redundant `?.`
+    / a false-positive on an exhaustive `keyof typeof` switch whose dead helper was deleted /
+    a `RegExp.exec` null-model gap suppressed with a comment), `noJsxPropsBind` (8 — error
+    boundaries use `onClick={reset}`; banner + search use `useCallback`), `noLeakedRender`
+    (6 — `{cond && <X/>}` → `{cond ? <X/> : null}`, the house style).
+  - **Stale suppressions** (`noEqualsToNull`/`noContinue`) re-pointed to their new
+    post-promotion rule paths.
+  - **Known non-blocking residue** (don't fail CI): the same per-dir-override Biome bug means
+    `noNodejsModules`/`noProcessEnv`/`noVoid` in `cypress/**`+`devtools/**` (legit tooling
+    patterns) flake between suppressed/shown as warnings/infos — root overrides express the
+    intent; they'll apply reliably once Biome fixes the bug. Also deferred: **`useExportsLast`
+    (11 infos)** in schema/dto files (info-level; pre-existing `useExportsLast` suppression in
+    `routes.ts` shows it's tolerated) — reorder exports below non-exports if desired.
 
 - [x] **knip full-report triage** _(2026-06-14)_ — completed via a 44-candidate
       multi-agent triage (each candidate: git archaeology + full-repo reference search +

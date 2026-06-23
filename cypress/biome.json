@@ -12,18 +12,6 @@
 		"rules": {
 			"complexity": {
 				"noExcessiveLinesPerFunction": "info"
-			},
-			"correctness": {
-				"noNodejsModules": "off"
-			},
-			"nursery": {
-				"useExplicitType": "off"
-			},
-			"performance": {
-				"noNamespaceImport": "off"
-			},
-			"style": {
-				"noProcessEnv": "off"
 			}
 		}
 	},

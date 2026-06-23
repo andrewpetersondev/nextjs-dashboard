@@ -26,10 +26,6 @@ export async function createUserTask(user: {
 	role: UserRole;
 	username: string;
 }): Promise<void> {
-	if (!user) {
-		throw new Error("createUser requires a user object");
-	}
-
 	const email = normalizeUserEmail(user.email);
 	const password = normalizeUserPassword(user.password);
 	const role = user.role;

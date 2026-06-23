@@ -32,7 +32,14 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!**/*.d.ts", "!**/*.js", "!**/*.jsx", "!**/*.map"]
+		"includes": [
+			"**",
+			"!**/*.d.ts",
+			"!**/*.js",
+			"!**/*.jsx",
+			"!**/*.map",
+			"!public"
+		]
 	},
 	"formatter": {
 		"enabled": true,
@@ -81,6 +88,7 @@
 				"preset": "recommended"
 			},
 			"complexity": {
+				"noDivRegex": "on",
 				"noExcessiveCognitiveComplexity": "on",
 				"noExcessiveLinesPerFunction": "on",
 				"noForEach": "on",
@@ -91,8 +99,7 @@
 				"preset": "recommended",
 				"useMaxParams": "on",
 				"useSimplifiedLogicExpression": "on",
-				"useWhile": "on",
-				"noDivRegex": "on"
+				"useWhile": "on"
 			},
 			"correctness": {
 				"noGlobalDirnameFilename": "on",
@@ -103,18 +110,17 @@
 				"noUnresolvedImports": "off",
 				"noUnusedFunctionParameters": "on",
 				"noUnusedImports": "on",
+				"noUnusedInstantiation": "on",
 				"noUnusedLabels": "on",
 				"noUnusedPrivateClassMembers": "on",
 				"noUnusedVariables": "on",
 				"preset": "recommended",
 				"useImportExtensions": "off",
-				"useSingleJsDocAsterisk": "on",
-				"noUnusedInstantiation": "on"
+				"useSingleJsDocAsterisk": "on"
 			},
 			"nursery": {
 				"noFloatingPromises": "on",
 				"preset": "recommended",
-				"useExplicitType": "on",
 				"useSortedClasses": "on"
 			},
 			"performance": {
@@ -132,8 +138,11 @@
 			},
 			"style": {
 				"noCommonJs": "on",
+				"noContinue": "on",
 				"noDoneCallback": "on",
 				"noEnum": "on",
+				"noExcessiveClassesPerFile": "on",
+				"noExcessiveLinesPerFile": "on",
 				"noExportedImports": "on",
 				"noImplicitBoolean": "on",
 				"noInferrableTypes": "off",
@@ -181,22 +190,24 @@
 				"useThrowNewError": "on",
 				"useThrowOnlyError": "on",
 				"useTrimStartEnd": "on",
-				"useUnifiedTypeSignatures": "on",
-				"noContinue": "on",
-				"noExcessiveClassesPerFile": "on",
-				"noExcessiveLinesPerFile": "on"
+				"useUnifiedTypeSignatures": "on"
 			},
 			"suspicious": {
 				"noAlert": "on",
 				"noBitwiseOperators": "on",
 				"noConstantBinaryExpressions": "on",
 				"noDuplicateDependencies": "on",
+				"noDuplicatedSpreadProps": "on",
+				"noDuplicateEnumValues": "on",
 				"noEmptyBlockStatements": "on",
 				"noEmptySource": "on",
+				"noEqualsToNull": "on",
 				"noEvolvingTypes": "on",
+				"noForIn": "on",
 				"noImportCycles": "on",
 				"noMisplacedAssertion": "on",
 				"noRedeclare": "on",
+				"noShadow": "on",
 				"noSkippedTests": "on",
 				"noUnassignedVariables": "on",
 				"noVar": "on",
@@ -205,14 +216,9 @@
 				"useErrorMessage": "on",
 				"useGuardForIn": "on",
 				"useNumberToFixedDigitsArgument": "on",
+				"useRequiredScripts": "on",
 				"useStaticResponseMethods": "on",
-				"useStrictMode": "on",
-				"noDuplicatedSpreadProps": "on",
-				"noDuplicateEnumValues": "on",
-				"noEqualsToNull": "on",
-				"noForIn": "on",
-				"noShadow": "on",
-				"useRequiredScripts": "on"
+				"useStrictMode": "on"
 			}
 		}
 	},
@@ -422,6 +428,38 @@
 					},
 					"style": {
 						"noMagicNumbers": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["cypress/**", "cypress.config.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"performance": {
+						"noNamespaceImport": "off"
+					},
+					"style": {
+						"noProcessEnv": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["devtools/**"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noVoid": "off"
+					},
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"style": {
+						"noProcessEnv": "off"
 					}
 				}
 			}

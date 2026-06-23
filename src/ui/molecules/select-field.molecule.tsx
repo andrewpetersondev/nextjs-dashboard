@@ -37,14 +37,14 @@ export function SelectFieldMolecule<T extends { id: string; name: string }>(
 					id={id}
 					{...rest}
 				/>
-				{hasError && (
+				{hasError ? (
 					<FieldErrorComponentMolecule
 						dataCy={dataCy ? `${dataCy}-errors` : undefined}
 						error={error}
 						id={errorId}
 						label={`${label} error:`}
 					/>
-				)}
+				) : null}
 			</div>
 		</InputFieldCardWrapper>
 	);

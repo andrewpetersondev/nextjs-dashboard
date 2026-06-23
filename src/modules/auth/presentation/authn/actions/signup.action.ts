@@ -20,7 +20,6 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
 import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 
-// biome-ignore lint/nursery/useExplicitType: fix
 const fields = SIGNUP_FIELDS_LIST;
 
 /**
