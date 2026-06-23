@@ -64,7 +64,7 @@ function flattenErrorChain(root: unknown): ErrorCandidate[] {
 		const current = queue.shift();
 
 		if (!current || seen.has(current)) {
-			// biome-ignore lint/nursery/noContinue: needed for BFS
+			// biome-ignore lint/style/noContinue: needed for BFS
 			continue;
 		}
 		seen.add(current);

@@ -386,6 +386,76 @@
 			}
 		},
 		{
+			"includes": ["cypress/**", "cypress.config.ts"],
+			"javascript": {
+				"globals": ["cy", "Cypress"]
+			},
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noExcessiveLinesPerFunction": "info"
+					},
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"nursery": {
+						"useExplicitType": "off"
+					},
+					"performance": {
+						"noNamespaceImport": "off"
+					},
+					"style": {
+						"noProcessEnv": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["cypress/support/commands.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noNamespace": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["devtools/**"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noVoid": "off"
+					},
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"nursery": {
+						"useExplicitType": "off"
+					},
+					"style": {
+						"noProcessEnv": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["database/**"],
+			"linter": {
+				"rules": {
+					"complexity": {
+						"noVoid": "off"
+					},
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"nursery": {
+						"useExplicitType": "off"
+					}
+				}
+			}
+		},
+		{
 			"includes": ["src/**"],
 			"linter": {
 				"rules": {
