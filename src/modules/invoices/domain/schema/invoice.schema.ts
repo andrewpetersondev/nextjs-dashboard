@@ -38,13 +38,13 @@ const InvoiceBaseSchema = z.object({
 	status: invoiceStatusSchema,
 });
 
+type CreateInvoiceInput = z.input<typeof CreateInvoiceSchema>;
+type UpdateInvoiceInput = z.input<typeof UpdateInvoiceSchema>;
+
 // biome-ignore lint/nursery/useExplicitType: fix
 export const CreateInvoiceSchema = InvoiceBaseSchema;
 
 export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
-
-type CreateInvoiceInput = z.input<typeof CreateInvoiceSchema>;
-type UpdateInvoiceInput = z.input<typeof UpdateInvoiceSchema>;
 
 export type CreateInvoicePayload = z.output<typeof CreateInvoiceSchema>;
 export type UpdateInvoicePayload = z.output<typeof UpdateInvoiceSchema>;
