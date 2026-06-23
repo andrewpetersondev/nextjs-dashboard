@@ -1,12 +1,12 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
 	"assist": {
 		"actions": {
-			"recommended": true,
+			"preset": "recommended",
 			"source": {
 				"noDuplicateClasses": "on",
 				"organizeImports": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useSortedAttributes": "on",
 				"useSortedInterfaceMembers": "on",
 				"useSortedKeys": "on",
@@ -78,9 +78,10 @@
 		"rules": {
 			"a11y": {
 				"noNoninteractiveElementInteractions": "on",
-				"recommended": true
+				"preset": "recommended"
 			},
 			"complexity": {
+				"noDivRegex": "on",
 				"noExcessiveCognitiveComplexity": "on",
 				"noExcessiveLinesPerFunction": "on",
 				"noForEach": "on",
@@ -88,7 +89,7 @@
 				"noUselessStringConcat": "on",
 				"noUselessUndefined": "on",
 				"noVoid": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useMaxParams": "on",
 				"useSimplifiedLogicExpression": "on",
 				"useWhile": "on"
@@ -102,28 +103,18 @@
 				"noUnresolvedImports": "off",
 				"noUnusedFunctionParameters": "on",
 				"noUnusedImports": "on",
+				"noUnusedInstantiation": "on",
 				"noUnusedLabels": "on",
 				"noUnusedPrivateClassMembers": "on",
 				"noUnusedVariables": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useImportExtensions": "off",
 				"useSingleJsDocAsterisk": "on"
 			},
 			"nursery": {
-				"noContinue": "on",
-				"noDivRegex": "on",
-				"noDuplicatedSpreadProps": "on",
-				"noDuplicateEnumValues": "on",
-				"noEqualsToNull": "on",
-				"noExcessiveClassesPerFile": "on",
-				"noExcessiveLinesPerFile": "on",
-				"noFloatingClasses": "on",
 				"noFloatingPromises": "on",
-				"noForIn": "on",
-				"noShadow": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useExplicitType": "on",
-				"useRequiredScripts": "on",
 				"useSortedClasses": "on"
 			},
 			"performance": {
@@ -132,17 +123,20 @@
 				"noDelete": "on",
 				"noNamespaceImport": "on",
 				"noReExportAll": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useTopLevelRegex": "on"
 			},
-			"recommended": true,
+			"preset": "recommended",
 			"security": {
-				"recommended": true
+				"preset": "recommended"
 			},
 			"style": {
 				"noCommonJs": "on",
+				"noContinue": "on",
 				"noDoneCallback": "on",
 				"noEnum": "on",
+				"noExcessiveClassesPerFile": "on",
+				"noExcessiveLinesPerFile": "on",
 				"noExportedImports": "on",
 				"noImplicitBoolean": "on",
 				"noInferrableTypes": "off",
@@ -159,7 +153,7 @@
 				"noUselessElse": "on",
 				"noValueAtRule": "on",
 				"noYodaExpression": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useAsConstAssertion": "on",
 				"useAtIndex": "on",
 				"useBlockStatements": "on",
@@ -197,20 +191,26 @@
 				"noBitwiseOperators": "on",
 				"noConstantBinaryExpressions": "on",
 				"noDuplicateDependencies": "on",
+				"noDuplicatedSpreadProps": "on",
+				"noDuplicateEnumValues": "on",
 				"noEmptyBlockStatements": "on",
 				"noEmptySource": "on",
+				"noEqualsToNull": "on",
 				"noEvolvingTypes": "on",
+				"noForIn": "on",
 				"noImportCycles": "on",
 				"noMisplacedAssertion": "on",
 				"noRedeclare": "on",
+				"noShadow": "on",
 				"noSkippedTests": "on",
 				"noUnassignedVariables": "on",
 				"noVar": "on",
-				"recommended": true,
+				"preset": "recommended",
 				"useAwait": "on",
 				"useErrorMessage": "on",
 				"useGuardForIn": "on",
 				"useNumberToFixedDigitsArgument": "on",
+				"useRequiredScripts": "on",
 				"useStaticResponseMethods": "on",
 				"useStrictMode": "on"
 			}
