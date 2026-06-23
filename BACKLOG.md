@@ -40,6 +40,15 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Two-tier branch model: `develop` → `main`** _(2026-06-23)_ — reworked the git strategy for
+      parallel multi-session work: `develop` is now the **default** branch (integration), `main` is
+      promote-only (production). GitHub rulesets gate `develop` (`Lint & type-check`) and `main`
+      (`+ E2E (Cypress)`); `ci.yml` split so the slow E2E runs only for main-targeting PRs (#89);
+      branch model + Mermaid diagram documented (#90); Vercel verified (main=production,
+      develop=free staging URL); added the `/promote` command + updated CLAUDE.md/AGENTS.md
+      git-safety wording; the lane map landed (`docs/lane-map.md` + diagram). ⚠️ Rulesets pin required-status-check
+      contexts to the CI job **names** (`Lint & type-check`, `E2E (Cypress)`) — rename a job and
+      merges silently block. Detail: memory `project_branch_model_migration`.
 - [x] **Worktree/branch cleanup tooling** _(2026-06-23, #88)_ — added a `/clean-worktrees`
       command (`.claude/commands/clean-worktrees.md`): fetch → classify `[gone]`/merged/empty
       lanes (verified via `gh` PR state or `ahead=0`) → auto-remove only **clean** worktrees

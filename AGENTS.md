@@ -10,6 +10,13 @@ These instructions apply to AI Assistant, Claude, and ChatGPT when working in th
 - Prefer minimal, focused changes and preserve user-authored work.
 - If rules conflict with each other or with common practice, stop and ask for clarification.
 
+## Branching
+
+Work flows through a two-tier model: feature branch → `develop` (the default, integration branch) →
+`main` (production). Open PRs into `develop`; promote `develop → main` as a deliberate release (Claude
+has a `/promote` command for it). Never commit directly to `develop` or `main` — both are protected and
+require a PR. See [`docs/branching-and-releases.md`](docs/branching-and-releases.md).
+
 ## Next.js: ALWAYS read docs before coding
 
 Before any Next.js work, find and read the relevant doc in `node_modules/next/dist/docs/`. Your training data is
