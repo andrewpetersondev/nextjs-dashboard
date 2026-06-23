@@ -1,8 +1,9 @@
 "use client";
 import { type JSX, useEffect } from "react";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 import { H2, H3 } from "@/ui/atoms/headings.atom";
 
-export default function InvoicesError({
+export default function UsersError({
 	error,
 	reset,
 }: {
@@ -10,7 +11,11 @@ export default function InvoicesError({
 	reset: () => void;
 }): JSX.Element {
 	useEffect((): void => {
-		console.error(error);
+		logger.error("Users error boundary", {
+			digest: error.digest,
+			error: error.message,
+			stack: error.stack,
+		});
 	}, [error]);
 
 	return (

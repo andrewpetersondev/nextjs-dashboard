@@ -1,6 +1,7 @@
 "use client";
 
 import { type JSX, useEffect } from "react";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 import { H2, H3 } from "@/ui/atoms/headings.atom";
 
 export default function SignupError({
@@ -11,7 +12,11 @@ export default function SignupError({
 	reset: () => void;
 }): JSX.Element {
 	useEffect((): void => {
-		console.error(error);
+		logger.error("Signup error boundary", {
+			digest: error.digest,
+			error: error.message,
+			stack: error.stack,
+		});
 	}, [error]);
 
 	return (
