@@ -6,6 +6,7 @@ import type { CustomerSelectRowRaw } from "@/modules/customers/domain/types";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
+import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 /**
  * Fetches all customers for select options.
@@ -23,8 +24,10 @@ export async function fetchCustomersSelectDal(
 			.from(customers)
 			.orderBy(asc(customers.name));
 	} catch (error) {
-		// Use structured logging in production
-		console.error("Database Error:", error);
+		logger.error("Error fetching customers for select", {
+			error: Error.isError(error) ? error.message : "Unknown error",
+			stack: Error.isError(error) ? error.stack : undefined,
+		});
 		throw makeAppError(APP_ERROR_KEYS.database, {
 			cause: Error.isError(error)
 				? error

@@ -13,6 +13,7 @@ function validateMetadataByCode<T extends AppErrorMetadata>(
 		const schema = getMetadataSchemaForKey(code);
 		return schema.parse(metadata) as T;
 	} catch (err) {
+		// biome-ignore lint/suspicious/noConsole: errors core must stay logger-independent — the logger depends on this layer, so importing it here would create a cycle
 		console.error(`Metadata validation failed for code "${code}":`, err);
 		return metadata;
 	}
