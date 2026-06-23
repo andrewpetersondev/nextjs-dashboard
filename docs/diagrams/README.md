@@ -24,6 +24,7 @@ in a PR, and sitting right next to the code it describes.
 | [session-lifecycle.md](session-lifecycle.md)               | "What states can a session be in, and what moves it between them?"                            | State machine                        |
 | [dependency-injection.md](dependency-injection.md)         | "How do application contracts and infrastructure implementations actually get connected?"     | Component graph                      |
 | [branch-and-ci-flow.md](branch-and-ci-flow.md)             | "Which branch do I work on, how does a change reach production, and what CI gate runs where?" | Flowchart                            |
+| [lane-map.md](lane-map.md)                                 | "Which slices can be edited in parallel sessions, and which must stay single-threaded?"       | Flowchart                            |
 
 ## Pick the question first
 

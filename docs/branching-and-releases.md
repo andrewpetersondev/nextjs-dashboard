@@ -84,14 +84,15 @@ The point of `develop` is to let multiple branches integrate cheaply. Two sessio
 collide only when they edit the same files, so parallel-safe "lanes" are slices with
 disjoint footprints:
 
-- **Parallel-safe:** the feature modules
-  `src/modules/{auth,banner,customers,invoices,users}`, docs/diagrams, and isolated
-  chores (deps, tsconfig, fonts).
-- **Single-thread — never parallel-edit:** the shared kernel `src/shared/**` and
-  `src/server/**`. Almost everything imports these, so two sessions touching them
-  will conflict.
+- **Parallel-safe:** the feature modules — `auth`+`users` move together (they import each
+  other), then `customers`, `invoices` (downstream), and `banner` — plus docs/diagrams and
+  isolated chores (deps, tsconfig, fonts).
+- **Single-thread — never parallel-edit:** the shared kernel `src/shared/**`, `src/ui/**`,
+  `src/server/**`, and the centralized `database/schema/**`. Almost everything imports these,
+  so two sessions touching them will conflict.
 
-A fuller lane map is planned as its own doc.
+See [lane-map.md](lane-map.md) for the full lane map — the verified module-coupling graph and
+today's BACKLOG mapped onto lanes.
 
 ## Keeping this honest
 
