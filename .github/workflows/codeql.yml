@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Initialise CodeQL for JS/TS. `build-mode: none` is correct for
       # interpreted languages — there's nothing to compile.
