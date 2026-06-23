@@ -15,7 +15,10 @@ Run these in order. If a precondition fails, STOP and report — don't push ahea
 2. **Anything to release?** Run `git rev-list --left-right --count origin/main...origin/develop`. If
    `develop` is not ahead of `main` (the right-hand count is 0), STOP — there is nothing to promote.
    Otherwise summarize what will ship with `git log --oneline origin/main..origin/develop`, and flag
-   any commit that looks unfinished or unintended.
+   any commit that looks unfinished or unintended. Treat `git diff --stat origin/main origin/develop`
+   as the source of truth for _content_: if a previous promote was squash-merged (see step 5), the
+   commit list can re-show already-shipped commits even when the file diff is small or empty — flag
+   that as squash divergence rather than re-promoting noise.
 
 3. **Reuse or open the PR.** Check for an existing open promote PR with
    `gh pr list --base main --head develop --state open`. If one exists, reuse it. Otherwise
@@ -27,8 +30,16 @@ Run these in order. If a precondition fails, STOP and report — don't push ahea
    settle. Report green/red plainly; if red, surface the failing job's real log — don't pipe it
    through `tail`/`head` (a passing pipe can hide a failing command; see AGENTS.md).
 
-5. **Hand back the merge.** Do NOT merge. Report that the PR is green and ready, and let me run the
-   production merge myself. On merge, `main` advances and Vercel builds the production deploy.
+5. **Hand back the merge — as a MERGE COMMIT, never a squash.** Do NOT merge. Report that the PR is
+   green and ready, and tell me to merge it with a **merge commit** (in the UI: "Create a merge
+   commit"; on the CLI: `gh pr merge <n> --merge` — never `--squash`). This matters: a
+   `develop → main` promote must keep develop's commits as ancestors of `main`. Squashing collapses
+   them into one new commit, so `main` and `develop` permanently diverge — the merge-base stays
+   pinned to the previous release and every later promote PR re-shows already-shipped commits (the
+   step-2 squash-divergence trap). Merge commits (or a fast-forward) keep the two branches
+   convergent; squash is only for feature PRs into `develop`. On merge, `main` advances and Vercel
+   builds the production deploy. Do **not** delete the head branch on merge — it is `develop`, the
+   integration branch (GitHub won't offer to, since it is the default branch, but never force it).
 
 6. **Stay safe.** Never force-push, never delete branches, and never merge to `main` automatically —
    those are mine to decide, and several are blocked outright by `.claude/settings.json`.
