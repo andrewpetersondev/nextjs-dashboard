@@ -189,6 +189,7 @@
 			"suspicious": {
 				"noAlert": "on",
 				"noBitwiseOperators": "on",
+				"noConsole": "warn",
 				"noConstantBinaryExpressions": "on",
 				"noDuplicateDependencies": "on",
 				"noDuplicatedSpreadProps": "on",
@@ -435,6 +436,9 @@
 					},
 					"style": {
 						"noProcessEnv": "off"
+					},
+					"suspicious": {
+						"noConsole": "off"
 					}
 				}
 			}
@@ -451,6 +455,19 @@
 					},
 					"nursery": {
 						"useExplicitType": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"src/shared/telemetry/logging/**",
+				"src/shared/core/config/**/*.ts"
+			],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsole": "off"
 					}
 				}
 			}
