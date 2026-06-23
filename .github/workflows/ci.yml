@@ -40,7 +40,7 @@ jobs:
     steps:
       # 1. Check out your repository code onto the runner.
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # 2. Install pnpm. The version is read automatically from the
       #    "packageManager" field in package.json, so it stays in sync.
@@ -117,7 +117,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v6
@@ -131,7 +131,7 @@ jobs:
       # Cache the Cypress binary (~/.cache/Cypress). Restored BEFORE install so
       # the `cypress` postinstall finds it instead of re-downloading every run.
       - name: Cache Cypress binary
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
