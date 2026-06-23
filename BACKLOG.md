@@ -7,6 +7,15 @@ this file is the deliberate workaround.)
 
 ## Open
 
+- [ ] **Phase 4 CI: e2e + branch protection** — the Cypress e2e suite is now wired into
+      `ci.yml` as a parallel `e2e` job (`postgres:17-alpine` service container,
+      `.env.test.local` regenerated on the runner from non-secret values + a per-run
+      `openssl` `SESSION_SECRET`, then `db:migrate:test` → `db:seed:test` → `cy:e2e`) —
+      **PR open** from `claude/vibrant-darwin-fe91f7`. Remaining after merge: enable branch
+      protection on `main` requiring the `check` + `e2e` status checks (repo-admin setting).
+      Closes the last item of the deploy plan (`project_dashboard_plan` in memory). Possible
+      follow-up: bring the integration vitest lane into CI via the same service-container
+      pattern.
 - [ ] **Dependency-audit watch (from weekly-maintenance 2026-06-15)** — `pnpm audit`
       reports 3 advisories, all in **transitive dev/test tooling** (none in runtime
       deps, nothing shipped to prod): `form-data` **HIGH**
