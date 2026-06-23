@@ -23,7 +23,7 @@ type AppErrorDefinitionByKey = (typeof APP_ERROR_REGISTRY)[AppErrorKey];
  * Registry of all available Application Error Keys.
  * Using a constant object ensures type safety and IDE autocompletion across the project.
  */
-export const APP_ERROR_KEYS = {
+const APP_ERROR_KEYS = {
 	conflict: "conflict",
 	database: "database",
 	forbidden: "forbidden",
@@ -39,7 +39,7 @@ export const APP_ERROR_KEYS = {
 	validation: "validation",
 } as const;
 
-export type AppErrorKey = keyof typeof APP_ERROR_KEYS;
+type AppErrorKey = keyof typeof APP_ERROR_KEYS;
 
 /**
  * Single source of truth for Error Definitions and their Metadata Schemas.
@@ -127,19 +127,20 @@ const APP_ERROR_REGISTRY = {
 	},
 } as const satisfies Record<AppErrorKey, AppErrorRegistryEntry>;
 
-export function getAppErrorDefinition(
-	key: AppErrorKey,
-): AppErrorDefinitionByKey {
+function getAppErrorDefinition(key: AppErrorKey): AppErrorDefinitionByKey {
 	return APP_ERROR_REGISTRY[key];
 }
 
 /**
  * Automatically derived mapping of Metadata types by Error Key.
  */
-export type AppErrorMetadataValueByKey = {
+type AppErrorMetadataValueByKey = {
 	[K in AppErrorKey]: z.infer<(typeof APP_ERROR_REGISTRY)[K]["metadataSchema"]>;
 };
 
-export function getMetadataSchemaForKey(key: AppErrorKey): ZodType {
+function getMetadataSchemaForKey(key: AppErrorKey): ZodType {
 	return APP_ERROR_REGISTRY[key].metadataSchema;
 }
+
+export type { AppErrorKey, AppErrorMetadataValueByKey };
+export { APP_ERROR_KEYS, getAppErrorDefinition, getMetadataSchemaForKey };
