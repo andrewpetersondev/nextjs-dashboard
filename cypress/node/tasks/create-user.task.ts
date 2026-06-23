@@ -26,6 +26,7 @@ export async function createUserTask(user: {
 	role: UserRole;
 	username: string;
 }): Promise<void> {
+	// biome-ignore lint/suspicious/noUnnecessaryConditions: cy.task args are not type-checked at the call site, so `user` can be undefined at runtime despite the param type.
 	if (!user) {
 		throw new Error("createUser requires a user object");
 	}

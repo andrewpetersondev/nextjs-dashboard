@@ -25,7 +25,7 @@ export default function AuthError({
 			<H3 className="text-center">Auth Error</H3>
 			<button
 				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
-				onClick={(): void => reset()}
+				onClick={reset}
 				type="button"
 			>
 				Try again

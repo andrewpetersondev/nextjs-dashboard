@@ -107,6 +107,7 @@ export class InvoiceRepository extends BaseRepository<
 				metadata: {},
 			});
 		}
+		// biome-ignore lint/suspicious/noUnnecessaryConditions: defensive guard at a public method boundary; callers may pass runtime values that violate the static type (e.g. Server Action input or as-casts), and `typeof null === "object"` would not catch a null without the `!data` check.
 		if (!data || typeof data !== "object") {
 			throw makeAppError("validation", {
 				cause: "",

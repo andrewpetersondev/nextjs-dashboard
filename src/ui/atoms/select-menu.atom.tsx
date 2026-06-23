@@ -92,7 +92,7 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
 						</option>
 					))}
 				</select>
-				{Icon && (
+				{Icon ? (
 					<Icon
 						className={cn(
 							"ml-3 shrink-0",
@@ -100,7 +100,7 @@ export const SelectMenuAtom: SelectMenuComponent = React.memo(
 							"h-[18px] w-[18px]",
 						)}
 					/>
-				)}
+				) : null}
 			</div>
 		);
 	},

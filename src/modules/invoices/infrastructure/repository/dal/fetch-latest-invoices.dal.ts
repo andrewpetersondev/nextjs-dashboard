@@ -37,7 +37,7 @@ export async function fetchLatestInvoicesDal(
 		.limit(limit);
 
 	// TODO: Refactor. Empty result does not mean that an error occurred.
-	if (!data || data.length === 0) {
+	if (data.length === 0) {
 		throw makeAppError("database", {
 			cause: "",
 			message: INVOICE_MSG.fetchLatestFailed,

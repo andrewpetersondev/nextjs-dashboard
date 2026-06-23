@@ -2,6 +2,12 @@ import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { AppErrorKey } from "@/shared/core/errors/core/catalog/app-error.registry";
 import type { AppErrorMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
 
+type AppErrorCoreDescriptor = Readonly<
+	AppErrorDefinition & {
+		readonly key: AppErrorKey;
+	}
+>;
+
 export const APP_ERROR_SEVERITY = {
 	ERROR: "ERROR",
 	INFO: "INFO",
@@ -41,12 +47,6 @@ export type UnexpectedErrorParams<
 > = Omit<AppErrorParams<T>, "cause" | "key" | "metadata"> & {
 	readonly overrideMetadata?: T;
 };
-
-type AppErrorCoreDescriptor = Readonly<
-	AppErrorDefinition & {
-		readonly key: AppErrorKey;
-	}
->;
 
 export type AppErrorJsonDto<T extends AppErrorMetadata = AppErrorMetadata> =
 	Readonly<

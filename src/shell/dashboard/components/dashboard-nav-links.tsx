@@ -7,6 +7,6 @@ import { NavLinks } from "@/shell/dashboard/components/nav-links";
 
 export async function DashboardNavLinks(): Promise<JSX.Element> {
 	const session: SessionVerificationDto = await verifySessionOptimistic();
-	const role: UserRole = normalizeUserRole(session?.role);
+	const role: UserRole = normalizeUserRole(session.role);
 	return <NavLinks role={role} />;
 }

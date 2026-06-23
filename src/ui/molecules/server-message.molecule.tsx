@@ -110,7 +110,7 @@ export function ServerMessageMolecule<Tdata>({
 
 	return (
 		<div className="relative min-h-[56px]">
-			{message && (
+			{message ? (
 				<div
 					aria-live={success ? "polite" : "assertive"}
 					className={`${baseStyles} ${visibilityStyles} ${semanticStyles}`}
@@ -122,7 +122,7 @@ export function ServerMessageMolecule<Tdata>({
 				>
 					{message}
 				</div>
-			)}
+			) : null}
 		</div>
 	);
 }
