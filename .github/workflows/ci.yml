@@ -1,14 +1,21 @@
 # Continuous Integration (CI)
 #
-# Two jobs run on every push to `main` and every pull request targeting `main`:
+# Two-tier gate, matching the branch model (feature -> develop -> main):
 #
-#   • check — fast, dependency-free checks: `pnpm check:fast` (Biome lint +
-#     Markdown lint/format + type-check + Next.js typegen) plus the migration-
-#     drift gate and the DB-free unit lane with coverage thresholds.
-#   • e2e — the Cypress end-to-end suite against a real `next dev` server backed
-#     by an ephemeral Postgres service container. The job recreates the
-#     `.env.test.local` the harness expects from non-secret CI values, so it
-#     needs no configured GitHub secrets.
+#   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
+#     type-check + Next.js typegen) plus the migration-drift gate and the DB-free
+#     unit lane with coverage thresholds. Runs on EVERY push/PR to `develop` and
+#     `main` — this is day-to-day feedback for lane work (~1 min).
+#   • e2e — the slow Cypress end-to-end suite against a real `next dev` server
+#     backed by an ephemeral Postgres service container (recreates the
+#     `.env.test.local` from non-secret CI values, so no GitHub secrets needed).
+#     Gated via `if:` to MAIN-targeting work only — the `develop -> main` promote
+#     PR and pushes to `main` — so the slow suite runs once per release, not on
+#     every develop PR.
+#
+# Required checks (rulesets): `develop` -> `Lint & type-check`; `main` ->
+# `Lint & type-check` + `E2E (Cypress)`. E2E is required on `main` only, so its
+# `if:`-skip on develop never blocks a develop merge.
 #
 # Still intentionally NOT here: the integration vitest lane and the production
 # build. They also need a database/secrets; the e2e job's service-container
@@ -19,9 +26,9 @@ name: CI
 # When should this workflow run?
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 # If you push again before a run finishes, cancel the old run (saves CI minutes).
 concurrency:
@@ -92,6 +99,10 @@ jobs:
 
   e2e:
     name: E2E (Cypress)
+    # Slow suite: only for main-targeting work — the develop -> main promote PR
+    # (github.base_ref == 'main') and pushes to main (github.ref). Skipped on
+    # develop PRs/pushes so day-to-day lane work gets fast check-only feedback.
+    if: github.base_ref == 'main' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # Generous ceiling: a cold `next dev` (Turbopack compiles routes on first
     # hit) plus 20 specs. The warm local run is ~35s; this is a safety net.

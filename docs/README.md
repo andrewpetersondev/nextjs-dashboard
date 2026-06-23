@@ -25,6 +25,13 @@ folder is for the cross-cutting, project-wide docs.
 | ------------------------ | ----------------------------------------------------------------------------- |
 | [testing.md](testing.md) | "How do I run the unit (Vitest) and E2E (Cypress) suites, locally and in CI?" |
 
+## Branching, CI & releases
+
+| Doc                                                    | The question it answers                                                                            |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| [branching-and-releases.md](branching-and-releases.md) | "Which branch do I work on, how does a change reach production, and what CI runs at each step?"    |
+| [lane-map.md](lane-map.md)                             | "If I want to run several Claude sessions at once, how do I split the work so they don't collide?" |
+
 ## Build tooling & configuration
 
 | Doc                                                            | The question it answers                                                                                         |

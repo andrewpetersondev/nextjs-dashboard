@@ -9,11 +9,11 @@ After completing any backlog item or fix: run the full test suite + typecheck, v
 
 ## Git Safety
 
-Never delete branches/worktrees or run destructive DB/git commands without explicit confirmation. When merging stacked PRs, warn before deleting any branch so changes aren't lost. Always confirm you are operating in a worktree, never directly on main.
+Never delete branches/worktrees or run destructive DB/git commands without explicit confirmation. When merging stacked PRs, warn before deleting any branch so changes aren't lost. Always work from a worktree feature branch — never commit directly to `develop` (the default, integration branch) or `main` (production). Both are protected; code reaches them only through a PR, and `main` only via a deliberate `develop → main` promote (`/promote`).
 
 ## Worktrees
 
-This project runs in git worktrees under `.claude/worktrees/`, not a single checkout — work committed there lives on a separate branch and does not touch `main` until a PR merges. Expect **multiple worktrees at once**: today usually one per Claude Code session, with the intended direction being branch-per-architecture lanes for running several sessions in parallel. Reason about branches, env files, and isolation with that in mind. (Shell/OS specifics live in `AGENTS.md` → "Shell environment".)
+This project runs in git worktrees under `.claude/worktrees/`, not a single checkout — work committed there lives on a separate branch (cut from `develop`, the default) and does not touch the shared `develop`/`main` branches until a PR merges. Expect **multiple worktrees at once**: today usually one per Claude Code session, with the intended direction being branch-per-architecture lanes for running several sessions in parallel. Reason about branches, env files, and isolation with that in mind. The full branch/CI/release model is in [`docs/branching-and-releases.md`](docs/branching-and-releases.md). (Shell/OS specifics live in `AGENTS.md` → "Shell environment".)
 
 ## Claude-specific context
 
@@ -21,18 +21,19 @@ This project runs in git worktrees under `.claude/worktrees/`, not a single chec
 
 Project-level slash commands are defined in `.claude/commands/`:
 
-| Command       | Runs                                                                                         |
-| ------------- | -------------------------------------------------------------------------------------------- |
-| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)                |
-| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only)        |
-| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)             |
-| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue                 |
-| `/test`       | `pnpm test` — unit tests only (report-only)                                                  |
-| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                            |
-| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)                     |
-| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, push, open a PR, watch CI |
+| Command       | Runs                                                                                                 |
+| ------------- | ---------------------------------------------------------------------------------------------------- |
+| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)                        |
+| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only)                |
+| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)                     |
+| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue                         |
+| `/test`       | `pnpm test` — unit tests only (report-only)                                                          |
+| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                                    |
+| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)                             |
+| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, push, open a PR, watch CI         |
+| `/promote`    | open the `develop → main` release PR, run the full gate (check + E2E), watch CI, hand the merge back |
 
-Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` is the one command that writes git history — it commits, pushes, and opens a PR, and only ever runs from a worktree branch, never `main`.
+Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` commits, pushes, and opens a PR into `develop` from a worktree feature branch (never `develop`/`main` directly); `/promote` opens the `develop → main` release PR and watches the full gate but never merges `main` itself — that stays a human decision.
 
 ### Markdown tooling
 

@@ -12,17 +12,19 @@ in a PR, and sitting right next to the code it describes.
 
 ## The diagrams
 
-| File                                                       | The question it answers                                                                   | Diagram type                         |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------ |
-| [c4-architecture.md](c4-architecture.md)                   | "How is the whole system carved into pieces?"                                             | C4 (context → container → component) |
-| [database-erd.md](database-erd.md)                         | "What tables exist and how do they relate?"                                               | Entity-relationship                  |
-| [module-layers.md](module-layers.md)                       | "How is a module layered, and which way do dependencies point?"                           | Layered flowchart                    |
-| [auth-login-flow.md](auth-login-flow.md)                   | "Step by step, what happens when someone logs in?"                                        | Sequence                             |
-| [request-flow-update-user.md](request-flow-update-user.md) | "How does a form submission travel through the layers?"                                   | Sequence                             |
-| [error-handling-flow.md](error-handling-flow.md)           | "How does a failure travel from the database to a red field error — without a `throw`?"   | Sequence + type map                  |
-| [route-authorization.md](route-authorization.md)           | "Before a page renders, what decides whether I'm allowed in?"                             | Sequence + decision                  |
-| [session-lifecycle.md](session-lifecycle.md)               | "What states can a session be in, and what moves it between them?"                        | State machine                        |
-| [dependency-injection.md](dependency-injection.md)         | "How do application contracts and infrastructure implementations actually get connected?" | Component graph                      |
+| File                                                       | The question it answers                                                                       | Diagram type                         |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [c4-architecture.md](c4-architecture.md)                   | "How is the whole system carved into pieces?"                                                 | C4 (context → container → component) |
+| [database-erd.md](database-erd.md)                         | "What tables exist and how do they relate?"                                                   | Entity-relationship                  |
+| [module-layers.md](module-layers.md)                       | "How is a module layered, and which way do dependencies point?"                               | Layered flowchart                    |
+| [auth-login-flow.md](auth-login-flow.md)                   | "Step by step, what happens when someone logs in?"                                            | Sequence                             |
+| [request-flow-update-user.md](request-flow-update-user.md) | "How does a form submission travel through the layers?"                                       | Sequence                             |
+| [error-handling-flow.md](error-handling-flow.md)           | "How does a failure travel from the database to a red field error — without a `throw`?"       | Sequence + type map                  |
+| [route-authorization.md](route-authorization.md)           | "Before a page renders, what decides whether I'm allowed in?"                                 | Sequence + decision                  |
+| [session-lifecycle.md](session-lifecycle.md)               | "What states can a session be in, and what moves it between them?"                            | State machine                        |
+| [dependency-injection.md](dependency-injection.md)         | "How do application contracts and infrastructure implementations actually get connected?"     | Component graph                      |
+| [branch-and-ci-flow.md](branch-and-ci-flow.md)             | "Which branch do I work on, how does a change reach production, and what CI gate runs where?" | Flowchart                            |
+| [lane-map.md](lane-map.md)                                 | "Which slices can be edited in parallel sessions, and which must stay single-threaded?"       | Flowchart                            |
 
 ## Pick the question first
 
