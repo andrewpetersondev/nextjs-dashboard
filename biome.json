@@ -362,7 +362,6 @@
 				"src/server/**/*.{ts,tsx}",
 				"src/shared/core/config/**/*.ts",
 				"src/server/config/**/*.ts",
-				"cypress.config.ts",
 				"drizzle.config.ts",
 				"vitest.setup.ts",
 				"next.config.ts",
