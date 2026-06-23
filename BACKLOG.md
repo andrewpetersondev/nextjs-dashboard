@@ -7,17 +7,6 @@ this file is the deliberate workaround.)
 
 ## Open
 
-- [ ] **Dependency-audit watch (from weekly-maintenance 2026-06-15; rechecked 2026-06-23)** —
-      `pnpm audit` now reports **2 moderate** advisories, both **transitive dev/test tooling**
-      (none in runtime deps, nothing shipped to prod) and both via `markdownlint-cli2`:
-      `js-yaml` ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68),
-      patched `>=4.1.2`) and `markdown-it`
-      ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq), `>=14.1.2`).
-      Both clear once `markdownlint-cli2` bumps its own transitives; decide whether to wait
-      for upstream or add `pnpm.overrides` pins (overrides go in `pnpm-workspace.yaml`, keep
-      lockstep with package.json). _Resolved since 2026-06-15:_ the `form-data` **HIGH**
-      (GHSA-hmw2-7cc7-3qxx, via `cypress` / `wait-on>axios`) has cleared upstream, and
-      **biome 2.5.0** was adopted (schema 2.5.0 + `preset: recommended`, commit `3fa9400b`).
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
@@ -51,6 +40,15 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Dependency-audit watch: 2 moderate alerts cleared** _(2026-06-23, #85)_ — the two
+      transitive dev-tooling quadratic-DoS advisories pulled via `markdownlint-cli2@0.22.1`
+      (latest, which pins both exactly so no upstream bump was possible) fixed with
+      `pnpm-workspace.yaml` overrides: `js-yaml ^4.2.0`
+      ([GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68)) +
+      `markdown-it ^14.2.0`
+      ([GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq)); `pnpm audit`
+      → 0. Earlier: the `form-data` HIGH cleared upstream + biome 2.5.0 adopted. Ongoing audit
+      watch continues via the `weekly-maintenance` routine.
 - [x] **Phase 4 CI: e2e + branch protection** _(2026-06-23)_ — Cypress e2e wired into
       `ci.yml` as a parallel `e2e` job (Postgres service container, runner-generated
       `.env.test.local`, migrate→seed→`cy:e2e`; PR #80, green ~3m), and `main` branch

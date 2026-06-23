@@ -17,5 +17,10 @@ overrides:
   esbuild: ^0.28.1
   vite: ^7.3.5
   postcss: ^8.5.15
+  # Force patched transitive deps of markdownlint-cli2 (dev-only quadratic-complexity DoS fixes).
+  # markdownlint-cli2@0.22.1 (latest) pins the vulnerable versions exactly, so an override is required.
+  # GHSA-h67p-54hq-rp68 (js-yaml >=4.2.0), GHSA-6v5v-wf23-fmfq (markdown-it >=14.2.0).
+  js-yaml: ^4.2.0
+  markdown-it: ^14.2.0
 
 sideEffectsCache: false
