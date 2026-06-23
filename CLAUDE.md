@@ -3,6 +3,22 @@
 Follow the shared repository instructions in `AGENTS.md`.
 Also consult relevant detailed project standards in `docs/standards/`.
 
+## Workflow: PR Creation
+
+After completing any backlog item or fix: run the full test suite + typecheck, verify CI is green, then open a focused PR. Reconcile BACKLOG.md and memory/docs as part of the same flow.
+
+## Git Safety
+
+Never delete branches/worktrees or run destructive DB/git commands without explicit confirmation. When merging stacked PRs, warn before deleting any branch so changes aren't lost. Always confirm you are operating in a worktree, never directly on main.
+
+## Worktrees
+
+This project uses MANY worktrees, not a single checkout. Assume branch-per-architecture and a multi-worktree workflow when reasoning about branches, env files, and isolation. Claude Code checks out work in a git worktree under `.claude/worktrees/`; changes committed there go to a separate branch and do not affect `main` until a PR is merged.
+
+## Environment
+
+This is a macOS/zsh environment: `timeout` and bash `mapfile` are unavailable, and shell access to env/secret files is often blocked. Use targeted single commands instead of compound shell pipelines, and poll CI directly rather than wrapping in `timeout`.
+
 ## Claude-specific context
 
 ### Slash commands
@@ -24,10 +40,6 @@ Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so the
 ### Markdown tooling
 
 Markdown is linted by **markdownlint-cli2** (`.markdownlint-cli2.jsonc`) and formatted by **dprint** (`dprint.json`) — Biome's markdown support is still experimental, so it only owns JS/TS/JSON here. The two tools have non-overlapping responsibilities: formatting rules (whitespace, list/table layout, emphasis markers) are disabled in markdownlint and owned by dprint. Use `pnpm md:check` to verify and `pnpm md:fix` to auto-fix (markdownlint first, dprint last).
-
-### Worktrees
-
-Claude Code may check out work in a git worktree under `.claude/worktrees/`. Changes committed there go to a separate branch and do not affect `main` until a PR is merged.
 
 ### Memory
 
