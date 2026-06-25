@@ -1,101 +1,82 @@
 # Branching & releases
 
 > The question this answers: _"Which branch do I work on, how does a change reach
-> production, and what CI runs at each step?"_ The visual companion is
+> production, and what CI runs?"_ The visual companion is
 > [diagrams/branch-and-ci-flow.md](diagrams/branch-and-ci-flow.md).
 
 ## Why this shape
 
-This repo uses a two-tier branch model — `feature → develop → main` — for three
-reasons:
+This repo uses a **single-branch, local-first** model — `feature → main`, merged
+locally — for three reasons:
 
-1. **Parallel work.** Several Claude sessions (or you, across tasks) can each work
-   on their own branch and integrate through `develop` without every merge touching
-   production.
-2. **A clean production face.** `main` is the portfolio/production branch. Half-done
-   work never lands there — it accumulates on `develop` until a deliberate release.
-3. **Cheaper feedback.** The slow end-to-end suite and the Vercel production deploy
-   happen once per _release_, not on every merge.
+1. **Low friction.** Work lands in `main` with a local merge in your primary checkout
+   (WebStorm). No remote feature branches, no PR round-trip, no second integration
+   branch to keep in sync.
+2. **One source of truth.** The `main` you see in your editor _is_ production. There is
+   no `develop` shadow that drifts behind `origin`.
+3. **Isolation without ceremony.** Each Claude session still works in its own worktree
+   branch so it never touches your files — but because all worktrees share one git
+   object store, merging that branch into `main` is purely local.
 
 ## The branches
 
-| Branch           | Role                             | How code lands                                  |
-| ---------------- | -------------------------------- | ----------------------------------------------- |
-| `feature` / lane | one unit of work, one session    | its own branch → PR into `develop`              |
-| `develop`        | **default** branch · integration | only through a PR                               |
-| `main`           | production · promote-only        | never directly — only via a `develop → main` PR |
+| Branch           | Role                          | How code lands                                   |
+| ---------------- | ----------------------------- | ------------------------------------------------ |
+| `feature` / lane | one unit of work, one session | its own worktree branch, cut from `main`         |
+| `main`           | **default** · production      | a **local** merge of a feature branch, then push |
 
-`develop` is the repository's **default branch**, so new clones, new worktrees, and
-`gh pr create` all target it automatically.
+`main` is the repository's **default branch**, so new clones and new worktrees base on
+it automatically.
 
-## Everyday flow — shipping to `develop`
+## Everyday flow — landing to `main`
 
-1. Branch off `develop` (a worktree per session is the norm — see the Worktrees
+1. Branch off `main` in a worktree (one per session is the norm — see the Worktrees
    section in [../CLAUDE.md](../CLAUDE.md)).
 2. Make your change.
-3. Open a PR into `develop`. The `/ship` command runs this end-to-end and targets
-   `develop` automatically now that it's the default branch.
-4. The fast **`Lint & type-check`** gate runs (~1 min) — the only required check on
-   `develop`. Green → merge.
+3. Run `pnpm check:fast` (Biome + Markdown + type-check + typegen + drift) — this is
+   your **pre-push gate**, standing in for pre-merge CI. The `/ship` command runs
+   steps 2–4 end-to-end and stops here, handing you the merge.
+4. In your **primary checkout**, merge the worktree branch into `main` and push:
 
-No end-to-end suite runs here, by design, so lane work stays fast.
+   ```sh
+   git -C <primary-checkout> merge --no-ff <feature-branch>
+   git -C <primary-checkout> push origin main
+   ```
 
-## Release flow — promoting `develop → main`
+   The merge is local — worktrees share one object store, so there's no fetch and no
+   remote round-trip. The **push** to `main` is what triggers CI and the Vercel
+   production deploy.
 
-When `develop` is in a coherent state you want live:
-
-1. Open a PR with **base `main`, head `develop`**:
-   `gh pr create --base main --head develop`.
-2. This PR runs the **full gate**: `Lint & type-check` **and** the slow
-   `E2E (Cypress)` suite. Both are required on `main`.
-3. Merge → `main` advances → Vercel builds a **production** deploy.
-
-The `/promote` command scripts this step — it opens the `develop → main` PR, runs the full gate,
-watches CI, and hands you the merge (it never merges `main` itself). The manual equivalent is the
-`gh pr create --base main` above.
+There are no pull requests in this model; review happens when you merge the branch in
+WebStorm. If you ever want a showcase PR, open one by hand — nothing here forbids it.
 
 ## What runs where
 
-CI is one workflow, [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml),
-with two jobs and a per-branch gate:
+CI is one workflow, [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml), with
+two jobs that both run on **every push to `main`**:
 
-| Branch    | `Lint & type-check` (fast) | `E2E (Cypress)` (slow) | Vercel            |
-| --------- | -------------------------- | ---------------------- | ----------------- |
-| `develop` | ✅ required                | ⏭ skipped              | preview URL       |
-| `main`    | ✅ required                | ✅ required            | production deploy |
+| Trigger        | `Lint & type-check` (fast) | `E2E (Cypress)` (slow) | Vercel            |
+| -------------- | -------------------------- | ---------------------- | ----------------- |
+| push to `main` | ✅                         | ✅                     | production deploy |
 
-The E2E job is gated in the workflow with
-`if: github.base_ref == 'main' || github.ref == 'refs/heads/main'`. It is required
-on `main` only — never on `develop`, because a _required_ check that gets skipped
-would block the merge.
+CI runs **after** the push, as a safety net — not as a merge gate (a direct push can't
+wait for checks that only start once it lands). The local `pnpm check:fast` before the
+merge is what catches most failures early; a red `main` run means fix-forward.
 
-The required-check policy itself lives in GitHub **rulesets** (`Protect Important
-Branches` → `main`; `Protect develop (integration)` → `develop`), not in this repo.
-If you rename a CI job, update the ruleset's required-status-check contexts or merges
-will silently block.
-
-`develop` also has a persistent **staging URL** you can share or test against —
-`https://nextjs-dashboard-git-develop-andrew-petersons-projects-15cc2fda.vercel.app` — which Vercel
-auto-updates on every push to `develop`.
+`main` is protected by a GitHub ruleset (`Protect Important Branches`) that blocks
+force-pushes and branch deletion but **allows** direct pushes — there is no
+required-status-check or pull-request rule, by design.
 
 ## Working in parallel (lanes)
 
-The point of `develop` is to let multiple branches integrate cheaply. Two sessions
-collide only when they edit the same files, so parallel-safe "lanes" are slices with
-disjoint footprints:
-
-- **Parallel-safe:** the feature modules — `auth`+`users` move together (they import each
-  other), then `customers`, `invoices` (downstream), and `banner` — plus docs/diagrams and
-  isolated chores (deps, tsconfig, fonts).
-- **Single-thread — never parallel-edit:** the shared kernel `src/shared/**`, `src/ui/**`,
-  `src/server/**`, and the centralized `database/schema/**`. Almost everything imports these,
-  so two sessions touching them will conflict.
-
-See [lane-map.md](lane-map.md) for the full lane map — the verified module-coupling graph and
-today's BACKLOG mapped onto lanes.
+You can still run several sessions at once — each in its own worktree branch off `main`,
+each merged into `main` locally when done. The rule is unchanged: two sessions collide
+only when they **edit the same files**, so pick lanes with disjoint edit footprints. See
+[lane-map.md](lane-map.md) for the verified module-coupling graph and today's BACKLOG
+mapped onto lanes.
 
 ## Keeping this honest
 
 Like every doc here, this is a **snapshot**. If you change the branch model, a CI
 trigger, or a ruleset, update this file and
-[diagrams/branch-and-ci-flow.md](diagrams/branch-and-ci-flow.md) in the same PR.
+[diagrams/branch-and-ci-flow.md](diagrams/branch-and-ci-flow.md) in the same change.

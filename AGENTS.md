@@ -12,10 +12,10 @@ These instructions apply to AI Assistant, Claude, and ChatGPT when working in th
 
 ## Branching
 
-Work flows through a two-tier model: feature branch → `develop` (the default, integration branch) →
-`main` (production). Open PRs into `develop`; promote `develop → main` as a deliberate release (Claude
-has a `/promote` command for it). Never commit directly to `develop` or `main` — both are protected and
-require a PR. See [`docs/branching-and-releases.md`](docs/branching-and-releases.md).
+Work flows through a **single-branch, local-first** model: cut a worktree branch from `main`, and merge
+it back into `main` **locally** (in the primary checkout) when it is green, then push. There are no PRs
+and no `develop` integration branch; CI runs on the push to `main`. Never commit directly on `main` —
+always work from a worktree feature branch. See [`docs/branching-and-releases.md`](docs/branching-and-releases.md).
 
 ## Next.js: ALWAYS read docs before coding
 
