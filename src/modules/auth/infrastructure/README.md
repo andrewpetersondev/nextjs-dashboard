@@ -118,12 +118,15 @@ export class AuthUserRepository {
 
 ```text
 infrastructure/
+├── auth-transaction.logger.ts      # Transaction-scoped logger (flat — no logging/ folder)
+│
 ├── composition/                    # Dependency Injection
 │   ├── auth.composition.ts         # Main composition root
 │   └── factories/                  # Factory functions
 │       ├── auth-user/              # Auth user factories
 │       │   ├── auth-tx-deps.factory.ts
 │       │   ├── auth-unit-of-work.factory.ts
+│       │   ├── demo-user-use-case.factory.ts
 │       │   ├── login-use-case.factory.ts
 │       │   └── signup-use-case.factory.ts
 │       ├── crypto/                 # Crypto service factories
@@ -136,19 +139,15 @@ infrastructure/
 │           └── session-token-service.factory.ts
 │
 ├── crypto/                         # Cryptography implementations
-│   ├── adapters/
-│   │   └── password-hasher.adapter.ts
-│   ├── config/
-│   │   └── auth-crypto.config.ts
+│   ├── auth-crypto.config.ts       #   (flat — no config/ folder)
+│   ├── password-hasher.adapter.ts  #   (flat — no adapters/ folder)
 │   └── services/
 │       ├── bcrypt-password.service.ts
 │       └── password-generator.service.ts
 │
-├── logging/                        # Infrastructure logging
-│   └── auth-transaction.logger.ts
-│
 ├── persistence/                    # Database access
 │   └── auth-user/
+│       ├── auth-user.repository.ts # Repository impl (flat — no repositories/ folder)
 │       ├── adapters/               # Repository adapters
 │       │   ├── auth-unit-of-work.adapter.ts
 │       │   └── auth-user-repository.adapter.ts
@@ -156,29 +155,26 @@ infrastructure/
 │       │   ├── get-user-by-email.dal.ts
 │       │   ├── increment-demo-user-counter.dal.ts
 │       │   └── insert-user.dal.ts
-│       ├── mappers/                # Database row → Domain entity
-│       │   └── to-auth-user-entity.mapper.ts
-│       └── repositories/           # Repository implementations
-│           └── auth-user.repository.ts
+│       └── mappers/                # Database row → Domain entity
+│           ├── pg-unique-violation-to-signup-conflict-error.mapper.ts
+│           └── to-auth-user-entity.mapper.ts
 │
 └── session/                        # Session infrastructure
+    ├── jwt-to-session-token-claims-dto.mapper.ts   # JWT → DTO (flat — no mappers/ folder)
+    ├── session-jwt-crypto.strategy.ts              # JWT strategy (flat — no strategies/ folder)
+    ├── session-token-claims.schema.ts              # Zod schema for the JWT claims
+    ├── to-session-cookie-max-age-seconds.helper.ts # cookie max-age helper (flat — no helpers/ folder)
+    ├── adapters/                   # Session adapters
+    │   ├── session-cookie-store.adapter.ts
+    │   └── session-token-codec.adapter.ts
     ├── config/                     # Session configuration
     │   ├── session-cookie-options.config.ts
     │   ├── session-jwt.constants.ts
     │   └── session-token.constants.ts
-    ├── adapters/                   # Session adapters
-    │   ├── session-cookie-store.adapter.ts
-    │   └── session-token-codec.adapter.ts
     ├── services/                   # Session services
-    │   ├── session.service.ts
+    │   ├── jose-session-jwt-crypto.service.ts
     │   ├── session-token.service.ts
-    │   └── jose-session-jwt-crypto.service.ts
-    ├── strategies/                 # JWT strategies
-    │   └── session-jwt-crypto.strategy.ts
-    ├── mappers/                    # JWT → DTO mappers
-    │   └── jwt-to-session-token-claims-dto.mapper.ts
-    ├── helpers/                    # Session helpers
-    │   └── to-session-cookie-max-age-seconds.helper.ts
+    │   └── session.service.ts
     └── types/                      # Infrastructure types
         ├── session-cookie.constants.ts
         ├── session-jwt-claims.transport.ts
@@ -280,7 +276,7 @@ Facade over session use cases. Delegates to:
 
 Handles token issuance and validation:
 
-- Issues JWT with claims (userId, role, exp, iat, nbf)
+- Issues JWT with claims (`sub` (user id), `role`, `sid`, `jti`, `iat`, `exp`, `nbf`)
 - Validates token signature and claims
 - Enforces semantic checks (exp > iat, nbf <= iat, etc.)
 
@@ -421,7 +417,7 @@ export function toAuthUserEntity(row: UserRow): AuthUserEntity {
 
 Concrete implementation using bcrypt:
 
-- Hash passwords with salt rounds (10)
+- Hash passwords with env-configured salt rounds (`AUTH_BCRYPT_SALT_ROUNDS`)
 - Compare plaintext with hash
 - Returns `Result<boolean, AppError>`
 
@@ -439,16 +435,16 @@ Implements `PasswordHasherContract`:
 Concrete JWT implementation:
 
 - Algorithm: HS256 (HMAC with SHA-256)
-- Secret: From environment variable
-- Claims: userId, role, exp, iat, nbf
-- Expiration: 7 days (configurable)
+- Secret: From environment variable `SESSION_SECRET`
+- Claims: `sub` (user id), `role`, `sid`, `jti`, `iat`, `exp`, `nbf`
+- Expiration: 15 minutes per token, slid forward by rotation (see below)
 
 **Security Features:**
 
 - HTTP-only cookies (prevents XSS)
 - Secure flag (HTTPS only in production)
 - SameSite=Strict (CSRF protection; current default)
-- Short expiration (7 days)
+- Short-lived tokens (15 minutes), rotated up to a 30-day absolute ceiling
 - Signature verification on every request
 
 ---
@@ -458,8 +454,11 @@ Concrete JWT implementation:
 ### **Environment Variables**
 
 ```bash
-# Session JWT secret (required)
-SESSION_JWT_SECRET=your-secret-key-here
+# Session JWT signing secret (required)
+SESSION_SECRET=your-secret-key-here
+
+# Bcrypt cost factor (required — schema enforces a positive int, no default)
+AUTH_BCRYPT_SALT_ROUNDS=10
 
 # Database connection (required)
 DATABASE_URL=postgresql://...
@@ -467,9 +466,14 @@ DATABASE_URL=postgresql://...
 
 ### **Constants**
 
-- **Session duration**: 7 days (`SESSION_DURATION_SEC`)
+- **Session duration**: 15 minutes (`SESSION_DURATION_SEC` = 900s) — lifetime of a freshly issued token
+- **Refresh threshold**: 2 minutes (`SESSION_REFRESH_THRESHOLD_SEC`) — the "approaching expiry" rotation window
+- **Max absolute lifetime**: 30 days (`MAX_ABSOLUTE_SESSION_SEC`) — hard ceiling on age via `iat`, even with rotation
 - **Clock tolerance**: 5 seconds (`SESSION_TOKEN_CLOCK_TOLERANCE_SEC`)
-- **Bcrypt rounds**: 10 (`BCRYPT_SALT_ROUNDS`)
+- **Bcrypt rounds**: env-configured via `AUTH_BCRYPT_SALT_ROUNDS` (required; e.g. 10)
+
+> The full session state machine and these numbers are in the
+> [session-lifecycle diagram](../../../../docs/diagrams/session-lifecycle.md).
 
 ---
 
@@ -651,5 +655,5 @@ Changes to adapters or services that implement application contracts are breakin
 
 ---
 
-**Last Updated**: 2026-02-01\
+**Last Updated**: 2026-06-24\
 **Maintainer**: Auth Module Team

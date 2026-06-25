@@ -114,7 +114,7 @@ But Next.js Server Actions are independently invocable RPC endpoints: a crafted
 request can call an action without ever loading the page that hosts it, so the
 gate alone doesn't protect them. Each sensitive action therefore enforces its own
 authorization as a second layer (defense in depth), via two guards in
-[`session-access.guard.ts`](../../src/modules/auth/presentation/session/guards/session-access.guard.ts):
+[`session-access.guard.ts`](../../src/modules/auth/presentation/session/session-access.guard.ts):
 
 - **`requireSession()`** — any valid session; used by the invoice mutations.
 - **`requireAdmin()`** — an admin session; used by every user action (the

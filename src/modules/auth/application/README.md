@@ -86,37 +86,34 @@ Promise < Result < AuthenticatedUserDto, AppError >> {
 ```text
 application/
 ├── auth-user/                      # Auth user subdomain
-│   ├── commands/                   # Write operations (login, signup)
+│   ├── auth-error.factory.ts       # Auth error factory (flat file — no errors/ folder)
+│   ├── commands/                   # Write operations (login, signup, create-demo-user)
 │   ├── contracts/                  # Interfaces for infrastructure
 │   │   ├── repositories/           # Repository contracts
-│   │   └── services/               # Service contracts (password hashing, etc.)
+│   │   └── services/               # Service contracts (password hashing, generation)
 │   ├── dtos/                       # Data Transfer Objects
 │   │   ├── requests/               # Input DTOs
 │   │   └── responses/              # Output DTOs
-│   ├── errors/                     # Error factories
-│   ├── schemas/                    # Input validation schemas (Zod)
-│   ├── validators/                 # Domain entity validators
+│   ├── validators/                 # Input / entity validators
 │   └── workflows/                  # Multi-use-case orchestration
 │
 ├── session/                        # Session subdomain
+│   ├── builders/                   # Complex DTO builders
 │   ├── commands/                   # Write operations (establish, rotate, terminate)
-│   ├── queries/                    # Read operations (read, require)
 │   ├── contracts/                  # Session service contracts
 │   ├── dtos/                       # Session DTOs
 │   │   ├── requests/               # Input DTOs
 │   │   └── responses/              # Output DTOs
-│   ├── builders/                   # Complex DTO builders
 │   ├── mappers/                    # Session-specific mappers
-│   ├── schemas/                    # Session validation schemas
+│   ├── queries/                    # Read operations (read, require)
 │   └── workflows/                  # Session workflows
 │
 └── shared/                         # Shared application concerns
-    ├── helpers/                    # Utility functions
+    ├── helpers/                    # Cookie / authorization / session-cleanup helpers
     ├── logging/                    # Logging utilities
     └── mappers/                    # Cross-subdomain mappers
         └── flows/                  # Mappers organized by flow
-            ├── login/              # Login flow mappers
-            └── signup/             # Signup flow mappers
+            └── login/              # Login flow mappers (to-authenticated-user, to-session-principal)
 ```
 
 ---
@@ -217,7 +214,7 @@ Cross-cutting concerns:
 
 - **Helpers**: Cookie operations, authorization, session cleanup
 - **Logging**: Auth-specific logging utilities
-- **Mappers**: Organized by flow (login, signup) for easy navigation
+- **Mappers**: Organized by flow under `flows/` — currently `login/` (signup reuses these)
 
 ---
 
@@ -408,5 +405,5 @@ Changes to contracts or DTOs are breaking changes. Coordinate with:
 
 ---
 
-**Last Updated**: 2026-02-01\
+**Last Updated**: 2026-06-24\
 **Maintainer**: Auth Module Team

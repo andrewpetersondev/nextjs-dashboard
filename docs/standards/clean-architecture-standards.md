@@ -35,7 +35,7 @@ drivers.
 
 - **Allowed Imports**:
   - Primitives and TypeScript utilities
-  - Shared domain types (`@/shared/domain/`)
+  - Shared value types and branded primitives (`@/shared/primitives/`, `@/shared/core/branding/`)
 - **Forbidden Imports**:
   - Application layer (DTOs, schemas, use cases, contracts)
   - Infrastructure implementations

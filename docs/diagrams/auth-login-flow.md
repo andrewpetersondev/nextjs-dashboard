@@ -74,14 +74,14 @@ Same shape as login, with one extra step **first**: create the user.
 
 ## The files behind the boxes
 
-| Box                                 | File                                                                                                                                                          |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| login.action / signup.action        | [`presentation/authn/actions/`](../../src/modules/auth/presentation/authn/actions)                                                                            |
-| verifySessionOptimistic             | [`presentation/session/actions/verify-session-optimistic.action.ts`](../../src/modules/auth/presentation/session/actions/verify-session-optimistic.action.ts) |
-| auth.composition                    | [`infrastructure/composition/auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts)                                     |
-| login.workflow / LoginUseCase       | [`application/auth-user/`](../../src/modules/auth/application/auth-user)                                                                                      |
-| SessionService / ReadSessionUseCase | [`application/session/`](../../src/modules/auth/application/session) + [`infrastructure/session/`](../../src/modules/auth/infrastructure/session)             |
-| Bcrypt service                      | [`infrastructure/crypto/services/bcrypt-password.service.ts`](../../src/modules/auth/infrastructure/crypto/services/bcrypt-password.service.ts)               |
+| Box                                 | File                                                                                                                                              |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| login.action / signup.action        | [`presentation/authn/actions/`](../../src/modules/auth/presentation/authn/actions)                                                                |
+| verifySessionOptimistic             | [`presentation/session/verify-session-optimistic.action.ts`](../../src/modules/auth/presentation/session/verify-session-optimistic.action.ts)     |
+| auth.composition                    | [`infrastructure/composition/auth.composition.ts`](../../src/modules/auth/infrastructure/composition/auth.composition.ts)                         |
+| login.workflow / LoginUseCase       | [`application/auth-user/`](../../src/modules/auth/application/auth-user)                                                                          |
+| SessionService / ReadSessionUseCase | [`application/session/`](../../src/modules/auth/application/session) + [`infrastructure/session/`](../../src/modules/auth/infrastructure/session) |
+| Bcrypt service                      | [`infrastructure/crypto/services/bcrypt-password.service.ts`](../../src/modules/auth/infrastructure/crypto/services/bcrypt-password.service.ts)   |
 
 ## The "why" lives in the ADRs
 
