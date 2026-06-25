@@ -36,12 +36,15 @@ User clicks Dismiss ─▶ dismissBannerAction()  ─▶ dismissBanner() sets co
 ```
 
 - **Gating is the caller's job.** `<OneTimeBanner>` always renders when mounted;
-  the server code that includes it should check `isBannerDismissed()` first and
-  skip mounting it when the cookie is set. The component owns only the dismiss
+  the server code that includes it must check `isBannerDismissed()` first and skip
+  mounting it when the cookie is set. The one real caller is the root layout
+  (`app/layout.tsx`), which awaits `isBannerDismissed()` and renders
+  `{!dismissed && <OneTimeBanner/>}`. The component owns only the dismiss
   interaction (optimistic `useState` + `useTransition`).
 - **The adapter** (`BannerCookieAdapter`) wraps the shared cookie service
-  (`@/server/cookies`) and centralizes the cookie options; `banner-cookie.ts` is a
-  two-function facade so callers don't construct the adapter themselves.
+  (`createCookieService()` from `@/server/cookies/cookie.factory`) and centralizes
+  the cookie options; `banner-cookie.ts` is a two-function facade so callers don't
+  construct the adapter themselves.
 
 ---
 
@@ -74,8 +77,8 @@ flags like this one.
 ## Related documentation
 
 - [project-structure.md](../../../docs/project-structure.md) — where code belongs across the repo.
-- Cookie service: `@/server/cookies` (the shared adapter this module builds on).
+- Cookie service: `@/server/cookies/cookie.factory` (`createCookieService()` — the shared service this module builds on).
 
 ---
 
-**Last updated:** 2026-06-04
+**Last updated:** 2026-06-24
