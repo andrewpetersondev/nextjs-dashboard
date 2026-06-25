@@ -4,8 +4,8 @@ This guide helps you set up, run, and develop the Next.js Dashboard locally.
 
 ## Prerequisites
 
-- Node >= 24
-- PNPM >= 10.12
+- Node >= 26 (pinned in [`.nvmrc`](../.nvmrc); CI reads the version from it)
+- pnpm >= 11 (pinned via the `packageManager` field in [`package.json`](../package.json))
 - PostgreSQL (local or remote)
 
 ## 1. Install Dependencies
