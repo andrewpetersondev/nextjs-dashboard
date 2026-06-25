@@ -1,9 +1,10 @@
-# Weekly maintenance routine (drafted)
+# Weekly maintenance routine
 
 A scheduled Claude Code cloud agent that keeps the repo current with a single,
-reviewable PR each week. Drafted from the `BACKLOG.md` "Weekly codemod routine"
-item, with extra scope recommended below. **Not yet live** — create it with
-`/schedule` once you're happy with the scope.
+reviewable PR each week. Grown from the `BACKLOG.md` "Weekly codemod routine"
+item, with extra scope recommended below. **Live** — it runs as the
+`weekly-maintenance` `/schedule` cloud agent (cron `0 9 * * 1`, Mondays). This doc
+records its scope and rationale; use `/schedule` to list, adjust, or disable it.
 
 ## Schedule
 

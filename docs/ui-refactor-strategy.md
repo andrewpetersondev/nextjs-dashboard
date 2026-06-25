@@ -146,7 +146,7 @@ Use the current codebase as the reference for what should stay where.
   - Keep in auth presentation because it is a feature-local page template, not app-wide shell.
 - `src/shell/dashboard/components/dashboard-sidebar.tsx`
   - Keep in `src/shell` because it composes branding, navigation, and auth logout into dashboard chrome.
-- `src/ui/molecules/page-header.tsx`
+- `src/ui/molecules/page-header.molecule.tsx`
   - Keep in `src/ui` as long as it stays feature-neutral and does not absorb auth-specific behavior.
 
 ### Signals that a file is in the wrong layer

@@ -21,18 +21,20 @@ All environments need these. Validation lives in
 `src/shared/core/config/` — the server **fails fast at startup** if any are
 missing or malformed, so set them all.
 
-| Variable                  | Example                               | Notes                                     |
-| ------------------------- | ------------------------------------- | ----------------------------------------- |
-| `DATABASE_URL`            | `postgresql://user:pass@host:5432/db` | Neon: append `?sslmode=require`           |
-| `SESSION_SECRET`          | (long random string)                  | generate with `openssl rand -base64 48`   |
-| `AUTH_BCRYPT_SALT_ROUNDS` | `12`                                  | positive integer                          |
-| `SESSION_ISSUER`          | `my-app`                              | fixed value                               |
-| `SESSION_AUDIENCE`        | `web`                                 | fixed value                               |
-| `NODE_ENV`                | `production`                          |                                           |
-| `DATABASE_ENV`            | `production`                          | selects the migration scope               |
-| `LOG_LEVEL`               | `info`                                | `trace`\|`debug`\|`info`\|`warn`\|`error` |
-| `NEXT_PUBLIC_NODE_ENV`    | `production`                          | inlined into the client bundle at build   |
-| `NEXT_PUBLIC_LOG_LEVEL`   | `info`                                | inlined into the client bundle at build   |
+| Variable                  | Example                               | Notes                                                       |
+| ------------------------- | ------------------------------------- | ----------------------------------------------------------- |
+| `DATABASE_URL`            | `postgresql://user:pass@host:5432/db` | Neon: append `?sslmode=require`                             |
+| `SESSION_SECRET`          | (long random string)                  | generate with `openssl rand -base64 48`                     |
+| `AUTH_BCRYPT_SALT_ROUNDS` | `12`                                  | positive integer                                            |
+| `NODE_ENV`                | `production`                          | `development` \| `test` \| `production`                     |
+| `DATABASE_ENV`            | `production`                          | selects the migration scope                                 |
+| `NEXT_PUBLIC_NODE_ENV`    | `production`                          | inlined into the client bundle at build                     |
+| `NEXT_PUBLIC_LOG_LEVEL`   | `info`                                | `trace`\|`debug`\|`info`\|`warn`\|`error`; inlined at build |
+
+The server validates `DATABASE_URL`, `SESSION_SECRET`, and `AUTH_BCRYPT_SALT_ROUNDS` (plus `NODE_ENV` /
+`DATABASE_ENV`) and fails fast at startup if any are missing or malformed. The JWT `issuer` / `audience`
+are compile-time **constants** (`my-app` / `web`), not env vars — see
+`src/modules/auth/infrastructure/session/config/session-jwt.constants.ts`.
 
 **Demo logins** (created by the seed):
 

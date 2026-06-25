@@ -2,6 +2,16 @@
 
 Use this guide to decide where code belongs and how layers interact.
 
+> **The model in one line:** each feature is a self-contained vertical slice under
+> `src/modules/<feature>/`, internally organized into clean-architecture layers
+> (`presentation/`, `application/`, `domain/`, `infrastructure/`) — so a module owns
+> its own UI, domain rules, use cases, **and** its data access (repositories, DB
+> queries) and server actions. `src/server` is _not_ where feature repositories or
+> actions live; it holds only the small set of **shared, cross-cutting** server-only
+> pieces (the Drizzle connection, cookies, crypto). For the per-module layering and
+> dependency direction, see [diagrams/module-layers.md](diagrams/module-layers.md)
+> and [standards/clean-architecture-standards.md](standards/clean-architecture-standards.md).
+
 ## 1) Identify the concern: domain capability vs. page/layout composition
 
 - Domain capability: A cohesive business area with its own models, rules, and reusable UI (e.g., auth, invoices,
@@ -50,23 +60,26 @@ Use this guide to decide where code belongs and how layers interact.
 
 - shared: May only import from shared. Lowest-level utilities, tokens, and primitives.
 - ui: Base, reusable UI primitives and patterns (atoms/molecules). May import from shared.
-- modules: A domain slice. May import from modules (itself/peers) and shared/ui. Must not import from shell.
+- modules: A domain slice, internally layered (presentation/application/domain/infrastructure). May import from modules (itself/peers) and shared/ui. Must not import from shell.
 - shell: App composition/orchestration. May import from modules, shared, ui. Should not be imported by modules.
-- server: Infrastructure, actions, services, repositories. No import restrictions (but keep server code server-only).
-- app (Next.js): Routes and server components. Should delegate domain logic to server/modules and composition to shell.
+- server: **Shared, cross-cutting** server-only infrastructure (the DB connection, cookies, crypto) — not feature repositories or actions, which live inside each module. Keep server code server-only.
+- app (Next.js): Routes and server components. Should delegate domain logic to modules (and shared server infra) and composition to shell.
 
 One-way dependency rule of thumb:
 shared/ui -> modules -> shell -> app
-server is usable from modules/shell/app as needed.
+the shared `server` infra is usable from modules/shell/app as needed.
 
 ---
 
 ## Purpose of the `src` folder's children
 
-1. `modules` — Domain-centric slices (auth, invoices, customers, users, etc.). Each slice exposes:
-   - Domain types, schemas, and view-model mappers
-   - Reusable, module-scoped UI
-   - Light adapters that are module-specific (no DB or external I/O)
+1. `modules` — Domain-centric vertical slices (auth, invoices, customers, users, banner). Each slice is internally layered (`presentation/`, `application/`, `domain/`, `infrastructure/`) and owns:
+   - Domain entities, value objects, and policies (`domain/`)
+   - Use cases, contracts, schemas, and mappers (`application/`)
+   - Its own data access — repositories, DAL, row↔entity mappers (`infrastructure/`)
+   - Server actions and module-scoped UI (`presentation/`)
+
+   Not every module needs every layer — thin CRUD slices (`customers`, `banner`) skip `application/`. See [diagrams/module-layers.md](diagrams/module-layers.md) for the per-module map.
 
 2. `shared` — Cross-cutting, module-agnostic utilities and tokens:
    - Pure helpers, constants, types
@@ -86,10 +99,10 @@ server is usable from modules/shell/app as needed.
      - Data access or external API calls (keep in server)
      - Generic utilities (keep in shared)
 
-4. `server` — Infrastructure and backend-facing code:
-   - Database access, repositories, migrations
-   - Services and server actions
-   - Integration with external systems (OAuth, queues, webhooks)
+4. `server` — Shared, cross-cutting server-only infrastructure (the small stuff many modules need):
+   - The Drizzle database **connection** (`server/db/`)
+   - Cookie handling (`server/cookies/`) and crypto/hashing (`server/crypto/`)
+   - Note: feature **repositories** and **server actions** do _not_ live here — they live in each module's `infrastructure/` and `presentation/`. Drizzle schema and migrations live in `database/schema` and `drizzle/migrations/` (see [drizzle.md](drizzle.md)).
 
 5. `ui` — Base UI primitives intended for reuse and extension:
    - Atoms/molecules (buttons, inputs, wrappers)
@@ -101,15 +114,14 @@ server is usable from modules/shell/app as needed.
 
 1. Is it app chrome or cross-module composition (layouts, nav, role gates, dashboard composition)?
    - Yes → Place in `shell`.
-2. Is it a domain capability with reusable UI and types (auth, invoices, customers)?
-   - Yes → Place in `modules/<module>`.
-3. Is it infrastructure (DB, services, actions, external APIs)?
+2. Is it a domain capability — a repository, use case, server action, domain rule, or module UI for one feature?
+   - Yes → Place in the right layer of `modules/<module>` (`infrastructure/`, `application/`, `presentation/`, `domain/`).
+3. Is it shared, cross-cutting server-only infrastructure used by many modules (the DB connection, cookies, crypto)?
    - Yes → Place in `server`.
 4. Is it a generic utility, token, or primitive UI with no domain knowledge?
    - Yes → `shared` (utilities/tokens) or `ui` (primitive components).
 5. Route files and data fetching for pages?
-   - Prefer `src/app` server components that call into `server` (for data) and render `shell` (for composition) and
-     `modules` (for module UI).
+   - Prefer `src/app` server components that call into `modules` (for data and module UI) and render `shell` (for composition).
 
 ---
 
@@ -128,8 +140,8 @@ server is usable from modules/shell/app as needed.
   - Don't: Import from modules or shell.
 
 - server
-  - Do: Encapsulate data access and integrations; expose actions/services.
-  - Don't: Contain client UI.
+  - Do: Hold shared, cross-cutting server-only infrastructure (DB connection, cookies, crypto).
+  - Don't: Contain client UI, or feature-specific repositories/actions (those belong in the module).
 
 ---
 
@@ -140,8 +152,9 @@ server is usable from modules/shell/app as needed.
   - Underlying widgets provided by their respective `modules/*`
 
 - Authentication:
-  - Forms, schemas, roles, and client helpers in `modules/auth`
-  - Server actions and provider integrations in `server/auth`
+  - Domain rules, use cases, schemas, repositories, server actions, and module UI all live in `modules/auth` (across its
+    `domain`/`application`/`infrastructure`/`presentation` layers)
+  - It reuses shared server infra from `server` (the DB connection, cookies, crypto) rather than reimplementing it
   - If the sidebar needs a logout button or role-aware links, the sidebar lives in `shell`, consuming `modules/auth`
     UI or actions.
 
@@ -152,4 +165,4 @@ boundaries, and simplify testing and scaling of both the UI and the backend.
 
 ---
 
-_Last updated: 2026-03-03_
+_Last updated: 2026-06-24_

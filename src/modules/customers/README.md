@@ -64,9 +64,13 @@ customers/
 │   ├── repository/dal/                  #   fetch-filtered-customers, fetch-customers-select, fetch-total-count
 │   └── adapters/customer.mapper.ts      #   raw row → server DTO (brand id, normalize sums)
 │
-└── presentation/                        # Next.js server actions + React UI
-    ├── actions/                         #   read-filtered-customers, read-customers, read-total-customers-count
-    └── components/                      #   customers-table (+ desktop / mobile / row variants)
+├── presentation/                        # Next.js server actions + React UI
+│   ├── actions/                         #   read-filtered-customers, read-customers, read-total-customers-count
+│   └── components/                      #   customers-table (+ desktop / mobile / row variants)
+│
+└── __tests__/unit/                      # Vitest unit tests (domain mappers + infra adapter)
+    ├── domain/                          #   customer-id.mappers, mappers (toFormattedCustomersTableRow)
+    └── infrastructure/adapters/         #   customer.mapper (raw → DTO, null→0)
 ```
 
 There is intentionally no `application/` layer — without writes or business rules
@@ -121,15 +125,20 @@ All three actions follow the same read-only shape — for example the table:
 
 ## Error handling
 
-The DAL **throws** `makeAppError(APP_ERROR_KEYS.database, …)` on a query failure
-(using `CUSTOMER_SERVER_ERROR_MESSAGES`); the error propagates up to the action /
-page. This is the same throw-based model as the `invoices` DAL — note it differs
-from `users`, which returns `Result` end-to-end. See
+The two query DALs (`fetch-filtered-customers`, `fetch-customers-select`) wrap
+their query in `try/catch` and **throw** `makeAppError(APP_ERROR_KEYS.database, …)`
+on failure (using `CUSTOMER_SERVER_ERROR_MESSAGES`); the error propagates up to the
+action / page. `fetch-total-count` is the exception: it does not catch query errors
+(so a DB failure propagates raw) and only throws — with the `validation` key — when
+the count comes back missing. This is the same throw-based model as the `invoices`
+DAL — note it differs from `users`, which returns `Result` end-to-end. See
 [when-to-use-app-error.md](../../../docs/when-to-use-app-error.md).
 
-> No automated tests yet. The mappers (`mapCustomerAggregatesRawToDto`'s null→0
-> normalization) and the filtered-aggregate query are the highest-value things to
-> cover first.
+> **Tests:** unit suites cover the domain mappers (`toFormattedCustomersTableRow`
+> currency formatting, `CustomerId` create/throw) and the infra adapter
+> (`mapCustomerAggregatesRawToDto`'s null→0 normalization, id branding). The
+> filtered-aggregate DAL query is still uncovered — it needs a DB and is the
+> highest-value thing to add next.
 
 ---
 
@@ -142,4 +151,4 @@ from `users`, which returns `Result` end-to-end. See
 
 ---
 
-**Last updated:** 2026-06-04
+**Last updated:** 2026-06-24
