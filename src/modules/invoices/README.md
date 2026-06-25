@@ -57,7 +57,9 @@ Server Action ─▶ InvoiceService ─▶ InvoiceRepository ─▶ DAL ─▶ P
 
 Both commands (create / read-by-id / update / delete) and list/aggregate
 reads (filtered list, page count, latest, totals/summary) take this path; each
-action builds `new InvoiceService(new InvoiceRepository(getAppDb()))` inline.
+action builds `new InvoiceService(new InvoiceRepository(getAppDb()))` inline. The
+one exception is `deleteInvoiceFormAction`, a thin `FormData` wrapper that delegates
+to `deleteInvoiceAction` rather than building its own service.
 
 How invoices differs from the `auth` module — worth knowing up front:
 
@@ -105,11 +107,15 @@ invoices/
 │       ├── invoice.repository.ts        #   InvoiceRepository — CRUD + reads; throws AppError
 │       └── dal/                         #   one function per query (4 CRUD + 6 dashboard reads)
 │
-└── presentation/                        # Next.js server actions + React UI
-    ├── actions/                         #   9 server actions (commands + reads)
-    ├── components/                      #   tables (desktop/mobile/status), latest, skeletons, links
-    ├── forms/                           #   create/edit forms + field inputs
-    └── constants/invoice-form.constants.ts
+├── presentation/                        # Next.js server actions + React UI
+│   ├── actions/                         #   9 server actions (8 build the service inline; delete-invoice-form wraps delete)
+│   ├── components/                      #   tables (desktop/mobile/status), latest, skeletons, links
+│   ├── forms/                           #   create/edit forms + field inputs
+│   └── constants/invoice-form.constants.ts
+│
+└── __tests__/unit/                      # Vitest unit tests — domain + infra (service & actions still uncovered)
+    ├── domain/                          #   id mappers, status validator, codecs, date-utils
+    └── infrastructure/                  #   adapter codecs + mapper, 2 read DAL queries (filtered, pages)
 ```
 
 ---
@@ -152,10 +158,13 @@ won't type-check where an ID is expected. Convert at the boundary with
 
 ### Validation, forms, and i18n
 
-- Input is validated with a Zod schema (`CreateInvoiceSchema` +
-  `CREATE_INVOICE_FIELDS_LIST`) in `domain/schema/invoice.schema.ts`.
-- Actions return a `FormResult` (`makeFormOk` / `makeFormError` from
-  `@/shared/forms`), with Zod issues mapped to per-field errors.
+- Input is validated with Zod schemas in `domain/schema/invoice.schema.ts`:
+  `CreateInvoiceSchema` (+ `CREATE_INVOICE_FIELDS_LIST`) for create, and its partial
+  form `UpdateInvoiceSchema` (+ `UPDATE_INVOICE_FIELDS_LIST`) for update.
+- The create and update actions return a `FormResult` (`makeFormOk` / `makeFormError`
+  from `@/shared/forms`), with Zod issues mapped to per-field errors.
+  (`deleteInvoiceAction` returns a `Result<InvoiceDto, AppError>` instead — see
+  [Request flows](#request-flows).)
 - User-facing strings come from `INVOICE_MSG` and are rendered through
   `translator()` (`domain/i18n/`); domain/infra errors are mapped to a message via
   `toInvoiceErrorMessage()`.
@@ -192,14 +201,22 @@ and [ADR-007](../auth/notes/adr/007-enforce-action-level-authorization.md).
 
 ### Create / update / delete (command path)
 
-1. The action parses `FormData` and validates it with the Zod schema.
-2. It constructs `new InvoiceService(new InvoiceRepository(getAppDb()))`.
+1. **create / update** parse `FormData` and validate it through the shared
+   `validateForm` funnel with the matching Zod schema (`CreateInvoiceSchema`, or the
+   partial `UpdateInvoiceSchema`). **delete** takes a string id and only checks that
+   it is present.
+2. The action constructs `new InvoiceService(new InvoiceRepository(getAppDb()))`.
 3. `InvoiceService` applies business rules (dollars→cents, date format), runs the
    codec/mapper chain, and calls the repository.
 4. `InvoiceRepository` calls the matching DAL function and maps the row back to an
    `InvoiceDto`.
-5. The action `revalidatePath(ROUTES.dashboard.invoices)` and returns a
-   `FormResult`.
+5. On success the action revalidates and returns:
+   - **create** → `revalidatePath(ROUTES.dashboard.invoices)`, returns a `FormResult`.
+   - **update** → `revalidatePath(ROUTES.dashboard.root)`, returns a `FormResult`.
+   - **delete** (`deleteInvoiceAction`) → `revalidatePath(ROUTES.dashboard.root)`,
+     returns a `Result<InvoiceDto, AppError>` (not a `FormResult`). The form-bound
+     `deleteInvoiceFormAction` wraps it: read the id from `FormData`, call
+     `deleteInvoiceAction`, then `revalidatePath` + `redirect` to the invoices list.
 
 ### Lists & aggregates (read path)
 
@@ -220,9 +237,12 @@ This module uses two styles, and you'll see both in a single action:
 
 - **The service returns `Result`** — its own validation failures come back as
   `Err(AppError)` and are turned into field-level `FormResult` errors.
-- **The repository and DAL throw `AppError`** — those propagate up as exceptions
-  and are caught by the action's `try/catch`, then mapped with
-  `toInvoiceErrorMessage()` and logged.
+- **The repository and DAL throw `AppError`** — those propagate up as exceptions.
+  The command actions (and the by-id / pages reads) catch them in a `try/catch`,
+  then map with `toInvoiceErrorMessage()` and log. The plain list/aggregate reads
+  (`readFilteredInvoicesAction`, `readLatestInvoicesAction`,
+  `readInvoicesSummaryAction`) have no `try/catch` and rethrow, letting the invoices
+  route error boundary (`error.tsx`) handle it.
 
 For when something should be an `AppError` versus a domain outcome, see
 [when-to-use-app-error.md](../../../docs/when-to-use-app-error.md) and the
@@ -234,10 +254,12 @@ For when something should be an `AppError` versus a domain outcome, see
 
 Kept honest on purpose — a doc that hides the warts isn't worth much.
 
-- **No automated tests yet.** Unlike `auth` and `users`, this module has no
-  `__tests__/`. The service's business rules (cents conversion, date validation,
-  partial-update assembly) and the DAL queries are the highest-value things to
-  cover first.
+- **Test coverage is partial.** A `__tests__/unit/` suite covers the domain (id
+  mappers, status validator, codecs, date-utils) and parts of infrastructure
+  (adapter codecs + mapper, the filtered-list and pages-count DAL queries). Still
+  uncovered, and the highest-value gaps: `InvoiceService`'s business rules (cents
+  conversion, date validation, partial-update assembly), the CRUD and remaining read
+  DAL queries, and the server actions.
 - **Composition is inline.** Actions `new` up the service and repository directly
   rather than resolving them from a composition root (as `auth` does). Fine while
   the graph is small; revisit if wiring grows.
@@ -257,4 +279,4 @@ Kept honest on purpose — a doc that hides the warts isn't worth much.
 
 ---
 
-**Last updated:** 2026-06-09
+**Last updated:** 2026-06-24
