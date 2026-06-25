@@ -1,26 +1,34 @@
 # Testing
 
-The dashboard has two layers of tests, and both run under the **test environment**
-(`.env.test.local`):
+The dashboard has three test lanes. The **unit** lane is database-free and runs
+anywhere; the **integration** and **E2E** lanes talk to the real `test_db` under
+the **test environment** (`.env.test.local`):
 
-| Layer              | Tool    | Command       | What it covers                                                    |
-| ------------------ | ------- | ------------- | ----------------------------------------------------------------- |
-| Unit + integration | Vitest  | `pnpm test`   | Logic, mappers, services, and full-stack flows through the layers |
-| End-to-end (E2E)   | Cypress | `pnpm cy:e2e` | The running app in a real browser, including accessibility        |
+| Lane        | Tool    | Command                 | What it covers                                                | Needs `test_db`? |
+| ----------- | ------- | ----------------------- | ------------------------------------------------------------- | ---------------- |
+| Unit        | Vitest  | `pnpm test`             | Pure logic, mappers, services — dependencies mocked           | No               |
+| Integration | Vitest  | `pnpm test:integration` | Full-stack flows through the layers against the real database | Yes              |
+| End-to-end  | Cypress | `pnpm cy:e2e`           | The running app in a real browser, including accessibility    | Yes              |
 
-Before running either, make sure the **test database** exists and is migrated — see
-[database-setup.md](database-setup.md). The integration tests and all E2E specs
-talk to `test_db`.
+`pnpm test` is an alias for `pnpm test:unit` (unit only); `pnpm test:all` runs the
+unit and integration lanes together.
+
+Before running the integration or E2E lanes, make sure the **test database** exists
+and is migrated — see [database-setup.md](database-setup.md). The unit lane needs
+neither a database nor `.env.test.local`: it runs against a schema-valid dummy env
+baked into [`vitest.config.ts`](../vitest.config.ts).
 
 ## Unit & integration tests (Vitest)
 
 Config: [`vitest.config.ts`](../vitest.config.ts) · setup: [`vitest.setup.ts`](../vitest.setup.ts)
 
 ```sh
-pnpm test            # run once (test env)
-pnpm test:watch      # re-run on change
-pnpm test:ui         # Vitest UI
-pnpm test:coverage   # run once with coverage
+pnpm test             # unit lane, run once (no database needed)
+pnpm test:watch       # unit lane, re-run on change
+pnpm test:ui          # Vitest UI
+pnpm test:coverage    # unit lane once, with coverage (enforces the floors)
+pnpm test:integration # integration lane against the real test_db
+pnpm test:all         # unit + integration
 ```
 
 **Where tests live** — beside the code they cover, in `__tests__/` folders:
@@ -28,7 +36,8 @@ pnpm test:coverage   # run once with coverage
 - `__tests__/unit/…` — pure logic with dependencies mocked. No database needed.
 - `__tests__/integration/…` — exercise multiple layers together (presentation →
   application → infrastructure → DB). **These connect to the real `test_db`**, so
-  Postgres must be running and migrated (`pnpm db:push:test`) before `pnpm test`.
+  Postgres must be running and migrated (`pnpm db:push:test`) before
+  `pnpm test:integration` (or `pnpm test:all`).
 
 **Conventions:**
 
@@ -90,15 +99,23 @@ cy.checkA11y()
 
 ## CI
 
-- Unit / integration: `pnpm test` (needs the migrated `test_db`).
-- E2E headless: `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) — it boots the server itself.
+The CI gate is two-tier, matching the branch model — see
+[branching-and-releases.md](branching-and-releases.md).
+
+- **`check` job (every push/PR to `develop` and `main`):** runs `pnpm test:coverage`,
+  the DB-free unit lane, which also enforces the coverage floors in
+  `vitest.config.ts`. The integration lane is **not** run in CI — it needs a live
+  database — so run it locally before opening a PR.
+- **`e2e` job (main-targeting work only):** `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) —
+  it boots the server itself against an ephemeral Postgres service container.
 - Cypress records no video by default (`video: false` in `cypress.config.ts`).
 
 ## Troubleshooting
 
-- **`pnpm test` can't connect / hangs** — the integration tests need `test_db`.
-  Confirm Postgres is up, `pnpm db:push:test` has run, and `.env.test.local`'s
-  `DATABASE_URL` is reachable.
+- **`pnpm test:integration` can't connect / hangs** — the integration tests need
+  `test_db`. Confirm Postgres is up, `pnpm db:push:test` has run, and
+  `.env.test.local`'s `DATABASE_URL` is reachable. (The plain `pnpm test` unit lane
+  is database-free, so it should never need a connection.)
 - **Cypress can't reach the app** — confirm the server is running and that `PORT`
   and `CYPRESS_BASE_URL` in `.env.test.local` agree (the auto-server path derives
   its wait-URL from `PORT`).

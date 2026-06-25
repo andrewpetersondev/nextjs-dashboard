@@ -12,39 +12,40 @@ authentication, middleware-based route protection, database migrations/seeding, 
 ## Tech Stack
 
 - Next.js 16 (App Router, Server/Client Components)
-- React 19 + TypeScript 5 (strict)
+- React 19 + TypeScript 6 (strict)
 - Drizzle ORM (PostgreSQL)
 - Tailwind CSS v4
 - Cypress for E2E testing (with @testing-library/cypress and cypress-axe)
-- Biome and Prettier for formatting and checks
+- Biome for JS/TS/JSON; dprint + markdownlint-cli2 for Markdown
 - Turbopack for dev/build
 
-Note: ESLint is not used in this project, by design.
+Note: ESLint and Prettier are not used in this project, by design.
 
 ## Project Structure
 
 ```text
 nextjs-dashboard/
 ├── cypress/                # E2E specs and support
+├── database/               # Drizzle schema (source of truth)
 ├── docs/                   # Additional documentation and guides
-├── drizzle/                # Generated SQL, migrations, meta
+├── drizzle/                # Generated SQL migrations, one set per env (dev/test/prod)
 ├── devtools/               # cli, config, seed-support, tasks
 ├── public/                 # Static assets
 ├── src/                    # Application source
 │   ├── app/                # App router
-│   ├── modules/            # auth, customers, invoices, revenues, users
-│   ├── server/             # config, db, events
-│   ├── shared/             # branding, config, errors, forms, http,  logging, result, routes, utilities
-│   ├── shell/              # dashboard-wide components/screens/
-│   ├── ui/                 # atoms, brand, feedback, forms, molecules, navigation, styles
-│   ├── proxy.ts       # Route protection
+│   ├── modules/            # auth, banner, customers, invoices, users (each internally layered)
+│   ├── server/             # cookies, crypto, db (shared server infra)
+│   ├── shared/             # core, forms, http, policies, primitives, routing, telemetry, time
+│   ├── shell/              # dashboard composition
+│   ├── ui/                 # atoms, brand, forms, hooks, molecules, navigation, skeletons, styles, utils, wrappers
+│   ├── proxy.ts            # Route protection (Next.js middleware)
 └── ...
 ```
 
 ## Requirements
 
-- Node >= 24
-- PNPM >= 10.12
+- Node >= 26 (pinned in `.nvmrc`)
+- pnpm >= 11 (pinned via the `packageManager` field in `package.json`)
 - PostgreSQL (local or remote)
 
 ## Getting Started

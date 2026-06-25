@@ -45,7 +45,7 @@ Markdown is linted by markdownlint-cli2 and formatted by dprint (Biome's Markdow
 Build and run the app.
 
 - `pnpm next:dev` — start Next.js in development mode (Turbopack).
-- `pnpm next:dev:test` — start Next.js in development mode on port 3001 with the test environment.
+- `pnpm next:dev:test` — start Next.js in development mode with the test environment (port from `PORT` in `.env.test.local`).
 - `pnpm next:build` — create a production build.
 - `pnpm next:build:test` — build the app using the test environment.
 - `pnpm next:build:standalone` — clean and build a standalone production bundle.
@@ -66,6 +66,9 @@ End-to-end testing.
 - `pnpm cy:e2e:ci` — alias for `cy:e2e`.
 - `pnpm cy:e2e:open` — open the Cypress interactive runner.
 - `pnpm cy:e2e:run` — run Cypress E2E in headless mode.
+- `pnpm cy:open:with-server` — boot the test-env dev server, then open the interactive runner.
+- `pnpm cy:server` — start the test-env dev server only (alias for `next:dev:test`).
+- `pnpm cy:preflight` — run the `/api/health` identity preflight (asserts the test env/DB).
 - `pnpm cy:open` — open Cypress (general).
 - `pnpm cy:run` — run Cypress (general).
 - `pnpm cy:clean` — remove generated Cypress config artifacts.
@@ -87,6 +90,7 @@ Migrations, seeding, and resets per environment.
 - `pnpm db:reset:prod` — drop, recreate, and seed the production database.
 - `pnpm db:studio:dev` — open Drizzle Studio against the development database.
 - `pnpm db:studio:test` — open Drizzle Studio against the test database.
+- `pnpm db:drift` — assert the dev/test/prod migration sets describe the same schema (the CI drift gate; no database needed).
 
 ---
 
@@ -110,17 +114,21 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
 - `pnpm knip` — find unused exports, files, and dependencies.
-- `pnpm check` — run lint, typecheck, typegen, tests, and E2E.
-- `pnpm check:fast` — run lint, typecheck, and typegen only.
-- `pnpm check:repo` — run full check plus knip.
-- `pnpm test` — run unit/integration tests (Vitest) with the test environment.
-- `pnpm test:coverage` — run tests with coverage using the test environment.
-- `pnpm test:ui` — open Vitest UI with the test environment.
-- `pnpm test:watch` — run Vitest in watch mode with the test environment.
+- `pnpm check` — run Biome lint, Markdown check, typecheck, typegen, unit + integration tests, and E2E.
+- `pnpm check:fast` — run Biome lint, Markdown check, typecheck, typegen, and the migration-drift gate (no tests/E2E).
+- `pnpm check:repo` — run full `check` plus knip.
+- `pnpm test` — run the unit lane (alias for `test:unit`; `vitest run --project unit`). DB-free; no test env needed.
+- `pnpm test:unit` — run the unit lane once (pure/mocked, no database).
+- `pnpm test:integration` — run the integration lane against the real `test_db` (loads `.env.test.local` via `env:test`).
+- `pnpm test:all` — run the unit and integration lanes together.
+- `pnpm test:coverage` — run the unit lane with coverage (enforces the floors in `vitest.config.ts`). No test env needed.
+- `pnpm test:ui` — open the Vitest UI.
+- `pnpm test:watch` — run the unit lane in watch mode.
 
-Vitest environment variables are loaded by the `test:*` scripts via `env:test`; `vitest.setup.ts` only registers global
-test mocks. If DB-backed integration tests continue to run in the same `pnpm test` command as unit tests, revisit Vitest
-`coverage`, `pool`/isolation, and explicit integration-test behavior so the default test command remains predictable.
+The unit lane is database-free: it runs against a schema-valid dummy env baked into `vitest.config.ts`, so it needs
+neither `.env.test.local` nor a live database. Only the integration lane (`test:integration`, and the integration half
+of `test:all`) loads `.env.test.local` via `env:test` and talks to the real `test_db`. `vitest.setup.ts` registers the
+global server-API mocks shared by both lanes.
 
 ---
 
@@ -160,4 +168,4 @@ pnpm next:dev
 
 ---
 
-_Last updated: 2026-04-02_
+_Last updated: 2026-06-24_

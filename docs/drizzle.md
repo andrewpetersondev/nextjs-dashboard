@@ -5,10 +5,11 @@ TypeScript CLI scripts in `devtools/`.
 
 ## Key Locations
 
-- `drizzle/` — generated SQL, migrations, and meta
-- `drizzle.config.ts` — Drizzle Kit configuration
-- `devtools/cli/*.ts` — reset and seed helpers
-- `src/server/**` — server-side DB access (repositories/services)
+- `database/schema/` — the Drizzle table schema (the source migrations are generated from)
+- `drizzle/migrations/{dev,test,prod}/` — generated SQL migrations, one set per environment
+- `drizzle.config.ts` — Drizzle Kit config (`schema` → `database/schema`, `out` → the per-env migration dir)
+- `devtools/cli/*.ts` + `devtools/seed/**` — reset and seed helpers
+- `src/server/db/` — the shared database connection; per-module repositories live in each module's `infrastructure/persistence/`
 
 ## Common Commands
 
