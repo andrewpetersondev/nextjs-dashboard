@@ -50,12 +50,21 @@ The domain layer does **not**:
 
 ## Directory Structure
 
-This layer is intentionally small. Typical contents include:
+The domain is organized by subdomain (`auth-user`, `session`) plus a `shared/`
+constants area:
 
 ```text
 domain/
-├── entities/          # Domain entities (rich data + invariants)
-├── types/             # Branded types and enums (e.g., UserId, UserRole)
+├── auth-user/
+│   ├── entities/        # AuthUserEntity
+│   └── policies/        # password.policy.ts, registration.policy.ts
+├── session/
+│   ├── entities/        # session.entity.ts
+│   ├── policies/        # session-lifecycle + authorization/ route policies
+│   ├── value-objects/   # auth-brands.value.ts (branded types), time.value.ts
+│   └── auth-request-authorization.output.ts
+├── shared/
+│   └── constants/       # session-config, session-lifecycle, route, request, policy, demo-identity
 └── README.md
 ```
 
@@ -81,10 +90,10 @@ When data crosses the domain → application boundary, sensitive fields should b
 - **Infrastructure → Domain**: database rows are mapped into domain entities (e.g., `UserRow → AuthUserEntity`).
 - **Domain → Application**: passwords are stripped when mapping to DTOs (e.g., `AuthUserEntity → AuthenticatedUserDto`).
 
-For the full chain, see:
+For the boundary mappers, see:
 
-- `src/modules/auth/application/shared/mappers/mapper-chains.ts`
-- `src/modules/auth/application/shared/mappers/mapper-registry.ts`
+- `src/modules/auth/application/shared/mappers/flows/login/to-authenticated-user.mapper.ts` — strips the password hash
+- `src/modules/auth/application/shared/mappers/flows/login/to-session-principal.mapper.ts` — narrows to the session principal
 
 ---
 

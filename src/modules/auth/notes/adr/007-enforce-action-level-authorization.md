@@ -22,7 +22,7 @@ escalate privileges — or read user PII directly.
 
 Each sensitive server action enforces its own authorization, as a second layer
 beneath the route gate (defense in depth). Two guards live in
-[`session/guards/session-access.guard.ts`](../../presentation/session/guards/session-access.guard.ts):
+[`session/session-access.guard.ts`](../../presentation/session/session-access.guard.ts):
 
 - **`requireSession()`** — requires any valid session; redirects to login when
   none exists. Used by the invoice mutations (create / update / delete).
