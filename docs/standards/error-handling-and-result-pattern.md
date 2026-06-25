@@ -48,7 +48,7 @@ The `AppError` constructor automatically validates and sanitizes `metadata` agai
 - **`makeUnexpectedError`**: Preferred for wrapping technical exceptions in Infrastructure.
   - Wraps a trigger (the `error` parameter) into an `unexpected` key.
   - Automatically normalizes the trigger and attaches it as the `cause`.
-- **`normalizeUnknownToAppError`**: Converts any caught `unknown` into an `AppError`.
+- **`normalizeUnknownError`**: Converts any caught `unknown` into an `AppError`.
   - Use this when you need a generic fallback but don't want to explicitly mark it as "unexpected".
 
 ### Infrastructure Normalizers
