@@ -80,6 +80,17 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Single-branch, local-first model (retired `develop`)** _(2026-06-25)_ — collapsed the two-tier
+      `develop → main` model back into a single `main` branch. `main` is the default again; feature work
+      happens in worktree branches and is **merged into `main` locally** (worktrees share one object
+      store — no remote round-trip, no PRs), then pushed. CI (`ci.yml`, `codeql.yml`) now triggers on
+      push to `main` only; the slow E2E runs on every `main` push as a safety net (no pre-merge gate —
+      `pnpm check:fast` is the local pre-push gate). Relaxed the `main` ruleset to allow direct pushes
+      (kept no-force-push + no-delete), deleted the `develop` ruleset, retired the `develop` branch, and
+      rewrote `/ship` (now hands off a local merge; `/promote` deleted). Docs reconciled
+      (`branching-and-releases.md`, the flow diagram, `lane-map.md`, CLAUDE/AGENTS). Rationale: the
+      remote-first PR flow created friction (stale local branches, GitHub as the orchestration point)
+      that blocked real use during the job hunt. Detail: memory `project_branch_model_migration`.
 - [x] **Docs-drift audit — remaining md files** _(2026-06-25)_ — drift-checked the ~53 prose
       markdown files yesterday's sweep didn't touch (ADRs excluded) via 7 read-only audit lanes;
       48 clean, **5 fixed**: `docs/knip.md` (`ignoreDependencies`), error-handling standard

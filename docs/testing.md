@@ -99,14 +99,14 @@ cy.checkA11y()
 
 ## CI
 
-The CI gate is two-tier, matching the branch model — see
+Both CI jobs run on every push to `main` — see
 [branching-and-releases.md](branching-and-releases.md).
 
-- **`check` job (every push/PR to `develop` and `main`):** runs `pnpm test:coverage`,
+- **`check` job (every push to `main`):** runs `pnpm test:coverage`,
   the DB-free unit lane, which also enforces the coverage floors in
   `vitest.config.ts`. The integration lane is **not** run in CI — it needs a live
-  database — so run it locally before opening a PR.
-- **`e2e` job (main-targeting work only):** `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) —
+  database — so run it locally before you merge into `main`.
+- **`e2e` job (every push to `main`):** `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) —
   it boots the server itself against an ephemeral Postgres service container.
 - Cypress records no video by default (`video: false` in `cypress.config.ts`).
 
