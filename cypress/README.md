@@ -293,14 +293,12 @@ Conventions worth following:
 
 Kept honest on purpose — a doc that hides the warts isn't worth much.
 
-- **Two tests are skipped, pending an app fix.** `update-form` (invalid amount)
-  and `auth-actions` (invalid credentials) are `it.skip`-ped because form **error**
-  results are non-serializable `AppError` class instances, so error banners never
-  render across the server-action boundary. Both have a `biome-ignore` comment
-  explaining why; re-enable them once form errors are returned as plain objects.
-- **Not in CI yet.** The suite runs locally only — `.github/workflows` has no
-  Cypress job. Wiring it in (against a service-container Postgres) is the highest-
-  value next step.
+- **Runs in CI.** The suite runs as the `E2E (Cypress)` job in
+  `.github/workflows/ci.yml` (against a service-container Postgres) and is a required
+  check on `main`; it also runs locally via `pnpm cy:e2e`. The suite is green with no
+  skipped specs — form **error** results now cross the server-action boundary as plain
+  `AppErrorJsonDto` objects (not `AppError` class instances), so the previously skipped
+  `update-form` / `auth-actions` error-banner specs are active again.
 - **Secrets stay Node-side.** `DATABASE_URL` and `SESSION_SECRET` are never
   written into `config.env`, so they can't be read browser-side via
   `Cypress.env()` (and can't leak into the command log or screenshots). Specs

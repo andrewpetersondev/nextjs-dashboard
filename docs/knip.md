@@ -50,8 +50,10 @@ Triage each finding — not everything reported should be deleted:
 - **Intentionally kept** → leave it. The repo uses a leading `_` to mark
   deliberately-unused symbols (e.g. `_NewInvoiceRow` insert types, `_isDev`); Knip does
   not honor that convention, so these show up as noise.
-- **Config-only / peer dependencies** → not real dead deps. `dotenv` and `tailwindcss`
-  are used via scripts/PostCSS config, and `@testing-library/dom` is a peer of
-  `@testing-library/cypress` — none are imported in code, so Knip lists them.
+- **Config-only / peer dependencies** → not real dead deps. `dotenv` (used via scripts),
+  `tailwindcss` (PostCSS config), and `@testing-library/dom` (a peer of
+  `@testing-library/cypress`) are never imported in code. `tailwindcss` and
+  `@testing-library/dom` are silenced via `ignoreDependencies` in `knip.json`, so they no
+  longer surface; `dotenv` is not ignored, so it can still appear — leave it.
 
 The running triage list lives in `BACKLOG.md` ("knip full-report triage").
