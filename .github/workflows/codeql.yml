@@ -4,17 +4,15 @@
 # (injection, unsafe deserialization, path traversal, etc.) and reports
 # findings in the repository's "Security" tab. Free for public repositories.
 #
-# Runs on pushes to main, on PRs to main, and on a weekly schedule — the
-# schedule matters because newly-published CodeQL queries can flag issues in
-# code that hasn't changed since the last push.
+# Runs on pushes to main and on a weekly schedule — the schedule matters because
+# newly-published CodeQL queries can flag issues in code that hasn't changed
+# since the last push. (No PR trigger: this repo merges into main locally.)
 # Docs: https://docs.github.com/code-security/code-scanning
 
 name: CodeQL
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
   schedule:
     # Mondays at 04:27 UTC. Off the top of the hour on purpose — GitHub asks

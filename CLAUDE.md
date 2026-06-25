@@ -3,17 +3,17 @@
 Follow the shared repository instructions in `AGENTS.md`.
 Also consult relevant detailed project standards in `docs/standards/`.
 
-## Workflow: PR Creation
+## Workflow: landing changes
 
-After completing any backlog item or fix: run the full test suite + typecheck, verify CI is green, then open a focused PR. Reconcile BACKLOG.md and memory/docs as part of the same flow.
+After completing any backlog item or fix: run `pnpm check:fast`, commit on the worktree feature branch, then merge it into `main` **locally** (in the primary checkout) and push — CI runs on that push. Reconcile BACKLOG.md and memory/docs as part of the same flow, before committing, so it all lands together.
 
 ## Git Safety
 
-Never delete branches/worktrees or run destructive DB/git commands without explicit confirmation. When merging stacked PRs, warn before deleting any branch so changes aren't lost. Always work from a worktree feature branch — never commit directly to `develop` (the default, integration branch) or `main` (production). Both are protected; code reaches them only through a PR, and `main` only via a deliberate `develop → main` promote (`/promote`).
+Never delete branches/worktrees or run destructive DB/git commands without explicit confirmation. Always work from a worktree feature branch cut from `main` — never commit directly on `main`. A feature branch reaches `main` through a **local** merge in the primary checkout (your review gate), then a push; CI runs on that push. `main` is protected against force-pushes and deletion (direct pushes are allowed, by design).
 
 ## Worktrees
 
-This project runs in git worktrees under `.claude/worktrees/`, not a single checkout — work committed there lives on a separate branch (cut from `develop`, the default) and does not touch the shared `develop`/`main` branches until a PR merges. Expect **multiple worktrees at once**: today usually one per Claude Code session, with the intended direction being branch-per-architecture lanes for running several sessions in parallel. Reason about branches, env files, and isolation with that in mind. The full branch/CI/release model is in [`docs/branching-and-releases.md`](docs/branching-and-releases.md). (Shell/OS specifics live in `AGENTS.md` → "Shell environment".)
+This project runs in git worktrees under `.claude/worktrees/`, not a single checkout — work committed there lives on a separate branch (cut from `main`, the default) and does not touch `main` until you merge it in **locally**. Because all worktrees share one git object store, that merge needs no fetch or remote round-trip. Expect **multiple worktrees at once**: today usually one per Claude Code session, with the intended direction being branch-per-architecture lanes for running several sessions in parallel. Reason about branches, env files, and isolation with that in mind. The full branch/CI model is in [`docs/branching-and-releases.md`](docs/branching-and-releases.md). (Shell/OS specifics live in `AGENTS.md` → "Shell environment".)
 
 ## Claude-specific context
 
@@ -30,10 +30,9 @@ Project-level slash commands are defined in `.claude/commands/`:
 | `/test`       | `pnpm test` — unit tests only (report-only)                                                                  |
 | `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                                            |
 | `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)                                     |
-| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, push, open a PR, watch CI                 |
-| `/promote`    | open the `develop → main` release PR, run the full gate (check + E2E), watch CI, hand the merge back         |
+| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, then hand off the local merge into `main` |
 
-Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` commits, pushes, and opens a PR into `develop` from a worktree feature branch (never `develop`/`main` directly); `/promote` opens the `develop → main` release PR and watches the full gate but never merges `main` itself — that stays a human decision.
+Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` validates and commits on a worktree feature branch (never on `main`), then hands you the local merge into `main` — it does not push or open PRs. Merging into `main` (your review gate) and the push that triggers CI and the Vercel deploy stay yours.
 
 ### Markdown tooling
 

@@ -7,6 +7,46 @@ this file is the deliberate workaround.)
 
 ## Open
 
+> **Priority focus — set 2026-06-25 (active job hunt, ~1–2 week window).** Shifted the
+> emphasis from infrastructure/tooling to the **demo surface a hiring manager actually
+> experiences in 60 seconds**: kill demo dead-ends → first impression → one memorable
+> feature. The infra-polish items still matter but drop to "Later" below. Full rationale
+> in memory (`project_job_hunt_priority_shift`). If week 2 runs long, ship the week-1
+> polish on its own — a clean demo beats a half-built feature.
+
+### Now — job-hunt focus (demo-first, ~2 weeks)
+
+1. **Kill the demo dead-ends** (fast, high honesty-per-hour)
+   - [ ] **`forgot-password` is a live stub** — `src/app/auth/forgot-password/page.tsx`
+         renders a bare placeholder yet is linked from the login screen
+         (`.../components/shared/forgot-password-link.tsx`). Build a minimal request-reset
+         form returning a generic "if an account exists, we've sent a link" confirmation
+         (no email provider needed for the demo). This **demonstrates ADR-006**
+         (prevent credential enumeration) in the product, not just the docs.
+   - [ ] **Stub/empty module READMEs (~12)** — empty (0 bytes) or literal
+         `# [Capability Name]` templates: auth `application/**` sub-layers,
+         `src/shared/{http,primitives,routing,time}`, `forms/notes`. Fill the meaningful
+         ones, delete the dead templates. (Surfaced by the 2026-06-25 docs-drift audit.)
+   - [ ] **Font experiment — finish or drop** — wire `doto`/`merienda`
+         (`src/ui/styles/fonts.ts`, `--font-experiment` CSS var) into the UI or delete the
+         exports + the var. Tracked scaffolding from the 2026-06-14 dead-code triage; stays
+         visible in `pnpm knip` until decided.
+2. **First impression** — the live link is what recruiters click first.
+   - [ ] Real landing page (`src/app/page.tsx`) explaining the project + a one-click
+         "Try the demo" login.
+   - [ ] Surface the `docs/diagrams/` architecture diagrams on the README (strong, and
+         currently buried).
+3. **One memorable feature — invoice status lifecycle** (the interview story).
+   - [ ] Status enum + guarded transitions (pending → paid → overdue/void), status badges,
+         a status filter on the invoices list, and tests. Domain-native (invoice
+         schema/DAL/list already exist), bounded to ~a week, whiteboard-able end to end.
+         No specific tech to show off (confirmed 2026-06-25) → build it the straightforward
+         server-action way matching the existing architecture.
+4. **(Optional, alongside) a11y + Lighthouse pass** — `cypress-axe` + `axe-core` are
+   already installed; run a real sweep, fix findings, write up before/after.
+
+### Later — lower priority during the job hunt (infra/tooling polish)
+
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
@@ -18,13 +58,6 @@ this file is the deliberate workaround.)
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
       Full context in memory (`project_forms_error_refactor`).
-- [ ] **Font experiment — finish or drop** — `doto` + `merienda` in `src/ui/styles/fonts.ts`
-      are loaded via `next/font/google` and a `--font-experiment` CSS variable is defined,
-      but the fonts are never applied to any element (the class silently falls back to
-      sans-serif). Decide: wire them in (apply `doto.variable`/`merienda.variable`) or delete
-      the exports + the CSS var. Left deliberately as tracked scaffolding (the only
-      intended-but-unbuilt code surfaced by the 2026-06-14 dead-code triage); both stay
-      visible in `pnpm knip` until decided.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
 - [ ] **TSConfig modernization for TypeScript 6.0** — TS **6.0.3** is already installed
@@ -35,11 +68,44 @@ this file is the deliberate workaround.)
 - [ ] **Integration lane in CI (optional)** — the e2e job's Postgres-service-container
       pattern (2026-06-23) could also run the integration vitest lane in CI; today only
       the DB-free unit lane runs there. Unscheduled.
+- [ ] **Issue tracking: GitHub Issues/Projects vs. BACKLOG.md** _(revisit Mon 2026-06-29)_ —
+      consider a **hybrid**, not a switch: keep `BACKLOG.md` as the worktree-friendly planning
+      doc the AI sessions drive, but file the _narratable_ units (e.g. the invoice-status
+      feature, the forgot-password fix) as GitHub Issues that PRs close (`Closes #N`), plus a
+      small Projects board. Rationale = portfolio signal: makes the repo _look_ as
+      professionally run as it already is. Not now — only worth it once the demo polish lands.
+      Curiosity-driven (2026-06-25 chat).
 
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Single-branch, local-first model (retired `develop`)** _(2026-06-25)_ — collapsed the two-tier
+      `develop → main` model back into a single `main` branch. `main` is the default again; feature work
+      happens in worktree branches and is **merged into `main` locally** (worktrees share one object
+      store — no remote round-trip, no PRs), then pushed. CI (`ci.yml`, `codeql.yml`) now triggers on
+      push to `main` only; the slow E2E runs on every `main` push as a safety net (no pre-merge gate —
+      `pnpm check:fast` is the local pre-push gate). Relaxed the `main` ruleset to allow direct pushes
+      (kept no-force-push + no-delete), deleted the `develop` ruleset, retired the `develop` branch, and
+      rewrote `/ship` (now hands off a local merge; `/promote` deleted). Docs reconciled
+      (`branching-and-releases.md`, the flow diagram, `lane-map.md`, CLAUDE/AGENTS). Rationale: the
+      remote-first PR flow created friction (stale local branches, GitHub as the orchestration point)
+      that blocked real use during the job hunt. Detail: memory `project_branch_model_migration`.
+- [x] **Docs-drift audit — remaining md files** _(2026-06-25)_ — drift-checked the ~53 prose
+      markdown files yesterday's sweep didn't touch (ADRs excluded) via 7 read-only audit lanes;
+      48 clean, **5 fixed**: `docs/knip.md` (`ignoreDependencies`), error-handling standard
+      (`normalizeUnknownError`), `src/shared/README.md` (real dir list),
+      `src/shared/core/config/README.md` (real env exports), `cypress/README.md` (now in CI / no
+      skips). Surfaced a separate gap — ~12 empty/template module READMEs — now tracked under "Now".
+- [x] **Docs-drift reconciliation sweep** _(2026-06-24, #97–#100 → develop, promoted #101)_ — the
+      first real **parallel-lane run**: four worktrees, each scoped to non-overlapping docs —
+      customers/banner (#97), invoices (#98), auth/users (#99), shared/cross-cutting (#100) — re-verified
+      each module's README/standards against the current code and corrected the drift (24 files,
+      +349/-249, docs-only). Promoted `develop → main` as a merge commit (#101): the first **clean**
+      promote after the #96 divergence heal — both file diff and commit list showed only the four real
+      docs commits. Validated the lane workflow end-to-end; the cross-module type-contract safeguards
+      weren't exercised (docs touch no types). Detail: memory `project_docs_consolidation`,
+      `project_branch_per_architecture_idea`.
 - [x] **Two-tier branch model: `develop` → `main`** _(2026-06-23)_ — reworked the git strategy for
       parallel multi-session work: `develop` is now the **default** branch (integration), `main` is
       promote-only (production). GitHub rulesets gate `develop` (`Lint & type-check`) and `main`

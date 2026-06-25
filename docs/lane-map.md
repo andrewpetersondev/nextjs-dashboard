@@ -57,7 +57,8 @@ refactors at once, and don't run a kernel refactor next to a module lane it will
 
 The realistic ceiling isn't the kernel or your tokens — it's **your steering bandwidth**. Two or three
 sessions you can actually review and unblock beats five you can't. Start with 2, grow toward ~4 once the
-rhythm is comfortable. Each lane is its own worktree + branch off `develop`, opening its own PR.
+rhythm is comfortable. Each lane is its own worktree branch off `main`, merged back into `main` locally
+when done.
 
 ## Today's BACKLOG, mapped onto lanes
 
@@ -81,10 +82,10 @@ is the one to keep solo: it lives in the shared kernel, so don't pair it with an
 ## The protocol
 
 1. Pick lanes with disjoint edit footprints (use the tables above).
-2. Give each its own worktree + branch off `develop`.
-3. Let each open its own PR into `develop`; the fast `Lint & type-check` gate runs per PR.
+2. Give each its own worktree branch off `main`.
+3. When a lane is green (`pnpm check:fast`), merge it into `main` locally; CI runs on the push.
 4. If a task must touch the **kernel / schema**, run it **solo** — pause module lanes it could break.
-5. Promote `develop → main` with `/promote` once the integrated set is coherent.
+5. Push `main` after each landed lane — Vercel builds production on every push to `main`.
 
 ## Keeping this honest
 
