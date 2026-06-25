@@ -21,17 +21,17 @@ This project runs in git worktrees under `.claude/worktrees/`, not a single chec
 
 Project-level slash commands are defined in `.claude/commands/`:
 
-| Command       | Runs                                                                                                 |
-| ------------- | ---------------------------------------------------------------------------------------------------- |
-| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)                        |
-| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, unit tests, e2e (report-only)                |
-| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)                     |
-| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue                         |
-| `/test`       | `pnpm test` — unit tests only (report-only)                                                          |
-| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                                    |
-| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)                             |
-| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, push, open a PR, watch CI         |
-| `/promote`    | open the `develop → main` release PR, run the full gate (check + E2E), watch CI, hand the merge back |
+| Command       | Runs                                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------ |
+| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)                                |
+| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, typegen, unit + integration tests, e2e (report-only) |
+| `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)                             |
+| `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue                                 |
+| `/test`       | `pnpm test` — unit tests only (report-only)                                                                  |
+| `/coverage`   | `pnpm test:coverage` — vitest unit coverage summary (report-only)                                            |
+| `/e2e`        | `pnpm cy:e2e` — Cypress e2e suite; needs `.env.test.local` (report-only)                                     |
+| `/ship`       | review, reconcile BACKLOG/docs, gate on `pnpm check:fast`, commit, push, open a PR, watch CI                 |
+| `/promote`    | open the `develop → main` release PR, run the full gate (check + E2E), watch CI, hand the merge back         |
 
 Report-only commands carry `disallowed-tools: Edit, Write, NotebookEdit`, so they structurally cannot modify files. `/fix` delegates writes to Biome, markdownlint-cli2, and dprint (it does not hand-edit). `/ship` commits, pushes, and opens a PR into `develop` from a worktree feature branch (never `develop`/`main` directly); `/promote` opens the `develop → main` release PR and watches the full gate but never merges `main` itself — that stays a human decision.
 

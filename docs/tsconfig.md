@@ -43,7 +43,7 @@ later layers win:
 | `next`                      | Next.js: DOM libs, `module: esnext`, `moduleResolution: bundler`, `jsx: preserve`, `plugins: [next]`, `noEmit` |
 
 On top of the presets, the root then sets `target: esnext` and `jsx: react-jsx`, declares the path aliases (`@/*`,
-`@cypress/*`, `@database/*`, `@devtools/*`) and explicit `types`, and relaxes three `strictest` flags
+`@cypress/*`, `@database/*`, `@devtools/*`, `@test-support/*`) and explicit `types`, and relaxes three `strictest` flags
 (`exactOptionalPropertyTypes`, `noPropertyAccessFromIndexSignature`, `noUnusedLocals`).
 
 For the exact contents of each preset, read them in `@tsconfig/bases` — a copy pasted here would drift the moment the
