@@ -101,10 +101,13 @@ export type LoginFormResult = FormResult<LoginField>;
 presentation/
 ├── authn/                          # Authentication UI
 │   ├── actions/                    # Server Actions
-│   │   ├── demo-user.action.ts     # Create demo user
+│   │   ├── demo-user.action.ts     # demoUserAction + demoAdminAction
 │   │   ├── login.action.ts         # User login
 │   │   ├── logout.action.ts        # User logout
 │   │   └── signup.action.ts        # User registration
+│   ├── adapters/                   # FormData → command adapters
+│   │   ├── to-login-command.adapter.ts
+│   │   └── to-signup-command.adapter.ts
 │   ├── components/                 # React components
 │   │   ├── cards/                  # Page-level components
 │   │   │   ├── login-card.tsx
@@ -114,32 +117,35 @@ presentation/
 │   │   │   ├── login-form.tsx
 │   │   │   ├── logout-form.tsx
 │   │   │   └── signup-form.tsx
-│   │   └── shared/                 # Reusable UI components
-│   │       ├── auth-actions-row.tsx
-│   │       ├── auth-form-demo-section.tsx
+│   │   └── shared/                 # Reusable UI (grouped by type)
 │   │       ├── auth-form-feedback.tsx
-│   │       ├── auth-form-social-section.tsx
-│   │       ├── auth-page-wrapper.tsx
 │   │       ├── forgot-password-link.tsx
-│   │       ├── form-row.wrapper.tsx
-│   │       ├── icons.tsx
 │   │       ├── remember-me-checkbox.tsx
-│   │       └── social-login-button.tsx
+│   │       ├── sections/
+│   │       │   ├── auth-form-demo-section.tsx
+│   │       │   └── auth-form-social-section.tsx
+│   │       ├── ui/
+│   │       │   ├── icons.tsx
+│   │       │   └── social-login-button.tsx
+│   │       └── wrappers/
+│   │           ├── auth-actions-row.tsx
+│   │           ├── auth-page-template.tsx
+│   │           └── form-row.wrapper.tsx
 │   ├── mappers/                    # Error mappers
-│   │   └── auth-form-error.mapper.ts
-│   └── transports/                 # Type definitions
+│   │   ├── map-generic-auth.error.ts
+│   │   ├── to-login-form-result.mapper.ts
+│   │   └── to-signup-form-result.mapper.ts
+│   └── transports/                 # Type definitions + form schemas
 │       ├── auth-action-props.transport.ts
+│       ├── login.form.schema.ts
 │       ├── login.transport.ts
+│       ├── signup.form.schema.ts
 │       └── signup.transport.ts
 │
-├── session/                        # Session UI + authorization guards
-│   ├── actions/
-│   │   └── verify-session-optimistic.action.ts
-│   ├── guards/                     # Server-action authorization
-│   │   └── session-access.guard.ts # requireSession() / requireAdmin()
-│   ├── components/                 # (Empty - future session UI)
-│   └── features/
-│       └── session-refresh.tsx
+├── session/                        # Session UI + authorization guards (flat files)
+│   ├── session-access.guard.ts     # requireSession() / requireAdmin()
+│   ├── session-refresh.tsx         # client session-refresh feature
+│   └── verify-session-optimistic.action.ts  # canonical optimistic session check
 │
 └── constants/                      # UI constants
     ├── auth-ui.constants.ts
@@ -234,7 +240,7 @@ Terminates current session.
 Server Actions are independently invocable RPC endpoints — a crafted request can
 reach an action without going through the page that hosts it — so the route
 checks in `proxy.ts` (middleware) are not sufficient on their own. The guards in
-[`session/guards/session-access.guard.ts`](session/guards/session-access.guard.ts)
+[`session/session-access.guard.ts`](session/session-access.guard.ts)
 make each sensitive action enforce its own authorization (defense in depth).
 
 | Guard              | Requires             | Redirects when denied                     | Used by                                                                   |
@@ -280,9 +286,9 @@ Page-level containers that wrap forms:
 ```typescript
 export function LoginCard() {
     return (
-        <AuthPageWrapper title = "Sign In" >
+        <AuthPageTemplate title = "Sign In" >
             <LoginForm / >
-            </AuthPageWrapper>
+            </AuthPageTemplate>
     );
 }
 ```
@@ -310,15 +316,15 @@ export function LoginForm() {
 
 #### **Shared Components** (`components/shared/`)
 
-Reusable UI elements:
+Reusable UI elements (grouped into `sections/`, `ui/`, and `wrappers/`):
 
-- **Layout**: `AuthPageWrapper`, `FormRowWrapper`
+- **Layout** (`wrappers/`): `AuthPageTemplate`, `AuthActionsRow`, `FormRowWrapper`
 - **Feedback**: `AuthFormFeedback` (displays errors)
 - **Controls**: `RememberMeCheckbox`
-- **Sections**: `AuthFormDemoSection`, `AuthFormSocialSection`
+- **Sections** (`sections/`): `AuthFormDemoSection`, `AuthFormSocialSection`
 - **Links**: `ForgotPasswordLink`
-- **Buttons**: `SocialLoginButton`
-- **Icons**: `Icons` (auth-related icons)
+- **Buttons** (`ui/`): `SocialLoginButton`
+- **Icons** (`ui/`): `Icons` (auth-related icons)
 
 ---
 
@@ -390,17 +396,18 @@ FormResult<LoginField> (presentation layer)
 User-friendly error message (UI)
 ```
 
-### **Error Mapper** (`mappers/auth-form-error.mapper.ts`)
+### **Error Mapper** (`mappers/to-login-form-result.mapper.ts`)
 
-Converts application errors to form errors:
+Converts application errors to form errors (the generic fallback lives in
+`map-generic-auth.error.ts`):
 
 ```typescript
 export function toLoginFormResult(
   error: AppError,
-  input: LoginRequestDto,
+  formData: LoginFormData,
 ): FormResult<never> {
-  // Map specific error codes to user-friendly messages
-  if (error.code === "invalid_credentials") {
+  // Map specific error keys to user-friendly messages
+  if (error.key === "invalid_credentials") {
     return {
       ok: false,
       error: {
@@ -652,14 +659,16 @@ Changes to Server Action signatures or form field names are breaking changes. Co
 
 ### **Suggested Enhancements**
 
-1. **Reorganize `components/shared/`**: Group by type (controls, feedback, layout, links, sections, ui)
-2. **Add client-side hooks**: `useAuthForm`, `useLoginState` for client components
-3. **Add session UI components**: Session status indicator, logout button
-4. **Add loading skeletons**: Better loading states for forms
-5. **Add animations**: Smooth transitions for error messages
-6. **Add toast notifications**: Success/error toasts instead of redirects
+> `components/shared/` has since been regrouped by type (`sections/`, `ui/`,
+> `wrappers/`), so that earlier suggestion is done.
+
+1. **Add client-side hooks**: `useAuthForm`, `useLoginState` for client components
+2. **Add session UI components**: Session status indicator
+3. **Add loading skeletons**: Better loading states for forms
+4. **Add animations**: Smooth transitions for error messages
+5. **Add toast notifications**: Success/error toasts instead of redirects
 
 ---
 
-**Last Updated**: 2026-06-09\
+**Last Updated**: 2026-06-24\
 **Maintainer**: Auth Module Team

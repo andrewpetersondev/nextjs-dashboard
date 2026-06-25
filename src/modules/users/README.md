@@ -127,7 +127,7 @@ users/
     ├── forms/                           #   create / edit / delete-button
     └── constants/user-form.constants.ts
 
-__tests__/                               # Vitest unit tests (service); see also the co-located schema/action tests
+__tests__/unit/                          # Vitest unit tests, centralized by layer (service / schema / actions)
 ```
 
 ---
@@ -263,18 +263,22 @@ For when something should be an `AppError`, see
 
 ## Testing
 
-This module **has tests** (Vitest) — the most-covered of the feature modules:
+This module **has tests** (Vitest) — the most-covered of the feature modules.
+They live under a centralized `__tests__/unit/` tree (mirroring the source
+layers), not co-located next to the source:
 
 - `__tests__/unit/application/services/user.service.test.ts` — `UserService` with a
   fully mocked `UserRepositoryContract`, `HashingService`, and logger; covers
   `readUserById` (found / null / repo-error) and `createUser` (ok / repo-error).
-- `domain/schemas/__tests__/user.schema.test.ts` — form-schema validation.
-- `presentation/actions/__tests__/create-user.action.test.ts` — the create action.
+- `__tests__/unit/domain/schemas/user.schema.test.ts` — form-schema validation.
+- `__tests__/unit/presentation/actions/create-user.action.test.ts` — the create action.
+- `__tests__/unit/presentation/actions/delete-user.action.test.ts` — the delete action,
+  including the success redirect, not-found, unexpected-error, and admin-authorization paths.
 
 Run them with `pnpm test` (see [testing.md](../../../docs/testing.md)).
 
 **Coverage gaps worth filling:** `updateUser` / `deleteUser` / `readFilteredUsers`
-in the service, the DAL functions, and the update/delete actions are not yet unit-tested.
+in the service, the DAL functions, and the **update** action are not yet unit-tested.
 
 ---
 
@@ -289,4 +293,4 @@ in the service, the DAL functions, and the update/delete actions are not yet uni
 
 ---
 
-**Last updated:** 2026-06-09
+**Last updated:** 2026-06-24
