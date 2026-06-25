@@ -2,11 +2,11 @@
 
 ## 1️⃣ Shared Core (Universal)
 
-- File: `src/shared/config/env-shared.ts`
+- File: `src/shared/core/config/shared/env-shared.ts`
 - Defines canonical env types & schemas (NODE\*ENV, `DATABASE_ENV`, etc.)
 - Provides fallbacks + normalization (toLower, cache)
 - Safe for use in both server and client contexts
-- Exports helper flags: `IS_DEV` / `IS_TEST` / `IS_PROD`
+- Exports runtime helper functions: `getDatabaseEnv()`, `isProd()`, `isTestDatabaseEnvironment()`
 
 ---
 
@@ -23,6 +23,6 @@
   stable code constants in
   `src/modules/auth/infrastructure/session/config/session-jwt.constants.ts`
 - Caches + freezes values for immutability
-- Exports both constants and a `getServerEnv()` helper
+- Exports the validated constants `DATABASE_URL`, `SESSION_SECRET`, and `AUTH_BCRYPT_SALT_ROUNDS`
 
 ---
