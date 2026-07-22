@@ -17,12 +17,7 @@ this file is the deliberate workaround.)
 ### Now — job-hunt focus (demo-first, ~2 weeks)
 
 1. **Kill the demo dead-ends** (fast, high honesty-per-hour)
-   - [ ] **`forgot-password` is a live stub** — `src/app/auth/forgot-password/page.tsx`
-         renders a bare placeholder yet is linked from the login screen
-         (`.../components/shared/forgot-password-link.tsx`). Build a minimal request-reset
-         form returning a generic "if an account exists, we've sent a link" confirmation
-         (no email provider needed for the demo). This **demonstrates ADR-006**
-         (prevent credential enumeration) in the product, not just the docs.
+   - [x] ~~`forgot-password` live stub~~ — done 2026-07-22, see Done below.
    - [ ] **Stub/empty module READMEs (~12)** — empty (0 bytes) or literal
          `# [Capability Name]` templates: auth `application/**` sub-layers,
          `src/shared/{http,primitives,routing,time}`, `forms/notes`. Fill the meaningful
@@ -80,6 +75,23 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Forgot-password request flow (ADR-006 in the product)** _(2026-07-22)_ — replaced the
+      live stub at `/auth/forgot-password` with a real request-reset form: email-only schema,
+      `requestPasswordResetAction` that after validation does **no user lookup and no branching
+      on account existence** (response identical by construction — the ADR-006 story), generic
+      "if an account exists…" confirmation plus an honest "Demo project: no reset email is
+      actually sent." caption. Route added to `ROUTES.auth` + `PUBLIC_ROUTES` (authenticated
+      users bounce to dashboard like login/signup). Deliberately out of scope: tokens, email
+      delivery, set-new-password page. Tests: 3 unit (incl. the identical-response ADR-006
+      lock) + 3 e2e (login-page link, confirmation swap, seeded-vs-unknown email parity).
+- [x] **Dependency catch-up + audit overrides** _(2026-07-22)_ — landed the 4 stale PRs: #107
+      weekly maintenance (next 16.2.10, biome 2.5.2) + #108 Actions bumps merged; #105 closed
+      (superseded by #107); #109 superseded by a local commit applying its 13 clean bumps while
+      **holding biome at 2.5.2** (2.5.3 panics on 8 form tsx files with exit 0 — silent lint
+      loss; memory `project_biome_nested_config`). Added audit overrides for 4 new highs:
+      brace-expansion ^5.0.7, js-yaml ^4.3.0, linkify-it ^5.0.2, sharp ^0.35.3 (next pins
+      ^0.34.5 — override until next bumps; prod build + native load verified). `pnpm audit`
+      clean, all Dependabot alerts closed.
 - [x] **Single-branch, local-first model (retired `develop`)** _(2026-06-25)_ — collapsed the two-tier
       `develop → main` model back into a single `main` branch. `main` is the default again; feature work
       happens in worktree branches and is **merged into `main` locally** (worktrees share one object

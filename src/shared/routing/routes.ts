@@ -12,6 +12,7 @@ const TRAILING_SLASH_REGEX: RegExp = /\/+$/;
 
 type RoutesShape = Readonly<{
 	auth: Readonly<{
+		forgotPassword: StaticPath;
 		login: StaticPath;
 		signup: StaticPath;
 	}>;
@@ -34,6 +35,7 @@ type RoutesShape = Readonly<{
 // biome-ignore lint/nursery/useExplicitType: TODO: HIGH PRIORITY REFACTOR FOR NEXT ROUTES
 export const ROUTES = {
 	auth: {
+		forgotPassword: "/auth/forgot-password",
 		login: "/auth/login",
 		signup: "/auth/signup",
 	},
@@ -61,6 +63,7 @@ const PROTECTED_PREFIX: StaticPath = ROUTES.dashboard.root;
 const ADMIN_PREFIX: StaticPath = ROUTES.dashboard.users;
 
 const PUBLIC_ROUTES: ReadonlySet<StaticPath> = new Set<StaticPath>([
+	ROUTES.auth.forgotPassword,
 	ROUTES.auth.login,
 	ROUTES.auth.signup,
 	ROUTES.root,
