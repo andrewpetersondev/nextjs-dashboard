@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import type { FormState } from "@/shared/forms/core/types/form-result.dto";
 import { FormAlertMolecule } from "@/ui/molecules/form-alert.molecule";
 
-interface AuthFormFeedbackProps<F extends string> {
+interface AuthFormFeedbackProps<F> {
 	readonly state: FormState<F>;
 }
 
@@ -11,7 +11,7 @@ interface AuthFormFeedbackProps<F extends string> {
  * Renders nothing at idle (`state === null`), otherwise a success or error
  * message from the FormResult.
  */
-export function AuthFormFeedback<F extends string>({
+export function AuthFormFeedback<F>({
 	state,
 }: AuthFormFeedbackProps<F>): JSX.Element | null {
 	if (state === null) {

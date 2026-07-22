@@ -15,6 +15,11 @@ export const COMMON_SEL = {
 export const AUTH_SEL = {
 	// Server-action feedback rendered by AuthFormFeedback (FormAlertMolecule).
 	authServerMessageError: '[data-cy="auth-server-message-error"]',
+	authServerMessageSuccess: '[data-cy="auth-server-message-success"]',
+	forgotPasswordDemoNote: '[data-cy="forgot-password-demo-note"]',
+	forgotPasswordEmail: '[data-cy="forgot-password-email-input"]',
+	forgotPasswordForm: '[data-cy="forgot-password-form"]',
+	forgotPasswordSubmit: '[data-cy="forgot-password-submit-button"]',
 	loginEmail: '[data-cy="login-email-input"]',
 	//  For a "pure" fundamental level, lean more heavily on Testing Library queries (which you already have installed).
 	//  Instead of cy.get('#email'), use cy.findByLabelText(/email/i). This makes tests less dependent on code structure

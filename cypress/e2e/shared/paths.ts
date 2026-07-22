@@ -8,6 +8,7 @@ export const BASE_URL = "/" as const;
 // BASE --> AUTH
 export const SIGNUP_PATH = "/auth/signup" as const;
 export const LOGIN_PATH = "/auth/login" as const;
+export const FORGOT_PASSWORD_PATH = "/auth/forgot-password" as const;
 
 // BASE --> DASHBOARD
 export const DASHBOARD_PATH = "/dashboard" as const;
