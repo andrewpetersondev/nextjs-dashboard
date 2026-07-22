@@ -16,11 +16,18 @@ onlyBuiltDependencies:
 overrides:
   esbuild: ^0.28.1
   vite: ^7.3.5
-  postcss: ^8.5.15
+  postcss: ^8.5.19
   # Force patched transitive deps of markdownlint-cli2 (dev-only quadratic-complexity DoS fixes).
-  # markdownlint-cli2@0.22.1 (latest) pins the vulnerable versions exactly, so an override is required.
-  # GHSA-h67p-54hq-rp68 (js-yaml >=4.2.0), GHSA-6v5v-wf23-fmfq (markdown-it >=14.2.0).
-  js-yaml: ^4.2.0
+  # GHSA-h67p-54hq-rp68 + GHSA-52cp-r559-cp3m (js-yaml >=4.3.0), GHSA-6v5v-wf23-fmfq
+  # (markdown-it >=14.2.0), GHSA-v245-v573-v5vm (linkify-it >=5.0.2).
+  js-yaml: ^4.3.0
   markdown-it: ^14.2.0
+  linkify-it: ^5.0.2
+  # GHSA-3jxr-9vmj-r5cp (brace-expansion DoS, patched 5.0.7): dev-only transitive via
+  # rimraf -> glob -> minimatch, which pulled 5.0.6.
+  brace-expansion: ^5.0.7
+  # GHSA-f88m-g3jw-g9cj (libvips CVEs inherited by sharp <0.35.0): next pins sharp ^0.34.5,
+  # so this override forces the patched line until next bumps. Verified via production build.
+  sharp: ^0.35.3
 
 sideEffectsCache: false
