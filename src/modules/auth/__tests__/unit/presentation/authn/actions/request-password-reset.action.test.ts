@@ -9,6 +9,12 @@ vi.mock("@/modules/auth/infrastructure/composition/auth.composition", () => ({
 	}),
 }));
 
+// validateForm's error path logs via the real LoggingClient, whose formatter
+// reads NEXT_PUBLIC_NODE_ENV (absent in the DB-free CI unit lane) — stub it.
+vi.mock("@/shared/telemetry/logging/infrastructure/logging.client", () => ({
+	logger: { error: vi.fn() },
+}));
+
 function formDataWithEmail(email: string): FormData {
 	const formData = new FormData();
 	formData.set("email", email);
