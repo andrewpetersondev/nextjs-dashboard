@@ -53,7 +53,7 @@ jobs:
       # 3. Install Node.js and cache the pnpm store so installs are faster.
       #    (pnpm must be set up BEFORE this step for the cache to work.)
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: ".nvmrc" # single source of truth for the Node version
           cache: pnpm
@@ -128,7 +128,7 @@ jobs:
         uses: pnpm/action-setup@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: ".nvmrc"
           cache: pnpm
@@ -136,7 +136,7 @@ jobs:
       # Cache the Cypress binary (~/.cache/Cypress). Restored BEFORE install so
       # the `cypress` postinstall finds it instead of re-downloading every run.
       - name: Cache Cypress binary
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
