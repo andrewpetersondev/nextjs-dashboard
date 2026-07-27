@@ -47,6 +47,16 @@ this file is the deliberate workaround.)
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
+- [ ] **Restore the `next` caret range** _(added 2026-07-27, weekly maintenance)_ — `next` is
+      temporarily pinned **exact** at `16.2.11` (the security patch) instead of `^16.2.11`, because
+      `16.2.12` was only 2 days old and the routine holds releases <3 days. Once `16.2.12`+ has aged,
+      restore `"next": "^16.2.x"` so Dependabot/caret updates work normally again.
+- [ ] **5 new `noUnnecessaryConditions` warnings** _(added 2026-07-27, weekly maintenance)_ — Biome
+      2.5.5 widened the rule and now flags redundant defensive guards on non-nullable params:
+      `invoice.service.ts:68`, `invoice.repository.ts:56`, and `if (!(db && id))` in the
+      delete/read/update invoice DALs. Warnings only (`check:fast` stays green). Deciding whether to
+      delete the guards is a real code change — they're runtime belt-and-braces against untyped
+      callers — so it was deliberately left out of the maintenance bump.
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
