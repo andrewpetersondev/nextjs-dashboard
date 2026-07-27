@@ -13,15 +13,12 @@ import {
  * so the result is always safe to freeze and log.
  */
 describe("deepFreeze", () => {
-	it.each([
-		42,
-		"x",
-		true,
-		null,
-		undefined,
-	])("returns primitive %p unchanged", (value) => {
-		expect(deepFreeze(value)).toBe(value);
-	});
+	it.each([42, "x", true, null, undefined])(
+		"returns primitive %p unchanged",
+		(value) => {
+			expect(deepFreeze(value)).toBe(value);
+		},
+	);
 
 	it("deep-freezes nested objects and returns the same reference", () => {
 		const obj = { a: 1, nested: { b: 2 } };

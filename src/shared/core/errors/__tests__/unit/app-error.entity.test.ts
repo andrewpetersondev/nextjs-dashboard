@@ -68,15 +68,12 @@ describe("AppError entity", () => {
 			expect(isAppError(makeConflict())).toBe(true);
 		});
 
-		it.each([
-			new Error("x"),
-			{ key: "conflict" },
-			null,
-			"conflict",
-			42,
-		])("is false for non-AppError value %p", (value) => {
-			expect(isAppError(value)).toBe(false);
-		});
+		it.each([new Error("x"), { key: "conflict" }, null, "conflict", 42])(
+			"is false for non-AppError value %p",
+			(value) => {
+				expect(isAppError(value)).toBe(false);
+			},
+		);
 	});
 
 	describe("isAppErrorDto", () => {
