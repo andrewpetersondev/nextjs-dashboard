@@ -30,21 +30,17 @@ describe("Result core", () => {
 			}
 		});
 
-		it.each([
-			0,
-			"",
-			null,
-			undefined,
-			false,
-			Number.NaN,
-		])("wraps falsy value %p without coercion", (value) => {
-			const result = Ok(value);
+		it.each([0, "", null, undefined, false, Number.NaN])(
+			"wraps falsy value %p without coercion",
+			(value) => {
+				const result = Ok(value);
 
-			expect(result.ok).toBe(true);
-			if (result.ok) {
-				expect(result.value).toBe(value);
-			}
-		});
+				expect(result.ok).toBe(true);
+				if (result.ok) {
+					expect(result.value).toBe(value);
+				}
+			},
+		);
 
 		it("returns a frozen object (immutable result)", () => {
 			expect(Object.isFrozen(Ok(1))).toBe(true);
