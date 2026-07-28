@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
 		authInterrupts: true,
 		//    ppr: "incremental",
 		typedEnv: true,
+		useTypeScriptCli: true, // TypeScript 7 no longer exposes the compiler API Next.js used
 	},
 	output: "standalone",
 	reactStrictMode: true,
