@@ -73,6 +73,8 @@ postgres-certs/
 *.js
 *.map
 *.d.ts
+# Hand-written ambient declarations (not build output)
+!cypress/node/types/*.d.ts
 vitest.config.d.ts
 cypress.config.d.ts
 drizzle.config.d.ts

@@ -47,10 +47,6 @@ this file is the deliberate workaround.)
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
-- [ ] **Restore the `next` caret range** _(added 2026-07-27, weekly maintenance)_ — `next` is
-      temporarily pinned **exact** at `16.2.11` (the security patch) instead of `^16.2.11`, because
-      `16.2.12` was only 2 days old and the routine holds releases <3 days. Once `16.2.12`+ has aged,
-      restore `"next": "^16.2.x"` so Dependabot/caret updates work normally again.
 - [ ] **5 new `noUnnecessaryConditions` warnings** _(added 2026-07-27, weekly maintenance)_ — Biome
       2.5.5 widened the rule and now flags redundant defensive guards on non-nullable params:
       `invoice.service.ts:68`, `invoice.repository.ts:56`, and `if (!(db && id))` in the
@@ -65,11 +61,6 @@ this file is the deliberate workaround.)
       Full context in memory (`project_forms_error_refactor`).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
-- [ ] **TSConfig modernization for TypeScript 6.0** — TS **6.0.3** is already installed
-      (`package.json` `^6.0.3`) and `pnpm typecheck` (`tsc -b`) is green, so the version bump
-      itself is done. Remaining: modernize `tsconfig.json` for v6 — adopt the new recommended
-      defaults, drop any now-deprecated options, and confirm nothing relied on removed
-      behavior. (Close this item if you consider the bump alone sufficient.)
 - [ ] **Integration lane in CI (optional)** — the e2e job's Postgres-service-container
       pattern (2026-06-23) could also run the integration vitest lane in CI; today only
       the DB-free unit lane runs there. Unscheduled.
@@ -84,6 +75,21 @@ this file is the deliberate workaround.)
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **TypeScript 7 upgrade** _(2026-07-28)_ — typescript `^6.0.3` → `^7.0.2` (native compiler)
+      on next 16.2.12 (16.2.11 crashes outright on TS7). tsconfig: dropped `baseUrl` +
+      `ignoreDeprecations` (removed in TS7). next.config: `experimental.useTypeScriptCli: true`
+      (TS7 drops the old compiler API). Cypress needed real work: bumped to `^15.19.0`
+      (adds TS7 spec preprocessing) but its bundled Babel fallback is packed broken, so
+      the npm `@cypress/webpack-batteries-included-preprocessor@^4.2.0` is wired explicitly in
+      `cypress.config.ts` with `@cypress/webpack-preprocessor@^7.1.1` (4.2.0's declared peer
+      `^6.0.4` is stale — 6.x lacks `getResolvedTypescriptVersion`). `cypress/tsconfig.json`
+      re-adds `baseUrl` locally (tsconfig-paths still needs it for aliases; that file is outside
+      the `tsc -b` graph so TS7 never sees it). Also restored the `next` caret (`^16.2.12`,
+      closing the 2026-07-27 backlog item) and closed the old "TSConfig modernization for TS 6.0"
+      item (superseded). Verified: check:fast, unit 289/289, e2e 35/35, production build.
+      This also lands the cypress part of Dependabot #113 early. Full recipe in memory
+      (`project_ts7_and_release_age_gotchas`).
 
 - [x] **Forgot-password request flow (ADR-006 in the product)** _(2026-07-22)_ — replaced the
       live stub at `/auth/forgot-password` with a real request-reset form: email-only schema,
