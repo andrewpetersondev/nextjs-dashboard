@@ -8,9 +8,6 @@ overrides:
   esbuild: ^0.28.1
   vite: ^7.3.5
   postcss: ^8.5.23
-  js-yaml: ^4.3.0
-  markdown-it: ^14.2.0
-  linkify-it: ^5.0.2
   brace-expansion: ^5.0.8
   sharp: ^0.35.3
 
@@ -3144,8 +3141,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@4.3.0:
-    resolution: {integrity: sha512-1td788aAnnZ5qs7V2QIRl1owjtYpbKt749Y3xauqQgwIIGF/xXWz1wMTEBx5O3LK3lXLVuqXPdPxj2BoFHaW9Q==}
+  js-yaml@5.2.2:
+    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
     hasBin: true
 
   jsbn@0.1.1:
@@ -7193,7 +7190,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@4.3.0:
+  js-yaml@5.2.2:
     dependencies:
       argparse: 2.0.1
 
@@ -7403,7 +7400,7 @@ snapshots:
   markdownlint-cli2@0.23.2(supports-color@8.1.1):
     dependencies:
       globby: 16.2.2
-      js-yaml: 4.3.0
+      js-yaml: 5.2.2
       jsonc-parser: 3.3.1
       jsonpointer: 5.0.1
       markdown-it: 14.3.0
