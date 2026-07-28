@@ -25,4 +25,14 @@ overrides:
   # so this override forces the patched line until next bumps. Verified via production build.
   sharp: ^0.35.3
 
+# Vetted peer combos that upstream ranges haven't caught up to (both at latest release):
+# - @cypress/webpack-batteries-included-preprocessor 4.2.0 declares peer ^6.0.4, but the e2e
+#   suite runs green against @cypress/webpack-preprocessor 7.x.
+# - tsconfck 3.1.6 (via vite-tsconfig-paths) declares peer typescript ^5, works with TS 7.
+# Re-check on major bumps of cypress preprocessors / typescript; drop entries once upstream widens.
+peerDependencyRules:
+  allowedVersions:
+    "@cypress/webpack-batteries-included-preprocessor>@cypress/webpack-preprocessor": "7"
+    "tsconfck>typescript": "7"
+
 sideEffectsCache: false
