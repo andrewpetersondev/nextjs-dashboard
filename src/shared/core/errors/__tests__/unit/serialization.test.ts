@@ -10,17 +10,12 @@ import { redactNonSerializable } from "@/shared/core/errors/utils/serialization"
  * descriptor so logging never throws.
  */
 describe("redactNonSerializable", () => {
-	it.each([
-		null,
-		undefined,
-		"text",
-		42,
-		0,
-		true,
-		false,
-	])("returns primitive %p unchanged", (value) => {
-		expect(redactNonSerializable(value)).toBe(value);
-	});
+	it.each([null, undefined, "text", 42, 0, true, false])(
+		"returns primitive %p unchanged",
+		(value) => {
+			expect(redactNonSerializable(value)).toBe(value);
+		},
+	);
 
 	it("stringifies bigint (JSON cannot represent it)", () => {
 		expect(redactNonSerializable(10n)).toBe("10");

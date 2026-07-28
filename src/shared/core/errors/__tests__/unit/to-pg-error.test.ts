@@ -87,12 +87,10 @@ describe("toPgError", () => {
 		expect(mapping.pgErrorMetadata.detail).toBe("connection refused");
 	});
 
-	it.each([
-		null,
-		undefined,
-		"raw string",
-		7,
-	])("falls back to unexpected for non-object input %p", (input) => {
-		expect(toPgError(input).appErrorKey).toBe(APP_ERROR_KEYS.unexpected);
-	});
+	it.each([null, undefined, "raw string", 7])(
+		"falls back to unexpected for non-object input %p",
+		(input) => {
+			expect(toPgError(input).appErrorKey).toBe(APP_ERROR_KEYS.unexpected);
+		},
+	);
 });

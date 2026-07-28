@@ -8,17 +8,17 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
  * Allowed values are exactly "pending" and "paid".
  */
 describe("validateInvoiceStatus", () => {
-	it.each([
-		"pending",
-		"paid",
-	] as const)("accepts the valid status %j", (status) => {
-		const result = validateInvoiceStatus(status);
+	it.each(["pending", "paid"] as const)(
+		"accepts the valid status %j",
+		(status) => {
+			const result = validateInvoiceStatus(status);
 
-		expect(result.ok).toBe(true);
-		if (result.ok) {
-			expect(result.value).toBe(status);
-		}
-	});
+			expect(result.ok).toBe(true);
+			if (result.ok) {
+				expect(result.value).toBe(status);
+			}
+		},
+	);
 
 	it("rejects an unknown status string with a validation AppError", () => {
 		const result = validateInvoiceStatus("cancelled");
