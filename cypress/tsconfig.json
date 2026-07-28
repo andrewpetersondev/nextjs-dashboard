@@ -4,6 +4,11 @@
 	"extends": ["../tsconfig.json"],
 	"compilerOptions": {
 		// Modules
+		// baseUrl was removed in TypeScript 7 and is gone from the root tsconfig,
+		// but Cypress's webpack preprocessor (tsconfig-paths) still requires it to
+		// activate the inherited `paths` aliases. This file is never typechecked by
+		// `tsc -b`, so TS7 does not reject it here; editors may flag it — ignore.
+		"baseUrl": "..",
 		"module": "esnext",
 		"moduleResolution": "bundler",
 		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"],
