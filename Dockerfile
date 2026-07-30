@@ -48,11 +48,8 @@ COPY . .
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_ENV=production
-ENV LOG_LEVEL=info
 ENV NEXT_PUBLIC_NODE_ENV=production
 ENV NEXT_PUBLIC_LOG_LEVEL=info
-ENV SESSION_ISSUER=my-app
-ENV SESSION_AUDIENCE=web
 ENV AUTH_BCRYPT_SALT_ROUNDS=12
 ENV SESSION_SECRET=build-time-placeholder-overridden-at-runtime
 ENV DATABASE_URL=postgresql://build:build@localhost:5432/build
