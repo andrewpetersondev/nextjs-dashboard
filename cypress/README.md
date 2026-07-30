@@ -134,8 +134,7 @@ cypress/
 │       ├── cleanup-e2e-users.task.ts  # db:cleanup (deletes e2e_* users)
 │       └── seed-database.task.ts      # db:seed → devtools databaseSeed()
 │
-├── tsconfig.json              # extends root; types: cypress, node, testing-library, axe
-└── biome.json                 # cypress-scoped lint (cy / Cypress as globals)
+└── tsconfig.json              # extends root; types: cypress, node, testing-library, axe
 ```
 
 ---

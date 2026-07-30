@@ -12,7 +12,7 @@ authentication, middleware-based route protection, database migrations/seeding, 
 ## Tech Stack
 
 - Next.js 16 (App Router, Server/Client Components)
-- React 19 + TypeScript 6 (strict)
+- React 19 + TypeScript 7 (strict)
 - Drizzle ORM (PostgreSQL)
 - Tailwind CSS v4
 - Cypress for E2E testing (with @testing-library/cypress and cypress-axe)
@@ -29,7 +29,7 @@ nextjs-dashboard/
 ├── database/               # Drizzle schema (source of truth)
 ├── docs/                   # Additional documentation and guides
 ├── drizzle/                # Generated SQL migrations, one set per env (dev/test/prod)
-├── devtools/               # cli, config, seed-support, tasks
+├── devtools/               # cli, config, db, seed, shared, users
 ├── public/                 # Static assets
 ├── src/                    # Application source
 │   ├── app/                # App router
