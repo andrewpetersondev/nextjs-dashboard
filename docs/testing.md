@@ -25,7 +25,7 @@ Config: [`vitest.config.ts`](../vitest.config.ts) · setup: [`vitest.setup.ts`](
 ```sh
 pnpm test             # unit lane, run once (no database needed)
 pnpm test:watch       # unit lane, re-run on change
-pnpm test:ui          # Vitest UI
+pnpm test:ui          # Vitest UI (unit lane — integration needs .env.test.local via test:integration)
 pnpm test:coverage    # unit lane once, with coverage (enforces the floors)
 pnpm test:integration # integration lane against the real test_db
 pnpm test:all         # unit + integration
