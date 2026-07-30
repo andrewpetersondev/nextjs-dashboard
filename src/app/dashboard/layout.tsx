@@ -1,6 +1,8 @@
 import type { JSX, ReactNode } from "react";
 import { logoutAction } from "@/modules/auth/presentation/authn/actions/logout.action";
 import { SessionRefresh } from "@/modules/auth/presentation/session/session-refresh";
+import { isBannerDismissed } from "@/modules/banner/infrastructure/banner-cookie";
+import { OneTimeBanner } from "@/modules/banner/presentation/one-time-banner";
 import { DashboardSidebar } from "@/shell/dashboard/components/dashboard-sidebar";
 
 const ROOT_LAYOUT_CLASS =
@@ -8,9 +10,11 @@ const ROOT_LAYOUT_CLASS =
 const SIDENAV_WRAPPER_CLASS = "w-full flex-none md:w-64";
 const MAIN_CONTENT_CLASS = "grow p-6 md:overflow-y-auto md:p-12";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
 	children,
-}: Readonly<{ children: ReactNode }>): JSX.Element {
+}: Readonly<{ children: ReactNode }>): Promise<JSX.Element> {
+	const bannerDismissed = await isBannerDismissed();
+
 	return (
 		<section aria-label="Dashboard Layout" className={ROOT_LAYOUT_CLASS}>
 			<SessionRefresh />
@@ -18,6 +22,7 @@ export default function DashboardLayout({
 				<DashboardSidebar logoutAction={logoutAction} />
 			</aside>
 			<main className={MAIN_CONTENT_CLASS} tabIndex={-1}>
+				{!bannerDismissed && <OneTimeBanner />}
 				{children}
 			</main>
 		</section>

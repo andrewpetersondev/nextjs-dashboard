@@ -1,8 +1,10 @@
 # Banner Module
 
-A small, self-contained feature: a **one-time dismissible banner**. Once a user
-dismisses it, it stays dismissed — the choice is stored in a cookie (180 days)
-so it survives reloads and sessions.
+A small, self-contained feature: a **one-time dismissible banner**, currently
+used as the portfolio-demo notice on dashboard pages ("you're browsing seeded
+demo data", with a link to the GitHub source). Once a user dismisses it, it
+stays dismissed — the choice is stored in a cookie (180 days) so it survives
+reloads and sessions.
 
 Unlike the other feature modules, banner is **not a data module**: it has no
 database table, no domain entity, and no `Result`/DTO machinery. Its "domain" is
@@ -15,13 +17,13 @@ a React component.
 
 ```text
 banner/
-├── domain/banner.constants.ts           # BANNER_DISMISSED_COOKIE ("banner_dismissed_v1"), max-age (180d)
+├── domain/banner.constants.ts           # BANNER_DISMISSED_COOKIE ("banner_dismissed_v2"), max-age (180d)
 ├── infrastructure/
 │   ├── banner-cookie.adapter.ts         # BannerCookieAdapter — dismiss / isDismissed / clear (over the shared cookie service)
 │   └── banner-cookie.ts                 # functional facade: isBannerDismissed(), dismissBanner()
 └── presentation/
     ├── one-time-banner.tsx              # <OneTimeBanner> client component (renders + Dismiss button)
-    └── actions/dismiss-banner.action.ts # dismissBannerAction() — sets the cookie, revalidates "/"
+    └── actions/dismiss-banner.action.ts # dismissBannerAction() — sets the cookie, revalidates the dashboard layout
 ```
 
 ---
@@ -37,10 +39,11 @@ User clicks Dismiss ─▶ dismissBannerAction()  ─▶ dismissBanner() sets co
 
 - **Gating is the caller's job.** `<OneTimeBanner>` always renders when mounted;
   the server code that includes it must check `isBannerDismissed()` first and skip
-  mounting it when the cookie is set. The one real caller is the root layout
-  (`app/layout.tsx`), which awaits `isBannerDismissed()` and renders
-  `{!dismissed && <OneTimeBanner/>}`. The component owns only the dismiss
-  interaction (optimistic `useState` + `useTransition`).
+  mounting it when the cookie is set. The one real caller is the dashboard layout
+  (`app/dashboard/layout.tsx`), which awaits `isBannerDismissed()` and renders
+  `{!bannerDismissed && <OneTimeBanner/>}` — so the banner greets signed-in
+  (demo) users, and the public landing/auth pages stay banner-free. The component
+  owns only the dismiss interaction (optimistic `useState` + `useTransition`).
 - **The adapter** (`BannerCookieAdapter`) wraps the shared cookie service
   (`createCookieService()` from `@/server/cookies/cookie.factory`) and centralizes
   the cookie options; `banner-cookie.ts` is a two-function facade so callers don't
@@ -52,10 +55,11 @@ User clicks Dismiss ─▶ dismissBannerAction()  ─▶ dismissBanner() sets co
 
 ### Versioned cookie = a re-show switch
 
-The cookie name carries a version suffix (`banner_dismissed_v1`). To show a _new_
-banner to everyone who already dismissed the old one, **bump the suffix** (e.g.
-`_v2`) — old cookies no longer match, so the banner reappears. The banner copy
-notes this too.
+The cookie name carries a version suffix (`banner_dismissed_v2`). To show a _new_
+banner to everyone who already dismissed the old one, **bump the suffix** — old
+cookies no longer match, so the banner reappears. (`_v1` → `_v2` happened when
+the copy changed from the self-describing placeholder to the portfolio-demo
+notice.)
 
 ### Cookie options (deliberate)
 
@@ -81,4 +85,4 @@ flags like this one.
 
 ---
 
-**Last updated:** 2026-06-24
+**Last updated:** 2026-07-30

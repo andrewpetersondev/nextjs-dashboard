@@ -22,18 +22,30 @@ this file is the deliberate workaround.)
          `# [Capability Name]` templates: auth `application/**` sub-layers,
          `src/shared/{http,primitives,routing,time}`, `forms/notes`. Fill the meaningful
          ones, delete the dead templates. (Surfaced by the 2026-06-25 docs-drift audit.)
-   - [ ] **Font experiment — finish or drop** — wire `doto`/`merienda`
-         (`src/ui/styles/fonts.ts`, `--font-experiment` CSS var) into the UI or delete the
-         exports + the var. Tracked scaffolding from the 2026-06-14 dead-code triage; stays
-         visible in `pnpm knip` until decided. _(Landing rewrite 2026-07-30 shrank the
-         surface: removed the two `page.tsx` usages and the broken `--font-eyegrab` global
-         `p` rule. Remaining: `--font-experiment` var + `middleware-card.tsx` + the fonts.ts
-         exports — and that middleware debug card, which shows a raw user id + font-test
-         lines on the dashboard, is itself a demo dead-end to fold into this decision.)_
+   - [x] ~~Font experiment + middleware debug card~~ — resolved "drop" 2026-07-30, see Done
+         (dead-ends round 2).
+   - [ ] **Template SVG residue in `public/`** — `next.svg`, `vercel.svg`, `file.svg`,
+         `globe.svg`, `window.svg` are unreferenced create-next-app leftovers (verified
+         zero refs 2026-07-30). One-minute deletion.
 2. **First impression** — the live link is what recruiters click first.
    - [x] ~~Real landing page~~ — done 2026-07-30, see Done below.
    - [ ] Surface the `docs/diagrams/` architecture diagrams on the README (strong, and
          currently buried).
+   - [ ] **OG/social-preview image** — the course `opengraph-image.png` was deleted with
+         the landing rewrite and nothing replaced it, so the live URL unfurls without a
+         card image exactly where it gets shared (LinkedIn/iMessage/Slack). A generated
+         `opengraph-image.tsx` via `ImageResponse` is low-effort and itself a nice
+         technical detail. _(Found in the 2026-07-30 interview-impact review.)_
+   - [ ] **Make the role-guarding claim demoable from the landing page** — the hero sells
+         "role-guarded user management", but the landing CTA creates a USER-role account
+         (no Users section in the sidebar); "Login as Demo Admin" exists only on the login
+         page. Consider a small secondary link under the CTA ("or explore as admin") so
+         the differentiator is one click from provable. _(Found in the 2026-07-30 review.)_
+   - [ ] **Auth pages wear the Tailwind Plus template logo off the tailwindcss.com CDN**
+         (`BRAND_LOGO_SRC` in `src/ui/brand/brand.constants.ts`) — recognizable template
+         residue, brand-inconsistent with the landing's Acme globe, and an external asset
+         dependency. Fold into the AcmeLogo brand-mark dedup item under Later (extend
+         `AcmeLogo`, then use it on both surfaces). _(Found in the 2026-07-30 review.)_
 3. **One memorable feature — invoice status lifecycle** (the interview story).
    - [ ] Status enum + guarded transitions (pending → paid → overdue/void), status badges,
          a status filter on the invoices list, and tests. Domain-native (invoice
@@ -45,7 +57,11 @@ this file is the deliberate workaround.)
    the landing smoke axe check is now **blocking** — `skipFailures` dropped. `signup.cy.ts`'s
    `checkA11y` still passes `skipFailures: true`, so auth-page violations only log; make it
    blocking as part of this pass. Also fold in: `DemoForm` errors now have `role="alert"`,
-   but the other form-error molecules haven't been audited for live regions.)_
+   but the other form-error molecules haven't been audited for live regions. Also fold in:
+   **nested `<main>` landmarks** — the dashboard layout's `<main>` wraps each page's own
+   `<main>` (every dashboard page does this), an invalid landmark structure; fix at the
+   layout level (`<main>` → `<div>`, or drop the per-page mains) and verify skip-link/
+   `tabIndex` focus targets and Cypress selectors together.)_
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
@@ -76,6 +92,9 @@ this file is the deliberate workaround.)
       because `src/ui/brand/acme-logo.tsx` hard-codes an `<H1>` (two H1s on the landing) and
       heavy container styling. Extend AcmeLogo with a heading-level/size prop so the brand
       mark has a single owner, then use it in `src/app/page.tsx`'s `LandingHeader`.
+      _(Scope grew 2026-07-30: also replace the auth pages' `BRAND_LOGO_SRC` — the Tailwind
+      Plus template mark hotlinked from the tailwindcss.com CDN — with the same AcmeLogo;
+      see the First-impression item under Now.)_
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
@@ -99,7 +118,25 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
-- [x] **Biome zero-warning sweep** _(2026-07-30)_ — cleared the whole `biome check` slate
+- [x] **Demo dead-ends round 2 (interview-impact review, tier 1)** _(2026-07-30)_ — walked
+      the 60-second recruiter path (landing → Try the demo → dashboard → invoices → login,
+      desktop + mobile, both schemes) and killed the three worst dead-ends it surfaced:
+      **(1) middleware debug card deleted** — the raw `User Id: <uuid> in experiment font`
+      block was the first thing on the dashboard after the landing CTA; with it went the
+      font experiment (resolved "drop": `doto`/`merienda` exports and `--font-experiment`
+      var deleted, `H6` commented out like H4/H5 — its only user was the card).
+      **(2) "Heads up" meta-banner repurposed** — now a portfolio-demo notice ("seeded demo
+      data — explore freely" + GitHub source link), moved from the root layout (every page,
+      incl. landing, where it ate the top quarter of a phone screen) into the dashboard
+      layout only; cookie bumped `banner_dismissed_v1` → `_v2` so prior dismissals don't
+      hide the new copy; dismiss action now revalidates the dashboard layout, not `/`.
+      **(3) dead OAuth buttons removed** — login/signup rendered `continue with
+      google/github` linking to `/api/auth/{google,github}`, which 404 (no such routes);
+      deleted `auth-form-social-section`, `social-login-button`, `icons.tsx`,
+      `AUTH_ENDPOINTS`/`OauthProvider`; divider reworded "or continue with" → "or use a
+      demo account". New `src/shared/routing/external-urls.ts` owns `GITHUB_REPO_URL`
+      (landing + banner). Auth-presentation + banner READMEs reconciled. Tier-2 findings
+      from the same review filed under Now/Later above. — cleared the whole `biome check` slate
       (8 warnings + 2 infos → 0): hoisted the prod-db guard-test regexes to module scope,
       exports-last reorder in `prod-db.guard.ts`, split `home.cy.ts` into two describes,
       dropped `?.` on the constructor-assigned `AppError.metadata` in `logging.client.ts`,

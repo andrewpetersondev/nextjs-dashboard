@@ -1,8 +1,6 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
-import { isBannerDismissed } from "@/modules/banner/infrastructure/banner-cookie";
-import { OneTimeBanner } from "@/modules/banner/presentation/one-time-banner";
 import { notoSans } from "@/ui/styles/fonts";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
@@ -16,19 +14,16 @@ export const metadata: Metadata = {
 	},
 };
 
-export default async function RootLayout({
+export default function RootLayout({
 	children,
 }: {
 	children: ReactNode;
-}): Promise<JSX.Element> {
-	const dismissed = await isBannerDismissed();
-
+}): JSX.Element {
 	return (
 		<html className="scheme-light-dark h-full" lang="en">
 			<body
 				className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
 			>
-				{!dismissed && <OneTimeBanner />}
 				{children}
 			</body>
 		</html>

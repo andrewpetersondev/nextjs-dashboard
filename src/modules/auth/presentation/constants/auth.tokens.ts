@@ -8,8 +8,8 @@ export const SIGNUP_HEADING = "Sign up for an account" as const;
 /** Heading for the login page. */
 export const LOGIN_HEADING = "Log in to your account" as const;
 
-/** Label for the divider in auth forms (e.g., between credentials and OAuth). */
-export const AUTH_DIVIDER_LABEL = "or continue with" as const;
+/** Label for the divider between the credentials form and the demo-account buttons. */
+export const AUTH_DIVIDER_LABEL = "or use a demo account" as const;
 
 /** Heading for the forgot-password page. */
 export const FORGOT_PASSWORD_HEADING = "Forgot your password?" as const;
