@@ -12,12 +12,6 @@ import process from "node:process";
  * unrecognized `DATABASE_ENV` is treated like production (fail closed).
  */
 
-/** Env var an operator must set to run a destructive task against production. */
-export const PROD_DB_CONFIRM_VAR = "CONFIRM_PROD_DB";
-
-/** Exact value required — near-misses (`y`, `true`, `1`, `YES`) are rejected. */
-export const PROD_DB_CONFIRM_VALUE = "yes";
-
 /** `DATABASE_ENV` values allowed to run destructive tasks without confirmation. */
 const NON_PROD_DATABASE_ENVS: readonly string[] = ["development", "test"];
 
@@ -25,6 +19,12 @@ interface DestructiveDbTaskEnv {
 	readonly CONFIRM_PROD_DB?: string | undefined;
 	readonly DATABASE_ENV?: string | undefined;
 }
+
+/** Env var an operator must set to run a destructive task against production. */
+export const PROD_DB_CONFIRM_VAR = "CONFIRM_PROD_DB";
+
+/** Exact value required — near-misses (`y`, `true`, `1`, `YES`) are rejected. */
+export const PROD_DB_CONFIRM_VALUE = "yes";
 
 /**
  * Pure decision: may a destructive DB task run under this environment?

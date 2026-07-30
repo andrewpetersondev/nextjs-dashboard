@@ -54,13 +54,6 @@ this file is the deliberate workaround.)
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
-- [ ] **6 `noUnnecessaryConditions` warnings** _(added 2026-07-27; re-inventoried 2026-07-30 —
-      the 3 invoice-DAL `if (!(db && id))` warnings stopped firing on Biome 2.5.6)_ — current set:
-      `invoice.service.ts:68`, `invoice.repository.ts:56`, `session-refresh.tsx:144` + `:147`
-      (the known 2.5.6 false-positive pair on refs), and `logging.client.ts:131` + `:137`.
-      Warnings only (`check:fast` stays green). Deciding whether to delete the service/repository
-      guards is a real code change — they're runtime belt-and-braces against untyped callers — so
-      deliberately not bundled into maintenance bumps.
 - [ ] **Rootfiles sweep — deferred judgment calls** _(added 2026-07-30, from the root-file
       audit)_ — items that need a decision, not mechanics: **security headers** (no CSP /
       X-Frame-Options / X-Content-Type-Options / Referrer-Policy anywhere; a real CSP needs
@@ -106,6 +99,15 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Biome zero-warning sweep** _(2026-07-30)_ — cleared the whole `biome check` slate
+      (8 warnings + 2 infos → 0): hoisted the prod-db guard-test regexes to module scope,
+      exports-last reorder in `prod-db.guard.ts`, split `home.cy.ts` into two describes,
+      dropped `?.` on the constructor-assigned `AppError.metadata` in `logging.client.ts`,
+      and **deleted the unreachable invoice input guards** (`createInvoice`'s `!dto`, repo
+      `create`'s `!input` — resolves the deferred "6 noUnnecessaryConditions" decision;
+      `update()` keeps its documented suppressed guard). The `session-refresh.tsx` ref pair
+      (known Biome 2.5.6 false positives) is suppressed in-code with reasoned
+      `biome-ignore` comments — delete them when a Biome bump reports them unused.
 - [x] **AI-config refactor — trust the built-ins** _(2026-07-30)_ — evaluated `.claude/`,
       the ignore files, and the instruction files against current Claude Code built-ins
       (verified against docs + changelog, v2.1.220). Deleted `.claudeignore` (no tool ever

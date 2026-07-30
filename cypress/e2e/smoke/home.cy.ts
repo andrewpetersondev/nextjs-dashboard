@@ -45,7 +45,9 @@ describe("Home smoke test", () => {
 			"be.visible",
 		);
 	});
+});
 
+describe("Home accessibility smoke test", () => {
 	it("injects axe and checks for accessibility violations", () => {
 		cy.visit(BASE_URL);
 
