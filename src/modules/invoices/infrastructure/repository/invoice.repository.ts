@@ -48,19 +48,10 @@ export class InvoiceRepository extends BaseRepository<
 	 * - generated values in the service layer (`InvoiceServiceEntity`).
 	 * @param input - Invoice creation data as InvoiceServiceEntity
 	 * @returns Promise resolving to created InvoiceDto returning to Service layer.
-	 * @throws AppError (code: "validation") for invalid input
 	 * @throws
 	 * - Error bubbles up through the Service Layer to the Actions layer.
 	 */
 	async create(input: InvoiceServiceEntity): Promise<InvoiceDto> {
-		if (!input || typeof input !== "object") {
-			throw makeAppError("validation", {
-				cause: "",
-				message: INVOICE_MSG.invalidInput,
-				metadata: {},
-			});
-		}
-
 		const createdEntity = await createInvoiceDal(this.db, input);
 
 		return entityToInvoiceDto(createdEntity);

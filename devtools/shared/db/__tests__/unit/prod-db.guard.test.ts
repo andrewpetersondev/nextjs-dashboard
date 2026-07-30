@@ -17,6 +17,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
  *  - the assert throws a message naming the task and the opt-in variable,
  *    and reads `process.env` when no env is injected.
  */
+
+// Kept as literals (not derived from the exported constants) so they pin the
+// operator-facing error text; top-level per lint/performance/useTopLevelRegex.
+const DATABASE_ENV_UNSET_REGEX = /DATABASE_ENV is unset/;
+const CONFIRM_PROD_DB_REGEX = /CONFIRM_PROD_DB=yes/;
+
 describe("isDestructiveDbTaskAllowed", () => {
 	it("allows development without confirmation", () => {
 		expect(isDestructiveDbTaskAllowed({ DATABASE_ENV: "development" })).toBe(
@@ -87,7 +93,7 @@ describe("assertDestructiveDbTaskAllowed", () => {
 
 	it("reports an unset DATABASE_ENV in the error message", () => {
 		expect(() => assertDestructiveDbTaskAllowed("db:seed", {})).toThrow(
-			/DATABASE_ENV is unset/,
+			DATABASE_ENV_UNSET_REGEX,
 		);
 	});
 
@@ -104,7 +110,7 @@ describe("assertDestructiveDbTaskAllowed", () => {
 		vi.stubEnv("DATABASE_ENV", "production");
 
 		expect(() => assertDestructiveDbTaskAllowed("db:reset")).toThrow(
-			/CONFIRM_PROD_DB=yes/,
+			CONFIRM_PROD_DB_REGEX,
 		);
 
 		vi.stubEnv(PROD_DB_CONFIRM_VAR, PROD_DB_CONFIRM_VALUE);

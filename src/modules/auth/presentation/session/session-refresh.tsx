@@ -141,9 +141,11 @@ function useSessionRefresh(): void {
 
 		return () => {
 			aborted = true;
+			// biome-ignore lint/suspicious/noUnnecessaryConditions: Biome 2.5.6 false positive on refs — .current is assigned a timer handle earlier in this effect
 			if (kickoffRef.current) {
 				clearTimeout(kickoffRef.current);
 			}
+			// biome-ignore lint/suspicious/noUnnecessaryConditions: Biome 2.5.6 false positive on refs — .current is assigned a timer handle earlier in this effect
 			if (intervalRef.current) {
 				clearInterval(intervalRef.current);
 			}

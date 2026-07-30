@@ -65,16 +65,6 @@ export class InvoiceService {
 	async createInvoice(
 		dto: InvoiceFormDto,
 	): Promise<Result<InvoiceDto, AppError>> {
-		if (!dto) {
-			return Err(
-				makeAppError("validation", {
-					cause: "",
-					message: INVOICE_MSG.invalidInput,
-					metadata: {},
-				}),
-			);
-		}
-
 		const transformedDtoResult = this.applyBusinessRules(dto);
 		if (!transformedDtoResult.ok) {
 			return Err(transformedDtoResult.error);

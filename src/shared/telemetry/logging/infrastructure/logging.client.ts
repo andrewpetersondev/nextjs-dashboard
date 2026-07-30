@@ -128,13 +128,13 @@ class LoggingClient extends BaseLogger implements LoggingClientContract {
 			error.key === "validation" || error.key === "missing_fields";
 
 		const fieldErrors = isValidation
-			? ((error.metadata as Record<string, unknown>)?.fieldErrors as
+			? ((error.metadata as Record<string, unknown>).fieldErrors as
 					| Record<string, readonly string[]>
 					| undefined)
 			: undefined;
 
 		const formErrors = isValidation
-			? ((error.metadata as Record<string, unknown>)?.formErrors as
+			? ((error.metadata as Record<string, unknown>).formErrors as
 					| readonly string[]
 					| undefined)
 			: undefined;
