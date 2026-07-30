@@ -19,7 +19,15 @@ const migrationScopeByEnv: Record<string, "dev" | "prod" | "test"> = {
 	test: "test",
 };
 
-const scope = migrationScopeByEnv[env] ?? "dev";
+// Fail fast on typos like DATABASE_ENV=prod: a silent fallback here would
+// apply the dev migration set against whatever DATABASE_URL is loaded.
+const scope: "dev" | "prod" | "test" | undefined = migrationScopeByEnv[env];
+
+if (!scope) {
+	throw new Error(
+		`Unrecognized DATABASE_ENV/NODE_ENV "${env}" — expected one of: ${Object.keys(migrationScopeByEnv).join(", ")}.`,
+	);
+}
 
 export default defineConfig({
 	casing: "snake_case",
