@@ -2,7 +2,6 @@
 
 /* Global custom variables */
 :root {
-	--font-eyegrab: "merienda", sans-serif;
 	color-scheme: light dark;
 }
 
@@ -54,8 +53,3 @@
 @custom-variant dark (
 	&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *)
 );
-
-p {
-	font-family: var(--font-eyegrab), sans-serif;
-	/*color: var(--color-text-primary);*/
-}

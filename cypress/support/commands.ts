@@ -94,7 +94,7 @@ Cypress.Commands.add("logoutViaForm", () => {
 				name: UI_MATCHERS_REGEX.signoutButton,
 			}).click();
 		}
-		cy.findByText(UI_MATCHERS_REGEX.welcomeHome, {
+		cy.findByText(UI_MATCHERS_REGEX.landingHeadline, {
 			timeout: TWENTY_SECONDS,
 		}).should("be.visible");
 	});

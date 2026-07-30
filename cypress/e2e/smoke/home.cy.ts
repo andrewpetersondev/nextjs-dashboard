@@ -1,18 +1,23 @@
-import { BASE_URL, LOGIN_PATH } from "@cypress/e2e/shared/paths";
+import {
+	BASE_URL,
+	DASHBOARD_PATH,
+	LOGIN_PATH,
+} from "@cypress/e2e/shared/paths";
 import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
 import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
+import { TWENTY_SECONDS } from "@cypress/e2e/shared/times";
 import { EXTERNAL_URLS } from "@cypress/e2e/shared/urls";
 
 describe("Home smoke test", () => {
 	it("loads homepage and navigates to login", () => {
 		cy.visit(BASE_URL);
 
-		// Assert welcome text and course link exist
-		cy.findByText(UI_MATCHERS_REGEX.welcomeHome).should("be.visible");
-		cy.get(AUTH_SEL.nextjsCourseLink).should(
+		// Assert landing headline and GitHub source link exist
+		cy.findByText(UI_MATCHERS_REGEX.landingHeadline).should("be.visible");
+		cy.get(AUTH_SEL.githubRepoLink).should(
 			"have.attr",
 			"href",
-			EXTERNAL_URLS.nextJsCourse,
+			EXTERNAL_URLS.githubRepo,
 		);
 
 		// Navigate to the login page via the login button
@@ -25,10 +30,27 @@ describe("Home smoke test", () => {
 		);
 	});
 
+	it("opens the dashboard via the one-click demo", () => {
+		cy.visit(BASE_URL);
+
+		cy.get(AUTH_SEL.landingDemoButton).click();
+
+		// Demo-user creation runs bcrypt + a DB transaction before redirecting,
+		// so wait with the suite's extended timeout (same as assertOnDashboard).
+		cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+			"include",
+			DASHBOARD_PATH,
+		);
+		cy.findByRole("heading", { name: UI_MATCHERS_REGEX.dashboardH1 }).should(
+			"be.visible",
+		);
+	});
+
 	it("injects axe and checks for accessibility violations", () => {
 		cy.visit(BASE_URL);
 
-		// Detailed accessibility check with violation logging
+		// Detailed accessibility check with violation logging.
+		// No skipFailures flag: critical/serious violations FAIL this spec.
 		cy.injectAxe();
 		cy.checkA11y(
 			undefined,
@@ -48,7 +70,6 @@ describe("Home smoke test", () => {
 					}
 				}
 			},
-			true,
 		);
 	});
 });
