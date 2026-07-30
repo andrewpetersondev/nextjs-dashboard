@@ -34,5 +34,3 @@ peerDependencyRules:
     "@napi-rs/wasm-runtime>@emnapi/core": "1"
     "@napi-rs/wasm-runtime>@emnapi/runtime": "1"
     "tsconfck>typescript": "7"
-
-sideEffectsCache: false

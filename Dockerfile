@@ -29,7 +29,7 @@ FROM base AS deps
 # Skip Cypress's large binary download — it's an e2e tool, never needed to
 # build or run the production server.
 ENV CYPRESS_INSTALL_BINARY=0
-# pnpm-workspace.yaml carries overrides + onlyBuiltDependencies, so it must be
+# pnpm-workspace.yaml carries overrides + allowBuilds, so it must be
 # present or --frozen-lockfile rejects the install as out of sync.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
