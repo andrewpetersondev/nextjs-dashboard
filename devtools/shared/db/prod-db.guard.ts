@@ -50,7 +50,14 @@ export function isDestructiveDbTaskAllowed(env: DestructiveDbTaskEnv): boolean {
  */
 export function assertDestructiveDbTaskAllowed(
 	taskLabel: string,
-	env: DestructiveDbTaskEnv = process.env,
+	// Read keys individually instead of assigning `process.env` wholesale:
+	// with `experimental.typedEnv`, ProcessEnv's declared keys come from the
+	// env files present, so in CI/Vercel (no env files) the whole-object
+	// assignment fails TS2559 despite compiling locally.
+	env: DestructiveDbTaskEnv = {
+		CONFIRM_PROD_DB: process.env[PROD_DB_CONFIRM_VAR],
+		DATABASE_ENV: process.env.DATABASE_ENV,
+	},
 ): void {
 	if (isDestructiveDbTaskAllowed(env)) {
 		return;
