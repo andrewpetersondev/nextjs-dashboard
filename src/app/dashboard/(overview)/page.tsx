@@ -13,7 +13,6 @@ import {
 import { normalizeUserRole } from "@/shared/policies/user-role/user-role.parser";
 import { formatCurrency } from "@/shared/primitives/money/convert";
 import { DashboardOverview } from "@/shell/dashboard/components/dashboard-overview";
-import { MiddlewareCard } from "@/shell/dashboard/components/middleware-card";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";
 
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
@@ -55,7 +54,6 @@ export default async function Page(): Promise<JSX.Element> {
 
 	const commonContent = (
 		<main>
-			<MiddlewareCard />
 			<DashboardOverview
 				dashboardCardData={dashboardData.cards}
 				latestInvoices={dashboardData.latestInvoices}

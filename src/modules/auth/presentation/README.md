@@ -122,11 +122,7 @@ presentation/
 │   │       ├── forgot-password-link.tsx
 │   │       ├── remember-me-checkbox.tsx
 │   │       ├── sections/
-│   │       │   ├── auth-form-demo-section.tsx
-│   │       │   └── auth-form-social-section.tsx
-│   │       ├── ui/
-│   │       │   ├── icons.tsx
-│   │       │   └── social-login-button.tsx
+│   │       │   └── auth-form-demo-section.tsx
 │   │       └── wrappers/
 │   │           ├── auth-actions-row.tsx
 │   │           ├── auth-page-template.tsx
@@ -316,15 +312,16 @@ export function LoginForm() {
 
 #### **Shared Components** (`components/shared/`)
 
-Reusable UI elements (grouped into `sections/`, `ui/`, and `wrappers/`):
+Reusable UI elements (grouped into `sections/` and `wrappers/`):
 
 - **Layout** (`wrappers/`): `AuthPageTemplate`, `AuthActionsRow`, `FormRowWrapper`
 - **Feedback**: `AuthFormFeedback` (displays errors)
 - **Controls**: `RememberMeCheckbox`
-- **Sections** (`sections/`): `AuthFormDemoSection`, `AuthFormSocialSection`
+- **Sections** (`sections/`): `AuthFormDemoSection`
 - **Links**: `ForgotPasswordLink`
-- **Buttons** (`ui/`): `SocialLoginButton`
-- **Icons** (`ui/`): `Icons` (auth-related icons)
+
+There is deliberately no OAuth/social login — the demo-account buttons are
+the only alternative to the credentials form.
 
 ---
 

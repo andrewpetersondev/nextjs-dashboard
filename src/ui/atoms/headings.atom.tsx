@@ -55,4 +55,4 @@ export const H2: HeadingComponent = createHeading("h2");
 export const H3: HeadingComponent = createHeading("h3");
 // export const H4: HeadingComponent = createHeading("h4");
 // export const H5: HeadingComponent = createHeading("h5");
-export const H6: HeadingComponent = createHeading("h6");
+// export const H6: HeadingComponent = createHeading("h6");

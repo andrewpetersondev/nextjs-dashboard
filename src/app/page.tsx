@@ -7,12 +7,12 @@ import Link from "next/link";
 import type { JSX } from "react";
 import { demoUserAction } from "@/modules/auth/presentation/authn/actions/demo-user.action";
 import { DemoForm } from "@/modules/auth/presentation/authn/components/forms/demo-form";
+import { GITHUB_REPO_URL } from "@/shared/routing/external-urls";
 import { ROUTES } from "@/shared/routing/routes";
 import { H1, H2, H3 } from "@/ui/atoms/headings.atom";
 import { tektur } from "@/ui/styles/fonts";
 import { cn } from "@/ui/utils/cn";
 
-const GITHUB_REPO_URL = "https://github.com/andrewpetersondev/nextjs-dashboard";
 const ARCHITECTURE_DOCS_URL = `${GITHUB_REPO_URL}/tree/main/docs/diagrams`;
 
 const FEATURE_MODULES = ["auth", "invoices", "customers", "users"] as const;

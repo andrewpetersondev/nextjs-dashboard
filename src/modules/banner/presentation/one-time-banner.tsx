@@ -2,6 +2,7 @@
 
 import { type JSX, useCallback, useState, useTransition } from "react";
 import { dismissBannerAction } from "@/modules/banner/presentation/actions/dismiss-banner.action";
+import { GITHUB_REPO_URL } from "@/shared/routing/external-urls";
 
 export function OneTimeBanner(): JSX.Element | null {
 	const [open, setOpen] = useState(true);
@@ -19,13 +20,20 @@ export function OneTimeBanner(): JSX.Element | null {
 	}
 
 	return (
-		<div className="rounded-md bg-bg-secondary p-4">
+		<div className="mb-6 rounded-md bg-bg-secondary p-4">
 			<div className="flex items-start justify-between gap-4">
 				<div>
-					<p className="font-medium text-text-primary">Heads up</p>
+					<p className="font-medium text-text-primary">Portfolio demo</p>
 					<p className="text-sm text-text-secondary">
-						This is a one-time banner. Dismiss it and it won’t come back (until
-						you bump the cookie version).
+						You&apos;re browsing seeded demo data — explore freely. Curious how
+						it&apos;s built?{" "}
+						<a
+							className="underline transition-colors hover:text-text-hover"
+							href={GITHUB_REPO_URL}
+						>
+							Read the source on GitHub
+						</a>
+						.
 					</p>
 				</div>
 

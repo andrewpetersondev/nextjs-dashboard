@@ -6,9 +6,6 @@
 }
 
 @theme {
-	/* === FONTS (experiment) === */
-	--font-experiment: "Doto", sans-serif;
-
 	/* === BASE COLORS === */
 	--color-text-primary: light-dark(
 		var(--color-gray-800),
