@@ -25,10 +25,13 @@ this file is the deliberate workaround.)
    - [ ] **Font experiment — finish or drop** — wire `doto`/`merienda`
          (`src/ui/styles/fonts.ts`, `--font-experiment` CSS var) into the UI or delete the
          exports + the var. Tracked scaffolding from the 2026-06-14 dead-code triage; stays
-         visible in `pnpm knip` until decided.
+         visible in `pnpm knip` until decided. _(Landing rewrite 2026-07-30 shrank the
+         surface: removed the two `page.tsx` usages and the broken `--font-eyegrab` global
+         `p` rule. Remaining: `--font-experiment` var + `middleware-card.tsx` + the fonts.ts
+         exports — and that middleware debug card, which shows a raw user id + font-test
+         lines on the dashboard, is itself a demo dead-end to fold into this decision.)_
 2. **First impression** — the live link is what recruiters click first.
-   - [ ] Real landing page (`src/app/page.tsx`) explaining the project + a one-click
-         "Try the demo" login.
+   - [x] ~~Real landing page~~ — done 2026-07-30, see Done below.
    - [ ] Surface the `docs/diagrams/` architecture diagrams on the README (strong, and
          currently buried).
 3. **One memorable feature — invoice status lifecycle** (the interview story).
@@ -38,7 +41,11 @@ this file is the deliberate workaround.)
          No specific tech to show off (confirmed 2026-06-25) → build it the straightforward
          server-action way matching the existing architecture.
 4. **(Optional, alongside) a11y + Lighthouse pass** — `cypress-axe` + `axe-core` are
-   already installed; run a real sweep, fix findings, write up before/after.
+   already installed; run a real sweep, fix findings, write up before/after. _(2026-07-30:
+   the landing smoke axe check is now **blocking** — `skipFailures` dropped. `signup.cy.ts`'s
+   `checkA11y` still passes `skipFailures: true`, so auth-page violations only log; make it
+   blocking as part of this pass. Also fold in: `DemoForm` errors now have `role="alert"`,
+   but the other form-error molecules haven't been audited for live regions.)_
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
@@ -71,6 +78,11 @@ this file is the deliberate workaround.)
       pipeline). Restoring a real tsc pass needs a typecheck-only tsconfig variant
       (paths without baseUrl) or a preprocessor that understands TS7 configs. Until
       then Cypress type errors surface in-editor and at spec webpack-compile time only.
+- [ ] **AcmeLogo brand-mark dedup** _(added 2026-07-30, from the landing-page review)_ —
+      the landing header hand-rolls the Acme mark (GlobeAltIcon + rotate + tektur wordmark)
+      because `src/ui/brand/acme-logo.tsx` hard-codes an `<H1>` (two H1s on the landing) and
+      heavy container styling. Extend AcmeLogo with a heading-level/size prop so the brand
+      mark has a single owner, then use it in `src/app/page.tsx`'s `LandingHeader`.
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
@@ -93,6 +105,28 @@ this file is the deliberate workaround.)
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Real landing page (first impression)** _(2026-07-30)_ — replaced the Next.js Learn
+      boilerplate `/` (course welcome, course link, course hero screenshots) with a real
+      portfolio landing: honest hero copy, one-click **Try the demo** (reuses
+      `demoUserAction` via `DemoForm`, which gained optional `className`/`size`/`variant`
+      pass-through), a pure-CSS architecture card (feature modules × layers, linking to
+      `docs/diagrams` on GitHub — zero-drift alternative to screenshots), an
+      engineering-highlights grid, and GitHub links. Root metadata de-boilerplated
+      (real description; `metadataBase` → the live Vercel URL). Removed the broken global
+      `p { font-family: var(--font-eyegrab) }` rule (merienda was never loaded under that
+      family name, so paragraphs app-wide silently fell back to system sans; body text now
+      actually renders Noto Sans). Deleted three unreferenced course assets
+      (`hero-desktop.png`, `hero-mobile.png`, `opengraph-image.png`). Cypress: smoke spec
+      rewritten (headline + GitHub-link assertions + a new landing→demo→dashboard test),
+      shared selectors/regex/urls updated, `logoutViaForm` re-anchored to the new headline.
+      A 14-finding adversarial review pass then hardened it: CTA + PostgreSQL-chip colors
+      re-pinned to WCAG-AA pairs (semantic active/hover tokens fail AA in dark), the landing
+      axe check made **blocking** (`skipFailures` dropped — it was silently advisory),
+      header/footer hoisted out of `<main>` for real landmark roles, `DemoForm` errors got
+      `role="alert"` + a `dataCy` prop decoupling test ids from a now-human aria-label,
+      the demo-redirect assertion got the suite's 20s timeout, and copy tightened to
+      "push to main" / "layering pattern" for literal accuracy.
 
 - [x] **TypeScript 7 upgrade** _(2026-07-28)_ — typescript `^6.0.3` → `^7.0.2` (native compiler)
       on next 16.2.12 (16.2.11 crashes outright on TS7). tsconfig: dropped `baseUrl` +

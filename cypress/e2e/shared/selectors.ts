@@ -20,13 +20,14 @@ export const AUTH_SEL = {
 	forgotPasswordEmail: '[data-cy="forgot-password-email-input"]',
 	forgotPasswordForm: '[data-cy="forgot-password-form"]',
 	forgotPasswordSubmit: '[data-cy="forgot-password-submit-button"]',
+	githubRepoLink: '[data-testid="github-repo-link"]',
+	landingDemoButton: '[data-cy="demo-user-button-try-demo"]',
 	loginEmail: '[data-cy="login-email-input"]',
 	//  For a "pure" fundamental level, lean more heavily on Testing Library queries (which you already have installed).
 	//  Instead of cy.get('#email'), use cy.findByLabelText(/email/i). This makes tests less dependent on code structure
 	//  and more on user experience.
 	loginPassword: '[data-cy="login-password-input"]',
 	loginSubmit: '[data-cy="login-submit-button"]',
-	nextjsCourseLink: '[data-testid="nextjs-course-link"]',
 	signupEmail: '[data-cy="signup-email-input"]',
 	signupPassword: '[data-cy="signup-password-input"]',
 	signupSubmit: '[data-cy="signup-submit-button"]',
