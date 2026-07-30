@@ -16,7 +16,7 @@ onlyBuiltDependencies:
 overrides:
   esbuild: ^0.28.1
   vite: ^7.3.5
-  postcss: ^8.5.23
+  postcss: ^8.5.24
   # GHSA-3jxr-9vmj-r5cp (brace-expansion DoS): dev-only transitive via
   # rimraf -> glob -> minimatch, which pulled 5.0.6. Re-patched in 5.0.8 (the 5.0.7
   # fix was incomplete — the advisory range now covers <=5.0.7).
