@@ -55,6 +55,8 @@ TableBody.displayName = "TableBody";
 
 /**
  * Table footer section.
+ *
+ * @public Unused today; kept to complete the table primitive set.
  */
 export function TableFooter({
 	className,
@@ -135,6 +137,8 @@ TableCell.displayName = "TableCell";
 
 /**
  * Table caption.
+ *
+ * @public Unused today; kept to complete the table primitive set.
  */
 export function TableCaption({
 	className,

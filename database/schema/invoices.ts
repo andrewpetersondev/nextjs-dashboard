@@ -20,6 +20,12 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 
+/**
+ * Postgres enum backing `invoices.status`. Drizzle needs the export for
+ * migration generation even though no TS file imports it directly.
+ *
+ * @public
+ */
 export const statusEnum = pgEnum("status", INVOICE_STATUSES);
 
 export const invoices = pgTable(
