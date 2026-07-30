@@ -55,8 +55,8 @@ The fastest path to a live URL. Steps marked 🔑 need your accounts.
 2. **Migrate + seed Neon from your machine** — put the Neon URL in
    `.env.production.local`, then:
    ```bash
-   pnpm db:migrate:prod   # apply schema
-   pnpm db:seed:prod      # demo data + logins (only seeds an empty DB)
+   pnpm db:migrate:prod                    # apply schema
+   CONFIRM_PROD_DB=yes pnpm db:seed:prod   # demo data + logins (only seeds an empty DB)
    ```
 3. **🔑 Vercel** — import the GitHub repo (Next.js is auto-detected). Add every
    variable from the table above under Project → Settings → Environment

@@ -84,7 +84,7 @@ nextjs-dashboard/
    - Production (ensure variables are set correctly)
      ```sh
      pnpm db:push:prod
-     pnpm db:seed:prod
+     CONFIRM_PROD_DB=yes pnpm db:seed:prod
      ```
 
 4. Start the app

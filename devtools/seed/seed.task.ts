@@ -12,9 +12,11 @@ import {
 	insertDemoCounters,
 } from "@devtools/seed/seed.queries";
 import { nodeDb } from "@devtools/shared/db/node-db";
+import { assertDestructiveDbTaskAllowed } from "@devtools/shared/db/prod-db.guard";
 
 /** Main seeding function */
 export async function databaseSeed(): Promise<void> {
+	assertDestructiveDbTaskAllowed("db:seed");
 	const proceed = await ensureResetOrEmpty();
 	if (!proceed) {
 		return;

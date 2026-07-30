@@ -114,7 +114,10 @@ export default defineConfig({
 						"**/*.js",
 						"**/*.mjs",
 					],
-					include: ["src/**/*.{test,spec}.{ts,tsx}"],
+					include: [
+						"devtools/**/*.{test,spec}.{ts,tsx}",
+						"src/**/*.{test,spec}.{ts,tsx}",
+					],
 					name: "unit",
 					setupFiles: ["./vitest.setup.ts"],
 				},

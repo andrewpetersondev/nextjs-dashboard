@@ -48,8 +48,11 @@ pnpm db:seed:test
 
 ```sh
 pnpm db:push:prod
-pnpm db:seed:prod
+CONFIRM_PROD_DB=yes pnpm db:seed:prod
 ```
+
+Destructive DB tasks (seed/reset) refuse to run against production without the explicit
+`CONFIRM_PROD_DB=yes` opt-in.
 
 ## 4. Start the App
 
