@@ -30,7 +30,7 @@ Run these steps in order. If a step's precondition fails, STOP and report — do
 5. **Commit.** Stage the change set (code + reconcile edits), then make one focused commit,
    conventional-commit style. Use `$ARGUMENTS` as the scope/summary when provided. End the message with:
 
-   `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`
+   `Co-Authored-By: Claude <noreply@anthropic.com>`
 
 6. **Hand off the local merge — do NOT merge into `main` yourself.** `main` is checked out in the
    primary checkout (your review gate); a worktree can't and shouldn't merge into it. Report that the

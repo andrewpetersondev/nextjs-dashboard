@@ -106,6 +106,24 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **AI-config refactor — trust the built-ins** _(2026-07-30)_ — evaluated `.claude/`,
+      the ignore files, and the instruction files against current Claude Code built-ins
+      (verified against docs + changelog, v2.1.220). Deleted `.claudeignore` (no tool ever
+      read it; Claude Code enforcement lives in `settings.json`); slimmed `.aiignore` to
+      paths that exist (it is JetBrains-only, and now says so). `settings.json`: fixed the
+      env-contract bug (broad `Read(**/.env.*)` also blocked the tracked
+      `.env.example.local`; the deny list now enumerates the real env filenames), dropped
+      the brittle `Bash(cat/grep/head/… .env*)` rules, build-output Read denies, and
+      phantom-path denies (vault/secrets/dumps/certs that never existed), and added
+      OS-level `sandbox.filesystem.denyRead` for the real env files (merges into the
+      app-managed Seatbelt sandbox; `sandbox.enabled: true` at project scope was tried
+      and reverted — it hot-loads into live sessions and broke tsx's IPC socket during
+      `check:fast`). CLAUDE.md cut roughly in half: the slash-command
+      table and memory section went (both auto-surfaced by the harness), the two
+      overlapping git-safety sections merged, Markdown-tooling rationale moved to
+      AGENTS.md. Micro: `ship.md` co-author line de-pinned from "Opus 4.8";
+      `clean-worktrees` dropped the vestigial `gh pr list` merged-PR check (the
+      local-first flow has no PRs).
 - [x] **Production guard for destructive DB tasks** _(2026-07-30)_ — `db:reset:prod` /
       `db:seed:prod` (and any `:dev` → `:prod` typo) could wipe/seed the production DB with
       one command. Added `devtools/shared/db/prod-db.guard.ts`: reset/seed now refuse to run
