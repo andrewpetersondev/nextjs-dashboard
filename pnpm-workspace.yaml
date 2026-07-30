@@ -24,10 +24,15 @@ overrides:
 # - @cypress/webpack-batteries-included-preprocessor 4.2.0 declares peer ^6.0.4, but the e2e
 #   suite runs green against @cypress/webpack-preprocessor 7.x.
 # - tsconfck 3.1.6 (via vite-tsconfig-paths) declares peer typescript ^5, works with TS 7.
+# - @napi-rs/wasm-runtime 1.2.x (optional wasm32-wasi fallback under knip's oxc bindings)
+#   declares peer @emnapi/core+runtime ^2.0.0-alpha.3, but only stable 1.x is published;
+#   knip runs on the native bindings, so the wasm fallback peers are inert here.
 # Re-check on major bumps of cypress preprocessors / typescript; drop entries once upstream widens.
 peerDependencyRules:
   allowedVersions:
     "@cypress/webpack-batteries-included-preprocessor>@cypress/webpack-preprocessor": "7"
+    "@napi-rs/wasm-runtime>@emnapi/core": "1"
+    "@napi-rs/wasm-runtime>@emnapi/runtime": "1"
     "tsconfck>typescript": "7"
 
 sideEffectsCache: false
