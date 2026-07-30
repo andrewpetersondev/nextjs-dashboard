@@ -1,6 +1,9 @@
-# === Shared ignore list — keep identical between .aiignore and .claudeignore (.gitignore syntax) ===
+# === JetBrains AI Assistant / Junie ignore list (.gitignore syntax) ===
+# Claude Code does not read this file — its access rules live in .claude/settings.json.
+# Keep the env/secret entries of the two files in sync.
 
-# Dependencies & build output
+# Build output & generated artifacts
+.next/
 out/
 build/
 dist/
@@ -8,7 +11,6 @@ dist/
 .cache/
 coverage/
 *.tsbuildinfo
-.npmrc
 
 # Cypress artifacts
 cypress/videos/
@@ -21,37 +23,13 @@ logs/
 tmp/
 temp/
 
-# Env / secrets
+# Env / secrets — .env.example.local is the tracked contract and stays readable
 .env*
 !.env.example.local
-.envrc
-.direnv/
-.vault/
-.vault-token
-vault/
-secrets/
-password.txt
-*.secret
 
 # Deploy
 .vercel/
 
-# Database data, dumps & backups
-pgdata/
-postgres-data/
-docker/postgres-data/
-db_dumps/
-dumps/
-backups/
-*.dump
-*.psql
-
-# Keys & certificates
-postgres-certs/
+# Stray keys
 *.pem
 *.key
-*.crt
-*.pfx
-*.p12
-*.p8
-*.der
