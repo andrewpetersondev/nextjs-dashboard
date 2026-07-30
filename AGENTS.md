@@ -42,6 +42,13 @@ the files you are touching.
 - Coverage (unit lane): `pnpm test:coverage`
 - E2E tests: `pnpm cy:e2e`
 
+## Markdown tooling
+
+Markdown is linted by markdownlint-cli2 (`.markdownlint-cli2.jsonc`) and formatted by dprint (`dprint.json`) —
+Biome's markdown support is still experimental, so it only owns JS/TS/JSON here. Formatting rules (whitespace,
+list/table layout, emphasis markers) are disabled in markdownlint and owned by dprint. Use `pnpm md:check` to
+verify and `pnpm md:fix` to auto-fix (markdownlint first, dprint last).
+
 ## Shell environment
 
 Development happens on macOS with `zsh`. Some GNU/Linux idioms are missing or behave differently — don't assume them:
@@ -58,4 +65,4 @@ Development happens on macOS with `zsh`. Some GNU/Linux idioms are missing or be
 - Do not read, print, or commit local environment files such as `.env*.local`.
 - Avoid sending generated artifacts, dependency folders, build output, logs, coverage, or database dumps to AI tools.
 - Treat `database/`, `drizzle/`, and `devtools/` as project code, not disposable generated output.
-- These rules are enforced for AI tools by `.aiignore` / `.claudeignore` (what gets indexed) and `.claude/settings.json` (Claude Code tool permissions). Keep all three in sync when adding new secret or artifact paths.
+- These rules are enforced in two places: `.claude/settings.json` (Claude Code permission + sandbox rules — the enforcement layer for Claude) and `.aiignore` (JetBrains AI Assistant / Junie indexing). Keep the env/secret entries of the two in sync when adding new secret paths. Claude Code reads neither ignore file — `.claudeignore` is not a supported mechanism and has been removed.
