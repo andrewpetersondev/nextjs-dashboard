@@ -34,7 +34,7 @@ the files you are touching.
 - Full validation: `pnpm check`
 - Repo validation: `pnpm check:repo`
 - Format check: `pnpm biome:format:check`
-- Lint/typecheck/typegen: `pnpm biome:lint`, `pnpm typecheck`, `pnpm next:typegen`
+- Lint/typegen/typecheck: `pnpm biome:lint`, `pnpm next:typegen`, `pnpm typecheck`
 - Markdown lint + format (markdownlint-cli2 + dprint): `pnpm md:check` (verify), `pnpm md:fix` (autofix)
 - Unit tests (no DB; runs anywhere): `pnpm test` (alias for `pnpm test:unit`)
 - Integration tests (needs the test database): `pnpm test:integration`
