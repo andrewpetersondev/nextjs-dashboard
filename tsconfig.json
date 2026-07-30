@@ -1,16 +1,19 @@
 // biome-ignore-all assist/source/useSortedKeys: order matters in tsconfig files
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
+	// Each base earns its keep (verified via `tsc --showConfig`): strictest =
+	// the strictness flags, node-ts = erasableSyntaxOnly/verbatimModuleSyntax,
+	// next = lib/module/moduleResolution/jsx plugin. recommended, node-lts, and
+	// node24 were dropped 2026-07-30 — every option they set was shadowed by a
+	// later base or a local override, so removal is a resolved-config no-op.
 	"extends": [
-		"@tsconfig/bases/recommended",
 		"@tsconfig/bases/strictest",
-		"@tsconfig/bases/node-lts",
 		"@tsconfig/bases/node-ts",
-		"@tsconfig/bases/node24",
 		"@tsconfig/bases/next"
 	],
 	"compilerOptions": {
 		// Type Checking Options
+		"forceConsistentCasingInFileNames": true, // TS default since 5.0; pinned when the recommended base was dropped
 		"exactOptionalPropertyTypes": false, // disabling from strictest base
 		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
 		"noUnusedLocals": false, // disabling from strictest base
@@ -24,8 +27,8 @@
 		},
 		// Language and Environment
 		"types": ["node", "react", "react-dom", "next", "pg"], // TypeScript v6 defaults to [] so I have to set it explicitly
-		"jsx": "react-jsx", // default setting from create next app
-		"target": "esnext" // if module is nodenext, then target must be esnext
+		"jsx": "react-jsx", // deliberate override of the next base's "preserve"; Next accepts both
+		"target": "esnext" // Next/SWC handles downleveling; keep source syntax modern
 	},
 	"include": [
 		"next-env.d.ts",
