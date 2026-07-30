@@ -47,12 +47,23 @@ this file is the deliberate workaround.)
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
-- [ ] **5 new `noUnnecessaryConditions` warnings** _(added 2026-07-27, weekly maintenance)_ — Biome
-      2.5.5 widened the rule and now flags redundant defensive guards on non-nullable params:
-      `invoice.service.ts:68`, `invoice.repository.ts:56`, and `if (!(db && id))` in the
-      delete/read/update invoice DALs. Warnings only (`check:fast` stays green). Deciding whether to
-      delete the guards is a real code change — they're runtime belt-and-braces against untyped
-      callers — so it was deliberately left out of the maintenance bump.
+- [ ] **6 `noUnnecessaryConditions` warnings** _(added 2026-07-27; re-inventoried 2026-07-30 —
+      the 3 invoice-DAL `if (!(db && id))` warnings stopped firing on Biome 2.5.6)_ — current set:
+      `invoice.service.ts:68`, `invoice.repository.ts:56`, `session-refresh.tsx:144` + `:147`
+      (the known 2.5.6 false-positive pair on refs), and `logging.client.ts:131` + `:137`.
+      Warnings only (`check:fast` stays green). Deciding whether to delete the service/repository
+      guards is a real code change — they're runtime belt-and-braces against untyped callers — so
+      deliberately not bundled into maintenance bumps.
+- [ ] **Rootfiles sweep — deferred judgment calls** _(added 2026-07-30, from the root-file
+      audit)_ — items that need a decision, not mechanics: **security headers** (no CSP /
+      X-Frame-Options / X-Content-Type-Options / Referrer-Policy anywhere; a real CSP needs
+      nonce work in Next — small project, good portfolio signal); **Cypress CI retries**
+      (0 today — honest but flake-fragile; decide before the suite grows); **five Biome rules
+      off with no rationale** (noUndeclaredDependencies, noUnresolvedImports,
+      useImportExtensions, noInferrableTypes, useConsistentArrayType — document why or
+      trial-enable one at a time); **interactive Cypress paths bypass the PORT guards**
+      (`cy:open` / `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
+      **knip css hint** (project globs don't follow `.css` imports).
 - [ ] **Cypress standalone typecheck lane** _(added 2026-07-30, rootfiles cleanup)_ — the
       `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
       `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
