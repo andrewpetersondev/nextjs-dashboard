@@ -112,7 +112,13 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       when `DATABASE_ENV` is `production` (missing/unrecognized fails closed) unless
       `CONFIRM_PROD_DB=yes` is set; blocked runs exit 1 via `runCli`. 17 unit tests (vitest
       unit lane now also picks up `devtools/**` tests); docs updated (drizzle, deployment,
-      getting-started, scripts guide, README).
+      getting-started, scripts guide, README). _Follow-up fix (same day): the guard's
+      `env = process.env` default failed TS2559 in CI/Vercel only — `experimental.typedEnv`
+      derives ProcessEnv's keys from the env files present, and CI has none — the first real
+      cross-lane **semantic** merge conflict (both lanes were green on their own bases; git
+      merged cleanly; the type contract broke). Fixed by reading the two keys individually,
+      matching `env-access.utils.ts`. Lane-map lesson: run `check:fast` on the merged tree
+      before pushing, not just on the branch._
 - [x] **Real landing page (first impression)** _(2026-07-30)_ — replaced the Next.js Learn
       boilerplate `/` (course welcome, course link, course hero screenshots) with a real
       portfolio landing: honest hero copy, one-click **Try the demo** (reuses
