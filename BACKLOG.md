@@ -106,6 +106,13 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Production guard for destructive DB tasks** _(2026-07-30)_ — `db:reset:prod` /
+      `db:seed:prod` (and any `:dev` → `:prod` typo) could wipe/seed the production DB with
+      one command. Added `devtools/shared/db/prod-db.guard.ts`: reset/seed now refuse to run
+      when `DATABASE_ENV` is `production` (missing/unrecognized fails closed) unless
+      `CONFIRM_PROD_DB=yes` is set; blocked runs exit 1 via `runCli`. 17 unit tests (vitest
+      unit lane now also picks up `devtools/**` tests); docs updated (drizzle, deployment,
+      getting-started, scripts guide, README).
 - [x] **Real landing page (first impression)** _(2026-07-30)_ — replaced the Next.js Learn
       boilerplate `/` (course welcome, course link, course hero screenshots) with a real
       portfolio landing: honest hero copy, one-click **Try the demo** (reuses

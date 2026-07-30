@@ -26,7 +26,7 @@ pnpm db:push:prod   # production
 ```sh
 pnpm db:seed:dev
 pnpm db:seed:test
-pnpm db:seed:prod
+CONFIRM_PROD_DB=yes pnpm db:seed:prod
 ```
 
 **Reset database (destructive):**
@@ -34,8 +34,12 @@ pnpm db:seed:prod
 ```sh
 pnpm db:reset:dev
 pnpm db:reset:test
-pnpm db:reset:prod
+CONFIRM_PROD_DB=yes pnpm db:reset:prod
 ```
+
+Seed and reset refuse to run when `DATABASE_ENV` is `production` (or missing/unrecognized —
+treated as production) unless `CONFIRM_PROD_DB=yes` is set. This guards against a `:dev` →
+`:prod` typo wiping the production database (`devtools/shared/db/prod-db.guard.ts`).
 
 **Drizzle Studio:**
 

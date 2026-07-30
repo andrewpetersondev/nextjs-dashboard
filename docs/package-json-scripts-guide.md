@@ -82,10 +82,10 @@ Migrations, seeding, and resets per environment.
 - `pnpm db:push:prod` — generate and apply migrations (production).
 - `pnpm db:seed:dev` — seed the development database.
 - `pnpm db:seed:test` — seed the test database.
-- `pnpm db:seed:prod` — seed the production database.
+- `pnpm db:seed:prod` — seed the production database (requires `CONFIRM_PROD_DB=yes`).
 - `pnpm db:reset:dev` — drop, recreate, and seed the development database.
 - `pnpm db:reset:test` — drop, recreate, and seed the test database.
-- `pnpm db:reset:prod` — drop, recreate, and seed the production database.
+- `pnpm db:reset:prod` — drop, recreate, and seed the production database (requires `CONFIRM_PROD_DB=yes`).
 - `pnpm db:studio:dev` — open Drizzle Studio against the development database.
 - `pnpm db:studio:test` — open Drizzle Studio against the test database.
 - `pnpm db:drift` — assert the dev/test/prod migration sets describe the same schema (the CI drift gate; no database needed).
