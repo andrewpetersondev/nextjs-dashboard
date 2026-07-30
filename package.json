@@ -127,7 +127,7 @@
 		"test:all": "pnpm test:unit && pnpm test:integration",
 		"test:coverage": "vitest run --project unit --coverage",
 		"test:integration": "pnpm env:test vitest run --project integration",
-		"test:ui": "vitest --ui",
+		"test:ui": "vitest --ui --project unit",
 		"test:unit": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
 		"typecheck": "tsc -b tsconfig.json"

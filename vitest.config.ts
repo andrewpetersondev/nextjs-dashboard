@@ -35,8 +35,6 @@ const unitEnv = {
 	AUTH_BCRYPT_SALT_ROUNDS: "10",
 	DATABASE_URL: "postgres://test:test@localhost:5432/unit_no_db",
 	NODE_ENV: "test",
-	SESSION_AUDIENCE: "web",
-	SESSION_ISSUER: "my-app",
 	SESSION_SECRET: "unit-test-session-secret-not-a-real-secret",
 	/**
 	 * Pin the unit lane to UTC so date logic is deterministic everywhere.
@@ -92,8 +90,6 @@ export default defineConfig({
 			},
 		},
 
-		globals: true,
-
 		/**
 		 * Two lanes, separated by directory:
 		 *
@@ -124,9 +120,12 @@ export default defineConfig({
 				test: {
 					// No dummy env here: integration runs via `pnpm test:integration`,
 					// which loads `.env.test.local` (real DATABASE_URL, SESSION_SECRET,
-					// …) before Vitest starts. The real values must win.
+					// …) before Vitest starts. The real values must win. TZ is the one
+					// exception — pinned like the unit lane so date logic never depends
+					// on the runner's zone.
 					env: {
 						NODE_ENV: "test",
+						TZ: "UTC",
 					},
 					environment: "node",
 					include: ["src/**/__tests__/integration/**/*.{test,spec}.{ts,tsx}"],

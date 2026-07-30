@@ -120,7 +120,7 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm test:integration` — run the integration lane against the real `test_db` (loads `.env.test.local` via `env:test`).
 - `pnpm test:all` — run the unit and integration lanes together.
 - `pnpm test:coverage` — run the unit lane with coverage (enforces the floors in `vitest.config.ts`). No test env needed.
-- `pnpm test:ui` — open the Vitest UI.
+- `pnpm test:ui` — open the Vitest UI (unit lane only; the integration lane needs `.env.test.local` loaded, so run it via `test:integration`).
 - `pnpm test:watch` — run the unit lane in watch mode.
 
 The unit lane is database-free: it runs against a schema-valid dummy env baked into `vitest.config.ts`, so it needs
