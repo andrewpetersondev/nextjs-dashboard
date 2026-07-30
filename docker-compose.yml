@@ -14,9 +14,6 @@ x-app-env: &app-env
   DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app_password}@db:5432/${POSTGRES_DB:-nextjs_dashboard}
   SESSION_SECRET: ${SESSION_SECRET:-local-demo-insecure-secret-change-me-0123456789abcdef}
   AUTH_BCRYPT_SALT_ROUNDS: "12"
-  SESSION_ISSUER: my-app
-  SESSION_AUDIENCE: web
-  LOG_LEVEL: info
   NEXT_PUBLIC_NODE_ENV: production
   NEXT_PUBLIC_LOG_LEVEL: info
 
