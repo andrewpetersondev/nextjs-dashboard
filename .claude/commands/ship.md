@@ -22,7 +22,7 @@ Run these steps in order. If a step's precondition fails, STOP and report — do
    `BACKLOG.md` item, mark it done; update `memory/` or `docs/` only if project state actually moved.
    Keep edits small and factual. If nothing needs reconciling, say so and move on — don't invent entries.
 
-4. **Validate (hard gate).** Run `pnpm check:fast` (Biome + Markdown + typecheck + typegen + drift) —
+4. **Validate (hard gate).** Run `pnpm check:fast` (Biome + Markdown + typegen + typecheck + drift) —
    this also covers the reconcile edits from step 3. If anything fails, STOP, report failures with
    `file:line`, and do not commit. This local gate stands in for pre-merge CI, so it must be green before
    you hand off — it's what keeps the `main` push from going red.

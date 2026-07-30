@@ -241,17 +241,22 @@ fast and loud instead of mid-suite.
 
 **Commands** (all load `.env.test.local` automatically):
 
-| Script                   | What it does                                                       |
-| ------------------------ | ------------------------------------------------------------------ |
-| `pnpm cy:e2e`            | clean, boot the test server, run **all** specs headless, tear down |
-| `pnpm cy:open`           | same, but opens the interactive Cypress runner                     |
-| `pnpm cy:run`            | run specs against an **already-running** server                    |
-| `pnpm cy:server`         | boot only the Next.js test server                                  |
-| `pnpm typecheck:cypress` | type-check the Cypress project on its own                          |
+| Script           | What it does                                                       |
+| ---------------- | ------------------------------------------------------------------ |
+| `pnpm cy:e2e`    | clean, boot the test server, run **all** specs headless, tear down |
+| `pnpm cy:open`   | same, but opens the interactive Cypress runner                     |
+| `pnpm cy:run`    | run specs against an **already-running** server                    |
+| `pnpm cy:server` | boot only the Next.js test server                                  |
 
 `pnpm cy:e2e` uses `start-server-and-test` to boot `next dev` (test env), wait for
 the port, run the suite, then kill the server — so it's the one command you need
 for a full local run.
+
+There is intentionally no standalone `tsc` pass for the Cypress project: TS7
+rejects the `baseUrl` option that `cypress/tsconfig.json` deliberately keeps for
+the webpack preprocessor's tsconfig-paths, so type errors surface in the editor
+and at spec compile time instead (see the comment in `cypress/tsconfig.json`,
+and BACKLOG "Cypress standalone typecheck lane").
 
 ---
 

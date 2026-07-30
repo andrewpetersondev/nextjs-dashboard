@@ -18,10 +18,8 @@ Static analysis and formatting.
 - `pnpm biome:lint` — run Biome checks (lint + format).
 - `pnpm biome:lint:fix` — run Biome checks and apply fixes.
 - `pnpm biome:summary` — print a compact check report.
-- `pnpm next:typegen` — generate Next.js types and run TypeScript type checking (no emit).
-- `pnpm typecheck` — run TypeScript type checking only.
-- `pnpm typecheck:app` — type-check the app project only (no emit).
-- `pnpm typecheck:cypress` — type-check the Cypress project only (no emit).
+- `pnpm next:typegen` — generate Next.js route types (run before `typecheck` so it validates against fresh output).
+- `pnpm typecheck` — run TypeScript type checking (no emit).
 
 > Biome owns JS/TS/JSON here. Markdown is handled separately — see below.
 
@@ -114,8 +112,8 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
 - `pnpm knip` — find unused exports, files, and dependencies.
-- `pnpm check` — run Biome lint, Markdown check, typecheck, typegen, unit + integration tests, and E2E.
-- `pnpm check:fast` — run Biome lint, Markdown check, typecheck, typegen, and the migration-drift gate (no tests/E2E).
+- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, unit + integration tests, and E2E.
+- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the migration-drift gate (no tests/E2E).
 - `pnpm check:repo` — run full `check` plus knip.
 - `pnpm test` — run the unit lane (alias for `test:unit`; `vitest run --project unit`). DB-free; no test env needed.
 - `pnpm test:unit` — run the unit lane once (pure/mocked, no database).

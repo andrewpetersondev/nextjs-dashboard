@@ -23,8 +23,8 @@ Project-level slash commands are defined in `.claude/commands/`:
 
 | Command       | Runs                                                                                                         |
 | ------------- | ------------------------------------------------------------------------------------------------------------ |
-| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typecheck + typegen (report-only)                                |
-| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typecheck, typegen, unit + integration tests, e2e (report-only) |
+| `/check`      | `pnpm check:fast` — Biome + Markdown lint + typegen + typecheck (report-only)                                |
+| `/check-full` | `pnpm check` — full suite: Biome + Markdown, typegen, typecheck, unit + integration tests, e2e (report-only) |
 | `/lint`       | `pnpm biome:lint + biome:format:check + md:lint + md:format:check` (report-only)                             |
 | `/fix`        | auto-fix Biome (`biome:lint:fix`) + Markdown (`md:fix`), then report residue                                 |
 | `/test`       | `pnpm test` — unit tests only (report-only)                                                                  |

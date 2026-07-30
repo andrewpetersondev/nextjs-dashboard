@@ -1,5 +1,5 @@
 ---
-description: Fast validation — lint + typecheck + typegen (report-only)
+description: Fast validation — lint + typegen + typecheck (report-only)
 allowed-tools: Bash(pnpm check:fast)
 disallowed-tools: Edit, Write, NotebookEdit
 ---

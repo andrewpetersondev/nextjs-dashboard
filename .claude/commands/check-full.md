@@ -1,5 +1,5 @@
 ---
-description: Full validation — lint + typecheck + typegen + unit + e2e (report-only)
+description: Full validation — lint + typegen + typecheck + unit + e2e (report-only)
 allowed-tools: Bash(pnpm check)
 disallowed-tools: Edit, Write, NotebookEdit
 ---

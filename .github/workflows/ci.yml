@@ -5,7 +5,7 @@
 # are no PRs — CI runs on every push to `main` as the safety net.
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
-#     type-check + Next.js typegen) plus the migration-drift gate and the DB-free
+#     Next.js typegen + type-check) plus the migration-drift gate and the DB-free
 #     unit lane with coverage thresholds (~1 min).
 #   • e2e — the slow Cypress end-to-end suite against a real `next dev` server
 #     backed by an ephemeral Postgres service container (recreates the
@@ -71,13 +71,13 @@ jobs:
       - name: Markdown
         run: pnpm md:check
 
-      # 7. TypeScript type-checking.
-      - name: Type-check
-        run: pnpm typecheck
-
-      # 8. Generate Next.js route types and type-check the app against them.
+      # 7. Generate Next.js route types (consumed by the type-check below).
       - name: Next.js typegen
         run: pnpm next:typegen
+
+      # 8. TypeScript type-checking, against fresh typegen output.
+      - name: Type-check
+        run: pnpm typecheck
 
       # 9. Migration drift gate: assert the dev/test/prod drizzle migration sets
       #    describe the same final schema. Pure file comparison (no database),

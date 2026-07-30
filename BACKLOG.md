@@ -53,6 +53,13 @@ this file is the deliberate workaround.)
       delete/read/update invoice DALs. Warnings only (`check:fast` stays green). Deciding whether to
       delete the guards is a real code change — they're runtime belt-and-braces against untyped
       callers — so it was deliberately left out of the maintenance bump.
+- [ ] **Cypress standalone typecheck lane** _(added 2026-07-30, rootfiles cleanup)_ — the
+      `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
+      `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
+      tsconfig-paths, so the script could never pass under TS7 (and was wired into no
+      pipeline). Restoring a real tsc pass needs a typecheck-only tsconfig variant
+      (paths without baseUrl) or a preprocessor that understands TS7 configs. Until
+      then Cypress type errors surface in-editor and at spec webpack-compile time only.
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
