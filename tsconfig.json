@@ -16,7 +16,8 @@
 		"forceConsistentCasingInFileNames": true, // TS default since 5.0; pinned when the recommended base was dropped
 		"exactOptionalPropertyTypes": false, // disabling from strictest base
 		"noPropertyAccessFromIndexSignature": false, // disabling from strictest base
-		"noUnusedLocals": false, // disabling from strictest base
+		"noUnusedLocals": false, // disabling from strictest base — Biome owns unused-code checks
+		"noUnusedParameters": false, // disabling from strictest base — Biome owns unused-code checks
 		// Modules
 		"paths": {
 			"@/*": ["./src/*"],
