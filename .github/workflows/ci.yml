@@ -177,3 +177,15 @@ jobs:
       # the server down afterward and propagates the suite's exit code.
       - name: Run Cypress e2e
         run: pnpm cy:e2e
+
+      # Failure screenshots are the only visual debugging artifact (video is
+      # off); without this upload they die with the runner and every red e2e
+      # run is debuggable from logs alone.
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+          if-no-files-found: ignore
