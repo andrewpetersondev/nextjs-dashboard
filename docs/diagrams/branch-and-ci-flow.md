@@ -21,9 +21,10 @@ flowchart LR
 - **`main` is the default branch and production.** Every feature or lane branch is cut
   from `main`, worked in its own worktree, then **merged into `main` locally** in your
   primary checkout. There are no PRs and no `develop` integration branch.
-- **The local `pnpm check:fast` is the gate.** It runs Biome + Markdown + type-check +
-  typegen + drift + the DB-free unit lane before you merge — that's what keeps the
-  `main` push green.
+- **The local `pnpm check:fast` is the gate.** It runs Biome + Markdown + typegen +
+  type-check + migration drift before you merge — no tests (run the DB-free unit
+  lane separately with `pnpm test:unit` when the change warrants it). That's what
+  keeps the `main` push green.
 - **CI runs on the push to `main`,** as a safety net: the fast `Lint & type-check` job
   **and** the slow `E2E (Cypress)` suite. A red run means fix-forward, not a blocked
   merge (the merge already happened locally).
