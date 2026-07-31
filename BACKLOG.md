@@ -29,8 +29,34 @@ this file is the deliberate workaround.)
          zero refs 2026-07-30). One-minute deletion.
 2. **First impression** — the live link is what recruiters click first.
    - [x] ~~Real landing page~~ — done 2026-07-30, see Done below.
-   - [ ] Surface the `docs/diagrams/` architecture diagrams on the README (strong, and
-         currently buried).
+   - [x] ~~Surface the `docs/diagrams/` architecture diagrams on the README~~ — done
+         2026-07-30, see Done below (README "Architecture" section).
+   - [ ] **Fix the drift-flagged architecture diagrams** — a full per-diagram audit
+         (2026-07-30, 11 verify agents) found 4 diagrams with major issues; the README's
+         new curated table deliberately links none of them, but they're one click away
+         via the gallery index:
+         - `session-lifecycle.md` — claims a 30-day **absolute** session ceiling, but
+         `issueRotated()` mints a fresh `iat` and preserves only `sid`
+         (`session-token.service.ts:160`), so rotation resets the clock and the ceiling
+         never binds. **Decide: fix the code (preserve original issuance) or the doc —
+         it's a security-property claim.**
+         - `database-erd.md` — "branded IDs = compile-time safety" is false at the schema
+         layer (`schema.types.ts` uses plain `string` aliases; branding is domain-only);
+         Drizzle Studio tip lacks the env wrapper (`pnpm db:studio:dev`).
+         - `error-handling-flow.md` — central framing `FormResult<T> = Result<…>` doesn't
+         match the code (standalone DTO union, `form-result.dto.ts:76`); sequence puts
+         `toDto()` on the wrong side of the server→client boundary.
+         - `dependency-injection.md` — `proxy.ts` bypasses the composition root
+         (`proxy.ts:57` wires `sessionTokenServiceFactory` directly); only auth has a
+         composition root (invoices/users don't, contrary to the doc).
+         - Batch in the minor nits on otherwise-clean diagrams: route-authorization
+         (forgot-password missing from public-routes row), auth-login-flow (ADR-007
+         missing from ADR list), branch-and-ci-flow (`check:fast` does NOT include the
+         unit lane), module-layers (presentation→composition-root edge missing; scope
+         the "application never imports infrastructure" rule to auth — invoices/users
+         application services DO import infra mappers/codecs), request-flow-update-user
+         (`UserRepositoryImpl` name; `requireAdmin` + re-read hops omitted),
+         c4-architecture (`demo_user_counters` table missing).
    - [ ] **OG/social-preview image** — the course `opengraph-image.png` was deleted with
          the landing rewrite and nothing replaced it, so the live URL unfurls without a
          card image exactly where it gets shared (LinkedIn/iMessage/Slack). A generated
@@ -117,6 +143,19 @@ this file is the deliberate workaround.)
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **README "Architecture" section (diagrams surfaced)** _(2026-07-30)_ — new section
+      between Tech Stack and Project Structure: a fresh, coarse Mermaid overview (request
+      path browser → proxy.ts → App Router → 5 modules → shared kernel → PostgreSQL;
+      directory names + audit-verified facts only, no styling so both GitHub themes
+      render it) plus a curated 5-row table linking only audit-clean diagrams, and the
+      gallery link. Chosen over embedding existing diagrams verbatim (two-copies drift)
+      and over link-only (wastes GitHub's native mermaid). Preceded by a full 11-agent
+      drift audit of docs/diagrams/ — 7 clean, 4 flagged (filed as the follow-up item
+      under Now #2; session-lifecycle's false 30-day-ceiling claim is the sharp one).
+      The audit also disproved a repo-wide "application never imports infrastructure"
+      claim (true for auth only — invoices/users app services import infra
+      mappers/codecs), so the README wording scopes it to auth.
 
 - [x] **Demo dead-ends round 2 (interview-impact review, tier 1)** _(2026-07-30)_ — walked
       the 60-second recruiter path (landing → Try the demo → dashboard → invoices → login,
