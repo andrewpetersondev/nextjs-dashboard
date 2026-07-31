@@ -21,6 +21,63 @@ authentication, middleware-based route protection, database migrations/seeding, 
 
 Note: ESLint and Prettier are not used in this project, by design.
 
+## Architecture
+
+One picture before the directory tree: every request passes the middleware,
+lands in an App Router page or Server Action, and is handled by one of five
+feature modules sitting on a small shared kernel.
+
+<!-- Keep this overview coarse — directory names and verified facts only.
+     Details belong in docs/diagrams/, not here. -->
+
+```mermaid
+flowchart TB
+  browser["Browser"]
+  proxy["src/proxy.ts — Next.js middleware<br/>route protection, JWT session cookie"]
+  app["src/app — App Router<br/>Server Components + Server Actions"]
+
+  subgraph modules["src/modules — one folder per feature"]
+    direction LR
+    auth["auth"]
+    users["users"]
+    invoices["invoices"]
+    customers["customers"]
+    banner["banner"]
+  end
+
+  subgraph kernel["Shared kernel"]
+    direction LR
+    shared["src/shared<br/>core, forms, policies, …"]
+    ui["src/ui<br/>design-system components"]
+    server["src/server<br/>db, crypto, cookies"]
+  end
+
+  db[("PostgreSQL<br/>Neon (managed) or Docker (local)")]
+
+  browser --> proxy
+  proxy --> app
+  app --> modules
+  modules --> kernel
+  kernel -->|"Drizzle ORM"| db
+```
+
+Two details the boxes can't show: feature modules are internally layered
+(presentation / application / domain / infrastructure — auth, the deepest,
+keeps its application layer free of infrastructure imports, with decisions
+recorded as ADRs), and sessions are stateless — a signed, httpOnly JWT cookie
+with no session table behind it.
+
+The [diagram gallery](docs/diagrams/README.md) goes deeper — eleven Mermaid
+diagrams, each answering exactly one question. Good starting points:
+
+| Diagram                                                                | The question it answers                                         |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------- |
+| [C4 architecture](docs/diagrams/c4-architecture.md)                    | "How is the whole system carved into pieces?"                   |
+| [Module layers](docs/diagrams/module-layers.md)                        | "How is a module layered, and which way do dependencies point?" |
+| [Route authorization](docs/diagrams/route-authorization.md)            | "Before a page renders, what decides whether I'm allowed in?"   |
+| [Request flow: update user](docs/diagrams/request-flow-update-user.md) | "How does a form submission travel through the layers?"         |
+| [Branch & CI flow](docs/diagrams/branch-and-ci-flow.md)                | "How does a change reach production, and what CI runs where?"   |
+
 ## Project Structure
 
 ```text
