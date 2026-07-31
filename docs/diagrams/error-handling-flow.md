@@ -6,14 +6,19 @@
 > three things people ask about most: **results**, **errors**, and **forms**.
 
 The key insight: these aren't three systems. They're **one currency for
-failure**, used everywhere. The code says so literally —
+failure**, used everywhere. The actual type (from
+[`form-result.dto.ts`](../../src/shared/forms/core/types/form-result.dto.ts)):
 
 ```ts
-FormResult<T>  =  Result<FormSuccessPayload<T>, AppError>
+type FormResult<T> = OkResult<FormSuccessPayload<T>> | FormErrResult;
+// where FormErrResult = { ok: false, error: AppErrorJsonDto }
 ```
 
-A form result is just a `Result` whose error is always an `AppError`. So if you
-learn the spine once, every module reads the same way.
+`FormResult` is deliberately **not** a variant of core `Result` — it reuses
+`OkResult` and the `ok` discriminant so narrowing reads identically everywhere,
+but its error side is a plain serialized `AppErrorJsonDto`, not an `AppError`
+instance (it has to cross the Server Action boundary). Learn the spine once and
+every module still reads the same way.
 
 ## The shapes (read this first)
 
@@ -28,13 +33,13 @@ flowchart TD
         reg["key → registry lookup<br/>adds layer · severity · metadata schema<br/>then deep-freezes the error"]
     end
 
-    subgraph fr["FormResult — Result, specialised for the UI"]
+    subgraph fr["FormResult — the Result idiom at the UI edge"]
         fok["Ok → { data, message }"]
-        ferr["Err → AppError → field + form errors"]
+        ferr["Err → AppErrorJsonDto → field + form errors"]
     end
 
     err -->|"error is always an"| ae
-    fr -.->|"is a"| res
+    fr -.->|"mirrors the shape of"| res
 ```
 
 - **`Result`** is a frozen discriminated union: either `Ok` (has `value`) or
@@ -43,7 +48,9 @@ flowchart TD
   e.g. `conflict`, `validation`, `not_found`) is looked up in a **registry** that
   stamps on the layer, severity, and the schema its metadata must
   match. It's an `Error` subclass, so it still has a stack — but it's structured.
-- **`FormResult`** is `Result` with the success side carrying `{ data, message }`.
+- **`FormResult`** mirrors `Result`, with the success side carrying
+  `{ data, message }` and the error side carrying the serialized
+  `AppErrorJsonDto`.
 
 ## The life of a failure — a duplicate email on signup
 
@@ -66,9 +73,8 @@ sequenceDiagram
     DAL->>DAL: logger.error(operation.failed, { error })
     DAL-->>Repo: Err(AppError)
     Repo-->>Action: Result is Err — propagates upward, no throw
-    Note over Action: isErr → turn the AppError into a FormResult
+    Note over Action: isErr → toFormErrResult(error):<br/>AppError.toDto() flattens the error to plain JSON<br/>here, still server-side, so it can survive the hop
     Action-->>UI: FormResult (crosses the server→client boundary)
-    Note over UI: AppError.toDto() reduces the error to plain JSON<br/>so a typed error can survive the Server Action hop
     Note over UI: toFormErrorPayload(error) →<br/>{ message, fieldErrors, formData }
     UI->>UI: red text under "email", inputs re-filled from formData
 ```
@@ -115,6 +121,7 @@ flowchart LR
 | DB boundary — catch → `Result`       | [`execute-dal-result.ts`](../../src/shared/core/errors/server/adapters/dal/execute-dal-result.ts)                                                                                                 |
 | Postgres → `AppError`                | [`normalize-pg-error.ts`](../../src/shared/core/errors/server/adapters/postgres/normalize-pg-error.ts) · [`to-pg-error.ts`](../../src/shared/core/errors/server/adapters/postgres/to-pg-error.ts) |
 | `FormResult` type                    | [`form-result.dto.ts`](../../src/shared/forms/core/types/form-result.dto.ts)                                                                                                                      |
+| `AppError` → DTO (server-side)       | [`form-result.factory.ts`](../../src/shared/forms/logic/factories/form-result.factory.ts) — `toFormErrResult` calls `toDto()`                                                                     |
 | Form validation on-ramp              | [`validate-form.ts`](../../src/shared/forms/server/validate-form.ts)                                                                                                                              |
 | `AppError` → UI payload              | [`form-error-payload.mapper.ts`](../../src/shared/forms/presentation/mappers/form-error-payload.mapper.ts)                                                                                        |
 
@@ -131,8 +138,8 @@ Three rules make the whole thing hang together:
    thing, so the UI never has to care where a failure came from.
 3. **The boundary is explicit.** An `AppError` is a class instance; it can't ride
    a Server Action to the browser as-is. `toDto()` flattens it to JSON on the way
-   out — which is exactly why a typed error can show up as a typed field error in
-   the client.
+   out — inside `toFormErrResult`, before the result leaves the server — which is
+   exactly why a typed error can show up as a typed field error in the client.
 
 The everyday payoff: a new feature gets correct, consistent error handling almost
 for free, just by returning `Result` and letting the spine do the rest.

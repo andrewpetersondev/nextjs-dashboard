@@ -7,19 +7,21 @@
 
 This is the mechanism behind the "dependencies point inward" rule. A use case
 depends on an _interface_ (a contract); the concrete database/crypto class that
-satisfies that interface is plugged in at runtime — and the plugging happens here,
-nowhere else.
+satisfies that interface is plugged in at runtime — and in `auth`, the plugging
+happens here (with one deliberate edge-runtime exception, below).
 
 ## The shape of it
 
 ```mermaid
 flowchart TD
-    caller["Server Action / proxy.ts<br/>(presentation)"] -->|"calls"| comp["makeAuthComposition()<br/>— the composition root —"]
+    caller["Auth server actions<br/>(presentation)"] -->|"calls"| comp["makeAuthComposition()<br/>— the composition root —"]
+    proxy["proxy.ts (edge middleware)"] -->|"calls one factory directly,<br/>bypassing the root"| f4
 
     subgraph fac["infrastructure/composition/factories"]
         f1["loginUseCaseFactory"]
         f2["sessionServiceFactory"]
         f3["authUnitOfWorkFactory"]
+        f4["sessionTokenServiceFactory"]
     end
 
     comp -->|"calls each factory once per request"| fac
@@ -36,6 +38,12 @@ flowchart TD
 in that request is traceable), opens the DB handle, then asks the factories to
 assemble the use cases and services. What comes back is a ready-to-run bundle of
 workflows — the caller never sees a single `new SomeRepository(...)`.
+
+One deliberate exception: [`proxy.ts`](../../src/proxy.ts) — the edge
+middleware — does **not** call `makeAuthComposition()`. It needs exactly one
+service (the session token service, to verify the cookie), so it calls
+`sessionTokenServiceFactory` directly and skips the full bundle. Same factory,
+same wiring, no root — the edge path shouldn't pay for workflows it never runs.
 
 ## Inside one factory — the contract/implementation handshake
 
@@ -100,6 +108,10 @@ above is the only thing the application layer is allowed to know about.
 - **Swappability** — bcrypt, jose, Drizzle, the cookie store: each sits behind a
   contract and is chosen in exactly one factory.
 - **The cost** — more files and one layer of indirection to trace. That's why only
-  the layered modules (`auth`, `invoices`, `users`) pay for it; `customers` and
+  `auth` pays for a full composition root. `users` stops at a small factory
+  ([`user-service.factory.ts`](../../src/modules/users/infrastructure/factories/user-service.factory.ts)
+  wires repository → adapter → service in one function), and `invoices` actions
+  construct their pieces inline
+  (`new InvoiceService(new InvoiceRepository(getAppDb()))`); `customers` and
   `banner` skip composition entirely, as the [module map](module-layers.md#not-every-module-has-every-layer-and-thats-on-purpose)
   spells out. Wiring is worth it when the wiring buys you something.

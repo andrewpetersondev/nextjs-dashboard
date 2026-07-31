@@ -71,15 +71,26 @@ schema failure and an expiry failure are never confused for one another.
 From [`session-config.constants.ts`](../../src/modules/auth/domain/shared/constants/session-config.constants.ts)
 and [`session-token.constants.ts`](../../src/modules/auth/infrastructure/session/config/session-token.constants.ts):
 
-| Knob                                | Value                     | Meaning                                             |
-| ----------------------------------- | ------------------------- | --------------------------------------------------- |
-| `SESSION_DURATION_SEC`              | **900 s — 15 minutes**    | how long a freshly issued token lives               |
-| `SESSION_REFRESH_THRESHOLD_SEC`     | **120 s — 2 minutes**     | "approaching expiry" window where rotation kicks in |
-| `MAX_ABSOLUTE_SESSION_SEC`          | **2,592,000 s — 30 days** | hard ceiling on age via `iat`, even with rotation   |
-| `SESSION_TOKEN_CLOCK_TOLERANCE_SEC` | **5 s**                   | slack for clock skew between machines               |
+| Knob                                | Value                     | Meaning                                                                         |
+| ----------------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
+| `SESSION_DURATION_SEC`              | **900 s — 15 minutes**    | how long a freshly issued token lives                                           |
+| `SESSION_REFRESH_THRESHOLD_SEC`     | **120 s — 2 minutes**     | "approaching expiry" window where rotation kicks in                             |
+| `MAX_ABSOLUTE_SESSION_SEC`          | **2,592,000 s — 30 days** | _intended_ hard ceiling on session age — **not currently enforced** (see below) |
+| `SESSION_TOKEN_CLOCK_TOLERANCE_SEC` | **5 s**                   | slack for clock skew between machines                                           |
 
-So a session slides forward in 15-minute leases, renewed as long as you stay
-active, but can never outlive its original issuance by more than 30 days.
+So a session slides forward in 15-minute leases, renewed for as long as you stay
+active.
+
+> **Honest gap — the 30-day ceiling doesn't actually bind.** The lifecycle
+> policy ([`evaluate-session-lifecycle.policy.ts`](../../src/modules/auth/domain/session/policies/evaluate-session-lifecycle.policy.ts))
+> does check session age against `MAX_ABSOLUTE_SESSION_SEC`, and a termination
+> path for `absolute_limit_exceeded` exists — but age is measured from the JWT
+> `iat`, and `issueRotated()` mints a **fresh `iat` on every rotation** (only
+> the `sid` survives). Since rotation happens within 15 minutes of the last
+> issuance, the measured age never gets near 30 days: an actively used session
+> can slide indefinitely, and the termination path is dead code in practice.
+> Enforcing the ceiling needs an original-issuance claim preserved across
+> rotations — tracked in `BACKLOG.md`.
 
 ## Why it's stateless (and what that costs)
 

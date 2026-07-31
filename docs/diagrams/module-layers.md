@@ -34,6 +34,7 @@ flowchart TD
     end
 
     pres --> app
+    pres -->|"composition root only"| i4
     app --> dom
     infra --> dom
     infra -.->|"implements contracts from"| app
@@ -47,11 +48,16 @@ This is the core idea of the layered ("clean") style:
 - **`application`** depends only on `domain`. It defines _contracts_ (interfaces)
   for the things it needs, like "something that can hash a password."
 - **`infrastructure`** depends inward too: it _implements_ those contracts with
-  real tech (Drizzle, bcrypt, jose). Application code never imports infrastructure
-  directly — the **composition root** (`auth.composition.ts`) plugs the concrete
-  pieces in at runtime.
+  real tech (Drizzle, bcrypt, jose). In `auth`, application code never imports
+  infrastructure directly — the **composition root** (`auth.composition.ts`)
+  plugs the concrete pieces in at runtime. That strictness is auth-only: the
+  `invoices` and `users` application services import infrastructure
+  mappers/codecs directly. Auth is the exemplar, not the enforced norm.
 - **`presentation`** sits on the outside: forms and server actions that call into
-  `application`.
+  `application`. Its server actions are also the one place allowed to touch
+  infrastructure — solely to call the composition root (that's the
+  `pres → auth.composition.ts` edge above; e.g. `login.action.ts` imports
+  `makeAuthComposition`).
 
 The payoff: you can read a use case without knowing whether the database is
 Postgres or the hasher is bcrypt — those are swappable details behind contracts.

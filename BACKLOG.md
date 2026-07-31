@@ -65,6 +65,17 @@ this file is the deliberate workaround.)
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
+- [ ] **Enforce the 30-day absolute session ceiling** _(added 2026-07-31, from the
+      diagrams drift audit)_ — `MAX_ABSOLUTE_SESSION_SEC` and the lifecycle policy's
+      `absolute_limit_exceeded` termination path exist, but age is measured from the
+      JWT `iat`, and `issueRotated()` mints a fresh `iat` on every rotation (only
+      `sid` survives) — so an actively used session slides forever and the
+      termination path is dead code. Fix: preserve an original-issuance claim
+      (session-started-at) across rotations — touches the claims schema, mappers,
+      `IssueRotatedTokenCommand`, the rotate use case, the session entity / policy
+      input, and their unit tests. Decided "doc now, code fix later" (2026-07-31);
+      `docs/diagrams/session-lifecycle.md` documents the gap honestly until then.
+      Good interview story when it lands.
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
@@ -118,6 +129,24 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Architecture-diagram drift fixes (`docs/diagrams/`)** _(2026-07-31)_ — verified and
+      fixed the 2026-07-30 audit findings against the code (every fix checked against source
+      before writing). Majors: session-lifecycle.md's 30-day absolute-ceiling claim replaced
+      with an honest-gap callout (rotation resets `iat`, so the ceiling never binds; the code
+      fix was deliberately deferred — see the new Later item); database-erd.md's "branded IDs"
+      claim relocated to the domain layer (the schema layer is plain `string` aliases) and the
+      Drizzle Studio tip now uses the env-wrapped `db:studio:dev`/`db:studio:test` scripts;
+      error-handling-flow.md now shows the real `FormResult` DTO union (not
+      `Result<_, AppError>`) with `toDto()` running server-side in `toFormErrResult`;
+      dependency-injection.md now shows proxy.ts calling `sessionTokenServiceFactory` directly
+      and only `auth` owning a composition root (`users` = small factory, `invoices` = inline
+      construction). Minors: route-authorization.md public row gained
+      `/auth/forgot-password`; auth-login-flow.md ADR list gained 007; branch-and-ci-flow.md
+      no longer claims `check:fast` runs the unit lane; module-layers.md gained the
+      presentation→composition-root edge and scoped "application never imports infrastructure"
+      to auth; request-flow-update-user.md renamed the repo to `UserRepositoryImpl` and added
+      the `requireAdmin` + `readUserById` hops; c4-architecture.md's table list gained
+      `demo_user_counters`.
 - [x] **Demo dead-ends round 2 (interview-impact review, tier 1)** _(2026-07-30)_ — walked
       the 60-second recruiter path (landing → Try the demo → dashboard → invoices → login,
       desktop + mobile, both schemes) and killed the three worst dead-ends it surfaced:
