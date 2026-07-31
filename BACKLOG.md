@@ -31,32 +31,9 @@ this file is the deliberate workaround.)
    - [x] ~~Real landing page~~ — done 2026-07-30, see Done below.
    - [x] ~~Surface the `docs/diagrams/` architecture diagrams on the README~~ — done
          2026-07-30, see Done below (README "Architecture" section).
-   - [ ] **Fix the drift-flagged architecture diagrams** — a full per-diagram audit
-         (2026-07-30, 11 verify agents) found 4 diagrams with major issues; the README's
-         new curated table deliberately links none of them, but they're one click away
-         via the gallery index:
-         - `session-lifecycle.md` — claims a 30-day **absolute** session ceiling, but
-         `issueRotated()` mints a fresh `iat` and preserves only `sid`
-         (`session-token.service.ts:160`), so rotation resets the clock and the ceiling
-         never binds. **Decide: fix the code (preserve original issuance) or the doc —
-         it's a security-property claim.**
-         - `database-erd.md` — "branded IDs = compile-time safety" is false at the schema
-         layer (`schema.types.ts` uses plain `string` aliases; branding is domain-only);
-         Drizzle Studio tip lacks the env wrapper (`pnpm db:studio:dev`).
-         - `error-handling-flow.md` — central framing `FormResult<T> = Result<…>` doesn't
-         match the code (standalone DTO union, `form-result.dto.ts:76`); sequence puts
-         `toDto()` on the wrong side of the server→client boundary.
-         - `dependency-injection.md` — `proxy.ts` bypasses the composition root
-         (`proxy.ts:57` wires `sessionTokenServiceFactory` directly); only auth has a
-         composition root (invoices/users don't, contrary to the doc).
-         - Batch in the minor nits on otherwise-clean diagrams: route-authorization
-         (forgot-password missing from public-routes row), auth-login-flow (ADR-007
-         missing from ADR list), branch-and-ci-flow (`check:fast` does NOT include the
-         unit lane), module-layers (presentation→composition-root edge missing; scope
-         the "application never imports infrastructure" rule to auth — invoices/users
-         application services DO import infra mappers/codecs), request-flow-update-user
-         (`UserRepositoryImpl` name; `requireAdmin` + re-read hops omitted),
-         c4-architecture (`demo_user_counters` table missing).
+   - [x] ~~Fix the drift-flagged architecture diagrams~~ — done 2026-07-31, see Done
+         below; the one deliberate leftover (enforce the 30-day absolute session
+         ceiling in code) moved to Later.
    - [ ] **OG/social-preview image** — the course `opengraph-image.png` was deleted with
          the landing rewrite and nothing replaced it, so the live URL unfurls without a
          card image exactly where it gets shared (LinkedIn/iMessage/Slack). A generated
