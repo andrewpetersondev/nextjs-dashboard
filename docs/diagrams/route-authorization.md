@@ -45,11 +45,11 @@ is a **pure function** — it takes the route type and who you are, and returns
 allow / deny. It deliberately knows _nothing_ about redirects; the middleware
 turns a denial into a destination.
 
-| Route type                                      | Anonymous                   | Authenticated (USER)       | Authenticated (ADMIN)      |
-| ----------------------------------------------- | --------------------------- | -------------------------- | -------------------------- |
-| **public** (`/`, `/auth/login`, `/auth/signup`) | ✅ allow                    | ↪︎ redirect to `/dashboard` | ↪︎ redirect to `/dashboard` |
-| **protected** (`/dashboard/**`)                 | ↪︎ redirect to `/auth/login` | ✅ allow                   | ✅ allow                   |
-| **admin** (`/dashboard/users/**`)               | ↪︎ redirect to `/auth/login` | ↪︎ redirect to `/dashboard` | ✅ allow                   |
+| Route type                                                               | Anonymous                   | Authenticated (USER)       | Authenticated (ADMIN)      |
+| ------------------------------------------------------------------------ | --------------------------- | -------------------------- | -------------------------- |
+| **public** (`/`, `/auth/login`, `/auth/signup`, `/auth/forgot-password`) | ✅ allow                    | ↪︎ redirect to `/dashboard` | ↪︎ redirect to `/dashboard` |
+| **protected** (`/dashboard/**`)                                          | ↪︎ redirect to `/auth/login` | ✅ allow                   | ✅ allow                   |
+| **admin** (`/dashboard/users/**`)                                        | ↪︎ redirect to `/auth/login` | ↪︎ redirect to `/dashboard` | ✅ allow                   |
 
 Reading it as a flow:
 

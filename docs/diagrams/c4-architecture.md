@@ -40,7 +40,7 @@ flowchart TD
         next["Next.js 16 App Router<br/>· Server Components — render pages<br/>· Server Actions — handle mutations<br/>· Middleware (proxy.ts) — guard routes"]
     end
 
-    db[("Neon Postgres<br/>users · customers · invoices")]
+    db[("Neon Postgres<br/>users · customers · invoices · demo_user_counters")]
 
     browser -->|"HTTPS<br/>httpOnly JWT session cookie"| next
     next -->|"Drizzle ORM"| db

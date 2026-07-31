@@ -8,7 +8,7 @@ erDiagram
     customers ||--o{ invoices : "has many"
 
     users {
-        uuid id PK "branded UserId"
+        uuid id PK "UserId brand in domain"
         varchar email UK "not null"
         varchar username UK "not null"
         varchar password "bcrypt hash, not null"
@@ -17,7 +17,7 @@ erDiagram
     }
 
     customers {
-        uuid id PK "branded CustomerId"
+        uuid id PK "CustomerId brand in domain"
         varchar email UK "not null"
         varchar name "not null"
         varchar image_url "not null"
@@ -25,7 +25,7 @@ erDiagram
     }
 
     invoices {
-        uuid id PK "branded InvoiceId"
+        uuid id PK "InvoiceId brand in domain"
         uuid customer_id FK "references customers.id, cascade"
         bigint amount "cents, must be >= 0 (check)"
         date date "not null"
@@ -59,12 +59,19 @@ erDiagram
 - **Money is stored as integer cents in a `bigint`**, never a float. `amount` has
   a check constraint (`>= 0`), and `revenue_period` is constrained to the first
   day of `date`'s month. The database enforces these — they can't drift.
-- **Branded IDs** (`UserId`, `CustomerId`, `InvoiceId`) are TypeScript types over
-  `uuid`. They stop you from accidentally passing a `CustomerId` where an
-  `InvoiceId` is expected — a compile-time error, not a runtime bug. See
+- **Branded IDs live in the domain layer, not here.** At the schema layer,
+  [`schema.types.ts`](../../database/schema/schema.types.ts) aliases `UserId`,
+  `CustomerId`, and `InvoiceId` to plain `string` — the database types carry no
+  branding. The compile-time protection (a `CustomerId` can't be passed where an
+  `InvoiceId` is expected) comes from the domain-level brands (e.g.
+  [`user-id.brand.ts`](../../src/modules/users/domain/types/user-id.brand.ts)),
+  applied when rows cross into a module. See
   [ADR-003](../../src/modules/auth/notes/adr/003-use-branded-types-for-ids.md).
 - The `sensitive_data` columns look like teaching/demo placeholders rather than
   real domain fields.
 
-> Tip: run **Drizzle Studio** (`pnpm drizzle-kit studio`) for a live, clickable
-> version of this — useful for browsing actual rows while debugging.
+> Tip: run **Drizzle Studio** (`pnpm db:studio:dev`, or `pnpm db:studio:test` for
+> the test database) for a live, clickable version of this — useful for browsing
+> actual rows while debugging. Use those env-wrapped scripts, not bare
+> `drizzle-kit studio`: they load the right `.env` file so Studio points at the
+> intended database.

@@ -94,6 +94,7 @@ in [`src/modules/auth/notes/adr/`](../../src/modules/auth/notes/adr):
 - [ADR-004](../../src/modules/auth/notes/adr/004-strip-passwords-at-application-boundary.md) — strip passwords at the application boundary
 - [ADR-005](../../src/modules/auth/notes/adr/005-use-jwt-for-session-tokens.md) — JWT for session tokens
 - [ADR-006](../../src/modules/auth/notes/adr/006-prevent-credential-enumeration.md) — prevent credential enumeration
+- [ADR-007](../../src/modules/auth/notes/adr/007-enforce-action-level-authorization.md) — enforce action-level authorization
 
 Pairing a **diagram (what)** with an **ADR (why)** is the combo worth keeping up —
 the diagram orients you fast, the ADR stops you from re-litigating an old decision.
