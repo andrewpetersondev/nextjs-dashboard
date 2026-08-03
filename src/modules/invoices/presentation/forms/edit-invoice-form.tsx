@@ -93,12 +93,33 @@ function FormFields({
 				label="Choose an amount"
 				name="amount"
 			/>
-
-			<InvoiceStatusTransitionGroup
-				current={currentInvoice.status}
-				disabled={pending}
-			/>
 		</div>
+	);
+}
+
+// Transitions live in their OWN form so a status change submits ONLY
+// {status}. The main form round-trips every field, and a seeded amount above
+// the schema's $10k cap made "Mark as paid" fail validation on unrelated data
+// (caught by e2e 2026-08-03 — see the BACKLOG Later item on the cap/seed
+// mismatch). Both forms share the same useActionState action, so pending
+// state and server feedback stay unified.
+function StatusTransitionForm({
+	action,
+	current,
+	pending,
+}: {
+	action: (formData: FormData) => void;
+	current: EditInvoiceViewModel["status"];
+	pending: boolean;
+}): JSX.Element {
+	return (
+		<form
+			action={action}
+			aria-label="Invoice status transitions"
+			className="mt-6"
+		>
+			<InvoiceStatusTransitionGroup current={current} disabled={pending} />
+		</form>
 	);
 }
 
@@ -162,6 +183,11 @@ export const EditInvoiceForm = ({
 					)}
 				</FormActionRow>
 			</form>
+			<StatusTransitionForm
+				action={action}
+				current={currentInvoice.status}
+				pending={pending}
+			/>
 			<ServerMessageMolecule showAlert={showAlert} state={state} />
 		</div>
 	);
