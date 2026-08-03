@@ -5,13 +5,23 @@ import {
 } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 
-const MAX_INVOICE_AMOUNT_USD = 10_000; // $10,000
+// Must stay at or above the seed range (maxLargeAmountCents = $50k) and
+// include $0 (the zero seed tier): the edit form round-trips stored amounts
+// through this schema, so any seeded amount outside it can never save a
+// field edit. The seed contract test in devtools/seed locks this.
+const MAX_INVOICE_AMOUNT_USD = 100_000; // $100,000
 const MIN_SENSITIVE_DATA_LENGTH = 2;
 const MAX_SENSITIVE_DATA_LENGTH = 100;
 
+const AMOUNT_NEGATIVE_ERROR = "Amount cannot be negative.";
+const AMOUNT_MAX_ERROR = `Amount cannot exceed $${MAX_INVOICE_AMOUNT_USD.toLocaleString("en-US")}.`;
+
 const amountCodec = z.codec(
 	z.string(),
-	z.number().positive().max(MAX_INVOICE_AMOUNT_USD),
+	z
+		.number()
+		.nonnegative({ error: AMOUNT_NEGATIVE_ERROR })
+		.max(MAX_INVOICE_AMOUNT_USD, { error: AMOUNT_MAX_ERROR }),
 	{
 		decode: (val: string) => Number(val),
 		encode: (val: number) => val.toString(),
