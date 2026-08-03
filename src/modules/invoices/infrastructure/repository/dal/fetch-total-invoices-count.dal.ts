@@ -1,6 +1,6 @@
 import "server-only";
 import { invoices } from "@database/schema/invoices";
-import { count } from "drizzle-orm";
+import { count, ne } from "drizzle-orm";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
@@ -14,9 +14,12 @@ export async function fetchTotalInvoicesCountDal(
 	db: AppDatabase,
 ): Promise<number> {
 	try {
+		// Void invoices are excluded from all customer-facing counts (lifecycle
+		// rule: void ≈ removed from reporting; the record stays for audit).
 		const [result] = await db
 			.select({ value: count(invoices.id) })
-			.from(invoices);
+			.from(invoices)
+			.where(ne(invoices.status, "void"));
 
 		return result?.value ?? 0;
 	} catch (error) {

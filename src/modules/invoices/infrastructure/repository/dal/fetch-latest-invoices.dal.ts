@@ -1,7 +1,7 @@
 import "server-only";
 import { customers } from "@database/schema/customers";
 import { invoices } from "@database/schema/invoices";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, ne } from "drizzle-orm";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -33,6 +33,9 @@ export async function fetchLatestInvoicesDal(
 		})
 		.from(invoices)
 		.innerJoin(customers, eq(invoices.customerId, customers.id))
+		// This panel shows no status badge, so a void invoice would be
+		// indistinguishable from a live one — exclude them entirely.
+		.where(ne(invoices.status, "void"))
 		.orderBy(desc(invoices.date))
 		.limit(limit);
 

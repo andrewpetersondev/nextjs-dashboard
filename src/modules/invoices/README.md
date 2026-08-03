@@ -41,9 +41,37 @@ interface InvoiceEntity {
   readonly id: InvoiceId;           // branded
   readonly revenuePeriod: Period;   // branded; derived from `date` (first-of-month)
   readonly sensitiveData: string;
-  readonly status: InvoiceStatus;   // "pending" | "paid"
+  readonly status: InvoiceStatus;   // "pending" | "paid" | "void" (stored)
 }
 ```
+
+---
+
+## Status lifecycle
+
+The stored enum is `pending → paid` / `pending → void`; `paid` and `void` are
+terminal. Two design decisions carry the weight:
+
+- **"overdue" is derived, never stored.** A pending invoice past its due date
+  (issue `date` + NET-30, `dueDateOf()` in `domain/statuses/invoice-status.display.ts`)
+  is _shown_ as overdue and filterable as its own bucket — but the database
+  never holds an `overdue` value. A stored time-based status needs a job to
+  flip it and goes stale the moment the clock moves; deriving keeps one source
+  of truth. The SQL filter binds a cutoff date computed in TS from the same
+  constant, so badge and filter can never disagree. Upgrading to a real
+  `due_date` column later only changes `dueDateOf()`'s implementation.
+- **Void, not delete.** Voiding preserves the record (terminal, details locked,
+  excluded from customer-facing counts and the Latest panel); delete remains
+  available but voiding is the bookkeeping-honest path — reports over past
+  periods stay reproducible.
+
+Transitions are enforced twice: `InvoiceService.updateInvoice` reads the
+current row and checks the matrix (`domain/statuses/invoice-status.transitions.ts`,
+the friendly rejection), and the update DAL adds `WHERE status = expectedFrom`
+when the status actually changes — the atomic, race-proof half. Zero rows with
+a precondition maps to a `conflict` error ("status changed while you were
+editing"). The create schema accepts only `pending|paid`; `void` is
+transition-only and cannot be created directly, even by a hand-crafted POST.
 
 ---
 
@@ -81,7 +109,7 @@ directly. The table is here so the difference doesn't read as an inconsistency.
 invoices/
 ├── domain/                              # Framework-agnostic core: types, rules, i18n
 │   ├── entities/invoice.entity.ts       #   InvoiceEntity + Service/Form/Partial variants
-│   ├── statuses/invoice.statuses.ts     #   INVOICE_STATUSES = ["pending", "paid"]
+│   ├── statuses/                        #   INVOICE_STATUSES (aliases the DB constant) + display/filter/transition rules
 │   ├── schema/invoice.schema.ts         #   Zod CreateInvoiceSchema + field-name lists
 │   ├── types/invoice-id.brand.ts        #   InvoiceId branded type
 │   ├── i18n/                            #   invoice-messages.ts, en-invoices.ts, translator.ts
@@ -184,7 +212,8 @@ and [ADR-007](../auth/notes/adr/007-enforce-action-level-authorization.md).
 ## Layer responsibilities
 
 - **domain/** — what an invoice _is_ and what's always true of it: entity + its
-  variants, the `pending|paid` status, branded `InvoiceId`, the Zod schema, date
+  variants, the `pending|paid|void` status with its transition matrix and the
+  derived display statuses, branded `InvoiceId`, the Zod schemas, date
   utilities, and the i18n message catalog. No Next.js, no Drizzle.
 - **application/** — `InvoiceService` applies business rules (dollars→cents, date
   validation) and orchestrates codecs/mappers and the repository. Returns

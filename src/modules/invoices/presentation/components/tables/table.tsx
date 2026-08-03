@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
+import type { InvoiceStatusFilter } from "@/modules/invoices/domain/statuses/invoice-status.filter";
 import { readFilteredInvoicesAction } from "@/modules/invoices/presentation/actions/read-filtered-invoices.action";
 import { DesktopTable } from "@/modules/invoices/presentation/components/tables/desktop-table";
 import { MobileTable } from "@/modules/invoices/presentation/components/tables/mobile-table";
@@ -11,13 +12,16 @@ import { MobileTable } from "@/modules/invoices/presentation/components/tables/m
 export const InvoicesTable = async ({
 	query,
 	currentPage,
+	statusFilter,
 }: {
 	query: string;
 	currentPage: number;
+	statusFilter: InvoiceStatusFilter;
 }): Promise<JSX.Element> => {
 	const invoices: InvoiceListFilter[] = await readFilteredInvoicesAction(
 		query,
 		currentPage,
+		statusFilter,
 	);
 
 	return (

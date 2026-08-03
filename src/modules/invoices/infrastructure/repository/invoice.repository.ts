@@ -10,6 +10,8 @@ import type {
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
+import type { InvoiceStatusFilter } from "@/modules/invoices/domain/statuses/invoice-status.filter";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
 import { entityToInvoiceDto } from "@/modules/invoices/infrastructure/adapters/codecs/invoice-codecs";
 import { BaseRepository } from "@/modules/invoices/infrastructure/repository/base-repository";
@@ -84,12 +86,16 @@ export class InvoiceRepository extends BaseRepository<
 	 * Updates an invoice.
 	 * @param id - InvoiceId (branded type)
 	 * @param data - Update data as InvoiceFormPartialEntity
+	 * @param expectedStatus - When set, the update only applies while the row
+	 * still holds this status (optimistic concurrency for status transitions).
 	 * @returns Promise resolving to updated InvoiceDto
 	 * @throws AppError (code: "validation") for invalid input
+	 * @throws AppError (code: "conflict") when expectedStatus no longer matches
 	 */
 	async update(
 		id: InvoiceId,
 		data: InvoiceFormPartialEntity,
+		expectedStatus?: InvoiceStatus,
 	): Promise<InvoiceDto> {
 		if (!id) {
 			throw makeAppError("validation", {
@@ -108,7 +114,12 @@ export class InvoiceRepository extends BaseRepository<
 		}
 
 		// Call DAL with branded types
-		const updatedEntity = await updateInvoiceDal(this.db, id, data);
+		const updatedEntity = await updateInvoiceDal(
+			this.db,
+			id,
+			data,
+			expectedStatus,
+		);
 
 		// Transform Entity (branded) → DTO (plain)
 		return entityToInvoiceDto(updatedEntity);
@@ -141,22 +152,40 @@ export class InvoiceRepository extends BaseRepository<
 	 * Reads the filtered, paginated invoice list for the invoices table.
 	 * @param query - Search query string.
 	 * @param currentPage - 1-based page number.
+	 * @param statusFilter - Structured status filter (display-status vocabulary).
+	 * @param overdueIssueCutoff - Issue-date cutoff for the derived overdue bucket.
 	 * @returns Promise resolving to the matching invoice list rows.
 	 */
 	async readFiltered(
 		query: string,
 		currentPage: number,
+		statusFilter: InvoiceStatusFilter,
+		overdueIssueCutoff: Date,
 	): Promise<InvoiceListFilter[]> {
-		return await fetchFilteredInvoicesDal(this.db, query, currentPage);
+		return await fetchFilteredInvoicesDal(
+			this.db,
+			{ overdueIssueCutoff, query, statusFilter },
+			currentPage,
+		);
 	}
 
 	/**
 	 * Reads the total number of pages for the filtered invoice list.
 	 * @param query - Search query string.
+	 * @param statusFilter - Structured status filter (display-status vocabulary).
+	 * @param overdueIssueCutoff - Issue-date cutoff for the derived overdue bucket.
 	 * @returns Promise resolving to the total page count.
 	 */
-	async readPagesCount(query: string): Promise<number> {
-		return await fetchInvoicesPagesDal(this.db, query);
+	async readPagesCount(
+		query: string,
+		statusFilter: InvoiceStatusFilter,
+		overdueIssueCutoff: Date,
+	): Promise<number> {
+		return await fetchInvoicesPagesDal(this.db, {
+			overdueIssueCutoff,
+			query,
+			statusFilter,
+		});
 	}
 
 	/**

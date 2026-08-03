@@ -43,10 +43,16 @@ export const INVOICES_SEL = {
 	invoiceAmountInput: '[data-cy="amount-input"]',
 	invoiceCustomerSelect: '[data-cy="customer-select"]',
 	invoiceRow: '[data-cy="invoice-row"]',
+	invoiceStatusBadge: '[data-cy="invoice-status-badge"]',
+	invoiceStatusFilterOverdue: '[data-cy="invoice-status-filter-overdue"]',
+	invoiceStatusFilterPaid: '[data-cy="invoice-status-filter-paid"]',
 	invoiceStatusPaid: "#paid",
 	invoiceStatusPending: "#pending",
 	invoiceStatusRadioGroup: '[data-cy="invoice-status-radio-group"]',
+	invoiceStatusTransitionGroup: '[data-cy="invoice-status-transition-group"]',
 	invoicesTable: '[data-cy="invoices-table"]',
+	invoiceTransitionPaid: '[data-cy="invoice-transition-paid"]',
+	invoiceTransitionVoid: '[data-cy="invoice-transition-void"]',
 } as const satisfies Readonly<Record<string, string>>;
 
 // Customers feature selectors

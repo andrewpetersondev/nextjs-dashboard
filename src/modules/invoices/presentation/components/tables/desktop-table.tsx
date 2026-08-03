@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { JSX } from "react";
 import { formatInvoiceDateLocalized } from "@/modules/invoices/domain/invoice.date-utils";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
+import { deriveInvoiceDisplayStatus } from "@/modules/invoices/domain/statuses/invoice-status.display";
 import {
 	DeleteInvoiceButton,
 	UpdateInvoiceLink,
@@ -22,6 +23,8 @@ export const DesktopTable = ({
 }: {
 	invoices: InvoiceListFilter[];
 }): JSX.Element => {
+	// One clock reading for the whole table render; "overdue" is derived, not stored.
+	const now = new Date();
 	return (
 		<TableAtom className="hidden min-w-full md:table">
 			<TableHeader className="rounded-lg font-normal text-sm">
@@ -76,7 +79,13 @@ export const DesktopTable = ({
 								{formatInvoiceDateLocalized(invoice.date.toISOString())}
 							</TableCell>
 							<TableCell className="whitespace-nowrap px-3 py-3">
-								<InvoiceStatusComponent status={invoice.status} />
+								<InvoiceStatusComponent
+									status={deriveInvoiceDisplayStatus(
+										invoice.status,
+										invoice.date,
+										now,
+									)}
+								/>
 							</TableCell>
 							<TableCell className="whitespace-nowrap py-3 pr-3 pl-6">
 								<div className="flex justify-end gap-3">

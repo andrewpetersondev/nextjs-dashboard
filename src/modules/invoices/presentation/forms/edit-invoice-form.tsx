@@ -7,12 +7,13 @@ import {
 	type UpdateInvoicePayload,
 	UpdateInvoiceSchema,
 } from "@/modules/invoices/domain/schema/invoice.schema";
+import { allowedNextInvoiceStatuses } from "@/modules/invoices/domain/statuses/invoice-status.transitions";
 import { updateInvoiceAction } from "@/modules/invoices/presentation/actions/update-invoice.action";
 import { INVOICE_FORM_CANCEL_LABEL } from "@/modules/invoices/presentation/constants/invoice-form.constants";
 import { CustomerSelect } from "@/modules/invoices/presentation/forms/customer-select";
 import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoice-amount-input";
 import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
-import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/forms/invoice-status-radio-group";
+import { InvoiceStatusTransitionGroup } from "@/modules/invoices/presentation/forms/invoice-status-transition-group";
 import { SensitiveData } from "@/modules/invoices/presentation/forms/sensitive-data";
 import type {
 	DenseFieldErrorMap,
@@ -46,25 +47,32 @@ function createWrappedUpdateAction(invoiceId: string) {
 		await updateInvoiceAction(prevState, invoiceId, formData);
 }
 
-// Presentational: invoice form fields
+// Presentational: invoice form fields. `locked` = terminal status (paid/void):
+// details are frozen, only the lifecycle panel (with no transitions) renders.
 function FormFields({
 	currentInvoice,
 	customers,
 	errors,
+	locked,
 	pending,
 }: {
 	currentInvoice: EditInvoiceViewModel;
 	customers: CustomerField[];
 	errors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string>;
+	locked: boolean;
 	pending: boolean;
 }): JSX.Element {
 	const invoiceAmountInputId = useId();
 	return (
 		<div className="space-y-6">
-			<InvoiceDate data-cy="date-input" defaultValue={currentInvoice.date} />
+			<InvoiceDate
+				data-cy="date-input"
+				defaultValue={currentInvoice.date}
+				disabled={pending || locked}
+			/>
 
 			<SensitiveData
-				disabled={pending}
+				disabled={pending || locked}
 				error={errors.sensitiveData as FieldError | undefined}
 			/>
 
@@ -72,26 +80,23 @@ function FormFields({
 				customers={customers}
 				dataCy="customer-select"
 				defaultValue={currentInvoice.customerId}
-				disabled={pending}
+				disabled={pending || locked}
 				error={errors.customerId as FieldError | undefined}
 			/>
 
 			<InvoiceAmountInput
 				dataCy="amount-input"
 				defaultValue={currentInvoice.amount / CENTS_IN_DOLLAR}
-				disabled={pending}
+				disabled={pending || locked}
 				error={errors.amount as FieldError | undefined}
 				id={invoiceAmountInputId}
 				label="Choose an amount"
 				name="amount"
 			/>
 
-			<InvoiceStatusRadioGroup
-				data-cy="invoice-status-radio-group"
+			<InvoiceStatusTransitionGroup
+				current={currentInvoice.status}
 				disabled={pending}
-				error={errors.status as FieldError | undefined}
-				name="status"
-				value={currentInvoice.status}
 			/>
 		</div>
 	);
@@ -130,6 +135,10 @@ export const EditInvoiceForm = ({
 	const denseErrors: DenseFieldErrorMap<UpdateInvoiceFieldNames, string> =
 		externalErrors ?? stateFieldErrors ?? EMPTY_ERRORS;
 
+	// Terminal statuses have no outgoing transitions — the invoice is a locked
+	// record (void-not-delete keeps it for reporting; see the module README).
+	const locked = allowedNextInvoiceStatuses(currentInvoice.status).length === 0;
+
 	return (
 		<div>
 			<form action={action}>
@@ -137,17 +146,20 @@ export const EditInvoiceForm = ({
 					currentInvoice={currentInvoice}
 					customers={customers}
 					errors={denseErrors}
+					locked={locked}
 					pending={pending}
 				/>
 				<FormActionRow
 					cancelHref={ROUTES.dashboard.invoices}
 					cancelLabel={INVOICE_FORM_CANCEL_LABEL}
 				>
-					<SubmitButtonMolecule
-						data-cy="edit-invoice-submit-button"
-						label="Edit Invoice"
-						pending={pending}
-					/>
+					{!locked && (
+						<SubmitButtonMolecule
+							data-cy="edit-invoice-submit-button"
+							label="Edit Invoice"
+							pending={pending}
+						/>
+					)}
 				</FormActionRow>
 			</form>
 			<ServerMessageMolecule showAlert={showAlert} state={state} />

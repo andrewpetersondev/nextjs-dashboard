@@ -15,9 +15,12 @@ describe("Invoices - Update via Server Action Form", () => {
 		cy.loginAsDemoAdmin();
 	});
 
-	// Opens the first seeded invoice's edit page.
+	// Opens the first OVERDUE invoice's edit page. Overdue rows are
+	// stored-pending, so they are guaranteed editable — paid/void invoices are
+	// terminal since the lifecycle work and render a locked form with no submit
+	// button (a random first row could be either).
 	const openFirstInvoiceForEdit = (): void => {
-		cy.visit(INVOICES_PATH);
+		cy.visit(`${INVOICES_PATH}?status=overdue`);
 		cy.get(VISIBLE_INVOICE_ROW).first().find(COMMON_SEL.editItemButton).click();
 		cy.location("pathname", { timeout: DEFAULT_TIMEOUT }).should(
 			"include",

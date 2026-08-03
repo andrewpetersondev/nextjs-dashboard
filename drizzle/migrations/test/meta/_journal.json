@@ -49,6 +49,13 @@
 			"tag": "0006_secret_red_skull",
 			"version": "7",
 			"when": 1779545516254
+		},
+		{
+			"breakpoints": true,
+			"idx": 7,
+			"tag": "0007_pale_felicia_hardy",
+			"version": "7",
+			"when": 1785743864188
 		}
 	],
 	"version": "7"

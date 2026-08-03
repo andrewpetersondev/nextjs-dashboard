@@ -9,7 +9,15 @@ describe("fetchFilteredInvoicesDal", () => {
 		// result is a valid outcome, not an error.
 		const db = makeReadQueryDb([]);
 
-		const result = await fetchFilteredInvoicesDal(db, "potato", 1);
+		const result = await fetchFilteredInvoicesDal(
+			db,
+			{
+				overdueIssueCutoff: new Date("2026-08-01"),
+				query: "potato",
+				statusFilter: "all",
+			},
+			1,
+		);
 
 		expect(result).toEqual([]);
 	});
@@ -18,7 +26,15 @@ describe("fetchFilteredInvoicesDal", () => {
 		const rows = [{ id: "11111111-1111-4111-8111-111111111111", name: "Acme" }];
 		const db = makeReadQueryDb(rows);
 
-		const result = await fetchFilteredInvoicesDal(db, "Acme", 1);
+		const result = await fetchFilteredInvoicesDal(
+			db,
+			{
+				overdueIssueCutoff: new Date("2026-08-01"),
+				query: "Acme",
+				statusFilter: "all",
+			},
+			1,
+		);
 
 		expect(result).toEqual(rows);
 	});
