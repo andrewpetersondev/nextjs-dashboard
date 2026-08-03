@@ -324,7 +324,7 @@ describe("loginWorkflow", () => {
 
 1. Create use case file in `commands/` or `queries/`
 2. Define input/output DTOs in `dtos/`
-3. Add validation schema in `schemas/` (if needed)
+3. Add a validator in `validators/` (if needed)
 4. Implement use case with `safeExecute()`
 5. Add factory in `infrastructure/composition/factories/`
 6. Wire in `auth.composition.ts`

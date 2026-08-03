@@ -1,22 +1,48 @@
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import type { JSX } from "react";
-import { H1 } from "@/ui/atoms/headings.atom";
+import { BRAND_NAME } from "@/ui/brand/brand.constants";
+import { tektur } from "@/ui/styles/fonts";
+import { cn } from "@/ui/utils/cn";
+
+const SIZES = {
+	lg: { icon: "h-12 w-12", wordmark: "text-3xl md:text-5xl" },
+	md: { icon: "h-8 w-8", wordmark: "text-2xl" },
+} as const;
 
 /**
- * AcmeLogo component displays the Acme brand logo.
- * @returns {JSX.Element}
+ * The Acme brand mark: globe + tektur wordmark. Deliberately a <span>, not a
+ * heading — a logo is not part of the document outline, and the previous
+ * hard-coded <H1> here put a second h1 on every dashboard page. Pages own
+ * their headings; this component owns only the mark.
  */
-export function AcmeLogo(): JSX.Element {
+export function AcmeLogo({
+	className,
+	size = "md",
+}: {
+	className?: string;
+	size?: keyof typeof SIZES;
+}): JSX.Element {
 	return (
-		<div
-			className="flex h-20 shrink-0 items-end rounded-lg bg-bg-secondary p-4 text-text-primary"
+		<span
+			className={cn(
+				"flex flex-row items-center gap-2 text-text-primary",
+				className,
+			)}
 			data-testid="acme-logo"
 		>
-			<div className="flex flex-row items-center text-3xl leading-none md:text-5xl">
-				<div className="sr-only">Acme Logo</div>
-				<GlobeAltIcon className="h-12 w-12 rotate-[15deg]" />
-				<H1>Acme</H1>
-			</div>
-		</div>
+			<GlobeAltIcon
+				aria-hidden={true}
+				className={cn("rotate-[15deg]", SIZES[size].icon)}
+			/>
+			<span
+				className={cn(
+					tektur.className,
+					"font-bold leading-none",
+					SIZES[size].wordmark,
+				)}
+			>
+				{BRAND_NAME}
+			</span>
+		</span>
 	);
 }

@@ -1,13 +1,14 @@
-# [Capability Name]
+# Time
 
 ## Purpose
 
-One sentence describing what this capability provides.
+Shared time constants and second/millisecond conversion helpers.
 
 ## Boundaries
 
-- Universal code lives in `core/`, `logic/`, etc.
-- Server-only code lives in `server/`.
+One flat, universal file: `time.constants.ts` — UI timing constants
+(`DEBOUNCE_MS`, `ALERT_AUTO_HIDE_MS`, `TYPING_MS`) and `nowInSeconds` +
+seconds/milliseconds converters used by session timing.
 
 ## Import Rules
 

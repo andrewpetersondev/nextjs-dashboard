@@ -18,13 +18,16 @@ export const DashboardSidebar = ({
 			className="flex h-full flex-col px-3 py-4 md:px-2"
 			data-cy="dashboard-sidenav"
 		>
+			{/* No aria-label: the visible "Acme" wordmark is the accessible name
+			    (the old "Go to homepage" label misdescribed a dashboard-root link —
+			    a WCAG 2.5.3 label-in-name smell). p-4 restores the padding the old
+			    AcmeLogo container owned. */}
 			<Link
-				aria-label="Go to homepage"
-				className="mb-2 flex h-20 items-end justify-start rounded-md bg-bg-secondary md:h-40"
+				className="mb-2 flex h-20 items-end justify-start rounded-md bg-bg-secondary p-4 md:h-40"
 				href={ROUTES.dashboard.root}
 				tabIndex={0}
 			>
-				<AcmeLogo />
+				<AcmeLogo size="lg" />
 			</Link>
 			<div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
 				<DashboardNavLinks />

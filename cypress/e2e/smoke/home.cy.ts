@@ -3,10 +3,15 @@ import {
 	DASHBOARD_PATH,
 	LOGIN_PATH,
 } from "@cypress/e2e/shared/paths";
-import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
+import {
+	ADMIN_DASHBOARD_H1,
+	UI_MATCHERS_REGEX,
+} from "@cypress/e2e/shared/regex";
 import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
 import { TWENTY_SECONDS } from "@cypress/e2e/shared/times";
 import { EXTERNAL_URLS } from "@cypress/e2e/shared/urls";
+
+const HTTP_OK = 200;
 
 describe("Home smoke test", () => {
 	it("loads homepage and navigates to login", () => {
@@ -30,6 +35,17 @@ describe("Home smoke test", () => {
 		);
 	});
 
+	it("serves the generated OG image", () => {
+		// The og:image route is a build-time-generated Route Handler; a broken
+		// generation would 500 here while the page itself still renders.
+		cy.request(`${BASE_URL}/opengraph-image`).then((response) => {
+			expect(response.status).to.eq(HTTP_OK);
+			expect(response.headers["content-type"]).to.include("image/png");
+		});
+	});
+});
+
+describe("Landing demo entry points", () => {
 	it("opens the dashboard via the one-click demo", () => {
 		cy.visit(BASE_URL);
 
@@ -42,6 +58,25 @@ describe("Home smoke test", () => {
 			DASHBOARD_PATH,
 		);
 		cy.findByRole("heading", { name: UI_MATCHERS_REGEX.dashboardH1 }).should(
+			"be.visible",
+		);
+	});
+
+	it("opens the ADMIN dashboard via the landing admin link", () => {
+		cy.visit(BASE_URL);
+
+		cy.get(AUTH_SEL.landingAdminButton).click();
+
+		// Same bcrypt + DB-transaction cost as the user demo button.
+		cy.location("pathname", { timeout: TWENTY_SECONDS }).should(
+			"include",
+			DASHBOARD_PATH,
+		);
+		// The ADMIN title (not the /User Dashboard/i regex above) plus the
+		// role-gated Users nav link — the hero's role-guarding claim, proven.
+		// Nav links carry no data-cy, so query by accessible role/name.
+		cy.findByRole("heading", { name: ADMIN_DASHBOARD_H1 }).should("be.visible");
+		cy.findByRole("link", { name: UI_MATCHERS_REGEX.usersNavLink }).should(
 			"be.visible",
 		);
 	});

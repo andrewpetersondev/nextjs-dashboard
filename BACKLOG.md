@@ -15,91 +15,33 @@ this file is the deliberate workaround.)
 > polish on its own — a clean demo beats a half-built feature.
 >
 > **Lane plan — decided 2026-08-03** (from the verified best-practice review, see Done):
-> **Lane A (invoice status lifecycle) SHIPPED + deployed 2026-08-03** — see Done.
-> Remaining: **Lane B** = demo-surface polish (items 1–2, single lane, any session), then
-> the **a11y pass (item 3) as the serial last phase** — it audits the final UI both lanes
-> produce. Before any push: run the full unit + e2e suites on the merged tree
-> (`check:fast` contains no tests). Each lane edits only its own BACKLOG item block.
+> **Lane A (invoice status lifecycle) SHIPPED + deployed 2026-08-03** and **Lane B
+> (demo-surface polish) BUILT 2026-08-03** — see Done. The only open Now work is the
+> **a11y pass (item 3), the serial last phase** auditing the final UI both lanes
+> produced. Before any push: run the full unit + e2e suites on the merged tree
+> (`check:fast` contains no tests).
 
 ### Now — job-hunt focus (demo-first, ~2 weeks)
 
-1. **Kill the demo dead-ends** (fast, high honesty-per-hour)
-   - [x] ~~`forgot-password` live stub~~ — done 2026-07-22, see Done below.
-   - [ ] **Stub/empty module READMEs (12) — delete 7, fill 7** _(inventory corrected +
-         dispositions decided in the 2026-08-02 verified review; the old text wrongly
-         listed `forms/notes` — a real 2.8KB doc — as a stub and missed the two
-         `infrastructure/**` stubs)_. **Delete** the 7 auth leaf stubs (5 empty + 2
-         one-liners: `application/auth-user{,/commands,/workflows}`,
-         `application/{session,shared}`, `infrastructure/{persistence,session}`) — the
-         four auth layer READMEs already cover them; zero inbound links. **Fill**
-         `src/shared/{http,primitives,routing,time}` (keep the
-         Purpose/Boundaries/Import-Rules headings but write Boundaries from the real file
-         lists — the template boilerplate is only true for `http/`), the 0-byte
-         `src/shared/forms/README.md` as the subsystem front door (link `notes/README.md`),
-         plus the two missing same-class READMEs `src/shared/{policies,telemetry}` so the
-         no-placeholder principle holds. Fold in the one-line
-         `auth/application/README.md` drift fix (`schemas/` → `validators/`).
-   - [x] ~~Font experiment + middleware debug card~~ — resolved "drop" 2026-07-30, see Done
-         (dead-ends round 2).
-   - [ ] **Template SVG residue in `public/`** — `next.svg`, `vercel.svg`, `file.svg`,
-         `globe.svg`, `window.svg` are unreferenced create-next-app leftovers (verified
-         zero refs 2026-07-30). One-minute deletion.
-2. **First impression** — the live link is what recruiters click first.
-   - [x] ~~Real landing page~~ — done 2026-07-30, see Done below.
-   - [x] ~~Surface the `docs/diagrams/` architecture diagrams on the README~~ — done
-         2026-07-30, see Done below (README "Architecture" section).
-   - [x] ~~Fix the drift-flagged architecture diagrams~~ — done 2026-07-31, see Done
-         below; the one deliberate leftover (enforce the 30-day absolute session
-         ceiling in code) moved to Later.
-   - [ ] **OG/social-preview image** — the site has in fact NEVER emitted `og:*` tags
-         (the deleted course PNG sat in `public/`, not a metadata convention — this is
-         net-new metadata). Decided design (verified against Next 16.2.12 docs,
-         2026-08-02): one `src/app/opengraph-image.tsx` via `ImageResponse` from
-         `next/og`, exporting `size` 1200×630 + `alt` + `contentType` (expect the repo's
-         usual `useComponentExportOnlyModules` biome-ignore); no request-time APIs →
-         prerenders at build on both Vercel and the Docker standalone target. v1 uses the
-         bundled default font (Noto Sans — already the body font). Satori has no
-         Tailwind/CSS vars: hardcode the CTA's pinned hex pair and inline-style the globe
-         icon. Hoist the hero tagline into a shared constant imported by both `page.tsx`
-         and the image so they can't drift. No `twitter-image` file (X falls back to
-         `og:image`); optionally add `twitter.card` + a minimal `openGraph` block to root
-         metadata in the same change. Verify: build + inspect `<head>`, `GET
-         /opengraph-image` smoke, LinkedIn Post Inspector after deploy.
-   - [ ] **Make the role-guarding claim demoable from the landing page** — decided design
-         (2026-08-02): a second quiet `DemoForm` inside `TryDemoCta` wired to the existing
-         `demoAdminAction` ("or explore as admin"). POST form is mandatory (server actions
-         are POST-only — never a link). Style via the `className` pass-through with
-         explicitly contrast-checked pinned colors in both schemes — NOT the raw `outline`
-         variant (its semantic tokens fail WCAG AA in dark mode, and axe returns
-         "incomplete" for contrast on the hero's gradient, so a green smoke run proves
-         nothing). Distinct `label` (feeds aria-label + fallback data-cy) + explicit
-         `dataCy` + new `AUTH_SEL` entry; reword the now-plural "One click creates a
-         throwaway demo account" caption. New e2e: click → assert `/Admin Dashboard/i`
-         (NOT the `/User Dashboard/i` regex the existing landing test uses) →
-         `findByRole("link", { name: /users/i })` (nav links carry no data-cy). Update the
-         README demo-login line + `docs/deployment.md`. **Accepted trade-off
-         (2026-08-03):** no rate limit/cap/cleanup exists; every click permanently inserts
-         an ADMIN row (+ a `demo_user_counters` row). The endpoint is already public on
-         the login page — added exposure, not a new risk class.
-   - [ ] **Brand-mark dedup: AcmeLogo everywhere, CDN logo gone** _(absorbs the former
-         Later "AcmeLogo brand-mark dedup" item; decided design 2026-08-02)_ — refactor
-         `AcmeLogo` to a **non-heading `<span>` mark** with a size prop (add
-         `tektur.className` + `font-bold` explicitly), NOT the heading-level prop the old
-         item proposed: a logo isn't part of the document outline, and the hard-coded
-         `<H1>` gives every dashboard page two H1s today (verified: even the create/edit
-         pages have their own H1s inside the form components, so demotion leaves exactly
-         one H1 everywhere). Drop the sr-only "Acme Logo" div (else the sidebar link
-         announces "Acme Logo Acme"); restore the padding the sidebar Link loses and
-         visually verify both breakpoints; fix the sidebar Link's
-         `aria-label="Go to homepage"` (it points at the dashboard — WCAG 2.5.3 smell).
-         Consume from the landing header (replacing the hand-rolled mark) and auth pages:
-         give `PageHeaderMolecule` a ReactNode logo slot (AuthPageTemplate is its only
-         consumer — don't hardcode brand into the generic molecule), delete the
-         `logoSrc`/`logoAlt`/`Image` branch + its `IMAGE_SIZES` import in the same change
-         (knip won't flag dead props), promote the auth title h2 → h1 (auth pages have no
-         h1 today), then delete `BRAND_LOGO_SRC` + `brand.constants.ts`. Rationale:
-         template residue + external hotlink — NOT breakage (Next 16 serves external SVGs
-         unoptimized; it renders fine today).
+1. **Kill the demo dead-ends** — COMPLETE 2026-08-03 (Lane B), see Done.
+   - [x] ~~`forgot-password` live stub~~ — done 2026-07-22.
+   - [x] ~~Stub/empty module READMEs~~ — done 2026-08-03 (deleted 7 auth leaf stubs,
+         wrote 7 real shared-capability READMEs incl. `policies`/`telemetry`).
+   - [x] ~~Font experiment + middleware debug card~~ — resolved "drop" 2026-07-30.
+   - [x] ~~Template SVG residue in `public/`~~ — deleted 2026-08-03 (zero refs re-verified).
+2. **First impression** — COMPLETE 2026-08-03 (Lane B), see Done.
+   - [x] ~~Real landing page~~ — done 2026-07-30.
+   - [x] ~~Architecture diagrams on README + drift fixes~~ — done 2026-07-30/31.
+   - [x] ~~OG/social-preview image~~ — done 2026-08-03 (`src/app/opengraph-image.tsx`,
+         statically prerendered; shared HERO_TAGLINE constant; og/twitter meta in root
+         layout; e2e smoke). Post-deploy: check the unfurl with LinkedIn Post Inspector.
+   - [x] ~~Role-guarding demoable from landing~~ — done 2026-08-03 ("or explore as
+         admin" quiet link, per-scheme pinned contrast colors, e2e asserts the ADMIN
+         dashboard + Users nav link).
+   - [x] ~~Brand-mark dedup / CDN logo gone~~ — done 2026-08-03 (AcmeLogo = non-heading
+         span with size prop; landing header, sidebar, and auth pages all consume it;
+         auth title promoted to h1; dashboard double-H1 fixed; `BRAND_LOGO_SRC` deleted —
+         `brand.constants.ts` now holds brand COPY: `BRAND_NAME` + `HERO_TAGLINE`).
 3. **a11y + Lighthouse pass — serial LAST phase: start after Lane B lands** (Lane A
    shipped 2026-08-03; the pass audits the final UI both lanes produce — same-file
    overlap with both was verified). Decided design 2026-08-02 — note this settles the old
@@ -192,6 +134,31 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Demo-surface polish (Lane B)** _(2026-08-03)_ — the rest of the job-hunt Now
+      list in one lane, all to the verified designs: **(1) README rework** — deleted the
+      7 auth leaf stubs (layer READMEs cover them), wrote 7 real shared-capability
+      READMEs from actual file lists (`http`, `primitives`, `routing`, `time`, `forms`
+      front-door, plus the previously-missing `policies` and `telemetry`), fixed the
+      auth application README `schemas/`→`validators/` drift. **(2) Template SVGs**
+      deleted. **(3) OG image** — `src/app/opengraph-image.tsx` (ImageResponse, pinned
+      hexes, statically prerendered — verified `○ /opengraph-image` in the build
+      manifest and rendered in the browser); hero tagline hoisted to `HERO_TAGLINE`
+      shared with the hero; net-new `openGraph` + `twitter.card` root metadata; e2e
+      smoke asserts 200 + image/png. **(4) Landing admin link** — quiet underlined
+      "or explore as admin" wired to the existing `demoAdminAction`, per-scheme pinned
+      sky shades (light AND dark verified in the preview), new e2e clicks it and
+      asserts the ADMIN dashboard + role-gated Users nav link. **(5) Brand-mark dedup**
+      — AcmeLogo is a non-heading span (size prop) consumed by landing header, sidebar
+      (misleading aria-label dropped), and auth pages via PageHeaderMolecule's new logo
+      slot (Image/`IMAGE_SIZES` branch deleted); auth titles promoted to the pages' only
+      h1; dashboard's double-H1 fixed (verified one h1 in the preview); CDN
+      `BRAND_LOGO_SRC` deleted. Bonus finds: `.env.example.local`'s example
+      SESSION_SECRET was shorter than the 32-char minimum the JWT service enforces
+      (fixed with a comment); split two over-long Cypress describes (a leftover Lane A
+      Biome warning — `biome check` exits 0 on warnings, so watch the printed slate,
+      not the exit code). Validation: Biome slate 0, unit 338/338, `check:fast` green,
+      production build green, landing/auth/dashboard visually verified in both color
+      schemes via a worktree dev server.
 - [x] **Invoice status lifecycle (Lane A) — SHIPPED + deployed** _(2026-08-03)_ — the
       job-hunt "one memorable feature": `void` added to the pg enum (migrations `0007` in
       all three env sets + Neon prod, applied before the deploy push); `overdue` DERIVED

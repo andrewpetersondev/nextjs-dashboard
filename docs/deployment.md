@@ -64,7 +64,8 @@ The fastest path to a live URL. Steps marked 🔑 need your accounts.
 4. **Deploy** — Vercel builds on push to `main` and gives you a URL. Preview
    deploys per PR are on by default.
 5. **Smoke test** — visit `/api/health` (expect `{"status":"ok","db":"up"}`),
-   then sign in with the demo admin login.
+   then use the landing page's one-click "explore as admin" button (or sign in
+   with the seeded demo admin login).
 6. **README** — add the live URL and CI badge.
 
 Good to know:
