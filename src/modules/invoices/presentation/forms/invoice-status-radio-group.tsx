@@ -1,17 +1,20 @@
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
-import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
+import type { CreatableInvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
 import { ErrorMessage } from "@/ui/forms/components/fields/error-message";
 import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
 /**
  * Props for InvoiceStatusRadioGroup.
+ * CREATE-only since the lifecycle work: the edit form changes status through
+ * InvoiceStatusTransitionGroup, so this group offers only the creatable subset
+ * ("void" is transition-only and never a creation choice).
  */
 interface InvoiceStatusRadioGroupProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
 	error?: FieldError;
-	value: InvoiceStatus;
+	value: CreatableInvoiceStatus;
 }
 
 /**

@@ -103,55 +103,40 @@ this file is the deliberate workaround.)
          template residue + external hotlink — NOT breakage (Next 16 serves external SVGs
          unoptimized; it renders fine today).
 3. **One memorable feature — invoice status lifecycle** (the interview story). **Lane A —
-   decided design 2026-08-02, approved 2026-08-03.** Bounded to ~a week, whiteboard-able,
-   built the straightforward server-action way matching the existing architecture.
-   - [ ] **Model** — stored enum gains only `void` (append LAST; `ALTER TYPE ... ADD
-         VALUE` is irreversible; drizzle-kit generates it, Neon ≥ PG14 fine). `overdue` is
-         **derived at read time** (`status = 'pending'` AND past due) — no cron, no
-         write-on-read, no stored value. Due date derives in the domain
-         (`dueDateOf(date: Date)` + a NET_30 constant; no `due_date` column in v1 — the
-         function seam makes a later column non-breaking). Add a display-status type (or
-         `isOverdue` flag) for badge/filter — `InvoiceListFilter`/DTO/badge all reuse the
-         write-side union today. Compute the cutoff in TS from the same constant and bind
-         it into SQL so the rule lives once.
-   - [ ] **Step order** — (1) unify the two parallel `INVOICE_STATUSES` constants
-         (`database/schema/schema.constants.ts` ↔ domain `invoice.statuses.ts`; retype the
-         seed builder's literal union off it); (2) freeze the irreversible decisions; (3)
-         generate migrations for dev+test+prod in ONE commit (`db:drift` in check:fast
-         fails a partial regen).
-   - [ ] **Transitions** — matrix + `canTransition` + Result validator in
-         `domain/statuses/invoice-status.transitions.ts`: pending→paid, pending→void,
-         terminals terminal, and `from === to` allowed as a no-op (the edit form always
-         posts status). Use the `validation` AppError kind (`conflict` requires `pgCode`
-         and won't typecheck from the domain). Enforce twice: service reads the current
-         row and checks the matrix; `updateInvoiceDal` adds `WHERE status = expectedFrom`
-         ONLY when the update changes status (unconditional would turn concurrent
-         amount-edits into false conflicts), 0 rows → conflict-flavored error; add a
-         key-conditional message in the action (`handleActionError` currently flattens all
-         errors to one string).
-   - [ ] **Forms** — create keeps the pending/paid radio but gets its OWN Zod status
-         subset (`z.enum(["pending", "paid"])`) — the shared create/update schema would
-         let a hand-crafted POST create `void`. Edit page: radio → transition buttons
-         driven by the matrix; **paid/void lock the other fields** (transitions only);
-         delete stays. Write the void-vs-delete rationale into the module README (the
-         interview narrative).
-   - [ ] **Filter** — validated URL param `status=all|pending|overdue|paid|void`
-         (pending/overdue mutually exclusive so the buckets partition); ONE shared
-         where-builder used by BOTH `fetch-filtered-invoices` and `fetch-invoices-pages`
-         (their WHERE blocks are verbatim duplicates — touching one silently breaks
-         pagination); filter UI resets `page=1`, preserves foreign params (SearchBox +
-         Pagination already cooperate), accessible selected state.
-   - [ ] **Decided semantics** — `void` is excluded from customer-facing counts: the
-         Total-Invoices card count, the customers module's `totalInvoices`
-         (`fetch-filtered-customers.ts` — outside the invoices module!), and
-         `fetch-latest-invoices` (the panel shows no status). Money sums already exclude
-         it by construction. Seeds emit a small share of `void` so filter/badge are
-         demo-visible.
-   - [ ] **Ripples** — make the badge exhaustive (unknown status currently renders an
-         empty span); update `invoice-status.validator.test.ts`'s hardcoded list; e2e:
-         keep `#pending`/`#paid` create selectors working, add filter + transition specs,
-         overdue fixture via the create form with a past date (`min="2020-01-01"` allows
-         it — no new cy.task); docs: module README + `docs/diagrams/database-erd.md`.
+   decided design 2026-08-02, approved 2026-08-03, BUILT 2026-08-03 on
+   `claude/invoice-status-lifecycle`** (awaiting merge; see remaining steps).
+   - [x] **Model** — enum gained only `void` (appended last); `overdue` derived at read
+         time via `dueDateOf()`/`overdueIssueDateCutoff()` (NET_30 in
+         `invoice.constants.ts`, display type in `statuses/invoice-status.display.ts`);
+         cutoff computed in TS and bound into SQL.
+   - [x] **Step order held** — constants unified (domain aliases
+         `database/schema/schema.constants.ts`; seed builder retyped), then one commit
+         generating dev+test+prod migrations (`0007_*`, `ALTER TYPE ADD VALUE 'void'`;
+         `db:drift` green).
+   - [x] **Transitions** — matrix + validator in `statuses/invoice-status.transitions.ts`
+         (`from === to` no-op allowed; `validation` kind). Enforced twice:
+         `InvoiceService.resolveExpectedStatus` (read + matrix check) and
+         `updateInvoiceDal`'s `WHERE status = expectedFrom` only when status changes
+         (0 rows → `conflict` error via the new `DomainConflictMetadata` union member);
+         `update-invoice.action` now surfaces lifecycle-specific messages.
+   - [x] **Forms** — `CreateInvoiceSchema` narrowed to `pending|paid`; edit form swapped
+         the radio for `InvoiceStatusTransitionGroup` (submitter buttons carrying
+         `name="status"`); paid/void lock all fields and hide submit; delete stays;
+         void-vs-delete narrative written into the module README.
+   - [x] **Filter** — `status=all|pending|overdue|paid|void` URL param (pending/overdue
+         partition), ONE shared `buildInvoiceListWhere` for both list DALs, pill control
+         (`InvoiceStatusFilterControl`, fieldset + aria-pressed, `page=1` reset).
+   - [x] **Semantics + ripples** — void excluded from Total-Invoices count, customers
+         `totalInvoices`, and Latest panel; seeds emit ~10% void; badge exhaustive over
+         display statuses (`data-status` attr for e2e); validator test updated; new specs
+         `status-lifecycle.cy.ts` (filter partition, mark-paid, void+lock) +
+         `update-form.cy.ts` re-anchored to `?status=overdue` (first row may now be a
+         locked terminal invoice); docs: module README lifecycle section +
+         `database-erd.md` enum values. Unit 338/338 + `check:fast` green on the branch.
+   - [ ] **Remaining to land**: run the full Cypress suite on the merged tree
+         (`check:fast` has no e2e; the branch worktree has no test env), run
+         `db:migrate:prod` against Neon BEFORE the push that deploys this code, then
+         move this item to Done.
 4. **a11y + Lighthouse pass — serial phase: start only after Lane A merges** (verified
    same-file overlap: the invoices page `<main>`, the form live-region call sites, the
    status radio group). Decided design 2026-08-02 — note this settles the old item's open

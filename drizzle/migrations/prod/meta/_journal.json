@@ -49,6 +49,13 @@
 			"tag": "0006_perpetual_the_executioner",
 			"version": "7",
 			"when": 1781184342254
+		},
+		{
+			"breakpoints": true,
+			"idx": 7,
+			"tag": "0007_cultured_juggernaut",
+			"version": "7",
+			"when": 1785743864904
 		}
 	],
 	"version": "7"

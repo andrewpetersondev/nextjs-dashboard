@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { JSX } from "react";
 import { formatInvoiceDateLocalized } from "@/modules/invoices/domain/invoice.date-utils";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
+import { deriveInvoiceDisplayStatus } from "@/modules/invoices/domain/statuses/invoice-status.display";
 import {
 	DeleteInvoiceButton,
 	UpdateInvoiceLink,
@@ -23,6 +24,8 @@ export const MobileTable = ({
 }: {
 	invoices: InvoiceListFilter[];
 }): JSX.Element => {
+	// One clock reading for the whole table render; "overdue" is derived, not stored.
+	const now = new Date();
 	return (
 		<div className="md:hidden">
 			{/* Map through invoices and create mobile-friendly cards */}
@@ -48,7 +51,13 @@ export const MobileTable = ({
 								</div>
 								<p className="text-sm text-text-primary">{invoice.email}</p>
 							</div>
-							<InvoiceStatusComponent status={invoice.status} />
+							<InvoiceStatusComponent
+								status={deriveInvoiceDisplayStatus(
+									invoice.status,
+									invoice.date,
+									now,
+								)}
+							/>
 						</div>
 						{/* Amount, date and actions section */}
 						<div className="flex w-full items-center justify-between pt-4">

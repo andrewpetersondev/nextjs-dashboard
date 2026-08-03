@@ -1,3 +1,4 @@
+import type { InvoiceStatus } from "@database/schema/schema.constants";
 import { SEED_CONFIG } from "@devtools/seed/data/seed.constants";
 import type {
 	NewInvoice,
@@ -46,7 +47,10 @@ function generateInvoiceAmount(): number {
 	);
 }
 
-function randomInvoiceStatus(): "pending" | "paid" {
+function randomInvoiceStatus(): InvoiceStatus {
+	if (Math.random() < SEED_CONFIG.invoiceStatusVoidProbability) {
+		return "void";
+	}
 	return Math.random() < SEED_CONFIG.invoiceStatusPendingProbability
 		? "pending"
 		: "paid";

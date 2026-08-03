@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { requireSession } from "@/modules/auth/presentation/session/session-access.guard";
 import { InvoiceService } from "@/modules/invoices/application/services/invoice.service";
-import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
+import {
+	INVOICE_MSG,
+	type InvoiceMessageId,
+} from "@/modules/invoices/domain/i18n/invoice-messages";
 import { translator } from "@/modules/invoices/domain/i18n/translator";
 import {
 	UPDATE_INVOICE_FIELDS_LIST,
@@ -27,6 +30,22 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
+// Lifecycle rejections carry their own message id in AppError.message; the
+// user must see WHY the update was refused (illegal transition vs. stale
+// status), not the generic "failed to update".
+function updateErrorMessageId(error: unknown): InvoiceMessageId {
+	if (!(error instanceof AppError)) {
+		return INVOICE_MSG.serviceError;
+	}
+	if (
+		error.message === INVOICE_MSG.invalidStatusTransition ||
+		error.message === INVOICE_MSG.statusConflict
+	) {
+		return error.message;
+	}
+	return INVOICE_MSG.updateFailed;
+}
+
 function handleActionError(id: string, error: unknown): FormResult<never> {
 	logger.error(INVOICE_MSG.serviceError, {
 		context: "updateInvoiceAction",
@@ -43,11 +62,7 @@ function handleActionError(id: string, error: unknown): FormResult<never> {
 		formData: {},
 		formErrors: [],
 		key: error instanceof AppError ? error.key : "unknown",
-		message: translator(
-			error instanceof AppError
-				? INVOICE_MSG.updateFailed
-				: INVOICE_MSG.serviceError,
-		),
+		message: translator(updateErrorMessageId(error)),
 	});
 }
 

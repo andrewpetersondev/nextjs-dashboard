@@ -1,22 +1,26 @@
 import "server-only";
 import { customers } from "@database/schema/customers";
 import { invoices } from "@database/schema/invoices";
-import { desc, eq, ilike, or, sql } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
+import {
+	buildInvoiceListWhere,
+	type InvoiceListWhereInput,
+} from "@/modules/invoices/infrastructure/repository/dal/invoice-list-where";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { ITEMS_PER_PAGE } from "@/ui/navigation/pagination/pagination.constants";
 
 /**
  * Fetches filtered invoices with pagination and customer information.
  * @param db - Drizzle database instance
- * @param query - Search query string
+ * @param listQuery - Search text + status filter + overdue cutoff bundle
  * @param currentPage - Current page number
  * @returns Promise resolving to array of InvoiceListFilter
  * @throws AppError if query fails
  */
 export async function fetchFilteredInvoicesDal(
 	db: AppDatabase,
-	query: string,
+	listQuery: InvoiceListWhereInput,
 	currentPage: number,
 ): Promise<InvoiceListFilter[]> {
 	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -36,27 +40,7 @@ export async function fetchFilteredInvoicesDal(
 		})
 		.from(invoices)
 		.innerJoin(customers, eq(invoices.customerId, customers.id))
-		.where(
-			or(
-				ilike(customers.name, `%${query}%`),
-				ilike(customers.email, `%${query}%`),
-				ilike(
-					sql<string>`${invoices.amount}
-                ::text`,
-					`%${query}%`,
-				),
-				ilike(
-					sql<string>`${invoices.date}
-                ::text`,
-					`%${query}%`,
-				),
-				ilike(
-					sql<string>`${invoices.status}
-                ::text`,
-					`%${query}%`,
-				),
-			),
-		)
+		.where(buildInvoiceListWhere(listQuery))
 		.orderBy(desc(invoices.date))
 		.limit(ITEMS_PER_PAGE)
 		.offset(offset);

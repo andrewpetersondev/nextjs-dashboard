@@ -17,6 +17,16 @@ const PgErrorMetadataSchema: z.ZodType<PgErrorMetadata> = z
 	})
 	.passthrough();
 
+const DomainConflictMetadataSchema = z
+	.object({
+		attemptedTo: z.string().optional(),
+		expectedFrom: z.string().optional(),
+		policy: z.string().optional(),
+		reason: z.string().optional(),
+		resourceId: z.string().optional(),
+	})
+	.passthrough() as z.ZodType<DomainConflictMetadata>;
+
 export type ValidationErrorMetadata = Readonly<{
 	readonly field?: string;
 	readonly fieldErrors?: Record<string, readonly string[]>;
@@ -51,10 +61,28 @@ export const InfrastructureErrorMetadataSchema = z
 	})
 	.passthrough() as z.ZodType<InfrastructureErrorMetadata>;
 
-export type ConflictErrorMetadata = Readonly<PgErrorMetadata>;
+/**
+ * Conflict raised by a domain rule rather than a Postgres error — e.g. an
+ * optimistic-concurrency precondition (`WHERE status = expected`) matching
+ * zero rows. Domain code cannot honestly supply the pgCode the PG shape
+ * requires, hence this second union member.
+ */
+export type DomainConflictMetadata = Readonly<{
+	readonly attemptedTo?: string;
+	readonly expectedFrom?: string;
+	readonly policy?: string;
+	readonly reason?: string;
+	readonly resourceId?: string;
+}>;
 
-export const ConflictErrorMetadataSchema =
-	PgErrorMetadataSchema as z.ZodType<ConflictErrorMetadata>;
+export type ConflictErrorMetadata =
+	| Readonly<PgErrorMetadata>
+	| DomainConflictMetadata;
+
+export const ConflictErrorMetadataSchema = z.union([
+	PgErrorMetadataSchema,
+	DomainConflictMetadataSchema,
+]) as z.ZodType<ConflictErrorMetadata>;
 
 export type IntegrityErrorMetadata = Readonly<PgErrorMetadata>;
 
@@ -97,8 +125,11 @@ export function isValidationMetadata(
 	return "fieldErrors" in metadata || "formErrors" in metadata;
 }
 
+// Narrows to the PG shape itself: since ConflictErrorMetadata became a union
+// (PG | domain conflict), narrowing to the alias would no longer guarantee
+// pgCode/constraint access.
 export function isPgMetadata(
 	metadata: AppErrorMetadata,
-): metadata is ConflictErrorMetadata | IntegrityErrorMetadata {
+): metadata is PgErrorMetadata {
 	return "pgCode" in metadata;
 }

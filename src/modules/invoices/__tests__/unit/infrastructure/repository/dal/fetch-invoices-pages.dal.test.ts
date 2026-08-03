@@ -9,7 +9,11 @@ describe("fetchInvoicesPagesDal", () => {
 		// `if (!total ...)` guard threw on that 0. The 1-page floor is correct.
 		const db = makeReadQueryDb([{ count: 0 }]);
 
-		const result = await fetchInvoicesPagesDal(db, "potato");
+		const result = await fetchInvoicesPagesDal(db, {
+			overdueIssueCutoff: new Date("2026-08-01"),
+			query: "potato",
+			statusFilter: "all",
+		});
 
 		expect(result).toBe(1);
 	});
@@ -18,7 +22,11 @@ describe("fetchInvoicesPagesDal", () => {
 		const matches = ITEMS_PER_PAGE * 3 + 1;
 		const db = makeReadQueryDb([{ count: matches }]);
 
-		const result = await fetchInvoicesPagesDal(db, "Acme");
+		const result = await fetchInvoicesPagesDal(db, {
+			overdueIssueCutoff: new Date("2026-08-01"),
+			query: "Acme",
+			statusFilter: "all",
+		});
 
 		expect(result).toBe(4);
 	});

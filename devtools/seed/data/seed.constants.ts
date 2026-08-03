@@ -9,6 +9,8 @@ export const SEED_CONFIG = {
 	invoiceCount: 70,
 	invoiceRegularThreshold: 0.9,
 	invoiceStatusPendingProbability: 0.5,
+	// Small share of void rows so the status filter and badge are demo-visible.
+	invoiceStatusVoidProbability: 0.1,
 	largeAmountThreshold: 1_500_001,
 	maxAmountCents: 1_500_000,
 	maxLargeAmountCents: 5_000_000,

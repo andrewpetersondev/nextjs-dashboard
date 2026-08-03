@@ -8,6 +8,13 @@ import type {
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
+import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
+import { overdueIssueDateCutoff } from "@/modules/invoices/domain/statuses/invoice-status.display";
+import {
+	DEFAULT_INVOICE_STATUS_FILTER,
+	type InvoiceStatusFilter,
+} from "@/modules/invoices/domain/statuses/invoice-status.filter";
+import { validateInvoiceStatusTransition } from "@/modules/invoices/domain/statuses/invoice-status.transitions";
 import {
 	dtoToCreateInvoiceEntity,
 	partialDtoToCreateInvoiceEntity,
@@ -60,6 +67,30 @@ export class InvoiceService {
 			sensitiveData: dto.sensitiveData,
 			status: dto.status,
 		});
+	}
+
+	/**
+	 * Transition guard, half 1 of 2: reads the current row and checks the domain
+	 * matrix, returning the expectedStatus precondition for the repo (half 2 is
+	 * the atomic WHERE in the DAL). Resolves to undefined when no real status
+	 * change is requested, so plain field edits never carry a precondition.
+	 */
+	private async resolveExpectedStatus(
+		id: string,
+		nextStatus: InvoiceStatus | undefined,
+	): Promise<Result<InvoiceStatus | undefined, AppError>> {
+		if (nextStatus === undefined) {
+			return Ok(undefined);
+		}
+		const current = await this.repo.read(toInvoiceId(id));
+		const transition = validateInvoiceStatusTransition(
+			current.status,
+			nextStatus,
+		);
+		if (!transition.ok) {
+			return Err(transition.error);
+		}
+		return Ok(current.status === nextStatus ? undefined : current.status);
 	}
 
 	async createInvoice(
@@ -136,12 +167,26 @@ export class InvoiceService {
 			...(dto.status !== undefined && { status: dto.status }),
 		};
 
+		const expectedStatusResult = await this.resolveExpectedStatus(
+			id,
+			updateDto.status,
+		);
+		if (!expectedStatusResult.ok) {
+			return Err(expectedStatusResult.error);
+		}
+
 		const entityResult = partialDtoToCreateInvoiceEntity(updateDto);
 		if (!entityResult.ok) {
 			return Err(entityResult.error);
 		}
 
-		return Ok(await this.repo.update(toInvoiceId(id), entityResult.value));
+		return Ok(
+			await this.repo.update(
+				toInvoiceId(id),
+				entityResult.value,
+				expectedStatusResult.value,
+			),
+		);
 	}
 
 	async deleteInvoice(id: string): Promise<Result<InvoiceDto, AppError>> {
@@ -160,12 +205,29 @@ export class InvoiceService {
 	async readFilteredInvoices(
 		query: string,
 		currentPage: number,
+		statusFilter: InvoiceStatusFilter = DEFAULT_INVOICE_STATUS_FILTER,
 	): Promise<Result<InvoiceListFilter[], AppError>> {
-		return Ok(await this.repo.readFiltered(query, currentPage));
+		// Cutoff computed HERE from the domain's NET-terms constant and bound as a
+		// query parameter — SQL never re-encodes the overdue rule.
+		const overdueCutoff = overdueIssueDateCutoff(new Date());
+		return Ok(
+			await this.repo.readFiltered(
+				query,
+				currentPage,
+				statusFilter,
+				overdueCutoff,
+			),
+		);
 	}
 
-	async readInvoicesPages(query: string): Promise<Result<number, AppError>> {
-		return Ok(await this.repo.readPagesCount(query));
+	async readInvoicesPages(
+		query: string,
+		statusFilter: InvoiceStatusFilter = DEFAULT_INVOICE_STATUS_FILTER,
+	): Promise<Result<number, AppError>> {
+		const overdueCutoff = overdueIssueDateCutoff(new Date());
+		return Ok(
+			await this.repo.readPagesCount(query, statusFilter, overdueCutoff),
+		);
 	}
 
 	async readLatestInvoices(

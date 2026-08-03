@@ -1,5 +1,8 @@
 import { type ZodString, type ZodUUID, z } from "zod";
-import { INVOICE_STATUSES } from "@/modules/invoices/domain/statuses/invoice.statuses";
+import {
+	CREATABLE_INVOICE_STATUSES,
+	INVOICE_STATUSES,
+} from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
 
 const MAX_INVOICE_AMOUNT_USD = 10_000; // $10,000
@@ -41,8 +44,12 @@ const InvoiceBaseSchema = z.object({
 type CreateInvoiceInput = z.input<typeof CreateInvoiceSchema>;
 type UpdateInvoiceInput = z.input<typeof UpdateInvoiceSchema>;
 
-// biome-ignore lint/nursery/useExplicitType: fix
-export const CreateInvoiceSchema = InvoiceBaseSchema;
+// Create narrows status to the creatable subset: "void" is transition-only,
+// and the shared base enum would otherwise let a hand-crafted POST create a
+// void invoice (the radio group hiding it is UI, not enforcement).
+export const CreateInvoiceSchema = InvoiceBaseSchema.extend({
+	status: z.enum(CREATABLE_INVOICE_STATUSES),
+});
 
 export const UpdateInvoiceSchema = InvoiceBaseSchema.partial();
 
@@ -52,7 +59,9 @@ export type UpdateInvoicePayload = z.output<typeof UpdateInvoiceSchema>;
 export type CreateInvoiceFieldNames = keyof CreateInvoiceInput;
 export type UpdateInvoiceFieldNames = keyof UpdateInvoiceInput;
 
-export type EditInvoiceViewModel = z.output<typeof CreateInvoiceSchema> & {
+// Base (not Create) output: an EXISTING invoice may hold any stored status,
+// including the transition-only "void" the create schema excludes.
+export type EditInvoiceViewModel = z.output<typeof InvoiceBaseSchema> & {
 	id: string;
 };
 

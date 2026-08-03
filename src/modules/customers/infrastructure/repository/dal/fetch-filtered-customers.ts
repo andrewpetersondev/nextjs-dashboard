@@ -1,7 +1,7 @@
 import "server-only";
 import { customers } from "@database/schema/customers";
 import { invoices } from "@database/schema/invoices";
-import { asc, count, eq, ilike, or, sql } from "drizzle-orm";
+import { asc, eq, ilike, or, sql } from "drizzle-orm";
 import { CUSTOMER_SERVER_ERROR_MESSAGES } from "@/modules/customers/domain/messages";
 import type { CustomerAggregatesRowRaw } from "@/modules/customers/domain/types";
 import type { AppDatabase } from "@/server/db/db.connection";
@@ -24,7 +24,19 @@ export async function fetchFilteredCustomersDal(
 				id: customers.id,
 				imageUrl: customers.imageUrl,
 				name: customers.name,
-				totalInvoices: count(invoices.id),
+				// Void invoices are excluded from customer-facing counts (invoice
+				// lifecycle rule); totalPaid/totalPending below already exclude them
+				// by construction. ::int keeps the pg driver returning a number.
+				totalInvoices: sql<number>`(count(
+            ${invoices.id}
+            )
+            FILTER
+            (
+            WHERE
+            ${invoices.status}
+            !=
+            'void'
+            ))::int`,
 				totalPaid: sql<number | null>`sum(
             ${invoices.amount}
             )

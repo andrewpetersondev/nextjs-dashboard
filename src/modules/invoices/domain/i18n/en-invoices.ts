@@ -29,6 +29,8 @@ export const enInvoices = {
 	[INVOICE_MSG.invalidFormData]: "Invalid form data. Please check your input.",
 	[INVOICE_MSG.invalidId]: "Invalid invoice ID provided.",
 	[INVOICE_MSG.invalidInput]: "Invalid input. Failed to create invoice.",
+	[INVOICE_MSG.invalidStatusTransition]:
+		"That status change isn't allowed for this invoice.",
 	[INVOICE_MSG.listSuccess]: "Invoices listed successfully.",
 	[INVOICE_MSG.mappingFailed]: "Failed to map invoice data.",
 	[INVOICE_MSG.missingFields]: "Missing required fields.",
@@ -37,6 +39,8 @@ export const enInvoices = {
 	[INVOICE_MSG.readSuccess]: "Invoice fetched successfully.",
 	[INVOICE_MSG.repoError]: "Invoice Repository Error. Please try again.",
 	[INVOICE_MSG.serviceError]: "Invoice Service Error. Please try again.",
+	[INVOICE_MSG.statusConflict]:
+		"This invoice's status changed while you were editing. Reload and try again.",
 	[INVOICE_MSG.statusRequired]: "Status is required.",
 	[INVOICE_MSG.transformationFailed]: "Failed to transform invoice data.",
 	[INVOICE_MSG.updateFailed]: "Failed to update invoice.",

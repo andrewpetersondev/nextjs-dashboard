@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { type JSX, Suspense } from "react";
+import { parseInvoiceStatusFilter } from "@/modules/invoices/domain/statuses/invoice-status.filter";
 import { readInvoicesPagesAction } from "@/modules/invoices/presentation/actions/read-invoices-pages.action";
 import { CreateInvoiceLink } from "@/modules/invoices/presentation/components/invoice-links";
+import { InvoiceStatusFilterControl } from "@/modules/invoices/presentation/components/invoice-status-filter";
 import {
 	InvoicesSearchSkeleton,
 	InvoicesTableSkeleton,
@@ -14,6 +16,7 @@ import { Pagination } from "@/ui/navigation/pagination/pagination";
 interface InvoicesSearchParams {
 	page?: string;
 	query?: string;
+	status?: string;
 }
 
 interface InvoicesPageProps {
@@ -40,7 +43,10 @@ export default async function Page(
 
 	const currentPage: number = Number(searchParams?.page) || 1;
 
-	const totalPages: number = await readInvoicesPagesAction(query);
+	// Untrusted URL input: silently falls back to "all" on absent/invalid values.
+	const statusFilter = parseInvoiceStatusFilter(searchParams?.status);
+
+	const totalPages: number = await readInvoicesPagesAction(query, statusFilter);
 
 	return (
 		<main className="w-full">
@@ -53,8 +59,20 @@ export default async function Page(
 				</Suspense>
 				<CreateInvoiceLink />
 			</div>
-			<Suspense fallback={<InvoicesTableSkeleton />} key={query + currentPage}>
-				<InvoicesTable currentPage={currentPage} query={query} />
+			<div className="mt-4">
+				<Suspense fallback={null}>
+					<InvoiceStatusFilterControl />
+				</Suspense>
+			</div>
+			<Suspense
+				fallback={<InvoicesTableSkeleton />}
+				key={query + currentPage + statusFilter}
+			>
+				<InvoicesTable
+					currentPage={currentPage}
+					query={query}
+					statusFilter={statusFilter}
+				/>
 			</Suspense>
 			<div className="mt-5 flex w-full justify-center">
 				<Pagination totalPages={totalPages} />

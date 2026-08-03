@@ -30,7 +30,7 @@ erDiagram
         bigint amount "cents, must be >= 0 (check)"
         date date "not null"
         date revenue_period "must equal month(date) (check)"
-        status status "pending, paid — default pending"
+        status status "pending, paid, void — default pending"
         varchar sensitive_data "demo column"
     }
 

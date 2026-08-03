@@ -5,10 +5,10 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
 
 /**
  * Characterization tests for the invoice-status enum validator.
- * Allowed values are exactly "pending" and "paid".
+ * Allowed values are exactly "pending", "paid", and "void".
  */
 describe("validateInvoiceStatus", () => {
-	it.each(["pending", "paid"] as const)(
+	it.each(["pending", "paid", "void"] as const)(
 		"accepts the valid status %j",
 		(status) => {
 			const result = validateInvoiceStatus(status);
@@ -19,6 +19,10 @@ describe("validateInvoiceStatus", () => {
 			}
 		},
 	);
+
+	it("rejects 'overdue' — a derived display state, never a stored status", () => {
+		expect(validateInvoiceStatus("overdue").ok).toBe(false);
+	});
 
 	it("rejects an unknown status string with a validation AppError", () => {
 		const result = validateInvoiceStatus("cancelled");
