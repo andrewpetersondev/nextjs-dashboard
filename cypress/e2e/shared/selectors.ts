@@ -21,6 +21,7 @@ export const AUTH_SEL = {
 	forgotPasswordForm: '[data-cy="forgot-password-form"]',
 	forgotPasswordSubmit: '[data-cy="forgot-password-submit-button"]',
 	githubRepoLink: '[data-testid="github-repo-link"]',
+	landingAdminButton: '[data-cy="demo-admin-button-try-demo"]',
 	landingDemoButton: '[data-cy="demo-user-button-try-demo"]',
 	loginEmail: '[data-cy="login-email-input"]',
 	//  For a "pure" fundamental level, lean more heavily on Testing Library queries (which you already have installed).

@@ -1,15 +1,19 @@
 import {
 	ArrowRightIcon,
 	ArrowTopRightOnSquareIcon,
-	GlobeAltIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import type { JSX } from "react";
-import { demoUserAction } from "@/modules/auth/presentation/authn/actions/demo-user.action";
+import {
+	demoAdminAction,
+	demoUserAction,
+} from "@/modules/auth/presentation/authn/actions/demo-user.action";
 import { DemoForm } from "@/modules/auth/presentation/authn/components/forms/demo-form";
 import { GITHUB_REPO_URL } from "@/shared/routing/external-urls";
 import { ROUTES } from "@/shared/routing/routes";
 import { H1, H2, H3 } from "@/ui/atoms/headings.atom";
+import { AcmeLogo } from "@/ui/brand/acme-logo";
+import { HERO_TAGLINE } from "@/ui/brand/brand.constants";
 import { tektur } from "@/ui/styles/fonts";
 import { cn } from "@/ui/utils/cn";
 
@@ -46,12 +50,8 @@ const PROOF_POINTS = [
 function LandingHeader(): JSX.Element {
 	return (
 		<header className="flex items-center justify-between gap-4 py-2">
-			<Link
-				className="flex items-center gap-2 text-text-primary"
-				href={ROUTES.root}
-			>
-				<GlobeAltIcon aria-hidden={true} className="h-8 w-8 rotate-[15deg]" />
-				<span className={cn(tektur.className, "font-bold text-2xl")}>Acme</span>
+			<Link className="text-text-primary" href={ROUTES.root}>
+				<AcmeLogo size="md" />
 			</Link>
 			<nav className="flex items-center gap-6">
 				<a
@@ -89,8 +89,21 @@ function TryDemoCta(): JSX.Element {
 				text="Try the demo"
 				variant="secondary"
 			/>
+			{/* Quiet link-styled secondary action; per-scheme pinned sky shades keep
+			    WCAG AA on both light and dark page backgrounds (the raw outline
+			    variant's semantic tokens fail AA in dark — and axe reports contrast
+			    on the hero gradient as "incomplete", so a green run proves nothing). */}
+			<DemoForm
+				action={demoAdminAction}
+				className="mt-0 h-auto w-auto justify-start self-start rounded-none bg-transparent p-0 text-left font-medium text-sky-700 text-sm underline underline-offset-4 hover:bg-transparent hover:text-sky-800 active:bg-transparent active:text-sky-900 dark:text-sky-300 dark:active:text-sky-100 dark:hover:text-sky-200"
+				dataCy="demo-admin-button-try-demo"
+				label="Explore as demo admin"
+				size="sm"
+				text="or explore as admin — includes user management"
+				variant="secondary"
+			/>
 			<p className="text-sm text-text-secondary">
-				One click creates a throwaway demo account and opens the dashboard.
+				Each button creates a throwaway demo account and opens the dashboard.
 				Nothing to sign up for.
 			</p>
 		</div>
@@ -104,7 +117,7 @@ function HeroCopy(): JSX.Element {
 				Portfolio project
 			</p>
 			<H1 className="text-4xl leading-tight md:text-5xl md:leading-tight">
-				A small dashboard, engineered like a production app.
+				{HERO_TAGLINE}
 			</H1>
 			<p className="max-w-prose text-lg text-text-secondary">
 				Invoices, customers, and role-guarded user management — built end to end

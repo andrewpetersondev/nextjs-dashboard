@@ -13,4 +13,5 @@ export const UI_MATCHERS_REGEX = {
 	loginHeading: /Log in to your account/i,
 	signoutButton: /Sign Out/i,
 	signupHeading: /Sign up for an account/i,
+	usersNavLink: /users/i,
 } as const satisfies Readonly<Record<string, RegExp>>;

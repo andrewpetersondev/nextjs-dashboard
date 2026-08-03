@@ -23,7 +23,7 @@ const openFirstOverdueInvoiceForEdit = (): void => {
 	);
 };
 
-describe("Invoices - status lifecycle", () => {
+describe("Invoices - status filter", () => {
 	beforeEach(() => {
 		cy.dbResetAndSeed();
 		cy.loginAsDemoAdmin();
@@ -52,6 +52,13 @@ describe("Invoices - status lifecycle", () => {
 			.each(($badge) => {
 				expect($badge.attr("data-status")).to.eq("paid");
 			});
+	});
+});
+
+describe("Invoices - status transitions", () => {
+	beforeEach(() => {
+		cy.dbResetAndSeed();
+		cy.loginAsDemoAdmin();
 	});
 
 	it("marks a pending invoice as paid via the transition button", () => {

@@ -1,13 +1,16 @@
-# [Capability Name]
+# HTTP
 
 ## Purpose
 
-One sentence describing what this capability provides.
+Small HTTP primitives shared across features: typed header-name/value
+constants and server-only request metadata.
 
 ## Boundaries
 
-- Universal code lives in `core/`, `logic/`, etc.
-- Server-only code lives in `server/`.
+- Universal code lives in `core/` — `http-headers.ts` (header names plus
+  cache-control values such as `CACHE_CONTROL_NO_STORE`).
+- Server-only code lives in `server/` — `request-metadata.ts` (derives
+  per-request metadata such as the client IP for logging/auth composition).
 
 ## Import Rules
 
