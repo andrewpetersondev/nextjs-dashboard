@@ -13,15 +13,34 @@ this file is the deliberate workaround.)
 > feature. The infra-polish items still matter but drop to "Later" below. Full rationale
 > in memory (`project_job_hunt_priority_shift`). If week 2 runs long, ship the week-1
 > polish on its own — a clean demo beats a half-built feature.
+>
+> **Lane plan — decided 2026-08-03** (from the verified best-practice review, see Done):
+> **Lane A** = invoice status lifecycle (item 3, starts first); **Lane B** = demo-surface
+> polish (items 1–2), parallel-safe — zero file overlap with A verified. The **a11y pass
+> (item 4) is a serial phase**: start it only after both lanes merge (confirmed same-file
+> overlap with lane A). Before any push: run the full unit + e2e suites on the merged tree
+> (`check:fast` contains no tests); lane A additionally runs `db:migrate:prod` against
+> Neon before the push that deploys code writing new enum values. Each lane edits only its
+> own BACKLOG item block.
 
 ### Now — job-hunt focus (demo-first, ~2 weeks)
 
 1. **Kill the demo dead-ends** (fast, high honesty-per-hour)
    - [x] ~~`forgot-password` live stub~~ — done 2026-07-22, see Done below.
-   - [ ] **Stub/empty module READMEs (~12)** — empty (0 bytes) or literal
-         `# [Capability Name]` templates: auth `application/**` sub-layers,
-         `src/shared/{http,primitives,routing,time}`, `forms/notes`. Fill the meaningful
-         ones, delete the dead templates. (Surfaced by the 2026-06-25 docs-drift audit.)
+   - [ ] **Stub/empty module READMEs (12) — delete 7, fill 7** _(inventory corrected +
+         dispositions decided in the 2026-08-02 verified review; the old text wrongly
+         listed `forms/notes` — a real 2.8KB doc — as a stub and missed the two
+         `infrastructure/**` stubs)_. **Delete** the 7 auth leaf stubs (5 empty + 2
+         one-liners: `application/auth-user{,/commands,/workflows}`,
+         `application/{session,shared}`, `infrastructure/{persistence,session}`) — the
+         four auth layer READMEs already cover them; zero inbound links. **Fill**
+         `src/shared/{http,primitives,routing,time}` (keep the
+         Purpose/Boundaries/Import-Rules headings but write Boundaries from the real file
+         lists — the template boilerplate is only true for `http/`), the 0-byte
+         `src/shared/forms/README.md` as the subsystem front door (link `notes/README.md`),
+         plus the two missing same-class READMEs `src/shared/{policies,telemetry}` so the
+         no-placeholder principle holds. Fold in the one-line
+         `auth/application/README.md` drift fix (`schemas/` → `validators/`).
    - [x] ~~Font experiment + middleware debug card~~ — resolved "drop" 2026-07-30, see Done
          (dead-ends round 2).
    - [ ] **Template SVG residue in `public/`** — `next.svg`, `vercel.svg`, `file.svg`,
@@ -34,37 +53,138 @@ this file is the deliberate workaround.)
    - [x] ~~Fix the drift-flagged architecture diagrams~~ — done 2026-07-31, see Done
          below; the one deliberate leftover (enforce the 30-day absolute session
          ceiling in code) moved to Later.
-   - [ ] **OG/social-preview image** — the course `opengraph-image.png` was deleted with
-         the landing rewrite and nothing replaced it, so the live URL unfurls without a
-         card image exactly where it gets shared (LinkedIn/iMessage/Slack). A generated
-         `opengraph-image.tsx` via `ImageResponse` is low-effort and itself a nice
-         technical detail. _(Found in the 2026-07-30 interview-impact review.)_
-   - [ ] **Make the role-guarding claim demoable from the landing page** — the hero sells
-         "role-guarded user management", but the landing CTA creates a USER-role account
-         (no Users section in the sidebar); "Login as Demo Admin" exists only on the login
-         page. Consider a small secondary link under the CTA ("or explore as admin") so
-         the differentiator is one click from provable. _(Found in the 2026-07-30 review.)_
-   - [ ] **Auth pages wear the Tailwind Plus template logo off the tailwindcss.com CDN**
-         (`BRAND_LOGO_SRC` in `src/ui/brand/brand.constants.ts`) — recognizable template
-         residue, brand-inconsistent with the landing's Acme globe, and an external asset
-         dependency. Fold into the AcmeLogo brand-mark dedup item under Later (extend
-         `AcmeLogo`, then use it on both surfaces). _(Found in the 2026-07-30 review.)_
-3. **One memorable feature — invoice status lifecycle** (the interview story).
-   - [ ] Status enum + guarded transitions (pending → paid → overdue/void), status badges,
-         a status filter on the invoices list, and tests. Domain-native (invoice
-         schema/DAL/list already exist), bounded to ~a week, whiteboard-able end to end.
-         No specific tech to show off (confirmed 2026-06-25) → build it the straightforward
-         server-action way matching the existing architecture.
-4. **(Optional, alongside) a11y + Lighthouse pass** — `cypress-axe` + `axe-core` are
-   already installed; run a real sweep, fix findings, write up before/after. _(2026-07-30:
-   the landing smoke axe check is now **blocking** — `skipFailures` dropped. `signup.cy.ts`'s
-   `checkA11y` still passes `skipFailures: true`, so auth-page violations only log; make it
-   blocking as part of this pass. Also fold in: `DemoForm` errors now have `role="alert"`,
-   but the other form-error molecules haven't been audited for live regions. Also fold in:
-   **nested `<main>` landmarks** — the dashboard layout's `<main>` wraps each page's own
-   `<main>` (every dashboard page does this), an invalid landmark structure; fix at the
-   layout level (`<main>` → `<div>`, or drop the per-page mains) and verify skip-link/
-   `tabIndex` focus targets and Cypress selectors together.)_
+   - [ ] **OG/social-preview image** — the site has in fact NEVER emitted `og:*` tags
+         (the deleted course PNG sat in `public/`, not a metadata convention — this is
+         net-new metadata). Decided design (verified against Next 16.2.12 docs,
+         2026-08-02): one `src/app/opengraph-image.tsx` via `ImageResponse` from
+         `next/og`, exporting `size` 1200×630 + `alt` + `contentType` (expect the repo's
+         usual `useComponentExportOnlyModules` biome-ignore); no request-time APIs →
+         prerenders at build on both Vercel and the Docker standalone target. v1 uses the
+         bundled default font (Noto Sans — already the body font). Satori has no
+         Tailwind/CSS vars: hardcode the CTA's pinned hex pair and inline-style the globe
+         icon. Hoist the hero tagline into a shared constant imported by both `page.tsx`
+         and the image so they can't drift. No `twitter-image` file (X falls back to
+         `og:image`); optionally add `twitter.card` + a minimal `openGraph` block to root
+         metadata in the same change. Verify: build + inspect `<head>`, `GET
+         /opengraph-image` smoke, LinkedIn Post Inspector after deploy.
+   - [ ] **Make the role-guarding claim demoable from the landing page** — decided design
+         (2026-08-02): a second quiet `DemoForm` inside `TryDemoCta` wired to the existing
+         `demoAdminAction` ("or explore as admin"). POST form is mandatory (server actions
+         are POST-only — never a link). Style via the `className` pass-through with
+         explicitly contrast-checked pinned colors in both schemes — NOT the raw `outline`
+         variant (its semantic tokens fail WCAG AA in dark mode, and axe returns
+         "incomplete" for contrast on the hero's gradient, so a green smoke run proves
+         nothing). Distinct `label` (feeds aria-label + fallback data-cy) + explicit
+         `dataCy` + new `AUTH_SEL` entry; reword the now-plural "One click creates a
+         throwaway demo account" caption. New e2e: click → assert `/Admin Dashboard/i`
+         (NOT the `/User Dashboard/i` regex the existing landing test uses) →
+         `findByRole("link", { name: /users/i })` (nav links carry no data-cy). Update the
+         README demo-login line + `docs/deployment.md`. **Accepted trade-off
+         (2026-08-03):** no rate limit/cap/cleanup exists; every click permanently inserts
+         an ADMIN row (+ a `demo_user_counters` row). The endpoint is already public on
+         the login page — added exposure, not a new risk class.
+   - [ ] **Brand-mark dedup: AcmeLogo everywhere, CDN logo gone** _(absorbs the former
+         Later "AcmeLogo brand-mark dedup" item; decided design 2026-08-02)_ — refactor
+         `AcmeLogo` to a **non-heading `<span>` mark** with a size prop (add
+         `tektur.className` + `font-bold` explicitly), NOT the heading-level prop the old
+         item proposed: a logo isn't part of the document outline, and the hard-coded
+         `<H1>` gives every dashboard page two H1s today (verified: even the create/edit
+         pages have their own H1s inside the form components, so demotion leaves exactly
+         one H1 everywhere). Drop the sr-only "Acme Logo" div (else the sidebar link
+         announces "Acme Logo Acme"); restore the padding the sidebar Link loses and
+         visually verify both breakpoints; fix the sidebar Link's
+         `aria-label="Go to homepage"` (it points at the dashboard — WCAG 2.5.3 smell).
+         Consume from the landing header (replacing the hand-rolled mark) and auth pages:
+         give `PageHeaderMolecule` a ReactNode logo slot (AuthPageTemplate is its only
+         consumer — don't hardcode brand into the generic molecule), delete the
+         `logoSrc`/`logoAlt`/`Image` branch + its `IMAGE_SIZES` import in the same change
+         (knip won't flag dead props), promote the auth title h2 → h1 (auth pages have no
+         h1 today), then delete `BRAND_LOGO_SRC` + `brand.constants.ts`. Rationale:
+         template residue + external hotlink — NOT breakage (Next 16 serves external SVGs
+         unoptimized; it renders fine today).
+3. **One memorable feature — invoice status lifecycle** (the interview story). **Lane A —
+   decided design 2026-08-02, approved 2026-08-03.** Bounded to ~a week, whiteboard-able,
+   built the straightforward server-action way matching the existing architecture.
+   - [ ] **Model** — stored enum gains only `void` (append LAST; `ALTER TYPE ... ADD
+         VALUE` is irreversible; drizzle-kit generates it, Neon ≥ PG14 fine). `overdue` is
+         **derived at read time** (`status = 'pending'` AND past due) — no cron, no
+         write-on-read, no stored value. Due date derives in the domain
+         (`dueDateOf(date: Date)` + a NET_30 constant; no `due_date` column in v1 — the
+         function seam makes a later column non-breaking). Add a display-status type (or
+         `isOverdue` flag) for badge/filter — `InvoiceListFilter`/DTO/badge all reuse the
+         write-side union today. Compute the cutoff in TS from the same constant and bind
+         it into SQL so the rule lives once.
+   - [ ] **Step order** — (1) unify the two parallel `INVOICE_STATUSES` constants
+         (`database/schema/schema.constants.ts` ↔ domain `invoice.statuses.ts`; retype the
+         seed builder's literal union off it); (2) freeze the irreversible decisions; (3)
+         generate migrations for dev+test+prod in ONE commit (`db:drift` in check:fast
+         fails a partial regen).
+   - [ ] **Transitions** — matrix + `canTransition` + Result validator in
+         `domain/statuses/invoice-status.transitions.ts`: pending→paid, pending→void,
+         terminals terminal, and `from === to` allowed as a no-op (the edit form always
+         posts status). Use the `validation` AppError kind (`conflict` requires `pgCode`
+         and won't typecheck from the domain). Enforce twice: service reads the current
+         row and checks the matrix; `updateInvoiceDal` adds `WHERE status = expectedFrom`
+         ONLY when the update changes status (unconditional would turn concurrent
+         amount-edits into false conflicts), 0 rows → conflict-flavored error; add a
+         key-conditional message in the action (`handleActionError` currently flattens all
+         errors to one string).
+   - [ ] **Forms** — create keeps the pending/paid radio but gets its OWN Zod status
+         subset (`z.enum(["pending", "paid"])`) — the shared create/update schema would
+         let a hand-crafted POST create `void`. Edit page: radio → transition buttons
+         driven by the matrix; **paid/void lock the other fields** (transitions only);
+         delete stays. Write the void-vs-delete rationale into the module README (the
+         interview narrative).
+   - [ ] **Filter** — validated URL param `status=all|pending|overdue|paid|void`
+         (pending/overdue mutually exclusive so the buckets partition); ONE shared
+         where-builder used by BOTH `fetch-filtered-invoices` and `fetch-invoices-pages`
+         (their WHERE blocks are verbatim duplicates — touching one silently breaks
+         pagination); filter UI resets `page=1`, preserves foreign params (SearchBox +
+         Pagination already cooperate), accessible selected state.
+   - [ ] **Decided semantics** — `void` is excluded from customer-facing counts: the
+         Total-Invoices card count, the customers module's `totalInvoices`
+         (`fetch-filtered-customers.ts` — outside the invoices module!), and
+         `fetch-latest-invoices` (the panel shows no status). Money sums already exclude
+         it by construction. Seeds emit a small share of `void` so filter/badge are
+         demo-visible.
+   - [ ] **Ripples** — make the badge exhaustive (unknown status currently renders an
+         empty span); update `invoice-status.validator.test.ts`'s hardcoded list; e2e:
+         keep `#pending`/`#paid` create selectors working, add filter + transition specs,
+         overdue fixture via the create form with a past date (`min="2020-01-01"` allows
+         it — no new cy.task); docs: module README + `docs/diagrams/database-erd.md`.
+4. **a11y + Lighthouse pass — serial phase: start only after Lane A merges** (verified
+   same-file overlap: the invoices page `<main>`, the form live-region call sites, the
+   status radio group). Decided design 2026-08-02 — note this settles the old item's open
+   choice the OTHER way: keep the layout `<main>`, demote the per-page mains.
+   - [ ] **Landmarks** — KEEP the dashboard layout `<main tabIndex={-1}>` as the single
+         main; add `id="main-content"`; demote the 12 nested mains under
+         `src/app/dashboard/**`: the 6 class-bearing ones (invoices/users list pages, 2
+         error.tsx, 2 not-found.tsx) become `<div>`s that keep their className, the 6 bare
+         ones become fragments. Auth side unchanged (fragment layout → its mains are
+         legit). Drop the `<section aria-label="Dashboard Layout">` label (named-region
+         noise); reword/demote the aside's "Sidebar Navigation" label (embeds a role name,
+         near-duplicates the nav's own). Add a real skip link as the first focusable
+         element targeting the layout main (its `tabIndex={-1}` currently has no
+         consumer).
+   - [ ] **Axe coverage** — make `signup.cy.ts` blocking AND add a NEW dashboard smoke
+         spec (e.g. `cypress/e2e/smoke/dashboard.cy.ts` — not lane A's spec files) whose
+         check includes **moderate** impacts: every landmark rule is moderate in axe-core,
+         so critical+serious guards none of the work above. Build ONE shared checkA11y
+         custom command (support has zero shared axe config today). Budget for
+         pre-existing signup violations.
+   - [ ] **Live regions** — standardize on the always-mounted-container pattern
+         (FormAlertMolecule's shape): 4 of 5 error components conditionally mount with
+         content already inside, which screen readers generally don't announce (the 5th,
+         previously uninventoried, is DemoForm — on the page with the blocking axe check).
+         `role="status"` for per-field errors (aria-describedby already links them;
+         simultaneous assertive alerts are hostile), `role="alert"` only for the single
+         form-level server message; drop the explicit `aria-live` attributes; merge
+         `ErrorMessage` into `FieldErrorComponentMolecule` (one consumer); preserve the
+         `server-message-*`/`auth-server-message-*` data-cy contracts.
+   - [ ] **Loose ends spotted by the review** — `global-error.tsx` has no main and
+         `lang="en-US"` vs the root's `"en"`; no `error.tsx` for `(overview)`/customers
+         (errors there fall through to global-error, losing all landmarks); refresh
+         `docs/lane-map.md`'s stale "Today's BACKLOG, mapped onto lanes" section.
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
@@ -101,14 +221,6 @@ this file is the deliberate workaround.)
       pipeline). Restoring a real tsc pass needs a typecheck-only tsconfig variant
       (paths without baseUrl) or a preprocessor that understands TS7 configs. Until
       then Cypress type errors surface in-editor and at spec webpack-compile time only.
-- [ ] **AcmeLogo brand-mark dedup** _(added 2026-07-30, from the landing-page review)_ —
-      the landing header hand-rolls the Acme mark (GlobeAltIcon + rotate + tektur wordmark)
-      because `src/ui/brand/acme-logo.tsx` hard-codes an `<H1>` (two H1s on the landing) and
-      heavy container styling. Extend AcmeLogo with a heading-level/size prop so the brand
-      mark has a single owner, then use it in `src/app/page.tsx`'s `LandingHeader`.
-      _(Scope grew 2026-07-30: also replace the auth pages' `BRAND_LOGO_SRC` — the Tailwind
-      Plus template mark hotlinked from the tailwindcss.com CDN — with the same AcmeLogo;
-      see the First-impression item under Now.)_
 - [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
@@ -132,6 +244,20 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Backlog best-practice review — solutions decided (multi-agent verified)**
+      _(2026-08-02/03)_ — grounded and adversarially verified the 15 draft solution
+      designs for the open Now items (13-agent workflow: 6 area grounders + 6 skeptical
+      verifiers + a completeness critic): **7 confirmed, 8 adjusted, 0 refuted**; all
+      decided designs are baked into the item texts above. Product decisions approved
+      2026-08-03: void excluded from customer-facing counts; paid/void lock edit fields
+      (transitions only, delete stays); landing-admin abuse surface consciously accepted.
+      Lane plan set (A = lifecycle first, B = demo surface parallel, a11y serial after
+      merges — see the Now preamble). Sharpest catches: axe's landmark rules are all
+      moderate impact (a critical+serious filter guards none of the landmark work);
+      conditionally-mounted `role="alert"` elements generally don't announce; the shared
+      create/update Zod schema would have made `void` creatable; the duplicated
+      list/pages-count DAL WHERE would have silently broken pagination;
+      Satori/ImageResponse can't read Tailwind or CSS vars.
 - [x] **Architecture-diagram drift fixes (`docs/diagrams/`)** _(2026-07-31)_ — verified and
       fixed the 2026-07-30 audit findings against the code (every fix checked against source
       before writing). Majors: session-lifecycle.md's 30-day absolute-ceiling claim replaced
