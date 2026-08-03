@@ -15,13 +15,11 @@ this file is the deliberate workaround.)
 > polish on its own — a clean demo beats a half-built feature.
 >
 > **Lane plan — decided 2026-08-03** (from the verified best-practice review, see Done):
-> **Lane A** = invoice status lifecycle (item 3, starts first); **Lane B** = demo-surface
-> polish (items 1–2), parallel-safe — zero file overlap with A verified. The **a11y pass
-> (item 4) is a serial phase**: start it only after both lanes merge (confirmed same-file
-> overlap with lane A). Before any push: run the full unit + e2e suites on the merged tree
-> (`check:fast` contains no tests); lane A additionally runs `db:migrate:prod` against
-> Neon before the push that deploys code writing new enum values. Each lane edits only its
-> own BACKLOG item block.
+> **Lane A (invoice status lifecycle) SHIPPED + deployed 2026-08-03** — see Done.
+> Remaining: **Lane B** = demo-surface polish (items 1–2, single lane, any session), then
+> the **a11y pass (item 3) as the serial last phase** — it audits the final UI both lanes
+> produce. Before any push: run the full unit + e2e suites on the merged tree
+> (`check:fast` contains no tests). Each lane edits only its own BACKLOG item block.
 
 ### Now — job-hunt focus (demo-first, ~2 weeks)
 
@@ -102,45 +100,10 @@ this file is the deliberate workaround.)
          h1 today), then delete `BRAND_LOGO_SRC` + `brand.constants.ts`. Rationale:
          template residue + external hotlink — NOT breakage (Next 16 serves external SVGs
          unoptimized; it renders fine today).
-3. **One memorable feature — invoice status lifecycle** (the interview story). **Lane A —
-   decided design 2026-08-02, approved 2026-08-03, BUILT 2026-08-03 on
-   `claude/invoice-status-lifecycle`** (awaiting merge; see remaining steps).
-   - [x] **Model** — enum gained only `void` (appended last); `overdue` derived at read
-         time via `dueDateOf()`/`overdueIssueDateCutoff()` (NET_30 in
-         `invoice.constants.ts`, display type in `statuses/invoice-status.display.ts`);
-         cutoff computed in TS and bound into SQL.
-   - [x] **Step order held** — constants unified (domain aliases
-         `database/schema/schema.constants.ts`; seed builder retyped), then one commit
-         generating dev+test+prod migrations (`0007_*`, `ALTER TYPE ADD VALUE 'void'`;
-         `db:drift` green).
-   - [x] **Transitions** — matrix + validator in `statuses/invoice-status.transitions.ts`
-         (`from === to` no-op allowed; `validation` kind). Enforced twice:
-         `InvoiceService.resolveExpectedStatus` (read + matrix check) and
-         `updateInvoiceDal`'s `WHERE status = expectedFrom` only when status changes
-         (0 rows → `conflict` error via the new `DomainConflictMetadata` union member);
-         `update-invoice.action` now surfaces lifecycle-specific messages.
-   - [x] **Forms** — `CreateInvoiceSchema` narrowed to `pending|paid`; edit form swapped
-         the radio for `InvoiceStatusTransitionGroup` (submitter buttons carrying
-         `name="status"`); paid/void lock all fields and hide submit; delete stays;
-         void-vs-delete narrative written into the module README.
-   - [x] **Filter** — `status=all|pending|overdue|paid|void` URL param (pending/overdue
-         partition), ONE shared `buildInvoiceListWhere` for both list DALs, pill control
-         (`InvoiceStatusFilterControl`, fieldset + aria-pressed, `page=1` reset).
-   - [x] **Semantics + ripples** — void excluded from Total-Invoices count, customers
-         `totalInvoices`, and Latest panel; seeds emit ~10% void; badge exhaustive over
-         display statuses (`data-status` attr for e2e); validator test updated; new specs
-         `status-lifecycle.cy.ts` (filter partition, mark-paid, void+lock) +
-         `update-form.cy.ts` re-anchored to `?status=overdue` (first row may now be a
-         locked terminal invoice); docs: module README lifecycle section +
-         `database-erd.md` enum values. Unit 338/338 + `check:fast` green on the branch.
-   - [ ] **Remaining to land**: run the full Cypress suite on the merged tree
-         (`check:fast` has no e2e; the branch worktree has no test env), run
-         `db:migrate:prod` against Neon BEFORE the push that deploys this code, then
-         move this item to Done.
-4. **a11y + Lighthouse pass — serial phase: start only after Lane A merges** (verified
-   same-file overlap: the invoices page `<main>`, the form live-region call sites, the
-   status radio group). Decided design 2026-08-02 — note this settles the old item's open
-   choice the OTHER way: keep the layout `<main>`, demote the per-page mains.
+3. **a11y + Lighthouse pass — serial LAST phase: start after Lane B lands** (Lane A
+   shipped 2026-08-03; the pass audits the final UI both lanes produce — same-file
+   overlap with both was verified). Decided design 2026-08-02 — note this settles the old
+   item's open choice the OTHER way: keep the layout `<main>`, demote the per-page mains.
    - [ ] **Landmarks** — KEEP the dashboard layout `<main tabIndex={-1}>` as the single
          main; add `id="main-content"`; demote the 12 nested mains under
          `src/app/dashboard/**`: the 6 class-bearing ones (invoices/users list pages, 2
@@ -229,6 +192,23 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Invoice status lifecycle (Lane A) — SHIPPED + deployed** _(2026-08-03)_ — the
+      job-hunt "one memorable feature": `void` added to the pg enum (migrations `0007` in
+      all three env sets + Neon prod, applied before the deploy push); `overdue` DERIVED
+      at read time (NET-30 `dueDateOf()`; cutoff computed in TS, bound into SQL — one
+      source for the rule); transition matrix (pending→paid/void, terminals locked,
+      no-op re-submits allowed) enforced twice — service read+check plus the DAL's atomic
+      `WHERE status = expectedFrom` (0 rows → conflict via new `DomainConflictMetadata`);
+      create schema excludes `void` (transition-only); edit form = transition buttons with
+      terminal field-lock; 5-bucket URL filter through ONE shared `buildInvoiceListWhere`
+      (rows + page count can't desync); void excluded from customer-facing counts
+      (Total-Invoices card, customers `totalInvoices`, Latest panel); seeds ~10% void.
+      Unit 338/338, full Cypress green on the merged tree, feature verified live on prod
+      post-deploy (overdue filter partitions real data). Landing detour worth
+      remembering: `postgres:latest` (18+) breaks `database-setup.md`'s volume mount
+      (doc fixed — pin `postgres:17-alpine`, matches CI) and drizzle-kit silently
+      swallows DB connection errors (exit 1, no message). Narrative + design rationale:
+      `src/modules/invoices/README.md` "Status lifecycle".
 - [x] **Backlog best-practice review — solutions decided (multi-agent verified)**
       _(2026-08-02/03)_ — grounded and adversarially verified the 15 draft solution
       designs for the open Now items (13-agent workflow: 6 area grounders + 6 skeptical
