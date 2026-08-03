@@ -62,22 +62,25 @@ when done.
 
 ## Today's BACKLOG, mapped onto lanes
 
-Most open items are tooling/docs/config rather than feature work, which makes them _very_
-parallel-friendly:
+With the job-hunt "Now" items landed (invoice lifecycle, demo surface, a11y pass), the open list is
+back to tooling/docs/config plus two scoped code items — still _very_ parallel-friendly:
 
-| BACKLOG item                  | Lane                       | Edit footprint                 |
-| ----------------------------- | -------------------------- | ------------------------------ |
-| docs/ consolidation           | docs                       | `docs/standards/**`, `docs/**` |
-| Font experiment (finish/drop) | chore (UI)                 | `src/ui/styles/fonts.ts`       |
-| TSConfig modernization        | chore (config)             | `tsconfig*.json`               |
-| Renovate adoption             | chore (CI/config)          | CI + workspace config          |
-| Integration lane in CI        | chore (CI)                 | `.github/workflows/ci.yml`     |
-| Skills exploration            | research (no code)         | none                           |
-| **Forms taxonomy flattening** | **kernel — single-thread** | `src/shared/forms/**`          |
+| BACKLOG item                            | Lane                       | Edit footprint                        |
+| --------------------------------------- | -------------------------- | ------------------------------------- |
+| Invoice amount-cap vs seed mismatch     | invoices                   | `src/modules/invoices/**`, seed tasks |
+| Session absolute-ceiling fix            | auth + users               | `src/modules/auth/**` (claims/rotate) |
+| Renovate adoption                       | chore (CI/config)          | CI + workspace config                 |
+| Rootfiles decisions (CSP, retries, ...) | chore (config)             | root configs, `next.config.ts`        |
+| Cypress standalone typecheck lane       | chore (config)             | `cypress/tsconfig.json`, scripts      |
+| docs/ consolidation                     | docs                       | `docs/standards/**`, `docs/**`        |
+| Integration lane in CI                  | chore (CI)                 | `.github/workflows/ci.yml`            |
+| Skills exploration                      | research (no code)         | none                                  |
+| **Forms taxonomy flattening**           | **kernel — single-thread** | `src/shared/forms/**`                 |
 
-A clean four-session day right now could be **docs consolidation** + **font experiment** + **TSConfig
-modernization** + **skills exploration** — four near-disjoint footprints. **Forms taxonomy flattening**
-is the one to keep solo: it lives in the shared kernel, so don't pair it with another kernel task.
+A clean four-session day right now could be **invoice amount-cap** + **session ceiling** +
+**docs consolidation** + **skills exploration** — four near-disjoint footprints. **Forms taxonomy
+flattening** is the one to keep solo: it lives in the shared kernel, so don't pair it with another
+kernel task.
 
 ## The protocol
 

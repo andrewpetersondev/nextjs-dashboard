@@ -18,7 +18,7 @@ export default async function Page(): Promise<JSX.Element> {
 	const customers: CustomerField[] = await readCustomersAction();
 
 	return (
-		<main>
+		<>
 			<Breadcrumbs
 				breadcrumbs={[
 					{
@@ -33,6 +33,6 @@ export default async function Page(): Promise<JSX.Element> {
 				]}
 			/>
 			<CreateInvoiceForm customers={customers} />
-		</main>
+		</>
 	);
 }

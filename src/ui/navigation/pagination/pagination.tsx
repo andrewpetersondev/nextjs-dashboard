@@ -65,10 +65,12 @@ function PaginationArrow({
 			<ArrowRightIcon className="w-4" />
 		);
 
+	const label = direction === "left" ? "Previous page" : "Next page";
+
 	return isDisabled ? (
 		<div className={className}>{icon}</div>
 	) : (
-		<Link className={className} href={href}>
+		<Link aria-label={label} className={className} href={href}>
 			{icon}
 		</Link>
 	);

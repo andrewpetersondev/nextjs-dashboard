@@ -52,14 +52,13 @@ export default async function Page(): Promise<JSX.Element> {
 		title = DASHBOARD_TITLES.guest;
 	}
 
+	// The dashboard layout owns the single <main>; pages render inside it.
 	const commonContent = (
-		<main>
-			<DashboardOverview
-				dashboardCardData={dashboardData.cards}
-				latestInvoices={dashboardData.latestInvoices}
-				title={title}
-			/>
-		</main>
+		<DashboardOverview
+			dashboardCardData={dashboardData.cards}
+			latestInvoices={dashboardData.latestInvoices}
+			title={title}
+		/>
 	);
 
 	// getValidUserRole already enforces allowed roles; this condition will always be true.

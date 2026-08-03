@@ -23,7 +23,6 @@ export function SelectFieldMolecule<T extends { id: string; name: string }>(
 ): JSX.Element {
 	const { id, label, error, dataCy, describedById, ...rest } = props;
 
-	const hasError = Array.isArray(error) && error.length > 0;
 	const errorId = describedById ?? `${id}-errors`;
 
 	return (
@@ -37,14 +36,12 @@ export function SelectFieldMolecule<T extends { id: string; name: string }>(
 					id={id}
 					{...rest}
 				/>
-				{hasError ? (
-					<FieldErrorComponentMolecule
-						dataCy={dataCy ? `${dataCy}-errors` : undefined}
-						error={error}
-						id={errorId}
-						label={`${label} error:`}
-					/>
-				) : null}
+				<FieldErrorComponentMolecule
+					dataCy={dataCy ? `${dataCy}-errors` : undefined}
+					error={error}
+					id={errorId}
+					label={`${label} error:`}
+				/>
 			</div>
 		</InputFieldCardWrapper>
 	);

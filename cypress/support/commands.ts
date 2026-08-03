@@ -9,10 +9,12 @@ import {
 import { UI_MATCHERS_REGEX } from "@cypress/e2e/shared/regex";
 import { AUTH_SEL } from "@cypress/e2e/shared/selectors";
 import { TWENTY_SECONDS } from "@cypress/e2e/shared/times";
+import type { ImpactValue, Result } from "axe-core";
 
 declare global {
 	namespace Cypress {
 		interface Chainable {
+			checkA11yStrict(context?: string): Chainable<void>;
 			dbReset(): Chainable<null>;
 			dbResetAndSeed(): Chainable<null>;
 			dbSeed(): Chainable<null>;
@@ -83,6 +85,39 @@ Cypress.Commands.add("loginAsDemoAdmin", () => {
 	}).click();
 
 	assertOnDashboard();
+});
+
+// The suite's single axe configuration: every landmark rule is moderate
+// impact in axe-core, so a critical+serious filter would not guard the
+// landmark structure at all. Minor stays excluded. Blocking by design —
+// no skipFailures flag, violations FAIL the spec.
+const A11Y_INCLUDED_IMPACTS: ImpactValue[] = [
+	"critical",
+	"serious",
+	"moderate",
+];
+
+const logA11yViolations = (violations: Result[]): void => {
+	for (const violation of violations) {
+		cy.log(`A11y violation: ${violation.id}`);
+		cy.log(`Description: ${violation.description}`);
+		cy.log(`Help: ${violation.helpUrl}`);
+
+		for (const node of violation.nodes) {
+			cy.log(`Element: ${node.target.join(", ")}`);
+			cy.log(`Summary: ${node.failureSummary}`);
+		}
+	}
+};
+
+// Call after cy.visit(); injects axe into the current page first.
+Cypress.Commands.add("checkA11yStrict", (context?: string) => {
+	cy.injectAxe();
+	cy.checkA11y(
+		context,
+		{ includedImpacts: A11Y_INCLUDED_IMPACTS },
+		logA11yViolations,
+	);
 });
 
 Cypress.Commands.add("logoutViaForm", () => {

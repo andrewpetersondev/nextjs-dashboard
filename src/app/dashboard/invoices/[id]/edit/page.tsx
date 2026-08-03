@@ -41,7 +41,7 @@ export default async function Page(
 	}
 
 	return (
-		<main>
+		<>
 			<Breadcrumbs
 				breadcrumbs={[
 					{ href: ROUTES.dashboard.invoices, label: "Invoices" },
@@ -55,6 +55,6 @@ export default async function Page(
 			<H1 className="mb-4">edit invoice</H1>
 
 			<EditInvoiceForm customers={customers} invoice={invoice} />
-		</main>
+		</>
 	);
 }

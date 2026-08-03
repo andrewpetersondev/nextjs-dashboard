@@ -59,15 +59,12 @@ export function InputFieldMolecule(props: InputFieldProps): JSX.Element {
 					{/* Mark icon decorative for screen readers */}
 					{icon ? <span aria-hidden="true">{icon}</span> : null}
 				</div>
-				{/* Only render FieldError if error is defined and non-empty */}
-				{hasError ? (
-					<FieldErrorComponentMolecule
-						dataCy={dataCy ? `${dataCy}-errors` : undefined}
-						error={error}
-						id={describedById ?? `${id}-errors`}
-						label={`${label} error:`}
-					/>
-				) : null}
+				<FieldErrorComponentMolecule
+					dataCy={dataCy ? `${dataCy}-errors` : undefined}
+					error={error}
+					id={describedById ?? `${id}-errors`}
+					label={`${label} error:`}
+				/>
 			</div>
 		</InputFieldCardWrapper>
 	);

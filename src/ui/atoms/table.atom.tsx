@@ -106,7 +106,7 @@ export function TableHead({
 		<th
 			{...props}
 			className={cn(
-				"h-12 px-4 text-left align-middle font-medium text-text-secondary [&:has([role=checkbox])]:pr-0",
+				"h-12 px-4 text-left align-middle font-medium text-text-primary [&:has([role=checkbox])]:pr-0",
 				className,
 			)}
 		/>

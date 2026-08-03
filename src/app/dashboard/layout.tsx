@@ -9,6 +9,7 @@ const ROOT_LAYOUT_CLASS =
 	"flex h-screen flex-col md:flex-row md:overflow-hidden";
 const SIDENAV_WRAPPER_CLASS = "w-full flex-none md:w-64";
 const MAIN_CONTENT_CLASS = "grow p-6 md:overflow-y-auto md:p-12";
+const MAIN_CONTENT_ID = "main-content";
 
 export default async function DashboardLayout({
 	children,
@@ -16,15 +17,22 @@ export default async function DashboardLayout({
 	const bannerDismissed = await isBannerDismissed();
 
 	return (
-		<section aria-label="Dashboard Layout" className={ROOT_LAYOUT_CLASS}>
+		<div className={ROOT_LAYOUT_CLASS}>
+			{/* Off-screen until keyboard focus; the main's tabIndex={-1} receives it. */}
+			<a
+				className="absolute -top-full left-2 z-50 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent focus:top-2"
+				href={`#${MAIN_CONTENT_ID}`}
+			>
+				Skip to main content
+			</a>
 			<SessionRefresh />
-			<aside aria-label="Sidebar Navigation" className={SIDENAV_WRAPPER_CLASS}>
+			<div className={SIDENAV_WRAPPER_CLASS}>
 				<DashboardSidebar logoutAction={logoutAction} />
-			</aside>
-			<main className={MAIN_CONTENT_CLASS} tabIndex={-1}>
+			</div>
+			<main className={MAIN_CONTENT_CLASS} id={MAIN_CONTENT_ID} tabIndex={-1}>
 				{!bannerDismissed && <OneTimeBanner />}
 				{children}
 			</main>
-		</section>
+		</div>
 	);
 }
