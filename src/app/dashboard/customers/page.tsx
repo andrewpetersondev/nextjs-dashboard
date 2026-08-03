@@ -33,9 +33,5 @@ export default async function Page(
 	const customers: FormattedCustomersTableRow[] =
 		await readFilteredCustomersAction(query);
 
-	return (
-		<main>
-			<CustomersTable customers={customers} />
-		</main>
-	);
+	return <CustomersTable customers={customers} />;
 }

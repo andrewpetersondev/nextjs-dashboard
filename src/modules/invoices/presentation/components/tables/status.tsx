@@ -19,7 +19,9 @@ type StatusPresentation = Readonly<{
 // typecheck here instead of rendering an empty badge.
 const STATUS_PRESENTATION: Record<InvoiceDisplayStatus, StatusPresentation> = {
 	overdue: {
-		badgeClassName: "bg-bg-accent text-text-error",
+		// Error tokens, not accent: red-on-sky fails WCAG AA in dark, and the
+		// error pair reads as the warning it is.
+		badgeClassName: "bg-bg-error text-text-error",
 		icon: ExclamationCircleIcon,
 		iconClassName: "text-text-error",
 		label: "Overdue",
@@ -37,9 +39,11 @@ const STATUS_PRESENTATION: Record<InvoiceDisplayStatus, StatusPresentation> = {
 		label: "Pending",
 	},
 	void: {
-		badgeClassName: "bg-bg-secondary text-text-disabled",
+		// The disabled-bg token is the "inert" signal; text-disabled on a chip
+		// fails WCAG AA contrast in both schemes, so the text stays primary.
+		badgeClassName: "bg-bg-disabled text-text-primary",
 		icon: NoSymbolIcon,
-		iconClassName: "text-text-disabled",
+		iconClassName: "text-text-primary",
 		label: "Void",
 	},
 };

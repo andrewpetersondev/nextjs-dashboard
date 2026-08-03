@@ -9,14 +9,19 @@ export default function GlobalError({
 	reset: () => void;
 }) {
 	return (
-		// global-error must include html and body tags
-		<html lang="en-US">
+		// global-error must include html and body tags; it replaces the root
+		// layout entirely, so it declares its own lang (kept in sync with
+		// layout.tsx) and its own main landmark.
+		<html lang="en">
 			<body>
-				<h2>Something went wrong!</h2>
-				<h3 className="text-center">Global Error</h3>
-				<p>{error.message}</p>
-				{/** biome-ignore lint/a11y/useButtonType: <default> */}
-				<button onClick={reset}>Try again</button>
+				<main>
+					<h2>Something went wrong!</h2>
+					<h3 className="text-center">Global Error</h3>
+					<p>{error.message}</p>
+					<button onClick={reset} type="button">
+						Try again
+					</button>
+				</main>
 			</body>
 		</html>
 	);

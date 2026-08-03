@@ -2,7 +2,7 @@ import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { type InputHTMLAttributes, type JSX, useId } from "react";
 import type { CreatableInvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { FieldError } from "@/shared/forms/core/types/field-error.types";
-import { ErrorMessage } from "@/ui/forms/components/fields/error-message";
+import { FieldErrorComponentMolecule } from "@/ui/molecules/field-error-component.molecule";
 import { InputFieldCardWrapper } from "@/ui/wrappers/input-field-card.wrapper";
 
 /**
@@ -60,7 +60,7 @@ export const InvoiceStatusRadioGroup = ({
 						{options.map((opt) => (
 							<div className="flex items-center" key={opt.value}>
 								<input
-									aria-describedby={hasError ? `${name}-error` : undefined}
+									aria-describedby={hasError ? errorMessageId : undefined}
 									className="h-4 w-4 cursor-pointer border-bg-primary bg-bg-accent text-text-primary focus:ring-2"
 									defaultChecked={value === opt.value}
 									disabled={disabled}
@@ -80,7 +80,7 @@ export const InvoiceStatusRadioGroup = ({
 						))}
 					</div>
 				</div>
-				<ErrorMessage
+				<FieldErrorComponentMolecule
 					dataCy="invoice-status-error"
 					error={error}
 					id={errorMessageId}

@@ -39,7 +39,7 @@ export default async function Page(
 	const totalPages = await readUsersPageCountAction(query);
 
 	return (
-		<main className="w-full">
+		<div className="w-full">
 			<div className="flex w-full items-center justify-between">
 				<H1>Users</H1>
 			</div>
@@ -58,6 +58,6 @@ export default async function Page(
 			<div className="mt-5 flex w-full justify-center">
 				<Pagination totalPages={totalPages} />
 			</div>
-		</main>
+		</div>
 	);
 }

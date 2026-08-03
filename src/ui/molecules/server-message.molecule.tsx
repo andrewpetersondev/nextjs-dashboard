@@ -81,7 +81,9 @@ function extractMessageAndSuccess<Tdata>(state: FormResult<Tdata>): Readonly<{
  * Renders a dismissible server-side message (success or error).
  *
  * @remarks
- * - Uses aria-live and role for accessibility
+ * - The container is the live region and stays mounted from idle on:
+ *   screen readers only announce regions that exist before content arrives.
+ *   role="alert" is reserved for this single form-level message.
  * - Smooth animations for show/hide
  * - Conditional styling based on success state
  * - Integrates with form submission flow
@@ -90,12 +92,11 @@ export function ServerMessageMolecule<Tdata>({
 	state,
 	showAlert,
 }: ServerMessageProps<Tdata>): JSX.Element {
-	// Idle: render only the layout placeholder, no message to show yet.
-	if (state === null) {
-		return <div className="relative min-h-[56px]" />;
-	}
-
-	const { message, success } = extractMessageAndSuccess(state);
+	// Idle: no message yet, but the (empty) live region below still mounts.
+	const { message, success } =
+		state === null
+			? { message: undefined, success: false }
+			: extractMessageAndSuccess(state);
 
 	const baseStyles =
 		"pointer-events-auto absolute right-0 left-0 mx-auto mt-6 w-fit rounded-md border px-4 py-3 shadow-lg transition-all duration-500";
@@ -109,16 +110,14 @@ export function ServerMessageMolecule<Tdata>({
 		: "border-red-300 bg-red-50 text-red-800";
 
 	return (
-		<div className="relative min-h-[56px]">
+		<div className="relative min-h-[56px]" role="alert">
 			{message ? (
 				<div
-					aria-live={success ? "polite" : "assertive"}
 					className={`${baseStyles} ${visibilityStyles} ${semanticStyles}`}
 					data-cy={success ? "server-message-success" : "server-message-error"}
 					data-testid={
 						success ? "server-message-success" : "server-message-error"
 					}
-					role={success ? "status" : "alert"}
 				>
 					{message}
 				</div>

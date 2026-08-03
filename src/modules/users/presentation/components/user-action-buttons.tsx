@@ -11,6 +11,7 @@ import type { JSX } from "react";
 export function CreateUserLink(): JSX.Element {
 	return (
 		<Link
+			aria-label="Create User"
 			className="flex h-10 items-center rounded-lg bg-bg-secondary px-4 font-medium text-sm text-text-primary transition-colors hover:bg-bg-hover focus-visible:outline focus-visible:outline-blue-600 focus-visible:outline-offset-2"
 			data-cy="add-item-button"
 			href="/dashboard/users/create"

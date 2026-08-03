@@ -37,7 +37,7 @@ export default async function Page(
 	}
 
 	return (
-		<main>
+		<>
 			<Breadcrumbs
 				breadcrumbs={[
 					{ href: ROUTES.dashboard.users, label: "Users" },
@@ -50,6 +50,6 @@ export default async function Page(
 			/>
 
 			<EditUserForm user={user} />
-		</main>
+		</>
 	);
 }

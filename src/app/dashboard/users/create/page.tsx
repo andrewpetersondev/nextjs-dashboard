@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 export default function Page(): JSX.Element {
 	return (
-		<main>
+		<>
 			<Breadcrumbs
 				breadcrumbs={[
 					{
@@ -30,6 +30,6 @@ export default function Page(): JSX.Element {
 				]}
 			/>
 			<CreateUserForm />
-		</main>
+		</>
 	);
 }

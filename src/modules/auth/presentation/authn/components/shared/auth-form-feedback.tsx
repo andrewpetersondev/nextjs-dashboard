@@ -8,14 +8,15 @@ interface AuthFormFeedbackProps<F> {
 
 /**
  * Shared server feedback for auth forms.
- * Renders nothing at idle (`state === null`), otherwise a success or error
- * message from the FormResult.
+ * At idle (`state === null`) it mounts the empty alert container — the live
+ * region must exist before the first message for screen readers to announce
+ * it — otherwise a success or error message from the FormResult.
  */
 export function AuthFormFeedback<F>({
 	state,
-}: AuthFormFeedbackProps<F>): JSX.Element | null {
+}: AuthFormFeedbackProps<F>): JSX.Element {
 	if (state === null) {
-		return null;
+		return <FormAlertMolecule />;
 	}
 
 	if (state.ok) {

@@ -86,27 +86,8 @@ describe("Home accessibility smoke test", () => {
 	it("injects axe and checks for accessibility violations", () => {
 		cy.visit(BASE_URL);
 
-		// Detailed accessibility check with violation logging.
-		// No skipFailures flag: critical/serious violations FAIL this spec.
-		cy.injectAxe();
-		cy.checkA11y(
-			undefined,
-			{
-				includedImpacts: ["critical", "serious"],
-			},
-			(violations) => {
-				// Log detailed violation information
-				for (const violation of violations) {
-					cy.log(`A11y violation: ${violation.id}`);
-					cy.log(`Description: ${violation.description}`);
-					cy.log(`Help: ${violation.helpUrl}`);
-
-					for (const node of violation.nodes) {
-						cy.log(`Element: ${node.target.join(", ")}`);
-						cy.log(`Summary: ${node.failureSummary}`);
-					}
-				}
-			},
-		);
+		// Shared strict check: critical/serious/moderate violations FAIL the
+		// spec (landmark rules are all moderate), with detailed logging.
+		cy.checkA11yStrict();
 	});
 });

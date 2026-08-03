@@ -52,11 +52,12 @@ export const DemoForm: FC<DemoFormProps> = ({
 				variant={variant}
 			/>
 
-			{state && !state.ok && state.error.message && (
-				<p className="mt-2 text-sm text-text-error" role="alert">
-					{state.error.message}
-				</p>
-			)}
+			{/* Always-mounted live region: announced only if it exists pre-error. */}
+			<div role="alert">
+				{state && !state.ok && state.error.message && (
+					<p className="mt-2 text-sm text-text-error">{state.error.message}</p>
+				)}
+			</div>
 		</form>
 	);
 };

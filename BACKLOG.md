@@ -15,11 +15,13 @@ this file is the deliberate workaround.)
 > polish on its own — a clean demo beats a half-built feature.
 >
 > **Lane plan — decided 2026-08-03** (from the verified best-practice review, see Done):
-> **Lane A (invoice status lifecycle) SHIPPED + deployed 2026-08-03** and **Lane B
-> (demo-surface polish) BUILT 2026-08-03** — see Done. The only open Now work is the
-> **a11y pass (item 3), the serial last phase** auditing the final UI both lanes
-> produced. Before any push: run the full unit + e2e suites on the merged tree
-> (`check:fast` contains no tests).
+> **Lane A (invoice status lifecycle) SHIPPED + deployed** and **Lane B (demo-surface
+> polish) SHIPPED + deployed 2026-08-03**; the **a11y pass (item 3, the serial last
+> phase) BUILT 2026-08-03** on the `claude/a11y-pass` lane — see Done. With that, the
+> demo-first "Now" list is complete; next work comes from "Later" (the invoice
+> amount-cap mismatch is the natural first pick — it's the last known demo wart).
+> Before any push: run the full unit + e2e suites on the merged tree (`check:fast`
+> contains no tests).
 
 ### Now — job-hunt focus (demo-first, ~2 weeks)
 
@@ -42,39 +44,12 @@ this file is the deliberate workaround.)
          span with size prop; landing header, sidebar, and auth pages all consume it;
          auth title promoted to h1; dashboard double-H1 fixed; `BRAND_LOGO_SRC` deleted —
          `brand.constants.ts` now holds brand COPY: `BRAND_NAME` + `HERO_TAGLINE`).
-3. **a11y + Lighthouse pass — serial LAST phase: start after Lane B lands** (Lane A
-   shipped 2026-08-03; the pass audits the final UI both lanes produce — same-file
-   overlap with both was verified). Decided design 2026-08-02 — note this settles the old
-   item's open choice the OTHER way: keep the layout `<main>`, demote the per-page mains.
-   - [ ] **Landmarks** — KEEP the dashboard layout `<main tabIndex={-1}>` as the single
-         main; add `id="main-content"`; demote the 12 nested mains under
-         `src/app/dashboard/**`: the 6 class-bearing ones (invoices/users list pages, 2
-         error.tsx, 2 not-found.tsx) become `<div>`s that keep their className, the 6 bare
-         ones become fragments. Auth side unchanged (fragment layout → its mains are
-         legit). Drop the `<section aria-label="Dashboard Layout">` label (named-region
-         noise); reword/demote the aside's "Sidebar Navigation" label (embeds a role name,
-         near-duplicates the nav's own). Add a real skip link as the first focusable
-         element targeting the layout main (its `tabIndex={-1}` currently has no
-         consumer).
-   - [ ] **Axe coverage** — make `signup.cy.ts` blocking AND add a NEW dashboard smoke
-         spec (e.g. `cypress/e2e/smoke/dashboard.cy.ts` — not lane A's spec files) whose
-         check includes **moderate** impacts: every landmark rule is moderate in axe-core,
-         so critical+serious guards none of the work above. Build ONE shared checkA11y
-         custom command (support has zero shared axe config today). Budget for
-         pre-existing signup violations.
-   - [ ] **Live regions** — standardize on the always-mounted-container pattern
-         (FormAlertMolecule's shape): 4 of 5 error components conditionally mount with
-         content already inside, which screen readers generally don't announce (the 5th,
-         previously uninventoried, is DemoForm — on the page with the blocking axe check).
-         `role="status"` for per-field errors (aria-describedby already links them;
-         simultaneous assertive alerts are hostile), `role="alert"` only for the single
-         form-level server message; drop the explicit `aria-live` attributes; merge
-         `ErrorMessage` into `FieldErrorComponentMolecule` (one consumer); preserve the
-         `server-message-*`/`auth-server-message-*` data-cy contracts.
-   - [ ] **Loose ends spotted by the review** — `global-error.tsx` has no main and
-         `lang="en-US"` vs the root's `"en"`; no `error.tsx` for `(overview)`/customers
-         (errors there fall through to global-error, losing all landmarks); refresh
-         `docs/lane-map.md`'s stale "Today's BACKLOG, mapped onto lanes" section.
+3. **a11y pass** — BUILT 2026-08-03 (`claude/a11y-pass` lane), see Done. Landmarks,
+   blocking moderate-impact axe coverage, live regions, and the review's loose ends
+   (global-error, missing error boundaries, lane-map refresh) all landed to the
+   2026-08-02 verified designs, plus the contrast/label fixes the new blocking checks
+   surfaced. Lighthouse scoring was NOT part of the decided sub-items and was not run —
+   worth a quick manual pass against prod after the merge if curious.
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
@@ -143,6 +118,40 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **a11y pass (serial phase 3)** _(2026-08-03, `claude/a11y-pass`)_ — audited the
+      final UI both lanes produced, to the 2026-08-02 verified designs. **(1) Landmarks**
+      — the dashboard layout owns the single `<main tabIndex={-1}>` (id hoisted to
+      `MAIN_CONTENT_ID` = "main-content", shared with the NEW skip link — first focusable
+      element, off-screen until keyboard focus); all 12 nested mains under
+      `src/app/dashboard/**` demoted (6 class-bearing → `<div>`, 6 bare → fragments);
+      the layout section's "Dashboard Layout" label dropped (plain div); the aside
+      demoted to a div — the sidebar `<nav aria-label="Dashboard sidebar">` is the
+      landmark. **(2) Live regions** — standardized on always-mounted containers
+      (regions must exist before content arrives): `FieldErrorComponentMolecule` now
+      `role="status"`, always mounted, consumers render it unconditionally;
+      `ErrorMessage` merged into it (also fixed the status radio group's
+      `aria-describedby` pointing at a never-rendered id); `FormAlertMolecule` /
+      `ServerMessageMolecule` / `DemoForm` carry `role="alert"` on the container;
+      explicit `aria-live` dropped everywhere; `server-message-*`/`auth-server-message-*`
+      data-cy contracts preserved; `AuthFormFeedback` mounts the empty container at idle.
+      **(3) Axe** — ONE shared `cy.checkA11yStrict()` command (critical+serious+moderate,
+      blocking, logs violations); `home.cy.ts` + `signup.cy.ts` use it (signup was
+      advisory-only via skipFailures); NEW `smoke/dashboard.cy.ts` checks
+      overview/invoices/users as demo admin and asserts exactly one `<main>`.
+      **(4) What the blocking checks then caught (all fixed):** body/html had NO
+      background — the canvas came from `color-scheme` alone, so axe judged dark-scheme
+      text against an assumed-white canvas (fix: `bg-bg-primary` on body — the canvas is
+      now explicit in both schemes); stat cards jumped h1→h3 (now H2 pinned to the old
+      visual size); Lane A's void badge failed AA in dark (1.94:1 → `bg-bg-disabled
+      text-text-primary`); the overdue badge was accent-on-accent (3.91:1 → error
+      tokens, reads better anyway); `TableHead` muted text failed on the accent table
+      panel (→ `text-text-primary`); pagination arrows + `CreateUserLink` (below md)
+      were icon-only links with no accessible name (aria-labels added). **(5) Loose
+      ends** — `global-error.tsx` gained `<main>` + `lang="en"` (was en-US vs root en);
+      new `error.tsx` for `(overview)` and `customers` (errors no longer fall through
+      to global-error, losing all landmarks); `docs/lane-map.md` backlog table
+      refreshed. Validation: Biome slate 0, unit 338/338, full Cypress 42/42 incl. the
+      three blocking axe specs. Not run: Lighthouse (never in the decided sub-items).
 - [x] **Demo-surface polish (Lane B)** _(2026-08-03)_ — the rest of the job-hunt Now
       list in one lane, all to the verified designs: **(1) README rework** — deleted the
       7 auth leaf stubs (layer READMEs cover them), wrote 7 real shared-capability

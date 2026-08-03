@@ -19,7 +19,7 @@ export default function UsersError({
 	}, [error]);
 
 	return (
-		<main className="flex h-full flex-col items-center justify-center">
+		<div className="flex h-full flex-col items-center justify-center">
 			<H2 className="text-center">Something went wrong!</H2>
 			<H3 className="text-center">User Error</H3>
 			<button
@@ -29,6 +29,6 @@ export default function UsersError({
 			>
 				Try again
 			</button>
-		</main>
+		</div>
 	);
 }

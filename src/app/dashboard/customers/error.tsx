@@ -3,7 +3,7 @@ import { type JSX, useEffect } from "react";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 import { H2, H3 } from "@/ui/atoms/headings.atom";
 
-export default function InvoicesError({
+export default function CustomersError({
 	error,
 	reset,
 }: {
@@ -11,7 +11,7 @@ export default function InvoicesError({
 	reset: () => void;
 }): JSX.Element {
 	useEffect((): void => {
-		logger.error("Invoices error boundary", {
+		logger.error("Customers error boundary", {
 			digest: error.digest,
 			error: error.message,
 			stack: error.stack,
@@ -21,7 +21,7 @@ export default function InvoicesError({
 	return (
 		<div className="flex h-full flex-col items-center justify-center">
 			<H2 className="text-center">Something went wrong!</H2>
-			<H3 className="text-center">Invoice Error</H3>
+			<H3 className="text-center">Customer Error</H3>
 			<button
 				className="mt-4 rounded-md bg-bg-accent px-4 py-2 text-sm text-text-accent transition-colors hover:bg-bg-hover hover:text-text-hover"
 				onClick={reset}

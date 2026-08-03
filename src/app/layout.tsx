@@ -38,7 +38,7 @@ export default function RootLayout({
 	return (
 		<html className="scheme-light-dark h-full" lang="en">
 			<body
-				className={`scheme-light-dark h-full antialiased ${notoSans.className}`}
+				className={`scheme-light-dark h-full bg-bg-primary antialiased ${notoSans.className}`}
 			>
 				{children}
 			</body>

@@ -20,9 +20,9 @@ describe("Signup flow", () => {
 		cy.get(AUTH_SEL.signupEmail).type(user.email);
 		cy.get(AUTH_SEL.signupPassword).type(user.password);
 
-		// Basic a11y check before submitting
-		cy.injectAxe();
-		cy.checkA11y(undefined, { includedImpacts: ["critical"] }, undefined, true);
+		// Blocking a11y check before submitting (was advisory-only: the old
+		// skipFailures flag logged violations without failing the spec).
+		cy.checkA11yStrict();
 
 		// Submit the form
 		cy.get(AUTH_SEL.signupSubmit).click();

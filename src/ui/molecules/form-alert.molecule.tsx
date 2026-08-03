@@ -10,6 +10,10 @@ interface FormAlertProps {
 
 /**
  * Inline form alert for submission feedback.
+ *
+ * The container stays mounted (empty at idle) so screen readers treat it as
+ * a live region before the first message arrives. role="alert" is reserved
+ * for this single form-level message; it implies assertive + atomic delivery.
  */
 export function FormAlertMolecule({
 	className,
@@ -18,11 +22,7 @@ export function FormAlertMolecule({
 	type = "error",
 }: FormAlertProps): JSX.Element {
 	return (
-		<div
-			aria-atomic="true"
-			aria-live="polite"
-			className={cn("min-h-8 text-sm", className)}
-		>
+		<div className={cn("min-h-8 text-sm", className)} role="alert">
 			{message ? (
 				<p
 					className={cn(

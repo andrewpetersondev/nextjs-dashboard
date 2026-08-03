@@ -5,7 +5,7 @@ import { H2 } from "@/ui/atoms/headings.atom";
 
 export default function NotFound(): JSX.Element {
 	return (
-		<main className="flex h-full flex-col items-center justify-center gap-2">
+		<div className="flex h-full flex-col items-center justify-center gap-2">
 			<FaceFrownIcon className="w-10 text-text-disabled" />
 			<H2>404 Not Found</H2>
 			<p>Could not find the requested user profile.</p>
@@ -15,6 +15,6 @@ export default function NotFound(): JSX.Element {
 			>
 				Go Back
 			</Link>
-		</main>
+		</div>
 	);
 }
