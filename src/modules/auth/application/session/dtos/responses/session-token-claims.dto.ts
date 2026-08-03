@@ -7,6 +7,15 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * decoded and validated from the infrastructure transport (e.g., JWT).
  */
 export type SessionTokenClaimsDto = Readonly<{
+	/**
+	 * Original authentication time (UNIX timestamp in seconds).
+	 *
+	 * @remarks
+	 * Required at this layer even though the wire claim is optional: infrastructure
+	 * resolves the fallback (`iat`) when decoding legacy tokens, so the application
+	 * never has to reason about its absence.
+	 */
+	authTime: number;
 	/** Expiration time (UNIX timestamp in seconds) */
 	exp: number;
 	/** Issued-at time (UNIX timestamp in seconds) */

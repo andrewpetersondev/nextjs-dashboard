@@ -9,6 +9,7 @@ import { UserIdSchema } from "@/modules/users/domain/user-id.schema";
 export function toSessionTokenClaimsDto(
 	input: IssueTokenCommand,
 	params: Readonly<{
+		authTime: number;
 		exp: number;
 		iat: number;
 		jti: string;
@@ -16,6 +17,7 @@ export function toSessionTokenClaimsDto(
 	}>,
 ): SessionTokenClaimsDto {
 	return {
+		authTime: params.authTime,
 		exp: params.exp,
 		iat: params.iat,
 		jti: params.jti,

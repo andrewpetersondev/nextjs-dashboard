@@ -28,6 +28,7 @@ stateDiagram-v2
 
     Active --> Terminated: logout
     ApproachingExpiry --> Terminated: logout
+    ApproachingExpiry --> Terminated: 30 days since auth_time
 
     Terminated --> [*]
     Expired --> [*]
@@ -35,14 +36,15 @@ stateDiagram-v2
 
 ## What each transition really does
 
-| From → To                  | Trigger                 | What happens in code                                                                                                       |
-| -------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Anonymous → Active         | login / signup / demo   | `issue()` mints a JWT (`sid`, `jti`, `iat`, `exp = iat + 15 min`, `nbf`), signs it (jose / HS256), sets an httpOnly cookie |
-| Active → Active            | a protected request     | cookie decoded + verified, claims validated — no new token issued                                                          |
-| Active → ApproachingExpiry | ≤ 2 min remaining       | `isSessionApproachingExpiry()` against the refresh threshold                                                               |
-| ApproachingExpiry → Active | rotate                  | `issueRotated()` keeps the same `sid`, issues a fresh `jti`/`iat`/`exp` — a sliding extension                              |
-| → Expired                  | wall clock passes `exp` | nothing runs _at_ expiry; it's caught on the **next** decode                                                               |
-| Active → Terminated        | logout                  | `terminate("logout")` deletes the cookie (`maxAge` 0)                                                                      |
+| From → To                      | Trigger                   | What happens in code                                                                                                                          |
+| ------------------------------ | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anonymous → Active             | login / signup / demo     | `issue()` mints a JWT (`sid`, `jti`, `iat`, `auth_time = iat`, `exp = iat + 15 min`, `nbf`), signs it (jose / HS256), sets an httpOnly cookie |
+| Active → Active                | a protected request       | cookie decoded + verified, claims validated — no new token issued                                                                             |
+| Active → ApproachingExpiry     | ≤ 2 min remaining         | `isSessionApproachingExpiry()` against the refresh threshold                                                                                  |
+| ApproachingExpiry → Active     | rotate                    | `issueRotated()` keeps the same `sid` **and `auth_time`**, issues a fresh `jti`/`iat`/`exp` — a sliding extension                             |
+| → Expired                      | wall clock passes `exp`   | nothing runs _at_ expiry; it's caught on the **next** decode                                                                                  |
+| Active → Terminated            | logout                    | `terminate("logout")` deletes the cookie (`maxAge` 0)                                                                                         |
+| ApproachingExpiry → Terminated | 30 days since `auth_time` | rotation refuses **and** clears the cookie — see the ceiling below                                                                            |
 
 ## The validation gauntlet (the Active → Active self-loop)
 
@@ -56,7 +58,7 @@ flowchart TD
     decode -->|ok| validate{"validate<br/>(Zod schema)"}
     validate -->|"wrong shape"| reject2["✗ invalid_schema"]
     validate -->|ok| semantics{"semantic checks"}
-    semantics -->|"iat in future · nbf in future<br/>exp ≤ iat · nbf &gt; exp · nbf &gt; iat"| reject3["✗ invalid_semantics"]
+    semantics -->|"iat in future · nbf in future<br/>exp ≤ iat · nbf &gt; exp · nbf &gt; iat<br/>auth_time in future · auth_time &gt; iat"| reject3["✗ invalid_semantics"]
     semantics -->|ok| accept["✓ trusted claims"]
 ```
 
@@ -71,26 +73,49 @@ schema failure and an expiry failure are never confused for one another.
 From [`session-config.constants.ts`](../../src/modules/auth/domain/shared/constants/session-config.constants.ts)
 and [`session-token.constants.ts`](../../src/modules/auth/infrastructure/session/config/session-token.constants.ts):
 
-| Knob                                | Value                     | Meaning                                                                         |
-| ----------------------------------- | ------------------------- | ------------------------------------------------------------------------------- |
-| `SESSION_DURATION_SEC`              | **900 s — 15 minutes**    | how long a freshly issued token lives                                           |
-| `SESSION_REFRESH_THRESHOLD_SEC`     | **120 s — 2 minutes**     | "approaching expiry" window where rotation kicks in                             |
-| `MAX_ABSOLUTE_SESSION_SEC`          | **2,592,000 s — 30 days** | _intended_ hard ceiling on session age — **not currently enforced** (see below) |
-| `SESSION_TOKEN_CLOCK_TOLERANCE_SEC` | **5 s**                   | slack for clock skew between machines                                           |
+| Knob                                | Value                     | Meaning                                                            |
+| ----------------------------------- | ------------------------- | ------------------------------------------------------------------ |
+| `SESSION_DURATION_SEC`              | **900 s — 15 minutes**    | how long a freshly issued token lives                              |
+| `SESSION_REFRESH_THRESHOLD_SEC`     | **120 s — 2 minutes**     | "approaching expiry" window where rotation kicks in                |
+| `MAX_ABSOLUTE_SESSION_SEC`          | **2,592,000 s — 30 days** | hard ceiling on session age, measured from `auth_time` (see below) |
+| `SESSION_TOKEN_CLOCK_TOLERANCE_SEC` | **5 s**                   | slack for clock skew between machines                              |
 
 So a session slides forward in 15-minute leases, renewed for as long as you stay
-active.
+active — but only up to the 30-day ceiling.
 
-> **Honest gap — the 30-day ceiling doesn't actually bind.** The lifecycle
-> policy ([`evaluate-session-lifecycle.policy.ts`](../../src/modules/auth/domain/session/policies/evaluate-session-lifecycle.policy.ts))
-> does check session age against `MAX_ABSOLUTE_SESSION_SEC`, and a termination
-> path for `absolute_limit_exceeded` exists — but age is measured from the JWT
-> `iat`, and `issueRotated()` mints a **fresh `iat` on every rotation** (only
-> the `sid` survives). Since rotation happens within 15 minutes of the last
-> issuance, the measured age never gets near 30 days: an actively used session
-> can slide indefinitely, and the termination path is dead code in practice.
-> Enforcing the ceiling needs an original-issuance claim preserved across
-> rotations — tracked in `BACKLOG.md`.
+## The 30-day ceiling, and the claim that makes it work
+
+Sliding renewal and an absolute ceiling pull against each other, and the naive
+implementation loses. Age used to be measured from the JWT `iat`; since
+`issueRotated()` mints a **fresh `iat` on every rotation**, and rotation happens
+within 15 minutes of the last issuance, the measured age never got near 30 days.
+An actively used session slid forever and the `absolute_limit_exceeded`
+termination path was unreachable code.
+
+The fix is one extra claim: **`auth_time`** — the OIDC-standard "when the user
+actually authenticated" timestamp. `issue()` stamps it at login and
+`issueRotated()` copies it forward verbatim. It is the only time claim that survives rotation
+(alongside `sid`), so it is the one thing that can anchor session age:
+
+| Claim       | On login | On each rotation | Anchors the ceiling?  |
+| ----------- | -------- | ---------------- | --------------------- |
+| `sid`       | new      | preserved        | no (identity only)    |
+| `auth_time` | now      | **preserved**    | **yes**               |
+| `iat`       | now      | refreshed        | no — this was the bug |
+| `jti`/`exp` | new      | refreshed        | no                    |
+
+The domain reads it as `SessionEntity.startedAt`, and
+[`evaluate-session-lifecycle.policy.ts`](../../src/modules/auth/domain/session/policies/evaluate-session-lifecycle.policy.ts)
+measures age from that. When the ceiling trips, the rotate use case both refuses
+to extend **and** deletes the cookie — a "terminate" decision that only declined
+to renew would have left the token authenticating requests until its own 15-minute
+expiry.
+
+> **Backward compatibility.** `auth_time` is optional on the wire: tokens minted
+> before this claim existed don't carry one, and rejecting them would have logged
+> every live session out on deploy. The infrastructure mapper falls back to `iat`
+> for those, so a legacy session pins its `auth_time` on its next rotation and the
+> ceiling starts binding from there.
 
 ## Why it's stateless (and what that costs)
 

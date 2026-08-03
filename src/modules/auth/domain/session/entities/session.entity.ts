@@ -23,10 +23,25 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
 export type SessionEntity = Readonly<{
 	/** Expiration time (UNIX seconds, matches JWT `exp`) */
 	expiresAt: UnixSeconds;
-	/** Issued at time (UNIX seconds, matches JWT `iat`) */
+	/**
+	 * Issued at time of the *current token* (UNIX seconds, matches JWT `iat`).
+	 *
+	 * @remarks
+	 * Resets on every rotation. Use {@link SessionEntity.startedAt} — not this — to
+	 * reason about how old the session itself is.
+	 */
 	issuedAt: UnixSeconds;
 	/** User role for authorization checks within the session */
 	role: UserRole;
+	/**
+	 * When the session began — the original authentication (UNIX seconds, matches
+	 * the JWT `auth_time` claim).
+	 *
+	 * @remarks
+	 * Survives rotation, which is exactly what distinguishes it from `issuedAt` and
+	 * what allows the absolute lifetime ceiling to actually bind.
+	 */
+	startedAt: UnixSeconds;
 	/** Unique user identifier (branded UserId) */
 	userId: UserId;
 }>;
@@ -74,7 +89,12 @@ export function isSessionApproachingExpiry(
 
 /**
  * Domain Logic: Checks if the session has exceeded its absolute maximum lifetime.
- * Uses issuedAt as the session start time.
+ *
+ * @remarks
+ * Age is measured from `startedAt` (original authentication), *not* `issuedAt`.
+ * Measuring from `issuedAt` was the bug this ceiling used to have: rotation mints a
+ * fresh `iat`, so an actively used session's measured age reset every few minutes
+ * and the ceiling could never be reached.
  *
  * @param session - The session entity.
  * @param maxLifetimeSec - Maximum allowed lifetime in seconds.
@@ -86,6 +106,6 @@ export function isSessionAbsoluteLifetimeExceeded(
 	maxLifetimeSec: DurationSeconds,
 	nowSec: UnixSeconds,
 ): Readonly<{ ageSec: DurationSeconds; exceeded: boolean }> {
-	const ageSec: DurationSeconds = calculateAgeSec(session.issuedAt, nowSec);
+	const ageSec: DurationSeconds = calculateAgeSec(session.startedAt, nowSec);
 	return { ageSec, exceeded: ageSec > maxLifetimeSec };
 }

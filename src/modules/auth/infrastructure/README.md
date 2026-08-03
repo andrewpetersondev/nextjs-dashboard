@@ -276,7 +276,7 @@ Facade over session use cases. Delegates to:
 
 Handles token issuance and validation:
 
-- Issues JWT with claims (`sub` (user id), `role`, `sid`, `jti`, `iat`, `exp`, `nbf`)
+- Issues JWT with claims (`sub` (user id), `role`, `sid`, `jti`, `iat`, `auth_time`, `exp`, `nbf`)
 - Validates token signature and claims
 - Enforces semantic checks (exp > iat, nbf <= iat, etc.)
 
@@ -436,7 +436,9 @@ Concrete JWT implementation:
 
 - Algorithm: HS256 (HMAC with SHA-256)
 - Secret: From environment variable `SESSION_SECRET`
-- Claims: `sub` (user id), `role`, `sid`, `jti`, `iat`, `exp`, `nbf`
+- Claims: `sub` (user id), `role`, `sid`, `jti`, `iat`, `auth_time`, `exp`, `nbf`
+- `auth_time` (OIDC) is the original authentication time — the only time claim rotation preserves, so it is what
+  anchors the absolute lifetime ceiling. Optional on the wire for pre-existing tokens; falls back to `iat`.
 - Expiration: 15 minutes per token, slid forward by rotation (see below)
 
 **Security Features:**
@@ -468,7 +470,8 @@ DATABASE_URL=postgresql://...
 
 - **Session duration**: 15 minutes (`SESSION_DURATION_SEC` = 900s) — lifetime of a freshly issued token
 - **Refresh threshold**: 2 minutes (`SESSION_REFRESH_THRESHOLD_SEC`) — the "approaching expiry" rotation window
-- **Max absolute lifetime**: 30 days (`MAX_ABSOLUTE_SESSION_SEC`) — hard ceiling on age via `iat`, even with rotation
+- **Max absolute lifetime**: 30 days (`MAX_ABSOLUTE_SESSION_SEC`) — hard ceiling on session age, measured from the
+  `auth_time` claim (preserved across rotation) rather than `iat` (refreshed by it). Tripping it clears the cookie.
 - **Clock tolerance**: 5 seconds (`SESSION_TOKEN_CLOCK_TOLERANCE_SEC`)
 - **Bcrypt rounds**: env-configured via `AUTH_BCRYPT_SALT_ROUNDS` (required; e.g. 10)
 

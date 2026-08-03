@@ -9,6 +9,11 @@ import type { UserRole } from "@/shared/policies/user-role/user-role.constants";
  * This mapper bridges infrastructure (JWT with role as string) and application
  * layers (SessionTokenClaims with role as {@link UserRole} enum).
  *
+ * It also resolves the one optional claim: `auth_time` is absent on tokens issued
+ * before the absolute-ceiling work, so it falls back to `iat`. That keeps live
+ * sessions valid across the deploy, and the claim pins itself on their next
+ * rotation (rotation carries `authTime` forward verbatim).
+ *
  * @param jwtClaims - Raw JWT claims from token decode.
  * @returns Application-layer session token claims DTO.
  */
@@ -16,6 +21,7 @@ export function jwtToSessionTokenClaimsDto(
 	jwtClaims: SessionJwtClaimsTransport,
 ): SessionTokenClaimsDto {
 	return {
+		authTime: jwtClaims.auth_time ?? jwtClaims.iat,
 		exp: jwtClaims.exp,
 		iat: jwtClaims.iat,
 		jti: jwtClaims.jti,
