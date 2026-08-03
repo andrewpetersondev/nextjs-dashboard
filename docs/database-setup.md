@@ -11,6 +11,9 @@ The values below match [`.env.example.local`](../.env.example.local): user
 
 ## 1. Create a Docker network
 
+Make sure Docker Desktop is running first — every command below fails with a
+"cannot connect to the Docker daemon" error otherwise.
+
 ```bash
 docker network create dashboard-network
 ```
@@ -25,12 +28,19 @@ docker run --name dashboard-postgres \
   -e POSTGRES_DB=postgres \
   -p 5432:5432 \
   -v pg-data:/var/lib/postgresql/data \
-  -d postgres:latest
+  -d postgres:17-alpine
 ```
 
 This creates a default `postgres` database; the app's per-environment databases
 are created in the next step. (`pg-data` is mounted at the Postgres data
 directory so your data survives a container restart.)
+
+> **Why `postgres:17-alpine`, not `latest`:** it matches CI's service container
+> (`.github/workflows/ci.yml`), and the official `postgres:18+` image moved its
+> data directory — with the `/var/lib/postgresql/data` mount above, an 18+
+> container refuses to start (exit 1, "upgrading without pg_upgrade" in the
+> logs; verified 2026-08-03). If you ever move to 18+, mount the volume at
+> `/var/lib/postgresql` instead and recreate the `pg-data` volume.
 
 ## 3. Create the dev / test / prod databases
 
