@@ -18,8 +18,8 @@ this file is the deliberate workaround.)
 > **Lane A (invoice status lifecycle) SHIPPED + deployed** and **Lane B (demo-surface
 > polish) SHIPPED + deployed 2026-08-03**; the **a11y pass (item 3, the serial last
 > phase) BUILT 2026-08-03** on the `claude/a11y-pass` lane — see Done. With that, the
-> demo-first "Now" list is complete; next work comes from "Later" (the invoice
-> amount-cap mismatch is the natural first pick — it's the last known demo wart).
+> demo-first "Now" list is complete, and the **invoice amount-cap mismatch** (the
+> last known demo wart) **landed 2026-08-03** — see Done. Next work comes from "Later".
 > Before any push: run the full unit + e2e suites on the merged tree (`check:fast`
 > contains no tests).
 
@@ -36,7 +36,8 @@ this file is the deliberate workaround.)
    - [x] ~~Architecture diagrams on README + drift fixes~~ — done 2026-07-30/31.
    - [x] ~~OG/social-preview image~~ — done 2026-08-03 (`src/app/opengraph-image.tsx`,
          statically prerendered; shared HERO_TAGLINE constant; og/twitter meta in root
-         layout; e2e smoke). Post-deploy: check the unfurl with LinkedIn Post Inspector.
+         layout; e2e smoke). Unfurl confirmed 2026-08-03 via LinkedIn Post Inspector
+         (card renders image/title/domain; image ingested to LinkedIn's CDN).
    - [x] ~~Role-guarding demoable from landing~~ — done 2026-08-03 ("or explore as
          admin" quiet link, per-scheme pinned contrast colors, e2e asserts the ADMIN
          dashboard + Users nav link).
@@ -52,15 +53,6 @@ this file is the deliberate workaround.)
    worth a quick manual pass against prod after the merge if curious.
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
-
-- [ ] **Invoice amount-cap vs seed mismatch** _(found 2026-08-03 by the transition e2e)_ —
-      the form schema caps amount at `MAX_INVOICE_AMOUNT_USD = 10_000`, but seeds
-      generate invoices up to $50,000 (`maxLargeAmountCents: 5_000_000`), so a seeded
-      invoice above $10k can never save a legitimate field edit: the round-tripped
-      amount fails validation with a confusing error. Transitions are now immune
-      (status-only form in `edit-invoice-form.tsx`), but the field-edit path still
-      hits it. Decide: raise the schema cap (the $10k looks like course residue) or
-      cap seed amounts at $10k — then add an e2e editing a large-amount invoice.
 
 - [ ] **Enforce the 30-day absolute session ceiling** _(added 2026-07-31, from the
       diagrams drift audit)_ — `MAX_ABSOLUTE_SESSION_SEC` and the lifecycle policy's
@@ -118,6 +110,19 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Invoice amount-cap vs seed mismatch** _(2026-08-03, `claude/invoice-amount-cap`)_ —
+      the last known demo wart: the schema capped amounts at $10k (course residue)
+      while seeds generate up to $50k — and, a second door into the same wart, ~5% of
+      rows seed at $0 against `.positive()` — so those rows could never save a
+      legitimate field edit (the round-tripped amount itself failed validation).
+      Fixed schema-side so already-seeded prod rows heal on code deploy alone, no
+      data operation: cap raised to $100,000 (2× the $50k seed max) and `.positive()`
+      → `.nonnegative()` ($0 approved as a valid amount 2026-08-03), with readable
+      error messages per the username-policy `{ error }` idiom. Guards: a seed↔schema
+      contract test (`devtools/seed/__tests__/`) locks every seed amount tier inside
+      the schema range; schema boundary unit tests; update-form e2e saves a >$10k
+      amount (asserting the round-tripped value) and a $0 amount, with the
+      invalid-input case moved to negative amounts. Edit-form comment de-staled.
 - [x] **a11y pass (serial phase 3)** _(2026-08-03, `claude/a11y-pass`)_ — audited the
       final UI both lanes produced, to the 2026-08-02 verified designs. **(1) Landmarks**
       — the dashboard layout owns the single `<main tabIndex={-1}>` (id hoisted to

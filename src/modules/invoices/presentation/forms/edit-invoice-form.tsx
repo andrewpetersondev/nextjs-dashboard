@@ -98,11 +98,12 @@ function FormFields({
 }
 
 // Transitions live in their OWN form so a status change submits ONLY
-// {status}. The main form round-trips every field, and a seeded amount above
-// the schema's $10k cap made "Mark as paid" fail validation on unrelated data
-// (caught by e2e 2026-08-03 — see the BACKLOG Later item on the cap/seed
-// mismatch). Both forms share the same useActionState action, so pending
-// state and server feedback stay unified.
+// {status}. The main form round-trips every field, so a status change could
+// otherwise fail validation on unrelated data (as happened when seeded
+// amounts exceeded the schema cap — caught by e2e 2026-08-03; the cap/seed
+// mismatch itself is fixed, with a seed contract test guarding it). Both
+// forms share the same useActionState action, so pending state and server
+// feedback stay unified.
 function StatusTransitionForm({
 	action,
 	current,
