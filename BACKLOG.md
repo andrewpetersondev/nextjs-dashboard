@@ -78,6 +78,15 @@ this file is the deliberate workaround.)
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
+- [ ] **Invoice amount-cap vs seed mismatch** _(found 2026-08-03 by the transition e2e)_ —
+      the form schema caps amount at `MAX_INVOICE_AMOUNT_USD = 10_000`, but seeds
+      generate invoices up to $50,000 (`maxLargeAmountCents: 5_000_000`), so a seeded
+      invoice above $10k can never save a legitimate field edit: the round-tripped
+      amount fails validation with a confusing error. Transitions are now immune
+      (status-only form in `edit-invoice-form.tsx`), but the field-edit path still
+      hits it. Decide: raise the schema cap (the $10k looks like course residue) or
+      cap seed amounts at $10k — then add an e2e editing a large-amount invoice.
+
 - [ ] **Enforce the 30-day absolute session ceiling** _(added 2026-07-31, from the
       diagrams drift audit)_ — `MAX_ABSOLUTE_SESSION_SEC` and the lifecycle policy's
       `absolute_limit_exceeded` termination path exist, but age is measured from the
