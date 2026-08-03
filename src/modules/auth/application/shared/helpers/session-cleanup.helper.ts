@@ -21,8 +21,12 @@ export async function cleanupInvalidTokenHelper(
 			| "invalid_claims"
 			| "invalid_claims_semantics"
 			| "invalid_session_state"
+			| "lifecycle_terminated"
 			| "unknown";
-		source: "readSessionTokenHelper" | "readSessionUseCase";
+		source:
+			| "readSessionTokenHelper"
+			| "readSessionUseCase"
+			| "rotateSessionUseCase";
 	}>,
 ): Promise<
 	Readonly<{

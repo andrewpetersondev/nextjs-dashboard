@@ -20,8 +20,55 @@ import {
 	secondsToMilliseconds,
 } from "@/shared/time/time.constants";
 
+/**
+ * Semantic checks for the optional `auth_time` claim.
+ *
+ * @remarks
+ * Only meaningful when the claim is present — an absent `auth_time` falls back to
+ * `iat` downstream, which the checks below would pass vacuously. A token claiming
+ * it was authenticated in the future, or *after* it was issued, is malformed: both
+ * would understate session age and so weaken the absolute ceiling.
+ */
+function validateAuthTimeSemantics(
+	claims: Readonly<{ auth_time?: number; iat: number }>,
+	nowSec: number,
+): Result<void, AppError> {
+	const authTime = claims.auth_time;
+
+	if (authTime === undefined) {
+		return Ok(undefined);
+	}
+
+	if (authTime > nowSec + SESSION_TOKEN_CLOCK_TOLERANCE_SEC) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "auth_time_in_future",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "auth_time_in_future" },
+			}),
+		);
+	}
+
+	if (authTime > claims.iat) {
+		return Err(
+			makeAppError(APP_ERROR_KEYS.validation, {
+				cause: "auth_time_after_iat",
+				message: "session.claims.invalid_semantics",
+				metadata: { policy: "session", reason: "auth_time_after_iat" },
+			}),
+		);
+	}
+
+	return Ok(undefined);
+}
+
 function validateSessionTokenClaimsSemantics(
-	claims: Readonly<{ exp: number; iat: number; nbf: number }>,
+	claims: Readonly<{
+		auth_time?: number;
+		exp: number;
+		iat: number;
+		nbf: number;
+	}>,
 	nowSec: number,
 ): Result<void, AppError> {
 	// These checks are intentionally *not* part of the Zod schema so we can
@@ -76,7 +123,7 @@ function validateSessionTokenClaimsSemantics(
 		);
 	}
 
-	return Ok(undefined);
+	return validateAuthTimeSemantics(claims, nowSec);
 }
 
 /**
@@ -133,6 +180,8 @@ export class SessionTokenService implements SessionTokenServiceContract {
 		const jti = crypto.randomUUID();
 
 		const claims = toSessionTokenClaimsDto(input, {
+			// Fresh authentication: this *is* the session start.
+			authTime: nowSec,
 			exp: expiresAtSec,
 			iat: nowSec,
 			jti,
@@ -154,6 +203,11 @@ export class SessionTokenService implements SessionTokenServiceContract {
 	/**
 	 * Issues a rotated session token.
 	 *
+	 * @remarks
+	 * Rotation is a *sliding* extension: `jti`, `iat`, `nbf` and `exp` are all fresh.
+	 * Only `sid` (session identity) and `auth_time` (original authentication time)
+	 * survive — the latter is what makes the absolute lifetime ceiling binding.
+	 *
 	 * @param input - The request containing existing session data for rotation.
 	 * @returns A promise resolving to a {@link Result} containing the issued token DTO or an {@link AppError}.
 	 */
@@ -168,6 +222,8 @@ export class SessionTokenService implements SessionTokenServiceContract {
 		const claims = toSessionTokenClaimsDto(
 			{ role: input.role, userId: input.userId },
 			{
+				// Carried over, never refreshed — the whole point of the ceiling.
+				authTime: input.authTime,
 				exp: expiresAtSec,
 				iat: nowSec,
 				jti,
@@ -212,6 +268,7 @@ export class SessionTokenService implements SessionTokenServiceContract {
 		const nowSec = nowInSeconds();
 		const semanticValidation = validateSessionTokenClaimsSemantics(
 			{
+				auth_time: parsed.data.auth_time,
 				exp: parsed.data.exp,
 				iat: parsed.data.iat,
 				nbf: parsed.data.nbf,

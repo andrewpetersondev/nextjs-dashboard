@@ -54,17 +54,6 @@ this file is the deliberate workaround.)
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
-- [ ] **Enforce the 30-day absolute session ceiling** _(added 2026-07-31, from the
-      diagrams drift audit)_ — `MAX_ABSOLUTE_SESSION_SEC` and the lifecycle policy's
-      `absolute_limit_exceeded` termination path exist, but age is measured from the
-      JWT `iat`, and `issueRotated()` mints a fresh `iat` on every rotation (only
-      `sid` survives) — so an actively used session slides forever and the
-      termination path is dead code. Fix: preserve an original-issuance claim
-      (session-started-at) across rotations — touches the claims schema, mappers,
-      `IssueRotatedTokenCommand`, the rotate use case, the session entity / policy
-      input, and their unit tests. Decided "doc now, code fix later" (2026-07-31);
-      `docs/diagrams/session-lifecycle.md` documents the gap honestly until then.
-      Good interview story when it lands.
 - [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
@@ -110,6 +99,31 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **30-day absolute session ceiling now actually binds** _(2026-08-03,
+      `claude/session-ceiling`)_ — the ceiling was dead code: `MAX_ABSOLUTE_SESSION_SEC`
+      and the `absolute_limit_exceeded` path existed, but age was measured from the JWT
+      `iat`, and `issueRotated()` mints a fresh `iat` every rotation (only `sid`
+      survived) — so an actively used session slid forever and the termination branch
+      was unreachable. Anchored on a new **`auth_time`** claim (the OIDC standard for
+      original authentication time): `issue()` stamps it, `issueRotated()` copies it
+      forward verbatim, the domain reads it as `SessionEntity.startedAt`, and
+      `isSessionAbsoluteLifetimeExceeded` measures from that instead of `issuedAt`.
+      **Second half of the bug, found while testing:** a terminate decision only
+      _refused to extend_ — nothing cleared the cookie, so the token kept authenticating
+      requests until its own 15-min expiry. The rotate use case now calls
+      `cleanupInvalidTokenHelper` on any termination (new `lifecycle_terminated` reason
+      + `rotateSessionUseCase` source). **Backward compatible by design:** `auth_time`
+      is optional on the wire and `jwtToSessionTokenClaimsDto` falls back to `iat`, so
+      live sessions survive the deploy and pin the claim on their next rotation —
+      the application DTO keeps it required, so only infrastructure knows about the
+      absence. Also added two semantic validations (`auth_time_in_future`,
+      `auth_time_after_iat`) — both would understate session age. Tests: 15 unit
+      (domain ceiling regression lock pinning `issuedAt` to _now_ so it can only pass
+      via `startedAt`; mapper fallback; service issue/rotate/validate) + 3 integration
+      (auth_time preserved across rotation, over-age session terminated AND cookie
+      deleted, legacy no-auth_time token rotates and pins). Docs reconciled: the
+      session-lifecycle diagram's "honest gap" callout replaced with a claim-by-claim
+      table of what survives rotation; auth infrastructure README claim lists.
 - [x] **Invoice amount-cap vs seed mismatch** _(2026-08-03, `claude/invoice-amount-cap`)_ —
       the last known demo wart: the schema capped amounts at $10k (course residue)
       while seeds generate up to $50k — and, a second door into the same wart, ~5% of

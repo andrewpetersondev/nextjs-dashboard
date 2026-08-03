@@ -52,6 +52,7 @@ export class SessionTokenCodecAdapter implements SessionTokenCodecContract {
 		claims: SessionTokenClaimsDto,
 	): Promise<Result<string, AppError>> {
 		const jwtClaims = {
+			auth_time: claims.authTime,
 			exp: claims.exp,
 			iat: claims.iat,
 			jti: claims.jti,

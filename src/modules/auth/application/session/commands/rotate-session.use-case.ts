@@ -14,6 +14,7 @@ import {
 } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { toSessionEntity } from "@/modules/auth/application/session/mappers/to-session-entity.mapper";
 import { readSessionTokenHelper } from "@/modules/auth/application/shared/helpers/read-session-token.helper";
+import { cleanupInvalidTokenHelper } from "@/modules/auth/application/shared/helpers/session-cleanup.helper";
 import { setSessionCookieAndLogHelper } from "@/modules/auth/application/shared/helpers/session-cookie-ops.helper";
 import { AUTH_USE_CASE_NAMES } from "@/modules/auth/application/shared/logging/auth-logging.constants";
 import { makeAuthUseCaseLoggerHelper } from "@/modules/auth/application/shared/logging/make-auth-use-case-logger.helper";
@@ -104,6 +105,18 @@ export class RotateSessionUseCase {
 							? UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded
 							: UPDATE_SESSION_OUTCOME_REASON.expired;
 
+					// A terminate decision has to actually terminate. Without this the
+					// session token stays in the cookie jar and keeps authenticating
+					// requests until it expires on its own — the ceiling would only ever
+					// refuse to *extend* the session, never end it.
+					await cleanupInvalidTokenHelper(
+						{ logger: this.logger, sessionStore: this.sessionStore },
+						{
+							reason: "lifecycle_terminated",
+							source: "rotateSessionUseCase",
+						},
+					);
+
 					return Ok(
 						buildUpdateSessionNotRotated({
 							ageSec: decision.ageSec,
@@ -123,6 +136,9 @@ export class RotateSessionUseCase {
 				}
 
 				const issuedResult = await this.sessionTokenService.issueRotated({
+					// Carried forward so the absolute ceiling keeps measuring from the
+					// original authentication rather than from this rotation.
+					authTime: session.startedAt,
 					role: session.role,
 					sid: tokenIdentity.sid,
 					userId: session.userId,

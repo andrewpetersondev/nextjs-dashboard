@@ -32,14 +32,29 @@ describe("Session Rotation Integration", () => {
 	});
 
 	// biome-ignore lint/nursery/useExplicitType: <fix later>
-	const createTokenWithDates = async (iat: number, exp: number) => {
+	const getCodec = async () => {
 		const auth = await makeAuthComposition();
 		// biome-ignore lint/suspicious/noExplicitAny: is this okay?
 		const tokenService = (auth.services.sessionService as any).deps
 			.sessionTokenService;
-		const codec = tokenService.codec;
+		return tokenService.codec;
+	};
+
+	/**
+	 * @param authTime - Original authentication time. Omit to mint a legacy-shaped
+	 *   token with no `auth_time` claim at all (what live tokens looked like before
+	 *   the absolute ceiling was anchored).
+	 */
+	// biome-ignore lint/nursery/useExplicitType: <fix later>
+	const createTokenWithDates = async (
+		iat: number,
+		exp: number,
+		authTime?: number,
+	) => {
+		const codec = await getCodec();
 
 		const claims = {
+			...(authTime === undefined ? {} : { authTime }),
 			exp,
 			iat,
 			jti: "00000000-0000-4000-8000-000000000001",
@@ -54,6 +69,27 @@ describe("Session Rotation Integration", () => {
 			throw result.error;
 		}
 		return result.value;
+	};
+
+	/** Decodes a signed token back to raw JWT claims (no semantic validation). */
+	// biome-ignore lint/nursery/useExplicitType: <fix later>
+	const decodeToken = async (token: string) => {
+		const codec = await getCodec();
+		const result = await codec.decode(token);
+		if (!result.ok) {
+			throw result.error;
+		}
+		return result.value;
+	};
+
+	// biome-ignore lint/nursery/useExplicitType: <fix later>
+	const stubCookieWith = async (token: string) => {
+		const { SessionCookieStoreAdapter } = await import(
+			"@/modules/auth/infrastructure/session/adapters/session-cookie-store.adapter"
+		);
+		return vi
+			.spyOn(SessionCookieStoreAdapter.prototype, "get")
+			.mockResolvedValue(Ok(token));
 	};
 
 	it("should rotate session when approaching expiry", async () => {
@@ -134,6 +170,92 @@ describe("Session Rotation Integration", () => {
 			expect(mockCookies.delete).toHaveBeenCalled();
 		}
 		getSpy.mockRestore();
+	});
+
+	describe("absolute lifetime ceiling", () => {
+		it("preserves auth_time across rotation while minting a fresh iat", async () => {
+			const nowSec = toUnixSeconds(Math.floor(Date.now() / 1000));
+			const authTime = nowSec - 86_400; // authenticated a day ago
+
+			// Approaching expiry, so this rotates.
+			const token = await createTokenWithDates(
+				nowSec - 300,
+				nowSec + 60,
+				authTime,
+			);
+			const getSpy = await stubCookieWith(token);
+
+			const auth = await makeAuthComposition();
+			const result = await auth.services.sessionService.rotate();
+
+			expect(result.ok).toBe(true);
+			expect(mockCookies.set).toHaveBeenCalled();
+
+			const rotatedToken = mockCookies.set.mock.calls[0]?.[1];
+			const rotatedClaims = await decodeToken(rotatedToken);
+
+			expect(rotatedClaims.auth_time).toBe(authTime);
+			// The token is new even though the session start is not.
+			expect(rotatedClaims.iat).toBeGreaterThan(authTime);
+			expect(rotatedClaims.sid).toBe("00000000-0000-4000-8000-000000000002");
+
+			getSpy.mockRestore();
+		});
+
+		it("terminates a session past the ceiling even though its token is fresh", async () => {
+			const nowSec = toUnixSeconds(Math.floor(Date.now() / 1000));
+			// 31 days of continuous use: every rotation kept iat fresh, so only
+			// auth_time reveals the session's real age.
+			const authTime = nowSec - (2_592_000 + 86_400);
+
+			const token = await createTokenWithDates(
+				nowSec - 300,
+				nowSec + 60,
+				authTime,
+			);
+			const getSpy = await stubCookieWith(token);
+
+			const auth = await makeAuthComposition();
+			const result = await auth.services.sessionService.rotate();
+
+			expect(result.ok).toBe(true);
+			if (result.ok) {
+				expect(result.value.reason).toBe(
+					UPDATE_SESSION_OUTCOME_REASON.absoluteLifetimeExceeded,
+				);
+				expect(result.value.refreshed).toBe(false);
+			}
+			// Not merely "refused to extend" — the cookie is cleared.
+			expect(mockCookies.delete).toHaveBeenCalled();
+			expect(mockCookies.set).not.toHaveBeenCalled();
+
+			getSpy.mockRestore();
+		});
+
+		it("rotates a legacy token with no auth_time, pinning it from iat", async () => {
+			const nowSec = toUnixSeconds(Math.floor(Date.now() / 1000));
+			const iat = nowSec - 300;
+
+			// No auth_time at all — a token minted before the claim existed.
+			const token = await createTokenWithDates(iat, nowSec + 60);
+			const getSpy = await stubCookieWith(token);
+
+			const auth = await makeAuthComposition();
+			const result = await auth.services.sessionService.rotate();
+
+			expect(result.ok).toBe(true);
+			expect(mockCookies.set).toHaveBeenCalled();
+
+			const rotatedClaims = await decodeToken(
+				mockCookies.set.mock.calls[0]?.[1],
+			);
+
+			// The fallback pins the claim at the legacy token's iat, so the ceiling
+			// starts binding from here rather than logging the user out on deploy.
+			expect(rotatedClaims.auth_time).toBe(iat);
+
+			getSpy.mockRestore();
+		});
 	});
 
 	it("should return invalid_or_missing_user when no token is present", async () => {

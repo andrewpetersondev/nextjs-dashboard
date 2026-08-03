@@ -14,6 +14,24 @@ const IatSchema: ZodNumber = z
 	});
 
 /**
+ * Authentication Time (auth_time) claim schema — OIDC standard.
+ * UNIX timestamp (seconds) of the *original* authentication, preserved across rotation.
+ *
+ * @remarks
+ * Optional by design: tokens issued before this claim existed carry no `auth_time`,
+ * and rejecting them would log every live session out on deploy. Absence is handled
+ * in {@link jwtToSessionTokenClaimsDto}, which falls back to `iat` — the claim then
+ * pins itself on that session's next rotation.
+ */
+const AuthTimeSchema: ZodNumber = z
+	.number()
+	.int()
+	.nonnegative()
+	.refine((v: number) => Number.isSafeInteger(v), {
+		message: "auth_time must be a safe integer",
+	});
+
+/**
  * Not Before (nbf) claim schema.
  * Represents a non-negative integer UNIX timestamp (in seconds) before which the token must be considered invalid.
  */
@@ -59,6 +77,7 @@ const SubSchema: ZodUUID = z.uuid();
  * Validates the raw session token payload (e.g., JWT claims) after verification.
  */
 export const SessionTokenClaimsSchema = z.object({
+	auth_time: AuthTimeSchema.optional(),
 	exp: ExpSchema,
 	iat: IatSchema,
 	jti: JtiSchema,

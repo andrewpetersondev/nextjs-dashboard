@@ -23,6 +23,7 @@ export function toSessionEntity(
 		expiresAt: toUnixSeconds(tokenClaims.exp),
 		issuedAt: toUnixSeconds(tokenClaims.iat),
 		role: tokenClaims.role,
+		startedAt: toUnixSeconds(tokenClaims.authTime),
 		userId: UserIdSchema.decode(tokenClaims.sub),
 	};
 }

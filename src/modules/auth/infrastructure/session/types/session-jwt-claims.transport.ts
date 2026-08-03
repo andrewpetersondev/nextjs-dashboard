@@ -15,6 +15,11 @@ import "server-only";
  *
  * **Session Lifecycle:**
  * - `sid`: Session ID (stable session identifier, useful for revocation/rotation)
+ * - `auth_time`: original authentication time (OIDC standard claim). Unlike `iat`,
+ *   this is **preserved across rotation**, so it is the only claim that can anchor
+ *   the absolute session ceiling — `iat` slides forward on every rotated token.
+ *   Optional on the wire: tokens issued before the claim existed omit it, and the
+ *   infrastructure mapper falls back to `iat` for those.
  *
  * **Performance Optimization (Denormalized Data):**
  * - `role`: User role (string) - Cached from user record at token issuance.
@@ -25,6 +30,11 @@ import "server-only";
  * remains decoupled as role is treated as an opaque string at this layer.
  */
 export type SessionJwtClaimsTransport = {
+	/**
+	 * Original authentication time (UNIX timestamp in seconds) - OIDC standard.
+	 * Preserved across rotation. Absent on tokens issued before this claim existed.
+	 */
+	auth_time?: number;
 	/** Expiration time (UNIX timestamp in seconds) - JWT standard */
 	exp: number;
 	/** Issued-at time (UNIX timestamp in seconds) - JWT standard */
