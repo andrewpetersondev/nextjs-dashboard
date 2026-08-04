@@ -94,7 +94,10 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
 
 /** Routes Middleware should not run on */
 export const config: MiddlewareConfig = {
-	// Exclude APIs, Next internals, data routes, and any path with a file extension.
+	// Prefix exclusions ONLY. An extension-based exclusion looks tidy but is a
+	// hole: Next answers /nope.js (and .css/.txt/.html) with a full text/html
+	// 404 document, so a path skipped by extension is still a live HTML page —
+	// it just arrives without whatever the middleware would have added.
 	// Must be a static literal for Next.js to statically analyze.
-	matcher: ["/((?!_next/static|_next/image|_next/data|.*\\..*$).*)"],
+	matcher: ["/((?!api|_next/static|_next/image|_next/data|favicon.ico).*)"],
 };
