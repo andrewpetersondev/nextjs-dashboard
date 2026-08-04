@@ -59,16 +59,23 @@ this file is the deliberate workaround.)
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
-- [ ] **Rootfiles sweep — deferred judgment calls** _(added 2026-07-30, from the root-file
-      audit)_ — items that need a decision, not mechanics: **security headers** (no CSP /
-      X-Frame-Options / X-Content-Type-Options / Referrer-Policy anywhere; a real CSP needs
-      nonce work in Next — small project, good portfolio signal); **Cypress CI retries**
-      (0 today — honest but flake-fragile; decide before the suite grows); **five Biome rules
-      off with no rationale** (noUndeclaredDependencies, noUnresolvedImports,
-      useImportExtensions, noInferrableTypes, useConsistentArrayType — document why or
-      trial-enable one at a time); **interactive Cypress paths bypass the PORT guards**
-      (`cy:open` / `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
+- [ ] **Rootfiles sweep — remaining judgment calls** _(added 2026-07-30, from the root-file
+      audit; **security headers split out and DONE 2026-08-03** — see Done)_ — items that
+      need a decision, not mechanics: **Cypress CI retries** (0 today — honest but
+      flake-fragile; decide before the suite grows); **five Biome rules off with no
+      rationale** (noUndeclaredDependencies, noUnresolvedImports, useImportExtensions,
+      noInferrableTypes, useConsistentArrayType — document why or trial-enable one at a
+      time); **interactive Cypress paths bypass the PORT guards** (`cy:open` /
+      `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
       **knip css hint** (project globs don't follow `.css` imports).
+- [ ] **CSP follow-ups** _(added 2026-08-03, from the security-headers lane — full
+      reasoning in `src/shared/http/notes/adr/001`)_ — **measure cold + warm TTFB on
+      production `/`** (the one unmeasured number the demo's first-impression cost hangs
+      on, now that five documents lost edge-cached HTML; also check whether Fluid Compute
+      is on); **`require-trusted-types-for 'script'`** on a Report-Only header once there
+      is a collector and it's validated against Next 16 + React 19; **HSTS
+      `includeSubDomains`** must be re-decided before any move to a custom domain (inert on
+      `*.vercel.app`, a two-year non-revocable commitment on an apex you own).
 - [ ] **Cypress standalone typecheck lane** _(added 2026-07-30, rootfiles cleanup)_ — the
       `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
       `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
@@ -99,6 +106,33 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Security headers + a strict nonce CSP** _(2026-08-03, `claude/security-headers`)_ —
+      first item pulled from "Later" after the demo-first list closed; split out of the
+      rootfiles sweep. The repo sent NO security headers at all. Now five static headers
+      from `next.config.ts` `headers()` plus a per-request nonce CSP built in `proxy.ts`
+      (`script-src 'self' 'nonce-…' 'strict-dynamic'`, `style-src 'self'`,
+      `object-src`/`base-uri`/`frame-ancestors` `'none'`, `form-action 'self'`).
+      **The load-bearing finding:** a prerendered page cannot carry a per-request nonce,
+      and `'strict-dynamic'` makes browsers ignore the `'self'` fallback — so all five
+      prerendered documents shipped un-nonced and **never hydrated**, while still looking
+      correct in a screenshot (`self.__next_f` is only defined from inside the blocked
+      scripts, so no error boundary fires and no hydration warning is emitted). Hence
+      `export const dynamic = "force-dynamic"` on the root layout. There was no cheaper
+      option: `script-src 'self'` does not authorize inline script, and App Router emits
+      inline flight scripts on every page, so "stay static, drop strict-dynamic" is also a
+      dead page. **Next's own docs are wrong** that `experimental.sri` lets you keep static
+      generation with a strict CSP (integrity attaches only to file-URL scripts) —
+      disproved three ways. Decided via a 9-agent workflow (4 grounding lenses + 3
+      adversarial + synthesis); Option A unanimous. Two bugs found en route: the proxy
+      matcher excluded by file EXTENSION, and Next answers `/nope.js` with an HTML 404, so
+      those documents shipped with no CSP (now prefix-only, and the guard probes
+      `/nope.js`); and Next's built-in 404 ships inline styles that `style-src 'self'`
+      blocks (hence an app-owned `not-found.tsx`). Guarded by
+      `devtools/cli/csp-guard.cli.ts` in its own CI job — asserts every `<script>` carries
+      the nonce, verified to fail loudly when the protection is removed. Cypress can NEVER
+      cover this: it strips the CSP header by default and runs against `next dev`, which
+      never prerenders. Landed as three commits (matcher / 404 page / CSP). Full rationale
+      + rejected alternatives: `src/shared/http/notes/adr/001`.
 - [x] **30-day absolute session ceiling now actually binds** _(2026-08-03,
       `claude/session-ceiling`)_ — the ceiling was dead code: `MAX_ABSOLUTE_SESSION_SEC`
       and the `absolute_limit_exceeded` path existed, but age was measured from the JWT
