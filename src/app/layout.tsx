@@ -30,6 +30,12 @@ export const metadata: Metadata = {
 	},
 };
 
+// A prerendered document is generated at build time and therefore cannot carry
+// the per-request CSP nonce, so under `script-src 'nonce-…' 'strict-dynamic'`
+// every inline flight script is blocked and the page never hydrates — silently.
+// biome-ignore lint/style/useComponentExportOnlyModules: Next segment config must live beside the layout.
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
 	children,
 }: {
