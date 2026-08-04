@@ -68,6 +68,8 @@
 		"clean:all": "pnpm clean && pnpm clean:deps",
 		"clean:deps": "rimraf node_modules",
 		"clean:generated": "rimraf --glob \"**/*.{js,map,tsbuildinfo}\"",
+		"csp:guard": "pnpm tsx --tsconfig tsconfig.json devtools/cli/csp-guard.cli.ts",
+		"csp:guard:build": "pnpm next:build && pnpm csp:guard",
 		"cy:clean": "rimraf cypress.config.js cypress.config.d.ts",
 		"cy:e2e": "pnpm cy:clean && pnpm env:test:pnpm tsx --tsconfig tsconfig.json devtools/cli/cypress-with-server.cli.ts run",
 		"cy:e2e:ci": "pnpm cy:e2e",

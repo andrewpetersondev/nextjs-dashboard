@@ -84,7 +84,6 @@ function getDatabaseEnvResult(): Result<DatabaseEnvironment, AppError> {
  * @returns The validated DatabaseEnvironment.
  * @throws {Error} When DATABASE_ENV is invalid.
  */
-// biome-ignore lint/style/useExportsLast: fine for now
 export function getDatabaseEnv(): DatabaseEnvironment {
 	const result = getDatabaseEnvResult();
 	if (result.ok) {
@@ -97,7 +96,17 @@ export function getDatabaseEnv(): DatabaseEnvironment {
  *  Runtime flag helpers
  * -----------------------------------------------------------------------------------------------*/
 
-function _isDev(): boolean {
+/**
+ * True only under `next dev`.
+ *
+ * @remarks
+ * Deliberately narrower than "not production": the CSP relaxations this gates
+ * (`'unsafe-eval'` for Fast Refresh, `'unsafe-inline'` styles) must not leak into
+ * a `test` runtime, or the e2e suite would exercise a policy production never
+ * serves.
+ */
+// biome-ignore lint/style/useExportsLast: sits with the runtime-flag helpers it belongs to.
+export function isDev(): boolean {
 	return getNodeEnv() === "development";
 }
 function _isTest(): boolean {

@@ -10,14 +10,18 @@
 #   • e2e — the slow Cypress end-to-end suite against a real `next dev` server
 #     backed by an ephemeral Postgres service container (recreates the
 #     `.env.test.local` from non-secret CI values, so no GitHub secrets needed).
+#   • csp — production build + `csp:guard`, the ONLY check that can see the
+#     enforced Content-Security-Policy. It needs a real `next build`, which the
+#     `check` job deliberately does not run, hence its own job. Cypress cannot
+#     substitute: it strips the CSP header by default and runs against
+#     `next dev`, which never prerenders.
 #
-# Both run on every push to `main`. Because the merge happens locally before the
-# push, a red run means fix-forward — run `pnpm check:fast` locally before merging
-# to catch most failures pre-push.
+# All three run on every push to `main`. Because the merge happens locally before
+# the push, a red run means fix-forward — run `pnpm check:fast` locally before
+# merging to catch most failures pre-push.
 #
-# Still intentionally NOT here: the integration vitest lane and the production
-# build. They also need a database/secrets; the e2e job's service-container
-# pattern could bring the integration lane in later if wanted.
+# Still intentionally NOT here: the integration vitest lane. It needs a real
+# database; the e2e job's service-container pattern could bring it in later.
 
 name: CI
 
@@ -92,6 +96,48 @@ jobs:
       #     the build.
       - name: Unit tests + coverage
         run: pnpm test:coverage
+
+  csp:
+    name: CSP guard
+    # A prerendered page cannot carry a per-request nonce, so it ships un-nonced
+    # and never hydrates — while still LOOKING correct in a screenshot. Nothing
+    # else in this pipeline can catch that: `check` runs no build, and Cypress
+    # strips the CSP header. This job builds for production and asserts against
+    # the served responses.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # `next build` validates the server env at module scope while collecting
+      # page data, so it fails outright without these — but it never dials the
+      # database, so dummy values are enough (no service container, no secrets).
+      # Do NOT set NODE_ENV: `next build` owns it, and forcing `development`
+      # here would build a dev bundle and serve the relaxed dev policy.
+      - name: Build and assert the served CSP
+        run: pnpm csp:guard:build
+        env:
+          AUTH_BCRYPT_SALT_ROUNDS: "12"
+          DATABASE_ENV: production
+          DATABASE_URL: postgresql://u:p@127.0.0.1:5999/nope
+          PORT: "3000"
+          SESSION_SECRET: ci-dummy-session-secret-at-least-32-chars
+          NEXT_PUBLIC_LOG_LEVEL: info
+          NEXT_PUBLIC_NODE_ENV: production
 
   e2e:
     name: E2E (Cypress)
