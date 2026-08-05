@@ -107,15 +107,37 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Full context in memory (`project_forms_error_refactor`).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
-- [ ] **Integration lane in CI (optional)** ([#130](https://github.com/andrewpetersondev/nextjs-dashboard/issues/130))
-      — the e2e job's Postgres-service-container
-      pattern (2026-06-23) could also run the integration vitest lane in CI; today only
-      the DB-free unit lane runs there. Unscheduled.
 
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Integration lane in CI** _(2026-08-04, `claude/integration-ci`,
+      [#130](https://github.com/andrewpetersondev/nextjs-dashboard/issues/130))_ — the
+      5 integration test files (21 tests, all auth's sharpest paths: session rotation,
+      login/signup flows, error propagation, repository final gate) ran on developer
+      machines and **nowhere else**, so a break in them reached `main` unnoticed unless
+      e2e happened to catch the same path downstream. Now a fourth CI job,
+      `Integration (Vitest)`, reusing the e2e job's proven `postgres:17-alpine` service
+      container. **Deliberately a separate job, not a step inside `e2e`:** these need a
+      database but no browser and no server, so the lane finishes in ~2s of test time
+      instead of waiting on Cypress. Added as a NEW job — never a rename, since
+      required-status-check contexts pin job NAMES. **No seed step**, unlike e2e: the
+      tests create and delete their own rows by email/id, reference no seeded demo
+      account, and touch neither customers nor invoices. **That claim was verified the
+      hard way rather than assumed** — the first local run passed against a `test_db`
+      that already held 6 users and 6 customers from prior e2e runs, which proved
+      nothing about CI's empty container, so a scratch `ci_sim_db` was created,
+      migrated, confirmed empty, and the suite re-run green (21/21) against it. Also
+      confirmed the lane is genuinely DB-backed (11 of 21 fail with no database, so the
+      service container is load-bearing rather than decorative). `CYPRESS_INSTALL_BINARY=0`
+      on the install step: `allowBuilds: cypress` lets the postinstall download a browser
+      binary this lane never opens, and unlike `e2e` there is no binary cache here.
+      Docs reconciled, including **drift that predated this change**: `ci.yml`'s header
+      said the integration lane was "intentionally NOT here", and both
+      `docs/branching-and-releases.md` and `docs/diagrams/branch-and-ci-flow.md` still
+      said **two** CI jobs — they had never been updated when the CSP guard landed
+      2026-08-03, so they were wrong by one before this made them wrong by two.
 - [x] **The four deferred tooling calls from the root-file audit** _(2026-08-04,
       `claude/next-steps`, [#125](https://github.com/andrewpetersondev/nextjs-dashboard/issues/125))_ —
       all four decided on evidence rather than taste; full rationale in the new
