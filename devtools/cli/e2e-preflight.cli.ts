@@ -15,11 +15,30 @@ import process from "node:process";
 const EXPECTED_DATABASE_ENV = "test";
 const HEALTH_PATH = "/api/health";
 
-async function main(): Promise<void> {
-	const baseUrl = process.argv[2];
-	if (!baseUrl) {
-		throw new Error("Usage: tsx devtools/cli/e2e-preflight.cli.ts <baseUrl>");
+/**
+ * Deliberate mirror of `CYPRESS_BASE_URL`
+ * (`cypress/node/config/cypress-env.ts`): the guard must probe exactly the URL
+ * Cypress will target. Both read `process.env.PORT`, so when a stale exported
+ * PORT beats the dotenv layer, both follow it to the same wrong server — which
+ * is the case this guard exists to catch.
+ */
+function baseUrlFromEnv(): string {
+	const port = process.env.PORT;
+	if (!port) {
+		throw new Error(
+			"Usage: tsx devtools/cli/e2e-preflight.cli.ts <baseUrl>\n" +
+				"Called without an argument, PORT must be set — run it through an " +
+				"`env:test:*` wrapper so `.env.test.local` is loaded.",
+		);
 	}
+	return `http://localhost:${port}`;
+}
+
+async function main(): Promise<void> {
+	// The harness passes an explicit, PORT-pinned baseUrl. The interactive
+	// scripts pass nothing and fall back to the env, so that `cy:open`/`cy:run`
+	// are guarded too rather than only the harness path.
+	const baseUrl = process.argv[2] ?? baseUrlFromEnv();
 
 	const healthUrl = new URL(HEALTH_PATH, baseUrl).toString();
 

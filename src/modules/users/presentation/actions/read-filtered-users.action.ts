@@ -9,8 +9,8 @@ import { unwrapOrNull } from "@/shared/core/result/result";
  * Server action to fetch filtered users for the users table.
  */
 export async function readFilteredUsersAction(
-	query: string = "",
-	currentPage: number = 1,
+	query = "",
+	currentPage = 1,
 ): Promise<UserDto[]> {
 	// Authorization: user records are admin-only (PII). This action is a
 	// "use server" endpoint, so it must guard itself, not rely on the route.

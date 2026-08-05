@@ -67,8 +67,10 @@ End-to-end testing.
 - `pnpm cy:open:with-server` — boot the test-env dev server, then open the interactive runner.
 - `pnpm cy:server` — start the test-env dev server only (alias for `next:dev:test`).
 - `pnpm cy:preflight` — run the `/api/health` identity preflight (asserts the test env/DB).
-- `pnpm cy:open` — open Cypress (general).
-- `pnpm cy:run` — run Cypress (general).
+- `pnpm cy:open` — open the Cypress runner against an **already-running** server (does
+  not boot one; use `cy:open:with-server` for that). Runs the identity preflight first.
+- `pnpm cy:run` — run specs headless against an **already-running** server. Runs the
+  identity preflight first.
 - `pnpm cy:clean` — remove generated Cypress config artifacts.
 
 ---

@@ -68,16 +68,6 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
-- [ ] **Rootfiles sweep — remaining judgment calls** ([#125](https://github.com/andrewpetersondev/nextjs-dashboard/issues/125))
-      _(added 2026-07-30, from the root-file
-      audit; **security headers split out and DONE 2026-08-03** — see Done)_ — items that
-      need a decision, not mechanics: **Cypress CI retries** (0 today — honest but
-      flake-fragile; decide before the suite grows); **five Biome rules off with no
-      rationale** (noUndeclaredDependencies, noUnresolvedImports, useImportExtensions,
-      noInferrableTypes, useConsistentArrayType — document why or trial-enable one at a
-      time); **interactive Cypress paths bypass the PORT guards** (`cy:open` /
-      `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
-      **knip css hint** (project globs don't follow `.css` imports).
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
@@ -126,6 +116,41 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **The four deferred tooling calls from the root-file audit** _(2026-08-04,
+      `claude/next-steps`, [#125](https://github.com/andrewpetersondev/nextjs-dashboard/issues/125))_ —
+      all four decided on evidence rather than taste; full rationale in the new
+      [`docs/biome.md`](docs/biome.md) and in `docs/knip.md`.
+      **(1) Cypress CI retries → stay 0, but now explicit** in `cypress.config.ts` with the
+      reasoning inline: a flake must fail loudly, like every other guard here (CSP,
+      prod-DB, blocking axe). It was previously 0 only by omission — a default nobody
+      chose. **(2) The five Biome rules → two enabled, three documented.** Each was
+      trial-run whole-repo with `biome check --only=<rule>`: `noUndeclaredDependencies`
+      **227 findings, all false** (it reads TS path aliases — `@database/*`, `@cypress/*`,
+      `@devtools/*`, `@test-support/*` — as scoped npm packages); `noUnresolvedImports`
+      **4, all false** (`cypress` and `react`, both installed and tsc-clean);
+      `useImportExtensions` **1977** (wrong model — bundler-resolved imports). Those three
+      stay off **with the counts recorded**. `noInferrableTypes` and `useConsistentArrayType`
+      are now **on**: 22 findings, all auto-fixed in the same change (11 were
+      `ReadonlyArray<T>` → `readonly T[]`, needing `--unsafe`, scoped via `--only`).
+      **(3) The interactive Cypress PORT-guard gap → closed.** `cy:open`/`cy:run` attached
+      to a running server with **no identity preflight**, so a dev server holding the port
+      meant the seeded, destructive specs ran against the **development** database. Both
+      now run `cy:preflight` first; `e2e-preflight.cli.ts` gained an env fallback that
+      derives the URL from `PORT` exactly as `CYPRESS_BASE_URL` does, so a stale exported
+      `PORT` sends both to the same server instead of hiding the mismatch. Verified: the
+      guard exits 1 and Cypress never launches. **(4) Knip CSS hint → explicitly retired**
+      — the repo has exactly one CSS file (`src/app/globals.css`, imported by the root
+      layout), so widening the globs would check one obviously-live file. Revisit if CSS
+      Modules or per-route stylesheets appear. **Two gotchas worth keeping:**
+      `biome.json` **cannot hold comments** (the config loader fails the whole run —
+      verified), which is why the rationale needed its own doc; and filtering a Biome trial
+      for `Found N errors` **misses `Found N infos`** — that mistake made both enabled
+      rules look like they had zero findings when they had 22. Also fixed real drift found
+      en route: `cypress/README.md` claimed `pnpm cy:open` boots a server, which it never
+      did. Validation: Biome slate 0, unit 373/373, typecheck + `check:fast` green. **Full
+      e2e not run here** — this sandbox can't reach `fonts.gstatic.com`, so `next dev`
+      500s at boot and `wait-on` times out; unrelated to the change, but it means CI (or a
+      local run) is the first real e2e proof.
 - [x] **Issue/Projects hybrid — Issues adopted alongside BACKLOG.md** _(2026-08-04,
       `claude/next-steps`)_ — the tracking item, taken once its own gate ("only worth it
       after the demo polish lands") was met. Set up as a **hybrid, not a switch**:

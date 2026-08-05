@@ -47,6 +47,12 @@ export default defineConfig({
 	},
 	env: {},
 	expose: {},
+	// Explicit rather than inherited: a flake must fail loudly. Retrying would
+	// report an intermittently-failing test as green, and every other guard in
+	// this repo (CSP, prod-DB, blocking axe) is deliberately loud. The accepted
+	// cost is that a genuine infra hiccup reds the build and needs a re-run.
+	// Revisit if the suite grows enough that infra noise outweighs the signal.
+	retries: { openMode: 0, runMode: 0 },
 	video: false,
 	watchForFileChanges: true,
 });

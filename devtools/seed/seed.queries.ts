@@ -19,12 +19,12 @@ export async function insertCustomers(tx: Tx): Promise<void> {
 /** Fetch all customer ids after insertion. */
 export async function fetchCustomerIds(
 	tx: Tx,
-): Promise<ReadonlyArray<SeedCustomerIdRow>> {
+): Promise<readonly SeedCustomerIdRow[]> {
 	const rows = await tx.select({ id: customers.id }).from(customers);
 	if (rows.length === 0) {
 		throw new Error("No customers found after seeding customers.");
 	}
-	return rows as ReadonlyArray<SeedCustomerIdRow>;
+	return rows as readonly SeedCustomerIdRow[];
 }
 
 /** Insert demo counters for each role. */

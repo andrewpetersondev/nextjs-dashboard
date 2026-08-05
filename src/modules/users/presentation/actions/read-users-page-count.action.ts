@@ -7,9 +7,7 @@ import { unwrapOrNull } from "@/shared/core/result/result";
 /**
  * Server action to fetch the total number of user pages.
  */
-export async function readUsersPageCountAction(
-	query: string = "",
-): Promise<number> {
+export async function readUsersPageCountAction(query = ""): Promise<number> {
 	// Authorization: user records are admin-only (PII). This action is a
 	// "use server" endpoint, so it must guard itself, not rely on the route.
 	await requireAdmin();

@@ -9,16 +9,12 @@ import type { SeedUserInput } from "@devtools/seed/data/seed.types";
 /**
  * Seed roles used for demo users.
  */
-export const roles: ReadonlyArray<UserRole> = [
-	ADMIN_ROLE,
-	GUEST_ROLE,
-	USER_ROLE,
-];
+export const roles: readonly UserRole[] = [ADMIN_ROLE, GUEST_ROLE, USER_ROLE];
 
 /**
  * Plain demo user seed input data before password hashing.
  */
-export const seedUserInputs: ReadonlyArray<SeedUserInput> = [
+export const seedUserInputs: readonly SeedUserInput[] = [
 	{
 		email: "user@user.com",
 		password: "UserPassword123!",

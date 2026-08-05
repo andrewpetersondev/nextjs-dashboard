@@ -240,16 +240,25 @@ fast and loud instead of mid-suite.
 
 **Commands** (all load `.env.test.local` automatically):
 
-| Script           | What it does                                                       |
-| ---------------- | ------------------------------------------------------------------ |
-| `pnpm cy:e2e`    | clean, boot the test server, run **all** specs headless, tear down |
-| `pnpm cy:open`   | same, but opens the interactive Cypress runner                     |
-| `pnpm cy:run`    | run specs against an **already-running** server                    |
-| `pnpm cy:server` | boot only the Next.js test server                                  |
+| Script                     | Boots a server? | What it does                                                       |
+| -------------------------- | --------------- | ------------------------------------------------------------------ |
+| `pnpm cy:e2e`              | yes             | clean, boot the test server, run **all** specs headless, tear down |
+| `pnpm cy:open:with-server` | yes             | same, but opens the interactive Cypress runner                     |
+| `pnpm cy:open`             | **no**          | open the runner against an **already-running** server              |
+| `pnpm cy:run`              | **no**          | run specs headless against an **already-running** server           |
+| `pnpm cy:server`           | yes             | boot only the Next.js test server                                  |
 
 `pnpm cy:e2e` uses `start-server-and-test` to boot `next dev` (test env), wait for
 the port, run the suite, then kill the server — so it's the one command you need
-for a full local run.
+for a full local run. `pnpm cy:open` does **not** boot anything; it attaches to a
+server you started yourself, which is what `cy:open:with-server` exists to avoid.
+
+**Every path is identity-guarded.** All of them run the `/api/health` preflight and
+refuse to start Cypress unless the server reports `databaseEnv=test`. The two
+attach-mode scripts gained that guard on 2026-08-04; before then they could point the
+seeded, destructive specs at the **development** database if a dev server held the port.
+The preflight derives its URL from `PORT` the same way Cypress derives `baseUrl`, so a
+stale exported `PORT` sends both to the same server rather than hiding the mismatch.
 
 There is intentionally no standalone `tsc` pass for the Cypress project: TS7
 rejects the `baseUrl` option that `cypress/tsconfig.json` deliberately keeps for

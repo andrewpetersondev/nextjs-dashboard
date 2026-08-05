@@ -10,7 +10,7 @@ import { getAppDb } from "@/server/db/db.connection";
  * @returns Array of InvoiceListFilter
  */
 export async function readLatestInvoicesAction(
-	limit: number = 5,
+	limit = 5,
 ): Promise<InvoiceListFilter[]> {
 	const service = new InvoiceService(new InvoiceRepository(getAppDb()));
 	const result = await service.readLatestInvoices(limit);

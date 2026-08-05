@@ -10,7 +10,7 @@ import { getAppDb } from "@/server/db/db.connection";
  * Keeps feature-level formatting in the feature layer.
  */
 export async function readFilteredCustomersAction(
-	query: string = "",
+	query = "",
 ): Promise<FormattedCustomersTableRow[]> {
 	const db = getAppDb();
 	const repo = createCustomersRepository(db);

@@ -56,7 +56,7 @@ function randomInvoiceStatus(): InvoiceStatus {
 		: "paid";
 }
 
-function pickRandomItem<T>(items: ReadonlyArray<T>): T {
+function pickRandomItem<T>(items: readonly T[]): T {
 	if (items.length === 0) {
 		throw new Error("pickRandomItem requires at least one item");
 	}
@@ -74,7 +74,7 @@ function pickRandomItem<T>(items: ReadonlyArray<T>): T {
 /**
  * Build demo users with hashed passwords.
  */
-export function buildUserSeed(): Promise<ReadonlyArray<SeedUserRow>> {
+export function buildUserSeed(): Promise<readonly SeedUserRow[]> {
 	return Promise.all(
 		seedUserInputs.map(async ({ email, password, role, username }) => ({
 			email,
@@ -89,8 +89,8 @@ export function buildUserSeed(): Promise<ReadonlyArray<SeedUserRow>> {
  * Build randomized invoice rows based on existing customers and available periods.
  */
 export function buildRandomInvoiceRows(
-	existingCustomers: ReadonlyArray<SeedCustomerIdRow>,
-	availablePeriods: ReadonlyArray<string>,
+	existingCustomers: readonly SeedCustomerIdRow[],
+	availablePeriods: readonly string[],
 ): NewInvoice[] {
 	if (existingCustomers.length === 0) {
 		throw new Error("buildRandomInvoiceRows requires at least one customer");

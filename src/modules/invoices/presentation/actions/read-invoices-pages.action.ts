@@ -17,7 +17,7 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
  * @returns Promise<number> - Total number of pages
  */
 export async function readInvoicesPagesAction(
-	query: string = "",
+	query = "",
 	statusFilter: InvoiceStatusFilter = DEFAULT_INVOICE_STATUS_FILTER,
 ): Promise<number> {
 	try {

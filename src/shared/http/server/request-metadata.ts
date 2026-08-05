@@ -38,7 +38,7 @@ const FORWARDED_FOR_REGEX: RegExp = /for="?(\[?[^;\],"]+]?)/i;
 function getHeaderValue(
 	headersList: Headers,
 	name: string,
-	fallback: string = "unknown",
+	fallback = "unknown",
 ): string {
 	const raw = headersList.get(name) ?? "";
 	const [first = ""] = raw.split(",");
