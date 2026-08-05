@@ -7,10 +7,11 @@ this file is the deliberate workaround.)
 
 **Relationship to GitHub Issues** — a hybrid, not duplicates. This file is the complete
 record and works offline; [Issues](https://github.com/andrewpetersondev/nextjs-dashboard/issues)
-carry only the _narratable_ units, so plenty of lines here have no issue and that is
-intended. Items filed as issues link to them below. Since feature work merges locally
-with no PR, an issue closes via a `Closes #N` **commit trailer** — and the backlog line
-is reconciled in that same commit. Convention in [`AGENTS.md`](AGENTS.md).
+and the [roadmap board](https://github.com/users/andrewpetersondev/projects/5) carry only
+the _narratable_ units, so plenty of lines here have no issue and that is intended. Items
+filed as issues link to them below. Since feature work merges locally with no PR, an issue
+closes via a `Closes #N` **commit trailer** — and the backlog line is reconciled in that
+same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 ## Open
 
@@ -141,9 +142,16 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       work — GitHub stamps creation dates, so filing and closing sixteen issues in one
       day reads as staged rather than lived; history accrues honestly from here. Also
       closed two zero-cost signal gaps found en route: the public repo had an **empty
-      description** and **no topics** (both now set). **Still open:** the Projects board —
-      the local `gh` token lacks the `project` scope, so it needs
-      `gh auth refresh -s project` from Andrew before a board can be created.
+      description** and **no topics** (both now set). **Projects board added the same day**
+      once Andrew granted the `project` scope:
+      [board #5](https://github.com/users/andrewpetersondev/projects/5) — public, linked to the
+      repo (so it appears on the repo's Projects tab), all seven issues in **Todo**, with a
+      README stating the board/BACKLOG split and the `Closes #N` commit-trailer rule so the
+      convention is discoverable without reading `AGENTS.md`. Board gotchas for next time:
+      `gh project` needs `--owner andrewpetersondev`, not `--owner @me`, or `project link`
+      rejects the repo as "different owner"; and this `gh` build has no
+      `--short-description` flag — set `shortDescription`/`readme` via the
+      `updateProjectV2` GraphQL mutation instead.
 - [x] **Prod measurement pass — Lighthouse + cold TTFB** _(2026-08-04,
       `claude/next-steps`)_ — closed the two loose ends the demo-first work left
       behind, both measurement, no product code changed. **Lighthouse** (v13 via
