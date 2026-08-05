@@ -69,13 +69,16 @@ this file is the deliberate workaround.)
       `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
       **knip css hint** (project globs don't follow `.css` imports).
 - [ ] **CSP follow-ups** _(added 2026-08-03, from the security-headers lane — full
-      reasoning in `src/shared/http/notes/adr/001`)_ — **measure cold + warm TTFB on
-      production `/`** (the one unmeasured number the demo's first-impression cost hangs
-      on, now that five documents lost edge-cached HTML; also check whether Fluid Compute
-      is on); **`require-trusted-types-for 'script'`** on a Report-Only header once there
-      is a collector and it's validated against Next 16 + React 19; **HSTS
-      `includeSubDomains`** must be re-decided before any move to a custom domain (inert on
-      `*.vercel.app`, a two-year non-revocable commitment on an apex you own).
+      reasoning in `src/shared/http/notes/adr/001`)_ — **warm TTFB on production `/`
+      MEASURED 2026-08-04: 0.21–0.29s** (6 sequential requests; total 0.25–0.33s), so
+      losing edge-cached HTML did **not** hurt the first impression — the cost this
+      decision was most exposed on is now known and acceptable. Still open on that
+      sub-item: a genuine **cold** start (all six samples were warm, from one location)
+      and whether **Fluid Compute** is on. Remaining: **`require-trusted-types-for
+      'script'`** on a Report-Only header once there is a collector and it's validated
+      against Next 16 + React 19; **HSTS `includeSubDomains`** must be re-decided before
+      any move to a custom domain (inert on `*.vercel.app`, a two-year non-revocable
+      commitment on an apex you own).
 - [ ] **Cypress standalone typecheck lane** _(added 2026-07-30, rootfiles cleanup)_ — the
       `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
       `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
