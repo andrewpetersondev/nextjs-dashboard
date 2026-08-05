@@ -1,5 +1,6 @@
 import process from "node:process";
 import { seedUserInputs } from "@devtools/seed/data/seed.users";
+import { checkDeployFreshness } from "@devtools/shared/deploy-identity";
 import {
 	buildServerActionBody,
 	extractForm,
@@ -23,6 +24,10 @@ import { HERO_TAGLINE } from "@/ui/brand/brand.constants";
  * It therefore asserts on a REAL LOGGED-IN SESSION, not just on 200s. A site that
  * returns 200 while login is broken is exactly what a read-only pinger misses.
  *
+ * It also asserts IDENTITY, not just liveness — see `checkDeployFreshness`. A
+ * failed build leaves the previous deployment serving, which passes every
+ * liveness question correctly while running older code.
+ *
  * HOW IT LOGS IN WITHOUT A BROWSER — see `@devtools/shared/server-action-form`.
  * Short version: React renders server-action forms for progressive enhancement,
  * so the action id is in the markup and a plain multipart POST dispatches it.
@@ -42,7 +47,10 @@ import { HERO_TAGLINE } from "@/ui/brand/brand.constants";
  *   pnpm smoke:prod            # liveness + auth + authorization (writes nothing)
  *   pnpm smoke:prod --demo     # also exercises the landing demo button (WRITES)
  *
- * Override the target with PROD_SMOKE_BASE_URL (e.g. a preview deployment).
+ * Override the target with PROD_SMOKE_BASE_URL (e.g. a preview deployment), and
+ * the expected commit with PROD_SMOKE_EXPECTED_SHA — needed when the target is
+ * NOT built from `main`, since the freshness check compares against `main` by
+ * default and would otherwise report a preview as stale.
  */
 
 const BASE_URL = (
@@ -153,7 +161,12 @@ async function checkHealth(): Promise<void> {
 	report.note(`health ok in ${ms}ms (db ${String(health.db)})`);
 }
 
-/** The landing page is the real one, not an error shell or a stale build. */
+/**
+ * The landing page is the real one, not an error shell.
+ *
+ * Note what this canNOT tell you: `HERO_TAGLINE` is a stable constant, so an
+ * older build passes this too. Staleness is `checkDeployFreshness`'s job.
+ */
 async function checkLanding(): Promise<void> {
 	const { response, body, ms } = await report.fetch(ROUTES.root);
 
@@ -314,6 +327,7 @@ async function main(): Promise<void> {
 	console.log(`Production smoke against ${BASE_URL}`);
 
 	await report.runCheck("/api/health", checkHealth);
+	await report.runCheck("deploy-freshness", () => checkDeployFreshness(report));
 	await report.runCheck(ROUTES.root, checkLanding);
 	await report.runCheck("auth-guard", checkUnauthenticatedRedirect);
 	await report.runCheck("login:user", () => checkSeededLogin("USER"));
