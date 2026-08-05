@@ -105,14 +105,16 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       dependency — large, single consumer) against **Google Chrome Dev**, the only Chrome installed
       here. **Weekly, not monthly**, since a month-old number proves nothing about a repo that
       deploys often.
-      **The load-bearing finding, caught by actually running it first:** Lighthouse scores are only
-      comparable **within a version**. The recorded baseline had desktop perf **100**; 13.4.1 against
-      unchanged production code reports **98**, and adds an `agentic-browsing` category that did not
-      exist before. So the routine version-stamps every report and explicitly discounts deltas across
-      versions — a regression report without a version stamp is not evidence. Baseline restated as
-      98/100/100/100 on **both** presets. Escalates only on a11y/BP/SEO below 100 or perf down ≥5,
-      and re-runs the failing preset once first (Lighthouse is noisy; `force-dynamic` cold starts
-      distort single samples).
+      **Two findings, both from running it before scheduling it.** (1) Lighthouse scores are only
+      comparable **within a version**, and the category SET changes too — 13.4.1 reports an
+      `agentic-browsing` category earlier runs did not have, so the routine version-stamps every
+      report and a report without a version stamp is not evidence. (2) **The run-to-run noise is
+      larger than it looks**: the first desktop sample on 13.4.1 read 98 and a second read 100, same
+      version, unchanged code — `force-dynamic` cold starts move the number. So the baseline was set
+      from the paired confirming run at **100/100/100/100 on both presets** (mobile FCP 1.0s / LCP
+      1.3s / TBT 10ms; desktop 0.6s / 0.7s / 0ms), 98 is explicitly documented as not-a-regression,
+      and the routine re-runs a failing preset before escalating. Escalates only on a11y/BP/SEO below
+      100 or perf ≤95. Only outstanding opportunity Lighthouse names: ~28 KiB unused JS.
       **All four agents retimed off-peak and staggered** — none inside ~08:00–18:00 Central, none on
       the hour (the cron-stampede reasoning `codeql.yml` already follows), no two overlapping:
       prod-watchdog daily 06:11 (was 07:30), bot-pr-triage Tue/Fri 06:41 (was 09:00),
