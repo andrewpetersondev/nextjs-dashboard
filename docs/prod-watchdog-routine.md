@@ -1,7 +1,7 @@
 # Production watchdog routine
 
 A scheduled Claude Code agent that checks the **live deployment** every morning. **Live** — it runs
-as the `prod-watchdog` `/schedule` agent (cron `30 7 * * *`, daily). This doc records its scope and
+as the `prod-watchdog` scheduled agent (cron `11 6 * * *`, daily). This doc records its scope and
 rationale; use `/schedule` to list, adjust, or disable it.
 
 ## Why this exists
@@ -24,8 +24,8 @@ the thing it watches change without a push?**
 
 ## Schedule
 
-- **Cron:** `30 7 * * *` — daily, before the working day, so a broken demo is known before anyone
-  else finds it.
+- **Cron:** `11 6 * * *` — daily, before the working day, so a broken demo is known before anyone
+  else finds it, and outside peak hours.
 - **Frequency rationale:** the cost of a broken portfolio demo is measured in whoever visits before
   you notice. Daily is the cheapest cadence that bounds that window to a day.
 - **Mondays additionally** run the demo-button and CSP checks (see below).

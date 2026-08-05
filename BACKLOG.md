@@ -96,6 +96,39 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Lighthouse regression routine + off-peak retiming of all four agents** _(2026-08-05,
+      `claude/routine-setup-recommendations`)_ — closed the last gap from the recommendation pass and
+      put a shared scheduling policy behind all of it. **New `lighthouse-regression` agent** (Sun
+      20:19, spec `docs/lighthouse-regression-routine.md`): axe covers a11y continuously, but perf,
+      SEO and best-practices had **no continuous check at all** — the only numbers on record were one
+      manual run. Runs both presets via `pnpm dlx lighthouse@13` (deliberately NOT a project
+      dependency — large, single consumer) against **Google Chrome Dev**, the only Chrome installed
+      here. **Weekly, not monthly**, since a month-old number proves nothing about a repo that
+      deploys often.
+      **The load-bearing finding, caught by actually running it first:** Lighthouse scores are only
+      comparable **within a version**. The recorded baseline had desktop perf **100**; 13.4.1 against
+      unchanged production code reports **98**, and adds an `agentic-browsing` category that did not
+      exist before. So the routine version-stamps every report and explicitly discounts deltas across
+      versions — a regression report without a version stamp is not evidence. Baseline restated as
+      98/100/100/100 on **both** presets. Escalates only on a11y/BP/SEO below 100 or perf down ≥5,
+      and re-runs the failing preset once first (Lighthouse is noisy; `force-dynamic` cold starts
+      distort single samples).
+      **All four agents retimed off-peak and staggered** — none inside ~08:00–18:00 Central, none on
+      the hour (the cron-stampede reasoning `codeql.yml` already follows), no two overlapping:
+      prod-watchdog daily 06:11 (was 07:30), bot-pr-triage Tue/Fri 06:41 (was 09:00),
+      lighthouse-regression Sun 20:19, weekly-maintenance Sun 21:47 (was Mon 09:00 — Sunday evening
+      is strictly better, the PR is still waiting Monday morning and the machine is likelier to be
+      on than at 5am).
+      **Model/effort is NOT a per-routine setting** — the local scheduler exposes no such field
+      (`create`/`update` have no model param; `SKILL.md` frontmatter is name + description only), so
+      routines inherit the app's session model. `/schedule` **cloud** routines do accept
+      `session_context.model`, but they run in Anthropic's cloud with no access to this machine's
+      checkout, pnpm cache, `gh` auth or Chrome — which all four of these need. Cost is therefore
+      controlled inside the prompts: each names its exact commands, forbids codebase exploration, and
+      exits early on the common no-op. Policy documented once in `docs/README.md`, not restated per
+      routine. Also corrected a standing docs inaccuracy: these are **local** scheduled agents, not
+      "cloud agents" as `weekly-maintenance-routine.md` had claimed.
+
 - [x] **Bot-PR triage routine** _(2026-08-05, `claude/routine-setup-recommendations`)_ — the second
       gap from the routine-recommendation pass. Under the local-first model human work merges with
       no PR, so the PR queue is **entirely bots** (Dependabot weekly + the weekly-maintenance Monday
