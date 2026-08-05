@@ -96,6 +96,43 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Production watchdog routine** _(2026-08-05, `claude/routine-setup-recommendations`)_ — closed
+      the one structural gap in this repo's guard coverage: every existing check (`check:fast`, the
+      four CI jobs) is **event-driven off a commit** and proves the CODE, so nothing observed the
+      **deployed artifact** afterwards. The failures that allows all happen without a push — Neon
+      suspending the free-tier DB, a rotated Vercel env var, wiped seed data, a rollback serving an
+      older build, or an auth path that breaks in production only. Now covered by
+      `devtools/cli/prod-smoke.cli.ts` (`pnpm smoke:prod`) driven by the daily `prod-watchdog`
+      `/schedule` agent (cron `30 7 * * *`); spec in `docs/prod-watchdog-routine.md`.
+      **It asserts on a real logged-in session, not on 200s** — a site can return 200 on every page
+      while login is broken, which is exactly what a read-only pinger reports as healthy. Checks:
+      `/api/health` (200 + `db: "up"`), `/` (200 + hero tagline), **`/dashboard` with no session →
+      307 to login** (the inverse guard — a watchdog that only proved pages render would pass just
+      as happily if the dashboard were wide open), and seeded USER **and** ADMIN logins whose
+      dashboards must render with a flight payload, ADMIN additionally asserting role-gated Users
+      nav — so authorization is covered, not just authentication.
+      **The load-bearing finding: a Server Action can be driven with no browser.** Its id is
+      build-generated, but React renders server-action forms for progressive enhancement, so the id
+      ships in the markup as `$ACTION_REF_<n>` / `$ACTION_<n>:0` / `$ACTION_<n>:1` / `$ACTION_KEY`
+      hidden inputs; replaying those dispatches the action. That means the guard exercises the same
+      **no-JS path** a real visitor would, with no Cypress and no browser — cheap enough to run
+      daily. Extracted to `devtools/shared/server-action-form.ts`.
+      **Cost drove the cadence.** `createDemoUserTxHelper` inserts a `demo_user_counters` row **and
+      a permanent user** per demo-button click, and those users are visible on the admin Users page
+      — which is itself part of the demo. So the daily check uses the **seeded** logins (public in
+      the README, imported from `seed.users.ts` rather than copied, and writing zero rows), and the
+      demo button gets a **Monday-only** `--demo` run (~52 rows/yr instead of ~365). Mondays also
+      run `pnpm smoke:prod:csp` — the CSP guard always supported `CSP_GUARD_BASE_URL`, but nothing
+      had ever pointed it at production; it passes there (6 documents, every script nonced).
+      **A defect the negative test caught:** the first version threw on the first hard error, which
+      discarded every finding already collected — backwards for a watchdog, whose value is the full
+      picture. Each check now runs isolated (`SmokeReport.runCheck`) and a run against a wrong origin
+      reports all five failures and exits 1. Latency is advisory below 12s (warn at 4s): cold starts
+      are inherent to `force-dynamic`, measured 2.39s cold / 0.24–0.69s warm during this work.
+      Also de-duplicated the production URL — it was a bare literal in `layout.tsx` and the README;
+      now `PRODUCTION_SITE_URL` in `external-urls.ts`, consumed by `metadataBase` and the guard.
+      Validation: `check:fast` green, unit 373/373, Biome slate 0, live run green.
+
 - [x] **docs/ consolidation — one home per rule** _(2026-08-05, `claude/docs-consolidation`,
       [#128](https://github.com/andrewpetersondev/nextjs-dashboard/issues/128))_ — the last piece
       of the docs work: `docs/standards/` overlapped three older docs that predate it, with no

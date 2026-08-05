@@ -128,6 +128,16 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm test:coverage` — run the unit lane with coverage (enforces the floors in `vitest.config.ts`). No test env needed.
 - `pnpm test:ui` — open the Vitest UI (unit lane only; the integration lane needs `.env.test.local` loaded, so run it via `test:integration`).
 - `pnpm test:watch` — run the unit lane in watch mode.
+- `pnpm smoke:prod` — probe the **live deployment**: health + database, landing page, the unauthenticated-dashboard
+  redirect, and a real seeded USER/ADMIN login whose dashboards must render. Writes nothing. Exits 1 on failure.
+- `pnpm smoke:prod --demo` — the above plus the one-click demo button. **Writes**: one permanent demo user and one
+  `demo_user_counters` row per run, so keep this weekly rather than daily.
+- `pnpm smoke:prod:csp` — point the existing CSP guard at the live deployment instead of a local `next start`.
+
+The `smoke:prod*` scripts target production, not localhost, and are the only checks here that observe the deployed
+artifact rather than the code. They are driven by the `prod-watchdog` scheduled agent — see
+[`prod-watchdog-routine.md`](prod-watchdog-routine.md). Override the target with `PROD_SMOKE_BASE_URL` to probe a
+preview deployment instead.
 
 The unit lane is database-free: it runs against a schema-valid dummy env baked into `vitest.config.ts`, so it needs
 neither `.env.test.local` nor a live database. Only the integration lane (`test:integration`, and the integration half
