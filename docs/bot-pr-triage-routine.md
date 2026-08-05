@@ -1,7 +1,7 @@
 # Bot-PR triage routine
 
 A scheduled Claude Code agent that reads the open pull-request queue and reports what to do with
-each one. **Live** — it runs as the `bot-pr-triage` `/schedule` agent (cron `0 9 * * 2,5`, Tuesdays
+each one. **Live** — it runs as the `bot-pr-triage` scheduled agent (cron `41 6 * * 2,5`, Tuesdays
 and Fridays). This doc records its scope and rationale; use `/schedule` to list, adjust, or disable
 it.
 
@@ -10,7 +10,7 @@ it.
 Under the [single-branch local-first model](branching-and-releases.md), feature work merges into
 `main` **locally from a worktree with no PR**. The consequence is easy to miss: the PR queue is
 almost entirely bots — Dependabot, plus the [weekly-maintenance](weekly-maintenance-routine.md)
-agent's Monday PR — and **nothing in the daily workflow pulls you to it**.
+agent's Sunday-night PR — and **nothing in the daily workflow pulls you to it**.
 
 That has already cost real work. PR #105 sat long enough to be overtaken and had to be closed as
 superseded by #107. It is not an isolated case: **#113, #114, #116, #117, #119, and #122 were all
@@ -22,11 +22,11 @@ minute.
 
 ## Schedule
 
-- **Cron:** `0 9 * * 2,5` — Tuesday and Friday mornings.
+- **Cron:** `41 6 * * 2,5` — Tuesday and Friday mornings, outside peak hours.
 - **Frequency rationale:** Dependabot is configured `interval: weekly` (Monday) and the
-  weekly-maintenance PR also lands Monday, so **Tuesday** triages a full queue one day old — by
-  which point anything blocked on the 24h release-age policy has cleared. **Friday** catches
-  whatever is still open before the weekend. Twice a week is enough for a queue that fills once.
+  weekly-maintenance PR lands Sunday night, so **Tuesday** triages a full queue — by which point
+  anything blocked on the 24h release-age policy has cleared. **Friday** catches whatever is still
+  open before the weekend. Twice a week is enough for a queue that fills once.
 
 ## What it classifies
 

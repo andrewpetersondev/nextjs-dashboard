@@ -32,14 +32,33 @@ folder is for the cross-cutting, project-wide docs.
 | [branching-and-releases.md](branching-and-releases.md) | "Which branch do I work on, how does a change reach production, and what CI runs at each step?"    |
 | [lane-map.md](lane-map.md)                             | "If I want to run several Claude sessions at once, how do I split the work so they don't collide?" |
 
-Three scheduled agents run outside the push-triggered pipeline, because what they watch changes
+### Scheduled agents
+
+Four scheduled agents run outside the push-triggered pipeline, because what they watch changes
 without a commit:
 
-| Doc                                                            | The question it answers                                          |
-| -------------------------------------------------------------- | ---------------------------------------------------------------- |
-| [prod-watchdog-routine.md](prod-watchdog-routine.md)           | "Is the live demo actually working right now — including login?" |
-| [weekly-maintenance-routine.md](weekly-maintenance-routine.md) | "What keeps dependencies, codemods, and version pins current?"   |
-| [bot-pr-triage-routine.md](bot-pr-triage-routine.md)           | "What is in the PR queue, and what should I do with each one?"   |
+| Doc                                                                  | Schedule (Central) | The question it answers                                          |
+| -------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------- |
+| [prod-watchdog-routine.md](prod-watchdog-routine.md)                 | Daily 06:11        | "Is the live demo actually working right now — including login?" |
+| [bot-pr-triage-routine.md](bot-pr-triage-routine.md)                 | Tue & Fri 06:41    | "What is in the PR queue, and what should I do with each one?"   |
+| [lighthouse-regression-routine.md](lighthouse-regression-routine.md) | Sun 20:19          | "Have performance, SEO, or best-practices drifted?"              |
+| [weekly-maintenance-routine.md](weekly-maintenance-routine.md)       | Sun 21:47          | "What keeps dependencies, codemods, and version pins current?"   |
+
+**Shared scheduling policy**, so each routine's own doc doesn't restate it:
+
+- **Off-peak by design.** Every routine runs outside roughly 08:00–18:00 Central, which keeps them
+  clear of peak model-inference load. Weekly work sits on Sunday evening; the daily and twice-weekly
+  checks run early morning so their output is waiting at the start of the day.
+- **Staggered, never on the hour.** No two routines overlap, and none is scheduled at `:00` — the
+  same cron-stampede reasoning `codeql.yml` already follows. The scheduler additionally applies a
+  few minutes of deterministic jitter at dispatch, so the actual fire time drifts slightly later
+  than the cron string.
+- **They run on this machine, while the app is open.** If it is closed when a task is due, the task
+  runs at next launch — so an early-morning slot only lands off-peak if the machine is on overnight.
+- **Model and reasoning effort are not per-routine settings.** The local scheduler exposes no such
+  field, so every routine inherits the app's session model. Cost is therefore controlled inside the
+  prompts instead: each one names the exact commands to run, forbids codebase exploration, and exits
+  early on the common no-op outcome.
 
 ## Build tooling & configuration
 

@@ -3,14 +3,16 @@
 A scheduled Claude Code cloud agent that keeps the repo current with a single,
 reviewable PR each week. Grown from the `BACKLOG.md` "Weekly codemod routine"
 item, with extra scope recommended below. **Live** — it runs as the
-`weekly-maintenance` `/schedule` cloud agent (cron `0 9 * * 1`, Mondays). This doc
+`weekly-maintenance` scheduled agent (cron `47 21 * * 0`, Sunday evenings). This doc
 records its scope and rationale; use `/schedule` to list, adjust, or disable it.
 
 ## Schedule
 
-- **Cron:** `0 9 * * 1` (Mondays, 09:00) — adjust the hour/day and timezone to taste.
+- **Cron:** `47 21 * * 0` (Sundays, 21:47 Central) — see the shared scheduling policy in
+  [`README.md`](README.md#scheduled-agents).
 - **Frequency rationale:** weekly is often enough to stay current without churning a
-  PR every day. Monday morning means the PR is waiting when you start the week.
+  PR every day. Sunday evening means the PR is waiting when you start the week, and it runs
+  well outside peak hours.
 
 ## Scope
 
