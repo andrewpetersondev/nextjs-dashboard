@@ -96,6 +96,33 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Slash-command ↔ pnpm-script parity + repo-wide drift sweep** _(2026-08-05,
+      `claude/claude-audit-cleanup`)_ — follow-up to the `.claude/` audit below. Established one
+      rule: **`/X` runs `pnpm X`**, with `-` standing in for `:` (`/check-fast` → `pnpm check:fast`),
+      and nothing may take the name of a script it does not run. `/check` broke it — it ran
+      `check:fast`, a strictly weaker gate that runs **no tests at all**. Renamed `/check`→`/check-fast`
+      and `/check-full`→`/check` (`git mv`, both bodies were already correct), and added four alias
+      scripts — `lint`, `fix`, `coverage`, `e2e` — so every command is a thin wrapper and the `/lint`
+      and `/fix` recipes stop living only in Markdown. `/ship` and `/clean-worktrees` are the two
+      documented exemptions (workflows, no script). CI was never at risk: `ci.yml` calls individual
+      scripts, never `pnpm check`.
+      **`lint`/`fix` use `a || r=1; b || r=1; exit ${r:-0}`, not `&&`** — verified empirically that
+      `biome check --write` exits 1 whenever unfixable diagnostics remain, so `&&` would have silently
+      skipped the Markdown half on every run with a lint error. The idiom suppresses the short-circuit,
+      not the exit code.
+      **Drift sweep** (6-lens audit, 33 findings confirmed / 13 rejected): fixed `pnpm dev` in the bug
+      template (no such script) and `pnpm biome:check` in the Result README; corrected `ci.yml`'s claim
+      that `check:fast` covers unit tests (it runs none), its "there are no PRs" header (Dependabot
+      opens them), and its 20→23 spec count; fixed `knip.md`'s claim that CI runs `check:fast`; fixed a
+      cron self-contradiction in `weekly-maintenance-routine.md` (`0 9 * * 1` at the create step vs the
+      live `47 21 * * 0`) plus its stale `pnpm@11.5.3` pin; corrected `db:reset:*` in the scripts guide
+      (it **truncates** — it does not drop, recreate, or seed, so the "start fresh" workflow was
+      starting on empty tables), the one-shot E2E recipe (`cy:e2e:run` boots no server), `clean`'s
+      scope, and documented 10 previously-undocumented scripts; fixed `/ship`'s prescribed commit
+      trailer (matched zero of the last 20 commits — the harness stamps a model-specific one); indexed
+      the two docs missing from `docs/README.md`; and corrected `AGENTS.md`'s claim that Biome owns only
+      JS/TS/JSON (it lints and formats CSS too).
+
 - [x] **`.claude/` audit — delete the inert sandbox block, fix command drift** _(2026-08-05,
       `claude/claude-audit-cleanup`)_ — a full read of the 13 files under `.claude/` found the
       **`sandbox.filesystem.denyRead` block was not gating anything**: `wc -c` through Bash read

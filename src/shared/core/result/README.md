@@ -64,5 +64,5 @@ is logged and returned as-is; any other thrown value is normalized to an
 
 ## Tooling
 
-- `pnpm biome:check` — lint/format diagnostics.
+- `pnpm lint` — Biome + Markdown lint/format diagnostics.
 - `pnpm typecheck` — TypeScript checks.

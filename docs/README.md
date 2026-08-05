@@ -31,6 +31,7 @@ folder is for the cross-cutting, project-wide docs.
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
 | [branching-and-releases.md](branching-and-releases.md) | "Which branch do I work on, how does a change reach production, and what CI runs at each step?"    |
 | [lane-map.md](lane-map.md)                             | "If I want to run several Claude sessions at once, how do I split the work so they don't collide?" |
+| [deployment.md](deployment.md)                         | "How do I build the standalone image and deploy to Vercel, and what env vars does each need?"      |
 
 ### Scheduled agents
 
@@ -65,6 +66,7 @@ without a commit:
 | Doc                                                            | The question it answers                                                                                         |
 | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [package-json-scripts-guide.md](package-json-scripts-guide.md) | "What does this `pnpm <script>` actually do?"                                                                   |
+| [claude-code-command-guide.md](claude-code-command-guide.md)   | "Which `/` command should I reach for, and when?"                                                               |
 | [knip.md](knip.md)                                             | "How do I find unused exports, files, and dependencies?"                                                        |
 | [biome.md](biome.md)                                           | "Why is this lint rule off, and how do I trial one before enabling it?"                                         |
 | [tsconfig.md](tsconfig.md)                                     | "How are the TypeScript projects organized, which config owns a file, and where does a compiler option belong?" |

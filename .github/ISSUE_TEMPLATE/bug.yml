@@ -23,7 +23,7 @@ body:
       label: Reproduction
       description: The smallest sequence that shows it. Note which environment — dev, test, or the live deployment.
       placeholder: |
-        1. pnpm dev
+        1. pnpm next:dev
         2. Visit /dashboard/invoices
         3. ...
     validations:
