@@ -1,6 +1,6 @@
 import { buildFormData } from "@test-support/forms/form-data";
 import { describe, expect, it } from "vitest";
-import { resolveRawFieldPayload } from "@/shared/forms/server/utils/form-data.utils";
+import { resolveRawFieldPayload } from "@/shared/forms/server/form-data.utils";
 
 /**
  * Unit tests for the FormData utils (form-data.utils.ts).

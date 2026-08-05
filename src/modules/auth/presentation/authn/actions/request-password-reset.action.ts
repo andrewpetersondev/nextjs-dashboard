@@ -9,8 +9,8 @@ import { FORGOT_PASSWORD_CONFIRMATION } from "@/modules/auth/presentation/consta
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
-import { makeFormOk } from "@/shared/forms/logic/factories/form-result.factory";
+} from "@/shared/forms/core/form-result.dto";
+import { makeFormOk } from "@/shared/forms/logic/form-result.factory";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 

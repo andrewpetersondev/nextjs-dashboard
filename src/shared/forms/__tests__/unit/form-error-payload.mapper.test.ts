@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
-import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import { toFormErrorPayload } from "@/shared/forms/presentation/form-error-payload.mapper";
 
 /**
  * Unit tests for the form error payload mapper (form-error-payload.mapper.ts).

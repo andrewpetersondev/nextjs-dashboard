@@ -18,11 +18,11 @@ import { UserInfoPanel } from "@/modules/users/presentation/components/user-info
 import { UserRoleSelect } from "@/modules/users/presentation/components/user-role-select";
 import { USER_FORM_CANCEL_LABEL } from "@/modules/users/presentation/constants/user-form.constants";
 import { isValidationMetadata } from "@/shared/core/errors/core/metadata/error-metadata.value";
-import type { FieldError } from "@/shared/forms/core/types/field-error.types";
+import type { FieldError } from "@/shared/forms/core/field-error.types";
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/forms/core/form-result.dto";
 import { ROUTES } from "@/shared/routing/routes";
 import { TYPING_MS } from "@/shared/time/time.constants";
 import { H1 } from "@/ui/atoms/headings.atom";

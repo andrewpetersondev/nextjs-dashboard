@@ -1,4 +1,4 @@
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/field-value.types";
 
 /**
  * Filters submitted field values down to the fields allowlisted for echo.

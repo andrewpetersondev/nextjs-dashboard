@@ -5,19 +5,22 @@ environment, bridging the gap between Server Actions and client-side UI.
 
 #### Directory Structure
 
-- `core/`: Fundamental types, guards, and constants.
-  - `types/`: Modularized types for field errors, field values, and form results.
-  - `guards/`: Type guards for discriminating form results.
-- `logic/`: Framework-agnostic logic for processing form data.
-  - `factories/`: Creation of `FormResult` objects.
-  - `inspectors/`: Tools for extracting information from schemas and errors.
-  - `mappers/`: Conversions between different error map shapes (sparse vs dense).
-- `presentation/`: UI-specific data adapters (`mappers/`).
-- `server/`: Next.js server-side specific utilities.
-  - `validate-form.ts`: The primary entry point for validating `FormData`.
-  - `factories/`: Construction of validation-error form results.
-  - `mappers/`: Zod error flattening.
-  - `utils/`: `FormData` extraction and manipulation.
+One directory per layer, each one flat — the file suffix names the kind, so it
+is not restated as a subdirectory.
+
+- `core/`: The type contract. Types for field errors, field values, form
+  results and validation (`*.types.ts`, `*.dto.ts`), the result guard
+  (`form-result.guard.ts`), and shared constants.
+- `logic/`: Framework-agnostic processing. `FormResult` creation
+  (`form-result.factory.ts`), extraction from schemas and errors
+  (`*.inspector.ts`), and sparse↔dense error-map conversion (`*.mapper.ts`).
+- `presentation/`: UI-specific data adapters
+  (`form-error-payload.mapper.ts`).
+- `server/`: Next.js server-side utilities. `validate-form.ts` is the primary
+  entry point for validating `FormData`; alongside it sit validation-error
+  result construction (`form-validation-error.factory.ts`), Zod error
+  flattening (`zod-error.mapper.ts`), and `FormData` extraction
+  (`form-data.utils.ts`).
 
 #### Key Concepts
 

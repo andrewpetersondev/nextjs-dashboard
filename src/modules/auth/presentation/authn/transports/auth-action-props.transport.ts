@@ -1,7 +1,7 @@
 import type { ForgotPasswordField } from "@/modules/auth/presentation/authn/transports/forgot-password.transport";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
-import type { FormAction } from "@/shared/forms/core/types/form-action.dto";
+import type { FormAction } from "@/shared/forms/core/form-action.dto";
 
 /**
  * Shared properties for UI components that require an authentication-related form action.

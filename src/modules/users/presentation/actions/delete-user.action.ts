@@ -7,8 +7,8 @@ import { toUserId } from "@/modules/users/domain/user-id.mappers";
 import { createUserService } from "@/modules/users/infrastructure/factories/user-service.factory";
 import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { makeFormError } from "@/shared/forms/logic/form-result.factory";
 import { ROUTES } from "@/shared/routing/routes";
 
 /**

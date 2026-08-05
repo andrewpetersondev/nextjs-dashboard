@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { selectEchoedFieldValues } from "@/shared/forms/logic/mappers/field-value-map.mapper";
+import { selectEchoedFieldValues } from "@/shared/forms/logic/field-value-map.mapper";
 
 /**
  * Unit tests for the echo allowlist filter (field-value-map.mapper.ts).

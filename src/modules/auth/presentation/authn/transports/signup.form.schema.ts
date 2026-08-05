@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import { LoginFormSchema } from "@/modules/auth/presentation/authn/transports/login.form.schema";
-import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { toSchemaKeys } from "@/shared/forms/logic/zod-schema.inspector";
 import { UsernameSchema } from "@/shared/policies/username/username.schema";
 
 /**

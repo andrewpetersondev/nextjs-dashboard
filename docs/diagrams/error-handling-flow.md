@@ -7,7 +7,7 @@
 
 The key insight: these aren't three systems. They're **one currency for
 failure**, used everywhere. The actual type (from
-[`form-result.dto.ts`](../../src/shared/forms/core/types/form-result.dto.ts)):
+[`form-result.dto.ts`](../../src/shared/forms/core/form-result.dto.ts)):
 
 ```ts
 type FormResult<T> = OkResult<FormSuccessPayload<T>> | FormErrResult;
@@ -120,10 +120,10 @@ flowchart LR
 | Error registry (the 13 keys)         | [`app-error.registry.ts`](../../src/shared/core/errors/core/catalog/app-error.registry.ts)                                                                                                        |
 | DB boundary — catch → `Result`       | [`execute-dal-result.ts`](../../src/shared/core/errors/server/adapters/dal/execute-dal-result.ts)                                                                                                 |
 | Postgres → `AppError`                | [`normalize-pg-error.ts`](../../src/shared/core/errors/server/adapters/postgres/normalize-pg-error.ts) · [`to-pg-error.ts`](../../src/shared/core/errors/server/adapters/postgres/to-pg-error.ts) |
-| `FormResult` type                    | [`form-result.dto.ts`](../../src/shared/forms/core/types/form-result.dto.ts)                                                                                                                      |
-| `AppError` → DTO (server-side)       | [`form-result.factory.ts`](../../src/shared/forms/logic/factories/form-result.factory.ts) — `toFormErrResult` calls `toDto()`                                                                     |
+| `FormResult` type                    | [`form-result.dto.ts`](../../src/shared/forms/core/form-result.dto.ts)                                                                                                                            |
+| `AppError` → DTO (server-side)       | [`form-result.factory.ts`](../../src/shared/forms/logic/form-result.factory.ts) — `toFormErrResult` calls `toDto()`                                                                               |
 | Form validation on-ramp              | [`validate-form.ts`](../../src/shared/forms/server/validate-form.ts)                                                                                                                              |
-| `AppError` → UI payload              | [`form-error-payload.mapper.ts`](../../src/shared/forms/presentation/mappers/form-error-payload.mapper.ts)                                                                                        |
+| `AppError` → UI payload              | [`form-error-payload.mapper.ts`](../../src/shared/forms/presentation/form-error-payload.mapper.ts)                                                                                                |
 
 ## The lesson
 

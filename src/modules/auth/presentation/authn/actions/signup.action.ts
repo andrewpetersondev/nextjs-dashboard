@@ -14,8 +14,8 @@ import type { SignupField } from "@/modules/auth/presentation/authn/transports/s
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
-import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
+} from "@/shared/forms/core/form-result.dto";
+import { extractFieldErrors } from "@/shared/forms/logic/form-error.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
 import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";

@@ -4,11 +4,11 @@ import { type JSX, useActionState, useId } from "react";
 import { AuthFormFeedback } from "@/modules/auth/presentation/authn/components/shared/auth-form-feedback";
 import type { ForgotPasswordActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
 import { FORGOT_PASSWORD_DEMO_NOTE } from "@/modules/auth/presentation/constants/auth.tokens";
-import type { FormState } from "@/shared/forms/core/types/form-result.dto";
+import type { FormState } from "@/shared/forms/core/form-result.dto";
 import {
 	extractFieldErrors,
 	extractFieldValues,
-} from "@/shared/forms/logic/inspectors/form-error.inspector";
+} from "@/shared/forms/logic/form-error.inspector";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";

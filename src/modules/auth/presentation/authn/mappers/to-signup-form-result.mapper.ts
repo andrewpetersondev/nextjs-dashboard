@@ -15,11 +15,11 @@ import { getPgConstraintFromAppError } from "@/shared/core/errors/server/adapter
 import type {
 	FieldError,
 	SparseFieldErrorMap,
-} from "@/shared/forms/core/types/field-error.types";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { toFormErrResult } from "@/shared/forms/logic/factories/form-result.factory";
-import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
-import { selectEchoedFieldValues } from "@/shared/forms/logic/mappers/field-value-map.mapper";
+} from "@/shared/forms/core/field-error.types";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { toDenseFieldErrorMap } from "@/shared/forms/logic/field-error-map.mapper";
+import { selectEchoedFieldValues } from "@/shared/forms/logic/field-value-map.mapper";
+import { toFormErrResult } from "@/shared/forms/logic/form-result.factory";
 
 type SignupFormData = Readonly<Partial<Record<SignupField, string>>>;
 

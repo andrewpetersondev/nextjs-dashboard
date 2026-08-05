@@ -1,14 +1,14 @@
 import "server-only";
 import { z } from "zod";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/field-error.types";
 import type {
 	ValidationErrors,
 	ZodErrorLike,
-} from "@/shared/forms/core/types/validation.types";
+} from "@/shared/forms/core/validation.types";
 import {
 	selectSparseFieldErrors,
 	toDenseFieldErrorMap,
-} from "@/shared/forms/logic/mappers/field-error-map.mapper";
+} from "@/shared/forms/logic/field-error-map.mapper";
 
 /**
  * Adapts a ZodError (foreign) into a canonical representation of field and form errors.

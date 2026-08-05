@@ -6,8 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loginAction } from "@/modules/auth/presentation/authn/actions/login.action";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import { getAppDb } from "@/server/db/db.connection";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { toFormErrorPayload } from "@/shared/forms/presentation/form-error-payload.mapper";
 
 /**
  * Integration tests for the complete login flow.

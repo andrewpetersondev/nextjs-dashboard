@@ -16,13 +16,13 @@ import { getAppDb } from "@/server/db/db.connection";
 import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.registry";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 import { Err, Ok } from "@/shared/core/result/result";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/field-error-map.mapper";
 import {
 	makeFormError,
 	makeFormOk,
-} from "@/shared/forms/logic/factories/form-result.factory";
-import { resolveCanonicalFieldNames } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
+} from "@/shared/forms/logic/form-result.factory";
+import { resolveCanonicalFieldNames } from "@/shared/forms/logic/zod-schema.inspector";
 import { validateForm } from "@/shared/forms/server/validate-form";
 
 vi.mock("@/shared/forms/server/validate-form");
@@ -35,20 +35,17 @@ vi.mock("@/modules/auth/presentation/session/session-access.guard", () => ({
 		userId: "admin-1",
 	}),
 }));
-vi.mock(
-	"@/shared/forms/logic/factories/form-result.factory",
-	async (importOriginal) => {
-		const actual =
-			await importOriginal<
-				typeof import("@/shared/forms/logic/factories/form-result.factory")
-			>();
-		return {
-			...actual,
-			makeFormError: vi.fn(actual.makeFormError),
-			makeFormOk: vi.fn(actual.makeFormOk),
-		};
-	},
-);
+vi.mock("@/shared/forms/logic/form-result.factory", async (importOriginal) => {
+	const actual =
+		await importOriginal<
+			typeof import("@/shared/forms/logic/form-result.factory")
+		>();
+	return {
+		...actual,
+		makeFormError: vi.fn(actual.makeFormError),
+		makeFormOk: vi.fn(actual.makeFormOk),
+	};
+});
 
 describe("createUserAction", () => {
 	const mockFields = resolveCanonicalFieldNames(CreateUserFormSchema);

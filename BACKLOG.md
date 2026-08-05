@@ -92,11 +92,6 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 - [ ] **docs/ consolidation** ([#128](https://github.com/andrewpetersondev/nextjs-dashboard/issues/128))
       — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
-- [ ] **Forms taxonomy flattening** ([#129](https://github.com/andrewpetersondev/nextjs-dashboard/issues/129))
-      — the last open piece of the forms/error cleanup
-      (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
-      Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
-      Full context in memory (`project_forms_error_refactor`).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
 
@@ -104,6 +99,31 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Forms taxonomy flattening** _(2026-08-05, `claude/next-steps-600eb9`,
+      [#129](https://github.com/andrewpetersondev/nextjs-dashboard/issues/129))_ — the last
+      open piece of the shrink → lock → decide → reshape roadmap, whose other three steps
+      finished 2026-06-13. `src/shared/forms/` carried **two** classification axes: the
+      layer (`core`/`logic`/`presentation`/`server`) and the kind (`types/`, `guards/`,
+      `factories/`, `inspectors/`, `mappers/`, `utils/`). The kind axis was pure
+      restatement — every filename already ends in `.types`/`.dto`/`.guard`/`.factory`/
+      `.inspector`/`.mapper`/`.utils` — and five of those nine subdirectories held exactly
+      one file. **Dropped the kind axis, kept the layer axis**: 13 directories → 4, and
+      each layer is now flat. The layer stayed because it is the only one encoding a real
+      constraint (`server/` must never be reachable from a client component), and because
+      it matches the closest sibling module, `src/shared/http/` (`core/` + `server/`, flat
+      within each). 19 files moved via `git mv`; **0 lines of logic changed** — the whole
+      diff is paths. Imports were uniform (every file, including the module's own, used the
+      `@/shared/forms/**` alias — no relative intra-module imports to fix), so the rewrite
+      was one scoped regex over the 66 files that referenced the old paths, verified by
+      re-counting: 141 import sites before, the same 141 after, redistributed exactly as
+      expected. Docs reconciled: both module READMEs (the notes README's directory tree was
+      the only place the kind axis was documented), the four `docs/diagrams/error-handling-flow.md`
+      links, and `docs/lane-map.md`'s backlog table — **which was stale by five rows**, still
+      listing invoice amount-cap, session ceiling, rootfiles, Cypress typecheck, and
+      integration CI as open; refreshed to the four genuinely-open items. Validation:
+      typecheck (app + Cypress) green, unit 373/373, Biome slate 0, `check:fast` green.
+      Full e2e not run locally — this sandbox can't reach `fonts.gstatic.com`, so `next dev`
+      500s at boot; CI is the first real e2e proof, and the change is import-path-only.
 - [x] **Cypress standalone typecheck lane** _(2026-08-04, `claude/issue-127-0f4b0d`,
       [#127](https://github.com/andrewpetersondev/nextjs-dashboard/issues/127))_ — the
       Cypress sources sit outside the `tsc -b` graph and had no `tsc` pass at all; type

@@ -1,10 +1,10 @@
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
-import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
 import type {
 	DenseFieldErrorMap,
 	FormErrors,
-} from "@/shared/forms/core/types/field-error.types";
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
+} from "@/shared/forms/core/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/field-value.types";
+import { isFormValidationError } from "@/shared/forms/core/form-result.guard";
 
 /**
  * Extracts dense field errors from an AppError or its serialized DTO.

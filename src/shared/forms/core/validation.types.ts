@@ -1,8 +1,8 @@
 import type {
 	DenseFieldErrorMap,
 	FormErrors,
-} from "@/shared/forms/core/types/field-error.types";
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
+} from "@/shared/forms/core/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/field-value.types";
 
 /**
  * Loose shape matching a ZodError for flattening.

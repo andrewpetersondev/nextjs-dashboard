@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
-import { isFormValidationError } from "@/shared/forms/core/guards/form-result.guard";
+import { isFormValidationError } from "@/shared/forms/core/form-result.guard";
 
 /**
  * Unit tests for the form result guard (form-result.guard.ts).

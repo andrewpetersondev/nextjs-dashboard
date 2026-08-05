@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import type { FormState } from "@/shared/forms/core/types/form-result.dto";
+import type { FormState } from "@/shared/forms/core/form-result.dto";
 import { FormAlertMolecule } from "@/ui/molecules/form-alert.molecule";
 
 interface AuthFormFeedbackProps<F> {

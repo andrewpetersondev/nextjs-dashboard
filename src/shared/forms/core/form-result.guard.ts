@@ -1,5 +1,5 @@
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
-import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
+import type { FormValidationMetadata } from "@/shared/forms/core/validation.types";
 
 /**
  * Type guard: checks if an AppError (entity or serialized DTO) structurally

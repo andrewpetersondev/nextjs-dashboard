@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { formValidationErrorFactory } from "@/shared/forms/server/factories/form-validation-error.factory";
+import { formValidationErrorFactory } from "@/shared/forms/server/form-validation-error.factory";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
 vi.mock(
