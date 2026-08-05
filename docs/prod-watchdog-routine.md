@@ -68,9 +68,12 @@ Two details that are load-bearing:
   remote-tracking ref is only as fresh as the last fetch, and a stale one would make a stale
   deployment compare _equal_ — a false pass on exactly the failure being checked for.
 - A mismatch is not automatically a failure. A deploy takes minutes, so a push shortly before the
-  06:11 run legitimately shows a mismatch. `isDeployInFlight` in
-  [`devtools/shared/deploy-identity.ts`](../devtools/shared/deploy-identity.ts) draws that line; a
-  mismatch inside the window is reported as a note, outside it as a failure.
+  06:11 run legitimately shows a mismatch. `classifyFreshness` in
+  [`devtools/shared/deploy-identity.ts`](../devtools/shared/deploy-identity.ts) draws that line at
+  **30 minutes**: inside the window a mismatch is a note, at or past it a failure. The window only
+  has to cover "pushed shortly before the run" — and since the routine is daily, widening it would
+  not surface a failed build any sooner. The asymmetry is deliberate: a watchdog that fails every
+  time it runs mid-deploy is one you learn to ignore.
 
 The check **degrades to a warning** rather than failing when it cannot reach a verdict — the
 deployment reports no commit (it predates this change), or git cannot reach the remote. A check that
