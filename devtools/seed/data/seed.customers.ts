@@ -3,7 +3,7 @@ import type { SeedCustomer } from "@devtools/seed/data/seed.types";
 /**
  * Demo customers data used during seeding.
  */
-export const customersData: ReadonlyArray<SeedCustomer> = [
+export const customersData: readonly SeedCustomer[] = [
 	{
 		email: "evil@rabbit.com",
 		imageUrl: "/customers/evil-rabbit.png",

@@ -41,9 +41,10 @@ const NONCE_BYTE_LENGTH = 16;
  * they do. `preload` stays omitted — submitting a domain we don't control would
  * be inappropriate.
  */
-export const STATIC_SECURITY_HEADERS: ReadonlyArray<
-	Readonly<{ key: string; value: string }>
-> = [
+export const STATIC_SECURITY_HEADERS: readonly Readonly<{
+	key: string;
+	value: string;
+}>[] = [
 	{ key: "X-Content-Type-Options", value: "nosniff" },
 	{ key: "X-Frame-Options", value: "DENY" },
 	{ key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

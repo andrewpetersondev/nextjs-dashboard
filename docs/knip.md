@@ -41,6 +41,17 @@ Exit code `1` just means "findings were reported" — it is not a crash.
   keeps `pnpm knip` env-free; the `relations.ts` entry above covers what the plugin
   would otherwise have contributed.
 
+### CSS is deliberately outside the project globs
+
+The `project` globs match only `.{ts,tsx,mjs}`, so Knip never follows `.css` imports and
+cannot report an unused stylesheet. **This was evaluated and deliberately retired on
+2026-08-04**, not left as an oversight: the repo has exactly **one** CSS file,
+`src/app/globals.css`, imported by the root layout. Widening the globs would buy Knip the
+ability to check a single file whose liveness is self-evident.
+
+Revisit only if CSS files multiply — CSS Modules, or per-route stylesheets — because at
+that point an orphaned stylesheet becomes possible and invisible.
+
 ## Acting on findings
 
 Triage each finding — not everything reported should be deleted:

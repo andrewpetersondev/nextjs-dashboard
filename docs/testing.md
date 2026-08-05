@@ -82,6 +82,14 @@ pnpm cy:e2e:run     # … or run headless
 For a production-like target, run `pnpm serve:test` (standalone build) instead of
 `cy:server`.
 
+Both manual commands run the `/api/health` **identity preflight** first (added
+2026-08-04) and refuse to start Cypress unless the server answering reports
+`databaseEnv=test`. Before that, only the one-command path was guarded, so attaching to a
+**dev** server left the seeded, destructive specs pointed at the development database.
+The preflight derives its URL from `PORT` exactly as Cypress derives `baseUrl`, so it
+follows a stale exported `PORT` to the same wrong server — which is the case worth
+catching.
+
 ### Selectors
 
 - Prefer role-based queries via `@testing-library/cypress`.

@@ -14,7 +14,7 @@ import { APP_ERROR_KEYS } from "@/shared/core/errors/core/catalog/app-error.regi
  * deliberately. `from === to` is an allowed no-op by design (the edit form
  * may re-submit the current status).
  */
-const MATRIX: ReadonlyArray<[InvoiceStatus, InvoiceStatus, boolean]> = [
+const MATRIX: readonly [InvoiceStatus, InvoiceStatus, boolean][] = [
 	["pending", "pending", true],
 	["pending", "paid", true],
 	["pending", "void", true],

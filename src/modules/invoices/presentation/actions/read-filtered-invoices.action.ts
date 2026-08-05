@@ -16,8 +16,8 @@ import { getAppDb } from "@/server/db/db.connection";
  * @returns Array of InvoiceListFilter
  */
 export async function readFilteredInvoicesAction(
-	query: string = "",
-	currentPage: number = 1,
+	query = "",
+	currentPage = 1,
 	statusFilter: InvoiceStatusFilter = DEFAULT_INVOICE_STATUS_FILTER,
 ): Promise<InvoiceListFilter[]> {
 	const service = new InvoiceService(new InvoiceRepository(getAppDb()));
