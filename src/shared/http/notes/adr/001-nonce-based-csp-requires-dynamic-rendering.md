@@ -114,9 +114,21 @@ Notes on two directives:
   against the same origin reports `server-response-time` at 40–50ms once warm,
   so the cold number is start-up, not render. The accepted cost is therefore
   real but bounded: a recruiter arriving at an idle deployment waits ~1.7s to
-  first byte. Whether **Fluid Compute** is enabled on the project is still
-  unconfirmed (dashboard-only setting); it is the lever if the cold path ever
-  needs to be shortened.
+  first byte. **Fluid Compute was already enabled when those numbers were
+  measured** (confirmed 2026-08-04), so 1.69s is already the Fluid-optimised
+  figure — it includes bytecode caching and production pre-warming. Fluid is
+  therefore **not** a remaining lever, as an earlier draft of this ADR assumed:
+  **~1.7s is the floor for the `force-dynamic` path**, and it is accepted rather
+  than pending. Shortening it further would mean revisiting the decision itself,
+  not changing a setting.
+- Because `force-dynamic` turns every page view into a function invocation, the
+  billing model is worth stating once: Fluid bills **Active CPU** (paused while
+  waiting on I/O), **Provisioned Memory** (billed for the instance lifetime),
+  and invocations. The Hobby plan has fixed monthly allowances — 4 Active-CPU
+  hours, 360 GB-hours of memory, 1M invocations — and **no on-demand rate**, so
+  this decision carries no billing exposure at this project's traffic. It would
+  need re-examining on Pro, or at a traffic level where invocations stop being
+  a rounding error.
 - **`no-store` also disables the browser back/forward cache**, which is a
   second-order cost of the same flip and was not anticipated here. Lighthouse
   flags it on both presets and marks it "Not actionable" — a bfcache entry is
@@ -163,7 +175,9 @@ regex and on per-tag nonces rather than on console output.
 ## Follow-ups
 
 - ~~Measure cold and warm TTFB on production `/`~~ — done 2026-08-04, recorded
-  under Consequences above. Remaining: confirm whether Fluid Compute is on.
+  under Consequences above.
+- ~~Confirm whether Fluid Compute is on~~ — done 2026-08-04: it is, and it was
+  on for the measurement, so there is no further cold-start lever here.
 - `require-trusted-types-for 'script'` on a Report-Only header, once there is a
   collector and it has been validated against Next 16 + React 19.
 - Before moving to a custom domain, confirm every subdomain of the apex serves
