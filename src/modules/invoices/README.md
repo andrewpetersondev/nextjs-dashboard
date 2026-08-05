@@ -274,8 +274,8 @@ This module uses two styles, and you'll see both in a single action:
   route error boundary (`error.tsx`) handle it.
 
 For when something should be an `AppError` versus a domain outcome, see
-[when-to-use-app-error.md](../../../docs/when-to-use-app-error.md) and the
-[error-handling flow diagram](../../../docs/diagrams/error-handling-flow.md).
+[error-handling-and-result-pattern.md](../../../docs/standards/error-handling-and-result-pattern.md)
+and the [error-handling flow diagram](../../../docs/diagrams/error-handling-flow.md).
 
 ---
 

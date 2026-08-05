@@ -132,7 +132,7 @@ action / page. `fetch-total-count` is the exception: it does not catch query err
 (so a DB failure propagates raw) and only throws — with the `validation` key — when
 the count comes back missing. This is the same throw-based model as the `invoices`
 DAL — note it differs from `users`, which returns `Result` end-to-end. See
-[when-to-use-app-error.md](../../../docs/when-to-use-app-error.md).
+[error-handling-and-result-pattern.md](../../../docs/standards/error-handling-and-result-pattern.md).
 
 > **Tests:** unit suites cover the domain mappers (`toFormattedCustomersTableRow`
 > currency formatting, `CustomerId` create/throw) and the infra adapter
