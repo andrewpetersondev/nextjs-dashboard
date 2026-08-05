@@ -16,12 +16,15 @@
 #     substitute: it strips the CSP header by default and runs against
 #     `next dev`, which never prerenders.
 #
-# All three run on every push to `main`. Because the merge happens locally before
-# the push, a red run means fix-forward — run `pnpm check:fast` locally before
-# merging to catch most failures pre-push.
+# #   4. `integration` — the Vitest integration lane against a real Postgres
+#      service container. Needs a database but no browser and no server, so it
+#      is its own job rather than a step in `e2e`: it finishes in about a minute
+#      instead of waiting on the full Cypress suite.
 #
-# Still intentionally NOT here: the integration vitest lane. It needs a real
-# database; the e2e job's service-container pattern could bring it in later.
+# All four run on every push to `main`. Because the merge happens locally before
+# the push, a red run means fix-forward — run `pnpm check:fast` locally before
+# merging to catch most failures pre-push. Note that `check:fast` does NOT cover
+# the integration lane (no database), so this job is its only automatic gate.
 
 name: CI
 
@@ -138,6 +141,89 @@ jobs:
           SESSION_SECRET: ci-dummy-session-secret-at-least-32-chars
           NEXT_PUBLIC_LOG_LEVEL: info
           NEXT_PUBLIC_NODE_ENV: production
+
+  integration:
+    name: Integration (Vitest)
+    # The `check` job runs only the DB-free unit lane, so until this existed the
+    # integration lane ran on developer machines and nowhere else — a break in
+    # it reached `main` unnoticed unless the e2e suite happened to catch the
+    # same path downstream.
+    #
+    # Deliberately a SEPARATE job from `e2e` rather than a step inside it: these
+    # tests need a database but no browser and no server, so they finish in
+    # about a minute and give a much faster signal than waiting on Cypress.
+    #
+    # ⚠️ Added as a NEW job, never by renaming one. Required-status-check
+    # contexts are pinned to job NAMES, so a rename silently blocks merges.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Same ephemeral database as the e2e job, pinned to the same image so the
+    # two DB lanes cannot drift onto different Postgres majors. `postgres:latest`
+    # (18+) breaks the documented volume mount — see docs/database-setup.md.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d test_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+
+      # `allowBuilds: cypress` in pnpm-workspace.yaml lets Cypress's postinstall
+      # run, which downloads its browser binary. This lane never opens a browser,
+      # and unlike the e2e job there is no binary cache here, so skip the
+      # download outright rather than pay for it on every run.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        env:
+          CYPRESS_INSTALL_BINARY: "0"
+
+      # `pnpm test:integration` runs through `env:test`, which loads
+      # `.env.test.local` — so the file has to exist even though no server boots.
+      # Kept byte-identical to the e2e job's so the two DB lanes cannot drift
+      # into different environments; PORT is unused here and present for parity.
+      - name: Write .env.test.local
+        run: |
+          {
+            echo "AUTH_BCRYPT_SALT_ROUNDS=12"
+            echo "DATABASE_ENV=test"
+            echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db"
+            echo "NODE_ENV=test"
+            echo "PORT=3000"
+            echo "SESSION_SECRET=$(openssl rand -base64 48)"
+            echo "NEXT_PUBLIC_LOG_LEVEL=info"
+            echo "NEXT_PUBLIC_NODE_ENV=test"
+          } > .env.test.local
+
+      - name: Apply test migrations
+        run: pnpm db:migrate:test
+
+      # No seed step, unlike the e2e job. These tests create the rows they need
+      # and delete them again by email/id; none reference a seeded demo account,
+      # and none touch customers or invoices. Seeding would only add a slower
+      # step and a second thing that can fail.
+      - name: Run integration tests
+        run: pnpm test:integration
 
   e2e:
     name: E2E (Cypress)

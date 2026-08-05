@@ -13,7 +13,7 @@ flowchart LR
     PROD["Vercel production"]
 
     F -->|"local merge (shared object store — no remote round-trip)"| MAIN
-    MAIN ==>|"push: CI (check + E2E), then deploy"| PROD
+    MAIN ==>|"push: CI (check + CSP + integration + E2E), then deploy"| PROD
 ```
 
 ## How to read it
@@ -25,14 +25,15 @@ flowchart LR
   type-check + migration drift before you merge — no tests (run the DB-free unit
   lane separately with `pnpm test:unit` when the change warrants it). That's what
   keeps the `main` push green.
-- **CI runs on the push to `main`,** as a safety net: the fast `Lint & type-check` job
-  **and** the slow `E2E (Cypress)` suite. A red run means fix-forward, not a blocked
-  merge (the merge already happened locally).
+- **CI runs on the push to `main`,** as a safety net: four parallel jobs —
+  `Lint & type-check` (fast), `CSP guard`, `Integration (Vitest)`, and the slow
+  `E2E (Cypress)` suite. A red run means fix-forward, not a blocked merge (the merge
+  already happened locally).
 - **Vercel** builds a **production** deploy whenever `main` advances.
 
 ## Where the gate is enforced
 
-The two CI jobs live in [`../../.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
-and both run on push to `main`. The `main` ruleset (`Protect Important Branches`) blocks
+The four CI jobs live in [`../../.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+and all run on push to `main`. The `main` ruleset (`Protect Important Branches`) blocks
 force-pushes and branch deletion but allows direct pushes — there is no
 required-status-check or PR rule, so CI is informational, not blocking.

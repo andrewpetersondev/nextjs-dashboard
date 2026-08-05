@@ -4,11 +4,16 @@ The dashboard has three test lanes. The **unit** lane is database-free and runs
 anywhere; the **integration** and **E2E** lanes talk to the real `test_db` under
 the **test environment** (`.env.test.local`):
 
-| Lane        | Tool    | Command                 | What it covers                                                | Needs `test_db`? |
-| ----------- | ------- | ----------------------- | ------------------------------------------------------------- | ---------------- |
-| Unit        | Vitest  | `pnpm test`             | Pure logic, mappers, services — dependencies mocked           | No               |
-| Integration | Vitest  | `pnpm test:integration` | Full-stack flows through the layers against the real database | Yes              |
-| End-to-end  | Cypress | `pnpm cy:e2e`           | The running app in a real browser, including accessibility    | Yes              |
+| Lane        | Tool    | Command                 | What it covers                                                | Needs `test_db`? | Runs in CI?         |
+| ----------- | ------- | ----------------------- | ------------------------------------------------------------- | ---------------- | ------------------- |
+| Unit        | Vitest  | `pnpm test`             | Pure logic, mappers, services — dependencies mocked           | No               | Yes — `check` job   |
+| Integration | Vitest  | `pnpm test:integration` | Full-stack flows through the layers against the real database | Yes              | Yes — `integration` |
+| End-to-end  | Cypress | `pnpm cy:e2e`           | The running app in a real browser, including accessibility    | Yes              | Yes — `e2e` job     |
+
+All three run on every push to `main`. The integration lane joined CI on
+2026-08-04; before that it ran on developer machines only, so a break in it could
+reach `main` unnoticed. Note that `pnpm check:fast` still does **not** cover it —
+it needs a database — so CI is its only automatic gate.
 
 `pnpm test` is an alias for `pnpm test:unit` (unit only); `pnpm test:all` runs the
 unit and integration lanes together.
@@ -107,16 +112,22 @@ cy.checkA11y()
 
 ## CI
 
-Both CI jobs run on every push to `main` — see
-[branching-and-releases.md](branching-and-releases.md).
+All four CI jobs run in parallel on every push to `main` — see
+[branching-and-releases.md](branching-and-releases.md). Three of them run tests:
 
-- **`check` job (every push to `main`):** runs `pnpm test:coverage`,
-  the DB-free unit lane, which also enforces the coverage floors in
-  `vitest.config.ts`. The integration lane is **not** run in CI — it needs a live
-  database — so run it locally before you merge into `main`.
-- **`e2e` job (every push to `main`):** `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) —
-  it boots the server itself against an ephemeral Postgres service container.
-- Cypress records no video by default (`video: false` in `cypress.config.ts`).
+- **`check` job:** `pnpm test:coverage` — the DB-free unit lane, which also enforces
+  the coverage floors in `vitest.config.ts`.
+- **`integration` job:** `pnpm test:integration` against an ephemeral
+  `postgres:17-alpine` service container, migrated but **not seeded** (these tests
+  create and delete their own rows). Added 2026-08-04; before that the lane ran on
+  developer machines only.
+- **`e2e` job:** `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) — boots the server itself
+  against its own service container.
+
+Cypress records no video by default (`video: false` in `cypress.config.ts`).
+
+`pnpm check:fast`, the local pre-push gate, covers **none** of the database lanes, so
+CI is the only automatic gate for integration and e2e.
 
 ## Troubleshooting
 

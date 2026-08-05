@@ -53,11 +53,16 @@ WebStorm. If you ever want a showcase PR, open one by hand — nothing here forb
 ## What runs where
 
 CI is one workflow, [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml), with
-two jobs that both run on **every push to `main`**:
+four jobs that all run in parallel on **every push to `main`**:
 
-| Trigger        | `Lint & type-check` (fast) | `E2E (Cypress)` (slow) | Vercel            |
-| -------------- | -------------------------- | ---------------------- | ----------------- |
-| push to `main` | ✅                         | ✅                     | production deploy |
+| Job                    | Speed  | What it needs                   | What it catches                                    |
+| ---------------------- | ------ | ------------------------------- | -------------------------------------------------- |
+| `Lint & type-check`    | fast   | nothing                         | lint, types, migration drift, unit lane + coverage |
+| `CSP guard`            | medium | a production build              | un-nonced scripts that would ship a dead page      |
+| `Integration (Vitest)` | fast   | Postgres service container      | the DB-backed integration lane                     |
+| `E2E (Cypress)`        | slow   | Postgres + a running `next dev` | the app in a real browser, including accessibility |
+
+A push to `main` also triggers the Vercel **production** deploy.
 
 CI runs **after** the push, as a safety net — not as a merge gate (a direct push can't
 wait for checks that only start once it lands). The local `pnpm check:fast` before the
