@@ -5,6 +5,13 @@ visible in the editor and travels into every worktree. Claude reads and updates 
 at the start/end of sessions. (Claude Code has no native cross-session backlog panel —
 this file is the deliberate workaround.)
 
+**Relationship to GitHub Issues** — a hybrid, not duplicates. This file is the complete
+record and works offline; [Issues](https://github.com/andrewpetersondev/nextjs-dashboard/issues)
+carry only the _narratable_ units, so plenty of lines here have no issue and that is
+intended. Items filed as issues link to them below. Since feature work merges locally
+with no PR, an issue closes via a `Closes #N` **commit trailer** — and the backlog line
+is reconciled in that same commit. Convention in [`AGENTS.md`](AGENTS.md).
+
 ## Open
 
 > **Priority focus — set 2026-06-25 (active job hunt, ~1–2 week window).** Shifted the
@@ -54,12 +61,14 @@ this file is the deliberate workaround.)
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
-- [ ] **Renovate adoption** — for pnpm-version / node-version / `pnpm-workspace.yaml`
+- [ ] **Renovate adoption** ([#124](https://github.com/andrewpetersondev/nextjs-dashboard/issues/124))
+      — for pnpm-version / node-version / `pnpm-workspace.yaml`
       override automation + grouped dep updates (Dependabot can't do those). Replaces
       Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
       2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
       pnpm/node/override gap; Renovate would still automate grouped updates.)_
-- [ ] **Rootfiles sweep — remaining judgment calls** _(added 2026-07-30, from the root-file
+- [ ] **Rootfiles sweep — remaining judgment calls** ([#125](https://github.com/andrewpetersondev/nextjs-dashboard/issues/125))
+      _(added 2026-07-30, from the root-file
       audit; **security headers split out and DONE 2026-08-03** — see Done)_ — items that
       need a decision, not mechanics: **Cypress CI retries** (0 today — honest but
       flake-fragile; decide before the suite grows); **five Biome rules off with no
@@ -68,7 +77,8 @@ this file is the deliberate workaround.)
       time); **interactive Cypress paths bypass the PORT guards** (`cy:open` /
       `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
       **knip css hint** (project globs don't follow `.css` imports).
-- [ ] **CSP follow-ups** _(added 2026-08-03, from the security-headers lane — full
+- [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
+      _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
       MEASURED 2026-08-04: cold 1.69s, warm 0.21–0.37s.** The cold sample the earlier
       pass was missing now exists, so the cost this decision was most exposed on is
@@ -84,36 +94,56 @@ this file is the deliberate workaround.)
       collector and it's validated against Next 16 + React 19; **HSTS `includeSubDomains`**
       must be re-decided before any move to a custom domain (inert on `*.vercel.app`,
       a two-year non-revocable commitment on an apex you own).
-- [ ] **Cypress standalone typecheck lane** _(added 2026-07-30, rootfiles cleanup)_ — the
+- [ ] **Cypress standalone typecheck lane** ([#127](https://github.com/andrewpetersondev/nextjs-dashboard/issues/127))
+      _(added 2026-07-30, rootfiles cleanup)_ — the
       `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
       `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
       tsconfig-paths, so the script could never pass under TS7 (and was wired into no
       pipeline). Restoring a real tsc pass needs a typecheck-only tsconfig variant
       (paths without baseUrl) or a preprocessor that understands TS7 configs. Until
       then Cypress type errors surface in-editor and at spec webpack-compile time only.
-- [ ] **docs/ consolidation** — reconcile `docs/standards/` overlap with the existing
+- [ ] **docs/ consolidation** ([#128](https://github.com/andrewpetersondev/nextjs-dashboard/issues/128))
+      — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
-- [ ] **Forms taxonomy flattening** — the last open piece of the forms/error cleanup
+- [ ] **Forms taxonomy flattening** ([#129](https://github.com/andrewpetersondev/nextjs-dashboard/issues/129))
+      — the last open piece of the forms/error cleanup
       (the rest of the shrink → lock → decide → reshape roadmap completed 2026-06-13; see
       Done). Unscheduled. Core layering is sound, so don't migrate internals to DTOs.
       Full context in memory (`project_forms_error_refactor`).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
-- [ ] **Integration lane in CI (optional)** — the e2e job's Postgres-service-container
+- [ ] **Integration lane in CI (optional)** ([#130](https://github.com/andrewpetersondev/nextjs-dashboard/issues/130))
+      — the e2e job's Postgres-service-container
       pattern (2026-06-23) could also run the integration vitest lane in CI; today only
       the DB-free unit lane runs there. Unscheduled.
-- [ ] **Issue tracking: GitHub Issues/Projects vs. BACKLOG.md** _(revisit Mon 2026-06-29)_ —
-      consider a **hybrid**, not a switch: keep `BACKLOG.md` as the worktree-friendly planning
-      doc the AI sessions drive, but file the _narratable_ units (e.g. the invoice-status
-      feature, the forgot-password fix) as GitHub Issues that PRs close (`Closes #N`), plus a
-      small Projects board. Rationale = portfolio signal: makes the repo _look_ as
-      professionally run as it already is. Not now — only worth it once the demo polish lands.
-      Curiosity-driven (2026-06-25 chat).
 
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Issue/Projects hybrid — Issues adopted alongside BACKLOG.md** _(2026-08-04,
+      `claude/next-steps`)_ — the tracking item, taken once its own gate ("only worth it
+      after the demo polish lands") was met. Set up as a **hybrid, not a switch**:
+      `BACKLOG.md` stays the complete, offline, worktree-travelling planning record that
+      sessions drive; Issues carry only the **narratable units**, and that asymmetry is
+      deliberate. Filed the seven open "Later" items as [#124–#130] with bodies giving
+      problem / desired outcome / constraints-and-prior-art, each linked back from its
+      backlog line. Added a label system whose priority axis mirrors this file's own
+      Now/Next/Later vocabulary, plus `needs-decision` for work blocked on a judgement
+      call rather than effort. Added GitHub **issue forms** (`.github/ISSUE_TEMPLATE/`:
+      task, bug, config) — the task form's Definition-of-Done pre-fills the real gates.
+      **The original note's mechanism was stale and had to be adapted:** it said "Issues
+      that PRs close", written under the retired two-tier model — human feature work has
+      no PR now, so issues close via a `Closes #N` **commit trailer** reaching `main`.
+      (Bot PRs still exist — Dependabot, weekly-maintenance — so
+      `.github/PULL_REQUEST_TEMPLATE.md` is live, not residue.) Convention documented in
+      `AGENTS.md`. **Deliberately NOT done:** no retroactive issues for already-shipped
+      work — GitHub stamps creation dates, so filing and closing sixteen issues in one
+      day reads as staged rather than lived; history accrues honestly from here. Also
+      closed two zero-cost signal gaps found en route: the public repo had an **empty
+      description** and **no topics** (both now set). **Still open:** the Projects board —
+      the local `gh` token lacks the `project` scope, so it needs
+      `gh auth refresh -s project` from Andrew before a board can be created.
 - [x] **Prod measurement pass — Lighthouse + cold TTFB** _(2026-08-04,
       `claude/next-steps`)_ — closed the two loose ends the demo-first work left
       behind, both measurement, no product code changed. **Lighthouse** (v13 via

@@ -1,0 +1,63 @@
+name: Task
+description: A unit of planned work — feature, refactor, or tooling change.
+labels: ["priority: later"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Planning for this project lives in [`BACKLOG.md`](../blob/main/BACKLOG.md).
+        Issues track the **narratable units** — the ones worth a reader's attention.
+        Not every backlog line needs one.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is wrong, missing, or unclear today? Describe the situation, not the fix.
+      placeholder: The repo sends no security headers at all, so ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: What is true once this is done? Prefer observable outcomes over implementation steps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and prior art
+      description: >
+        Existing decisions this must respect — ADRs under `src/**/notes/adr/`, files in
+        `docs/standards/`, or a related issue. Note anything already ruled out and why.
+    validations:
+      required: false
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: The checks that must pass, and any docs that must be reconciled.
+      value: |
+        - [ ] `pnpm check:fast` green
+        - [ ] Unit + e2e green on the merged tree
+        - [ ] `BACKLOG.md` reconciled
+        - [ ] Docs / ADR updated if a decision was made
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Mirrors the Now / Later split in `BACKLOG.md`.
+      options:
+        - "now — active focus"
+        - "next — queued behind the current focus"
+        - "later — real, but deliberately deferred"
+      default: 2
+    validations:
+      required: true

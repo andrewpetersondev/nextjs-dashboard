@@ -13,9 +13,29 @@ These instructions apply to AI Assistant, Claude, and ChatGPT when working in th
 ## Branching
 
 Work flows through a **single-branch, local-first** model: cut a worktree branch from `main`, and merge
-it back into `main` **locally** (in the primary checkout) when it is green, then push. There are no PRs
-and no `develop` integration branch; CI runs on the push to `main`. Never commit directly on `main` —
+it back into `main` **locally** (in the primary checkout) when it is green, then push. There is no
+`develop` integration branch; CI runs on the push to `main`. Never commit directly on `main` —
 always work from a worktree feature branch. See [`docs/branching-and-releases.md`](docs/branching-and-releases.md).
+
+Human feature work opens **no pull request** — it merges locally. PRs still exist for automation
+(Dependabot, the weekly-maintenance routine), which is why `.github/PULL_REQUEST_TEMPLATE.md` is live.
+
+## Planning: BACKLOG.md and GitHub Issues
+
+The two are a **hybrid**, not duplicates, and each has one job:
+
+- [`BACKLOG.md`](BACKLOG.md) is the complete planning record and the file AI sessions read and update.
+  It travels into every worktree, so it works offline and needs no network round-trip. Everything goes
+  here, including work too small to be worth a reader's attention.
+- **GitHub Issues** track only the **narratable units** — the ones a reader would care about. Not every
+  backlog line earns an issue, and that asymmetry is deliberate.
+
+Because feature work has no PR, an issue is closed by a **commit trailer**, not a PR body. Put
+`Closes #N` on its own line at the end of the commit message; GitHub closes the issue when the commit
+reaches `main`. In a bot PR, the reference goes in the PR description as usual.
+
+When an issue closes, reconcile `BACKLOG.md` in the **same** commit — a closed issue and a stale
+backlog line is the failure mode this hybrid exists to avoid.
 
 ## Next.js: ALWAYS read docs before coding
 

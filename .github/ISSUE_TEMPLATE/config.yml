@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Backlog
+    url: https://github.com/andrewpetersondev/nextjs-dashboard/blob/main/BACKLOG.md
+    about: The full planning list, including work too small to warrant an issue.
+  - name: Architecture decision records
+    url: https://github.com/andrewpetersondev/nextjs-dashboard/blob/main/docs/README.md
+    about: Why things are built the way they are — read before proposing a redesign.

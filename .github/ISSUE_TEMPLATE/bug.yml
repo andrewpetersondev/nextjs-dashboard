@@ -1,0 +1,40 @@
+name: Bug
+description: Something behaves incorrectly.
+labels: ["type: fix"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: Observed behaviour, with the exact error or output where there is one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: The smallest sequence that shows it. Note which environment — dev, test, or the live deployment.
+      placeholder: |
+        1. pnpm dev
+        2. Visit /dashboard/invoices
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Blast radius
+      description: >
+        Who or what is affected, and whether anything silently swallows it. Failures that
+        look correct in a screenshot are the expensive kind — say so if you suspect one.
+    validations:
+      required: false
