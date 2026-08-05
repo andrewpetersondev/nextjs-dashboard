@@ -96,6 +96,27 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **`.claude/` audit — delete the inert sandbox block, fix command drift** _(2026-08-05,
+      `claude/claude-audit-cleanup`)_ — a full read of the 13 files under `.claude/` found the
+      **`sandbox.filesystem.denyRead` block was not gating anything**: `wc -c` through Bash read
+      `.env.production.local` at the _exact absolute path listed on line 81_. Related, and
+      demonstrated in the same session: Bash denies match on the **command-string prefix**, so
+      `printenv HOME` is denied while `env | grep '^HOME='` returns normally. The R2 refactor
+      (2026-07-30) had deleted ~10 `Bash(cat/grep/… .env*)` patterns _because_ the sandbox was
+      believed to be the real boundary — so the block was carrying weight it never had.
+      **Deleted it** rather than leave a rule that invites false confidence; `AGENTS.md` now states
+      plainly that `Read`/`Write` denies hold, Bash denies stop slips not paths, and the
+      "don't read/print/commit `.env*.local`" rule is the actual contract.
+      Also: dropped phantom `Bash(pnpm db:drop*)`/`db:wipe*` denies (no such scripts); corrected
+      `/check` and `/check-full` descriptions (both omitted Markdown, `/check` also omitted
+      `db:drift`, and `ship.md` already described the same script correctly); dropped `/lint`'s
+      redundant `biome:format:check` (`biome check` covers formatting); documented the `/fix`
+      write-lock in `fix.md` itself; added `$schema` to `settings.json` + `launch.json`; removed a
+      stray `.DS_Store`. **Left open for Andrew:** `.aiignore` globs `.env*` while `settings.json`
+      enumerates five filenames, so a future `.env.staging.local` would be ignored by JetBrains but
+      not denied to Claude — unresolved because permission rules have no negation, so a glob would
+      re-block the tracked `.env.example.local` contract (the exact bug R2 fixed).
+
 - [x] **Deploy-identity check — closing the push→deploy blind spot** _(2026-08-05,
       `claude/routines-review-artifacts`)_ — a routine-coverage review found the four scheduled
       agents well-distributed but **the seam between "I pushed" and "the push worked" unwatched**,
