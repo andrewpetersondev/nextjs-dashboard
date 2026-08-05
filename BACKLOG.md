@@ -122,8 +122,10 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       (reports a single failure, escalates only on repeats or a coincident smoke failure).
       Validation: `check:fast` green, 4 new unit tests pass, live `smoke:prod` green with the
       expected "reports no commit" warning (prod predates the change), `/api/health` verified
-      off-platform on the dev server. **Open:** `isDeployInFlight` threshold still `0` pending
-      Andrew's call on how long a mismatch reads as a deploy in flight.
+      off-platform on the dev server. **In-flight window set to 30 min** (Andrew's call) — a
+      mismatch inside it is a note, at or past it a failure; the decision was extracted into a pure
+      `classifyFreshness` so the threshold and its boundary are pinned by tests rather than buried
+      in the I/O path.
 
 - [x] **Lighthouse regression routine + off-peak retiming of all four agents** _(2026-08-05,
       `claude/routine-setup-recommendations`)_ — closed the last gap from the recommendation pass and

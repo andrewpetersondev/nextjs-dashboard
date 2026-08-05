@@ -32,25 +32,42 @@ const LABEL = "deploy-freshness";
  * How long after a push a SHA mismatch is still explained by a build in
  * progress rather than a build that failed.
  *
- * TODO(andrew): choose this value — see `isDeployInFlight` below.
+ * 30 minutes. A Vercel build of this project takes a few minutes, so the window
+ * only has to cover "pushed shortly before the run" — and the routine is DAILY,
+ * so widening it further would not surface a failed build any sooner anyway.
+ * The cost of going too short is the one that matters: a watchdog that fails
+ * every time it happens to run mid-deploy is a watchdog you learn to ignore.
  */
-const DEPLOY_IN_FLIGHT_SECONDS = 0;
+const DEPLOY_IN_FLIGHT_SECONDS = 30 * SECONDS_PER_MINUTE;
 
 /**
- * Is a SHA mismatch still plausibly a deploy that simply has not landed yet?
+ * What the deployed and expected SHAs mean together.
  *
- * TODO(andrew): implement the policy. `lagSeconds` is how long ago the newest
- * commit on `main` was authored; return `true` to treat the mismatch as
- * in-flight (reported as a note, run stays green) and `false` to fail the run.
- *
- * The trade-off: too short and the watchdog fails every time it happens to run
- * while a legitimate deploy is building, which trains you to ignore it. Too
- * long and a genuinely failed build goes unreported — though note the routine
- * is DAILY, so any threshold under ~12h behaves identically except for pushes
- * made shortly before the 06:11 run.
+ * Pure, and separate from the probing and reporting around it, because this is
+ * the whole decision: everything else is I/O. `lagSeconds` is how long ago the
+ * newest commit on `main` was authored, or null when that commit is not
+ * available locally to date.
  */
-function isDeployInFlight(lagSeconds: number): boolean {
-	return lagSeconds < DEPLOY_IN_FLIGHT_SECONDS;
+export type FreshnessVerdict =
+	| { readonly kind: "current" }
+	| { readonly kind: "in-flight"; readonly lagSeconds: number }
+	| { readonly kind: "stale"; readonly lagSeconds: number }
+	| { readonly kind: "undatable" };
+
+export function classifyFreshness(
+	deployed: string,
+	expected: string,
+	lagSeconds: number | null,
+): FreshnessVerdict {
+	if (deployed === expected) {
+		return { kind: "current" };
+	}
+	if (lagSeconds === null) {
+		return { kind: "undatable" };
+	}
+	return lagSeconds < DEPLOY_IN_FLIGHT_SECONDS
+		? { kind: "in-flight", lagSeconds }
+		: { kind: "stale", lagSeconds };
 }
 
 function shortSha(sha: string): string {
@@ -148,29 +165,34 @@ export async function checkDeployFreshness(report: SmokeReport): Promise<void> {
 		return;
 	}
 
-	if (deployed === expected) {
-		report.note(`deploy is current (${shortSha(deployed)})`);
-		return;
-	}
-
-	const lagSeconds = await commitAgeSeconds(expected);
-	if (lagSeconds === null) {
-		report.warn(
-			LABEL,
-			`serving ${shortSha(deployed)} but main is ${shortSha(expected)} — cannot date that commit locally, so this may be a deploy in flight`,
-		);
-		return;
-	}
-
-	if (isDeployInFlight(lagSeconds)) {
-		report.note(
-			`deploy in flight: serving ${shortSha(deployed)}, main moved to ${shortSha(expected)} ${minutes(lagSeconds)}m ago`,
-		);
-		return;
-	}
-
-	report.fail(
-		LABEL,
-		`serving ${shortSha(deployed)} but main has been at ${shortSha(expected)} for ${minutes(lagSeconds)}m — the build or deploy did not succeed, and production is running older code while every liveness check passes`,
+	const verdict = classifyFreshness(
+		deployed,
+		expected,
+		deployed === expected ? null : await commitAgeSeconds(expected),
 	);
+
+	switch (verdict.kind) {
+		case "current":
+			report.note(`deploy is current (${shortSha(deployed)})`);
+			break;
+		case "undatable":
+			report.warn(
+				LABEL,
+				`serving ${shortSha(deployed)} but main is ${shortSha(expected)} — cannot date that commit locally, so this may be a deploy in flight`,
+			);
+			break;
+		case "in-flight":
+			report.note(
+				`deploy in flight: serving ${shortSha(deployed)}, main moved to ${shortSha(expected)} ${minutes(verdict.lagSeconds)}m ago`,
+			);
+			break;
+		case "stale":
+			report.fail(
+				LABEL,
+				`serving ${shortSha(deployed)} but main has been at ${shortSha(expected)} for ${minutes(verdict.lagSeconds)}m — the build or deploy did not succeed, and production is running older code while every liveness check passes`,
+			);
+			break;
+		default:
+			break;
+	}
 }
