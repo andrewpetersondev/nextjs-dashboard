@@ -134,7 +134,8 @@ cypress/
 │       ├── cleanup-e2e-users.task.ts  # db:cleanup (deletes e2e_* users)
 │       └── seed-database.task.ts      # db:seed → devtools databaseSeed()
 │
-└── tsconfig.json              # extends root; types: cypress, node, testing-library, axe
+├── tsconfig.typecheck.json    # the real config: extends root; types: cypress, node, testing-library, axe
+└── tsconfig.json              # shim: extends the above + `baseUrl` for the webpack preprocessor
 ```
 
 ---
@@ -260,11 +261,14 @@ seeded, destructive specs at the **development** database if a dev server held t
 The preflight derives its URL from `PORT` the same way Cypress derives `baseUrl`, so a
 stale exported `PORT` sends both to the same server rather than hiding the mismatch.
 
-There is intentionally no standalone `tsc` pass for the Cypress project: TS7
-rejects the `baseUrl` option that `cypress/tsconfig.json` deliberately keeps for
-the webpack preprocessor's tsconfig-paths, so type errors surface in the editor
-and at spec compile time instead (see the comment in `cypress/tsconfig.json`,
-and BACKLOG "Cypress standalone typecheck lane").
+**Type-checking.** `pnpm typecheck:cypress` runs a real `tsc` pass over this
+project, and `pnpm typecheck` (hence `check:fast` and the CI `Lint & type-check`
+job) runs it after the app's. It reads `tsconfig.typecheck.json`, not
+`tsconfig.json`: TS7 removed `baseUrl` and errors on it, but the webpack
+preprocessor's tsconfig-paths still needs it to anchor the inherited `paths` at
+the repo root. So `tsconfig.typecheck.json` holds the real configuration without
+`baseUrl` and `tsconfig.json` is a two-line shim that extends it and adds
+`baseUrl` back for the bundler and editors. Both files carry the full reasoning.
 
 ---
 

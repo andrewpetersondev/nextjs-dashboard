@@ -19,7 +19,11 @@ Static analysis and formatting.
 - `pnpm biome:lint:fix` — run Biome checks and apply fixes.
 - `pnpm biome:summary` — print a compact check report.
 - `pnpm next:typegen` — generate Next.js route types (run before `typecheck` so it validates against fresh output).
-- `pnpm typecheck` — run TypeScript type checking (no emit).
+- `pnpm typecheck` — run TypeScript type checking (no emit) over both projects: app then Cypress.
+- `pnpm typecheck:app` — the app project only (`tsc -b tsconfig.json`).
+- `pnpm typecheck:cypress` — the Cypress project only, via `cypress/tsconfig.typecheck.json` (the
+  `baseUrl`-free variant of `cypress/tsconfig.json`; TS7 errors on `baseUrl`, which the webpack
+  preprocessor still needs — see the comments in both files).
 
 > Biome owns JS/TS/JSON here. Markdown is handled separately — see below.
 

@@ -132,7 +132,9 @@
 		"test:ui": "vitest --ui --project unit",
 		"test:unit": "vitest run --project unit",
 		"test:watch": "vitest --project unit",
-		"typecheck": "tsc -b tsconfig.json"
+		"typecheck": "pnpm typecheck:app && pnpm typecheck:cypress",
+		"typecheck:app": "tsc -b tsconfig.json",
+		"typecheck:cypress": "tsc -p cypress/tsconfig.typecheck.json"
 	},
 	"type": "module",
 	"version": "0.1.0"
