@@ -32,13 +32,14 @@ folder is for the cross-cutting, project-wide docs.
 | [branching-and-releases.md](branching-and-releases.md) | "Which branch do I work on, how does a change reach production, and what CI runs at each step?"    |
 | [lane-map.md](lane-map.md)                             | "If I want to run several Claude sessions at once, how do I split the work so they don't collide?" |
 
-Two scheduled agents run outside the push-triggered pipeline, because what they watch changes
+Three scheduled agents run outside the push-triggered pipeline, because what they watch changes
 without a commit:
 
 | Doc                                                            | The question it answers                                          |
 | -------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [prod-watchdog-routine.md](prod-watchdog-routine.md)           | "Is the live demo actually working right now — including login?" |
 | [weekly-maintenance-routine.md](weekly-maintenance-routine.md) | "What keeps dependencies, codemods, and version pins current?"   |
+| [bot-pr-triage-routine.md](bot-pr-triage-routine.md)           | "What is in the PR queue, and what should I do with each one?"   |
 
 ## Build tooling & configuration
 

@@ -96,6 +96,31 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Bot-PR triage routine** _(2026-08-05, `claude/routine-setup-recommendations`)_ — the second
+      gap from the routine-recommendation pass. Under the local-first model human work merges with
+      no PR, so the PR queue is **entirely bots** (Dependabot weekly + the weekly-maintenance Monday
+      PR) and nothing in the daily workflow pulls attention to it. That has already cost work: #105
+      sat until it was overtaken and closed as superseded by #107, and it is not isolated —
+      **#113, #114, #116, #117, #119 and #122 were all closed rather than merged**, mostly because a
+      manual upgrade or a later grouped PR overtook them while they waited. Now the `bot-pr-triage`
+      `/schedule` agent (cron `0 9 * * 2,5`) classifies every open PR into one of six buckets —
+      clean / superseded / release-age-blocked / needs-lockstep / failing / conflicted — with one
+      recommended action each. Spec: `docs/bot-pr-triage-routine.md`.
+      **Tue+Fri, not daily:** Dependabot is `interval: weekly` (Monday) and weekly-maintenance also
+      lands Monday, so Tuesday triages a full queue one day old — by which point anything blocked on
+      pnpm 11's ~24h `minimumReleaseAge` has cleared — and Friday sweeps before the weekend.
+      **Superseded is verified, not guessed** (reads the version on `main` from `package.json` and
+      compares against the PR target). **Release-age blocking is treated as the policy working**, not
+      a defect — wait and rebase, never bypass. Standing holds encoded from prior incidents: Biome
+      bumps checked for `panicked` (2.5.3 panicked on 8 files while exiting 0 — silent lint loss),
+      `next` bumps held to `>= 16.2.12` for TS7, and `sharp` flagged because it is override-pinned.
+      **It never merges, closes, approves, pushes or edits** — the merge decision stays the review
+      gate; its one permitted write is a single `@dependabot rebase` comment on a PR whose release-age
+      block has cleared. Also flags any PR open >14 days by name, and leaves human-authored PRs alone.
+      Docs-only change in the repo (the agent itself lives in `~/.claude/scheduled-tasks/`).
+      Housekeeping in the same pass: the orphaned `merge-dependabot-pr-36` scheduled-task directory
+      was identified as residue (its PR merged 2026-06-09, already deregistered from the scheduler).
+
 - [x] **Production watchdog routine** _(2026-08-05, `claude/routine-setup-recommendations`)_ — closed
       the one structural gap in this repo's guard coverage: every existing check (`check:fast`, the
       four CI jobs) is **event-driven off a commit** and proves the CODE, so nothing observed the
