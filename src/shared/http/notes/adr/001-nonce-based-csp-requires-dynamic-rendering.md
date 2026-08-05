@@ -107,9 +107,22 @@ Notes on two directives:
   becomes fail-open.
 - Five documents lose build-time prerendering and edge-cached HTML;
   `Cache-Control` flips from `s-maxage=31536000` to `no-store`. `/` fetches no
-  data, so the render itself is free and cold start dominates. **The cold TTFB
-  on production `/` is unmeasured** — the one number this decision's
-  first-impression cost hangs on. Measure it after deploy.
+  data, so the render itself is free and cold start dominates. **Measured on
+  production `/` 2026-08-04: cold TTFB 1.69s, warm 0.24–0.37s** (cold = one
+  sample on the first request after an idle period; warm = the six sequential
+  requests that followed, plus six more the same day at 0.21–0.29s). Lighthouse
+  against the same origin reports `server-response-time` at 40–50ms once warm,
+  so the cold number is start-up, not render. The accepted cost is therefore
+  real but bounded: a recruiter arriving at an idle deployment waits ~1.7s to
+  first byte. Whether **Fluid Compute** is enabled on the project is still
+  unconfirmed (dashboard-only setting); it is the lever if the cold path ever
+  needs to be shortened.
+- **`no-store` also disables the browser back/forward cache**, which is a
+  second-order cost of the same flip and was not anticipated here. Lighthouse
+  flags it on both presets and marks it "Not actionable" — a bfcache entry is
+  impossible while the main resource sends `no-store`. Costs an instant
+  restore on back-navigation; it does not affect first paint, and there is no
+  fix that keeps this CSP.
 - **Cache Components / PPR are off the table** for now: Next documents PPR as
   incompatible with nonce-based CSP (`vercel/next.js#89754`, open).
 - `next/image` emits `style="color:transparent"` unconditionally at five
@@ -149,7 +162,8 @@ regex and on per-tag nonces rather than on console output.
 
 ## Follow-ups
 
-- Measure cold and warm TTFB on production `/` and record both here.
+- ~~Measure cold and warm TTFB on production `/`~~ — done 2026-08-04, recorded
+  under Consequences above. Remaining: confirm whether Fluid Compute is on.
 - `require-trusted-types-for 'script'` on a Report-Only header, once there is a
   collector and it has been validated against Next 16 + React 19.
 - Before moving to a custom domain, confirm every subdomain of the apex serves
