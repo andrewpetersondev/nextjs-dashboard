@@ -89,9 +89,6 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       collector and it's validated against Next 16 + React 19; **HSTS `includeSubDomains`**
       must be re-decided before any move to a custom domain (inert on `*.vercel.app`,
       a two-year non-revocable commitment on an apex you own).
-- [ ] **docs/ consolidation** ([#128](https://github.com/andrewpetersondev/nextjs-dashboard/issues/128))
-      — reconcile `docs/standards/` overlap with the existing
-      `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
 
@@ -99,6 +96,43 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **docs/ consolidation — one home per rule** _(2026-08-05, `claude/docs-consolidation`,
+      [#128](https://github.com/andrewpetersondev/nextjs-dashboard/issues/128))_ — the last piece
+      of the docs work: `docs/standards/` overlapped three older docs that predate it, with no
+      stated winner, so a reader could follow either and get different answers. Resolved by giving
+      each rule exactly one home and making every other mention a link.
+      **Two docs deleted outright.** `when-to-use-app-error.md` (22 lines) held exactly one rule
+      the standards didn't: _policy decision → return a domain outcome value; technical failure →
+      `Err(AppError)`_. That rule was verified live before promoting it —
+      `evaluateSessionLifecyclePolicy` really does return a decision carrying a
+      `TerminateSessionReason` rather than an `Err` — and now sits in
+      `standards/error-handling-and-result-pattern.md` under Failure Classification. The rest of
+      the file was tentative note-to-self prose ("you don't have to do that now"), not a standard.
+      `ui-refactor-strategy.md` (330 lines) was a **2026-04 migration plan with durable placement
+      rules mixed in**. The durable half moved into `project-structure.md` as a new "Placing a
+      component (TSX)" section; the plan half was dropped as spent, and it was measurably stale —
+      its target taxonomy listed `presentation/templates|adapters|view-models` folders that exist
+      in **no** module, and `src/shell/dashboard/frames/` which does not exist, while its one
+      concrete migration ask (`src/ui/layouts/` → `wrappers/`) was **already done**. All five of
+      its named reference files were checked and still exist, so those carried over. It also
+      contained the same 4-step decision tree **twice** ("Placement Checklist" and "Decision
+      Framework"); the merged version states it once.
+      **The authority split is now written down** in `docs/README.md` and echoed as a scope note in
+      each doc: top-level directory → `project-structure.md`; layer inside a module →
+      `clean-architecture-standards.md`; what it's called →
+      `naming-conventions-and-organization.md`; how failures are modeled →
+      `error-handling-and-result-pattern.md`. Under that split two sections were **in the wrong
+      file** and moved: `global-standards.md`'s "Server Action Responsibilities" and its
+      `@/server/**` import allowlist are layer rules, so they now live in
+      `clean-architecture-standards.md` beside the other layer rules. Three duplicate copies were
+      reduced to pointers (global-standards' "Project Structure" list, clean-architecture's
+      "Screaming Architecture" folder stub), and `project-structure.md` lost its generic
+      §2 "Map concerns to layers" — boilerplate naming models (`Account`, `Transaction`) this repo
+      has never had, which also contradicted its own import-boundary section by putting server
+      actions in Infrastructure. Inbound links repointed: `docs/README.md` plus the `customers`,
+      `invoices`, and `users` module READMEs. Every relative link in the eight touched files was
+      resolved against the filesystem; no dangling references remain. Validation: `check:fast`
+      green (markdownlint + dprint included), unit 373/373.
 - [x] **Forms taxonomy flattening** _(2026-08-05, `claude/next-steps-600eb9`,
       [#129](https://github.com/andrewpetersondev/nextjs-dashboard/issues/129))_ — the last
       open piece of the shrink → lock → decide → reshape roadmap, whose other three steps

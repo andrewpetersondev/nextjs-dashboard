@@ -43,17 +43,22 @@ folder is for the cross-cutting, project-wide docs.
 
 ## Architecture & design
 
-| Doc                                                  | The question it answers                                                                                       |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [project-structure.md](project-structure.md)         | "Where does this code belong, and which layer may import which?"                                              |
-| [shared-architecture.md](shared-architecture.md)     | "What belongs in `src/shared`, and how is it organized?"                                                      |
-| [ui-refactor-strategy.md](ui-refactor-strategy.md)   | "Does this component go in `src/app`, `src/ui`, or a module's `presentation`?"                                |
-| [when-to-use-app-error.md](when-to-use-app-error.md) | "Should this failure be an `AppError` or a domain policy outcome?"                                            |
-| [diagrams/](diagrams/)                               | The visual companion — sequence, ERD, C4, state, and layering diagrams. See its [README](diagrams/README.md). |
+| Doc                                              | The question it answers                                                                                       |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| [project-structure.md](project-structure.md)     | "Where does this code belong, which layer may import which, and where does a component go?"                   |
+| [shared-architecture.md](shared-architecture.md) | "What belongs in `src/shared`, and how is it organized?"                                                      |
+| [diagrams/](diagrams/)                           | The visual companion — sequence, ERD, C4, state, and layering diagrams. See its [README](diagrams/README.md). |
 
 ## Coding standards
 
 Detailed, opinionated standards in [standards/](standards/), consulted by AI assistants and humans alike (relocated from the old `.aiassistant/rules/`). Apply each by judgment, based on the files you're touching.
+
+Each rule has one home, so that two docs can't give different answers. The split: **which top-level
+directory** a file goes in is [project-structure.md](project-structure.md); **which layer inside a
+module** is [clean-architecture-standards.md](standards/clean-architecture-standards.md); **what it
+is called** is [naming-conventions-and-organization.md](standards/naming-conventions-and-organization.md);
+**how failures are modeled** is [error-handling-and-result-pattern.md](standards/error-handling-and-result-pattern.md).
+Where a doc mentions a rule another one owns, it links rather than restates.
 
 | Doc                                                                                                  | The question it answers                                                          |
 | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |

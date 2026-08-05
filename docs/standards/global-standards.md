@@ -40,17 +40,11 @@ Avoid "drift" caused by silent fallbacks or implicit defaults.
 
 ## Project Structure
 
-Organize features using a **Modular Clean Architecture** approach:
-
-- **Global UI**: `@/ui` (Atoms, Molecules - Atomic Design). Shared, stateless components.
-- **Feature Modules**: `@/modules/{feature_name}` (Bounded Contexts).
-  - `domain/`
-  - `application/`
-  - `infrastructure/`
-  - `presentation/`
-- **Shared**: `@/shared/` (cross-cutting concerns: error handling, functional `Result` types, Zod schemas).
-- **Server**: `@/server/` (Global singletons: DB client, logger configuration).
-- **Shell**: `@/shell/` (App-wide layout, providers, and global navigation).
+Features are organized as **Modular Clean Architecture** vertical slices. Which top-level directory
+a file belongs to — and which may import which — is owned by
+[project-structure.md](../project-structure.md); the layering inside a module is owned by
+[clean-architecture-standards.md](clean-architecture-standards.md). This doc does not restate
+either.
 
 ## Module Boundaries & Communication
 
@@ -62,38 +56,5 @@ Organize features using a **Modular Clean Architecture** approach:
 - **Communication**: Prefer asynchronous events (Domain Events) or simple service calls via contracts for cross-module
   interaction to maintain loose coupling.
 
-## Server Action Responsibilities (Interface Adapters)
-
-Server Actions must remain **thin** and framework-focused. They are the bridge between the Web (HTTP/Forms) and your
-Application logic.
-
-- **Allowed Concerns**:
-  - Extracting data from `FormData`.
-  - Retrieving request metadata (IP, User Agent, Cookies).
-  - Initializing observability (Request IDs, Performance Trackers).
-  - Validating input schemas (via Zod/Form Helpers).
-  - Invoking a **single** Use Case or Workflow.
-  - Mapping Domain/Application Results to UI-compatible `FormResult`.
-  - Triggering Next.js navigation (`redirect`, `revalidatePath`).
-- **Forbidden Concerns**:
-  - Direct Database queries (DAL/Drizzle).
-  - Business logic or complex branching (move to Use Cases).
-  - Manual password hashing or crypto logic.
-  - Instantiating complex Infrastructure classes directly (use Factories).
-
-### `@/server/**` boundary (server-only infrastructure)
-
-`@/server/**` is a server-only infrastructure boundary for shared sensitive code (DB, secrets, cookies, crypto, event
-bus).
-
-**Allowed imports**:
-
-- `infrastructure/**` → may import from `@/server/**`
-- `presentation/**` (server actions, route handlers) → may import from `@/server/**`
-- `shared/**` (server utilities only) → may import from `@/server/**` **only if** the importing file is server-only
-
-**Forbidden imports**:
-
-- `domain/**` → must never import from `@/server/**`
-- `application/**` → must never import from `@/server/**`
-- Client Components (`"use client"`) → must never import from `@/server/**` (enforced via `"server-only"`)
+What a Server Action may and may not do, and which layers may reach `@/server/**`, are layer rules —
+see [clean-architecture-standards.md](clean-architecture-standards.md).

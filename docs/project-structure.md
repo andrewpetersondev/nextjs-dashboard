@@ -2,6 +2,16 @@
 
 Use this guide to decide where code belongs and how layers interact.
 
+> **What this doc owns:** placement across the **top level of `src/`** — which of `modules`,
+> `shared`, `shell`, `server`, `ui`, or `app` a file belongs to, and which of those may import
+> which. Layering **inside** a module (`domain` → `application` → `infrastructure` →
+> `presentation`) is owned by
+> [standards/clean-architecture-standards.md](standards/clean-architecture-standards.md), and what
+> a file is called is owned by
+> [standards/naming-conventions-and-organization.md](standards/naming-conventions-and-organization.md).
+> Where this doc and a standard both mention a rule, the standard wins on detail and this doc wins
+> on which directory.
+>
 > **The model in one line:** each feature is a self-contained vertical slice under
 > `src/modules/<feature>/`, internally organized into clean-architecture layers
 > (`presentation/`, `application/`, `domain/`, `infrastructure/`) — so a module owns
@@ -19,44 +29,7 @@ Use this guide to decide where code belongs and how layers interact.
 - Page/layout composition: App "chrome" and orchestration that stitches together multiple modules for a route (e.g.,
   dashboard pages, sidebars, nav, guards, providers).
 
-## 2) Map concerns to layers
-
-- UI (React Components)
-  - Page Components
-    - Layout components (headers, footers, navigation)
-    - Dashboard views
-    - Form pages
-    - Authentication screens
-  - Shared Components
-    - Buttons and CTAs
-    - Input fields and form controls
-    - Cards and containers
-    - Modal dialogs
-    - Tables and data grids
-  - UI Elements
-    - Typography components
-    - Icons and visual elements
-    - Loading states and spinners
-    - Toast notifications
-    - Error boundaries
-  - Layout Components
-    - Flex containers
-    - Grid systems
-    - Responsive wrappers
-    - Section dividers
-
-- Domain (business logic, data models, services, and core functionality)
-  - Models: User, Account, Transaction
-  - Services: Authentication, Authorization, Business rules
-  - Data validation and transformation logic
-
-- Infrastructure (system setup and technical foundation)
-  - Database access, repositories, and migrations
-  - Server actions and services
-  - Authentication middleware and session handling
-  - Integration with external systems
-
-## 3) Apply import-boundary restrictions
+## 2) Apply import-boundary restrictions
 
 - shared: May only import from shared. Lowest-level utilities, tokens, and primitives.
 - ui: Base, reusable UI primitives and patterns (atoms/molecules). May import from shared.
@@ -68,6 +41,11 @@ Use this guide to decide where code belongs and how layers interact.
 One-way dependency rule of thumb:
 shared/ui -> modules -> shell -> app
 the shared `server` infra is usable from modules/shell/app as needed.
+
+Two refinements live elsewhere, deliberately: which of a _peer module's_ layers you may reach into
+is [standards/global-standards.md](standards/global-standards.md#module-boundaries--communication),
+and which layers may import `@/server/**` is
+[standards/clean-architecture-standards.md](standards/clean-architecture-standards.md#the-server-boundary-server-only-infrastructure).
 
 ---
 
@@ -125,6 +103,63 @@ the shared `server` infra is usable from modules/shell/app as needed.
 
 ---
 
+## Placing a component (TSX)
+
+Components are the case where the four candidate homes look most alike, so they get their own pass.
+This section covers _where a component file goes_; how it should look and behave is
+[standards/ui-design-standards.md](standards/ui-design-standards.md).
+
+### What each home is for
+
+- **`src/app`** — the App Router contract only: `page.tsx`, `layout.tsx`, `template.tsx`,
+  `loading.tsx`, `error.tsx`, `global-error.tsx`, `not-found.tsx`, `default.tsx`, `route.ts`, route
+  groups like `(overview)`, and route-local `_components`/`_lib` folders. Keep these files thin —
+  read params, invoke loading or an action, delegate rendering. `src/app` is not a component
+  library.
+- **`src/ui`** — feature-agnostic building blocks: atoms, molecules, wrappers, navigation
+  primitives, skeletons, brand, styles, generic form controls. No business vocabulary
+  (`invoice`, `user`, `auth`, `dashboard`) and no server actions or feature validation. The test:
+  would this still make sense in a different app on the same design system?
+- **`src/modules/<feature>/presentation`** — anything speaking one feature's language: its forms,
+  tables, panels, empty states, server actions, mappers, transports, view models, and page
+  templates. May depend on `src/ui` and its own module's application/domain code.
+- **`src/shell`** — app chrome and cross-feature composition: the dashboard sidebar, nav links, the
+  composed overview screen. May depend on `src/ui` and several modules' presentation layers; must
+  not absorb low-level primitives or re-own URL structure.
+
+### The order to decide in
+
+1. Is it a real Next.js route artifact, or route-local? → `src/app`
+2. Does it speak one feature's language or run one feature's workflow? → `src/modules/<feature>/presentation`
+3. Does it compose multiple features or define app chrome? → `src/shell`
+4. Is it feature-agnostic shared UI? → `src/ui`
+
+If more than one fits, take the **more specific** owner. Promoting a component from feature-local to
+shared later is easy; cleaning feature semantics back out of `src/ui` after they spread is not.
+
+### Signals a file is in the wrong home
+
+- In `src/ui` but its name, props, or copy says `auth`, `invoice`, `user`, or `dashboard`.
+- In a module's `presentation` but other features import it as a generic building block.
+- In `src/shell` but it has stopped composing features and become a visual primitive.
+- In `src/app` but it is neither a route convention file nor genuinely route-local.
+
+### Reserve `layout.tsx` and `template.tsx` for routes
+
+In this codebase `layout.tsx` and bare `template.tsx` mean App Router files, so don't reuse those
+names for ordinary wrappers elsewhere. Outside `src/app`, name the concept: `templates/` for
+page-level feature wrappers, `wrappers/` for narrow structural ones, `frames/` for larger
+compositions inside a feature, `sections/` for self-contained page sections. Prefer a descriptive
+filename — `auth-page-template.tsx` over `template.tsx`.
+
+Current files worth copying as references:
+`src/modules/auth/presentation/authn/components/shared/wrappers/auth-page-template.tsx` (feature
+page scaffold), `src/shell/dashboard/components/dashboard-sidebar.tsx` (app chrome),
+`src/shell/dashboard/components/dashboard-overview.tsx` (composed screen), and
+`src/ui/molecules/page-header.molecule.tsx` (shared molecule — keep it feature-neutral).
+
+---
+
 ## Do/Don't by layer
 
 - shell
@@ -165,4 +200,5 @@ boundaries, and simplify testing and scaling of both the UI and the backend.
 
 ---
 
-_Last updated: 2026-06-24_
+_Last updated: 2026-08-05 — absorbed the durable placement rules from the retired
+`ui-refactor-strategy.md`._

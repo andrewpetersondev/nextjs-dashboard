@@ -3,6 +3,12 @@
 Rules for maintaining strict architectural boundaries and ensuring business logic remains independent of frameworks and
 drivers.
 
+> **Scope:** this doc owns the layers **inside** a module — what `domain`, `application`,
+> `infrastructure`, and `presentation` may each import and contain. Choosing between the top-level
+> directories (`modules` vs `shell` vs `server` vs `ui` vs `shared`) is
+> [project-structure.md](../project-structure.md); what things are called is
+> [naming-conventions-and-organization.md](naming-conventions-and-organization.md).
+
 ## Core Principles
 
 1. **Strict Dependency Rule**: Source code dependencies must point only inwards.
@@ -360,7 +366,16 @@ export class UserRepository implements UserRepositoryContract {
 
 **What Belongs Here**:
 
-- **Server Actions** (`actions/`): Thin adapters between forms and use cases
+- **Server Actions** (`actions/`): Thin adapters between forms and use cases. They are the bridge
+  between the web (HTTP/forms) and application logic, and must stay framework-focused.
+  - **Allowed**: extracting data from `FormData`; reading request metadata (IP, user agent,
+    cookies); initializing observability (request ids, performance trackers); validating input
+    schemas via Zod/form helpers; invoking a **single** use case or workflow; mapping
+    domain/application `Result`s to a UI-compatible `FormResult`; triggering Next.js navigation
+    (`redirect`, `revalidatePath`).
+  - **Forbidden**: direct database queries (DAL/Drizzle); business logic or complex branching (move
+    it to a use case); manual password hashing or crypto; instantiating infrastructure classes
+    directly (use factories).
 
   ```typescript
   // ✅ Good: Extract, validate, call use case, map result
@@ -386,6 +401,19 @@ export class UserRepository implements UserRepositoryContract {
   export type LoginTransport = z.input<typeof LoginRequestSchema>;
   export type LoginField = keyof LoginTransport;
   ```
+
+### The `@/server/**` boundary (server-only infrastructure)
+
+`@/server/**` holds shared, sensitive server-only code — the DB connection, secrets, cookies,
+crypto. It cuts across the layer rules above, so it gets its own allowlist:
+
+- **May import it**: `infrastructure/**`; `presentation/**` (server actions, route handlers);
+  `shared/**` **only** where the importing file is itself server-only.
+- **Must never import it**: `domain/**`; `application/**`; any client component (`"use client"`) —
+  the last is enforced at runtime by `"server-only"`.
+
+What belongs inside `@/server/**` in the first place (as opposed to a module's own
+`infrastructure/`) is [project-structure.md](../project-structure.md).
 
 ## Boundary Crossing & Data Flow
 
@@ -612,12 +640,10 @@ export type LoginRequestDto = z.output<typeof LoginRequestSchema>;
 
 ## Screaming Architecture
 
-### File Organization
-
-```text
-auth/
-  domain/
-  application/
-  infrastructure/
-  presentation/
-```
+A module's top level should name its layers, not its frameworks — `auth/domain/`,
+`auth/application/`, `auth/infrastructure/`, `auth/presentation/`. The full folder layout, down to
+the directories inside each layer, is in
+[naming-conventions-and-organization.md](naming-conventions-and-organization.md#folder-organization-modular-clean-architecture).
+Not every module carries every layer: the thin CRUD slices (`customers`, `banner`) skip
+`application/` — see [diagrams/module-layers.md](../diagrams/module-layers.md) for the real
+per-module map.

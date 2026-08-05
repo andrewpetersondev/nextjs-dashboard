@@ -7,6 +7,25 @@ The project treats failures as first-class citizens using a "Result-first" appro
 - **Expected Failures**: (Validation, "Not Found", Policy violations). Treat as **values**.
 - **Unexpected Failures**: (Programmer errors, broken invariants, impossible states). Treat as **exceptions**.
 
+### `AppError` vs. a domain policy outcome
+
+`AppError` is an application/boundary error: it carries a stable key and metadata meant to be
+translated into a UI or HTTP response. That makes it right for server actions and route handlers,
+application services and workflows, and infrastructure adapters mapping technical failures upward.
+
+It is the wrong shape for a **pure domain policy decision**. A policy that decides something is
+answering a business question, not reporting a failure, so it should return its own outcome type:
+
+- **Policy decision** → return a domain outcome **value** (a discriminated union or decision object).
+- **Technical failure** → return `Err(AppError)`, or a narrower infrastructure error mapped to
+  `AppError` one layer up.
+
+The session lifecycle is the worked example: `evaluateSessionLifecyclePolicy`
+(`src/modules/auth/domain/session/policies/`) returns a decision carrying a `TerminateSessionReason`
+— not an `Err`. The caller in the application layer decides what that decision means at the
+boundary. Keeping the policy `AppError`-free is also what keeps `domain/` library-independent (see
+[clean-architecture-standards.md](clean-architecture-standards.md)).
+
 ## The Result Pattern
 
 Use `Result` from `@/shared/core/result/result.dto` for all **expected failures**.

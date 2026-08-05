@@ -256,8 +256,8 @@ The **update** flow has a dedicated visual companion:
   message from `USER_ERROR_MESSAGES`.
 
 For when something should be an `AppError`, see
-[when-to-use-app-error.md](../../../docs/when-to-use-app-error.md) and the
-[error-handling flow diagram](../../../docs/diagrams/error-handling-flow.md).
+[error-handling-and-result-pattern.md](../../../docs/standards/error-handling-and-result-pattern.md)
+and the [error-handling flow diagram](../../../docs/diagrams/error-handling-flow.md).
 
 ---
 
