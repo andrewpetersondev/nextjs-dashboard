@@ -91,7 +91,10 @@ Cypress.Commands.add("loginAsDemoAdmin", () => {
 // impact in axe-core, so a critical+serious filter would not guard the
 // landmark structure at all. Minor stays excluded. Blocking by design —
 // no skipFailures flag, violations FAIL the spec.
-const A11Y_INCLUDED_IMPACTS: ImpactValue[] = [
+//
+// NonNullable, because axe-core's `ImpactValue` includes `null` while
+// cypress-axe types `includedImpacts` as `string[]`.
+const A11Y_INCLUDED_IMPACTS: NonNullable<ImpactValue>[] = [
 	"critical",
 	"serious",
 	"moderate",

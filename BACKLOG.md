@@ -89,14 +89,6 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       collector and it's validated against Next 16 + React 19; **HSTS `includeSubDomains`**
       must be re-decided before any move to a custom domain (inert on `*.vercel.app`,
       a two-year non-revocable commitment on an apex you own).
-- [ ] **Cypress standalone typecheck lane** ([#127](https://github.com/andrewpetersondev/nextjs-dashboard/issues/127))
-      _(added 2026-07-30, rootfiles cleanup)_ — the
-      `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
-      `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
-      tsconfig-paths, so the script could never pass under TS7 (and was wired into no
-      pipeline). Restoring a real tsc pass needs a typecheck-only tsconfig variant
-      (paths without baseUrl) or a preprocessor that understands TS7 configs. Until
-      then Cypress type errors surface in-editor and at spec webpack-compile time only.
 - [ ] **docs/ consolidation** ([#128](https://github.com/andrewpetersondev/nextjs-dashboard/issues/128))
       — reconcile `docs/standards/` overlap with the existing
       `project-structure.md`, `when-to-use-app-error.md`, and `ui-refactor-strategy.md`.
@@ -112,6 +104,27 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Cypress standalone typecheck lane** _(2026-08-04, `claude/issue-127-0f4b0d`,
+      [#127](https://github.com/andrewpetersondev/nextjs-dashboard/issues/127))_ — the
+      Cypress sources sit outside the `tsc -b` graph and had no `tsc` pass at all; type
+      errors surfaced only in-editor and at spec webpack-compile time. Fixed by
+      **splitting the config**, the first of the two routes the issue named:
+      `cypress/tsconfig.typecheck.json` now holds the real configuration **without**
+      `baseUrl` (which TS7 removed and now errors on, TS5102), and `cypress/tsconfig.json`
+      is a shim that extends it and adds `baseUrl` back. Nothing else moved, so the
+      hard-won preprocessor wiring is untouched.
+      **The premise was verified, not assumed**: dropping `baseUrl` outright was
+      probed against the real resolver and **would have broken spec bundling** —
+      `tsconfig-paths@4` computes `absoluteBaseUrl` as `dirname(tsconfig) + (baseUrl ?? "")`,
+      so without it the inherited `paths` rebase onto `cypress/` and `@cypress/e2e/shared/urls`
+      stops resolving. The shim's resolved output was then confirmed byte-identical to the
+      old single file's. Wired in via `pnpm typecheck` (now `typecheck:app` +
+      `typecheck:cypress`), so it runs in `check`, `check:fast`, **and** the CI
+      `Lint & type-check` job — the "wired into no pipeline" flaw that killed the last
+      script. **The pass immediately found a real error** it was meant to catch:
+      `A11Y_INCLUDED_IMPACTS` was typed `ImpactValue[]`, which includes `null`, against
+      cypress-axe's `includedImpacts?: string[]` — now `NonNullable<ImpactValue>[]`.
+      Costs ~0.5s.
 - [x] **Integration lane in CI** _(2026-08-04, `claude/integration-ci`,
       [#130](https://github.com/andrewpetersondev/nextjs-dashboard/issues/130))_ — the
       5 integration test files (21 tests, all auth's sharpest paths: session rotation,

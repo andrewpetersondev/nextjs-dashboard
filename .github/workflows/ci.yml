@@ -82,7 +82,10 @@ jobs:
       - name: Next.js typegen
         run: pnpm next:typegen
 
-      # 8. TypeScript type-checking, against fresh typegen output.
+      # 8. TypeScript type-checking, against fresh typegen output. Two projects:
+      #    the app (`tsc -b`) and the Cypress sources, which sit outside that
+      #    build graph and need their own baseUrl-free tsconfig variant to pass
+      #    under TS7 (see cypress/tsconfig.typecheck.json).
       - name: Type-check
         run: pnpm typecheck
 

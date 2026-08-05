@@ -1,25 +1,18 @@
 // biome-ignore-all assist/source/useSortedKeys: order matters in tsconfig files
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
-	"extends": ["../tsconfig.json"],
+	// The config the TOOLS pick up: editors, and — via get-tsconfig — the Cypress
+	// webpack preprocessor. It exists only to add `baseUrl` on top of
+	// `tsconfig.typecheck.json`; every other option lives there.
+	//
+	// Why the split: `baseUrl` was removed in TypeScript 7 and tsc now errors on
+	// it (TS5102), but the preprocessor's tsconfig-paths still needs it to anchor
+	// the inherited `paths` at the repo root — without it they resolve relative to
+	// `cypress/` and every `@cypress/*` / `@/*` import fails to bundle. So the
+	// baseUrl-free variant is what `pnpm typecheck:cypress` reads, and this one is
+	// what the bundler reads. Editors may flag the line below — ignore it.
+	"extends": ["./tsconfig.typecheck.json"],
 	"compilerOptions": {
-		// Modules
-		// baseUrl was removed in TypeScript 7 and is gone from the root tsconfig,
-		// but Cypress's webpack preprocessor (tsconfig-paths) still requires it to
-		// activate the inherited `paths` aliases. This file is never typechecked by
-		// `tsc -b`, so TS7 does not reject it here; editors may flag it — ignore.
-		"baseUrl": "..",
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"],
-		// Language and Environment
-		"lib": ["esnext", "dom"],
-		"target": "esnext"
-	},
-	"include": [
-		"../cypress.config.ts",
-		"./**/*.ts",
-		"./**/*.tsx",
-		"../database/**/*.ts"
-	]
+		"baseUrl": ".."
+	}
 }

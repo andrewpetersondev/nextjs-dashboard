@@ -1,0 +1,31 @@
+// biome-ignore-all assist/source/useSortedKeys: order matters in tsconfig files
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	// The real configuration for the Cypress project, and the one `tsc` reads
+	// (`pnpm typecheck:cypress`). It is deliberately free of `baseUrl`, which
+	// TypeScript 7 removed — the inherited `paths` from the root tsconfig are
+	// resolved relative to the file that declares them, so they need no base.
+	//
+	// `cypress/tsconfig.json` extends THIS file and adds `baseUrl` back for the
+	// webpack preprocessor's tsconfig-paths, which still requires it. Keep every
+	// other option here so the two configs cannot drift.
+	"extends": ["../tsconfig.json"],
+	"compilerOptions": {
+		// Modules
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"types": ["cypress", "node", "@testing-library/cypress", "cypress-axe"],
+		// Language and Environment
+		"lib": ["esnext", "dom"],
+		"target": "esnext",
+		// Emit — this project is type-checked only; specs are compiled by the
+		// Cypress preprocessor (Babel under TS7), never by tsc.
+		"noEmit": true
+	},
+	"include": [
+		"../cypress.config.ts",
+		"./**/*.ts",
+		"./**/*.tsx",
+		"../database/**/*.ts"
+	]
+}
