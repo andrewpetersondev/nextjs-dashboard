@@ -41,22 +41,30 @@ installed Chrome (reporting which binary it used) if that path stops existing.
 
 | Preset  | Perf | A11y | Best-practices | SEO |
 | ------- | ---- | ---- | -------------- | --- |
-| Mobile  | 98   | 100  | 100            | 100 |
-| Desktop | 98   | 100  | 100            | 100 |
+| Mobile  | 100  | 100  | 100            | 100 |
+| Desktop | 100  | 100  | 100            | 100 |
 
-Reference timings — mobile: FCP 1.1s, LCP 2.3s, TBT 40ms, CLS 0. Desktop: FCP 0.5s, LCP 0.6s,
-TBT 0ms, CLS 0, server-response ~200ms.
+Measured 2026-08-05 on Lighthouse 13.4.1. Reference timings — mobile: FCP 1.0s, LCP 1.3s, TBT 10ms,
+CLS 0, server-response ~200ms. Desktop: FCP 0.6s, LCP 0.7s, TBT 0ms, CLS 0, server-response ~130ms.
+
+**Known noise:** performance oscillates between roughly 98 and 100 on both presets with no code
+change — `force-dynamic` on a free tier means a cold start moves the number. A reading of 98 is not
+a regression, and the 5-point threshold below is sized for exactly that.
 
 ### The version caveat, which is load-bearing
 
-**Lighthouse scores are only comparable within a version.** This is not a theoretical concern — it
-showed up immediately. The original manual run recorded desktop performance at **100**; running
-13.4.1 against unchanged production code gives **98**, and 13.4.1 also reports an `agentic-browsing`
-category that did not exist in the earlier run.
+**Lighthouse scores are only comparable within a version**, and the category set itself changes
+between versions — 13.4.1 reports an `agentic-browsing` category that earlier runs did not have, so
+a naive diff of "which categories exist" would read as a change to the site.
 
 So the agent always reports the `lighthouseVersion` it used, and when that version differs from one
 named in a previous issue comment it says explicitly that part of any delta may be the tool rather
 than the site. A regression report without a version stamp is not evidence.
+
+Worth separating from this: the first desktop sample on 13.4.1 read **98** and the second read
+**100**, same version, same unchanged code. That gap was run-to-run noise, not a version effect —
+which is why the baseline was set from the paired confirming run and why the routine re-runs a
+failing preset before escalating.
 
 ## Escalation
 
