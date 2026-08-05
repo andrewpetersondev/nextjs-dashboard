@@ -49,8 +49,8 @@ this file is the deliberate workaround.)
    blocking moderate-impact axe coverage, live regions, and the review's loose ends
    (global-error, missing error boundaries, lane-map refresh) all landed to the
    2026-08-02 verified designs, plus the contrast/label fixes the new blocking checks
-   surfaced. Lighthouse scoring was NOT part of the decided sub-items and was not run —
-   worth a quick manual pass against prod after the merge if curious.
+   surfaced. **Lighthouse pass since run against prod (2026-08-04) — see Done;
+   a11y 100 on both presets, so the axe work holds up under a second engine.**
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
@@ -69,16 +69,21 @@ this file is the deliberate workaround.)
       `cy:e2e:run` skip the env-pin + identity preflight that protect `cy:e2e`);
       **knip css hint** (project globs don't follow `.css` imports).
 - [ ] **CSP follow-ups** _(added 2026-08-03, from the security-headers lane — full
-      reasoning in `src/shared/http/notes/adr/001`)_ — **warm TTFB on production `/`
-      MEASURED 2026-08-04: 0.21–0.29s** (6 sequential requests; total 0.25–0.33s), so
-      losing edge-cached HTML did **not** hurt the first impression — the cost this
-      decision was most exposed on is now known and acceptable. Still open on that
-      sub-item: a genuine **cold** start (all six samples were warm, from one location)
-      and whether **Fluid Compute** is on. Remaining: **`require-trusted-types-for
-      'script'`** on a Report-Only header once there is a collector and it's validated
-      against Next 16 + React 19; **HSTS `includeSubDomains`** must be re-decided before
-      any move to a custom domain (inert on `*.vercel.app`, a two-year non-revocable
-      commitment on an apex you own).
+      reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
+      MEASURED 2026-08-04: cold 1.69s, warm 0.21–0.37s.** The cold sample the earlier
+      pass was missing now exists, so the cost this decision was most exposed on is
+      known end to end: an idle deployment costs a first visitor ~1.7s to first byte,
+      warm is a quarter-second, and Lighthouse puts `server-response-time` at 40–50ms
+      once warm (so the cold number is start-up, not render). Judged acceptable.
+      A second-order cost surfaced in the same pass and is recorded in the ADR:
+      **`no-store` disables the browser bfcache** (Lighthouse: "Not actionable"),
+      so back-navigation loses its instant restore — no fix keeps this CSP.
+      Still open: whether **Fluid Compute** is on (dashboard-only setting, needs
+      Andrew — it's the lever if the cold path ever needs shortening);
+      **`require-trusted-types-for 'script'`** on a Report-Only header once there is a
+      collector and it's validated against Next 16 + React 19; **HSTS `includeSubDomains`**
+      must be re-decided before any move to a custom domain (inert on `*.vercel.app`,
+      a two-year non-revocable commitment on an apex you own).
 - [ ] **Cypress standalone typecheck lane** _(added 2026-07-30, rootfiles cleanup)_ — the
       `typecheck:cypress` script was removed: TS7 rejects the `baseUrl` option that
       `cypress/tsconfig.json` deliberately keeps for the webpack preprocessor's
@@ -109,6 +114,26 @@ this file is the deliberate workaround.)
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Prod measurement pass — Lighthouse + cold TTFB** _(2026-08-04,
+      `claude/next-steps`)_ — closed the two loose ends the demo-first work left
+      behind, both measurement, no product code changed. **Lighthouse** (v13 via
+      local Chrome Dev, headless, against the live Vercel deployment — the keyless
+      PageSpeed Insights API was quota-exhausted, so it ran locally):
+      **mobile 98 / 100 / 100 / 100** and **desktop 100 / 100 / 100 / 100**
+      (perf / a11y / best-practices / SEO). Mobile FCP 1.1s, LCP 2.3s, TBT 40ms,
+      CLS 0; desktop FCP 0.4s, LCP 0.6s, TBT 0, CLS 0. **a11y 100 on both presets
+      independently corroborates the axe work** from the a11y lane — a different
+      engine, same verdict. Only real perf notes are minor and shared by both
+      presets: ~29KB unused JS in one chunk, two render-blocking CSS chunks, a
+      legacy-JS transform hint. **Cold TTFB** on `/` finally sampled: **1.69s cold
+      vs 0.24–0.37s warm**, which completes the one number ADR-001 said its
+      first-impression cost hung on. **New finding:** `no-store` (from the CSP
+      lane's `force-dynamic`) also **disables the browser bfcache** — Lighthouse
+      flags it on both presets as "Not actionable"; back-navigation loses its
+      instant restore and no fix keeps this CSP. Both recorded in
+      `src/shared/http/notes/adr/001` Consequences. Not resolved: whether Fluid
+      Compute is enabled — a dashboard-only setting, and the Vercel CLI here is
+      unauthenticated.
 - [x] **Security headers + a strict nonce CSP** _(2026-08-03, `claude/security-headers`)_ —
       first item pulled from "Later" after the demo-first list closed; split out of the
       rootfiles sweep. The repo sent NO security headers at all. Now five static headers
