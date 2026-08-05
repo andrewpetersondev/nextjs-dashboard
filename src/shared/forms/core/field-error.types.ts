@@ -1,4 +1,4 @@
-import type { NonEmptyArray } from "@/shared/forms/core/types/array.types";
+import type { NonEmptyArray } from "@/shared/forms/core/array.types";
 
 /**
  * Represents an error associated with a field as a non-empty array of messages.

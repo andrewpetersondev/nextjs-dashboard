@@ -18,13 +18,13 @@ import { SensitiveData } from "@/modules/invoices/presentation/forms/sensitive-d
 import type {
 	DenseFieldErrorMap,
 	FieldError,
-} from "@/shared/forms/core/types/field-error.types";
+} from "@/shared/forms/core/field-error.types";
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
-import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
+} from "@/shared/forms/core/form-result.dto";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/field-error-map.mapper";
+import { extractFieldErrors } from "@/shared/forms/logic/form-error.inspector";
 import { CENTS_IN_DOLLAR } from "@/shared/primitives/money/money.constants";
 import { ROUTES } from "@/shared/routing/routes";
 import { FormActionRow } from "@/ui/forms/components/wrappers/form-action-row";

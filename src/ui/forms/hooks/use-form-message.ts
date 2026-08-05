@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FormState } from "@/shared/forms/core/types/form-result.dto";
+import type { FormState } from "@/shared/forms/core/form-result.dto";
 import { ALERT_AUTO_HIDE_MS } from "@/shared/time/time.constants";
 
 /**

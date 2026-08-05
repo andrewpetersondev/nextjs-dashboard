@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/forms/core/form-result.dto";
 import type { ButtonProps } from "@/ui/atoms/button.atom";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { cn } from "@/ui/utils/cn";

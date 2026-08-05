@@ -17,10 +17,16 @@ as a serializable `FormResult` DTO (never an `AppError` instance).
   allowlists, so secrets never round-trip.
 - `presentation/` — client-side error-payload mapping.
 
+Each layer is flat: the file suffix (`.types`/`.dto`/`.guard`/`.factory`/
+`.inspector`/`.mapper`/`.utils`) already names the kind, so there are no
+`types/`, `mappers/`, or `factories/` subdirectories to restate it. The layer
+is the only axis that encodes a real constraint — `server/` must never be
+imported from a client component — which is why it survived the flattening.
+
 Design notes, the security rationale for the echo allowlist, and the ADR live
 in [`notes/README.md`](notes/README.md) — read that before reshaping anything
 here. Core layering was deliberately kept (see `project_forms_error_refactor`
-history); the one open item is taxonomy flattening (BACKLOG, Later).
+history).
 
 ## Import Rules
 

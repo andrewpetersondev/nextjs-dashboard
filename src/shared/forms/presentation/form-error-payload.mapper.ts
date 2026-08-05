@@ -1,12 +1,12 @@
 import type { AppErrorLike } from "@/shared/core/errors/core/app-error.dto";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
-import type { FormErrorPayload } from "@/shared/forms/core/types/form-result.dto";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/field-error.types";
+import type { FormErrorPayload } from "@/shared/forms/core/form-result.dto";
+import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/field-error-map.mapper";
 import {
 	extractFieldErrors,
 	extractFieldValues,
 	extractFormErrors,
-} from "@/shared/forms/logic/inspectors/form-error.inspector";
-import { makeEmptyDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
+} from "@/shared/forms/logic/form-error.inspector";
 
 /**
  * Adapts a canonical AppError (entity or serialized DTO) into a shape the

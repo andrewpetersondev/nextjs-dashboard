@@ -5,7 +5,7 @@ import {
 	extractFieldErrors,
 	extractFieldValues,
 	extractFormErrors,
-} from "@/shared/forms/logic/inspectors/form-error.inspector";
+} from "@/shared/forms/logic/form-error.inspector";
 
 /**
  * Unit tests for the form error inspector (form-error.inspector.ts).

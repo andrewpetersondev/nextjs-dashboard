@@ -3,8 +3,8 @@ import type { OkResult } from "@/shared/core/result/result.dto";
 import type {
 	DenseFieldErrorMap,
 	FormErrors,
-} from "@/shared/forms/core/types/field-error.types";
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
+} from "@/shared/forms/core/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/field-value.types";
 
 /**
  * Failed form submission carrying a serialized error.

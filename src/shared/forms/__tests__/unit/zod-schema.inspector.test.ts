@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
 	resolveCanonicalFieldNames,
 	toSchemaKeys,
-} from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+} from "@/shared/forms/logic/zod-schema.inspector";
 
 /**
  * Unit tests for the Zod schema inspector (zod-schema.inspector.ts).

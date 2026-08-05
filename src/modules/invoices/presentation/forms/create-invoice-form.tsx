@@ -13,8 +13,8 @@ import { InvoiceAmountInput } from "@/modules/invoices/presentation/forms/invoic
 import { InvoiceDate } from "@/modules/invoices/presentation/forms/invoice-date";
 import { InvoiceStatusRadioGroup } from "@/modules/invoices/presentation/forms/invoice-status-radio-group";
 import { SensitiveData } from "@/modules/invoices/presentation/forms/sensitive-data";
-import type { FormState } from "@/shared/forms/core/types/form-result.dto";
-import { extractFieldErrors } from "@/shared/forms/logic/inspectors/form-error.inspector";
+import type { FormState } from "@/shared/forms/core/form-result.dto";
+import { extractFieldErrors } from "@/shared/forms/logic/form-error.inspector";
 import { ROUTES } from "@/shared/routing/routes";
 import { H1 } from "@/ui/atoms/headings.atom";
 import { FormActionRow } from "@/ui/forms/components/wrappers/form-action-row";

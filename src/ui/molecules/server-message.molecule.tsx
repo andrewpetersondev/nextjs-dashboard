@@ -4,7 +4,7 @@ import type {
 	FormResult,
 	FormState,
 	FormSuccessPayload,
-} from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/forms/core/form-result.dto";
 
 /**
  * State accepted by the molecule: `null` until the first submission (idle),

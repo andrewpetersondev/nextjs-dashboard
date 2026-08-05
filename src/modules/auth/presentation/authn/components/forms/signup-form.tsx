@@ -10,11 +10,11 @@ import { AuthActionsRow } from "@/modules/auth/presentation/authn/components/sha
 import { FormRowWrapper } from "@/modules/auth/presentation/authn/components/shared/wrappers/form-row.wrapper";
 import type { AuthActionProps } from "@/modules/auth/presentation/authn/transports/auth-action-props.transport";
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
-import type { FormState } from "@/shared/forms/core/types/form-result.dto";
+import type { FormState } from "@/shared/forms/core/form-result.dto";
 import {
 	extractFieldErrors,
 	extractFieldValues,
-} from "@/shared/forms/logic/inspectors/form-error.inspector";
+} from "@/shared/forms/logic/form-error.inspector";
 import { InputFieldMolecule } from "@/ui/molecules/input-field.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 import { INPUT_ICON_CLASS } from "@/ui/styles/icons.tokens";

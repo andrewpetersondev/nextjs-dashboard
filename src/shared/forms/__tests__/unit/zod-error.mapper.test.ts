@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
 	fromZodError,
 	toDenseFieldErrorMapFromZod,
-} from "@/shared/forms/server/mappers/zod-error.mapper";
+} from "@/shared/forms/server/zod-error.mapper";
 
 /**
  * Unit tests for the Zod error mapper (zod-error.mapper.ts).

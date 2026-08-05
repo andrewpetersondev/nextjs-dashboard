@@ -1,12 +1,12 @@
 "use server";
 import { redirect } from "next/navigation";
 import { makeAuthComposition } from "@/modules/auth/infrastructure/composition/auth.composition";
-import type { DenseFieldErrorMap } from "@/shared/forms/core/types/field-error.types";
+import type { DenseFieldErrorMap } from "@/shared/forms/core/field-error.types";
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
+} from "@/shared/forms/core/form-result.dto";
+import { makeFormError } from "@/shared/forms/logic/form-result.factory";
 import {
 	ADMIN_ROLE,
 	USER_ROLE,

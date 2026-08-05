@@ -3,7 +3,7 @@ import {
 	CREATABLE_INVOICE_STATUSES,
 	INVOICE_STATUSES,
 } from "@/modules/invoices/domain/statuses/invoice.statuses";
-import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { toSchemaKeys } from "@/shared/forms/logic/zod-schema.inspector";
 
 // Must stay at or above the seed range (maxLargeAmountCents = $50k) and
 // include $0 (the zero seed tier): the edit form round-trips stored amounts

@@ -1,7 +1,7 @@
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/forms/core/form-result.dto";
 
 /**
  * Standard contract for a Next.js Server Action used with useActionState.

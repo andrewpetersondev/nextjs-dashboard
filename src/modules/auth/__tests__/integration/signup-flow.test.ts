@@ -7,8 +7,8 @@ import { signupAction } from "@/modules/auth/presentation/authn/actions/signup.a
 import type { SignupField } from "@/modules/auth/presentation/authn/transports/signup.transport";
 import { toHash } from "@/server/crypto/hashing/hashing.value";
 import { getAppDb } from "@/server/db/db.connection";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { toFormErrorPayload } from "@/shared/forms/presentation/form-error-payload.mapper";
 
 /**
  * Integration tests for the complete signup flow.

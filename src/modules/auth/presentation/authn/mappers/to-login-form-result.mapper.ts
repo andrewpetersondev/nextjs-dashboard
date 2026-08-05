@@ -5,10 +5,10 @@ import {
 } from "@/modules/auth/presentation/authn/transports/login.form.schema";
 import type { LoginField } from "@/modules/auth/presentation/authn/transports/login.transport";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { selectEchoedFieldValues } from "@/shared/forms/logic/mappers/field-value-map.mapper";
-import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { selectEchoedFieldValues } from "@/shared/forms/logic/field-value-map.mapper";
+import { makeFormError } from "@/shared/forms/logic/form-result.factory";
+import { toFormErrorPayload } from "@/shared/forms/presentation/form-error-payload.mapper";
 
 const LOGIN_CREDENTIALS_ERROR_MESSAGE =
 	"Invalid credentials. Please try again.";

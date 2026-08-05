@@ -1,7 +1,7 @@
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
-import type { FormResult } from "@/shared/forms/core/types/form-result.dto";
-import { makeFormError } from "@/shared/forms/logic/factories/form-result.factory";
-import { toFormErrorPayload } from "@/shared/forms/presentation/mappers/form-error-payload.mapper";
+import type { FormResult } from "@/shared/forms/core/form-result.dto";
+import { makeFormError } from "@/shared/forms/logic/form-result.factory";
+import { toFormErrorPayload } from "@/shared/forms/presentation/form-error-payload.mapper";
 
 /**
  * Maps generic authentication errors to a {@link FormResult} with appropriate field and form-level errors.

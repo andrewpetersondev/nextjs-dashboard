@@ -4,7 +4,7 @@ import {
 	makeFormError,
 	makeFormOk,
 	toFormErrResult,
-} from "@/shared/forms/logic/factories/form-result.factory";
+} from "@/shared/forms/logic/form-result.factory";
 
 /**
  * Unit tests for the form result factory (form-result.factory.ts).

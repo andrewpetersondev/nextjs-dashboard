@@ -62,25 +62,21 @@ when done.
 
 ## Today's BACKLOG, mapped onto lanes
 
-With the job-hunt "Now" items landed (invoice lifecycle, demo surface, a11y pass), the open list is
-back to tooling/docs/config plus two scoped code items — still _very_ parallel-friendly:
+With the job-hunt "Now" items landed (invoice lifecycle, demo surface, a11y pass) and the tooling
+sweep behind them (rootfiles decisions, integration CI lane, Cypress typecheck lane, forms taxonomy
+flattening), the open list is down to four items — all tooling, docs, or research:
 
-| BACKLOG item                            | Lane                       | Edit footprint                        |
-| --------------------------------------- | -------------------------- | ------------------------------------- |
-| Invoice amount-cap vs seed mismatch     | invoices                   | `src/modules/invoices/**`, seed tasks |
-| Session absolute-ceiling fix            | auth + users               | `src/modules/auth/**` (claims/rotate) |
-| Renovate adoption                       | chore (CI/config)          | CI + workspace config                 |
-| Rootfiles decisions (CSP, retries, ...) | chore (config)             | root configs, `next.config.ts`        |
-| Cypress standalone typecheck lane       | chore (config)             | `cypress/tsconfig.json`, scripts      |
-| docs/ consolidation                     | docs                       | `docs/standards/**`, `docs/**`        |
-| Integration lane in CI                  | chore (CI)                 | `.github/workflows/ci.yml`            |
-| Skills exploration                      | research (no code)         | none                                  |
-| **Forms taxonomy flattening**           | **kernel — single-thread** | `src/shared/forms/**`                 |
+| BACKLOG item               | Lane               | Edit footprint                 |
+| -------------------------- | ------------------ | ------------------------------ |
+| Renovate adoption (#124)   | chore (CI/config)  | CI + workspace config          |
+| CSP follow-ups (#126)      | chore (security)   | `next.config.ts`, `proxy.ts`   |
+| docs/ consolidation (#128) | docs               | `docs/standards/**`, `docs/**` |
+| Skills exploration         | research (no code) | none                           |
 
-A clean four-session day right now could be **invoice amount-cap** + **session ceiling** +
-**docs consolidation** + **skills exploration** — four near-disjoint footprints. **Forms taxonomy
-flattening** is the one to keep solo: it lives in the shared kernel, so don't pair it with another
-kernel task.
+All four footprints are disjoint, so they could run as four parallel lanes — but two of them are
+blocked on decisions rather than effort (CSP follow-ups need a report collector and a custom-domain
+call; Renovate needs the Mend GitHub App installed), so in practice this is a one- or two-lane list.
+Nothing currently open touches the shared kernel, which is where the single-thread rule bites.
 
 ## The protocol
 

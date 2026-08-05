@@ -1,4 +1,4 @@
-import type { FormErrors } from "@/shared/forms/core/types/field-error.types";
+import type { FormErrors } from "@/shared/forms/core/field-error.types";
 
 /**
  * Default human-readable messages for common form outcomes.

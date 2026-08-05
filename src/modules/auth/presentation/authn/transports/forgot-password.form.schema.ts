@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { toSchemaKeys } from "@/shared/forms/logic/inspectors/zod-schema.inspector";
+import { toSchemaKeys } from "@/shared/forms/logic/zod-schema.inspector";
 import { EmailSchema } from "@/shared/policies/email/email.schema";
 
 /**

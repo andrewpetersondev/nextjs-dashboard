@@ -3,7 +3,7 @@ import {
 	makeEmptyDenseFieldErrorMap,
 	selectSparseFieldErrors,
 	toDenseFieldErrorMap,
-} from "@/shared/forms/logic/mappers/field-error-map.mapper";
+} from "@/shared/forms/logic/field-error-map.mapper";
 
 /**
  * Unit tests for the field error map mapper (field-error-map.mapper.ts).

@@ -2,7 +2,7 @@ import type {
 	DenseFieldErrorMap,
 	FieldError,
 	SparseFieldErrorMap,
-} from "@/shared/forms/core/types/field-error.types";
+} from "@/shared/forms/core/field-error.types";
 
 /**
  * Creates an empty dense error map (all fields present with empty arrays).

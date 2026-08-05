@@ -20,12 +20,12 @@ import { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/forms/core/form-result.dto";
+import { toDenseFieldErrorMap } from "@/shared/forms/logic/field-error-map.mapper";
 import {
 	makeFormError,
 	makeFormOk,
-} from "@/shared/forms/logic/factories/form-result.factory";
-import { toDenseFieldErrorMap } from "@/shared/forms/logic/mappers/field-error-map.mapper";
+} from "@/shared/forms/logic/form-result.factory";
 import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
 import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client";

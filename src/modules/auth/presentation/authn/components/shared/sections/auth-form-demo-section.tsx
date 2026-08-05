@@ -7,7 +7,7 @@ import {
 import type {
 	FormResult,
 	FormState,
-} from "@/shared/forms/core/types/form-result.dto";
+} from "@/shared/forms/core/form-result.dto";
 
 interface AuthFormDemoSectionProps {
 	readonly demoAdminAction: (

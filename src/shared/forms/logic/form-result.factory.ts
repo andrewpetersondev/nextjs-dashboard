@@ -5,13 +5,13 @@ import { Ok } from "@/shared/core/result/result";
 import type {
 	DenseFieldErrorMap,
 	FormErrors,
-} from "@/shared/forms/core/types/field-error.types";
-import type { SparseFieldValueMap } from "@/shared/forms/core/types/field-value.types";
+} from "@/shared/forms/core/field-error.types";
+import type { SparseFieldValueMap } from "@/shared/forms/core/field-value.types";
 import type {
 	FormResult,
 	FormSuccessPayload,
-} from "@/shared/forms/core/types/form-result.dto";
-import type { FormValidationMetadata } from "@/shared/forms/core/types/validation.types";
+} from "@/shared/forms/core/form-result.dto";
+import type { FormValidationMetadata } from "@/shared/forms/core/validation.types";
 
 /**
  * Parameters for creating a form error result.
