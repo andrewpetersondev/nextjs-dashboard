@@ -22,12 +22,14 @@ records its scope and rationale; use `/schedule` to list, adjust, or disable it.
    official codemod (`npx @next/codemod@latest upgrade`), applying relevant transforms.
 2. **Biome migration** — if `@biomejs/biome` is behind, bump it and run
    `pnpm biome migrate --write` to update `biome.json` to the new schema.
-3. **Verify** with `pnpm check:fast` (lint + typecheck + typegen) before opening the PR.
+3. **Verify** with `pnpm check:fast` (Biome + Markdown + typegen + typecheck + migration
+   drift) before opening the PR. Note it runs no tests — `pnpm check` is the one that does.
 
 ### Recommended additions (why each earns its place)
 
 1. **Dependabot's blind spots** _(report, or bump if safe)_ — the pnpm version pin
-   (`packageManager: pnpm@11.5.3`), Node `.nvmrc` (`26`), and any `overrides` /
+   (`packageManager:` in `package.json` — read the live value rather than trusting this
+   doc, which has gone stale before), Node `.nvmrc` (`26`), and any `overrides` /
    `pnpm-workspace.yaml` overrides. These are exactly what broke CI on 2026-06-11 and
    what Dependabot/this project's current tooling can't bump. **Lockstep rule:** when a
    bumped dependency also appears in an `overrides` block, bump both together.
@@ -96,7 +98,9 @@ known gotchas. Never push to main, never merge, never run any db:*:prod script.
 
 ## Creating / disabling it
 
-- **Create:** run `/schedule` and paste the prompt above with the cron `0 9 * * 1`.
+- **Create:** run `/schedule` and paste the prompt above with the cron `47 21 * * 0` (the
+  live schedule — see [Schedule](#schedule) and the shared off-peak policy in
+  [`README.md`](README.md#scheduled-agents)).
 - **Adjust or stop later:** `/schedule` can list, update, or delete existing routines.
 
 ---

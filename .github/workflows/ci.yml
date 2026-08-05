@@ -1,8 +1,9 @@
 # Continuous Integration (CI)
 #
 # Single-branch, local-first model: feature work is merged into `main` locally
-# (worktrees share one object store, so no remote round-trip) and pushed. There
-# are no PRs — CI runs on every push to `main` as the safety net.
+# (worktrees share one object store, so no remote round-trip) and pushed. Human
+# feature work opens no PRs — CI runs on every push to `main` as the safety net.
+# (Dependabot still opens PRs; `dependency-review.yml` is the gate for those.)
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
 #     Next.js typegen + type-check) plus the migration-drift gate and the DB-free
@@ -16,7 +17,7 @@
 #     substitute: it strips the CSP header by default and runs against
 #     `next dev`, which never prerenders.
 #
-# #   4. `integration` — the Vitest integration lane against a real Postgres
+#   • integration — the Vitest integration lane against a real Postgres
 #      service container. Needs a database but no browser and no server, so it
 #      is its own job rather than a step in `e2e`: it finishes in about a minute
 #      instead of waiting on the full Cypress suite.
@@ -231,10 +232,11 @@ jobs:
   e2e:
     name: E2E (Cypress)
     # Runs on every push to `main` (the only trigger now). The local pre-push
-    # `pnpm check:fast` covers lint/types/unit; this is the full e2e safety net.
+    # `pnpm check:fast` covers lint/types/typegen/drift but runs NO tests at
+    # all; this is the full e2e safety net.
     runs-on: ubuntu-latest
     # Generous ceiling: a cold `next dev` (Turbopack compiles routes on first
-    # hit) plus 20 specs. The warm local run is ~35s; this is a safety net.
+    # hit) plus 23 specs. The warm local run is ~35s; this is a safety net.
     timeout-minutes: 15
 
     # Ephemeral test database. POSTGRES_DB MUST be `test_db`: the `db-env-guard`

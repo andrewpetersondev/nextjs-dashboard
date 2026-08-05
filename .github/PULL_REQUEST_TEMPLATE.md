@@ -13,9 +13,9 @@
 
 ## How it was tested
 
-- [ ] `pnpm check:fast` (lint + typecheck + typegen)
+- [ ] `pnpm check:fast` (Biome + Markdown + typegen + typecheck + migration drift)
 - [ ] `pnpm test` (unit)
-- [ ] `pnpm cy:e2e` (end-to-end)
+- [ ] `pnpm e2e` (end-to-end)
 - [ ] Manually verified in the running app
 
 <!-- For UI changes, add before/after screenshots here. -->

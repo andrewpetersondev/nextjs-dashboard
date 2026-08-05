@@ -51,6 +51,8 @@ Run these steps in order.
 7. **Report.** A short summary:
    - **Removed** — worktrees you removed (paths) + branches now queued for deletion.
    - **Needs your call — dirty** — worktrees skipped, with the blocking files.
-   - **Needs your call — possibly unmerged** — `[gone]` branches with unmerged work and no merged PR.
+   - **Needs your call — possibly unmerged** — branches with a nonzero `origin/main..<branch>` count,
+     including `[gone]` ones. This repo's local-first flow has no PRs to check against, so commits
+     absent from `origin/main` is the only evidence available — report them, never delete them.
 
    End with a fresh `git worktree list` so the result is visible.

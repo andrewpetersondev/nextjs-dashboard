@@ -12,9 +12,11 @@ pnpm check:repo    # the full gate: pnpm check (lint+types+tests+e2e) && pnpm kn
 
 Knip parses source statically; it never executes the app, so it does **not** need a
 running database or `.env` file. (It is intentionally kept env-free — see the drizzle
-note below.) Knip is **not** part of CI (`.github/workflows/ci.yml` runs `check:fast`
-only); run it locally, or let the `weekly-maintenance` `/schedule` routine report new
-findings each week.
+note below.) Knip is **not** part of CI — `.github/workflows/ci.yml` runs its checks as individual
+scripts (`biome:lint`, `md:check`, `next:typegen`, `typecheck`, `db:drift`,
+`test:coverage`, `test:integration`, `csp:guard:build`, `cy:e2e`), and `knip` is not
+among them. Run it locally via `pnpm check:repo`, or let the `weekly-maintenance`
+`/schedule` routine report new findings each week.
 
 Exit code `1` just means "findings were reported" — it is not a crash.
 

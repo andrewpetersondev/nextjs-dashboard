@@ -34,8 +34,10 @@ it automatically.
    section in [../CLAUDE.md](../CLAUDE.md)).
 2. Make your change.
 3. Run `pnpm check:fast` (Biome + Markdown + type-check + typegen + drift) — this is
-   your **pre-push gate**, standing in for pre-merge CI. The `/ship` command runs
-   steps 2–4 end-to-end and stops here, handing you the merge.
+   your **pre-push gate**, standing in for pre-merge CI. The `/ship` command does this
+   step for you: it reviews the diff, reconciles `BACKLOG.md`/`docs/`, runs the gate,
+   commits on the worktree branch, then **stops and hands you step 4** — it will not
+   merge into `main` or push.
 4. In your **primary checkout**, merge the worktree branch into `main` and push:
 
    ```sh

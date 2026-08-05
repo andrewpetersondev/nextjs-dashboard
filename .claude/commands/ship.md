@@ -28,9 +28,10 @@ Run these steps in order. If a step's precondition fails, STOP and report — do
    you hand off — it's what keeps the `main` push from going red.
 
 5. **Commit.** Stage the change set (code + reconcile edits), then make one focused commit,
-   conventional-commit style. Use `$ARGUMENTS` as the scope/summary when provided. End the message with:
-
-   `Co-Authored-By: Claude <noreply@anthropic.com>`
+   conventional-commit style. Use `$ARGUMENTS` as the scope/summary when provided. End the message
+   with the `Co-Authored-By:` trailer your harness prescribes — it names the specific model
+   (`Claude Opus 5`, `Claude Fable 5`, …), which is what this repo's history actually carries. Don't
+   hardcode a model-agnostic literal here; it would be wrong for every commit.
 
 6. **Hand off the local merge — do NOT merge into `main` yourself.** `main` is checked out in the
    primary checkout (your review gate); a worktree can't and shouldn't merge into it. Report that the

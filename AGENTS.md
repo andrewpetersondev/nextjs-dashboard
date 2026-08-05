@@ -65,7 +65,8 @@ the files you are touching.
 ## Markdown tooling
 
 Markdown is linted by markdownlint-cli2 (`.markdownlint-cli2.jsonc`) and formatted by dprint (`dprint.json`) —
-Biome's markdown support is still experimental, so it only owns JS/TS/JSON here. Formatting rules (whitespace,
+Biome's markdown support is still experimental, so Biome owns JS/TS/JSON/CSS here and Markdown goes to
+markdownlint + dprint. Formatting rules (whitespace,
 list/table layout, emphasis markers) are disabled in markdownlint and owned by dprint. Use `pnpm md:check` to
 verify and `pnpm md:fix` to auto-fix (markdownlint first, dprint last).
 

@@ -6,6 +6,30 @@ This document explains each group of scripts defined in `package.json` and how t
 
 - Run scripts with: `pnpm <script>` (or `pnpm run <script>`).
 - Scripts that target a specific environment load the corresponding `.env.*.local` file via the `env:*` wrappers.
+- Composite scripts chain with `&&`, so the **first failure stops the rest**. Two deliberately do not — see
+  [Slash-command parity](#slash-command-parity).
+
+---
+
+## Slash-command parity
+
+Every project slash command in `.claude/commands/` runs the pnpm script of **the same name**: `/lint` runs
+`pnpm lint`, `/check` runs `pnpm check`, `/test` runs `pnpm test`. Where a script name contains a colon the
+command substitutes a hyphen — `/check-fast` runs `pnpm check:fast` — because `:` is reserved for plugin
+namespacing in the command palette (`/engineering:architecture`).
+
+Two commands are exempt, because they are workflows with no script equivalent: **`/ship`** and
+**`/clean-worktrees`**. Nothing else may take the name of a script it does not run.
+
+`coverage`, `e2e`, `fix`, and `lint` exist purely to hold that invariant. They are one-line aliases so the
+command's recipe lives in `package.json` — one source of truth — instead of being duplicated in Markdown,
+where it silently drifts when the toolchain changes.
+
+`lint` and `fix` use `cmd-a || r=1; cmd-b || r=1; exit ${r:-0}` rather than `&&`. Both are multi-tool
+commands where you want **every** tool to run: with `&&`, one Biome error would skip the Markdown half
+entirely, so `/lint` would under-report and `/fix` would leave Markdown unformatted. (`biome check --write`
+exits non-zero whenever unfixable diagnostics remain, so this is the normal case, not an edge case.) The
+idiom still exits non-zero if either half failed — it suppresses the short-circuit, not the signal.
 
 ---
 
@@ -18,6 +42,8 @@ Static analysis and formatting.
 - `pnpm biome:lint` — run Biome checks (lint + format).
 - `pnpm biome:lint:fix` — run Biome checks and apply fixes.
 - `pnpm biome:summary` — print a compact check report.
+- `pnpm lint` — Biome **and** Markdown, report-only; runs both halves even if the first fails (backs `/lint`).
+- `pnpm fix` — Biome **and** Markdown autofixes; runs both halves even if the first fails (backs `/fix`).
 - `pnpm next:typegen` — generate Next.js route types (run before `typecheck` so it validates against fresh output).
 - `pnpm typecheck` — run TypeScript type checking (no emit) over both projects: app then Cypress.
 - `pnpm typecheck:app` — the app project only (`tsc -b tsconfig.json`).
@@ -65,17 +91,19 @@ Build and run the app.
 End-to-end testing.
 
 - `pnpm cy:e2e` — start the dev server (test env) and run E2E tests end-to-end.
+- `pnpm e2e` — alias for `cy:e2e` (backs `/e2e`).
 - `pnpm cy:e2e:ci` — alias for `cy:e2e`.
-- `pnpm cy:e2e:open` — open the Cypress interactive runner.
-- `pnpm cy:e2e:run` — run Cypress E2E in headless mode.
+- `pnpm cy:e2e:open` — open the Cypress interactive runner against an **already-running** server
+  (runs the identity preflight first; it does not boot anything). `cy:open` is its alias.
+- `pnpm cy:e2e:run` — run specs headless against an **already-running** server (identity preflight
+  first; it does not boot anything). `cy:run` is its alias.
 - `pnpm cy:open:with-server` — boot the test-env dev server, then open the interactive runner.
 - `pnpm cy:server` — start the test-env dev server only (alias for `next:dev:test`).
 - `pnpm cy:preflight` — run the `/api/health` identity preflight (asserts the test env/DB).
-- `pnpm cy:open` — open the Cypress runner against an **already-running** server (does
-  not boot one; use `cy:open:with-server` for that). Runs the identity preflight first.
-- `pnpm cy:run` — run specs headless against an **already-running** server. Runs the
-  identity preflight first.
 - `pnpm cy:clean` — remove generated Cypress config artifacts.
+
+> Only `cy:e2e` (and its `e2e` / `cy:e2e:ci` aliases) and `cy:open:with-server` start a server.
+> Everything else assumes one is already listening and fails the preflight if it is not.
 
 ---
 
@@ -86,12 +114,19 @@ Migrations, seeding, and resets per environment.
 - `pnpm db:push:dev` — generate and apply migrations (development).
 - `pnpm db:push:test` — generate and apply migrations (test).
 - `pnpm db:push:prod` — generate and apply migrations (production).
+- `pnpm db:generate:{dev,test,prod}` — generate migration SQL only (the first half of `db:push:*`);
+  output is routed per environment by `DATABASE_ENV`, see `drizzle.config.ts`.
+- `pnpm db:migrate:{dev,test,prod}` — apply already-generated migrations (the second half).
 - `pnpm db:seed:dev` — seed the development database.
 - `pnpm db:seed:test` — seed the test database.
 - `pnpm db:seed:prod` — seed the production database (requires `CONFIRM_PROD_DB=yes`).
-- `pnpm db:reset:dev` — drop, recreate, and seed the development database.
-- `pnpm db:reset:test` — drop, recreate, and seed the test database.
-- `pnpm db:reset:prod` — drop, recreate, and seed the production database (requires `CONFIRM_PROD_DB=yes`).
+- `pnpm db:reset:dev` — **empty every table** in the development database (drizzle-seed's `reset`,
+  i.e. `TRUNCATE … CASCADE`). Tables and applied migrations survive; rows do not. It does **not**
+  drop, recreate, or re-seed — follow with `pnpm db:seed:dev`.
+- `pnpm db:reset:test` — the same for the test database; follow with `pnpm db:seed:test`.
+- `pnpm db:reset:prod` — the same for the production database (requires `CONFIRM_PROD_DB=yes`).
+- `pnpm db:seed` / `pnpm db:reset` — the env-less base scripts the `:dev`/`:test`/`:prod` variants
+  wrap. Prefer the wrappers; running these bare uses whatever environment is already loaded.
 - `pnpm db:studio:dev` — open Drizzle Studio against the development database.
 - `pnpm db:studio:test` — open Drizzle Studio against the test database.
 - `pnpm db:drift` — assert the dev/test/prod migration sets describe the same schema (the CI drift gate; no database needed).
@@ -113,7 +148,8 @@ Load a specific `.env.*.local` file before running a command.
 
 ## Utilities
 
-- `pnpm clean` — remove `.next` build output.
+- `pnpm clean` — remove `.next` build output **and** run `clean:generated` (a repo-wide glob delete
+  of `.js`, `.map`, and `.tsbuildinfo`). Not `.next`-only despite the name.
 - `pnpm clean:all` — clean `.next`, generated files, and `node_modules` (requires reinstall).
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
@@ -121,11 +157,17 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, unit + integration tests, and E2E.
 - `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the migration-drift gate (no tests/E2E).
 - `pnpm check:repo` — run full `check` plus knip.
+- `pnpm csp:guard` — assert the enforced Content-Security-Policy on a running server (nonce-CSP
+  breakage is silent and screenshot-proof, so this is its own gate).
+- `pnpm csp:guard:build` — `next:build` then `csp:guard`. This is the CI `csp` job: it is the only
+  check that sees the real enforced CSP, because Cypress strips the header and `next dev` never
+  prerenders.
 - `pnpm test` — run the unit lane (alias for `test:unit`; `vitest run --project unit`). DB-free; no test env needed.
 - `pnpm test:unit` — run the unit lane once (pure/mocked, no database).
 - `pnpm test:integration` — run the integration lane against the real `test_db` (loads `.env.test.local` via `env:test`).
 - `pnpm test:all` — run the unit and integration lanes together.
 - `pnpm test:coverage` — run the unit lane with coverage (enforces the floors in `vitest.config.ts`). No test env needed.
+- `pnpm coverage` — alias for `test:coverage` (backs `/coverage`).
 - `pnpm test:ui` — open the Vitest UI (unit lane only; the integration lane needs `.env.test.local` loaded, so run it via `test:integration`).
 - `pnpm test:watch` — run the unit lane in watch mode.
 - `pnpm smoke:prod` — probe the **live deployment**: health + database, landing page, the unauthenticated-dashboard
@@ -157,29 +199,35 @@ pnpm db:seed:dev
 pnpm next:dev
 ```
 
-**Prepare and run E2E locally:**
+**Prepare and run E2E locally** (interactive runner against a server you control):
 
 ```sh
 pnpm db:push:test
 pnpm db:seed:test
-pnpm next:build:test
 pnpm serve:test   # keep running in a separate terminal
 pnpm cy:e2e:open
 ```
 
-**One-shot E2E run:**
+`serve:test` cleans and builds before starting, so a separate `next:build:test` first would just be
+thrown away.
+
+**One-shot E2E run** (boots and tears down its own test server):
 
 ```sh
-pnpm cy:e2e:run
+pnpm e2e
 ```
 
 **Reset dev database and start fresh:**
 
 ```sh
 pnpm db:reset:dev
+pnpm db:seed:dev
 pnpm next:dev
 ```
 
+`db:reset:*` only truncates — without the seed step the app starts against empty tables. Reset-then-seed
+is the supported order; `db:seed` refuses to run against a non-empty database.
+
 ---
 
-_Last updated: 2026-06-24_
+_Last updated: 2026-08-05_
