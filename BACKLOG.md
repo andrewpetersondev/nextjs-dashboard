@@ -89,9 +89,13 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       A second-order cost surfaced in the same pass and is recorded in the ADR:
       **`no-store` disables the browser bfcache** (Lighthouse: "Not actionable"),
       so back-navigation loses its instant restore — no fix keeps this CSP.
-      Still open: whether **Fluid Compute** is on (dashboard-only setting, needs
-      Andrew — it's the lever if the cold path ever needs shortening);
-      **`require-trusted-types-for 'script'`** on a Report-Only header once there is a
+      **Fluid Compute RESOLVED 2026-08-04: already enabled** — so 1.69s is already the
+      Fluid-optimised cold number (bytecode caching + production pre-warming included).
+      It is not a remaining lever; ~1.7s is the floor for the `force-dynamic` path and is
+      accepted, not pending. Cost checked while confirming: Hobby's allowances (4
+      Active-CPU hrs / 360 GB-hrs / 1M invocations, **no on-demand rate**) leave this
+      project orders of magnitude clear, so `force-dynamic` carries no billing exposure.
+      Still open: **`require-trusted-types-for 'script'`** on a Report-Only header once there is a
       collector and it's validated against Next 16 + React 19; **HSTS `includeSubDomains`**
       must be re-decided before any move to a custom domain (inert on `*.vercel.app`,
       a two-year non-revocable commitment on an apex you own).
