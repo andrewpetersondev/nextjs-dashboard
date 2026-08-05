@@ -35,19 +35,57 @@ the thing it watches change without a push?**
 Implemented by [`devtools/cli/prod-smoke.cli.ts`](../devtools/cli/prod-smoke.cli.ts), run via
 `pnpm smoke:prod`:
 
-| Check                                                        | Failure means                                                       |
-| ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `/api/health` → 200, `db: "up"`                              | Neon suspended/expired, or a stale connection string                |
-| `/` → 200 containing the hero tagline                        | The deployment serves something other than the current landing page |
-| `/dashboard` with no session → 307 to login                  | **The dashboard may be publicly readable**                          |
-| Seeded USER logs in, dashboard renders with a flight payload | Authentication is broken in production                              |
-| Seeded ADMIN logs in, role-gated Users nav present           | Authorization is broken in production                               |
+| Check                                                        | Failure means                                        |
+| ------------------------------------------------------------ | ---------------------------------------------------- |
+| `/api/health` → 200, `db: "up"`                              | Neon suspended/expired, or a stale connection string |
+| `deploy-freshness` — reported commit == remote `main`        | **The build or deploy did not succeed**              |
+| `/` → 200 containing the hero tagline                        | The deployment serves an error shell, not the app    |
+| `/dashboard` with no session → 307 to login                  | **The dashboard may be publicly readable**           |
+| Seeded USER logs in, dashboard renders with a flight payload | Authentication is broken in production               |
+| Seeded ADMIN logs in, role-gated Users nav present           | Authorization is broken in production                |
 
 The point of the login checks is that **a site can return 200 on every page while login is
 broken** — which is precisely what a read-only pinger would report as healthy.
 
 The unauthenticated-redirect check is the inverse guard, and the more important one: a watchdog that
 only proved pages render would pass just as happily if the dashboard were wide open.
+
+### Liveness is not identity
+
+The five original checks are all **liveness** probes, and liveness stays green through failure 4
+above. When a build fails, Vercel keeps the previous deployment serving: health is 200, login works,
+the auth guard holds — and the hero tagline is a **stable constant**, so the older build contains it
+too. Five green checks against a deployment running last week's code.
+
+So `deploy-freshness` asserts **identity** instead. The deployment reports the commit it was built
+from at `/api/health` (`VERCEL_GIT_COMMIT_SHA`, injected by the platform and readable at request
+time; not a secret — this repository is public), and the check compares it against what `main`
+points at.
+
+Two details that are load-bearing:
+
+- It resolves the expected SHA with `git ls-remote`, **not** `rev-parse origin/main`. A local
+  remote-tracking ref is only as fresh as the last fetch, and a stale one would make a stale
+  deployment compare _equal_ — a false pass on exactly the failure being checked for.
+- A mismatch is not automatically a failure. A deploy takes minutes, so a push shortly before the
+  06:11 run legitimately shows a mismatch. `isDeployInFlight` in
+  [`devtools/shared/deploy-identity.ts`](../devtools/shared/deploy-identity.ts) draws that line; a
+  mismatch inside the window is reported as a note, outside it as a failure.
+
+The check **degrades to a warning** rather than failing when it cannot reach a verdict — the
+deployment reports no commit (it predates this change), or git cannot reach the remote. A check that
+cannot answer must not answer wrongly.
+
+### The last CI run on `main`
+
+Not part of `smoke:prod` — the routine reads it directly with
+`gh run list --branch main --limit 3`. Feature work merges into `main` **locally** and is then
+pushed, so no pull request anywhere shows a red X, and CI runs after the fact with nobody watching.
+Since `check:fast` contains no tests, that CI run is the **first** place unit, e2e, and integration
+ever execute against the merged tree.
+
+A single `failure` is reported, not escalated — one flaky e2e run is not an outage. It becomes an
+issue only when `smoke:prod` also failed, or when the same workflow fails on consecutive runs.
 
 ### Weekly extras (Mondays)
 

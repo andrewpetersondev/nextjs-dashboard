@@ -96,6 +96,35 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Deploy-identity check — closing the push→deploy blind spot** _(2026-08-05,
+      `claude/routines-review-artifacts`)_ — a routine-coverage review found the four scheduled
+      agents well-distributed but **the seam between "I pushed" and "the push worked" unwatched**,
+      in two ways. (1) `ci.yml` triggers on `push: branches: [main]`, and since feature work merges
+      locally there is **no PR anywhere showing a red X** — and `check:fast` runs no tests, so that
+      CI run is the FIRST execution of unit/e2e/integration against the merged tree. (2) More
+      subtly: **prod-watchdog could not detect a stale deploy.** Its landing check asserts
+      `HERO_TAGLINE`, a stable constant the PREVIOUS build also contains — so when a Vercel build
+      fails and the old deployment keeps serving, all five smoke checks pass against week-old code.
+      The commit that added the watchdog claimed "bad rollback, stale build" was covered; it was
+      not. Both docs and the routine prompt corrected.
+      **Fix — liveness vs identity.** Every existing check was a liveness probe; liveness stays
+      green through exactly this failure. Added `getDeployedCommitSha()`
+      (`src/shared/core/config/server/deployment-identity.ts`, its own module because
+      `VERCEL_GIT_COMMIT_SHA` is optional-by-nature and must not go through `ServerEnvSchema`, and
+      because Biome's `noProcessEnv` is only relaxed in the config layer — the lint rule enforcing
+      the architecture). `/api/health` now reports `commit` (absent, not null, off-platform, so a
+      prober can tell "predates reporting" from "unknown"). New `deploy-freshness` check in
+      `devtools/shared/deploy-identity.ts` compares it against remote `main`.
+      **Two decisions worth keeping:** expected SHA comes from `git ls-remote`, NOT
+      `rev-parse origin/main` — a stale tracking ref would make a stale deployment compare EQUAL, a
+      false pass on the very failure being checked. And the check DEGRADES TO A WARNING when it
+      cannot reach a verdict rather than failing. Routine also now reads `gh run list --branch main`
+      (reports a single failure, escalates only on repeats or a coincident smoke failure).
+      Validation: `check:fast` green, 4 new unit tests pass, live `smoke:prod` green with the
+      expected "reports no commit" warning (prod predates the change), `/api/health` verified
+      off-platform on the dev server. **Open:** `isDeployInFlight` threshold still `0` pending
+      Andrew's call on how long a mismatch reads as a deploy in flight.
+
 - [x] **Lighthouse regression routine + off-peak retiming of all four agents** _(2026-08-05,
       `claude/routine-setup-recommendations`)_ — closed the last gap from the recommendation pass and
       put a shared scheduling policy behind all of it. **New `lighthouse-regression` agent** (Sun
