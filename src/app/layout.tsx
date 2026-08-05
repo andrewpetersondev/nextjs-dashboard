@@ -1,6 +1,7 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
 import type { JSX, ReactNode } from "react";
+import { PRODUCTION_SITE_URL } from "@/shared/routing/external-urls";
 import { notoSans } from "@/ui/styles/fonts";
 
 const APP_DESCRIPTION =
@@ -9,7 +10,7 @@ const APP_DESCRIPTION =
 // biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
 	description: APP_DESCRIPTION,
-	metadataBase: new URL("https://nextjs-dashboard-beige-pi-12.vercel.app"),
+	metadataBase: new URL(PRODUCTION_SITE_URL),
 	// og:image itself comes from the opengraph-image.tsx file convention; this
 	// block adds the og:title/description/siteName tags that were never
 	// emitted before. X falls back to og:* except twitter:card, hence the one

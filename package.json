@@ -125,6 +125,8 @@
 		"next:typegen": "next typegen",
 		"serve:standalone": "pnpm clean && pnpm next:build:standalone && pnpm next:start:standalone",
 		"serve:test": "pnpm clean && pnpm next:build:standalone:test && pnpm next:start:standalone:test",
+		"smoke:prod": "pnpm tsx --tsconfig tsconfig.json devtools/cli/prod-smoke.cli.ts",
+		"smoke:prod:csp": "CSP_GUARD_BASE_URL=https://nextjs-dashboard-beige-pi-12.vercel.app pnpm csp:guard",
 		"test": "pnpm test:unit",
 		"test:all": "pnpm test:unit && pnpm test:integration",
 		"test:coverage": "vitest run --project unit --coverage",
