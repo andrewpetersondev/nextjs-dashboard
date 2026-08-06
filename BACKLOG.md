@@ -91,10 +91,30 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       a two-year non-revocable commitment on an apex you own).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
+- [ ] **Resolve the `/verify` question** _(2026-08-05)_ — `docs/claude-code-command-guide.md` lists
+      `/verify` (cadence table + daily drivers), but no such command or skill could be found in the
+      palette during re-verification, and its row's description duplicates `/run`. Check the palette
+      in the desktop app; if it's absent there too, collapse `/verify` into `/run` in both tables and
+      drop the open-question note from the guide.
 
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Env-file policy decision + `.gitignore` glob hardening** _(2026-08-05,
+      `claude/review-audit-cleanup`)_ — Andrew's call: env values are **not secret from AI tools**;
+      the binding goals are "never in git" (repo is **public**) and "never exposed to other
+      people/services". Implemented: `.gitignore` now ignores `.env*` by **glob** with a
+      `!.env.example.local` exception (it enumerated five filenames, so a future
+      `.env.staging.local` was committable — verified fixed with `git check-ignore`);
+      `settings.json` read-denies drop to `.env.production.local` only (dev/test env files are
+      readable when a task needs them; all env **write** denies stay); `AGENTS.md` safety section
+      rewritten to state the policy and the per-tool enforcement (aiignore still hides all env from
+      JetBrains indexing — that's the third-party channel). This **resolves the audit's open
+      `.aiignore`-vs-settings question** — the layers now diverge on purpose. Decided **against** a
+      scheduled env-rotation routine: rotation guards exposure, not committing; GitHub secret
+      scanning + push protection confirmed already enabled on the repo; rotate on suspected exposure
+      only. Also documented the `/verify` open question (guide note + Later item).
 
 - [x] **Post-review hardening: `check` superset, deny variants, root-README sweep** _(2026-08-05,
       `claude/review-audit-cleanup`)_ — review of the parity branch verified every claim against

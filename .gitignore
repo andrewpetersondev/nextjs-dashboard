@@ -34,12 +34,10 @@ cypress/.nyc_output/
 .html-report/
 
 # Secrets and Local Environment
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.envrc
+# Glob, not an enumeration: a future .env.staging.local must be unignorable-by-default.
+# .env.example.local is the tracked contract file and is the only exception.
+.env*
+!.env.example.local
 .direnv/
 .vercel/
 .vault/

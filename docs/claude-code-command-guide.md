@@ -33,6 +33,10 @@ auth code, tests).
 | `/security-review` | Security pass over the branch's pending changes.                                                                                                                                                                                                | any auth / DB / session-touching diff |
 | `/verify`, `/run`  | Launches the app and confirms a change works in-browser (not just green tests).                                                                                                                                                                 | per feature                           |
 
+> **Open question (2026-08-05):** `/verify` could not be found in the command palette when this guide
+> was re-verified, and its row describes exactly what `/run` does. If it is missing from your palette
+> too, collapse `/verify` into `/run` here and in the cadence table above. Tracked in `BACKLOG.md`.
+
 **Key distinction:** `/code-review` finds bugs, `/simplify` improves quality.
 Run review → simplify → verify.
 

@@ -84,8 +84,18 @@ Development happens on macOS with `zsh`. Some GNU/Linux idioms are missing or be
 
 ## Safety and context
 
-- Do not read, print, or commit local environment files such as `.env*.local`.
+- Env-file policy (owner's decision, 2026-08-05): the values in `.env*` files are **not** treated as
+  secret from AI tools — reading `.env.development.local` / `.env.test.local` when a task genuinely
+  needs it is fine. The two rules that do bind: **never commit an env file or reproduce its values in
+  anything that leaves this machine** (commits, docs, issues, artifacts — this repo is public), and
+  treat `.env.production.local` as hands-off: it stays read-denied, because leaking live-deployment
+  credentials is the one failure that matters.
 - Avoid sending generated artifacts, dependency folders, build output, logs, coverage, or database dumps to AI tools.
 - Treat `database/`, `drizzle/`, and `devtools/` as project code, not disposable generated output.
-- These rules are backed in two places: `.claude/settings.json` (Claude Code permission rules) and `.aiignore` (JetBrains AI Assistant / Junie indexing). Keep the env/secret entries of the two in sync when adding new secret paths. Claude Code reads neither ignore file — `.claudeignore` is not a supported mechanism and has been removed.
-- Know what that backing is worth. The `Read`/`Write` denials on `.env*.local`, `*.pem`, and `*.key` do block those tools. The `Bash` denials do not generalise: they match on the **command-string prefix**, so `Bash(printenv*)` stops `printenv` while `env` walks straight through, and the `pnpm db:reset*` / `pnpm run db:reset*` denies stop those two spellings while invoking the underlying CLI directly (`pnpm tsx devtools/cli/reset.cli.ts`) walks straight through. Nothing stops Bash from reading a secret file outright. Treat the deny list as a guard against slips, not a boundary — the rule above ("do not read, print, or commit") is the actual contract, and it is on you, not the config.
+- Enforcement differs by tool **on purpose**: `.gitignore` ignores `.env*` by glob (only the tracked
+  `.env.example.local` is excepted), so a future `.env.staging.local` is unignorable-by-default;
+  `.aiignore` (JetBrains AI Assistant / Junie indexing) hides all `.env*` the same way, since
+  third-party upload is exactly what the policy forbids; `.claude/settings.json` read-denies only
+  `.env.production.local` and write-denies every env file. Claude Code reads neither ignore file —
+  `.claudeignore` is not a supported mechanism and has been removed.
+- Know what that backing is worth. The `Read` denials on `.env.production.local` / `*.pem` / `*.key` and the `Write` denials on env files do block those tools. The `Bash` denials do not generalise: they match on the **command-string prefix**, so `Bash(printenv*)` stops `printenv` while `env` walks straight through, and the `pnpm db:reset*` / `pnpm run db:reset*` denies stop those two spellings while invoking the underlying CLI directly (`pnpm tsx devtools/cli/reset.cli.ts`) walks straight through. Nothing stops Bash from reading a secret file outright. Treat the deny list as a guard against slips, not a boundary — the policy above ("never commit or reproduce values") is the actual contract, and it is on you, not the config.
