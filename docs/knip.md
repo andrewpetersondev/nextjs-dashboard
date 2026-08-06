@@ -7,7 +7,7 @@ dependencies — by building an import graph from a set of entry points.
 
 ```sh
 pnpm knip          # static analysis — no env vars or database needed
-pnpm check:repo    # the full gate: pnpm check (lint+types+tests+e2e) && pnpm knip
+pnpm check:repo    # the full gate: pnpm check (lint+types+drift+tests+e2e) && pnpm knip
 ```
 
 Knip parses source statically; it never executes the app, so it does **not** need a

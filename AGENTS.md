@@ -53,6 +53,7 @@ the files you are touching.
 - Fast validation: `pnpm check:fast`
 - Full validation: `pnpm check`
 - Repo validation: `pnpm check:repo`
+- Lint + format, both toolchains (report-only / autofix): `pnpm lint` / `pnpm fix`
 - Format check: `pnpm biome:format:check`
 - Lint/typegen/typecheck: `pnpm biome:lint`, `pnpm next:typegen`, `pnpm typecheck`
 - Markdown lint + format (markdownlint-cli2 + dprint): `pnpm md:check` (verify), `pnpm md:fix` (autofix)
@@ -87,4 +88,4 @@ Development happens on macOS with `zsh`. Some GNU/Linux idioms are missing or be
 - Avoid sending generated artifacts, dependency folders, build output, logs, coverage, or database dumps to AI tools.
 - Treat `database/`, `drizzle/`, and `devtools/` as project code, not disposable generated output.
 - These rules are backed in two places: `.claude/settings.json` (Claude Code permission rules) and `.aiignore` (JetBrains AI Assistant / Junie indexing). Keep the env/secret entries of the two in sync when adding new secret paths. Claude Code reads neither ignore file — `.claudeignore` is not a supported mechanism and has been removed.
-- Know what that backing is worth. The `Read`/`Write` denials on `.env*.local`, `*.pem`, and `*.key` do block those tools. The `Bash` denials do not generalise: they match on the **command-string prefix**, so `Bash(printenv*)` stops `printenv` while `env` walks straight through, and `Bash(pnpm db:reset*)` stops that spelling while `pnpm run db:reset` does not. Nothing stops Bash from reading a secret file outright. Treat the deny list as a guard against slips, not a boundary — the rule above ("do not read, print, or commit") is the actual contract, and it is on you, not the config.
+- Know what that backing is worth. The `Read`/`Write` denials on `.env*.local`, `*.pem`, and `*.key` do block those tools. The `Bash` denials do not generalise: they match on the **command-string prefix**, so `Bash(printenv*)` stops `printenv` while `env` walks straight through, and the `pnpm db:reset*` / `pnpm run db:reset*` denies stop those two spellings while invoking the underlying CLI directly (`pnpm tsx devtools/cli/reset.cli.ts`) walks straight through. Nothing stops Bash from reading a secret file outright. Treat the deny list as a guard against slips, not a boundary — the rule above ("do not read, print, or commit") is the actual contract, and it is on you, not the config.

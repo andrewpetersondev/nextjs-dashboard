@@ -96,6 +96,23 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Post-review hardening: `check` superset, deny variants, root-README sweep** _(2026-08-05,
+      `claude/review-audit-cleanup`)_ — review of the parity branch verified every claim against
+      code/runtime (including the live `47 21 * * 0` cron via the scheduler) and found one gap:
+      **`pnpm check` skipped `db:drift`**, so the "full" gate was not a superset of `check:fast` —
+      drift gate added to `check`. Extended the `|| r=1` no-short-circuit idiom to `md:check`/`md:fix`
+      (an unfixable markdownlint error was silently skipping dprint — the same class `lint`/`fix`
+      fixed at the top level); deleted the unused `cy:e2e:ci` alias (CI calls `cy:e2e` directly);
+      added `Bash(pnpm run db:…*)` deny variants for the four guarded scripts and reworked
+      `AGENTS.md`'s prefix-matching example so it stays true. **Root `README.md` swept** — the drift
+      sweep covered `docs/` but not the root: Getting Started prescribed `SESSION_SECRET=change-me`,
+      which the session service rejects at startup (<32 chars) — now points at `.env.example.local`
+      as the contract; the Testing section gained the missing unit-lane entry and now mirrors the
+      corrected e2e recipes (`pnpm e2e` one-shot; `serve:test` rebuilds, so the prescribed pre-build
+      was thrown away; `cy:e2e:run` was labeled "CI-friendly" but CI uses `cy:e2e`); fixed `clean`'s
+      scope and "Biome for JS/TS/JSON" (owns CSS too) here and in the scripts guide. `db:seed`'s
+      silent-success-on-refusal wart spun off to its own session.
+
 - [x] **Slash-command ↔ pnpm-script parity + repo-wide drift sweep** _(2026-08-05,
       `claude/claude-audit-cleanup`)_ — follow-up to the `.claude/` audit below. Established one
       rule: **`/X` runs `pnpm X`**, with `-` standing in for `:` (`/check-fast` → `pnpm check:fast`),

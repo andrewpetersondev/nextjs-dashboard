@@ -16,7 +16,7 @@ authentication, middleware-based route protection, database migrations/seeding, 
 - Drizzle ORM (PostgreSQL)
 - Tailwind CSS v4
 - Cypress for E2E testing (with @testing-library/cypress and cypress-axe)
-- Biome for JS/TS/JSON; dprint + markdownlint-cli2 for Markdown
+- Biome for JS/TS/JSON/CSS; dprint + markdownlint-cli2 for Markdown
 - Turbopack for dev/build
 
 Note: ESLint and Prettier are not used in this project, by design.
@@ -115,15 +115,20 @@ nextjs-dashboard/
 
 2. Configure environment
 
-   Create environment files as needed (these are referenced by scripts):
-   - .env.development.local
-   - .env.test.local
-   - .env.production.local
+   Copy the tracked contract file [`.env.example.local`](.env.example.local) to each
+   environment file the scripts reference, then adjust the values:
 
-   Typical variables (adapt to your setup):
-   - DATABASE_URL=postgres://user:pass@localhost:5432/nextjs_dashboard
-   - SESSION_SECRET=change-me
-   - NODE_ENV=development
+   ```sh
+   cp .env.example.local .env.development.local
+   cp .env.example.local .env.test.local
+   ```
+
+   (`.env.production.local` works the same way when you need the `db:*:prod` scripts.)
+
+   Two values need real attention: `DATABASE_URL` / `DATABASE_ENV` must match the
+   environment the file is for, and `SESSION_SECRET` must be **at least 32 characters** —
+   the session service refuses shorter secrets at startup. The full variable contract is
+   documented in the [deployment guide](docs/deployment.md).
 
 3. Database: generate, migrate, seed
 
@@ -183,40 +188,43 @@ checks and container health probes.
 
 ## Testing
 
-- Build App:
-  ```sh
-  pnpm next:build:test
-  ```
-- Start App:
+- Unit tests (Vitest; database-free, runs anywhere):
 
   ```sh
-  pnpm serve:test
+  pnpm test
   ```
 
-- Open Cypress (E2E):
+- One-shot E2E run (boots and tears down its own test server; needs `.env.test.local`
+  and a migrated + seeded test database):
+
   ```sh
-  pnpm cy:e2e:open
-  ```
-- Run Cypress headless (CI-friendly):
-  ```sh
-  pnpm cy:e2e:run
+  pnpm e2e
   ```
 
-Accessibility checks via cypress-axe are integrated in tests where applicable.
+- Interactive Cypress runner against a server you control:
+
+  ```sh
+  pnpm serve:test    # cleans, builds, and serves the test env — keep it running
+  pnpm cy:e2e:open   # in a second terminal
+  ```
+
+CI runs the same E2E suite via `pnpm cy:e2e` (the script `e2e` aliases). Accessibility
+checks via cypress-axe are integrated in tests where applicable.
 
 ## Useful Scripts
 
-- Formatting and checks (Biome):
-  - "pnpm biome:format" — format code
-  - "pnpm biome:lint" — run checks
-  - "pnpm biome:summary" — summary reporter
+- Lint and format (Biome for code, markdownlint + dprint for Markdown):
+  - `pnpm lint` — report-only, both toolchains
+  - `pnpm fix` — apply safe autofixes, both toolchains
+- Validation gates:
+  - `pnpm check:fast` — Biome + Markdown + typegen + typecheck + migration drift (the pre-merge gate)
+  - `pnpm check` — everything above plus the unit, integration, and E2E lanes
 - Clean builds:
-  - "pnpm clean" — remove .next
-  - "pnpm clean:all" — clean .next, generated files, and node_modules (will require reinstall)
-- Env helpers (wrap commands with specific env files):
-  - env:dev, env:test, env:prod
+  - `pnpm clean` — remove `.next` and generated `.js`/`.map`/`.tsbuildinfo` files
+  - `pnpm clean:all` — the above plus `node_modules` (requires reinstall)
+- Env helpers (wrap commands with specific env files): `env:dev`, `env:test`, `env:prod`
 
-See package.json for the full list of scripts.
+See the [package scripts guide](docs/package-json-scripts-guide.md) for the full annotated list.
 
 ## Conventions
 
