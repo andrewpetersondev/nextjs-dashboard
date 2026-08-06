@@ -58,6 +58,7 @@
 			"Bash(pnpm publish*)",
 			"Bash(yarn publish*)",
 			"Read(**/.env.production.local)",
+			"Read(//Users/ap/WebstormProjects/nextjs-dashboard/.env.production.local)",
 			"Write(**/.env)",
 			"Write(**/.env.local)",
 			"Write(**/.env.development.local)",

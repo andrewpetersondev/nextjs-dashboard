@@ -31,11 +31,8 @@ auth code, tests).
 | `/code-review`     | Reviews the current diff for **bugs** + cleanups. Effort scales: `low`/`medium` (few, high-confidence) → `high`/`max` (broader) → `ultra` (multi-agent **cloud, billed**). Flags: `--fix` applies findings, `--comment` posts inline on the PR. | before every PR                       |
 | `/simplify`        | Applies reuse / simplification / altitude cleanups. **Quality only — does not hunt bugs.** Pairs with refactor work.                                                                                                                            | after a feature, before review        |
 | `/security-review` | Security pass over the branch's pending changes.                                                                                                                                                                                                | any auth / DB / session-touching diff |
-| `/verify`, `/run`  | Launches the app and confirms a change works in-browser (not just green tests).                                                                                                                                                                 | per feature                           |
-
-> **Open question (2026-08-05):** `/verify` could not be found in the command palette when this guide
-> was re-verified, and its row describes exactly what `/run` does. If it is missing from your palette
-> too, collapse `/verify` into `/run` here and in the cadence table above. Tracked in `BACKLOG.md`.
+| `/verify`          | Drives the branch's diff at its real surface (CLI, app, config) and reports PASS/FAIL with captured evidence — runtime observation, not a test rerun.                                                                                           | before merging                        |
+| `/run`             | Launches the app so the change can be driven and screenshotted (not just green tests).                                                                                                                                                          | per feature                           |
 
 **Key distinction:** `/code-review` finds bugs, `/simplify` improves quality.
 Run review → simplify → verify.
