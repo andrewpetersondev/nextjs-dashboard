@@ -121,8 +121,8 @@ All four CI jobs run in parallel on every push to `main` — see
   `postgres:17-alpine` service container, migrated but **not seeded** (these tests
   create and delete their own rows). Added 2026-08-04; before that the lane ran on
   developer machines only.
-- **`e2e` job:** `pnpm cy:e2e` (alias `pnpm cy:e2e:ci`) — boots the server itself
-  against its own service container.
+- **`e2e` job:** `pnpm cy:e2e` — boots the server itself against its own service
+  container.
 
 Cypress records no video by default (`video: false` in `cypress.config.ts`).
 

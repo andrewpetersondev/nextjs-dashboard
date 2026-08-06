@@ -6,8 +6,8 @@ This document explains each group of scripts defined in `package.json` and how t
 
 - Run scripts with: `pnpm <script>` (or `pnpm run <script>`).
 - Scripts that target a specific environment load the corresponding `.env.*.local` file via the `env:*` wrappers.
-- Composite scripts chain with `&&`, so the **first failure stops the rest**. Two deliberately do not — see
-  [Slash-command parity](#slash-command-parity).
+- Composite scripts chain with `&&`, so the **first failure stops the rest**. Four (`lint`, `fix`,
+  `md:check`, `md:fix`) deliberately do not — see [Slash-command parity](#slash-command-parity).
 
 ---
 
@@ -25,11 +25,13 @@ Two commands are exempt, because they are workflows with no script equivalent: *
 command's recipe lives in `package.json` — one source of truth — instead of being duplicated in Markdown,
 where it silently drifts when the toolchain changes.
 
-`lint` and `fix` use `cmd-a || r=1; cmd-b || r=1; exit ${r:-0}` rather than `&&`. Both are multi-tool
-commands where you want **every** tool to run: with `&&`, one Biome error would skip the Markdown half
-entirely, so `/lint` would under-report and `/fix` would leave Markdown unformatted. (`biome check --write`
-exits non-zero whenever unfixable diagnostics remain, so this is the normal case, not an edge case.) The
-idiom still exits non-zero if either half failed — it suppresses the short-circuit, not the signal.
+`lint`, `fix`, `md:check`, and `md:fix` use `cmd-a || r=1; cmd-b || r=1; exit ${r:-0}` rather than `&&`.
+All four are multi-tool commands where you want **every** tool to run: with `&&`, one Biome error would
+skip the Markdown half entirely (so `/lint` would under-report and `/fix` would leave Markdown
+unformatted), and inside the Markdown pair an unfixable markdownlint error would skip dprint the same
+way. (`biome check --write` exits non-zero whenever unfixable diagnostics remain, so this is the normal
+case, not an edge case.) The idiom still exits non-zero if either half failed — it suppresses the
+short-circuit, not the signal.
 
 ---
 
@@ -51,7 +53,7 @@ Static analysis and formatting.
   `baseUrl`-free variant of `cypress/tsconfig.json`; TS7 errors on `baseUrl`, which the webpack
   preprocessor still needs — see the comments in both files).
 
-> Biome owns JS/TS/JSON here. Markdown is handled separately — see below.
+> Biome owns JS/TS/JSON/CSS here. Markdown is handled separately — see below.
 
 ---
 
@@ -63,8 +65,10 @@ Markdown is linted by markdownlint-cli2 and formatted by dprint (Biome's Markdow
 - `pnpm md:lint:fix` — apply markdownlint's safe autofixes.
 - `pnpm md:format:check` — check Markdown formatting with dprint (no writes).
 - `pnpm md:format` — format Markdown with dprint.
-- `pnpm md:check` — lint + format-check together; runs inside `check` and `check:fast`.
-- `pnpm md:fix` — autofix then format (markdownlint first, dprint last, so dprint has final say on whitespace).
+- `pnpm md:check` — lint + format-check together; both halves run even if the first fails. Runs inside
+  `check` and `check:fast`.
+- `pnpm md:fix` — autofix then format (markdownlint first, dprint last, so dprint has final say on
+  whitespace); dprint still runs when markdownlint reports unfixable issues.
 
 ---
 
@@ -92,7 +96,6 @@ End-to-end testing.
 
 - `pnpm cy:e2e` — start the dev server (test env) and run E2E tests end-to-end.
 - `pnpm e2e` — alias for `cy:e2e` (backs `/e2e`).
-- `pnpm cy:e2e:ci` — alias for `cy:e2e`.
 - `pnpm cy:e2e:open` — open the Cypress interactive runner against an **already-running** server
   (runs the identity preflight first; it does not boot anything). `cy:open` is its alias.
 - `pnpm cy:e2e:run` — run specs headless against an **already-running** server (identity preflight
@@ -102,7 +105,7 @@ End-to-end testing.
 - `pnpm cy:preflight` — run the `/api/health` identity preflight (asserts the test env/DB).
 - `pnpm cy:clean` — remove generated Cypress config artifacts.
 
-> Only `cy:e2e` (and its `e2e` / `cy:e2e:ci` aliases) and `cy:open:with-server` start a server.
+> Only `cy:e2e` (and its `e2e` alias) and `cy:open:with-server` start a server.
 > Everything else assumes one is already listening and fails the preflight if it is not.
 
 ---
@@ -154,7 +157,8 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
 - `pnpm knip` — find unused exports, files, and dependencies.
-- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, unit + integration tests, and E2E.
+- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the migration-drift gate, unit +
+  integration tests, and E2E (everything `check:fast` runs, plus all three test lanes).
 - `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the migration-drift gate (no tests/E2E).
 - `pnpm check:repo` — run full `check` plus knip.
 - `pnpm csp:guard` — assert the enforced Content-Security-Policy on a running server (nonce-CSP
