@@ -96,6 +96,26 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **De-hardcode the prod-env deny — `//**/` glob instead of a machine path** _(2026-08-05,
+      `claude/deny-reach-portable`)_ — the deny-reach fix landed the day before pinned the primary
+      checkout by absolute path: `Read(//Users/ap/WebstormProjects/nextjs-dashboard/.env.production.local)`.
+      Three problems, all real: it guards **exactly one copy** (proved by probe — a
+      `.env.production.local` at any other path read fine), it **silently stops matching** if the repo
+      moves (no error, the rule just goes quiet — and this repo has been relocated before), and it
+      publishes the machine layout in a public repo.
+      Replaced with `Read(//**/.env.production.local)` — **the `//` absolute form accepts globs**, so
+      it matches that filename anywhere on the filesystem: no machine path, survives relocation, and
+      covers every clone rather than one. Verified by probe under isolation (only this rule active):
+      dummy file outside the project root → denied; harmless sibling in the same directory → readable,
+      so it is file-precise despite the error text saying "directory". Never probe the real prod env —
+      a dummy, always; if the rule fails to match, a real probe pulls live credentials into context.
+      **Verification gotcha found the hard way, now in the verify skill:** permission edits **stop
+      hot-reloading after `EnterWorktree`** — a rule proven to deny minutes earlier silently stopped,
+      and edits to neither the worktree's nor the primary's `settings.json` took effect. It produced
+      three false "this pattern doesn't work" conclusions before the control test caught it. Probe deny
+      rules from the primary checkout, then move the edit to the worktree branch to commit. Config is
+      read at session start, so a fresh worktree session is unaffected.
+
 - [x] **Env-file policy decision + `.gitignore` glob hardening** _(2026-08-05,
       `claude/review-audit-cleanup`)_ — Andrew's call: env values are **not secret from AI tools**;
       the binding goals are "never in git" (repo is **public**) and "never exposed to other

@@ -97,8 +97,12 @@ Development happens on macOS with `zsh`. Some GNU/Linux idioms are missing or be
   `.aiignore` (JetBrains AI Assistant / Junie indexing) hides all `.env*` the same way, since
   third-party upload is exactly what the policy forbids; `.claude/settings.json` read-denies only
   `.env.production.local` and write-denies every env file. The prod read-deny is two entries on
-  purpose: the `**/` glob only matches inside the session's own project root, so a worktree session
-  could still read the **primary checkout's** copy until an absolute-path entry pinned it (gap found
-  and closed 2026-08-05 — don't "dedupe" the absolute rule away). Claude Code reads neither ignore file —
-  `.claudeignore` is not a supported mechanism and has been removed.
+  purpose: `Read(**/…)` only matches inside the session's own project root, so a worktree session
+  could otherwise read the **primary checkout's** copy. The second entry uses the `//` absolute-path
+  form with a glob — `Read(//**/.env.production.local)` — which matches that file **anywhere on the
+  filesystem**, so it needs no machine-specific path and survives the repo being relocated. Don't
+  "dedupe" it away, and don't replace it with a hardcoded absolute path (it was one until
+  2026-08-05; a hardcoded path guards exactly one copy and silently stops matching after a move).
+  Claude Code reads neither ignore file — `.claudeignore` is not a supported mechanism and has been
+  removed.
 - Know what that backing is worth. The `Read` denials on `.env.production.local` / `*.pem` / `*.key` and the `Write` denials on env files do block those tools. The `Bash` denials do not generalise: they match on the **command-string prefix**, so `Bash(printenv*)` stops `printenv` while `env` walks straight through, and the `pnpm db:reset*` / `pnpm run db:reset*` denies stop those two spellings while invoking the underlying CLI directly (`pnpm tsx devtools/cli/reset.cli.ts`) walks straight through. Nothing stops Bash from reading a secret file outright. Treat the deny list as a guard against slips, not a boundary — the policy above ("never commit or reproduce values") is the actual contract, and it is on you, not the config.
