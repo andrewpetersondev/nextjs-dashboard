@@ -7,15 +7,15 @@ description: How to runtime-verify changes in this repo — the surfaces, the ha
 
 ## Surfaces by change type
 
-| Change touches                  | Surface                | Handle                                                                     |
-| ------------------------------- | ---------------------- | -------------------------------------------------------------------------- |
-| `package.json` scripts, tooling | the scripts themselves | run `pnpm <script>`, observe order/exit; probe removed scripts by name     |
-| App code (`src/`)               | the running app        | `preview_start` with the `.claude/launch.json` dev config, or `pnpm e2e`   |
-| `.claude/settings.json` denies  | this live session      | probe with the Read/Bash tool against a matching file; rules hot-reload    |
-| `.gitignore`                    | git                    | `git check-ignore -v <paths>` incl. a hypothetical future path             |
-| `.claude/commands/*.md`         | the skills palette     | the harness re-reads descriptions live; check the available-skills listing |
-| CI / workflows                  | GitHub Actions         | `gh run list --branch main --limit 4` after a push; both CI + CodeQL run   |
-| Docs only                       | none                   | SKIP — no runtime surface                                                  |
+| Change touches                  | Surface                | Handle                                                                                                       |
+| ------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `package.json` scripts, tooling | the scripts themselves | run `pnpm <script>`, observe order/exit; probe removed scripts by name                                       |
+| App code (`src/`)               | the running app        | `preview_start` with the `.claude/launch.json` dev config, or `pnpm e2e`                                     |
+| `.claude/settings.json` denies  | this live session      | probe with the Read/Bash tool against a matching file; hot-reloads **only outside a worktree** — see gotchas |
+| `.gitignore`                    | git                    | `git check-ignore -v <paths>` incl. a hypothetical future path                                               |
+| `.claude/commands/*.md`         | the skills palette     | the harness re-reads descriptions live; check the available-skills listing                                   |
+| CI / workflows                  | GitHub Actions         | `gh run list --branch main --limit 4` after a push; both CI + CodeQL run                                     |
+| Docs only                       | none                   | SKIP — no runtime surface                                                                                    |
 
 ## Gotchas (each cost real time once)
 
@@ -26,6 +26,20 @@ description: How to runtime-verify changes in this repo — the surfaces, the ha
   required for the integration + e2e lanes.
 - **Permission `Read(**/…)` denies only match inside the session's project root** — a worktree
   session probing a file in the primary checkout tests the absolute-path entries, not the globs.
+  The `//` prefix is the absolute form and it accepts globs: `Read(//**/x)` matches `x` anywhere on
+  the filesystem, and it is file-precise (a sibling in the same directory stays readable, despite the
+  denial message saying "directory").
+- **Permission edits stop hot-reloading after `EnterWorktree`** (observed 2026-08-05). In the primary
+  checkout, editing `.claude/settings.json` takes effect within the session — that is how deny rules
+  get probed. After entering a worktree, edits to _neither_ the worktree's nor the primary's copy
+  took effect, and a rule proven to deny minutes earlier silently stopped denying. **Verify permission
+  changes from the primary checkout, then move the edit to the worktree branch to commit.** Config is
+  read at session start, so a fresh worktree session loads it correctly — the breakage is a live-session
+  artifact, not a config defect. Cost most of a verification pass: three "the pattern doesn't work"
+  conclusions that were all the same stale-reload artifact.
+- **The Read tool dedupes unchanged files** — "Wasted call — file unchanged since your last Read"
+  short-circuits before the permission check, so a second probe of the same path proves nothing.
+  Change the content or use a fresh path between probes.
 - **Markdown edits:** run `pnpm fix` before `pnpm check:fast` if you touched tables — dprint owns
   table alignment and `md:format:check` fails on hand-aligned pipes.
 - **A full `pnpm check` is viable in-worktree** when `.env.test.local` exists: ~5 min, boots its own
@@ -38,3 +52,8 @@ description: How to runtime-verify changes in this repo — the surfaces, the ha
   no-short-circuit exit logic. Delete the probe file in the same command that creates it.
 - Deny-engine probe: Write a dummy `probe.key` in-root (only _Read_ is denied for `*.key`), attempt
   Read → expect denial, then `rm` it via Bash.
+- Deny-**reach** probe (does a rule match outside the project root?): write a dummy file with the
+  guarded name plus a harmless sibling in a scratchpad subdirectory, then Read both. Denied target +
+  readable sibling proves the rule reaches _and_ is file-precise. Never point a reach probe at the
+  real `.env.production.local` — if the rule fails to match you have pulled live credentials into
+  context. Use a dummy, always. Clean up with `rm -f` (`rm -rf` is denied).
