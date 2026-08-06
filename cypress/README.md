@@ -156,7 +156,7 @@ sequenceDiagram
     R->>DB: drizzle-seed reset() — empties all tables
     S->>T: cy.dbSeed()  — cy.task
     T->>DB: databaseSeed() — customers, invoices, demo users
-    Note over S,DB: Reset must run first. seed bails (no-op)<br/>if the DB isn't empty (ensureResetOrEmpty).
+    Note over S,DB: Reset must run first. seed refuses (throws)<br/>if the DB isn't empty (assertDatabaseEmpty).
 ```
 
 - **`db:reset`** hits the app's real `GET /api/db/reset` route, which calls

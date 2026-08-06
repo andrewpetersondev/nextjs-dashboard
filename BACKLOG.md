@@ -96,6 +96,15 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **`db:seed` misleading exit 0 on a non-empty DB** _(2026-08-05, `claude/kind-fermi-454a6f`)_ —
+      `databaseSeed()` returned early when the guard found data, so `runCli` printed "Database
+      seeded successfully." and exited 0 right after the refusal notice — the misleading-exit-code
+      genre again. Guard restructured to `assertDatabaseEmpty()`, which **throws** (mirroring
+      `assertDestructiveDbTaskAllowed`: `runCli`'s catch → exit 1). The advertised `SEED_RESET=true`
+      hatch was vestigial — `process.env.SEED_RESET` is read nowhere (export removed as unused back
+      in `0d283653`) — so the message now names the real remedy (`pnpm db:reset:<env>` then reseed)
+      instead of resurrecting the flag. Unit test pins the throw + remedy; e2e untouched (every
+      caller resets first via `cy.dbResetAndSeed()`).
 - [x] **Slash-command ↔ pnpm-script parity + repo-wide drift sweep** _(2026-08-05,
       `claude/claude-audit-cleanup`)_ — follow-up to the `.claude/` audit below. Established one
       rule: **`/X` runs `pnpm X`**, with `-` standing in for `:` (`/check-fast` → `pnpm check:fast`),

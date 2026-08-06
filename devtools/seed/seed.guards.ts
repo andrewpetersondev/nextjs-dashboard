@@ -20,16 +20,20 @@ async function isEmpty(): Promise<boolean> {
 }
 
 /**
- * Ensures DB is empty or resets it if SEED_RESET=true.
- * Returns true if it is safe to proceed with seeding.
+ * Abort seeding unless every seeded table is empty.
+ *
+ * Throwing (rather than returning a boolean) is deliberate, mirroring
+ * `assertDestructiveDbTaskAllowed`: devtools CLIs use `runCli`'s catch as
+ * their error boundary, so a refused seed must exit non-zero instead of
+ * resolving into "Database seeded successfully." There is intentionally no
+ * force-reseed escape hatch here — reset explicitly, then seed.
  */
-export async function ensureResetOrEmpty(): Promise<boolean> {
-	const empty = await isEmpty();
-	if (!empty) {
-		console.error(
-			"Database is not empty. Set SEED_RESET=true to force reseed. Exiting...",
-		);
-		return false;
+export async function assertDatabaseEmpty(): Promise<void> {
+	if (await isEmpty()) {
+		return;
 	}
-	return true;
+	throw new Error(
+		"Refusing to run db:seed: database is not empty. " +
+			"Reset it first with the matching env pair, e.g. `pnpm db:reset:dev && pnpm db:seed:dev`.",
+	);
 }

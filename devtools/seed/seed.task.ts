@@ -5,7 +5,7 @@ import {
 	buildUserSeed,
 } from "@devtools/seed/data/seed.builders";
 import { periods } from "@devtools/seed/data/seed.periods.data";
-import { ensureResetOrEmpty } from "@devtools/seed/seed.guards";
+import { assertDatabaseEmpty } from "@devtools/seed/seed.guards";
 import {
 	fetchCustomerIds,
 	insertCustomers,
@@ -17,10 +17,7 @@ import { assertDestructiveDbTaskAllowed } from "@devtools/shared/db/prod-db.guar
 /** Main seeding function */
 export async function databaseSeed(): Promise<void> {
 	assertDestructiveDbTaskAllowed("db:seed");
-	const proceed = await ensureResetOrEmpty();
-	if (!proceed) {
-		return;
-	}
+	await assertDatabaseEmpty();
 
 	const userSeed = await buildUserSeed();
 
