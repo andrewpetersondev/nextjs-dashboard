@@ -3,7 +3,13 @@
 # Single-branch, local-first model: feature work is merged into `main` locally
 # (worktrees share one object store, so no remote round-trip) and pushed. Human
 # feature work opens no PRs — CI runs on every push to `main` as the safety net.
-# (Renovate still opens PRs; `dependency-review.yml` is the gate for those.)
+#
+# Bot PRs (Renovate, weekly-maintenance) DO exist, and they run on the
+# `pull_request` trigger below. That trigger was added 2026-08-07 alongside
+# Renovate automerge: `dependency-review.yml` only checks for known-vulnerable
+# dependencies — it runs no build, no types, no tests — so before this, a bot PR
+# reached `main` with essentially nothing verified. Automerging dev-dependency
+# patches without these jobs on the PR would merge unverified code.
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
 #     Next.js typegen + type-check) plus the migration-drift gate and the DB-free
@@ -22,16 +28,23 @@
 #      is its own job rather than a step in `e2e`: it finishes in about a minute
 #      instead of waiting on the full Cypress suite.
 #
-# All four run on every push to `main`. Because the merge happens locally before
-# the push, a red run means fix-forward — run `pnpm check:fast` locally before
-# merging to catch most failures pre-push. Note that `check:fast` does NOT cover
-# the integration lane (no database), so this job is its only automatic gate.
+# All four run on every push to `main` AND on every pull request targeting it.
+# Because a human merge happens locally before the push, a red run on `main`
+# means fix-forward — run `pnpm check:fast` locally before merging to catch most
+# failures pre-push. Note that `check:fast` does NOT cover the integration lane
+# (no database), so this job is its only automatic gate.
+#
+# ⚠️ These four job NAMES are what a required-status-check context pins to, and
+# they are what Renovate's automerge waits on. Renaming one silently stops
+# gating rather than failing loudly. See docs/renovate.md.
 
 name: CI
 
 # When should this workflow run?
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 # If you push again before a run finishes, cancel the old run (saves CI minutes).
@@ -240,9 +253,10 @@ jobs:
 
   e2e:
     name: E2E (Cypress)
-    # Runs on every push to `main` (the only trigger now). The local pre-push
+    # Runs on every push to `main` and on every PR into it. The local pre-push
     # `pnpm check:fast` covers lint/types/typegen/drift but runs NO tests at
-    # all; this is the full e2e safety net.
+    # all; this is the full e2e safety net — and on a bot PR it is the only one,
+    # since no human ran anything locally first.
     runs-on: ubuntu-latest
     # Generous ceiling: a cold `next dev` (Turbopack compiles routes on first
     # hit) plus 23 specs. The warm local run is ~35s; this is a safety net.

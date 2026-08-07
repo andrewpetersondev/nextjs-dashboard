@@ -27,8 +27,11 @@ minute.
 - **Frequency rationale:** Renovate is scheduled for early **Monday** (`* 0-6 * * 1`) and the
   weekly-maintenance PR lands Sunday night, so **Tuesday** triages a full queue. **Friday** catches
   whatever is still open before the weekend. Twice a week is enough for a queue that fills once.
-  Renovate's grouping also makes that queue much shorter than Dependabot's was — roughly six
-  standing PRs plus one per major, instead of up to ten ungrouped bumps.
+  Renovate's grouping also makes that queue much shorter than Dependabot's was — roughly seven
+  standing PRs plus one per major, instead of up to ten ungrouped bumps. One of those seven,
+  **dev dependencies (patch)**, automerges itself once CI is green, so it is usually gone before
+  Tuesday. If it is still open, CI is red or the required checks are misconfigured — treat a
+  lingering dev-patch PR as a signal, not as work.
 
 ## What it classifies
 

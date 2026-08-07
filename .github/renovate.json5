@@ -49,7 +49,7 @@
   minimumReleaseAge: "3 days",
   internalChecksFilter: "strict",
 
-  // Six standing groups below; the limit must exceed that or one starves
+  // Seven standing groups below; the limit must exceed that or one starves
   // permanently. Overflow is visible on the dashboard, not lost.
   prConcurrentLimit: 8,
   prHourlyLimit: 2,
@@ -84,9 +84,33 @@
     },
     {
       matchDepTypes: ["devDependencies"],
-      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
-      groupName: "dev dependencies (non-major)",
+      matchUpdateTypes: ["minor", "pin", "digest"],
+      groupName: "dev dependencies (minor)",
       semanticCommitScope: "dev-deps",
+    },
+
+    // The one automerged slice. Split out of the group above deliberately: a
+    // grouped PR automerges only if EVERY update in it is automergeable, so
+    // leaving patches mixed with minors would make `automerge: true` silently
+    // inert — it would look enabled and never fire.
+    //
+    // Safe because dev dependencies cannot reach the production runtime, the
+    // 3-day soak still applies, and `ci.yml` now runs check + csp + integration
+    // + e2e on the PR itself. Renovate waits for those to go green.
+    //
+    // ⚠ ORDERING IS LOAD-BEARING: the lockstep rules further down re-assert
+    //   `automerge: false`, and later rules win. That is what stops a package
+    //   pinned in `pnpm-workspace.yaml` overrides (postcss today) from being
+    //   automerged as an ordinary dev patch. Do not move those rules above
+    //   this one.
+    {
+      matchDepTypes: ["devDependencies"],
+      matchUpdateTypes: ["patch"],
+      groupName: "dev dependencies (patch)",
+      semanticCommitScope: "dev-deps",
+      automerge: true,
+      automergeType: "pr",
+      platformAutomerge: true,
     },
     {
       matchManagers: ["github-actions"],
@@ -178,20 +202,20 @@
     },
 
     // ---------------------------------------------------------------------
-    // Automerge: intentionally OFF everywhere. The merge decision is the
-    // review gate (see AGENTS.md / docs/bot-pr-triage-routine.md).
-    // To enable it for the lowest-risk slice later, add a rule such as:
+    // Automerge summary (enabled 2026-08-07):
+    //   • dev-dependency PATCHES  → automerged, see the rule above.
+    //   • everything else         → human merge. Prod deps reach the runtime,
+    //     minors carry behaviour changes, majors need codemods, and the
+    //     lockstep group must be read against its advisory comments.
     //
-    //   {
-    //     matchDepTypes: ["devDependencies"],
-    //     matchUpdateTypes: ["patch"],
-    //     automerge: true,
-    //     automergeType: "pr",
-    //     platformAutomerge: true,
-    //   }
-    //
-    // Note `main` allows direct pushes, so nothing but `check` + `e2e` stands
-    // between an automerged PR and production. Decide deliberately.
+    // Two settings outside this file make it real; without them Renovate
+    // either cannot automerge or merges without waiting:
+    //   1. Repo setting "Allow auto-merge" must be ON (it was off).
+    //   2. The `Protect Important Branches` ruleset must require the four CI
+    //      contexts — `Lint & type-check`, `CSP guard`, `Integration (Vitest)`,
+    //      `E2E (Cypress)`. Without required checks, GitHub treats a PR with
+    //      no finished checks as immediately mergeable.
+    // See docs/renovate.md § Automerge.
     // ---------------------------------------------------------------------
   ],
 }

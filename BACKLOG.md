@@ -70,8 +70,20 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       via Renovate's `pnpm-workspace.overrides` depType. Lockstep is enforced by grouping an
       override with its `package.json` copy (this caught a live drift: postcss `^8.5.25` vs
       override `^8.5.24`). Docs: [`docs/renovate.md`](docs/renovate.md).
-      **Not live until three steps outside this repo happen:**
+      **Automerge enabled 2026-08-07 for dev-dependency patches only** — which required giving
+      `ci.yml` a `pull_request` trigger first: bot PRs previously saw only
+      `dependency-review.yml` (no build, no types, no tests), so automerging would have landed
+      unverified code. Patches got their own group because Renovate automerges a grouped PR only
+      if every update in it is automergeable.
+      **Not live until five steps outside this repo happen:**
   - [ ] Install the **Mend Renovate GitHub App** on the repo (account-level; Andrew only).
+  - [ ] Turn on **"Allow auto-merge"** in repo settings (currently `false`).
+  - [ ] Add the four CI contexts (`Lint & type-check`, `CSP guard`, `Integration (Vitest)`,
+        `E2E (Cypress)`) as **required status checks** on the `Protect Important Branches`
+        ruleset — it currently has only `deletion` + `non_fast_forward`. Without required
+        checks GitHub treats a PR whose checks haven't started as immediately mergeable, so
+        automerge could land before CI runs. Contexts pin to job NAMES; renaming one in
+        `ci.yml` silently stops gating.
   - [ ] Re-paste the updated `weekly-maintenance` and `bot-pr-triage` prompts via `/schedule` —
         both live agents keep their own copy in `~/.claude/scheduled-tasks/`, so the repo docs
         do not reach them. weekly-maintenance must stop bumping pnpm/Node/overrides itself;
