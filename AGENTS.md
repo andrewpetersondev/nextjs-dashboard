@@ -18,7 +18,7 @@ it back into `main` **locally** (in the primary checkout) when it is green, then
 always work from a worktree feature branch. See [`docs/branching-and-releases.md`](docs/branching-and-releases.md).
 
 Human feature work opens **no pull request** — it merges locally. PRs still exist for automation
-(Dependabot, the weekly-maintenance routine), which is why `.github/PULL_REQUEST_TEMPLATE.md` is live.
+(Renovate, the weekly-maintenance routine), which is why `.github/PULL_REQUEST_TEMPLATE.md` is live.
 
 ## Planning: BACKLOG.md and GitHub Issues
 

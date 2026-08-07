@@ -63,11 +63,21 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
 - [ ] **Renovate adoption** ([#124](https://github.com/andrewpetersondev/nextjs-dashboard/issues/124))
-      — for pnpm-version / node-version / `pnpm-workspace.yaml`
-      override automation + grouped dep updates (Dependabot can't do those). Replaces
-      Dependabot; needs the Mend Renovate GitHub App installed. _(Partially covered as of
-      2026-06-13 by the `weekly-maintenance` routine, which reports/bumps the
-      pnpm/node/override gap; Renovate would still automate grouped updates.)_
+      — **repo side BUILT 2026-08-07** (`claude/issue-124-326e7f` lane). `.github/renovate.json5`
+      added and validated with `renovate-config-validator --strict`; `.github/dependabot.yml`
+      deleted; six update groups replace Dependabot's split; the pnpm pin (`packageManager` +
+      sha512 hash), `.nvmrc`, and `pnpm-workspace.yaml` overrides are all now covered — the last
+      via Renovate's `pnpm-workspace.overrides` depType. Lockstep is enforced by grouping an
+      override with its `package.json` copy (this caught a live drift: postcss `^8.5.25` vs
+      override `^8.5.24`). Docs: [`docs/renovate.md`](docs/renovate.md).
+      **Not live until three steps outside this repo happen:**
+  - [ ] Install the **Mend Renovate GitHub App** on the repo (account-level; Andrew only).
+  - [ ] Re-paste the updated `weekly-maintenance` and `bot-pr-triage` prompts via `/schedule` —
+        both live agents keep their own copy in `~/.claude/scheduled-tasks/`, so the repo docs
+        do not reach them. weekly-maintenance must stop bumping pnpm/Node/overrides itself;
+        bot-pr-triage is now purely report-only (its `@dependabot rebase` action is gone).
+  - [ ] Delete Dependabot's leftover auto-labels `javascript` and `github_actions`
+        (`dependencies` is kept — Renovate uses it).
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully

@@ -16,7 +16,7 @@ records its scope and rationale; use `/schedule` to list, adjust, or disable it.
 
 ## Scope
 
-### Core (from the backlog) — the transformative work Dependabot can't do
+### Core (from the backlog) — the transformative work Renovate can't do
 
 1. **Next.js codemods** — if `next` is a minor/major behind, bump it and run the
    official codemod (`npx @next/codemod@latest upgrade`), applying relevant transforms.
@@ -27,12 +27,14 @@ records its scope and rationale; use `/schedule` to list, adjust, or disable it.
 
 ### Recommended additions (why each earns its place)
 
-1. **Dependabot's blind spots** _(report, or bump if safe)_ — the pnpm version pin
-   (`packageManager:` in `package.json` — read the live value rather than trusting this
-   doc, which has gone stale before), Node `.nvmrc` (`26`), and any `overrides` /
-   `pnpm-workspace.yaml` overrides. These are exactly what broke CI on 2026-06-11 and
-   what Dependabot/this project's current tooling can't bump. **Lockstep rule:** when a
-   bumped dependency also appears in an `overrides` block, bump both together.
+1. **Renovate cross-check** _(report-only)_ — the pnpm version pin (`packageManager:` in
+   `package.json` — read the live value rather than trusting this doc, which has gone
+   stale before), Node `.nvmrc` (`26`), and the `pnpm-workspace.yaml` overrides. These are
+   exactly what broke CI on 2026-06-11. **Renovate now bumps all three** (see
+   [`renovate.md`](renovate.md)), so this item flipped from _do it_ to
+   _confirm it happened_: if any of them is behind and no Renovate PR or dashboard entry
+   explains why, Renovate itself has silently stopped working — say so in the PR body.
+   That is the failure this check now exists to catch.
 2. **Migration drift guard** _(report-only)_ — compare the final snapshot/journal across
    `drizzle/migrations/{dev,test,prod}/meta/_journal.json`. Flag if the three don't
    describe the same final schema. This is the exact failure that gave a fresh prod DB an
@@ -70,14 +72,18 @@ known gotchas. Never push to main, never merge, never run any db:*:prod script.
 1. RELEASE SCAN — check latest STABLE versions, but ignore any release younger than
    3 days (fresh releases have broken CI here before): next, @biomejs/biome, and
    report-only: pnpm, Node (.nvmrc=26), react/react-dom, drizzle-kit/drizzle-orm,
-   vitest, cypress, typescript.
+   vitest, cypress, typescript. Renovate owns the pnpm / Node / pnpm-workspace.yaml
+   override bumps now — do NOT bump those here; instead report any that are behind
+   with no Renovate PR or dashboard entry explaining it, since that means Renovate
+   has stopped working.
 
-2. CODEMODS (the part Dependabot can't do):
+2. CODEMODS (the part Renovate can't do):
    - If `next` is behind: bump next (and eslint-config-next if present) and run
      `npx @next/codemod@latest upgrade`, applying the relevant transforms.
    - If `@biomejs/biome` is behind: bump it and run `pnpm biome migrate --write`.
-   - LOCKSTEP: if any bumped dep also appears in package.json `overrides`/`pnpm.overrides`
-     or pnpm-workspace.yaml, bump it there too in the same change.
+   - LOCKSTEP: if any bumped dep also appears in pnpm-workspace.yaml `overrides`, bump it
+     there too in the same change, and add its name to `overridePackages` in
+     .github/renovate.json5 if missing.
 
 3. VERIFY: `pnpm install`, then `pnpm check:fast`. If green, also `pnpm test:unit`.
    Do NOT run e2e. If something fails, try a minimal fix; if still red, continue but
@@ -102,6 +108,9 @@ known gotchas. Never push to main, never merge, never run any db:*:prod script.
   live schedule — see [Schedule](#schedule) and the shared off-peak policy in
   [`README.md`](README.md#scheduled-agents)).
 - **Adjust or stop later:** `/schedule` can list, update, or delete existing routines.
+- ⚠ **The live agent stores its own copy of the prompt**, outside this repo
+  (`~/.claude/scheduled-tasks/`). Editing the prompt above does **not** change the running
+  agent — re-paste it via `/schedule` after any edit here, or the two silently diverge.
 
 ---
 

@@ -68,6 +68,7 @@ without a commit:
 | [package-json-scripts-guide.md](package-json-scripts-guide.md) | "What does this `pnpm <script>` actually do?"                                                                   |
 | [claude-code-command-guide.md](claude-code-command-guide.md)   | "Which `/` command should I reach for, and when?"                                                               |
 | [knip.md](knip.md)                                             | "How do I find unused exports, files, and dependencies?"                                                        |
+| [renovate.md](renovate.md)                                     | "What keeps dependencies, the pnpm pin, Node, and the overrides current, and how are updates grouped?"          |
 | [biome.md](biome.md)                                           | "Why is this lint rule off, and how do I trial one before enabling it?"                                         |
 | [tsconfig.md](tsconfig.md)                                     | "How are the TypeScript projects organized, which config owns a file, and where does a compiler option belong?" |
 

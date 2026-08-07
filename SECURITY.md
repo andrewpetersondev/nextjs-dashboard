@@ -40,4 +40,4 @@ server actions, database access, and input handling.
 **Out of scope:** the third-party platforms this project deploys to (e.g.
 Vercel, Neon) and vulnerabilities originating in dependencies — please report
 those to their upstream maintainers. Dependency updates here are tracked by
-Dependabot and dependency review.
+Renovate, GitHub's Dependabot security alerts, and dependency review.
