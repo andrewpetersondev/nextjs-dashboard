@@ -66,8 +66,12 @@ export const InfrastructureErrorMetadataSchema = z
  * optimistic-concurrency precondition (`WHERE status = expected`) matching
  * zero rows. Domain code cannot honestly supply the pgCode the PG shape
  * requires, hence this second union member.
+ *
+ * Module-private: `ConflictErrorMetadata` is the exported vocabulary, and no
+ * caller narrows to this arm yet (the only narrowing guard here is
+ * {@link isPgMetadata}, for the other one). Export it the day one does.
  */
-export type DomainConflictMetadata = Readonly<{
+type DomainConflictMetadata = Readonly<{
 	readonly attemptedTo?: string;
 	readonly expectedFrom?: string;
 	readonly policy?: string;

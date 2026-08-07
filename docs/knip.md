@@ -7,16 +7,26 @@ dependencies — by building an import graph from a set of entry points.
 
 ```sh
 pnpm knip          # static analysis — no env vars or database needed
-pnpm check:repo    # the full gate: pnpm check (lint+types+drift+tests+e2e) && pnpm knip
+pnpm check         # the full gate; knip runs inside it, after db:drift
 ```
 
 Knip parses source statically; it never executes the app, so it does **not** need a
 running database or `.env` file. (It is intentionally kept env-free — see the drizzle
-note below.) Knip is **not** part of CI — `.github/workflows/ci.yml` runs its checks as individual
-scripts (`biome:lint`, `md:check`, `next:typegen`, `typecheck`, `db:drift`,
-`test:coverage`, `test:integration`, `csp:guard:build`, `cy:e2e`), and `knip` is not
-among them. Run it locally via `pnpm check:repo`, or let the `weekly-maintenance`
-`/schedule` routine report new findings each week.
+note below.)
+
+**Knip is a blocking gate as of 2026-08-06** — a `Dead code` step in the CI
+`Lint & type-check` job, and a link in the `pnpm check` chain. Before that it ran only via
+`pnpm check:repo`, which **nothing executed**: not `check`, not `check:fast`, not CI. It
+drifted red unnoticed and was found carrying four stale findings. That is the same
+"wired into no pipeline" flaw that killed an earlier standalone typecheck script, so
+`check:repo` was deleted rather than left as a name nobody types — `pnpm check` is now a
+true superset of it. The `weekly-maintenance` routine still reports findings, but a weekly
+report is a lagging indicator: it never blocked the drift it was meant to catch.
+
+It is not in `check:fast`. That gate is the pre-commit loop, and mid-feature code
+legitimately has an export whose consumer does not exist yet; blocking every commit on
+that trains you to bypass the gate. Knip costs ~1s, so its placement is about workflow,
+not speed.
 
 Exit code `1` just means "findings were reported" — it is not a crash.
 
@@ -37,6 +47,13 @@ Exit code `1` just means "findings were reported" — it is not a crash.
   (`schema: "./database/schema"` in `drizzle.config.ts`), so `relations.ts` is live at
   migration time but invisible to the import graph. Without the entry, Knip would
   false-flag it as unused.
+- **`entry` looks like it under-covers tests, and does not.** It lists
+  `src/**/__tests__/**`, so the four test files under `devtools/**` appear to be
+  undeclared graph roots that Knip should false-flag as unused files. It does not report
+  them: Knip's **vitest plugin** derives test entries from `vitest.config.ts`, which
+  covers them already. Verified by running it — do not "fix" this by widening the glob.
+  (Biome's test-file override had the genuine version of this bug and was widened on
+  2026-08-06; the two configs look alike but only one was broken.)
 - The **`drizzle` plugin is left with `"config": []`** (disabled config discovery) on
   purpose: `drizzle.config.ts` throws `"DATABASE_URL is not set."` at module load, so
   letting the plugin load it would force every `knip` run to provide env. Disabling it

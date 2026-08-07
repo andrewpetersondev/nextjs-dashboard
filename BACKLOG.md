@@ -96,6 +96,45 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **knip triage + wiring it into a pipeline that runs** _(2026-08-06,
+      `claude/what-is-next-6181ec`)_ — `pnpm knip` was exiting 1 on `main` and nothing noticed,
+      because **nothing executed it**: not `check`, not `check:fast`, not CI. Its only caller was
+      `pnpm check:repo`, a name that appeared in three docs and in no workflow. Same
+      "wired into no pipeline" flaw that killed an earlier standalone typecheck script.
+      **The four findings were not what the label suggested.** knip says "unused export", which
+      reads as dead code; **three of the four were used inside their own file** and merely exported
+      too widely, so the fix was to drop `export`, not to delete: `extractServerActionFields`
+      (called by `buildServerActionBody` beside it — the module's surface is `extractForm` +
+      `buildServerActionBody`), `INVOICE_STATUS_TRANSITIONS` (the table behind three exported
+      accessors; un-exporting stops a caller reading it raw and bypassing the `from === to` no-op
+      rule that `canTransitionInvoiceStatus` adds), and `DomainConflictMetadata` (a member of the
+      exported `ConflictErrorMetadata` union, which stays the public vocabulary — re-export the arm
+      the day something narrows to it). This mirrors the 2026-06-11 "knip residue" pass, which also
+      resolved to un-exporting internal types rather than deleting them.
+      **One was genuinely dead and got deleted:** `isInvoiceDisplayStatus`, a guard narrowing
+      `InvoiceStatusFilter` → `InvoiceDisplayStatus` by excluding `"all"`. Zero references anywhere,
+      and **superseded rather than merely unadopted** — the one site that would use it,
+      `statusCondition` in `invoice-list-where.ts`, handles the same narrowing with an exhaustive
+      `switch` + `const exhaustive: never`, which buys compile-time exhaustiveness the guard cannot.
+      Its now-unused `InvoiceDisplayStatus` type import went with it.
+      **Wiring, decided rather than defaulted:** knip added to `pnpm check` (after `db:drift`) and as
+      a **`Dead code` step in the CI `Lint & type-check` job** — a step, never a new job, since
+      required-status-check contexts pin job NAMES. `check:repo` **deleted**: with knip inside
+      `check` it would have run knip twice, and `check` being a true superset is the rule established
+      2026-08-05 when `db:drift` was added to it for the same reason. Deliberately **not** in
+      `check:fast`: that is the pre-commit loop, and mid-feature code legitimately has an export
+      whose consumer does not exist yet — blocking every commit on that trains you to bypass the
+      gate. Cost is not the reason (knip is ~1.12s, cheaper than `typecheck`'s 1.7s); placement is
+      a workflow call. The `weekly-maintenance` routine still reports knip, but it is a lagging
+      report and demonstrably never blocked this drift.
+      **Recorded in `docs/knip.md` so it is not "fixed" later:** `entry` lists `src/**/__tests__/**`
+      and _looks_ like it under-covers the four test files under `devtools/**`, but knip's **vitest
+      plugin** derives test entries from `vitest.config.ts` and already covers them — verified by
+      running it. The near-identical-looking Biome override in the entry below had the real version
+      of that bug; only one of the two configs was broken. Validation: knip exit 0, `check:fast`
+      exit 0, unit 386/386, `ci.yml` re-parsed to confirm step placement and that all four job names
+      are unchanged. Integration/e2e not run — this worktree has no `.env.test.local`; CI is the
+      first real proof, and no runtime path changed.
 - [x] **Biome info slate back to 0 — the test override was anchored to `src/`** _(2026-08-06,
       `claude/what-is-next-6181ec`)_ — five `style` infos had accumulated (non-blocking, so
       `biome:lint` still exited 0 and they rode along unnoticed). **Three were not a code problem
