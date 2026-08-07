@@ -28,14 +28,15 @@ overtaken while they waited.
 Renovate runs early Monday (`* 0-6 * * 1`, Central), which keeps
 [bot-pr-triage](bot-pr-triage-routine.md)'s Tuesday/Friday cadence correct.
 
-| Group                         | Contents                                      | Commit prefix     |
-| ----------------------------- | --------------------------------------------- | ----------------- |
-| prod dependencies (non-major) | `dependencies`, `optionalDependencies`        | `chore(deps)`     |
-| dev dependencies (non-major)  | `devDependencies`                             | `chore(dev-deps)` |
-| github actions                | every workflow action                         | `ci(deps)`        |
-| pnpm (packageManager pin)     | the pnpm version + hash                       | `chore(tooling)`  |
-| node (.nvmrc)                 | the Node major                                | `chore(tooling)`  |
-| pinned overrides (lockstep)   | everything in `pnpm-workspace.yaml` overrides | `chore(deps)`     |
+| Group                         | Contents                                      | Commit prefix     | Merge    |
+| ----------------------------- | --------------------------------------------- | ----------------- | -------- |
+| prod dependencies (non-major) | `dependencies`, `optionalDependencies`        | `chore(deps)`     | human    |
+| dev dependencies (minor)      | `devDependencies` minor                       | `chore(dev-deps)` | human    |
+| dev dependencies (patch)      | `devDependencies` patch                       | `chore(dev-deps)` | **auto** |
+| github actions                | every workflow action                         | `ci(deps)`        | human    |
+| pnpm (packageManager pin)     | the pnpm version + hash                       | `chore(tooling)`  | human    |
+| node (.nvmrc)                 | the Node major                                | `chore(tooling)`  | human    |
+| pinned overrides (lockstep)   | everything in `pnpm-workspace.yaml` overrides | `chore(deps)`     | human    |
 
 **Majors are never grouped** — they need codemods and review, so each gets its own PR labelled
 `needs-decision`. That is the work the [weekly-maintenance routine](weekly-maintenance-routine.md)
@@ -84,10 +85,45 @@ as policy.
 
 ## Automerge
 
-Off everywhere, deliberately. The merge decision is the review gate (see
-[`AGENTS.md`](../AGENTS.md)), and `main` accepts direct pushes — so only `check` + `e2e` would stand
-between an automerged PR and production. A ready-to-enable rule for the lowest-risk slice
-(dev-dependency patches) is commented at the bottom of the config.
+**Dev-dependency patches automerge. Nothing else does.** Enabled 2026-08-07.
+
+That slice is the safe one: dev dependencies never reach the production runtime, patches carry the
+smallest behaviour surface, and the 3-day soak still applies. Everything else stays a human merge —
+prod deps ship to users, minors carry behaviour changes, majors need codemods, and the lockstep group
+has to be read against its advisory comments.
+
+Two things had to be true first, and neither was:
+
+**1. CI had to actually run on pull requests.** `ci.yml` triggered only on push to `main`. The one
+workflow on `pull_request` was `dependency-review.yml`, which checks for known-vulnerable
+dependencies and runs no build, no types, no tests. A bot PR was reaching `main` with essentially
+nothing verified. `ci.yml` now carries a `pull_request` trigger, so `Lint & type-check`, `CSP guard`,
+`Integration (Vitest)` and `E2E (Cypress)` all run on the PR that Renovate is waiting on.
+
+**2. GitHub had to be able to block the merge.** These are repo settings, not files here:
+
+- **"Allow auto-merge"** must be on in repository settings.
+- The **`Protect Important Branches` ruleset** must require the four CI contexts above. It previously
+  had only `deletion` and `non_fast_forward` — no required checks at all. This matters more than it
+  sounds: with no required checks, GitHub considers a PR whose checks have not started yet to be
+  immediately mergeable.
+
+> [!WARNING]
+> Required-status-check contexts pin to CI **job names**. Renaming a job in `ci.yml` silently stops
+> gating instead of failing loudly — the same trap already flagged in that file's `integration` job.
+
+### Why patches got their own group
+
+Renovate automerges a grouped PR only when _every_ update in it is automergeable. Leaving patches
+inside a combined "dev dependencies (non-major)" group would have made `automerge: true` look enabled
+and never fire. Splitting minor and patch into two groups is what makes the setting real.
+
+### Why ordering in `packageRules` is load-bearing
+
+The automerge rule sits **above** the lockstep rules. Later rules win, so the lockstep rules'
+`automerge: false` re-asserts itself for any package pinned in `pnpm-workspace.yaml` overrides —
+`postcss` is a devDependency _and_ an override, so without that ordering its patches would automerge
+straight past the review the lockstep group exists to force. Do not reorder those blocks.
 
 ## Editing the config
 
