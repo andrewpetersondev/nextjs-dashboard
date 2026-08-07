@@ -22,7 +22,7 @@ flowchart LR
   from `main`, worked in its own worktree, then **merged into `main` locally** in your
   primary checkout. There are no PRs and no `develop` integration branch.
 - **The local `pnpm check:fast` is the gate.** It runs Biome + Markdown + typegen +
-  type-check + migration drift before you merge — no tests (run the DB-free unit
+  type-check + Node/migration drift before you merge — no tests (run the DB-free unit
   lane separately with `pnpm test:unit` when the change warrants it). That's what
   keeps the `main` push green.
 - **CI runs on the push to `main`,** as a safety net: four parallel jobs —

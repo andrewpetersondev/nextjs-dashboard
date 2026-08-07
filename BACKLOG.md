@@ -91,7 +91,19 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       catalogs, and catalogs would make `package.json` read `"postcss": "catalog:"`, which
       Dependabot cannot bump. See the override-drift guard below for the durable fix.
 
-- [ ] **No guard on override/dependency drift** _(the class behind the postcss fix above)_ —
+- [x] ~~**Node version declared in three files that never agree**~~ — fixed 2026-08-07.
+      `.nvmrc` and the `Dockerfile` said **26** while `engines.node` said `>=24`, which Vercel
+      resolves to the newest major it offers — and Vercel tops out at **24.x** and never reads
+      `.nvmrc`. So production ran Node 24 while dev, CI, and Docker ran 26, and nothing
+      reported it. **Aligned on 24** (`.nvmrc`, `Dockerfile`, `engines.node: "24.x"`), which is
+      the version production was already proven on. Verified first that none of the 392
+      packages declaring `engines.node` requires ≥25 (highest floors are cypress/vitest at
+      `>=24.0.0`). New gate `pnpm node:drift` keeps the three in sync and additionally rejects
+      an open-ended `engines.node` range, since a range lets Vercel move production a major
+      with no commit and no CI run. Wired into `check` and `check:fast`.
+
+- [ ] **No guard on override/dependency drift** _(the class behind the postcss fix above;
+      `devtools/cli/node-version-drift.cli.ts` is the working template for it)_ —
       nothing asserts that an entry in `pnpm-workspace.yaml` `overrides` still matches the
       `package.json` range for the same package, so Dependabot bumping a dep silently leaves
       its override behind. Only `postcss` currently overlaps, so the blast radius is small

@@ -6,7 +6,7 @@
 # (Dependabot still opens PRs; `dependency-review.yml` is the gate for those.)
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
-#     Next.js typegen + type-check) plus the migration-drift gate and the DB-free
+#     Next.js typegen + type-check) plus the Node- and migration-drift gates and the DB-free
 #     unit lane with coverage thresholds (~1 min).
 #   • e2e — the slow Cypress end-to-end suite against a real `next dev` server
 #     backed by an ephemeral Postgres service container (recreates the

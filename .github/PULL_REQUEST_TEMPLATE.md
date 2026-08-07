@@ -13,7 +13,7 @@
 
 ## How it was tested
 
-- [ ] `pnpm check:fast` (Biome + Markdown + typegen + typecheck + migration drift)
+- [ ] `pnpm check:fast` (Biome + Markdown + typegen + typecheck + Node/migration drift)
 - [ ] `pnpm test` (unit)
 - [ ] `pnpm e2e` (end-to-end)
 - [ ] Manually verified in the running app

@@ -57,12 +57,12 @@ WebStorm. If you ever want a showcase PR, open one by hand — nothing here forb
 CI is one workflow, [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml), with
 four jobs that all run in parallel on **every push to `main`**:
 
-| Job                    | Speed  | What it needs                   | What it catches                                    |
-| ---------------------- | ------ | ------------------------------- | -------------------------------------------------- |
-| `Lint & type-check`    | fast   | nothing                         | lint, types, migration drift, unit lane + coverage |
-| `CSP guard`            | medium | a production build              | un-nonced scripts that would ship a dead page      |
-| `Integration (Vitest)` | fast   | Postgres service container      | the DB-backed integration lane                     |
-| `E2E (Cypress)`        | slow   | Postgres + a running `next dev` | the app in a real browser, including accessibility |
+| Job                    | Speed  | What it needs                   | What it catches                                           |
+| ---------------------- | ------ | ------------------------------- | --------------------------------------------------------- |
+| `Lint & type-check`    | fast   | nothing                         | lint, types, Node + migration drift, unit lane + coverage |
+| `CSP guard`            | medium | a production build              | un-nonced scripts that would ship a dead page             |
+| `Integration (Vitest)` | fast   | Postgres service container      | the DB-backed integration lane                            |
+| `E2E (Cypress)`        | slow   | Postgres + a running `next dev` | the app in a real browser, including accessibility        |
 
 A push to `main` also triggers the Vercel **production** deploy.
 

@@ -29,7 +29,7 @@ records its scope and rationale; use `/schedule` to list, adjust, or disable it.
 
 1. **Dependabot's blind spots** _(report, or bump if safe)_ — the pnpm version pin
    (`packageManager:` in `package.json` — read the live value rather than trusting this
-   doc, which has gone stale before), Node `.nvmrc` (`26`), and any `overrides` /
+   doc, which has gone stale before), Node `.nvmrc` (`24`), and any `overrides` /
    `pnpm-workspace.yaml` overrides. These are exactly what broke CI on 2026-06-11 and
    what Dependabot/this project's current tooling can't bump. **Lockstep rule:** when a
    bumped dependency also appears in an `overrides` block, bump both together.
@@ -69,7 +69,7 @@ known gotchas. Never push to main, never merge, never run any db:*:prod script.
 
 1. RELEASE SCAN — check latest STABLE versions, but ignore any release younger than
    3 days (fresh releases have broken CI here before): next, @biomejs/biome, and
-   report-only: pnpm, Node (.nvmrc=26), react/react-dom, drizzle-kit/drizzle-orm,
+   report-only: pnpm, Node (.nvmrc=24), react/react-dom, drizzle-kit/drizzle-orm,
    vitest, cypress, typescript.
 
 2. CODEMODS (the part Dependabot can't do):
