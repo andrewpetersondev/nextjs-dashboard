@@ -18,9 +18,7 @@ it back into `main` **locally** (in the primary checkout) when it is green, then
 always work from a worktree feature branch. See [`docs/branching-and-releases.md`](docs/branching-and-releases.md).
 
 Human feature work opens **no pull request** — it merges locally. PRs still exist for automation
-(Renovate, the weekly-maintenance routine), which is why `.github/PULL_REQUEST_TEMPLATE.md` is live.
-CI runs on those PRs as well as on pushes to `main`, and Renovate **automerges dev-dependency
-patches** once it is green — the only automerged slice. See [`docs/renovate.md`](docs/renovate.md).
+(Dependabot, the weekly-maintenance routine), which is why `.github/PULL_REQUEST_TEMPLATE.md` is live.
 
 ## Planning: BACKLOG.md and GitHub Issues
 

@@ -7,12 +7,6 @@ allowBuilds:
   esbuild: true
   sharp: true
 
-# Each entry forces a resolution ahead of upstream; the comment above it is the reason.
-# Renovate bumps these (depType `pnpm-workspace.overrides`) and groups every one of them —
-# plus any package.json copy of the same package — into a single "pinned overrides (lockstep)"
-# PR, so an override can never drift away from the dependency it is pinning.
-# ⚠ ADDING A KEY HERE? Add it to `overridePackages` in `.github/renovate.json5` too, or the
-#   package.json side of the lockstep group will silently stop matching.
 overrides:
   # GHSA-g7r4-m6w7-qqqr (esbuild, patched 0.28.1): vite declares ^0.27.0 and drizzle-kit
   # ^0.25.4, both admitting vulnerable lines. Also dedupes tsx's ~0.28.0 to one copy.

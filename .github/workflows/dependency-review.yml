@@ -1,7 +1,7 @@
 # Dependency Review — blocks pull requests that introduce vulnerable or
 # disallowed dependencies BEFORE they reach main.
 #
-# This complements Renovate: Renovate opens PRs to *update* existing
+# This complements Dependabot: Dependabot opens PRs to *update* existing
 # dependencies, while this inspects the dependency changes *introduced by* a
 # PR and fails the check if one pulls in a known vulnerability. Uses the
 # GitHub Advisory Database + dependency graph; free on public repositories.

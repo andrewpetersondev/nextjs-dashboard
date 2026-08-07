@@ -10,7 +10,7 @@ the **test environment** (`.env.test.local`):
 | Integration | Vitest  | `pnpm test:integration` | Full-stack flows through the layers against the real database | Yes              | Yes — `integration` |
 | End-to-end  | Cypress | `pnpm cy:e2e`           | The running app in a real browser, including accessibility    | Yes              | Yes — `e2e` job     |
 
-All three run on every push to `main` and on every PR into it. The integration lane joined CI on
+All three run on every push to `main`. The integration lane joined CI on
 2026-08-04; before that it ran on developer machines only, so a break in it could
 reach `main` unnoticed. Note that `pnpm check:fast` still does **not** cover it —
 it needs a database — so CI is its only automatic gate.
@@ -112,7 +112,7 @@ cy.checkA11y()
 
 ## CI
 
-All four CI jobs run in parallel on every push to `main`, and on every PR into it — see
+All four CI jobs run in parallel on every push to `main` — see
 [branching-and-releases.md](branching-and-releases.md). Three of them run tests:
 
 - **`check` job:** `pnpm test:coverage` — the DB-free unit lane, which also enforces
