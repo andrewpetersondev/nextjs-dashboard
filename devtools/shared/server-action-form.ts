@@ -45,30 +45,6 @@ function decodeHtmlEntities(value: string): string {
 }
 
 /**
- * Isolates one `<form>` element by a marker string in its opening tag.
- *
- * @param html - A rendered HTML document.
- * @param marker - Something unique to the target form's opening tag, e.g.
- *   `data-cy="login-form"` or `aria-label="demo-user"`.
- * @throws If no form contains the marker.
- */
-export function extractForm(html: string, marker: string): string {
-	const form = html
-		.split("<form")
-		.slice(1)
-		.map((chunk) => `<form${chunk.split("</form>")[0] ?? ""}`)
-		.find((candidate) => candidate.includes(marker));
-
-	if (!form) {
-		throw new Error(
-			`no <form> containing ${marker} — the page rendered, but the form is gone`,
-		);
-	}
-
-	return form;
-}
-
-/**
  * Collects the `$ACTION_*` hidden inputs that make a no-JS submission dispatch.
  *
  * Module-private: callers want a submittable body, which is
@@ -100,6 +76,30 @@ function extractServerActionFields(form: string): Map<string, string> {
 	}
 
 	return fields;
+}
+
+/**
+ * Isolates one `<form>` element by a marker string in its opening tag.
+ *
+ * @param html - A rendered HTML document.
+ * @param marker - Something unique to the target form's opening tag, e.g.
+ *   `data-cy="login-form"` or `aria-label="demo-user"`.
+ * @throws If no form contains the marker.
+ */
+export function extractForm(html: string, marker: string): string {
+	const form = html
+		.split("<form")
+		.slice(1)
+		.map((chunk) => `<form${chunk.split("</form>")[0] ?? ""}`)
+		.find((candidate) => candidate.includes(marker));
+
+	if (!form) {
+		throw new Error(
+			`no <form> containing ${marker} — the page rendered, but the form is gone`,
+		);
+	}
+
+	return form;
 }
 
 /**
