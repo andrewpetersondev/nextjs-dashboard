@@ -38,7 +38,8 @@ const LABEL = "deploy-freshness";
  * The cost of going too short is the one that matters: a watchdog that fails
  * every time it happens to run mid-deploy is a watchdog you learn to ignore.
  */
-const DEPLOY_IN_FLIGHT_SECONDS = 30 * SECONDS_PER_MINUTE;
+const DEPLOY_IN_FLIGHT_MINUTES = 30;
+const DEPLOY_IN_FLIGHT_SECONDS = DEPLOY_IN_FLIGHT_MINUTES * SECONDS_PER_MINUTE;
 
 /**
  * What the deployed and expected SHAs mean together.
@@ -54,6 +55,7 @@ export type FreshnessVerdict =
 	| { readonly kind: "stale"; readonly lagSeconds: number }
 	| { readonly kind: "undatable" };
 
+// biome-ignore lint/style/useExportsLast: the pure decision leads this file on purpose — the I/O that feeds it follows, per the module doc above.
 export function classifyFreshness(
 	deployed: string,
 	expected: string,
