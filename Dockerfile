@@ -16,8 +16,20 @@
 FROM node:24-alpine AS base
 # `libc6-compat` covers the glibc shims some Node binaries expect on Alpine.
 RUN apk add --no-cache libc6-compat
-# Node 25+ no longer bundles corepack, so install it, then let it provide the
-# exact pnpm pinned in package.json "packageManager". Never prompt to download.
+# Corepack provides the exact pnpm pinned in package.json "packageManager",
+# including verifying its +sha512 integrity hash.
+#
+# Node 24 DOES bundle corepack (Node 25 was the first release to drop it), so
+# this install is not about availability — it is about key freshness. Corepack
+# ships a STATIC set of npm registry signing keys, frozen at whatever the Node
+# release bundled. When npm rotated its signing keys in January 2025, every
+# corepack older than 0.31.0 began failing with "Cannot find matching keyid".
+# Node 24's bundled copy is past that line today, but it never moves again,
+# while pnpm releases keep being signed with current keys. Installing
+# corepack@latest decouples key material from the Node bump cadence.
+#
+# If this image is ever pinned to a Node major that predates corepack 0.31.0,
+# or npm rotates keys again, this line is what keeps the build green.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN npm install -g corepack@latest && corepack enable
 WORKDIR /app
