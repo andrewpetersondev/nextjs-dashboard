@@ -17,6 +17,25 @@ const PgErrorMetadataSchema: z.ZodType<PgErrorMetadata> = z
 	})
 	.passthrough();
 
+/**
+ * Conflict raised by a domain rule rather than a Postgres error — e.g. an
+ * optimistic-concurrency precondition (`WHERE status = expected`) matching
+ * zero rows. Domain code cannot honestly supply the pgCode the PG shape
+ * requires, hence this second union member.
+ *
+ * Module-private, and grouped up here with the other private declarations:
+ * `ConflictErrorMetadata` below is the exported vocabulary, and no caller
+ * narrows to this arm yet (the only narrowing guard here is
+ * {@link isPgMetadata}, for the other one). Export it the day one does.
+ */
+type DomainConflictMetadata = Readonly<{
+	readonly attemptedTo?: string;
+	readonly expectedFrom?: string;
+	readonly policy?: string;
+	readonly reason?: string;
+	readonly resourceId?: string;
+}>;
+
 const DomainConflictMetadataSchema = z
 	.object({
 		attemptedTo: z.string().optional(),
@@ -60,24 +79,6 @@ export const InfrastructureErrorMetadataSchema = z
 		reason: z.string().optional(),
 	})
 	.passthrough() as z.ZodType<InfrastructureErrorMetadata>;
-
-/**
- * Conflict raised by a domain rule rather than a Postgres error — e.g. an
- * optimistic-concurrency precondition (`WHERE status = expected`) matching
- * zero rows. Domain code cannot honestly supply the pgCode the PG shape
- * requires, hence this second union member.
- *
- * Module-private: `ConflictErrorMetadata` is the exported vocabulary, and no
- * caller narrows to this arm yet (the only narrowing guard here is
- * {@link isPgMetadata}, for the other one). Export it the day one does.
- */
-type DomainConflictMetadata = Readonly<{
-	readonly attemptedTo?: string;
-	readonly expectedFrom?: string;
-	readonly policy?: string;
-	readonly reason?: string;
-	readonly resourceId?: string;
-}>;
 
 export type ConflictErrorMetadata =
 	| Readonly<PgErrorMetadata>

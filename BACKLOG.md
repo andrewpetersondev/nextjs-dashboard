@@ -135,6 +135,18 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       exit 0, unit 386/386, `ci.yml` re-parsed to confirm step placement and that all four job names
       are unchanged. Integration/e2e not run — this worktree has no `.env.test.local`; CI is the
       first real proof, and no runtime path changed.
+      **Follow-up the same day — the un-exports tripped `useExportsLast`.** Dropping `export` from a
+      function in the MIDDLE of a file turns the ones above it into "exports not last": `extractForm`
+      and `InfrastructureErrorMetadataSchema` each began emitting an info once the symbol below them
+      went private. Fixed by **reordering, not suppressing** — private declarations now group ahead
+      of the exported surface in both files (`extractServerActionFields` moved above `extractForm`;
+      `DomainConflictMetadata` moved up beside its schema), which is the arrangement the rule wants
+      and reads better anyway. **The lesson is the verification method, not the rule:** the two infos
+      were introduced and shipped in the commit above because it was validated with
+      `pnpm check:fast >/dev/null; echo $?` — and Biome **infos do not change the exit code**, the
+      exact blindness the entry below this one is about. Verify a Biome slate by **listing
+      diagnostics**, never by reading an exit code. `check:fast`, `knip`, `test:coverage` (floors
+      hold) and unit 386/386 all green afterwards, with a zero-diagnostic Biome slate.
 - [x] **Biome info slate back to 0 — the test override was anchored to `src/`** _(2026-08-06,
       `claude/what-is-next-6181ec`)_ — five `style` infos had accumulated (non-blocking, so
       `biome:lint` still exited 0 and they rode along unnoticed). **Three were not a code problem
