@@ -9,8 +9,9 @@ it.
 
 Under the [single-branch local-first model](branching-and-releases.md), feature work merges into
 `main` **locally from a worktree with no PR**. The consequence is easy to miss: the PR queue is
-almost entirely bots — Dependabot, plus the [weekly-maintenance](weekly-maintenance-routine.md)
-agent's Sunday-night PR — and **nothing in the daily workflow pulls you to it**.
+almost entirely bots — [Renovate](renovate.md), plus the
+[weekly-maintenance](weekly-maintenance-routine.md) agent's Sunday-night PR — and **nothing in the
+daily workflow pulls you to it**.
 
 That has already cost real work. PR #105 sat long enough to be overtaken and had to be closed as
 superseded by #107. It is not an isolated case: **#113, #114, #116, #117, #119, and #122 were all
@@ -23,10 +24,11 @@ minute.
 ## Schedule
 
 - **Cron:** `41 6 * * 2,5` — Tuesday and Friday mornings, outside peak hours.
-- **Frequency rationale:** Dependabot is configured `interval: weekly` (Monday) and the
-  weekly-maintenance PR lands Sunday night, so **Tuesday** triages a full queue — by which point
-  anything blocked on the 24h release-age policy has cleared. **Friday** catches whatever is still
-  open before the weekend. Twice a week is enough for a queue that fills once.
+- **Frequency rationale:** Renovate is scheduled for early **Monday** (`* 0-6 * * 1`) and the
+  weekly-maintenance PR lands Sunday night, so **Tuesday** triages a full queue. **Friday** catches
+  whatever is still open before the weekend. Twice a week is enough for a queue that fills once.
+  Renovate's grouping also makes that queue much shorter than Dependabot's was — roughly six
+  standing PRs plus one per major, instead of up to ten ungrouped bumps.
 
 ## What it classifies
 
@@ -37,7 +39,7 @@ Every open PR lands in exactly one bucket, each with one recommended action:
 | **Clean**               | Checks green, mergeable, no override needs a matching bump    | Merge                              |
 | **Superseded**          | `main` already has that version or newer                      | Close, don't merge                 |
 | **Release-age blocked** | pnpm 11 `minimumReleaseAge` rejected a package under ~24h old | Wait, then rebase                  |
-| **Needs lockstep**      | The dep also appears in `overrides` / `pnpm-workspace.yaml`   | Bump the override first            |
+| **Needs lockstep**      | The dep also appears in `pnpm-workspace.yaml` `overrides`     | Fix the Renovate group, then bump  |
 | **Failing**             | CI red for any other reason                                   | Investigate (log excerpt included) |
 | **Conflicted**          | Dirty merge state                                             | Rebase                             |
 
@@ -46,7 +48,10 @@ Every open PR lands in exactly one bucket, each with one recommended action:
 
 **Release-age is not a defect.** pnpm 11's `minimumReleaseAge` blocking a package published in the
 last 24 hours is the supply-chain policy working correctly. The fix is to wait and re-run, never to
-bypass it. (This is what PR #36 hit in June.)
+bypass it. (This is what PR #36 hit in June.) Renovate should now stop this bucket from filling at
+all: it soaks releases for 3 days and, with `internalChecksFilter: "strict"`, holds the update back
+instead of opening a PR that cannot go green. **A PR in this bucket is therefore a signal** — either
+the weekly-maintenance agent bumped something itself, or the Renovate soak is misconfigured.
 
 ### Standing holds it checks regardless of bucket
 
@@ -58,10 +63,18 @@ bypass it. (This is what PR #36 hit in June.)
 
 ## What it will not do
 
-It **never merges, closes, approves, pushes, or edits anything.** The merge decision is the review
-gate and stays with a human. Its single permitted write action is posting one `@dependabot rebase`
-comment on a PR whose release-age block has since cleared — a mechanical bot command, capped at one
-per PR per run.
+It **never merges, closes, approves, pushes, comments, or edits anything.** The merge decision is the
+review gate and stays with a human.
+
+It used to have one permitted write action — a `@dependabot rebase` comment on a PR whose
+release-age block had cleared. That is gone with Dependabot. Renovate has no comment command;
+rebasing means ticking a checkbox in the PR body or on the dependency dashboard, which is an edit,
+and the 3-day soak means there should be nothing to rebase in the first place. **The routine is now
+purely report-only** — strictly safer, and it lost nothing that still applied.
 
 It also flags any PR open more than 14 days by name, and leaves human-authored PRs alone rather than
 classifying them as bot work.
+
+⚠ **The live agent stores its own copy of its prompt**, outside this repo
+(`~/.claude/scheduled-tasks/`). Edits here do not reach it — re-paste via `/schedule`, or the doc
+and the running agent silently diverge.

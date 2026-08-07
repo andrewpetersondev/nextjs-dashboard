@@ -1,0 +1,197 @@
+// Renovate keeps dependencies current. It replaces `.github/dependabot.yml`
+// (deleted) because Dependabot cannot touch three things this repo needs kept
+// current: the pinned pnpm version (`packageManager`), the Node version
+// (`.nvmrc`), and the `pnpm-workspace.yaml` overrides used to force-resolve
+// security advisories ahead of upstream. See issue #124.
+//
+// NOTE: deleting `dependabot.yml` removed Dependabot *version updates* only.
+// GitHub's Dependabot *security alerts*, the dependency graph, and
+// `.github/workflows/dependency-review.yml` are repo settings / workflows and
+// are all still live.
+//
+// JSON5 (not .json) so these comments survive — several of the rules below
+// encode *why* a pin exists, and a rule whose reason is invisible is a rule
+// somebody deletes.
+//
+// Validate after editing:  pnpm dlx --package=renovate renovate-config-validator
+// Docs: https://docs.renovatebot.com/configuration-options/
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+
+  extends: ["config:recommended"],
+
+  // The weekly-maintenance routine runs Monday ~9am Central; Dependabot ran
+  // weekly on Monday, and `docs/bot-pr-triage-routine.md` triages Tue/Fri on
+  // the assumption the queue fills once, on Monday. Keep that assumption true.
+  timezone: "America/Chicago",
+  schedule: ["* 0-6 * * 1"],
+
+  // Repo uses conventional commits. Dependabot wrote `chore(deps)` /
+  // `chore(dev-deps)` / `ci`; the per-rule scopes below preserve that.
+  semanticCommits: "enabled",
+  semanticCommitType: "chore",
+  semanticCommitScope: "deps",
+
+  // One issue listing everything outstanding. This is the direct answer to the
+  // problem `docs/bot-pr-triage-routine.md` was written for: the queue needs
+  // *reading*, and a dashboard is cheaper to read than N open PRs.
+  dependencyDashboard: true,
+  dependencyDashboardTitle: "Dependency dashboard",
+
+  labels: ["dependencies", "type: chore"],
+
+  // pnpm 11's default `minimumReleaseAge` refuses packages younger than 24h,
+  // which fails the Vercel build rather than the PR. Waiting 3 days keeps
+  // Renovate from opening PRs that cannot possibly go green.
+  // `strict` holds the update back entirely instead of opening a pending PR —
+  // PRs #113/#114/#116/#117/#119/#122 were all closed-not-merged after being
+  // overtaken while they waited, which is exactly what pending PRs cause.
+  minimumReleaseAge: "3 days",
+  internalChecksFilter: "strict",
+
+  // Six standing groups below; the limit must exceed that or one starves
+  // permanently. Overflow is visible on the dashboard, not lost.
+  prConcurrentLimit: 8,
+  prHourlyLimit: 2,
+
+  rangeStrategy: "replace",
+
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ["* 0-6 * * 1"],
+  },
+
+  // Advisories must not wait for the Monday window or the 3-day soak.
+  vulnerabilityAlerts: {
+    labels: ["dependencies", "area: security"],
+    minimumReleaseAge: null,
+    schedule: [],
+  },
+  osvVulnerabilityAlerts: true,
+
+  packageRules: [
+    // ---------------------------------------------------------------------
+    // Grouping — mirrors the prod/dev/actions split Dependabot had, so the
+    // shape of the weekly queue does not change when the bot does.
+    // Majors are deliberately excluded: they need codemods and review (see
+    // `docs/weekly-maintenance-routine.md`), so they stay one PR each.
+    // ---------------------------------------------------------------------
+    {
+      matchDepTypes: ["dependencies", "optionalDependencies"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "prod dependencies (non-major)",
+      semanticCommitScope: "deps",
+    },
+    {
+      matchDepTypes: ["devDependencies"],
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      groupName: "dev dependencies (non-major)",
+      semanticCommitScope: "dev-deps",
+    },
+    {
+      matchManagers: ["github-actions"],
+      groupName: "github actions",
+      semanticCommitType: "ci",
+      addLabels: ["area: ci"],
+    },
+    {
+      matchUpdateTypes: ["major"],
+      addLabels: ["needs-decision"],
+      minimumReleaseAge: "7 days",
+    },
+
+    // ---------------------------------------------------------------------
+    // The three Dependabot blind spots this migration exists for (#124).
+    // ---------------------------------------------------------------------
+
+    // 1. pnpm version pin. Renovate updates `packageManager` including its
+    //    `+sha512…` integrity hash, which is the part that made this a manual
+    //    edit. Soak it longer than a normal dep: a bad pnpm breaks every job.
+    {
+      matchDepTypes: ["packageManager"],
+      groupName: "pnpm (packageManager pin)",
+      semanticCommitScope: "tooling",
+      addLabels: ["area: tooling"],
+      minimumReleaseAge: "7 days",
+    },
+
+    // 2. Node version. `.nvmrc` holds a bare major, so every update Renovate
+    //    can offer here is a major — and it must be checked against what
+    //    Vercel actually supports before merging. Human gate, always.
+    {
+      matchManagers: ["nvm"],
+      groupName: "node (.nvmrc)",
+      semanticCommitScope: "tooling",
+      addLabels: ["area: tooling", "needs-decision"],
+      minimumReleaseAge: "14 days",
+    },
+
+    // `engines.node` is `>=24`: a deliberate *floor* (minimum supported), not
+    // a pin tracking `.nvmrc` (26). Renovate must not "sync" the two — that
+    // would silently narrow what this package claims to run on.
+    {
+      matchDepTypes: ["engines"],
+      enabled: false,
+    },
+
+    // 3. `pnpm-workspace.yaml` overrides — THE LOCKSTEP RULE.
+    //
+    //    Every entry there exists to force-resolve a security advisory or a
+    //    deliberate hold ahead of upstream, and each carries a comment saying
+    //    which. Two failure modes to prevent:
+    //
+    //    (a) An override bumping in isolation, away from the advisory that
+    //        motivated it → these are never automerged and are labelled
+    //        `area: security` so the comment gets re-read on every bump.
+    //    (b) A package bumping in `package.json` while its override entry
+    //        stays behind — already live today: postcss is `^8.5.25` in
+    //        devDependencies but `^8.5.24` in overrides.
+    //
+    //    (a) is handled by matching the depType; (b) needs the name list, so
+    //    that both copies of a package land in ONE branch.
+    //
+    //    ⚠ KEEP `overridePackages` BELOW IN SYNC WITH `pnpm-workspace.yaml`.
+    //      A name present in overrides but missing here can desync silently.
+    //      There is a matching pointer comment in `pnpm-workspace.yaml`.
+    {
+      matchDepTypes: ["pnpm-workspace.overrides"],
+      groupName: "pinned overrides (lockstep)",
+      semanticCommitScope: "deps",
+      addLabels: ["area: security"],
+      automerge: false,
+    },
+    {
+      // overridePackages — mirrors the keys of `pnpm-workspace.yaml` overrides
+      matchPackageNames: ["esbuild", "postcss", "sharp", "vite"],
+      groupName: "pinned overrides (lockstep)",
+      semanticCommitScope: "deps",
+      addLabels: ["area: security"],
+      automerge: false,
+    },
+
+    // Deliberate major-7 hold: vitest 4 accepts ^6||^7||^8 and would otherwise
+    // resolve vite 8. Drop this only as part of an intentional vite 8
+    // migration — the same wording guards the override in pnpm-workspace.yaml.
+    {
+      matchPackageNames: ["vite"],
+      allowedVersions: "<8",
+    },
+
+    // ---------------------------------------------------------------------
+    // Automerge: intentionally OFF everywhere. The merge decision is the
+    // review gate (see AGENTS.md / docs/bot-pr-triage-routine.md).
+    // To enable it for the lowest-risk slice later, add a rule such as:
+    //
+    //   {
+    //     matchDepTypes: ["devDependencies"],
+    //     matchUpdateTypes: ["patch"],
+    //     automerge: true,
+    //     automergeType: "pr",
+    //     platformAutomerge: true,
+    //   }
+    //
+    // Note `main` allows direct pushes, so nothing but `check` + `e2e` stands
+    // between an automerged PR and production. Decide deliberately.
+    // ---------------------------------------------------------------------
+  ],
+}

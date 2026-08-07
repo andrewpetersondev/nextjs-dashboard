@@ -3,7 +3,7 @@
 # Single-branch, local-first model: feature work is merged into `main` locally
 # (worktrees share one object store, so no remote round-trip) and pushed. Human
 # feature work opens no PRs — CI runs on every push to `main` as the safety net.
-# (Dependabot still opens PRs; `dependency-review.yml` is the gate for those.)
+# (Renovate still opens PRs; `dependency-review.yml` is the gate for those.)
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
 #     Next.js typegen + type-check) plus the migration-drift gate and the DB-free
