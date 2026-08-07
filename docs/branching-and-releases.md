@@ -55,9 +55,7 @@ WebStorm. If you ever want a showcase PR, open one by hand — nothing here forb
 ## What runs where
 
 CI is one workflow, [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml), with
-four jobs that all run in parallel on **every push to `main`** and on **every pull request
-targeting it** (the PR trigger was added 2026-08-07 for Renovate automerge — see
-[`renovate.md`](renovate.md)):
+four jobs that all run in parallel on **every push to `main`**:
 
 | Job                    | Speed  | What it needs                   | What it catches                                    |
 | ---------------------- | ------ | ------------------------------- | -------------------------------------------------- |
@@ -68,26 +66,13 @@ targeting it** (the PR trigger was added 2026-08-07 for Renovate automerge — s
 
 A push to `main` also triggers the Vercel **production** deploy.
 
-For **human work**, CI runs **after** the push, as a safety net — not as a merge gate (a
-direct push can't wait for checks that only start once it lands). The local
-`pnpm check:fast` before the merge is what catches most failures early; a red `main` run
-means fix-forward.
-
-For **bot PRs** it is the opposite: nobody ran anything locally, so the PR run is the only
-verification there is. That is why `ci.yml` gained its `pull_request` trigger — before
-2026-08-07 a bot PR saw only `dependency-review.yml`, which runs no build, types, or tests.
+CI runs **after** the push, as a safety net — not as a merge gate (a direct push can't
+wait for checks that only start once it lands). The local `pnpm check:fast` before the
+merge is what catches most failures early; a red `main` run means fix-forward.
 
 `main` is protected by a GitHub ruleset (`Protect Important Branches`) that blocks
-force-pushes and branch deletion but **allows** direct pushes — no pull-request rule, by
-design.
-
-> [!IMPORTANT]
-> That ruleset must also **require the four CI contexts above** for Renovate's automerge to
-> be safe: with no required checks, GitHub treats a PR whose checks have not started as
-> immediately mergeable. Verify with
-> `gh api repos/andrewpetersondev/nextjs-dashboard/rulesets/16781526`; if the only rules are
-> `deletion` and `non_fast_forward`, that setting has not been applied yet — see
-> [`renovate.md` § Automerge](renovate.md#automerge).
+force-pushes and branch deletion but **allows** direct pushes — there is no
+required-status-check or pull-request rule, by design.
 
 ## Working in parallel (lanes)
 

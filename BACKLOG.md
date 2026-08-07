@@ -62,34 +62,31 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
-- [ ] **Renovate adoption** ([#124](https://github.com/andrewpetersondev/nextjs-dashboard/issues/124))
-      — **repo side BUILT 2026-08-07** (`claude/issue-124-326e7f` lane). `.github/renovate.json5`
-      added and validated with `renovate-config-validator --strict`; `.github/dependabot.yml`
-      deleted; six update groups replace Dependabot's split; the pnpm pin (`packageManager` +
-      sha512 hash), `.nvmrc`, and `pnpm-workspace.yaml` overrides are all now covered — the last
-      via Renovate's `pnpm-workspace.overrides` depType. Lockstep is enforced by grouping an
-      override with its `package.json` copy (this caught a live drift: postcss `^8.5.25` vs
-      override `^8.5.24`). Docs: [`docs/renovate.md`](docs/renovate.md).
-      **Automerge enabled 2026-08-07 for dev-dependency patches only** — which required giving
-      `ci.yml` a `pull_request` trigger first: bot PRs previously saw only
-      `dependency-review.yml` (no build, no types, no tests), so automerging would have landed
-      unverified code. Patches got their own group because Renovate automerges a grouped PR only
-      if every update in it is automergeable.
-      **Not live until five steps outside this repo happen:**
-  - [ ] Install the **Mend Renovate GitHub App** on the repo (account-level; Andrew only).
-  - [ ] Turn on **"Allow auto-merge"** in repo settings (currently `false`).
-  - [ ] Add the four CI contexts (`Lint & type-check`, `CSP guard`, `Integration (Vitest)`,
-        `E2E (Cypress)`) as **required status checks** on the `Protect Important Branches`
-        ruleset — it currently has only `deletion` + `non_fast_forward`. Without required
-        checks GitHub treats a PR whose checks haven't started as immediately mergeable, so
-        automerge could land before CI runs. Contexts pin to job NAMES; renaming one in
-        `ci.yml` silently stops gating.
-  - [ ] Re-paste the updated `weekly-maintenance` and `bot-pr-triage` prompts via `/schedule` —
-        both live agents keep their own copy in `~/.claude/scheduled-tasks/`, so the repo docs
-        do not reach them. weekly-maintenance must stop bumping pnpm/Node/overrides itself;
-        bot-pr-triage is now purely report-only (its `@dependabot rebase` action is gone).
-  - [ ] Delete Dependabot's leftover auto-labels `javascript` and `github_actions`
-        (`dependencies` is kept — Renovate uses it).
+- [x] ~~**Renovate adoption** ([#124](https://github.com/andrewpetersondev/nextjs-dashboard/issues/124))~~
+      — **DROPPED 2026-08-07. Do not re-propose.** Fully built and validated on
+      `claude/issue-124-326e7f` (config, grouping, lockstep rules, automerge, docs), then
+      **reverted** — installing the Mend Renovate GitHub App asked for credit-card details at
+      the GitHub Marketplace checkout, and that is not a cost this project takes on. Dependabot
+      stays. The build is recoverable from the reverted commits on that branch if the calculus
+      ever changes. Two findings from the attempt outlived it and are listed below.
+
+- [ ] **Bot PRs run essentially no CI** _(found 2026-08-07 during the Renovate attempt;
+      independent of it)_ — [`ci.yml`](.github/workflows/ci.yml) triggers only on
+      `push: [main]`. The one workflow on `pull_request` is
+      [`dependency-review.yml`](.github/workflows/dependency-review.yml), which checks for
+      known-vulnerable dependencies and runs **no build, no types, no tests**. So every
+      Dependabot PR — and the weekly-maintenance PR — is merged on the strength of an
+      advisory scan alone. Fix is one `pull_request: branches: [main]` trigger; the cost is
+      that each bot PR then runs the full suite (e2e ~15 min) and runs it again on the merge
+      push. Consider scoping the PR trigger to `check` + `integration` and leaving `e2e` to
+      the push if that is too slow.
+
+- [ ] **`postcss` override has drifted from its dependency** _(found 2026-08-07)_ —
+      `package.json` devDependencies has `postcss: ^8.5.25` while
+      [`pnpm-workspace.yaml`](pnpm-workspace.yaml) `overrides` pins `postcss: ^8.5.24`. The
+      override exists to dedupe next's exact 8.4.31 pin to one 8.5.x copy, so this is not
+      currently harmful, but it is exactly the lockstep drift the weekly routine is meant to
+      catch and did not. Bump the override to match.
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
