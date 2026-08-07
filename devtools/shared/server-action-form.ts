@@ -71,11 +71,15 @@ export function extractForm(html: string, marker: string): string {
 /**
  * Collects the `$ACTION_*` hidden inputs that make a no-JS submission dispatch.
  *
+ * Module-private: callers want a submittable body, which is
+ * {@link buildServerActionBody}. This is the step that produces the half of it
+ * React owns.
+ *
  * @throws If the form carries none — which means progressive enhancement is
  *   broken (no visitor without JavaScript could submit it) or React changed its
  *   encoding. Either way the caller must not report a passing login.
  */
-export function extractServerActionFields(form: string): Map<string, string> {
+function extractServerActionFields(form: string): Map<string, string> {
 	const fields = new Map<string, string>();
 
 	for (const input of form.match(HIDDEN_INPUT_REGEX) ?? []) {

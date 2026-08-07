@@ -97,7 +97,16 @@ jobs:
       - name: Migration drift
         run: pnpm db:drift
 
-      # 10. Unit tests + coverage. The unit lane is DB-free (dummy env + mocked
+      # 10. Dead-code gate. Knip is static and env-free (no database, no .env),
+      #     so it runs in plain CI, and at ~1s it is the cheapest step here.
+      #     Added 2026-08-06: it previously ran only via `pnpm check:repo`, which
+      #     nothing executed, so it drifted red unnoticed — the same
+      #     "wired into no pipeline" flaw that killed an earlier typecheck script.
+      #     Exit 1 means findings, not a crash; triage per docs/knip.md.
+      - name: Dead code
+        run: pnpm knip
+
+      # 11. Unit tests + coverage. The unit lane is DB-free (dummy env + mocked
       #     DB), so it runs in plain CI. `test:coverage` also enforces the
       #     coverage floors in `vitest.config.ts` — a regression below them fails
       #     the build.

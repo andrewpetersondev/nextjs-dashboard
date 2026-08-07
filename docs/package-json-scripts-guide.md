@@ -157,10 +157,10 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
 - `pnpm knip` — find unused exports, files, and dependencies.
-- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the migration-drift gate, unit +
-  integration tests, and E2E (everything `check:fast` runs, plus all three test lanes).
-- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the migration-drift gate (no tests/E2E).
-- `pnpm check:repo` — run full `check` plus knip.
+- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the migration-drift gate, the
+  knip dead-code gate, unit + integration tests, and E2E (everything `check:fast` runs, plus knip and
+  all three test lanes).
+- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the migration-drift gate (no knip, no tests/E2E).
 - `pnpm csp:guard` — assert the enforced Content-Security-Policy on a running server (nonce-CSP
   breakage is silent and screenshot-proof, so this is its own gate).
 - `pnpm csp:guard:build` — `next:build` then `csp:guard`. This is the CI `csp` job: it is the only

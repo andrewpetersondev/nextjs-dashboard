@@ -11,8 +11,12 @@ import type { Result } from "@/shared/core/result/result.dto";
  * terminal. "void" (not delete) preserves the record for reporting — see the
  * module README. "overdue" never appears here: it is a derived display state
  * of "pending", not a stored status.
+ *
+ * Module-private on purpose: the table is the implementation, and the three
+ * functions below are the surface. Reading it directly would let a caller
+ * bypass the `from === to` no-op rule that `canTransitionInvoiceStatus` adds.
  */
-export const INVOICE_STATUS_TRANSITIONS: Readonly<
+const INVOICE_STATUS_TRANSITIONS: Readonly<
 	Record<InvoiceStatus, readonly InvoiceStatus[]>
 > = {
 	paid: [],

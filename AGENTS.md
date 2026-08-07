@@ -51,8 +51,7 @@ the files you are touching.
 ## Useful commands
 
 - Fast validation: `pnpm check:fast`
-- Full validation: `pnpm check`
-- Repo validation: `pnpm check:repo`
+- Full validation: `pnpm check` (a true superset of `check:fast`; includes the knip dead-code gate)
 - Lint + format, both toolchains (report-only / autofix): `pnpm lint` / `pnpm fix`
 - Format check: `pnpm biome:format:check`
 - Lint/typegen/typecheck: `pnpm biome:lint`, `pnpm next:typegen`, `pnpm typecheck`
