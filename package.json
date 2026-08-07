@@ -50,7 +50,7 @@
 		"vitest": "4.1.10"
 	},
 	"engines": {
-		"node": ">=24"
+		"node": "24.x"
 	},
 	"name": "nextjs-dashboard",
 	"packageManager": "pnpm@11.20.0+sha512.9a6f330a95b66446ea088faf1521405a8a01f07fde7124cc9958dfed52d4bb436737e65b08f85f37b46fcba375092558ac51262b816844b22f63406ed166bfee",
@@ -61,8 +61,8 @@
 		"biome:lint": "biome check",
 		"biome:lint:fix": "biome check --write",
 		"biome:summary": "biome check --reporter=summary",
-		"check": "pnpm biome:lint && pnpm md:check && pnpm next:typegen && pnpm typecheck && pnpm db:drift && pnpm knip && pnpm test:all && pnpm cy:e2e",
-		"check:fast": "pnpm biome:lint && pnpm md:check && pnpm next:typegen && pnpm typecheck && pnpm db:drift",
+		"check": "pnpm biome:lint && pnpm md:check && pnpm next:typegen && pnpm typecheck && pnpm node:drift && pnpm db:drift && pnpm knip && pnpm test:all && pnpm cy:e2e",
+		"check:fast": "pnpm biome:lint && pnpm md:check && pnpm next:typegen && pnpm typecheck && pnpm node:drift && pnpm db:drift",
 		"clean": "rimraf .next && pnpm clean:generated",
 		"clean:all": "pnpm clean && pnpm clean:deps",
 		"clean:deps": "rimraf node_modules",
@@ -125,6 +125,7 @@
 		"next:start:standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && pnpm env:prod:pnpm node .next/standalone/server.js",
 		"next:start:standalone:test": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && pnpm env:test:pnpm node .next/standalone/server.js",
 		"next:typegen": "next typegen",
+		"node:drift": "pnpm tsx --tsconfig tsconfig.json devtools/cli/node-version-drift.cli.ts",
 		"serve:standalone": "pnpm clean && pnpm next:build:standalone && pnpm next:start:standalone",
 		"serve:test": "pnpm clean && pnpm next:build:standalone:test && pnpm next:start:standalone:test",
 		"smoke:prod": "pnpm tsx --tsconfig tsconfig.json devtools/cli/prod-smoke.cli.ts",

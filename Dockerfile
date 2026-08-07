@@ -13,7 +13,7 @@
 ##############################
 # base: Node + pnpm (corepack)
 ##############################
-FROM node:26-alpine AS base
+FROM node:24-alpine AS base
 # `libc6-compat` covers the glibc shims some Node binaries expect on Alpine.
 RUN apk add --no-cache libc6-compat
 # Node 25+ no longer bundles corepack, so install it, then let it provide the

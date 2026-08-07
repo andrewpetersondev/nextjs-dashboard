@@ -133,6 +133,12 @@ Migrations, seeding, and resets per environment.
 - `pnpm db:studio:dev` — open Drizzle Studio against the development database.
 - `pnpm db:studio:test` — open Drizzle Studio against the test database.
 - `pnpm db:drift` — assert the dev/test/prod migration sets describe the same schema (the CI drift gate; no database needed).
+- `pnpm node:drift` — assert the Node major agrees across `.nvmrc`, `package.json` `engines.node`, and the `Dockerfile`.
+  None of those three reads the others: `.nvmrc` drives dev and CI, `engines.node` is the only one
+  **Vercel** reads (it overrides the Project Settings version), and the `Dockerfile` drives the
+  standalone image. It also rejects an open-ended `engines.node` range — Vercel resolves a range to
+  the newest major it offers, so `>=24` would let production jump a Node major with no commit and no
+  CI run. No network or env vars needed.
 
 ---
 
@@ -157,10 +163,10 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
 - `pnpm knip` — find unused exports, files, and dependencies.
-- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the migration-drift gate, the
+- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the Node- and migration-drift gates, the
   knip dead-code gate, unit + integration tests, and E2E (everything `check:fast` runs, plus knip and
   all three test lanes).
-- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the migration-drift gate (no knip, no tests/E2E).
+- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the Node- and migration-drift gates (no knip, no tests/E2E).
 - `pnpm csp:guard` — assert the enforced Content-Security-Policy on a running server (nonce-CSP
   breakage is silent and screenshot-proof, so this is its own gate).
 - `pnpm csp:guard:build` — `next:build` then `csp:guard`. This is the CI `csp` job: it is the only
