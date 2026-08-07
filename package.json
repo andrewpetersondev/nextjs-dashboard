@@ -73,7 +73,7 @@
 		"cy:clean": "rimraf cypress.config.js cypress.config.d.ts",
 		"cy:e2e": "pnpm cy:clean && pnpm env:test:pnpm tsx --tsconfig tsconfig.json devtools/cli/cypress-with-server.cli.ts run",
 		"cy:e2e:open": "pnpm cy:clean && pnpm env:test:pnpm cy:preflight && pnpm env:test:pnpm cypress open --e2e",
-		"cy:e2e:run": "pnpm cy:clean && pnpm env:test:pnpm cy:preflight && pnpm env:test:pnpm cypress run --e2e",
+		"cy:e2e:run": "pnpm cy:clean && pnpm env:test:pnpm cy:preflight && pnpm env:test:pnpm cypress run --e2e --quiet",
 		"cy:open": "pnpm cy:e2e:open",
 		"cy:open:with-server": "pnpm cy:clean && pnpm env:test:pnpm tsx --tsconfig tsconfig.json devtools/cli/cypress-with-server.cli.ts open",
 		"cy:preflight": "pnpm tsx --tsconfig tsconfig.json devtools/cli/e2e-preflight.cli.ts",

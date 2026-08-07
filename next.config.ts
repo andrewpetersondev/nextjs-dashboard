@@ -20,6 +20,27 @@ const nextConfig: NextConfig = {
 			{ headers: [...STATIC_SECURITY_HEADERS], source: "/:path*" },
 		]);
 	},
+	/**
+	 * Dev-server logging, scoped to the TEST environment.
+	 *
+	 * The e2e suite drives a real `next dev`, and `cypress-with-server.cli.ts`
+	 * merges that server's stdout into the Cypress output. Next logs every
+	 * incoming request and every Server Function invocation, which buried the
+	 * actual test results: a full run printed ~1020 lines to report 47 passing
+	 * tests, and roughly 400 of those were request/action traces.
+	 *
+	 * Scoped rather than global on purpose — `pnpm next:dev` keeps its request
+	 * log, which is genuinely useful while developing. Only the test env, whose
+	 * output nobody reads unless something failed, goes quiet.
+	 *
+	 * Both options are development-only and do not affect a production build.
+	 * `DATABASE_ENV` is set by `.env.test.local`, loaded via the `env:test`
+	 * wrapper before Next starts.
+	 */
+	logging:
+		process.env.DATABASE_ENV === "test"
+			? { incomingRequests: false, serverFunctions: false }
+			: undefined,
 	output: "standalone",
 	poweredByHeader: false, // don't advertise the framework on every response
 	reactStrictMode: true,
