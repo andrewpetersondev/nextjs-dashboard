@@ -81,12 +81,24 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       push. Consider scoping the PR trigger to `check` + `integration` and leaving `e2e` to
       the push if that is too slow.
 
-- [ ] **`postcss` override has drifted from its dependency** _(found 2026-08-07)_ —
-      `package.json` devDependencies has `postcss: ^8.5.25` while
-      [`pnpm-workspace.yaml`](pnpm-workspace.yaml) `overrides` pins `postcss: ^8.5.24`. The
-      override exists to dedupe next's exact 8.4.31 pin to one 8.5.x copy, so this is not
-      currently harmful, but it is exactly the lockstep drift the weekly routine is meant to
-      catch and did not. Bump the override to match.
+- [x] ~~**`postcss` override has drifted from its dependency**~~ — fixed 2026-08-07. Override
+      resynced `^8.5.24` → `^8.5.25` to match the `package.json` devDependency, lockfile
+      regenerated (its `overrides:` block records the range, so leaving it stale would have
+      failed CI's `--frozen-lockfile`). Verified still one `postcss@8.5.25` copy. The override
+      itself stays: `next@16.2.12` still pins `postcss 8.4.31` exact, so dropping it forks the
+      graph into two copies. Two structural fixes were considered and rejected — pnpm's
+      `"$postcss"` reference works but pnpm 11 warns it is **deprecated** in favour of
+      catalogs, and catalogs would make `package.json` read `"postcss": "catalog:"`, which
+      Dependabot cannot bump. See the override-drift guard below for the durable fix.
+
+- [ ] **No guard on override/dependency drift** _(the class behind the postcss fix above)_ —
+      nothing asserts that an entry in `pnpm-workspace.yaml` `overrides` still matches the
+      `package.json` range for the same package, so Dependabot bumping a dep silently leaves
+      its override behind. Only `postcss` currently overlaps, so the blast radius is small
+      today. A ~20-line check in the existing `check` pipeline (next to `db:drift`, which is
+      the same shape of gate) would close it permanently. Note the guard must compare only
+      packages present in BOTH files — `esbuild`, `vite`, and `sharp` are override-only and
+      have no `package.json` counterpart by design.
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
