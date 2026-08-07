@@ -96,6 +96,30 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Biome info slate back to 0 — the test override was anchored to `src/`** _(2026-08-06,
+      `claude/what-is-next-6181ec`)_ — five `style` infos had accumulated (non-blocking, so
+      `biome:lint` still exited 0 and they rode along unnoticed). **Three were not a code problem
+      at all.** The override that turns `noMagicNumbers`/`noExcessiveLinesPerFunction`/
+      `useTopLevelRegex` off in tests globbed `src/**/__tests__/**` + `src/**/*.{test,spec}.*`, so
+      the four test files under `devtools/**` fell outside a decision that was already made for
+      them — the same class of bug as the hardcoded deny path the day before: a rule written
+      against a **location** instead of a **concept**, which fails silently when the concept moves.
+      Widened to `**/__tests__/**` + `**/*.{test,spec}.{ts,tsx}` (kept `test-support/**`), so the
+      gap cannot reopen when a test lands in a new directory. Verified by **probe rather than by
+      reading globs**: a throwaway magic number in `devtools/shared/` still flags, the identical
+      one under `devtools/shared/__tests__/` does not, and `useNumericSeparators` fires on **both**
+      — proving the override relaxes only its three named rules and nothing leaked.
+      The remaining two were real and fixed in `devtools/shared/deploy-identity.ts` (non-test code,
+      where the rule legitimately applies): the `30` in `30 * SECONDS_PER_MINUTE` extracted to
+      `DEPLOY_IN_FLIGHT_MINUTES` so the doc comment's "30 minutes" names a constant, and
+      `useExportsLast` on `classifyFreshness` **suppressed, not obeyed** — the file deliberately
+      leads with the pure decision and puts the I/O after it, so satisfying the rule meant burying
+      it under ~80 lines of plumbing; suppression-with-a-reason follows the existing idiom in
+      `table.atom.tsx`/`select-menu.atom.tsx`. `seed.guards.test.ts` was **not edited** (Andrew's
+      call to leave it) — the glob widening cleared its info without touching the file.
+      Checked and **not** a gap: `knip.json` carries the same `src/`-anchored shape, but knip's
+      vitest plugin derives test entries from the vitest config, so devtools tests are already
+      covered. Validation: Biome 0 diagnostics across 643 files, `check:fast` exit 0, unit 386/386.
 - [x] **`db:seed` misleading exit 0 on a non-empty DB** _(2026-08-05, `claude/kind-fermi-454a6f`)_ —
       `databaseSeed()` returned early when the guard found data, so `runCli` printed "Database
       seeded successfully." and exited 0 right after the refusal notice — the misleading-exit-code
