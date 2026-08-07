@@ -254,6 +254,21 @@ the port, run the suite, then kill the server — so it's the one command you ne
 for a full local run. `pnpm cy:open` does **not** boot anything; it attaches to a
 server you started yourself, which is what `cy:open:with-server` exists to avoid.
 
+### Run output
+
+Headless runs pass `--quiet`, so Cypress prints **only** the Mocha `spec` reporter — not its own
+per-spec banners and box-drawn result tables. A green run went from ~1020 lines to ~310. Two
+supporting changes do the rest: `next.config.ts` disables `logging.incomingRequests` and
+`logging.serverFunctions` **when `DATABASE_ENV=test`** (the e2e server's stdout is merged into this
+output, and those two accounted for ~400 lines), while `pnpm next:dev` keeps its request log.
+
+**Failure output is untouched** by `--quiet` — a failing spec still prints the `1)` marker inline,
+the assertion diff, the spec file and line, and the full stack, and the run still exits non-zero.
+
+The one thing `--quiet` removes is the line naming the **screenshot path**. Screenshots are still
+captured on failure; look in `cypress/screenshots/<spec path>/` (gitignored). In CI the `e2e` job
+uploads them as the `cypress-screenshots` artifact.
+
 **Every path is identity-guarded.** All of them run the `/api/health` preflight and
 refuse to start Cypress unless the server reports `databaseEnv=test`. The two
 attach-mode scripts gained that guard on 2026-08-04; before then they could point the
