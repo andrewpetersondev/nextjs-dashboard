@@ -163,7 +163,35 @@ to dollars only at the very edge (UI).
 - `revenuePeriod` is a branded `Period`, **derived from `date`** (the first day of
   its month, transported as `YYYY-MM-01`). It is _not_ a form field — the mapper
   computes it server-side, which is why `InvoiceFormEntity` / `InvoiceFormDto`
-  omit it.
+  omit it. A CHECK constraint pins it to `date_trunc('month', date)` and it
+  carries its own index, which is what makes the monthly aggregate below cheap.
+
+### The revenue chart
+
+`domain/revenue/` powers the dashboard overview's stacked bar chart:
+
+- `fetchRevenueByPeriodDal` groups on `revenue_period` and sums each **display**
+  bucket. `void` is excluded — a cancelled invoice is not revenue.
+- **`overdue` is not a stored status**, so the query splits stored-pending using
+  the `overdueIssueCutoff` parameter, exactly as `buildInvoiceListWhere` does.
+  Computing that rule in SQL instead would let a bar disagree with the badge on
+  the row beneath it. `readRevenueByPeriod` reads `now` **once** and derives both
+  the cutoff and the window from it, so the two cannot straddle a month boundary.
+- `fillRevenuePeriodGaps` pads months the `GROUP BY` did not return. Without it a
+  quiet month vanishes and every later bar shifts left — an axis that looks
+  continuous while misrepresenting time.
+- `buildRevenueChartModel` is pure geometry (scale, stacked rects, ticks), so the
+  zero-data guard and the axis rounding are pinned by unit tests rather than by a
+  screenshot. Its `isEmpty` flag exists because dividing by a zero maximum writes
+  `NaN` into every coordinate and the SVG then renders nothing, silently.
+- The component is **hand-rolled inline SVG in a server component**, not a chart
+  library: production runs `style-src 'self'`, and the popular React chart
+  libraries position elements with inline styles that CSP strips. SVG geometry is
+  expressed as _attributes_, which CSP does not govern. It also keeps the bundle
+  and hydration cost at zero.
+- Accessibility: the `<svg>` is `aria-hidden` and a visually-hidden `<table>`
+  carries the same figures at full precision. That table is the accessible
+  chart, not a courtesy extra.
 
 ### Branded IDs
 
@@ -257,6 +285,9 @@ and calls the matching service read method (`readInvoicesSummary` /
 repository fulfils via its DAL functions. The action unwraps the `Result` into a
 plain shape (`InvoicesSummary`, `InvoiceListFilter[]`, …). Page size is
 `ITEMS_PER_PAGE_INVOICES` (10).
+
+`readRevenueByPeriodAction` follows the same path for the overview chart, adding
+the gap-filling step described under [The revenue chart](#the-revenue-chart).
 
 ---
 
