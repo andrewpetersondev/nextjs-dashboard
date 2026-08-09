@@ -151,11 +151,26 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       non-test files only (existing doc blocks are left alone, even the over-long ones);
       `src/app`'s 29 convention files get comments only where non-obvious — that judgment call
       is the whole of what remains.
-      **Surfaced while documenting, NOT fixed:** three customers read actions
-      (`read-filtered-customers`, `read-customers`, `read-total-customers-count`) carry no
-      session guard while every sibling does — see the spawned task; and both
-      `fetch-total-{paid,pending}-invoices.dal.ts` have an unreachable `=== undefined` check
-      after a `?? 0`.
+      **Surfaced while documenting:** both `fetch-total-{paid,pending}-invoices.dal.ts` have an
+      unreachable `=== undefined` check after a `?? 0`, and `readInvoiceByIdAction` rewraps every
+      failure as a `database` error including its own validation error. Neither fixed.
+
+- [ ] **Action-guard asymmetry — NOT a vulnerability, verified 2026-08-09.** Nine read actions
+      carry no `requireSession` of their own: 3 in customers (`read-filtered-customers`,
+      `read-customers`, `read-total-customers-count`) and 6 in invoices (`read-filtered-invoices`,
+      `read-invoice-by-id`, `read-invoices-pages`, `read-invoices-summary`, `read-latest-invoices`,
+      `read-revenue-by-period`). `users` is fully guarded. **Empirically tested against a local
+      production build**, not reasoned about: every `"use server"` export does get a
+      client-callable id (all 32 appear in `.next/server/server-reference-manifest.json`), but an
+      unauthenticated `Next-Action` POST to `/dashboard/*` is **307'd by the `src/proxy.ts`
+      matcher before the action runs**, and the same id POSTed to `/`, `/auth/login` or
+      `/auth/signup` returns `{}` because ids resolve only on their registered route. Positive
+      control: the identical request **with** a demo session returns 7 customer emails, so the
+      block is real and not a malformed request. **Residual concern (defence-in-depth, not
+      urgency):** one regex in one file is the only thing protecting those nine, while their
+      siblings have a second layer — and ADR-007 / Phase 2 deliberately chose action-level guards.
+      Adding `requireSession` to the nine is consistency work; `read-customer-by-id.action.ts`
+      shows it is safe to call from a Server Component page. **Andrew's call.**
 
 ## Done
 
