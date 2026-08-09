@@ -120,6 +120,23 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       collector and it's validated against Next 16 + React 19; **HSTS `includeSubDomains`**
       must be re-decided before any move to a custom domain (inert on `*.vercel.app`,
       a two-year non-revocable commitment on an apex you own).
+      **Third item added 2026-08-09 — production emits standing `style-src` violations.**
+      Found while consolidating avatar rendering. Every `next/image` renders an inline
+      `style="color:transparent"` (`next@16.2.12`, `dist/shared/lib/get-img-props.js` — merged
+      whenever alt text is hidden, with **no dev/prod branch**), and production runs
+      `style-src 'self'`; `'unsafe-inline'` is granted **only when `isDev`**, which is exactly why
+      it goes unnoticed locally. Verified both halves rather than inferred: the live header was
+      fetched, and the Next source read. **Cosmetic** (`color:transparent` only hides alt text
+      while loading) and **predates the customers work** — present since the CSP landed
+      2026-08-03 on every page with a customer avatar; `/` is clean (zero `<img>`, zero inline
+      styles), so only the dashboard is affected. **It matters because of the Trusted Types item
+      above:** the moment a collector exists it will receive a violation for every image on every
+      dashboard view before it receives anything real. Narrow fix if wanted:
+      `style-src-attr 'unsafe-inline'` alongside `style-src 'self'`, which permits the attribute
+      form only and leaves `<style>` blocks restricted — trade-off is that it legitimises all
+      inline style attributes, and the app's own code uses none (`AvatarMolecule` was moved to
+      standard Tailwind classes precisely to avoid adding one). Full analysis in
+      [issue #126's comment](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126#issuecomment-5231159398).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
 
