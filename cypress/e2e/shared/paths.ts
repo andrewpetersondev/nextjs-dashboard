@@ -20,3 +20,7 @@ export const ADMIN_USERS_PATH = "/admin/users" as const;
 // DASHBOARD --> INVOICES
 export const INVOICES_PATH = "/dashboard/invoices" as const;
 export const CREATE_INVOICE_PATH = "/dashboard/invoices/create" as const;
+
+// DASHBOARD --> CUSTOMERS
+export const CUSTOMERS_PATH = "/dashboard/customers" as const;
+export const CREATE_CUSTOMER_PATH = "/dashboard/customers/create" as const;

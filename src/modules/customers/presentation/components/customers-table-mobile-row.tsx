@@ -1,14 +1,19 @@
-import Image from "next/image";
 import type { JSX } from "react";
 import { CUSTOMER_LABELS } from "@/modules/customers/domain/constants";
 import type { FormattedCustomersTableRow } from "@/modules/customers/domain/types";
-import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
+import {
+	DeleteCustomerButton,
+	UpdateCustomerLink,
+} from "@/modules/customers/presentation/components/customer-action-buttons";
+import { CustomerAvatar } from "@/modules/customers/presentation/components/customer-avatar";
 
 /**
  * Props for the CustomerMobileCard component.
  */
 interface CustomerMobileCardProps {
 	customer: FormattedCustomersTableRow;
+	deleteAction: (formData: FormData) => void;
+	deletePending: boolean;
 }
 
 /**
@@ -17,6 +22,8 @@ interface CustomerMobileCardProps {
  */
 export function CustomersTableMobileRow({
 	customer,
+	deleteAction,
+	deletePending,
 }: CustomerMobileCardProps): JSX.Element {
 	return (
 		// Use role="region" and aria-label for accessibility on a non-interactive card
@@ -30,13 +37,9 @@ export function CustomersTableMobileRow({
 				<div>
 					<div className="mb-2 flex items-center">
 						<div className="flex items-center gap-3">
-							<Image
-								alt={`${customer.name}'s profile picture`}
-								className="rounded-full"
-								height={IMAGE_SIZES.small}
-								priority={true}
-								src={customer.imageUrl}
-								width={IMAGE_SIZES.small}
+							<CustomerAvatar
+								imageUrl={customer.imageUrl}
+								name={customer.name}
 							/>
 							<p className="font-medium">{customer.name}</p>
 						</div>
@@ -57,11 +60,20 @@ export function CustomersTableMobileRow({
 				</div>
 			</div>
 
-			{/* Customer invoice total */}
-			<div className="pt-4 text-sm">
+			{/* Customer invoice total, and the row's actions */}
+			<div className="flex items-center justify-between pt-4 text-sm">
 				<p>
 					{customer.totalInvoices} {CUSTOMER_LABELS.invoices}
 				</p>
+				<div className="flex gap-2">
+					<UpdateCustomerLink id={customer.id} />
+					<DeleteCustomerButton
+						action={deleteAction}
+						disabled={deletePending}
+						id={customer.id}
+						name={customer.name}
+					/>
+				</div>
 			</div>
 		</div>
 	);

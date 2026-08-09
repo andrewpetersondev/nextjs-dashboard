@@ -20,7 +20,22 @@ description: How to runtime-verify changes in this repo — the surfaces, the ha
 ## Gotchas (each cost real time once)
 
 - **Exit codes through pipes lie.** `pnpm x | tail; echo $?` reports tail's exit. Capture to a file:
-  `pnpm x > "$OUT" 2>&1; echo $?`. (Also stated in `AGENTS.md` §Shell environment.)
+  `pnpm x > "$OUT" 2>&1; echo $?`. (Also stated in `AGENTS.md` §Shell environment.) Re-learned the
+  hard way 2026-08-09 on a 15-minute `pnpm cy:e2e` run: piping to `tail -60` reported exit 0 **and**
+  discarded the run summary, so the log could neither confirm nor deny that the suite passed. A long
+  run is exactly where this costs the most — capture it to a file the first time.
+- **Never drive the preview browser by screenshot coordinates.** The screenshot comes back
+  downscaled (800×450) while the viewport is 1280×720, but `computer` clicks are applied in
+  **viewport** space — so every coordinate read off a screenshot lands ~1.6× short and silently hits
+  the wrong element. Call `read_page` and pass `ref: "ref_N"`, or use `form_input`; both are
+  resolution-independent. Symptom: clicks and `type` appear to succeed, the form stays empty, and
+  `location.href` never changes.
+- **A stale preview tab reports `(empty page)` / `Viewport: 0x0`** from `read_page` while
+  `screenshot` and `javascript_tool` still work on it — so the tab looks alive and only the
+  accessibility bridge is dead, which reads as "the page has no elements". Open a fresh tab
+  (`tabs_create` + `navigate`) rather than debugging the page; refs come back immediately. Cost
+  several failed login attempts before the control test (JS `document.querySelectorAll('input')`
+  returning the real fields) showed the page was fine.
 - **Fresh worktrees need `pnpm install`** (fast — shared store, ~6s). Untracked `.env*` files may or
   may not be present; check with `ls` before assuming `pnpm e2e` will fail. `.env.test.local` is
   required for the integration + e2e lanes.

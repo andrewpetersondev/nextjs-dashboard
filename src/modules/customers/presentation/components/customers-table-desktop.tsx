@@ -40,12 +40,18 @@ function getHeaderCellClass(key: ColumnKey): string {
 /**
  * Renders a responsive desktop table for customer data.
  * @param customers - Array of formatted customer table rows.
+ * @param deleteAction - Shared delete action owned by `CustomersTable`.
+ * @param deletePending - Whether a delete is in flight, to disable the buttons.
  * @returns JSX.Element
  */
 export function CustomersTableDesktop({
 	customers,
+	deleteAction,
+	deletePending,
 }: {
 	customers: FormattedCustomersTableRow[];
+	deleteAction: (formData: FormData) => void;
+	deletePending: boolean;
 }): JSX.Element {
 	return (
 		<TableAtom
@@ -63,11 +69,21 @@ export function CustomersTableDesktop({
 							{label}
 						</TableHead>
 					))}
+					{/* The column holds only icon buttons, so its label is for
+					    assistive tech alone — matching the invoices table. */}
+					<TableHead className={`px-3 ${HEADER_BASE_CLASS}`} scope="col">
+						<span className="sr-only">{CUSTOMER_TABLE_HEADERS.actions}</span>
+					</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody className="divide-y divide-bg-accent">
 				{customers.map((customer) => (
-					<CustomersTableDesktopRow customer={customer} key={customer.id} />
+					<CustomersTableDesktopRow
+						customer={customer}
+						deleteAction={deleteAction}
+						deletePending={deletePending}
+						key={customer.id}
+					/>
 				))}
 			</TableBody>
 		</TableAtom>
