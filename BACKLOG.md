@@ -67,8 +67,10 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       `claude/issue-124-326e7f` (config, grouping, lockstep rules, automerge, docs), then
       **reverted** — installing the Mend Renovate GitHub App asked for credit-card details at
       the GitHub Marketplace checkout, and that is not a cost this project takes on. Dependabot
-      stays. The build is recoverable from the reverted commits on that branch if the calculus
-      ever changes. Two findings from the attempt outlived it and are listed below.
+      stays. The build is recoverable from `main`'s own history if the calculus ever changes —
+      `9e41b2c8` (Renovate) and `58aff82f` (automerge), undone by `00966804`; nothing depends on
+      the `claude/issue-124-326e7f` branch surviving. Two findings from the attempt outlived it
+      and are listed below.
 
 - [ ] **Bot PRs run essentially no CI** _(found 2026-08-07 during the Renovate attempt;
       independent of it)_ — [`ci.yml`](.github/workflows/ci.yml) triggers only on
