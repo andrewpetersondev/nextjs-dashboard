@@ -5,7 +5,7 @@ import {
 	DeleteCustomerButton,
 	UpdateCustomerLink,
 } from "@/modules/customers/presentation/components/customer-action-buttons";
-import { CustomerAvatar } from "@/modules/customers/presentation/components/customer-avatar";
+import { AvatarMolecule } from "@/ui/molecules/avatar.molecule";
 
 /**
  * Props for the CustomerMobileCard component.
@@ -37,7 +37,7 @@ export function CustomersTableMobileRow({
 				<div>
 					<div className="mb-2 flex items-center">
 						<div className="flex items-center gap-3">
-							<CustomerAvatar
+							<AvatarMolecule
 								imageUrl={customer.imageUrl}
 								name={customer.name}
 							/>

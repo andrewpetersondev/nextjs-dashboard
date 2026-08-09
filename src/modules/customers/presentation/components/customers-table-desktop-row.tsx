@@ -4,8 +4,8 @@ import {
 	DeleteCustomerButton,
 	UpdateCustomerLink,
 } from "@/modules/customers/presentation/components/customer-action-buttons";
-import { CustomerAvatar } from "@/modules/customers/presentation/components/customer-avatar";
 import { TableCell, TableRow } from "@/ui/atoms/table.atom";
+import { AvatarMolecule } from "@/ui/molecules/avatar.molecule";
 
 /**
  * Props for the CustomerTableRow component.
@@ -29,7 +29,7 @@ export function CustomersTableDesktopRow({
 		<TableRow className="group hover:bg-bg-active" data-cy="customer-row">
 			<TableCell className="whitespace-nowrap py-5 pr-3 pl-4 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
 				<div className="flex items-center gap-3">
-					<CustomerAvatar imageUrl={customer.imageUrl} name={customer.name} />
+					<AvatarMolecule imageUrl={customer.imageUrl} name={customer.name} />
 					<p>{customer.name}</p>
 				</div>
 			</TableCell>
