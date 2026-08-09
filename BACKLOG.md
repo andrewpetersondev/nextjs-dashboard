@@ -93,7 +93,10 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       packages declaring `engines.node` requires ≥25 (highest floors are cypress/vitest at
       `>=24.0.0`). New gate `pnpm node:drift` keeps the three in sync and additionally rejects
       an open-ended `engines.node` range, since a range lets Vercel move production a major
-      with no commit and no CI run. Wired into `check` and `check:fast`.
+      with no commit and no CI run. Wired into `check` and `check:fast`. **Superseded 2026-08-09**
+      — that wiring turned out to reach no CI job at all, and the guard could not see the Node
+      actually running (dev was on 26 the whole time). Both closed; see the Node-runtime-alignment
+      entry at the top of this log.
 
 - [x] ~~**No guard on override/dependency drift**~~ — fixed 2026-08-09, see Done.
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
@@ -124,6 +127,46 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Node runtime alignment — `.nvmrc` finally applies locally, and `node:drift` reaches CI**
+      _(2026-08-09, `claude/node-runtime-alignment`)_ — found while reading the output of the
+      override-drift gate: every pnpm command was printing
+      `[WARN] Unsupported engine: wanted {"node":"24.x"} (current: v26.5.0)`. The repo has been
+      aligned on 24 since 2026-08-07 and `pnpm node:drift` proved it — but the guard compares the
+      three **declarations** against each other and never looks at `process.versions.node`, so all
+      three could agree perfectly while the workstation ran something else. It did, for two days.
+      **Root cause was two independent things, both needed fixing.** `~/.nvm/alias/default` held
+      `26`, so every new shell started on 26.5.0; and `~/.zshrc` loaded nvm but had **no `.nvmrc`
+      auto-switch hook**, so `cd`-ing into the repo never read the file. Net effect: `.nvmrc` had
+      never been consulted on this machine at all — it only ever governed CI. Node **24.19.0 was
+      already installed** and ships pnpm 11.20.0, exactly matching `packageManager`, so the switch
+      cost nothing. Fixed with a `chpwd` hook in `~/.zshrc` (Andrew's choice: hook only, default
+      alias left at 26 so other projects are unaffected — which is what `.nvmrc` is _for_). The hook
+      is nvm's own README version with one deliberate change: it does **not** auto-install a missing
+      version, because downloading a Node major as a side effect of `cd` is too surprising. Verified
+      both directions — inside the repo `node --version` is v24.19.0 and the pnpm warning is gone;
+      outside it reverts to the 26.5.0 default. Recorded in `docs/getting-started.md` so the next
+      clone does not inherit the same blind spot (the file is outside the repo, so the doc is the
+      only durable form).
+      **`node:drift` now asserts the running major too**, as a fourth axis — **hard failure in CI, a
+      warning locally** (Andrew's call). The asymmetry is the point: in CI the running version comes
+      from `.nvmrc` via `actions/setup-node`'s `node-version-file`, so a mismatch there cannot be
+      somebody's shell and means a job stopped reading it; locally the cause is a shell that has not
+      switched, and failing `check:fast` over a workstation setting is how a gate teaches you to
+      bypass it — the same reasoning that keeps knip out of `check:fast`. Detected via `CI`, with
+      `CI=false`/`0` honoured. Establishes the repo's first CI-detection convention.
+      **The load-bearing find, and it nearly made the whole decision vacuous: `pnpm node:drift` was
+      wired into NO CI job.** It had run in `check`/`check:fast` since 2026-08-07 and in nothing
+      else — so "fail in CI" would have been unreachable code. This is the third instance of the
+      identical flaw (knip ran only via a `check:repo` nobody called; an earlier standalone typecheck
+      script died the same way), and it is the reason the runtime check was verified by _running_
+      each branch rather than by reading the config. Added as a **`Node drift` step** in the existing
+      `Lint & type-check` job — a step, never a new job, since required-status-check contexts pin job
+      NAMES.
+      Validation: all four branches executed rather than reasoned about — Node 24 + no CI → OK exit 0;
+      Node 26 + no CI → WARN exit 0; Node 26 + `CI=true` → FAIL exit 1; Node 24 + `CI=true` → OK exit
+      0 (the real CI case, checked so the new gate cannot redden every build). Plus Biome slate 0,
+      `check:fast` green, unit 398/398, knip exit 0, and `ci.yml` re-parsed to confirm step order,
+      renumbered comments, and unchanged job names.
 - [x] **Gating the dependency-update path — CI on bot PRs + an override-drift guard**
       _(2026-08-09, `claude/dependency-update-gates`)_ — the two remaining "Later" items turned out
       to be one story, so they landed together: **the path a dependency bump takes into `main` was

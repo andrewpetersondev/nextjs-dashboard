@@ -101,7 +101,7 @@ nextjs-dashboard/
 
 ## Requirements
 
-- Node 24 (pinned in `.nvmrc`, `package.json` `engines`, and the `Dockerfile` — kept in sync by `pnpm node:drift`)
+- Node 24 (pinned in `.nvmrc`, `package.json` `engines`, and the `Dockerfile` — kept in sync by `pnpm node:drift`, which also checks the Node you are actually running; see [docs/getting-started.md](docs/getting-started.md#make-nvmrc-apply-automatically-recommended) for the `.nvmrc` shell hook)
 - pnpm >= 11 (pinned via the `packageManager` field in `package.json`)
 - PostgreSQL (local or remote)
 
