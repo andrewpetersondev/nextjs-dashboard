@@ -182,13 +182,43 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       `testing.md` / `branching-and-releases.md` / `AGENTS.md` (job names, both triggers, the e2e
       PR skip); no stale `/promote`, `/check-full`, or `develop` references survive outside
       historical entries; `SECURITY.md` and the command guide's frontmatter claims verified.
-      **Deliberately held:** the naming standard has drifted **both ways** — it documents
-      `.event.ts` / `.provider.ts` / `.record.ts` / `.view.ts` (**zero** uses each) while omitting
-      `.molecule.tsx` (10), `.atom.tsx` (7), `.utils.ts` (6), `.command.ts` (5), `.brand.ts` (4),
-      `.validator.ts` (3), `.guard.ts` (3), and never addresses the 5 `.mappers.ts` (plural) files
-      against 18 singular `.mapper.ts`. Prune vs. document vs. rename-to-singular is a judgment
-      call left to Andrew — it is the sole owner of "what a file is called" per `docs/README.md`,
-      so whichever way it goes should be decided, not defaulted.
+      **The naming standard had drifted both ways, and Andrew chose prune + document** (same day,
+      no rename). Its suffix table claimed `.record.ts` / `.view.ts` / `.event.ts` with **zero**
+      instances each while omitting eight suffixes in real use. Removed the three dead rows —
+      each with a line saying why it won't come back (row types are `$inferSelect`-inferred beside
+      the Drizzle schema, so a hand-written `.record.ts` could only drift; `.transport.ts`/`.dto.ts`
+      already cover `.view.ts`; there is no event bus) — and added `.brand.ts`, `.command.ts`,
+      `.validator.ts`, `.guard.ts`, `.utils.ts`, `.mappers.ts`, `.atom.tsx`, `.molecule.tsx`. The
+      table now states it is **vocabulary, not inventory**, with a ≥3-instance bar for entry so
+      one-off suffixes (`.wrapper.tsx`, `.inspector.ts`, …) don't get cargo-culted.
+      **Two findings came out of documenting rather than renaming.** The plural `.mappers.ts` is
+      not sloppiness: singular is verb-first and names a layer crossing (`to-auth-user-entity`),
+      plural is subject-first and holds a type's own converters (`user-id.mappers.ts`), and 4 of 5
+      are branded-primitive constructors — converting _into_ a brand belongs to the brand. The
+      exception, `logging.mappers.ts`, is flagged in-doc as mis-suffixed rather than silently
+      ratified. Also surfaced: `.brand.ts` and `.value.ts` genuinely overlap (both can declare a
+      brand; `hashing.value.ts` exports `Hash` **and** `toHash`), recorded as a real edge instead
+      of papered over with an invented rule. `.provider.ts` was **kept**: it sits in the
+      infrastructure-seam menu — forward-looking advice for naming something you're about to
+      create, where zero current uses is expected — not in the vocabulary table.
+      **Writing the invariant as a script caught two things reading would not have.** Asserting
+      "every row has instances AND every suffix with ≥3 uses has a row" immediately failed on the
+      first draft: `.constants.ts` (**24 uses**, 5th commonest in the codebase), `.types.ts` (7)
+      and `.tokens.ts` (3) were documented in later prose sections but absent from the table now
+      claiming to be the vocabulary — added as pointer rows, rule stays in its own section. A
+      second assertion — every Example File Name is a real tracked file — failed on
+      `password-validation.policy.ts`, `login-request.schema.ts` and `login-request.dto.ts`,
+      three **pre-existing** cells naming files that have never existed; repointed at
+      `password.policy.ts`, `login.form.schema.ts`, `auth-user-create.dto.ts`.
+      **And `.tokens.ts` was documented as the opposite of what it is.** The section described
+      DI tokens (`export const AUTH_REPOSITORY = Symbol(...)`) and cited `auth.tokens.ts` — a
+      real file that holds **UI copy** (`LOGIN_HEADING`). There are **zero** Symbol-based DI
+      tokens anywhere; DI is factories + `auth.composition.ts`, which the doc already covers
+      elsewhere. Rewritten to describe named literals reused across a surface, with the
+      `.constants.ts` dividing line (design decision vs. business fact) spelled out.
+      **Open, not actioned:** `LoginRequestDto` is declared inside `login.form.schema.ts` rather
+      than a `.dto.ts`, which reads against the doc's own suffix-redundancy rule. That is a code
+      question, not a docs one — left for a decision.
 
 - [x] **Seed data rebuilt — deterministic, anchored to today, and shaped to tell a story**
       _(2026-08-09, `claude/revenue-chart`)_ — asked for "better seed data" after the revenue

@@ -36,29 +36,70 @@ Use suffixes to indicate architectural role and prevent "dumping ground" files.
 
 ### Suffix Reference Table
 
-| Suffix           | Meaning                                     | Layer/Boundary         | Example Type Name           | Example File Name                 |
-| :--------------- | :------------------------------------------ | :--------------------- | :-------------------------- | :-------------------------------- |
-| `.entity.ts`     | Domain object with identity                 | Domain                 | `UserEntity`                | `user.entity.ts`                  |
-| `.value.ts`      | Value object / Branded primitive            | Domain / Shared        | `Email`, `UserId`           | `email.value.ts`                  |
-| `.policy.ts`     | Pure business rules/logic (no side effects) | Domain                 | N/A (exports functions)     | `password-validation.policy.ts`   |
-| `.schema.ts`     | Zod validation schema                       | Application            | `LoginRequestSchema`        | `login-request.schema.ts`         |
-| `.dto.ts`        | Data transfer object (boundary crossing)    | Application            | `LoginRequestDto`           | `login-request.dto.ts`            |
-| `.helper.ts`     | Stateless orchestration logic               | Application            | N/A (exports functions)     | `read-session-token.helper.ts`    |
-| `.transport.ts`  | Wire/HTTP/Cookie-only shape                 | Presentation           | `LoginTransport`            | `login.transport.ts`              |
-| `.view.ts`       | Server → Client UI shape                    | Presentation           | `UserProfileView`           | `user-profile.view.ts`            |
-| `.contract.ts`   | Dependency boundary interface (Port)        | Application            | `PasswordHasherContract`    | `password-hasher.contract.ts`     |
-| `.strategy.ts`   | Infrastructure-internal interface/seam      | Infrastructure         | `SessionJwtCryptoStrategy`  | `session-jwt-crypto.strategy.ts`  |
-| `.adapter.ts`    | Structural Bridge (delegates/wraps)         | Infrastructure         | `AuthUserRepositoryAdapter` | `auth-user-repository.adapter.ts` |
-| `.repository.ts` | Concrete Persistence Implementation         | Infrastructure         | `AuthUserRepository`        | `auth-user.repository.ts`         |
-| `.service.ts`    | Concrete Logic Implementation               | Infrastructure         | `BcryptPasswordHasher`      | `bcrypt-password.service.ts`      |
-| `.dal.ts`        | Raw data access logic                       | Infrastructure         | N/A (exports functions)     | `get-user-by-email.dal.ts`        |
-| `.mapper.ts`     | Data translation between layers             | All (context-specific) | N/A (exports functions)     | `user-row-to-entity.mapper.ts`    |
-| `.factory.ts`    | Dependency injection / Wiring               | Infrastructure         | N/A (exports functions)     | `login-use-case.factory.ts`       |
-| `.record.ts`     | Database row shape (from Drizzle schema)    | Infrastructure         | `UserRow`                   | `user.record.ts`                  |
-| `.use-case.ts`   | Single business capability                  | Application            | `LoginUseCase` (class)      | `login.use-case.ts`               |
-| `.workflow.ts`   | Multi-step orchestration                    | Application            | N/A (exports functions)     | `login.workflow.ts`               |
-| `.action.ts`     | Next.js Server Action                       | Presentation           | N/A (exports functions)     | `login.action.ts`                 |
-| `.event.ts`      | Domain or system event                      | Domain / Application   | `UserCreatedEvent`          | `user-created.event.ts`           |
+| Suffix           | Meaning                                          | Layer/Boundary         | Example Type Name           | Example File Name                 |
+| :--------------- | :----------------------------------------------- | :--------------------- | :-------------------------- | :-------------------------------- |
+| `.entity.ts`     | Domain object with identity                      | Domain                 | `UserEntity`                | `user.entity.ts`                  |
+| `.brand.ts`      | One branded primitive — its symbol and type      | Domain / Shared        | `UserId`                    | `user-id.brand.ts`                |
+| `.value.ts`      | Value object, or a brand plus its converters     | Domain / Shared        | `Hash`                      | `hashing.value.ts`                |
+| `.policy.ts`     | Pure business rules/logic (no side effects)      | Domain                 | N/A (exports functions)     | `password.policy.ts`              |
+| `.schema.ts`     | Zod validation schema                            | Application            | `LoginFormSchema`           | `login.form.schema.ts`            |
+| `.dto.ts`        | Data transfer object (boundary crossing)         | Application            | `AuthUserCreateDto`         | `auth-user-create.dto.ts`         |
+| `.command.ts`    | A use case's input — the request half of the DTO | Application            | `LoginCommand`              | `login.command.ts`                |
+| `.validator.ts`  | Reusable validation over an entity or DTO        | Application / Domain   | N/A (exports functions)     | `auth-user-entity.validator.ts`   |
+| `.guard.ts`      | Type guard, or a presentation access check       | Varies (see below)     | N/A (exports predicates)    | `form-result.guard.ts`            |
+| `.helper.ts`     | Stateless orchestration logic                    | Application            | N/A (exports functions)     | `read-session-token.helper.ts`    |
+| `.utils.ts`      | Small pure helpers with no boundary role         | `src/shared/**` only   | N/A (exports functions)     | `form-data.utils.ts`              |
+| `.transport.ts`  | Wire/HTTP/Cookie-only shape                      | Presentation           | `LoginTransport`            | `login.transport.ts`              |
+| `.contract.ts`   | Dependency boundary interface (Port)             | Application            | `PasswordHasherContract`    | `password-hasher.contract.ts`     |
+| `.strategy.ts`   | Infrastructure-internal interface/seam           | Infrastructure         | `SessionJwtCryptoStrategy`  | `session-jwt-crypto.strategy.ts`  |
+| `.adapter.ts`    | Structural Bridge (delegates/wraps)              | Infrastructure         | `AuthUserRepositoryAdapter` | `auth-user-repository.adapter.ts` |
+| `.repository.ts` | Concrete Persistence Implementation              | Infrastructure         | `AuthUserRepository`        | `auth-user.repository.ts`         |
+| `.service.ts`    | Concrete Logic Implementation                    | Infrastructure         | `BcryptPasswordHasher`      | `bcrypt-password.service.ts`      |
+| `.dal.ts`        | Raw data access logic                            | Infrastructure         | N/A (exports functions)     | `get-user-by-email.dal.ts`        |
+| `.mapper.ts`     | One conversion, named for what it produces       | All (context-specific) | N/A (exports functions)     | `to-auth-user-entity.mapper.ts`   |
+| `.mappers.ts`    | Plural — the converters belonging to one type    | Domain                 | N/A (exports functions)     | `user-id.mappers.ts`              |
+| `.factory.ts`    | Dependency injection / Wiring                    | Infrastructure         | N/A (exports functions)     | `login-use-case.factory.ts`       |
+| `.use-case.ts`   | Single business capability                       | Application            | `LoginUseCase` (class)      | `login.use-case.ts`               |
+| `.workflow.ts`   | Multi-step orchestration                         | Application            | N/A (exports functions)     | `login.workflow.ts`               |
+| `.action.ts`     | Next.js Server Action                            | Presentation           | N/A (exports functions)     | `login.action.ts`                 |
+| `.atom.tsx`      | Smallest reusable UI primitive                   | `src/ui/**`            | `ButtonAtom`                | `button.atom.tsx`                 |
+| `.molecule.tsx`  | UI composed from atoms                           | `src/ui/**`            | `PageHeaderMolecule`        | `page-header.molecule.tsx`        |
+| `.types.ts`      | Type-only companion module — **constrained**     | Any                    | N/A (types only)            | `revenue.types.ts`                |
+| `.constants.ts`  | Frozen literal values                            | Any                    | `USER_ROLES`                | `schema.constants.ts`             |
+| `.tokens.ts`     | Named literals reused across a surface           | Presentation / UI      | `LOGIN_HEADING`             | `auth.tokens.ts`                  |
+
+The last three carry rules too long for a cell — see [Hard Rules](#hard-rules) for the
+`.types.ts` anti-dumping-ground constraints, and
+[Constant and Token Naming](#constant-and-token-naming) for the other two. The row is the
+pointer; the section is the rule.
+
+**This table is the vocabulary, not an inventory.** Every suffix above is in use; a row with no
+instances is a claim the codebase does not back, so it gets removed rather than left as
+aspiration. Suffixes appearing once or twice (`.wrapper.tsx`, `.inspector.ts`, `.builder.ts`,
+`.config.ts`, `.deps.ts`, `.skeletons.tsx`) are deliberately not listed — they are local
+descriptions, not conventions, and promoting them here would invite cargo-culting. Add a row when
+a third instance appears and the suffix has started to mean something.
+
+Three suffixes were removed on 2026-08-09 after a census found zero instances of each. Don't
+reintroduce them without a file to point at:
+
+- **`.record.ts`** (database row shape) — not needed. Row types are _inferred_ from the Drizzle
+  schema and exported beside it: `export type UserRow = typeof users.$inferSelect` in
+  `database/schema/users.ts`. Hand-writing a row shape would let it drift from the table.
+- **`.view.ts`** (server → client UI shape) — the role is real, but `.transport.ts` and `.dto.ts`
+  cover it today. Reach for one of those, or make the case for `.view.ts` with a concrete file.
+- **`.event.ts`** (domain/system event) — no event bus, no domain events. It belongs here the day
+  one exists, not before.
+
+Two honest edges:
+
+- **`.brand.ts` vs `.value.ts` overlap.** Both can declare a branded primitive. In practice
+  `.brand.ts` is the narrow one — a symbol and the type it brands, nothing else — while
+  `.value.ts` carries a value object or bundles a brand with its converters (`hashing.value.ts`
+  exports both `Hash` and `toHash`). If you are only declaring the type, reach for `.brand.ts`.
+- **`.guard.ts` spans two ideas.** Two of the three are type guards (`form-result.guard.ts`,
+  `zod.guard.ts`); `session-access.guard.ts` is a presentation-layer authorization check. Both
+  read as "guard" and the layer disambiguates, so this is recorded rather than legislated.
 
 ### Hard Rules
 
@@ -185,6 +226,26 @@ export function mapUser(dto: CreateUserDto): UserEntity {
     // ...
 }
 ```
+
+### Singular `.mapper.ts` vs plural `.mappers.ts`
+
+The placement table above covers the singular form: one conversion across a layer boundary, in a
+`mappers/` folder, filed under the verb-first name of what it produces —
+`to-auth-user-entity.mapper.ts`.
+
+The plural is a different shape and lives in `domain/`: it is named **subject-first, after the
+type**, and holds that type's own converters — `user-id.mappers.ts` exports `toUserId` and
+`toUserIdResult`. Four of the five are branded-primitive constructors (`customer-id`,
+`invoice-id`, `user-id`, `period`), which is the case worth recognizing: converting _into_ a brand
+belongs to the brand, not to a layer crossing.
+
+Choose by the question the filename answers. "Which conversion is this?" → singular, verb-first.
+"Where do this type's converters live?" → plural, subject-first. Do not use the plural merely
+because a file happens to export two functions.
+
+> `logging.mappers.ts` (infrastructure, `toSafeErrorShape`) is the one file that fits neither
+> description. It is a single boundary conversion and would read better as
+> `to-safe-error-shape.mapper.ts`; left alone for now, noted so it is not copied.
 
 ### Special Case: Pure Mapping in Policies
 
@@ -772,22 +833,36 @@ export const ROUTES = {
 } as const;
 ```
 
-### Dependency Injection Tokens
+### Tokens
 
-**Location**: Module root or `constants/`
+**There are no dependency-injection tokens in this codebase, and `.tokens.ts` is not where you
+would put them.** Dependencies are wired by explicit factories and a composition root
+(`auth.composition.ts`) — see [Dependency Injection Naming](#dependency-injection-naming) and
+`.factory.ts` above. Nothing resolves a service by symbol, so there is no registry to key.
+
+What `.tokens.ts` actually holds is **named literals reused across one surface** — the values you
+want written down once so a rename is a single edit and a typo is a type error:
+
+**Location**: beside the surface that consumes them (`presentation/constants/`, `ui/styles/`)
 
 **Naming**:
 
-- File: `{module}.tokens.ts`
+- File: `{surface}.tokens.ts`
 - Export: `SCREAMING_SNAKE_CASE`
 
 ```typescript
 // ✅ Good
-// auth.tokens.ts
-export const AUTH_REPOSITORY = Symbol("AUTH_REPOSITORY");
-export const PASSWORD_HASHER = Symbol("PASSWORD_HASHER");
-export const SESSION_SERVICE = Symbol("SESSION_SERVICE");
+// auth.tokens.ts — copy shared by the auth screens
+export const LOGIN_HEADING = "Log in to your account" as const;
+export const SIGNUP_HEADING = "Sign up for an account" as const;
+
+// icons.tokens.ts — a class string several components must agree on
+export const INPUT_ICON_CLASS = "...";
 ```
+
+Prefer `.constants.ts` when the values are domain facts rather than presentation choices
+(`USER_ROLES`, `INVOICE_STATUSES`). The dividing line is whether changing the value is a design
+decision or a business one.
 
 ---
 
