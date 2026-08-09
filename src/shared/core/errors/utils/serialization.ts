@@ -1,3 +1,10 @@
+/**
+ * Makes any value safe to log — never throws.
+ *
+ * @returns The value unchanged when already serializable; a lossless conversion
+ * (`bigint`→string, `Date`→ISO, `Error`→plain object); or a
+ * `{ note, originalType, preview }` descriptor when neither is possible.
+ */
 // biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <ignore for now>
 export function redactNonSerializable(value: unknown): unknown {
@@ -42,15 +49,8 @@ export function redactNonSerializable(value: unknown): unknown {
 		// Fall through to redaction below
 	}
 
-	let originalType: string;
-
-	if (value === null) {
-		originalType = "null";
-	} else if (Array.isArray(value)) {
-		originalType = "array";
-	} else {
-		originalType = typeof value;
-	}
+	// Nullish values already returned above, so only array-vs-typeof remains.
+	const originalType: string = Array.isArray(value) ? "array" : typeof value;
 
 	let preview: string;
 	try {
