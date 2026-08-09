@@ -12,22 +12,21 @@ function isKnownInvoiceMessageId(value: unknown): value is InvoiceMessageId {
 	return typeof value === "string" && KNOWN_INVOICE_MESSAGE_IDS.has(value);
 }
 
+/**
+ * Maps a thrown value to user-facing text for the invoices UI.
+ *
+ * @returns The translation of `AppError.message` when it is a known invoice
+ * message ID, `invalidInput` when it is not, and `serviceError` for anything
+ * that is not an `AppError`.
+ */
 export function toInvoiceErrorMessage(error: unknown): string {
-	if (error instanceof AppError) {
-		const message = (error as Error).message;
-		const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
-			? message
-			: INVOICE_MSG.invalidInput;
-		return translator(id);
+	if (!(error instanceof AppError)) {
+		return translator(INVOICE_MSG.serviceError);
 	}
 
-	if (error instanceof AppError) {
-		const message = (error as Error).message;
-		const id: InvoiceMessageId = isKnownInvoiceMessageId(message)
-			? message
-			: INVOICE_MSG.dbError;
-		return translator(id);
-	}
+	const id: InvoiceMessageId = isKnownInvoiceMessageId(error.message)
+		? error.message
+		: INVOICE_MSG.invalidInput;
 
-	return translator(INVOICE_MSG.serviceError);
+	return translator(id);
 }
