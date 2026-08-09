@@ -1,5 +1,5 @@
 ---
-description: Fast validation — Biome + Markdown + typegen + typecheck + Node/migration drift (report-only)
+description: Fast validation — Biome + Markdown + typegen + typecheck + Node/dependency/migration drift (report-only)
 allowed-tools: Bash(pnpm check:fast)
 disallowed-tools: Edit, Write, NotebookEdit
 ---

@@ -139,6 +139,16 @@ Migrations, seeding, and resets per environment.
   standalone image. It also rejects an open-ended `engines.node` range — Vercel resolves a range to
   the newest major it offers, so `>=24` would let production jump a Node major with no commit and no
   CI run. No network or env vars needed.
+- `pnpm deps:drift` — assert every `overrides` entry in `pnpm-workspace.yaml` still matches the
+  `package.json` range for the same package. Only the **overlap** is gated: `esbuild`, `vite` and
+  `sharp` are override-only by design (they force a transitive resolution the project never depends
+  on directly), so today `postcss` is the single package checked. Nothing reconciles the two files,
+  so a dependency bump silently leaves its override behind and the graph forks into two copies —
+  `postcss` did exactly that between 2026-08-05 and 2026-08-07. Equality is **exact string
+  equality**, not semver compatibility, because "compatible but different" is precisely the state
+  that produces the second copy. The guard fails rather than passing when it cannot read the
+  `overrides` block at all, and its OK line always names what it compared, so a run that checked
+  nothing is visible instead of looking identical to a clean one. No network or env vars needed.
 
 ---
 
@@ -163,10 +173,14 @@ Load a specific `.env.*.local` file before running a command.
 - `pnpm clean:deps` — remove `node_modules`.
 - `pnpm clean:generated` — remove generated `.js`, `.map`, and `.tsbuildinfo` files.
 - `pnpm knip` — find unused exports, files, and dependencies.
-- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the Node- and migration-drift gates, the
-  knip dead-code gate, unit + integration tests, and E2E (everything `check:fast` runs, plus knip and
-  all three test lanes).
-- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the Node- and migration-drift gates (no knip, no tests/E2E).
+- `pnpm check` — run Biome lint, Markdown check, typegen, typecheck, the Node-, dependency- and
+  migration-drift gates, the knip dead-code gate, unit + integration tests, and E2E (everything
+  `check:fast` runs, plus knip and all three test lanes).
+- `pnpm check:fast` — run Biome lint, Markdown check, typegen, typecheck, and the Node-, dependency-
+  and migration-drift gates (no knip, no tests/E2E). All three drift gates are here and knip is not,
+  on purpose: mid-feature code legitimately has an export whose consumer does not exist yet, so
+  blocking every commit on knip trains you to bypass the gate — but there is no half-finished state
+  in which the Node major, a migration set, or an override is legitimately out of sync.
 - `pnpm csp:guard` — assert the enforced Content-Security-Policy on a running server (nonce-CSP
   breakage is silent and screenshot-proof, so this is its own gate).
 - `pnpm csp:guard:build` — `next:build` then `csp:guard`. This is the CI `csp` job: it is the only

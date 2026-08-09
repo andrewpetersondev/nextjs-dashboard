@@ -2,12 +2,20 @@
 #
 # Single-branch, local-first model: feature work is merged into `main` locally
 # (worktrees share one object store, so no remote round-trip) and pushed. Human
-# feature work opens no PRs — CI runs on every push to `main` as the safety net.
-# (Dependabot still opens PRs; `dependency-review.yml` is the gate for those.)
+# feature work opens no PRs — the push to `main` is the safety net.
+#
+# BOT PRs are the exception, and the reason this workflow also runs on
+# `pull_request`. Dependabot and the weekly-maintenance routine DO open PRs, and
+# a human's merge is gated by review while a bot's merge was gated by nothing
+# comparable: until 2026-08-09 the only `pull_request` workflow was
+# `dependency-review.yml`, which checks for known-vulnerable dependencies and
+# runs no build, no types and no tests. Every dependency bump therefore merged on
+# the strength of an advisory scan alone, and the first real execution against it
+# happened after it was already on `main`.
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
-#     Next.js typegen + type-check) plus the Node- and migration-drift gates and the DB-free
-#     unit lane with coverage thresholds (~1 min).
+#     Next.js typegen + type-check) plus the Node-, dependency- and migration-drift gates
+#     and the DB-free unit lane with coverage thresholds (~1 min).
 #   • e2e — the slow Cypress end-to-end suite against a real `next dev` server
 #     backed by an ephemeral Postgres service container (recreates the
 #     `.env.test.local` from non-secret CI values, so no GitHub secrets needed).
@@ -22,16 +30,30 @@
 #      is its own job rather than a step in `e2e`: it finishes in about a minute
 #      instead of waiting on the full Cypress suite.
 #
-# All four run on every push to `main`. Because the merge happens locally before
-# the push, a red run means fix-forward — run `pnpm check:fast` locally before
-# merging to catch most failures pre-push. Note that `check:fast` does NOT cover
-# the integration lane (no database), so this job is its only automatic gate.
+# All four run on every push to `main`. On a pull request, `check`, `integration`
+# and `csp` run and `e2e` does not — see the `if:` on that job for why.
+#
+# Because a human merge happens locally before the push, a red run on `main`
+# means fix-forward — run `pnpm check:fast` locally before merging to catch most
+# failures pre-push. Note that `check:fast` does NOT cover the integration lane
+# (no database), so this job is its only automatic gate.
+#
+# No job here reads a repository secret (the DB lanes write their own
+# `.env.test.local` from non-secret literals, and `csp` uses inline dummies), so
+# these run unchanged on Dependabot PRs, where `GITHUB_TOKEN` is read-only and
+# the regular secret store is not available.
 
 name: CI
 
 # When should this workflow run?
 on:
+  # The safety net for human work, which merges locally and opens no PR.
   push:
+    branches: [main]
+  # The gate for bot work, which does open PRs. `dependabot/*` branches do not
+  # match the push trigger above, so a bot PR runs this once before the merge
+  # and once on the resulting push to `main` — never twice pre-merge.
+  pull_request:
     branches: [main]
 
 # If you push again before a run finishes, cancel the old run (saves CI minutes).
@@ -90,14 +112,25 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
-      # 9. Migration drift gate: assert the dev/test/prod drizzle migration sets
+      # 9. Dependency drift gate: assert every `overrides` entry in
+      #    pnpm-workspace.yaml still matches the `package.json` range for the
+      #    same package. Pure file parsing (no network, no database).
+      #    This is the gate aimed squarely at the bot PRs the `pull_request`
+      #    trigger above now covers: a bump moves the `package.json` range and
+      #    nothing moves the override with it, so the override silently stops
+      #    deduping and the graph forks into two copies. `postcss` did exactly
+      #    that between 2026-08-05 and 2026-08-07, caught only by hand.
+      - name: Dependency drift
+        run: pnpm deps:drift
+
+      # 10. Migration drift gate: assert the dev/test/prod drizzle migration sets
       #    describe the same final schema. Pure file comparison (no database),
       #    so it runs in plain CI. Catches the per-env drift that broke prod on
       #    2026-06-11. See BACKLOG "Per-env migration drift guard".
       - name: Migration drift
         run: pnpm db:drift
 
-      # 10. Dead-code gate. Knip is static and env-free (no database, no .env),
+      # 11. Dead-code gate. Knip is static and env-free (no database, no .env),
       #     so it runs in plain CI, and at ~1s it is the cheapest step here.
       #     Added 2026-08-06: it previously ran only via `pnpm check:repo`, which
       #     nothing executed, so it drifted red unnoticed — the same
@@ -106,7 +139,7 @@ jobs:
       - name: Dead code
         run: pnpm knip
 
-      # 11. Unit tests + coverage. The unit lane is DB-free (dummy env + mocked
+      # 12. Unit tests + coverage. The unit lane is DB-free (dummy env + mocked
       #     DB), so it runs in plain CI. `test:coverage` also enforces the
       #     coverage floors in `vitest.config.ts` — a regression below them fails
       #     the build.
@@ -240,9 +273,21 @@ jobs:
 
   e2e:
     name: E2E (Cypress)
-    # Runs on every push to `main` (the only trigger now). The local pre-push
-    # `pnpm check:fast` covers lint/types/typegen/drift but runs NO tests at
-    # all; this is the full e2e safety net.
+    # Runs on pushes to `main` only — the one job the `pull_request` trigger
+    # deliberately skips. At ~15 min it is by far the most expensive job here,
+    # and a bot PR would pay it twice: once on the PR and again on the merge
+    # push. The other three jobs give a bot PR a signal in a few minutes that
+    # covers lint, types, all three drift gates, dead code, unit + coverage, the
+    # DB-backed integration lane, and a real production build with the CSP
+    # guard. Nothing loses e2e coverage — it arrives just after the merge
+    # instead of just before it, which is where it already was.
+    #
+    # ⚠️ This `if:` is what makes that true. Removing it silently triples the
+    # cost of every dependency bump; changing the job NAME breaks any pinned
+    # required-status-check context.
+    if: github.event_name != 'pull_request'
+    # The local pre-push `pnpm check:fast` covers lint/types/typegen/drift but
+    # runs NO tests at all; this is the full e2e safety net.
     runs-on: ubuntu-latest
     # Generous ceiling: a cold `next dev` (Turbopack compiles routes on first
     # hit) plus 23 specs. The warm local run is ~35s; this is a safety net.

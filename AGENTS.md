@@ -19,6 +19,8 @@ always work from a worktree feature branch. See [`docs/branching-and-releases.md
 
 Human feature work opens **no pull request** — it merges locally. PRs still exist for automation
 (Dependabot, the weekly-maintenance routine), which is why `.github/PULL_REQUEST_TEMPLATE.md` is live.
+Because a bot PR has no human reviewer, `ci.yml` also runs on `pull_request` — all jobs except the
+slow `E2E (Cypress)` one, which stays push-only.
 
 ## Planning: BACKLOG.md and GitHub Issues
 
