@@ -144,6 +144,50 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Seed data rebuilt — deterministic, anchored to today, and shaped to tell a story**
+      _(2026-08-09, `claude/revenue-chart`)_ — asked for "better seed data" after the revenue
+      chart shipped. The interesting part was not aesthetics: **the seed's periods were anchored to
+      a hardcoded `"2025-01-01"`.** `generateMonthlyPeriods("2025-01-01", 19)` ended in **July
+      2026**, so on 2026-08-09 the current month had **no seeded invoices at all** — the $555/$765
+      August bar in the new chart was hand-created test data, not seed output. And it **rots**: the
+      window drifts a month further into the past every month, so by early 2027 the chart's
+      12-month view would have been largely empty. Periods are now generated backwards from the
+      current month, so a fresh clone looks the same in a year as it does today.
+      **It also explained why the chart had almost no pending.** Every seeded invoice sat at least
+      a month in the past, so every stored-pending row was past NET-30 and correctly rendered as
+      overdue — the pending band had nothing to draw. Recent months now carry invoices young enough
+      to still be pending, which is what makes all three buckets visible.
+      **Determinism, which fixed a latent test flake as a side effect.** Every draw ran through
+      `Math.random()`, so the demo reshaped on every `db:seed` and — more seriously —
+      `status-lifecycle.cy.ts` **opens the first overdue invoice** to exercise both transitions and
+      asserts the paid bucket is non-empty. Its own comment claimed the bucket was "reliably
+      non-empty", but that held only probabilistically; an unlucky run would have failed three
+      tests with no code change to blame. Now a seeded mulberry32 PRNG (`SEED_CONFIG.randomSeed`)
+      drives everything, plus **anchor invoices** dated relative to `now` that guarantee one of
+      each display bucket **by construction** — 45 days ago is always past due, 3 days ago never
+      is. A unit test asserts the guarantee, so it is checked in CI rather than assumed.
+      **Shape.** Volume ramps 4→9 invoices/month and amounts ramp with it, so the chart reads as a
+      growing business rather than noise. Large deals scale with the ramp too — a four-invoice
+      month landing a $47k contract produced an early spike that fought the trend. Status mix is
+      driven by **month age**, which is the only thing that matters when "overdue" is derived:
+      current month is mostly pending, older months mostly paid with a pending tail that renders
+      overdue.
+      **The `$5.00`line on the dashboard is gone.** ~20% of invoices were drawn from the $0 / $0.01
+      / $5 tiers, which is demo litter. Those tiers stay in`SEED_CONFIG`because`seed-amounts.schema-contract.test.ts`pins them against the invoice schema — but they are now
+      emitted **once each**, in the oldest month, so they exist in the data without appearing
+      anywhere the demo looks.
+      **One picture-less customer** (Priya Raghunathan) seeded with`CUSTOMER_IMAGE_URL_NONE`, so
+      the initials-avatar path is visible in the demo without creating a customer by hand.
+      **A gotcha worth keeping:`pnpm db:reset:dev`is denied to the agent** (the destructive-DB
+      deny rules), so the dev reseed is a human step. The seed shape was verified instead by running
+      the builder directly and printing the per-month breakdown — no database required, which is a
+      better check anyway since it needs no environment.
+      **And the e2e port-reuse guard earned its keep**: the first run refused with
+      "server reports databaseEnv=development, expected test" because a preview dev server had
+      restarted on 3001. That is the guard working, not a failure.
+      Validation: Biome slate **0**, typecheck green, knip clean, unit **465/465** (up from 455 —
+      10 new covering determinism, the bucket guarantee, the no-future-dates rule, and the`revenue_period = date_trunc('month', date)`CHECK invariant that would otherwise only fail at
+      insert time),`check:fast` green, e2e green against a freshly seeded test database.
 - [x] **Revenue-by-month chart on the overview — finishing what `revenue_period` was built for**
       _(2026-08-09, `claude/revenue-chart`)_ — Andrew asked whether the dashboard should have
       charts. It should, and the schema had been waiting for one: **`invoices.revenue_period`
