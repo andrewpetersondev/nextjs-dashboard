@@ -48,7 +48,9 @@ pnpm test:all         # unit + integration
 
 **Conventions:**
 
-- Test files are named `*.test.ts` / `*.spec.ts`, anywhere under `src/`.
+- Test files are named `*.test.ts` / `*.spec.ts`. The unit lane picks them up anywhere
+  under `src/` **or `devtools/`** — the CLI/seed tooling is tested too (seed builders and
+  guards, the override- and deploy-identity helpers). The integration lane is `src/`-only.
 - **Import test APIs explicitly** — `import { describe, expect, it, vi } from "vitest"`.
   `globals` is **not** enabled; a file that omits the import fails to load with
   `ReferenceError: describe is not defined`.
@@ -140,8 +142,12 @@ CI is the only automatic gate for integration and e2e.
   `test_db`. Confirm Postgres is up, `pnpm db:push:test` has run, and
   `.env.test.local`'s `DATABASE_URL` is reachable. (The plain `pnpm test` unit lane
   is database-free, so it should never need a connection.)
-- **Cypress can't reach the app** — confirm the server is running and that `PORT`
-  and `CYPRESS_BASE_URL` in `.env.test.local` agree (the auto-server path derives
-  its wait-URL from `PORT`).
+- **Cypress can't reach the app** — confirm the server is running on the `PORT` in
+  `.env.test.local`. There is no separate base-URL variable to keep in sync: Cypress
+  derives `baseUrl` as `http://localhost:${PORT}` in
+  [`cypress/node/config/cypress-env.ts`](../cypress/node/config/cypress-env.ts), and the
+  auto-server path derives its wait-URL from the same `PORT`. So the failure is a server
+  on a different port than the file says — often a stale exported `PORT` in your shell,
+  which overrides the file.
 - **Odd `cypress.config.js` behavior** — the `cy:*` scripts run `cy:clean` first;
   `pnpm cy:clean` removes the generated file if it gets stale.

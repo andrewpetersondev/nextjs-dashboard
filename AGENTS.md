@@ -44,6 +44,11 @@ backlog line is the failure mode this hybrid exists to avoid.
 Before any Next.js work, find and read the relevant doc in `node_modules/next/dist/docs/`. Your training data is
 outdated — the docs are the source of truth.
 
+A fresh worktree has **no `node_modules`**, so that path won't exist there until you run `pnpm install`. Don't
+conclude the docs were removed. Either install, or read them from the primary checkout — worktrees live under
+its `.claude/worktrees/`, so `git worktree list` names it in the first row and the docs sit at the same
+relative path under it (same pinned version, since both share one checkout of the lockfile).
+
 ## Detailed project standards
 
 For detailed architecture, naming, error-handling, and UI rules, also consult the Markdown files in

@@ -197,14 +197,34 @@ pnpm next:start:standalone
 
 ## 6. Running Tests
 
+Unit tests need no database and no `.env.test.local` — they run anywhere, including a
+fresh worktree:
+
 ```sh
-pnpm next:build:test # Build with test env
-pnpm serve:test      # Serve with test env
-pnpm cy:e2e:open        # Open Cypress interactive runner
-pnpm cy:e2e:run  # Run Cypress headless
+pnpm test
 ```
 
-See [testing.md](testing.md) for the full E2E workflow.
+The E2E suite needs a migrated and seeded `test_db` (step 4, test environment). The
+one-shot form boots its own server and tears it down again, so this is all you need:
+
+```sh
+pnpm cy:e2e
+```
+
+To watch the specs run instead, use the interactive runner. `serve:test` cleans, builds,
+and serves the test environment in one command — don't build first, its own `pnpm clean`
+would delete that build — and it keeps running, so the runner goes in a second terminal:
+
+```sh
+pnpm serve:test
+```
+
+```sh
+pnpm cy:e2e:open
+```
+
+See [testing.md](testing.md) for the full E2E workflow, including the lighter
+`pnpm cy:server` dev-server target and the integration lane.
 
 ## Tips
 

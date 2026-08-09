@@ -57,7 +57,7 @@ and which layers may import `@/server/**` is
    - Its own data access — repositories, DAL, row↔entity mappers (`infrastructure/`)
    - Server actions and module-scoped UI (`presentation/`)
 
-   Not every module needs every layer — thin CRUD slices (`customers`, `banner`) skip `application/`. See [diagrams/module-layers.md](diagrams/module-layers.md) for the per-module map.
+   Not every module needs every layer — `banner`, the thinnest slice, skips `application/`. A layer is added when there is orchestration to put in it, not up front. See [diagrams/module-layers.md](diagrams/module-layers.md) for the per-module map.
 
 2. `shared` — Cross-cutting, module-agnostic utilities and tokens:
    - Pure helpers, constants, types
