@@ -23,6 +23,40 @@ export type FormattedCustomersTableRow = {
 };
 
 /**
+ * A single customer as owned by this module.
+ *
+ * `sensitiveData` is deliberately absent: the column exists on the table as a
+ * demo of column-level exclusion, and no read path selects it — modeling it
+ * here would be the first step toward leaking it into a DTO.
+ */
+export type CustomerEntity = {
+	id: CustomerId;
+	name: string;
+	email: string;
+	imageUrl: string;
+};
+
+/**
+ * Fields accepted when inserting a customer. `imageUrl` is set by the server
+ * (there is no user-facing image field), so it is required here but never
+ * sourced from form input.
+ */
+export type CreateCustomerProps = {
+	email: string;
+	imageUrl: string;
+	name: string;
+};
+
+/**
+ * Fields accepted when patching a customer. Every key is optional — an absent
+ * key means "leave unchanged", which is what the edit form's blank inputs mean.
+ */
+export type UpdateCustomerProps = {
+	email?: string;
+	name?: string;
+};
+
+/**
  * Server DTOs returned by the repository (branded, normalized).
  * These are internal to the server layer and not feature-specific.
  */

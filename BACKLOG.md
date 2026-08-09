@@ -127,6 +127,81 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Customers CRUD — closing the last read-only island on the demo surface**
+      _(2026-08-09, `claude/next-best-thing-976173`)_ — found by asking what was left on the
+      demo surface rather than on this list: **`/dashboard/customers` was a first-class sidebar
+      item, peer to Invoices and Users, that could only be read.** Both siblings had full CRUD;
+      customers had three `read-*` actions and nothing else, so a hiring manager clicking through
+      in 60 seconds hit a section that visibly did less than its neighbours with no explanation.
+      The "kill the demo dead-ends" pass missed it because that audit hunted for things that were
+      **broken** — stub pages, 404ing buttons, template SVGs — and a page that works correctly
+      while doing less than its siblings is invisible to that lens. **Absence is much harder to
+      audit for than breakage.**
+      **The load-bearing find was in the schema, not the UI: `invoices.customer_id` is declared
+      `ON DELETE CASCADE`.** So the obvious implementation — wire up a delete button — would have
+      let one click silently destroy a customer's entire invoice history and shift the dashboard's
+      revenue cards, with no warning and no way to tell what happened. Andrew's call: **refuse the
+      delete while invoices exist** and name the count ("Cannot delete Amy Burns — 10 invoices
+      reference this customer."). The decision is a pure `evaluateCustomerDeletion`, mirroring
+      `classifyFreshness`, so the boundary (exactly zero) is pinned by tests instead of buried in
+      the I/O path. A **blocked delete is modelled as an outcome value, not an `Err`** — a customer
+      who still has invoices is an expected state of the world, and collapsing it into an error
+      would leave the action unable to distinguish "database is down" from "this customer has
+      invoices". Known limitation recorded in the module README: it is check-then-act, so an
+      invoice created between the count and the delete is still cascaded; the durable fix is
+      `ON DELETE RESTRICT`, not more application code.
+      **Second constraint, also from outside the module: `next.config.ts` declares no
+      `images.remotePatterns`**, so `next/image` can only serve the six local avatars under
+      `public/customers/`. A free-text image-URL field would have looked fine in the form and then
+      failed at the optimizer for every customer created. So the create form has **no image field
+      at all**; new customers store `CUSTOMER_IMAGE_URL_NONE` and render an **initials tile** built
+      from existing semantic tokens — a generated per-customer palette would need its contrast
+      re-verified against both schemes, and the axe checks block on moderate-impact violations.
+      **Adding writes forced the module's first `application/` layer** — its README had explicitly
+      justified not having one ("without writes there is nothing for a service to orchestrate").
+      Built to the standard rather than to the siblings: a `CustomerRepositoryContract` **port** in
+      `application/contracts/` so the dependency arrow points inwards, and writes return
+      `Result<T, AppError>` via `executeDalResult` as
+      `error-handling-and-result-pattern.md` requires. **The module now reports failure two ways**
+      — new writes return `Result`, the older reads still throw — and that split is documented in
+      both the repository and the README rather than papered over; converting the reads has its own
+      callers and tests and is a separate change. Duplicate email needed no bespoke detection:
+      `normalizePgError` already maps Postgres `23505` to a `conflict` key, and `customers.email`
+      carries the table's only unique constraint, so the message lands on the right field.
+      Authorization is **`requireSession`, not `requireAdmin`** — customers are business data like
+      invoices, not account management like users — and that was verified by driving the whole
+      flow as the seeded non-admin `user@user.com`.
+      **Two defects caught by the work itself, both worth keeping.** (1) A unit test caught a bug
+      in `toCustomerInitials` that the function's own doc comment claimed to prevent: it iterated
+      with `Array.from` to avoid splitting a surrogate pair, then ended with `.slice(0, 2)`, which
+      counts **UTF-16 code units** — so "🦊 Fox" came back as "🦊" with the "F" truncated away. The
+      fix caps the WORD list, never the joined string. **A guard that re-introduces its own bug two
+      lines later is exactly what a test is for.** (2) `customers-table.tsx` carried
+      `aria-labelledby="customers-heading"`, a hardcoded string pointing at an id that never
+      existed — the `H1` uses a generated `useId`. Fixed while making the component the owner of
+      the shared delete state. Also dropped a `cursor-pointer` from the desktop row, which promised
+      a click target the row never had.
+      **The delete state is lifted to one `useActionState` in `CustomersTable`**, not one per row:
+      per-row state would mount one `role="alert"` live region per customer, and a refusal would
+      then be announced from whichever of N identical regions happened to update.
+      **Coverage gap closed in passing: the dashboard a11y smoke spec never visited
+      `/dashboard/customers`** — it checked invoices, users and the overview only. The page that
+      just gained icon-only per-row controls and a generated avatar was the one page with no axe
+      coverage; the customers list and the create form are now both in that spec.
+      Validation: Biome slate **0 diagnostics** (listed, never read off the exit code — and every
+      finding fixed by reordering or extraction, not suppression), typecheck green (app + Cypress),
+      unit **432/432** (up from 398 — 34 new, incl. `CustomerService` proving a blocked delete
+      never reaches `repo.delete`), knip exit 0, `check:fast` green with all three drift gates
+      reporting. Runtime-verified against the dev server end to end: refusal on a customer with 10
+      invoices (invoice counts confirmed unchanged afterwards), create with normalization
+      (`"   Sofia    Nakamura-Reyes  "` → `Sofia Nakamura-Reyes`, `"  SOFIA@Example.COM "` →
+      `sofia@example.com`), initials avatar, duplicate-email rejection on a mixed-case address,
+      edit persistence, and a successful delete of a zero-invoice customer.
+      **Follow-up not taken (deliberate, matches the siblings):** a failed create does not echo the
+      submitted values back into the form — `makeFormError` passes `formData: {}`, exactly as the
+      users and invoices forms do — so a duplicate-email rejection clears both inputs. Fixing it is
+      a shared-forms change, not a customers one.
+
 - [x] **Node runtime alignment — `.nvmrc` finally applies locally, and `node:drift` reaches CI**
       _(2026-08-09, `claude/node-runtime-alignment`)_ — found while reading the output of the
       override-drift gate: every pnpm command was printing

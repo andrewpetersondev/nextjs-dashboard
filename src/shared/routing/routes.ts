@@ -17,8 +17,10 @@ type RoutesShape = Readonly<{
 		signup: StaticPath;
 	}>;
 	dashboard: Readonly<{
+		createCustomer: DynamicBuilder;
 		createInvoice: DynamicBuilder;
 		createUser: DynamicBuilder;
+		customerEdit: (id: string) => StaticPath;
 		customers: StaticPath;
 		invoice: (id: string) => StaticPath;
 		invoiceEdit: (id: string) => StaticPath;
@@ -40,8 +42,11 @@ export const ROUTES = {
 		signup: "/auth/signup",
 	},
 	dashboard: {
+		createCustomer: () => "/dashboard/customers/create" as Route,
 		createInvoice: () => "/dashboard/invoices/create" as Route,
 		createUser: () => "/dashboard/users/create" as Route,
+		customerEdit: (id: string) =>
+			`/dashboard/customers/${encodeURIComponent(id)}/edit` as Route,
 		customers: "/dashboard/customers",
 		invoice: (id: string) =>
 			`/dashboard/invoices/${encodeURIComponent(id)}` as Route,
