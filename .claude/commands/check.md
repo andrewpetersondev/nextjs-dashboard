@@ -1,5 +1,5 @@
 ---
-description: Full validation — Biome + Markdown + typegen + typecheck + Node/migration drift + knip + unit/integration + e2e (report-only)
+description: Full validation — Biome + Markdown + typegen + typecheck + Node/dependency/migration drift + knip + unit/integration + e2e (report-only)
 allowed-tools: Bash(pnpm check)
 disallowed-tools: Edit, Write, NotebookEdit
 ---

@@ -49,26 +49,38 @@ it automatically.
    remote round-trip. The **push** to `main` is what triggers CI and the Vercel
    production deploy.
 
-There are no pull requests in this model; review happens when you merge the branch in
-WebStorm. If you ever want a showcase PR, open one by hand — nothing here forbids it.
+There are no pull requests for **human** work in this model; review happens when you merge
+the branch in WebStorm. If you ever want a showcase PR, open one by hand — nothing here
+forbids it. **Bots do open PRs** (Dependabot, the weekly-maintenance routine), and those
+are the reason CI also runs on `pull_request` — see below.
 
 ## What runs where
 
 CI is one workflow, [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml), with
-four jobs that all run in parallel on **every push to `main`**:
+four jobs that run in parallel:
 
-| Job                    | Speed  | What it needs                   | What it catches                                           |
-| ---------------------- | ------ | ------------------------------- | --------------------------------------------------------- |
-| `Lint & type-check`    | fast   | nothing                         | lint, types, Node + migration drift, unit lane + coverage |
-| `CSP guard`            | medium | a production build              | un-nonced scripts that would ship a dead page             |
-| `Integration (Vitest)` | fast   | Postgres service container      | the DB-backed integration lane                            |
-| `E2E (Cypress)`        | slow   | Postgres + a running `next dev` | the app in a real browser, including accessibility        |
+| Job                    | Speed  | Runs on                 | What it needs                   | What it catches                                                    |
+| ---------------------- | ------ | ----------------------- | ------------------------------- | ------------------------------------------------------------------ |
+| `Lint & type-check`    | fast   | push to `main` + PRs    | nothing                         | lint, types, Node + dependency + migration drift, dead code, units |
+| `CSP guard`            | medium | push to `main` + PRs    | a production build              | un-nonced scripts that would ship a dead page                      |
+| `Integration (Vitest)` | fast   | push to `main` + PRs    | Postgres service container      | the DB-backed integration lane                                     |
+| `E2E (Cypress)`        | slow   | push to `main` **only** | Postgres + a running `next dev` | the app in a real browser, including accessibility                 |
+
+`E2E` skips pull requests via a job-level `if:`. At ~15 min it is by far the most
+expensive job, and a bot PR would otherwise pay it twice — once on the PR and again on the
+merge push. The other three still give a bot PR a full signal in a few minutes, and e2e
+coverage is not lost: it arrives just after the merge instead of just before it, which is
+where it already was.
 
 A push to `main` also triggers the Vercel **production** deploy.
 
-CI runs **after** the push, as a safety net — not as a merge gate (a direct push can't
-wait for checks that only start once it lands). The local `pnpm check:fast` before the
-merge is what catches most failures early; a red `main` run means fix-forward.
+For human work CI runs **after** the push, as a safety net — not as a merge gate (a direct
+push can't wait for checks that only start once it lands). The local `pnpm check:fast`
+before the merge is what catches most failures early; a red `main` run means fix-forward.
+For bot PRs the order is the usual one: three of the four jobs run **before** the merge,
+which is the point of the `pull_request` trigger. Until 2026-08-09 the only workflow on
+`pull_request` was `dependency-review.yml`, an advisory scan with no build, types or tests
+— so every dependency bump merged with nothing having executed it.
 
 `main` is protected by a GitHub ruleset (`Protect Important Branches`) that blocks
 force-pushes and branch deletion but **allows** direct pushes — there is no

@@ -72,16 +72,7 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       the `claude/issue-124-326e7f` branch surviving. Two findings from the attempt outlived it
       and are listed below.
 
-- [ ] **Bot PRs run essentially no CI** _(found 2026-08-07 during the Renovate attempt;
-      independent of it)_ — [`ci.yml`](.github/workflows/ci.yml) triggers only on
-      `push: [main]`. The one workflow on `pull_request` is
-      [`dependency-review.yml`](.github/workflows/dependency-review.yml), which checks for
-      known-vulnerable dependencies and runs **no build, no types, no tests**. So every
-      Dependabot PR — and the weekly-maintenance PR — is merged on the strength of an
-      advisory scan alone. Fix is one `pull_request: branches: [main]` trigger; the cost is
-      that each bot PR then runs the full suite (e2e ~15 min) and runs it again on the merge
-      push. Consider scoping the PR trigger to `check` + `integration` and leaving `e2e` to
-      the push if that is too slow.
+- [x] ~~**Bot PRs run essentially no CI**~~ — fixed 2026-08-09, see Done.
 
 - [x] ~~**`postcss` override has drifted from its dependency**~~ — fixed 2026-08-07. Override
       resynced `^8.5.24` → `^8.5.25` to match the `package.json` devDependency, lockfile
@@ -104,15 +95,7 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       an open-ended `engines.node` range, since a range lets Vercel move production a major
       with no commit and no CI run. Wired into `check` and `check:fast`.
 
-- [ ] **No guard on override/dependency drift** _(the class behind the postcss fix above;
-      `devtools/cli/node-version-drift.cli.ts` is the working template for it)_ —
-      nothing asserts that an entry in `pnpm-workspace.yaml` `overrides` still matches the
-      `package.json` range for the same package, so Dependabot bumping a dep silently leaves
-      its override behind. Only `postcss` currently overlaps, so the blast radius is small
-      today. A ~20-line check in the existing `check` pipeline (next to `db:drift`, which is
-      the same shape of gate) would close it permanently. Note the guard must compare only
-      packages present in BOTH files — `esbuild`, `vite`, and `sharp` are override-only and
-      have no `package.json` counterpart by design.
+- [x] ~~**No guard on override/dependency drift**~~ — fixed 2026-08-09, see Done.
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
@@ -141,6 +124,66 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Gating the dependency-update path — CI on bot PRs + an override-drift guard**
+      _(2026-08-09, `claude/dependency-update-gates`)_ — the two remaining "Later" items turned out
+      to be one story, so they landed together: **the path a dependency bump takes into `main` was
+      ungated at both ends.** Under the local-first model a human's merge is gated by the WebStorm
+      review; a bot's merge was gated by nothing comparable.
+      **(1) CI now runs on `pull_request`.** [`ci.yml`](.github/workflows/ci.yml) triggered only on
+      `push: [main]`, and the ONLY workflow on `pull_request` was
+      [`dependency-review.yml`](.github/workflows/dependency-review.yml) — an advisory scan against
+      the GitHub Advisory Database with **no build, no types, no tests**. (Re-verified rather than
+      trusted: `codeql.yml` is also `push` + schedule.) So every Dependabot PR and every
+      weekly-maintenance PR merged on an advisory scan alone, and the first real execution against
+      it happened once it was already on `main`. Added `pull_request: branches: [main]`, with
+      **`E2E (Cypress)` skipped on PRs** via `if: github.event_name != 'pull_request'` — Andrew's
+      call. At ~15 min e2e is by far the most expensive job and a bot PR would pay it twice (PR +
+      merge push); the other three still deliver lint, types, all three drift gates, dead code,
+      unit + coverage, the DB-backed integration lane and a real production build with the CSP
+      guard in a few minutes. **No e2e coverage is lost** — it arrives just after the merge instead
+      of just before it, which is exactly where it already was. Checked and safe: `dependabot/*`
+      branches don't match the push trigger, so there is no double pre-merge run; and **no job here
+      reads a repository secret** (the DB lanes write `.env.test.local` from non-secret literals,
+      `csp` uses inline dummies), so these run unchanged on Dependabot PRs where `GITHUB_TOKEN` is
+      read-only. All four job NAMES left untouched — required-status-check contexts pin names.
+      **(2) New `pnpm deps:drift` gate.** Nothing asserted that a `pnpm-workspace.yaml` `overrides`
+      entry still matched the `package.json` range for the same package — the rule existed only as a
+      **comment** above the `postcss` entry ("⚠ MUST equal the `postcss` devDependency range"), and
+      it had already failed once (drifted 2026-08-05 → 2026-08-07). Same genre as knip-that-nothing-ran
+      and the three disagreeing Node versions: a documented rule with no executable gate. Only the
+      **overlap** is compared — `esbuild`, `vite` and `sharp` are override-only by design, so today
+      `postcss` is the single package checked (verified against `package.json`, not assumed).
+      Equality is **exact string equality**, not semver compatibility: "compatible but different" is
+      precisely the state that produces a second copy of a package, which is what the override
+      exists to prevent. Wired into `check`, `check:fast`, **and** a `Dependency drift` step in the
+      CI `check` job — a step, never a new job. In `check:fast` unlike knip, and that distinction is
+      deliberate: mid-feature code legitimately has an unused export, but nothing is ever
+      half-finished into an out-of-sync override.
+      **The design point worth keeping is anti-vacuity.** A guard's dangerous failure here is not a
+      crash but a silent one — a hand-rolled YAML parser that stops matching the file and returns an
+      empty map becomes a permanent green light. So: the parser **throws** when the block is absent,
+      empty, or contains a line it cannot read (nested structure is an error, never a skipped line),
+      and the OK output always names what it compared (`1 overlapping package(s) agree (postcss);
+      3 override-only (esbuild, vite, sharp)`) so a run that checked nothing cannot look like a
+      clean one. The parse + comparison live in `devtools/shared/override-drift.ts` with 12 unit
+      tests; the CLI is I/O only — the same pure-decision split as `classifyFreshness`.
+      **Validated by negative test, not just the happy path:** faking the 2026-08-07 postcss drift
+      produced the expected exit 1 with a remedy, and renaming the `overrides:` key produced the
+      "cannot verify anything" failure instead of a vacuous pass. **A gotcha that cost real time and
+      is worth remembering: mutating `pnpm-workspace.yaml` as a test fixture is not free.** `pnpm`
+      auto-installs before running a script, so the edited overrides were resolved for real — pnpm
+      installed **three extra copies of esbuild and the vulnerable `sharp` line**, rewrote
+      `pnpm-lock.yaml`, and after `git checkout` of both files left `node_modules/.pnpm` still
+      linking `next` → `postcss@8.4.31`, which neither `--frozen-lockfile` nor `--force` repaired
+      ("Already up to date"). Committed state was never affected. Probe the exported functions
+      directly, or accept that recovery needs a `node_modules` wipe.
+      Validation: Biome slate **0 diagnostics** (listed, never read off the exit code), `check:fast`
+      green with all three drift gates reporting, unit **398/398**, knip exit 0 (its two "unused
+      exported type" findings resolved the 2026-08-06 way — un-export, don't delete: the CLI reads
+      both types through inference), typecheck green, and `ci.yml` re-parsed to confirm both
+      triggers, the `e2e` condition, the new step's placement, and that all four job names are
+      unchanged. Integration/e2e not run locally — this worktree has no `.env.test.local`; CI is the
+      first real proof, and no runtime path changed.
 - [x] **knip triage + wiring it into a pipeline that runs** _(2026-08-06,
       `claude/what-is-next-6181ec`)_ — `pnpm knip` was exiting 1 on `main` and nothing noticed,
       because **nothing executed it**: not `check`, not `check:fast`, not CI. Its only caller was

@@ -41,6 +41,17 @@ Every open PR lands in exactly one bucket, each with one recommended action:
 | **Failing**             | CI red for any other reason                                   | Investigate (log excerpt included) |
 | **Conflicted**          | Dirty merge state                                             | Rebase                             |
 
+**"Checks green" now means something.** Until 2026-08-09 the only workflow on `pull_request` was
+`dependency-review.yml` — an advisory scan with no build, no types and no tests — so a green bot PR
+proved almost nothing and this routine was carrying the whole weight. `ci.yml` now runs on
+`pull_request` too (everything except the slow `E2E (Cypress)` job), so a clean PR has really been
+linted, type-checked, drift-gated and tested before you look at it.
+
+**Needs lockstep is now enforced, not just advised.** The `Dependency drift` step in the `check` job
+fails any PR that bumps a package whose `overrides` entry does not move with it, so this bucket
+should now show up as a RED check rather than as a green PR with a caveat. Treat a green PR in this
+bucket as a sign the guard has a gap worth reporting.
+
 **Superseded is verified, not guessed** — the agent reads the current version in `package.json` on
 `main` and compares it against the PR's target, rather than inferring from titles.
 

@@ -64,19 +64,19 @@ when done.
 
 With the job-hunt "Now" items landed (invoice lifecycle, demo surface, a11y pass) and the tooling
 sweep behind them (rootfiles decisions, integration CI lane, Cypress typecheck lane, forms taxonomy
-flattening), the open list is down to four items — all tooling, docs, or research:
+flattening, docs consolidation, knip wiring, Node alignment, dependency-update gates), the open list
+is down to two items:
 
-| BACKLOG item               | Lane               | Edit footprint                 |
-| -------------------------- | ------------------ | ------------------------------ |
-| Renovate adoption (#124)   | chore (CI/config)  | CI + workspace config          |
-| CSP follow-ups (#126)      | chore (security)   | `next.config.ts`, `proxy.ts`   |
-| docs/ consolidation (#128) | docs               | `docs/standards/**`, `docs/**` |
-| Skills exploration         | research (no code) | none                           |
+| BACKLOG item          | Lane               | Edit footprint               |
+| --------------------- | ------------------ | ---------------------------- |
+| CSP follow-ups (#126) | chore (security)   | `next.config.ts`, `proxy.ts` |
+| Skills exploration    | research (no code) | none                         |
 
-All four footprints are disjoint, so they could run as four parallel lanes — but two of them are
-blocked on decisions rather than effort (CSP follow-ups need a report collector and a custom-domain
-call; Renovate needs the Mend GitHub App installed), so in practice this is a one- or two-lane list.
-Nothing currently open touches the shared kernel, which is where the single-thread rule bites.
+The two footprints are disjoint, but this is a one-lane list in practice: the CSP work is **blocked
+on decisions rather than effort** (`require-trusted-types-for` needs a report collector that does
+not exist yet; the HSTS `includeSubDomains` call cannot be made until there is a custom domain), and
+Skills exploration writes no code. Neither touches the shared kernel, which is where the
+single-thread rule bites. Renovate (#124) is **dropped, not pending** — do not re-add it here.
 
 ## The protocol
 

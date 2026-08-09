@@ -10,10 +10,12 @@ the **test environment** (`.env.test.local`):
 | Integration | Vitest  | `pnpm test:integration` | Full-stack flows through the layers against the real database | Yes              | Yes — `integration` |
 | End-to-end  | Cypress | `pnpm cy:e2e`           | The running app in a real browser, including accessibility    | Yes              | Yes — `e2e` job     |
 
-All three run on every push to `main`. The integration lane joined CI on
-2026-08-04; before that it ran on developer machines only, so a break in it could
-reach `main` unnoticed. Note that `pnpm check:fast` still does **not** cover it —
-it needs a database — so CI is its only automatic gate.
+All three run on every push to `main`; the unit and integration lanes **also** run on
+pull requests, so bot dependency bumps are tested before they merge (E2E stays
+push-only — see [branching-and-releases.md](branching-and-releases.md)). The
+integration lane joined CI on 2026-08-04; before that it ran on developer machines
+only, so a break in it could reach `main` unnoticed. Note that `pnpm check:fast` still
+does **not** cover it — it needs a database — so CI is its only automatic gate.
 
 `pnpm test` is an alias for `pnpm test:unit` (unit only); `pnpm test:all` runs the
 unit and integration lanes together.
@@ -114,8 +116,9 @@ cy.checkA11y()
 
 ## CI
 
-All four CI jobs run in parallel on every push to `main` — see
-[branching-and-releases.md](branching-and-releases.md). Three of them run tests:
+All four CI jobs run in parallel on every push to `main`, and all but `e2e` also run on
+pull requests — see [branching-and-releases.md](branching-and-releases.md). Three of
+them run tests:
 
 - **`check` job:** `pnpm test:coverage` — the DB-free unit lane, which also enforces
   the coverage floors in `vitest.config.ts`.

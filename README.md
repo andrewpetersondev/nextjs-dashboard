@@ -217,7 +217,7 @@ checks via cypress-axe are integrated in tests where applicable.
   - `pnpm lint` — report-only, both toolchains
   - `pnpm fix` — apply safe autofixes, both toolchains
 - Validation gates:
-  - `pnpm check:fast` — Biome + Markdown + typegen + typecheck + Node/migration drift (the pre-merge gate)
+  - `pnpm check:fast` — Biome + Markdown + typegen + typecheck + Node/dependency/migration drift (the pre-merge gate)
   - `pnpm check` — everything above plus the unit, integration, and E2E lanes
 - Clean builds:
   - `pnpm clean` — remove `.next` and generated `.js`/`.map`/`.tsbuildinfo` files
