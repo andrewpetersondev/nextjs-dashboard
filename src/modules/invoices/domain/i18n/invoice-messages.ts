@@ -1,4 +1,9 @@
-// Central, type-safe message ID registry
+/**
+ * Every user-facing message the invoices module can emit, as stable IDs.
+ *
+ * Keeps English out of domain and application code: those layers select an ID,
+ * and only `en-invoices.ts` knows what it says.
+ */
 export const INVOICE_MSG = {
 	amountRequired: "INVOICE.AMOUNT_REQUIRED",
 	createFailed: "INVOICE.CREATE_FAILED",
@@ -37,5 +42,10 @@ export const INVOICE_MSG = {
 	validationFailed: "INVOICE.VALIDATION_FAILED",
 } as const;
 
-// The union of message ID string values
+/**
+ * The union of every value in {@link INVOICE_MSG}.
+ *
+ * Derived from the registry so the two cannot drift — adding an entry widens
+ * this union, and `en-invoices.ts` then fails to compile until it is translated.
+ */
 export type InvoiceMessageId = (typeof INVOICE_MSG)[keyof typeof INVOICE_MSG];
