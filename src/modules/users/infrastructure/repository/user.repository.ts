@@ -15,6 +15,14 @@ import type { AppDatabase } from "@/server/db/db.connection";
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 
+/**
+ * Drizzle-backed persistence for users.
+ *
+ * Holds no SQL itself — each method delegates to a single-purpose DAL function,
+ * so this class is really a namespace binding the database handle to that set of
+ * queries. Deliberately does not implement `UserRepositoryContract`;
+ * `UserRepositoryAdapter` supplies that seam.
+ */
 export class UserRepositoryImpl {
 	protected readonly db: AppDatabase;
 

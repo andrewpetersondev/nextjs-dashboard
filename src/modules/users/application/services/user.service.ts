@@ -20,6 +20,14 @@ import { Err, Ok } from "@/shared/core/result/result";
 import type { Result } from "@/shared/core/result/result.dto";
 import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logging-client.contract";
 
+/**
+ * Use cases for the users module.
+ *
+ * Owns password hashing and entity-to-DTO mapping, so nothing above it ever
+ * handles a plaintext password or a raw `UserEntity`. Every method returns a
+ * `Result` and never throws: unexpected exceptions are caught, logged, and
+ * converted at the boundary.
+ */
 export class UserService {
 	private readonly hasher: HashingService;
 	private readonly logger: LoggingClientContract;
@@ -35,6 +43,12 @@ export class UserService {
 		this.logger = logger.child({ scope: "user-service" });
 	}
 
+	/**
+	 * Hashes the password, then persists the user.
+	 *
+	 * @returns The created user, or `Err` if persistence reported no row — unlike
+	 * the reads below, a missing result here is a genuine failure.
+	 */
 	async createUser(input: CreateUserData): Promise<Result<UserDto, AppError>> {
 		try {
 			const hashedPassword = await this.hasher.hash(input.password);
@@ -134,6 +148,11 @@ export class UserService {
 		}
 	}
 
+	/**
+	 * @returns `Ok(null)` when no such user exists — absence is a normal answer
+	 * here, so callers must branch on the value rather than assume `Ok` means
+	 * found.
+	 */
 	async readUserById(id: UserId): Promise<Result<UserDto | null, AppError>> {
 		try {
 			const result = await this.repo.readById(id);
@@ -167,6 +186,12 @@ export class UserService {
 		}
 	}
 
+	/**
+	 * Applies a partial update, re-hashing the password only when one is given.
+	 *
+	 * An absent or empty `patch.password` leaves the stored hash untouched, so
+	 * editing a user's email cannot silently blank their credentials.
+	 */
 	async updateUser(
 		id: UserId,
 		patch: EditUserData,

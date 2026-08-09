@@ -1,5 +1,6 @@
 import type { JSX, ReactNode } from "react";
 
+/** Spacing shell for one auth form row — layout only, no semantics or field logic. */
 export function FormRowWrapper({
 	children,
 }: {

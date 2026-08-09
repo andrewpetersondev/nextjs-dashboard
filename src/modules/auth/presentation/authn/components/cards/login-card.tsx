@@ -10,6 +10,13 @@ import type { LoginField } from "@/modules/auth/presentation/authn/transports/lo
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/presentation/constants/auth.tokens";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
+/**
+ * The login panel: credentials form, divider, then the two demo shortcuts.
+ *
+ * The demo actions are imported here rather than passed in, because they are
+ * fixed entry points rather than a caller's choice — only the real credentials
+ * `action` varies.
+ */
 export function LoginCard({
 	action,
 }: AuthActionProps<LoginField>): JSX.Element {

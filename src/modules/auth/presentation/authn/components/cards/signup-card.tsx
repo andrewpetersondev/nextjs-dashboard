@@ -10,6 +10,13 @@ import type { SignupField } from "@/modules/auth/presentation/authn/transports/s
 import { AUTH_DIVIDER_LABEL } from "@/modules/auth/presentation/constants/auth.tokens";
 import { DividerAtom } from "@/ui/atoms/divider.atom";
 
+/**
+ * The signup panel: registration form, divider, then the two demo shortcuts.
+ *
+ * The demo buttons are the same actions the login card offers — they sign in as
+ * an existing demo identity rather than registering anything, despite the
+ * "Sign Up as…" labels.
+ */
 export function SignupCard({
 	action,
 }: AuthActionProps<SignupField>): JSX.Element {
