@@ -5,6 +5,12 @@ import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { AppDatabase } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
+/**
+ * Sums the amounts of all paid invoices.
+ *
+ * @returns The total in cents, or `0` when nothing is paid — SQL `sum()` over
+ * no rows yields NULL, which is coalesced here rather than propagated.
+ */
 export async function fetchTotalPaidInvoicesDal(
 	db: AppDatabase,
 ): Promise<number> {

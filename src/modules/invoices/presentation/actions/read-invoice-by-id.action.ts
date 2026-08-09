@@ -7,6 +7,18 @@ import { InvoiceRepository } from "@/modules/invoices/infrastructure/repository/
 import { getAppDb } from "@/server/db/db.connection";
 import { makeAppError } from "@/shared/core/errors/core/factories/app-error.factory";
 
+/**
+ * Loads one invoice for the edit form.
+ *
+ * Throws rather than returning a `Result`, unlike most of this module — the
+ * caller is a page that wants an error boundary, not a form that renders field
+ * errors.
+ *
+ * @throws Always as a `database` AppError carrying `INVOICE_MSG.dbError`. The
+ * catch-all rewraps every failure, so an empty id and a genuine query fault are
+ * indistinguishable to the caller despite the more specific errors raised
+ * inside.
+ */
 export async function readInvoiceByIdAction(id: string): Promise<InvoiceDto> {
 	try {
 		if (!id) {

@@ -3,7 +3,14 @@ import {
 	type InvoiceMessageId,
 } from "@/modules/invoices/domain/i18n/invoice-messages";
 
-// Single-locale dictionary (en) with compile-time completeness check
+/**
+ * English text for every invoice message ID.
+ *
+ * The `satisfies Record<InvoiceMessageId, string>` at the bottom is what makes
+ * this exhaustive: adding an entry to `INVOICE_MSG` breaks compilation here
+ * until it is translated, which is why `translator`'s missing-key fallback is
+ * effectively unreachable.
+ */
 // biome-ignore lint/nursery/useExplicitType: fix later
 export const enInvoices = {
 	[INVOICE_MSG.amountRequired]: "Amount is required.",

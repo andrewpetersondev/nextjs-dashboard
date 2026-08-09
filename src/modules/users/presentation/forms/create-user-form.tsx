@@ -90,6 +90,12 @@ function CreateUserFormFields({
 	);
 }
 
+/**
+ * Create-user form, driven by `useActionState`.
+ *
+ * Password is required here, unlike the edit form where omitting it leaves the
+ * stored hash untouched.
+ */
 export function CreateUserForm(): JSX.Element {
 	const [state, action, pending] = useActionState<FormState<unknown>, FormData>(
 		createUserAction,

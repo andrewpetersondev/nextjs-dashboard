@@ -1,6 +1,13 @@
 import type { JSX } from "react";
 import type { UserDto } from "@/modules/users/application/dtos/user.dto";
 
+/**
+ * Read-only summary shown above the edit-user form.
+ *
+ * Renders the stored values so an editor can see what they are changing from —
+ * the form's own inputs show the pending state. Takes a `UserDto`, which
+ * already excludes the password hash.
+ */
 export function UserInfoPanel({ user }: { user: UserDto }): JSX.Element {
 	return (
 		<div className="mb-6 rounded-lg border bg-muted p-4">

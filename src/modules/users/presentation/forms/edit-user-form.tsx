@@ -107,6 +107,13 @@ function EditUserFormFields({
 	);
 }
 
+/**
+ * Edit-user form, prefilled from the passed user.
+ *
+ * Leaving the password blank keeps the existing one — `UserService.updateUser`
+ * only re-hashes when a value is supplied, so editing an email cannot silently
+ * reset credentials.
+ */
 export function EditUserForm({ user }: { user: UserDto }): JSX.Element {
 	const [showAlert, setShowAlert] = useState(false);
 

@@ -104,6 +104,7 @@ function FormFields({
 // mismatch itself is fixed, with a seed contract test guarding it). Both
 // forms share the same useActionState action, so pending state and server
 // feedback stay unified.
+/** The status radio group, in its own `form` so it submits `{status}` alone. */
 function StatusTransitionForm({
 	action,
 	current,
@@ -124,6 +125,14 @@ function StatusTransitionForm({
 	);
 }
 
+/**
+ * Edit-invoice form, plus a separate status-transition form beside it.
+ *
+ * The split is deliberate: a status change submits only `{status}`, so it cannot
+ * fail validation on unrelated fields the main form round-trips. Both forms
+ * share one `useActionState` action, keeping pending state and server feedback
+ * unified across the two.
+ */
 export const EditInvoiceForm = ({
 	invoice,
 	customers,

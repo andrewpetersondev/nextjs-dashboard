@@ -83,6 +83,13 @@ function CreateInvoiceFormFields({
 	);
 }
 
+/**
+ * Create-invoice form, driven by `useActionState`.
+ *
+ * Clears itself on success so the next invoice starts blank — which is why it
+ * holds a form ref rather than relying on the action's return value alone.
+ * Status is limited to the creatable subset; "void" is not offered here.
+ */
 export function CreateInvoiceForm({
 	customers,
 }: {

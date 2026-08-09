@@ -11,6 +11,13 @@ interface InvoiceAmountInputProps
 	label?: string;
 }
 
+/**
+ * Currency field for an invoice amount, shared by the create and edit forms.
+ *
+ * Submits **dollars** as a string; the schema's amount codec decodes it and the
+ * conversion to stored cents happens further down. `step="0.01"` only constrains
+ * the browser's stepper — the schema is what actually enforces the range.
+ */
 export const InvoiceAmountInput = ({
 	id = "amount",
 	dataCy,
