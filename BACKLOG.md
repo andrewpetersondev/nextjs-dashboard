@@ -139,6 +139,17 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       [issue #126's comment](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126#issuecomment-5231159398).
 - [ ] **Skills exploration** — evaluate reputable-source skills (e.g. Vercel's
       `vercel-react-best-practices`) against `docs/standards/` before adopting.
+- [ ] **TSDoc coverage pass — IN PROGRESS, 105 files left.** Started 2026-08-09 on
+      `claude/doc-comments-coverage-a3c7fc`. Baseline was **178 of 649** tracked `.ts`/`.tsx`
+      files with zero doc blocks; 12 done so far (the `banner` slice, `auth-brands.value.ts`,
+      and seven singletons). **Calibration is decided and non-obvious — read
+      `feedback_doc_comment_style` in memory before continuing:** the target is WebStorm
+      **hover** readability, so "summary + contract" (~4–6 lines), **never `@remarks`**, drop
+      `@param` when the signature already says it, TSDoc-standard tags only. Scope: the ~117
+      non-test files only (existing doc blocks are left alone, even the over-long ones);
+      `src/app`'s 29 convention files get comments only where non-obvious. Remaining by area:
+      `src/modules` 42, `src/app` 29, `src/ui` 8, `src/shared` 6, `devtools` 6, `database` 5,
+      `src/shell` 5, `src/server` 1.
 
 ## Done
 
