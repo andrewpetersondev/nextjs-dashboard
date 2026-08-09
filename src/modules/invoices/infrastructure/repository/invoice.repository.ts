@@ -10,6 +10,7 @@ import type {
 } from "@/modules/invoices/domain/entities/invoice.entity";
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
+import type { RevenuePeriodTotals } from "@/modules/invoices/domain/revenue/revenue.types";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import type { InvoiceStatusFilter } from "@/modules/invoices/domain/statuses/invoice-status.filter";
 import type { InvoiceId } from "@/modules/invoices/domain/types/invoice-id.brand";
@@ -20,6 +21,7 @@ import { deleteInvoiceDal } from "@/modules/invoices/infrastructure/repository/d
 import { fetchFilteredInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-filtered-invoices.dal";
 import { fetchInvoicesPagesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-invoices-pages.dal";
 import { fetchLatestInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-latest-invoices.dal";
+import { fetchRevenueByPeriodDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-revenue-by-period.dal";
 import { fetchTotalInvoicesCountDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-invoices-count.dal";
 import { fetchTotalPaidInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-paid-invoices.dal";
 import { fetchTotalPendingInvoicesDal } from "@/modules/invoices/infrastructure/repository/dal/fetch-total-pending-invoices.dal";
@@ -209,5 +211,21 @@ export class InvoiceRepository extends BaseRepository<
 		]);
 
 		return { totalInvoices, totalPaid, totalPending };
+	}
+
+	/**
+	 * Reads monthly revenue totals split by display bucket, for the overview chart.
+	 * @param windowStart - Oldest `revenue_period` to include (`YYYY-MM-01`).
+	 * @param overdueIssueCutoff - Issue-date cutoff for the derived overdue bucket.
+	 */
+	async readRevenueByPeriod(
+		windowStart: string,
+		overdueIssueCutoff: Date,
+	): Promise<RevenuePeriodTotals[]> {
+		return await fetchRevenueByPeriodDal(
+			this.db,
+			windowStart,
+			overdueIssueCutoff,
+		);
 	}
 }

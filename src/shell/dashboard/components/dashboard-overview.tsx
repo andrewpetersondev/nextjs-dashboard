@@ -1,7 +1,12 @@
 import { type JSX, Suspense } from "react";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
-import { LatestInvoicesSkeleton } from "@/modules/invoices/presentation/components/invoices.skeletons";
+import type { RevenuePeriodTotals } from "@/modules/invoices/domain/revenue/revenue.types";
+import {
+	LatestInvoicesSkeleton,
+	RevenueChartSkeleton,
+} from "@/modules/invoices/presentation/components/invoices.skeletons";
 import { LatestInvoices } from "@/modules/invoices/presentation/components/latest/latest-invoices";
+import { RevenueChart } from "@/modules/invoices/presentation/components/revenue/revenue-chart";
 import { CardWrapper } from "@/shell/dashboard/components/cards";
 import type { DashboardCardData } from "@/shell/dashboard/types";
 import { H1 } from "@/ui/atoms/headings.atom";
@@ -10,6 +15,7 @@ import { CardsSkeleton } from "@/ui/skeletons/skeletons";
 interface DashboardProps {
 	readonly dashboardCardData: DashboardCardData;
 	readonly latestInvoices: InvoiceListFilter[];
+	readonly revenueByPeriod: readonly RevenuePeriodTotals[];
 	readonly title: string;
 }
 
@@ -22,6 +28,7 @@ interface DashboardProps {
 export const DashboardOverview = ({
 	dashboardCardData,
 	latestInvoices,
+	revenueByPeriod,
 	title,
 }: DashboardProps): JSX.Element => {
 	return (
@@ -31,6 +38,14 @@ export const DashboardOverview = ({
 				{/* Suspense enables streaming for async server components */}
 				<Suspense fallback={<CardsSkeleton />}>
 					<CardWrapper data={dashboardCardData} />
+				</Suspense>
+			</div>
+			{/* The chart sits above the latest-invoices list: the cards answer
+			    "how much", the chart answers "how is it trending and is it
+			    collecting", and the list is the detail underneath. */}
+			<div className="mt-6">
+				<Suspense fallback={<RevenueChartSkeleton />}>
+					<RevenueChart rows={revenueByPeriod} />
 				</Suspense>
 			</div>
 			<div className="mt-6">

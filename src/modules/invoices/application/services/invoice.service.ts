@@ -8,6 +8,11 @@ import type {
 import { INVOICE_MSG } from "@/modules/invoices/domain/i18n/invoice-messages";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import { toInvoiceId } from "@/modules/invoices/domain/invoice-id.mappers";
+import type { RevenuePeriodTotals } from "@/modules/invoices/domain/revenue/revenue.types";
+import {
+	fillRevenuePeriodGaps,
+	revenueWindowStart,
+} from "@/modules/invoices/domain/revenue/revenue-window";
 import type { InvoiceStatus } from "@/modules/invoices/domain/statuses/invoice.statuses";
 import { overdueIssueDateCutoff } from "@/modules/invoices/domain/statuses/invoice-status.display";
 import {
@@ -238,5 +243,30 @@ export class InvoiceService {
 
 	async readInvoicesSummary(): Promise<Result<InvoicesSummary, AppError>> {
 		return Ok(await this.repo.readSummary());
+	}
+
+	/**
+	 * Monthly revenue for the overview chart, split into paid / pending /
+	 * overdue and padded to a complete window.
+	 *
+	 * @remarks
+	 * `now` is read **once** and used for both the overdue cutoff and the window
+	 * bounds. Two `new Date()` calls would almost always agree, and would
+	 * disagree exactly at a month boundary — producing a window whose newest
+	 * month is classified against a cutoff from the previous one. Rare, silent,
+	 * and impossible to reproduce; cheaper to make unrepresentable.
+	 */
+	async readRevenueByPeriod(): Promise<
+		Result<readonly RevenuePeriodTotals[], AppError>
+	> {
+		const now = new Date();
+		const rows = await this.repo.readRevenueByPeriod(
+			revenueWindowStart(now),
+			overdueIssueDateCutoff(now),
+		);
+
+		// The query returns only months that have invoices; pad the gaps so the
+		// axis represents time continuously.
+		return Ok(fillRevenuePeriodGaps(rows, now));
 	}
 }

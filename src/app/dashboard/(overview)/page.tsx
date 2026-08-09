@@ -4,6 +4,7 @@ import { readTotalCustomersCountAction } from "@/modules/customers/presentation/
 import { ITEMS_PER_PAGE_INVOICES } from "@/modules/invoices/domain/invoice.constants";
 import { readInvoicesSummaryAction } from "@/modules/invoices/presentation/actions/read-invoices-summary.action";
 import { readLatestInvoicesAction } from "@/modules/invoices/presentation/actions/read-latest-invoices.action";
+import { readRevenueByPeriodAction } from "@/modules/invoices/presentation/actions/read-revenue-by-period.action";
 import {
 	ADMIN_ROLE,
 	GUEST_ROLE,
@@ -23,13 +24,19 @@ export const dynamic = "force-dynamic";
  * Renders role-appropriate dashboard with new invoice schema compatibility.
  */
 export default async function Page(): Promise<JSX.Element> {
-	const [session, invoicesSummary, latestInvoices, totalCustomers] =
-		await Promise.all([
-			verifySessionOptimistic(),
-			readInvoicesSummaryAction(),
-			readLatestInvoicesAction(ITEMS_PER_PAGE_INVOICES),
-			readTotalCustomersCountAction(),
-		]);
+	const [
+		session,
+		invoicesSummary,
+		latestInvoices,
+		totalCustomers,
+		revenueByPeriod,
+	] = await Promise.all([
+		verifySessionOptimistic(),
+		readInvoicesSummaryAction(),
+		readLatestInvoicesAction(ITEMS_PER_PAGE_INVOICES),
+		readTotalCustomersCountAction(),
+		readRevenueByPeriodAction(),
+	]);
 
 	const role: UserRole = normalizeUserRole(session?.role);
 
@@ -41,6 +48,7 @@ export default async function Page(): Promise<JSX.Element> {
 			totalPending: formatCurrency(invoicesSummary.totalPending),
 		},
 		latestInvoices,
+		revenueByPeriod,
 	};
 
 	let title = "Dashboard";
@@ -57,6 +65,7 @@ export default async function Page(): Promise<JSX.Element> {
 		<DashboardOverview
 			dashboardCardData={dashboardData.cards}
 			latestInvoices={dashboardData.latestInvoices}
+			revenueByPeriod={dashboardData.revenueByPeriod}
 			title={title}
 		/>
 	);

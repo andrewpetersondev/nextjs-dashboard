@@ -144,6 +144,61 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Revenue-by-month chart on the overview — finishing what `revenue_period` was built for**
+      _(2026-08-09, `claude/revenue-chart`)_ — Andrew asked whether the dashboard should have
+      charts. It should, and the schema had been waiting for one: **`invoices.revenue_period`
+      already existed** with a CHECK constraint pinning it to `date_trunc('month', date)`, its own
+      index, a branded `Period` type, codecs, seed-time period generation and unit tests — **and no
+      query aggregated it.** The whole monthly-revenue substrate was built and never consumed.
+      **Deliberately not the tutorial's chart.** This project descends from Next.js Learn, whose
+      dashboard has exactly one chart: a monthly revenue bar chart. Reproducing it is the single
+      move that makes original work look copied to anyone who has done that tutorial — a large
+      share of people screening junior React roles. So the bars are **stacked by invoice status**
+      instead, which makes the lifecycle feature visible rather than something to explain, and
+      answers a question the stat cards cannot: the "Pending" card reads $247,439.57, merging
+      genuinely-pending with long-overdue; the chart splits them and shows that over the last 12
+      months **pending is $765 and overdue is $136,185** — essentially all outstanding revenue is
+      late. Verified against the live dev data, and August's row ($555 paid / $765 pending) matches
+      the two invoices in the list below it.
+      **The load-bearing domain constraint: `overdue` is not a stored status.** The enum is
+      `pending | paid | void`; overdue is derived at read time. A naive `GROUP BY status` would
+      have produced a chart with no overdue bar at all, silently contradicting the badges directly
+      beneath it. The repo had already built the seam — `overdueIssueDateCutoff` exists precisely
+      as the SQL-side mirror of `dueDateOf` — so the aggregate splits stored-pending with that
+      bound parameter and **never re-encodes the NET-terms rule in SQL**, the contract
+      `buildInvoiceListWhere` documents. `readRevenueByPeriod` reads `now` **once** for both the
+      cutoff and the window: two `new Date()` calls would agree almost always and disagree exactly
+      at a month boundary.
+      **No chart library, and that was a CSP decision before it was a taste one.** Production runs
+      `style-src 'self'`; Recharts, Victory and Nivo all position elements with inline styles,
+      which are stripped there — the `next/image` problem from earlier the same day, except
+      structural rather than cosmetic. SVG geometry is expressed as **attributes**, which CSP does
+      not govern, so a hand-rolled inline SVG in a server component renders identically in dev and
+      production, adds **zero dependencies** against a Lighthouse perf score of 100, and hydrates
+      nothing. Fills come from the theme's `--color-*` tokens (Tailwind v4 generates `fill-*` from
+      them), reusing the status badges' hues so the page teaches one colour language.
+      **Two pure functions extracted and tested rather than trusted.** `buildRevenueChartModel`
+      owns the geometry — its `isEmpty` guard exists because an all-zero dataset divides by a zero
+      axis maximum and writes `NaN` into every coordinate, at which point the SVG renders nothing
+      with no error anywhere. `fillRevenuePeriodGaps` pads months the `GROUP BY` omitted; without
+      it a quiet month vanishes and every later bar shifts left, an axis that looks continuous
+      while misrepresenting time. Period keys are parsed from the **string**, never through
+      `new Date(period)`, which is UTC midnight and formats as the previous month in any
+      negative-offset zone.
+      **Two review findings caught by the tooling, both real.** Biome's `useUniqueElementIds`
+      flagged a hardcoded `id` on the chart heading that would collide if a second chart ever
+      appeared — a server component has no `useId`, so the region is named with `aria-label`
+      instead. And the first version styled the panel `bg-bg-accent`, which is sky-800 in dark
+      mode: a loud blue block that would also have swallowed the sky-hued pending bars. Corrected
+      to the `bg-bg-secondary` panel + `bg-bg-primary` surface that `LatestInvoices` already uses.
+      Accessibility: the `<svg>` is `aria-hidden` and a visually-hidden `<table>` carries the same
+      figures at full precision — the table _is_ the accessible chart. The overview is already in
+      the dashboard axe spec, so the chart is covered by the existing blocking checks.
+      Validation: Biome slate **0**, typecheck green, knip clean, unit **455/455** (up from 432 —
+      23 new across the chart model and the window helpers), e2e green including the a11y spec.
+      Verified in the browser in both colour schemes, with **zero inline-styled elements** inside
+      the chart (so nothing for production's CSP to strip), zero non-finite rect coordinates, and
+      no console errors.
 - [x] **Empty-`src` regression from customers CRUD — consolidated into one `AvatarMolecule`**
       _(2026-08-09, `claude/next-best-thing-976173`)_ — reported by Andrew from his own console:
       `An empty string ("") was passed to the src attribute` repeating on the dashboard overview.

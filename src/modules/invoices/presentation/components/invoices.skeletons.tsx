@@ -41,6 +41,43 @@ function InvoicesMobileSkeleton(): JSX.Element {
 	);
 }
 
+/**
+ * Placeholder bar heights, so the skeleton reads as a chart rather than a block.
+ * Fixed rather than random — a skeleton that differs between server and client
+ * renders is a hydration mismatch.
+ */
+const SKELETON_BAR_HEIGHTS = [
+	"h-16",
+	"h-24",
+	"h-12",
+	"h-32",
+	"h-20",
+	"h-28",
+	"h-14",
+	"h-24",
+] as const;
+
+export function RevenueChartSkeleton(): JSX.Element {
+	return (
+		<div className={`${shimmer} relative w-full overflow-hidden`}>
+			<div className="w-full rounded-xl bg-bg-accent p-4">
+				<div className="mb-4 h-8 w-48 rounded-md bg-bg-primary" />
+				<div className="flex h-40 items-end gap-3">
+					{SKELETON_BAR_HEIGHTS.map((height, index) => (
+						<div
+							className={`w-full rounded-sm bg-bg-primary ${height}`}
+							// Fixed list of presentational placeholders: the index is the
+							// only identity they have, and the list never reorders.
+							// biome-ignore lint/suspicious/noArrayIndexKey: static placeholder list
+							key={index}
+						/>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+
 export function LatestInvoicesSkeleton(): JSX.Element {
 	return (
 		<div
