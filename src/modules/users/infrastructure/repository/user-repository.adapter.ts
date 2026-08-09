@@ -10,6 +10,15 @@ import type { UserRepositoryImpl } from "@/modules/users/infrastructure/reposito
 import type { AppError } from "@/shared/core/errors/core/app-error.entity";
 import type { Result } from "@/shared/core/result/result.dto";
 
+/**
+ * Presents `UserRepositoryImpl` as the port the application layer depends on.
+ *
+ * Every method except `withTransaction` forwards untouched, which looks
+ * redundant until you notice what it buys: the application layer names only
+ * `UserRepositoryContract`, so the Drizzle-shaped implementation stays swappable
+ * and testable without the two ever being coupled. Add behaviour to the impl,
+ * not here.
+ */
 export class UserRepositoryAdapter
 	implements UserRepositoryContract<UserRepositoryImpl>
 {
@@ -49,6 +58,11 @@ export class UserRepositoryAdapter
 		return this.repo.update(id, patch);
 	}
 
+	/**
+	 * The one method that does more than forward: it re-wraps the transaction
+	 * repository in a fresh adapter, so the callback receives the port rather
+	 * than the raw impl and the abstraction holds inside the transaction too.
+	 */
 	withTransaction<T>(
 		fn: (txRepo: UserRepositoryContract<UserRepositoryImpl>) => Promise<T>,
 	): Promise<T> {
