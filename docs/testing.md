@@ -47,7 +47,9 @@ pnpm test:all         # unit + integration
 **Conventions:**
 
 - Test files are named `*.test.ts` / `*.spec.ts`, anywhere under `src/`.
-- `globals: true` — `describe` / `it` / `expect` are available without importing.
+- **Import test APIs explicitly** — `import { describe, expect, it, vi } from "vitest"`.
+  `globals` is **not** enabled; a file that omits the import fails to load with
+  `ReferenceError: describe is not defined`.
 - The environment is `node`; Next.js server APIs (`next/navigation`, `next/cache`,
   `next/headers`, and the `server-only` guard) are mocked centrally in
   `vitest.setup.ts`, so server modules import cleanly in tests.
