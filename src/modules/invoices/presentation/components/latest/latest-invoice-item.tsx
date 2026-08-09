@@ -1,9 +1,8 @@
 import clsx from "clsx";
-import Image from "next/image";
 import type { JSX } from "react";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
 import { formatCurrency } from "@/shared/primitives/money/convert";
-import { IMAGE_SIZES } from "@/ui/styles/images.tokens";
+import { AvatarMolecule } from "@/ui/molecules/avatar.molecule";
 
 interface LatestInvoiceItemProps {
 	readonly hasTopBorder: boolean;
@@ -23,12 +22,10 @@ export function LatestInvoiceItem({
 			key={invoice.id}
 		>
 			<div className="flex items-center">
-				<Image
-					alt={`${invoice.name}'s profile picture`}
-					className="mr-4 rounded-full"
-					height={IMAGE_SIZES.small}
-					src={invoice.imageUrl}
-					width={IMAGE_SIZES.small}
+				<AvatarMolecule
+					className="mr-4"
+					imageUrl={invoice.imageUrl}
+					name={invoice.name}
 				/>
 				<div className="min-w-0">
 					<p className="truncate font-semibold text-sm text-text-secondary md:text-base">

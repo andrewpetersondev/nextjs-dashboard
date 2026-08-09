@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { JSX } from "react";
 import { formatInvoiceDateLocalized } from "@/modules/invoices/domain/invoice.date-utils";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
@@ -17,6 +16,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/ui/atoms/table.atom";
+import { AvatarMolecule } from "@/ui/molecules/avatar.molecule";
 
 export const DesktopTable = ({
 	invoices,
@@ -59,12 +59,9 @@ export const DesktopTable = ({
 						>
 							<TableCell className="whitespace-nowrap py-3 pr-3 pl-6">
 								<div className="flex items-center gap-3">
-									<Image
-										alt={`${invoice.name}'s profile picture`}
-										className="rounded-full"
-										height={28}
-										src={invoice.imageUrl}
-										width={28}
+									<AvatarMolecule
+										imageUrl={invoice.imageUrl}
+										name={invoice.name}
 									/>
 									<p>{invoice.name}</p>
 								</div>

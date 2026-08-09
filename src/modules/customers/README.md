@@ -53,7 +53,6 @@ customers/
 │   ├── customer.schema.ts               #   Create/Edit Zod form schemas + field-name type
 │   ├── customer-policy.ts               #   name bounds, normalization, CUSTOMER_IMAGE_URL_NONE
 │   ├── customer-deletion.policy.ts      #   evaluateCustomerDeletion — the delete guard's decision
-│   ├── customer-initials.ts             #   toCustomerInitials for the fallback avatar
 │   ├── mappers.ts                       #   toFormattedCustomersTableRow (server DTO → UI row)
 │   ├── constants.ts                     #   CUSTOMER_LABELS, TABLE_HEADERS, FORM_LABELS
 │   └── messages.ts                      #   server / feature messages + customerHasInvoicesMessage
@@ -121,11 +120,20 @@ under Failure Classification.
 
 `next/image` is configured with **no `remotePatterns`**, so it can only serve
 files under `public/` — the six seeded avatars. A customer created through the
-app therefore has no image: the create form has no image field at all, the
-column is written as `CUSTOMER_IMAGE_URL_NONE` (the empty string), and
-`CustomerAvatar` renders an initials tile instead. The tile reuses existing
+app therefore has no image: the create form has no image field at all, and the
+column is written as `CUSTOMER_IMAGE_URL_NONE` (the empty string).
+
+**Every customer avatar in the app renders through
+[`AvatarMolecule`](../../ui/molecules/avatar.molecule.tsx)**, which shows the
+image when there is one and an initials tile when there is not. That rule is not
+stylistic: this module shipped the create form before the three components in
+`invoices` that render a customer's avatar were updated, so the dashboard
+overview logged React's "empty string was passed to the src attribute" warning
+for every invoice belonging to an in-app customer. The tile reuses existing
 semantic tokens rather than generating a per-customer color, so its contrast
-cannot regress the blocking axe checks.
+cannot regress the blocking axe checks, and it is sized with standard Tailwind
+classes rather than an inline `style` — production's CSP is `style-src 'self'`,
+which strips inline styles.
 
 ### Email is unique, and the conflict is attributed to the field
 

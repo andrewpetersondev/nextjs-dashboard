@@ -3,17 +3,18 @@ const NO_NAME_INITIAL = "?";
 const WHITESPACE_RUN = /\s+/u;
 
 /**
- * Derives up to two display initials from a customer's name.
+ * Derives up to two display initials from a person's or company's name.
  *
- * "Amy Burns" → "AB", "Evil Rabbits Inc" → "EI" (first and last word, since a
- * middle word is rarely the distinguishing one), "Delba" → "D", "" → "?".
+ * "Amy Burns" → "AB", "Evil Rabbits Incorporated" → "EI" (first and last word,
+ * since a middle word is rarely the distinguishing one), "Delba" → "D",
+ * "" → "?".
  *
  * Iterates with `Array.from` rather than indexing, so a name starting with an
  * astral-plane character (an emoji, or scripts outside the BMP) yields that
  * whole character instead of half a surrogate pair — `"🦊 Fox"[0]` is a lone
  * high surrogate and renders as a replacement glyph.
  */
-export function toCustomerInitials(name: string): string {
+export function toInitials(name: string): string {
 	const words = name.trim().split(WHITESPACE_RUN).filter(Boolean);
 
 	if (words.length === 0) {

@@ -127,6 +127,39 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Empty-`src` regression from customers CRUD — consolidated into one `AvatarMolecule`**
+      _(2026-08-09, `claude/next-best-thing-976173`)_ — reported by Andrew from his own console:
+      `An empty string ("") was passed to the src attribute` repeating on the dashboard overview.
+      **Directly caused by the entry below.** Customers CRUD introduced a new legal value for
+      `customers.image_url` — the empty string, meaning "no avatar" — and taught only the
+      **customers table** to handle it. Three other components render a customer's avatar, all in
+      `invoices`, all fed by joins on `customers.imageUrl`: `latest-invoice-item.tsx` (the overview),
+      and the invoices `desktop-table.tsx` / `mobile-table.tsx`. Each passed the value straight to
+      `next/image`. So any invoice belonging to an in-app customer broke all three.
+      **The lesson is about the shape of the change, not the missed files:** introducing a new
+      possible value for an existing field is a change to every consumer of that field, and the
+      audit has to be "who reads this?" rather than "what did I write?". Grepping `imageUrl` across
+      `*.tsx` would have caught it in seconds before shipping.
+      Fixed by consolidating all five call sites onto one `AvatarMolecule` in `src/ui/molecules/`,
+      with `toInitials` promoted to `src/shared/primitives/text/` — the concept is generic UI, and
+      leaving the fallback inside the customers module would have made `invoices` import another
+      module's presentation component. The component's doc comment records that every customer
+      avatar must go through it, and why.
+      **A second, latent production bug was caught while fixing the first, and it would not have
+      shown up locally.** The first version sized the initials tile with an inline
+      `style={{ fontSize, height, width }}`. `security-headers.ts` grants
+      `style-src 'unsafe-inline'` **only in development**; production runs `style-src 'self'`, which
+      strips inline styles — so the tile would have rendered correctly on the dev server and
+      **zero-sized on Vercel**. Exactly the silent, screenshot-proof CSP failure recorded in memory.
+      Replaced with Tailwind classes, and deliberately with **standard-scale ones** (`h-7`, `h-10`,
+      `text-xs`): an arbitrary value like `h-[30px]` only reaches the stylesheet if Tailwind's
+      scanner finds that literal, so it fails as a _missing rule_ — class present in the markup,
+      element 0×0, nothing errors. Standard-scale classes remove that failure mode instead of
+      relying on the scanner. Avatars are now a uniform 28px app-wide (the customers table was 30px),
+      which also made `src/ui/styles/images.tokens.ts` dead — deleted, per knip.
+      Validation: Biome slate 0, typecheck green, knip clean, unit 432/432, e2e green, and all three
+      previously-broken surfaces confirmed in the browser rendering a "BN" tile for an in-app
+      customer with **zero empty-`src` images and no inline `style` attribute** on the tile.
 - [x] **Customers CRUD — closing the last read-only island on the demo surface**
       _(2026-08-09, `claude/next-best-thing-976173`)_ — found by asking what was left on the
       demo surface rather than on this list: **`/dashboard/customers` was a first-class sidebar

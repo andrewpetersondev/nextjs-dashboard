@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { JSX } from "react";
 import { formatInvoiceDateLocalized } from "@/modules/invoices/domain/invoice.date-utils";
 import type { InvoiceListFilter } from "@/modules/invoices/domain/invoice.types";
@@ -9,6 +8,7 @@ import {
 } from "@/modules/invoices/presentation/components/invoice-links";
 import { InvoiceStatusComponent } from "@/modules/invoices/presentation/components/tables/status";
 import { formatCurrency } from "@/shared/primitives/money/convert";
+import { AvatarMolecule } from "@/ui/molecules/avatar.molecule";
 
 /**
  * MobileTable component displays invoices in a mobile-friendly format.
@@ -40,12 +40,10 @@ export const MobileTable = ({
 						<div className="flex items-center justify-between border-b pb-4">
 							<div>
 								<div className="mb-2 flex items-center">
-									<Image
-										alt={`${invoice.name}'s profile picture`}
-										className="mr-2 rounded-full"
-										height={28}
-										src={invoice.imageUrl}
-										width={28}
+									<AvatarMolecule
+										className="mr-2"
+										imageUrl={invoice.imageUrl}
+										name={invoice.name}
 									/>
 									<p>{invoice.name}</p>
 								</div>
