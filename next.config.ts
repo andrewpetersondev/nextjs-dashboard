@@ -1,7 +1,19 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 // Relative, not aliased: next.config.ts is evaluated outside the app's module
 // graph, so the `@/` paths from tsconfig are not available here.
 import { STATIC_SECURITY_HEADERS } from "./src/shared/http/server/security-headers";
+
+/**
+ * The directory holding this file — i.e. the checkout Next is being run from.
+ *
+ * Derived, never hardcoded: sessions run in git worktrees under
+ * `.claude/worktrees/`, so the absolute path differs per lane, and the repo has
+ * been relocated wholesale before. A literal path would guard exactly one copy
+ * and silently stop matching after either.
+ */
+const PROJECT_ROOT = path.resolve(fileURLToPath(new URL(".", import.meta.url)));
 
 const nextConfig: NextConfig = {
 	experimental: {
@@ -44,6 +56,30 @@ const nextConfig: NextConfig = {
 	output: "standalone",
 	poweredByHeader: false, // don't advertise the framework on every response
 	reactStrictMode: true,
+	/**
+	 * Pin Turbopack's root to THIS checkout.
+	 *
+	 * Turbopack infers the root by walking up for a lockfile, and "files outside
+	 * of the project root are not resolved". In a worktree it found two —
+	 * this one and the primary checkout's — and picked the outer, so it rooted
+	 * itself at the parent repo. It reports that on the FIRST COMPILE, not at
+	 * boot, so `next dev` looks clean until the first request arrives.
+	 *
+	 * That is not just noise. The parent contains `.claude/worktrees/`, so an
+	 * un-pinned root makes Turbopack watch every sibling lane's tree and resolve
+	 * modules across them. Pinning keeps a lane's dev server inside its own lane.
+	 *
+	 * Harmless outside a worktree: there the resolved path is the repo root,
+	 * which is what Turbopack would have inferred anyway.
+	 *
+	 * ⚠ CHANGING THIS INVALIDATES `.next` IN A WAY TURBOPACK DOES NOT DETECT.
+	 *   A cache built under the old root resolves against stale `[project]/…`
+	 *   paths, and the app fails at runtime with a misleading
+	 *   `Could not find the module "[project]/src/app/…#default" in the React
+	 *   Client Manifest. This is probably a bug in the React Server Components
+	 *   bundler.` It is not a bundler bug — run `pnpm clean` and rebuild.
+	 */
+	turbopack: { root: PROJECT_ROOT },
 	typedRoutes: true,
 	typescript: {
 		ignoreBuildErrors: false,
