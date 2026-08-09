@@ -18,6 +18,13 @@ import {
 } from "@/ui/atoms/table.atom";
 import { AvatarMolecule } from "@/ui/molecules/avatar.molecule";
 
+/**
+ * The invoices table shown from `md` up; a card list covers smaller screens.
+ *
+ * Reads the clock once for the whole render so every row derives "overdue"
+ * against the same instant — a per-row `new Date()` could classify two invoices
+ * inconsistently across a slow render.
+ */
 export const DesktopTable = ({
 	invoices,
 }: {

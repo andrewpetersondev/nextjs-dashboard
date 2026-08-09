@@ -15,6 +15,12 @@ import { useFormMessage } from "@/ui/forms/hooks/use-form-message";
 import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
+/**
+ * Create-customer form, driven by `useActionState`.
+ *
+ * Takes no props: the action is imported directly and there is nothing to
+ * prefill, which is the whole difference from `EditCustomerForm`.
+ */
 export function CreateCustomerForm(): JSX.Element {
 	const [state, action, pending] = useActionState<FormState<unknown>, FormData>(
 		createCustomerAction,

@@ -48,6 +48,15 @@ const STATUS_PRESENTATION: Record<InvoiceDisplayStatus, StatusPresentation> = {
 	},
 };
 
+/**
+ * Status badge for an invoice row.
+ *
+ * Takes the *display* status, which includes the derived "overdue" — that value
+ * is never stored, so do not pass a raw persisted status without running it
+ * through the display rule first. The presentation map is keyed by
+ * `Record<InvoiceDisplayStatus, …>`, so adding a status breaks the typecheck
+ * here rather than rendering an empty badge.
+ */
 export const InvoiceStatusComponent = ({
 	status,
 }: {

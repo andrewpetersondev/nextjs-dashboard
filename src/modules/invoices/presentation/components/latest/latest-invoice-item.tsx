@@ -9,6 +9,12 @@ interface LatestInvoiceItemProps {
 	readonly invoice: InvoiceListFilter;
 }
 
+/**
+ * One row of the dashboard's latest-invoices panel.
+ *
+ * `hasTopBorder` is the caller's job because only the first item should go
+ * without one — the separator belongs to the list's rhythm, not to the item.
+ */
 export function LatestInvoiceItem({
 	invoice,
 	hasTopBorder,

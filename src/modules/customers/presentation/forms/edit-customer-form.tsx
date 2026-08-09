@@ -19,6 +19,12 @@ import { useFormMessage } from "@/ui/forms/hooks/use-form-message";
 import { ServerMessageMolecule } from "@/ui/molecules/server-message.molecule";
 import { SubmitButtonMolecule } from "@/ui/molecules/submit-button.molecule";
 
+/**
+ * Edit-customer form, prefilled from the passed customer.
+ *
+ * The id travels with the bound action rather than as a form field, so it cannot
+ * be retargeted by editing the submitted payload.
+ */
 export function EditCustomerForm({
 	customer,
 }: {
