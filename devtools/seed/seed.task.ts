@@ -1,7 +1,7 @@
 import { invoices } from "@database/schema/invoices";
 import { type NewUserRow, users } from "@database/schema/users";
 import {
-	buildRandomInvoiceRows,
+	buildInvoiceRows,
 	buildUserSeed,
 } from "@devtools/seed/data/seed.builders";
 import { periods } from "@devtools/seed/data/seed.periods.data";
@@ -24,7 +24,7 @@ export async function databaseSeed(): Promise<void> {
 	await nodeDb.transaction(async (tx) => {
 		await insertCustomers(tx);
 		const existingCustomers = await fetchCustomerIds(tx);
-		const invoiceRows = buildRandomInvoiceRows(existingCustomers, periods);
+		const invoiceRows = buildInvoiceRows(existingCustomers, periods);
 		if (invoiceRows.length > 0) {
 			await tx.insert(invoices).values(invoiceRows);
 		}

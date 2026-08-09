@@ -64,6 +64,31 @@ pnpm db:push:dev && pnpm db:seed:dev
 
 Swap `:dev` for `:test` or `:prod` to set up the other environments.
 
+### What the seed produces
+
+The demo data is **deterministic and anchored to today**, which matters for two
+reasons beyond looking tidy:
+
+- **Deterministic.** `SEED_CONFIG.randomSeed` drives every draw, so reseeding
+  reproduces the same customers, invoices and amounts. Screenshots, recorded
+  walkthroughs and the figures quoted in docs stay valid, and the e2e suite no
+  longer depends on a lucky distribution — `status-lifecycle.cy.ts` opens the
+  first _overdue_ invoice, and the seed now guarantees one exists rather than
+  hoping. Changing `randomSeed` reshuffles the whole dataset.
+- **Anchored to the current month.** Periods are generated backwards from today,
+  not from a fixed start date. The previous hardcoded start meant the newest
+  seeded month drifted further into the past every month — by 2026-08 it ended in
+  July, leaving the dashboard's 12-month chart with an empty final bar and no
+  invoices young enough to still be _pending_ rather than overdue.
+
+Shape: 7 customers (one deliberately without an avatar, so the initials fallback
+is visible), ~92 invoices over 19 months, with volume and amounts ramping upward
+so the revenue chart shows a growing business. Recent months carry genuinely
+pending invoices; older months' pending rows are past NET-30 and therefore render
+as overdue. The `$0.00` and `$0.01` edge cases the schema contract covers are
+emitted once each, in the oldest month, so they exist in the data without
+appearing anywhere the demo looks.
+
 ## Optional: Adminer (web UI)
 
 To browse the database in a browser instead of `psql`:
