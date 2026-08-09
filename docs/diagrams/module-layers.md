@@ -72,17 +72,23 @@ Postgres or the hasher is bcrypt — those are swappable details behind contract
 ## Not every module has every layer (and that's on purpose)
 
 `auth` is the learning ground for these patterns. The other modules are
-deliberately simpler — adding an `application` layer to a thin CRUD slice would
-be ceremony, not value. Here's the honest map:
+deliberately simpler — a layer earns its place when there is orchestration to
+put in it, and `banner` (read-only, one query) has none. Here's the honest map:
 
-| Module      | presentation | application | domain | infrastructure | Notes                                    |
-| ----------- | :----------: | :---------: | :----: | :------------: | ---------------------------------------- |
-| `auth`      |      ✅      |     ✅      |   ✅   |       ✅       | full layering; has ADRs + the most tests |
-| `invoices`  |      ✅      |     ✅      |   ✅   |       ✅       | layered                                  |
-| `users`     |      ✅      |     ✅      |   ✅   |       ✅       | layered; has tests                       |
-| `customers` |      ✅      |      —      |   ✅   |       ✅       | simpler CRUD — no `application` layer    |
-| `banner`    |      ✅      |      —      |   ✅   |       ✅       | the thinnest slice                       |
+| Module      | presentation | application | domain | infrastructure | Notes                                         |
+| ----------- | :----------: | :---------: | :----: | :------------: | --------------------------------------------- |
+| `auth`      |      ✅      |     ✅      |   ✅   |       ✅       | full layering; has ADRs + the most tests      |
+| `invoices`  |      ✅      |     ✅      |   ✅   |       ✅       | layered                                       |
+| `users`     |      ✅      |     ✅      |   ✅   |       ✅       | layered; has tests                            |
+| `customers` |      ✅      |     ✅      |   ✅   |       ✅       | gained `application/` when writes landed      |
+| `banner`    |      ✅      |      —      |   ✅   |       ✅       | the thinnest slice — the only one without one |
 
 When you open a module and it looks different from `auth`, this is why — it's a
 conscious trade-off, not an inconsistency to "fix." The decisions behind auth's
 shape are recorded in its [ADRs](../../src/modules/auth/notes/adr).
+
+The trade-off is meant to be revisited, and `customers` is the worked example:
+it was read-only and skipped `application/` entirely, then create/edit/delete
+landed and brought real orchestration with them — a delete guard against the
+invoice cascade, patch diffing on update. That is when the layer was added, not
+before. Add one to `banner` the same way: when it has something to orchestrate.

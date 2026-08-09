@@ -120,9 +120,9 @@ rest of the codebase follows too.
 
 ### Shared forms module — [`src/shared/forms/notes/adr/`](../src/shared/forms/notes/adr/)
 
-| ADR                                                                                                                                                          | The question it answers                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| [001 — Model form state as a boundary DTO with null idle](../src/shared/forms/notes/adr/001-model-form-state-as-boundary-dto-with-null-idle.md) _(proposed)_ | "Why is form state `FormResult<T> \| null` instead of a `Result` variant with an idle member?" |
+| ADR                                                                                                                                             | The question it answers                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [001 — Model form state as a boundary DTO with null idle](../src/shared/forms/notes/adr/001-model-form-state-as-boundary-dto-with-null-idle.md) | "Why is form state `FormResult<T> \| null` instead of a `Result` variant with an idle member?" |
 
 ## Keeping them honest
 

@@ -66,16 +66,21 @@ Run review → simplify → verify.
 5. **Report-only project skills can't touch files.** `/check`, `/check-fast`, `/lint`,
    `/test`, `/coverage`, `/e2e` carry `disallowed-tools: Edit, Write, NotebookEdit` —
    safe to fire anytime; they report, Claude acts on the result.
-6. **Project commands are named after their scripts.** `/X` runs `pnpm X`, with `-` standing
+6. **`/fix` last, not first.** It carries the same `disallowed-tools`, but it is _not_
+   report-only — it writes through `pnpm fix`. The catch: invoking it mid-turn latches
+   the Edit/Write denial for the **rest of that turn**, subagents included, so any
+   hand-edit Claude still owed you silently becomes impossible. Do the hand-edits first
+   and run `/fix` at the end.
+7. **Project commands are named after their scripts.** `/X` runs `pnpm X`, with `-` standing
    in for `:` (`/check-fast` → `pnpm check:fast`). So `/check` is the **full** run — tests
    and e2e, minutes — and `/check-fast` is the everyday pre-merge gate. `/ship` and
    `/clean-worktrees` are the two exceptions: workflows with no script behind them.
-7. **Namespaced domain skills** that fit this project: `/engineering:architecture`
+8. **Namespaced domain skills** that fit this project: `/engineering:architecture`
    (you already write ADRs), `/engineering:tech-debt` (knip-triage backlog),
    `/engineering:testing-strategy`, `/deep-research` (the "evaluate reputable-source
    skills" backlog item).
 
 ---
 
-_Generated 2026-06-13; last verified 2026-08-05. Companion:
+_Generated 2026-06-13; last verified 2026-08-09. Companion:
 [`weekly-maintenance-routine.md`](weekly-maintenance-routine.md)._

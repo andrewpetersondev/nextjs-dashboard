@@ -2,8 +2,13 @@
 
 [![CI](https://github.com/andrewpetersondev/nextjs-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/andrewpetersondev/nextjs-dashboard/actions/workflows/ci.yml)
 
-A modern dashboard application built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS. It includes
-authentication, middleware-based route protection, database migrations/seeding, and end-to-end tests with Cypress.
+An invoicing dashboard built with Next.js (App Router), TypeScript, Drizzle ORM, and Tailwind CSS.
+
+It manages customers and their invoices end to end: create, edit, and delete both; move an
+invoice through a guarded `pending → paid | void` lifecycle; and read the results off an
+overview of revenue by month, stacked by invoice status. Behind that sit role-based
+authentication with stateless JWT sessions, middleware-based route protection, per-environment
+database migrations and seeding, and unit, integration, and end-to-end test lanes.
 
 > **Live demo:** <https://nextjs-dashboard-beige-pi-12.vercel.app/> — one-click demo buttons on the landing page (user **or admin**) &nbsp;·&nbsp; **Seeded login:** `admin@admin.com` / `AdminPassword123!`
 >
@@ -84,9 +89,9 @@ diagrams, each answering exactly one question. Good starting points:
 nextjs-dashboard/
 ├── cypress/                # E2E specs and support
 ├── database/               # Drizzle schema (source of truth)
+├── devtools/               # cli, config, db, seed, shared, users
 ├── docs/                   # Additional documentation and guides
 ├── drizzle/                # Generated SQL migrations, one set per env (dev/test/prod)
-├── devtools/               # cli, config, db, seed, shared, users
 ├── public/                 # Static assets
 ├── src/                    # Application source
 │   ├── app/                # App router
@@ -95,8 +100,8 @@ nextjs-dashboard/
 │   ├── shared/             # core, forms, http, policies, primitives, routing, telemetry, time
 │   ├── shell/              # dashboard composition
 │   ├── ui/                 # atoms, brand, forms, hooks, molecules, navigation, skeletons, styles, utils, wrappers
-│   ├── proxy.ts            # Route protection (Next.js middleware)
-└── ...
+│   └── proxy.ts            # Route protection (Next.js middleware)
+└── test-support/           # Shared Vitest fixtures and Next.js mocks
 ```
 
 ## Requirements

@@ -5,7 +5,7 @@
 Accepted (2026-06-11) — step 3 ("decide") of the forms/error cleanup roadmap:
 shrink (PRs #45–47) → lock (PR #48) → **decide** (PR #49) → reshape
 (implemented by the `FormState` / null-idle slice; `form-state.factory.ts`,
-linked below as context, was deleted by it).
+described below as context, was deleted by it — so it is named, not linked).
 
 ## Context
 
@@ -31,7 +31,7 @@ Form state must survive Next.js serialization (progressive enhancement encodes
 it into the rendered form), and class instances don't serialize. PR #41
 therefore gave the form error side a plain DTO, and `FormResult` stopped being
 an instantiation of `Result`
-([form-result.dto.ts](../../core/types/form-result.dto.ts)):
+([form-result.dto.ts](../../core/form-result.dto.ts)):
 
 ```ts
 type FormErrResult = { readonly error: AppErrorJsonDto; readonly ok: false };
@@ -48,7 +48,8 @@ wart to be fixed by loosening `Result`'s constraint.
 
 `useActionState(action, initialState)` requires an initial value of the state
 type, and `FormResult` has only two members — ok and err. So
-[form-state.factory.ts](../../logic/factories/form-state.factory.ts)
+`form-state.factory.ts` (deleted by this ADR; it lived at
+`logic/factories/form-state.factory.ts`)
 fabricates a fake failure: a `validation` `AppError` with
 `cause: "INITIAL_STATE"`, an empty message, and an all-empty dense field-error
 map.

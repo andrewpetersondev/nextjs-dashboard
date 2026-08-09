@@ -30,6 +30,13 @@ missing or malformed, so set them all.
 | `DATABASE_ENV`            | `production`                          | selects the migration scope                                 |
 | `NEXT_PUBLIC_NODE_ENV`    | `production`                          | inlined into the client bundle at build                     |
 | `NEXT_PUBLIC_LOG_LEVEL`   | `info`                                | `trace`\|`debug`\|`info`\|`warn`\|`error`; inlined at build |
+| `PORT`                    | `3000`                                | the port the server listens on — see below                  |
+
+`PORT` is the one entry the server does not validate, because it usually isn't yours to set:
+Vercel injects it, and the `Dockerfile` defaults it to `3000` (map a different host port with
+`APP_PORT` in `docker-compose.yml`). It matters locally, where `.env.test.local` must carry it —
+the e2e harness reads `PORT` from that file to pin the server, the wait-on probe, and Cypress's
+`baseUrl` to one number.
 
 The server validates `DATABASE_URL`, `SESSION_SECRET`, and `AUTH_BCRYPT_SALT_ROUNDS` (plus `NODE_ENV` /
 `DATABASE_ENV`) and fails fast at startup if any are missing or malformed. The JWT `issuer` / `audience`

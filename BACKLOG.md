@@ -144,6 +144,52 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Full documentation review — every claim verified against code, not read for plausibility**
+      _(2026-08-09, `claude/documentation-review`)_ — swept all 82 tracked Markdown files (~12k
+      lines). The mechanical passes carried most of the weight: resolve every relative link, every
+      `pnpm <script>` reference, and every backticked path against `git ls-files`. **All ~120 script
+      references resolve** (the apparent misses are BACKLOG/knip entries _describing_ those as bugs
+      already fixed), and only **two broken links existed repo-wide**, both in the forms ADR.
+      **The headline finding is drift with a shape worth remembering: local doc updated, global docs
+      not.** `93ab1ffb` gave `customers` an `application/` layer and updated
+      `src/modules/customers/README.md` — but three cross-cutting docs still said the module skips
+      it: `project-structure.md`, `clean-architecture-standards.md`, and the `module-layers.md`
+      table that the other two both cite as the authoritative per-module map. So the wrong answer
+      was the one a reader landed on. All three now say `banner` is the only module without an
+      `application/` layer, and module-layers.md gained a paragraph using `customers` as the worked
+      example of _when_ to add one (orchestration arrived: delete guard, patch diffing).
+      **Four other real errors.** `getting-started.md` step 6 told you to run `next:build:test`
+      before `serve:test` — but `serve:test` starts with `pnpm clean`, so it deleted the build you
+      just made; it also ran a long-running server and an interactive runner as one sequential block
+      (README got this right, getting-started didn't) and never mentioned the one-shot `pnpm e2e`.
+      `testing.md` sent you to reconcile `PORT` with `CYPRESS_BASE_URL` in `.env.test.local` — **no
+      such variable exists**; `cypress-env.ts` derives `baseUrl` from `PORT`, so they cannot
+      disagree, and the real failure is a stale exported `PORT` (which `cypress-with-server.cli.ts`
+      explicitly warns about). `testing.md` also scoped test discovery to `src/` when the unit lane
+      also includes `devtools/**` (6 real test files). And `docs/README.md` labelled the forms ADR
+      _(proposed)_ when its own Status line reads Accepted — all 8 ADRs are Accepted.
+      **Completeness gaps closed.** README tree was missing `test-support/` (and left `src/`
+      unclosed); `deployment.md`'s env contract omitted `PORT`; `AGENTS.md` told agents to "ALWAYS"
+      read `node_modules/next/dist/docs/` without noting **a fresh worktree has no `node_modules`**,
+      so every session was pointed at a path it could not reach; the `/fix` write-lock gotcha
+      (latches Edit/Write denial for the rest of the turn) was in memory but not in the command
+      guide; `clean-architecture-standards.md` gave a UoW contract path that no implementation uses.
+      README's description also covered infrastructure only — no mention of customers/invoice CRUD,
+      the status lifecycle, or the revenue chart — which for the resume centerpiece was the gap
+      worth caring about most after the layering one.
+      **What held up, which is most of it:** the ERD matches the schema exactly (every column,
+      default, cascade, unique constraint); the CI docs match `ci.yml` precisely across
+      `testing.md` / `branching-and-releases.md` / `AGENTS.md` (job names, both triggers, the e2e
+      PR skip); no stale `/promote`, `/check-full`, or `develop` references survive outside
+      historical entries; `SECURITY.md` and the command guide's frontmatter claims verified.
+      **Deliberately held:** the naming standard has drifted **both ways** — it documents
+      `.event.ts` / `.provider.ts` / `.record.ts` / `.view.ts` (**zero** uses each) while omitting
+      `.molecule.tsx` (10), `.atom.tsx` (7), `.utils.ts` (6), `.command.ts` (5), `.brand.ts` (4),
+      `.validator.ts` (3), `.guard.ts` (3), and never addresses the 5 `.mappers.ts` (plural) files
+      against 18 singular `.mapper.ts`. Prune vs. document vs. rename-to-singular is a judgment
+      call left to Andrew — it is the sole owner of "what a file is called" per `docs/README.md`,
+      so whichever way it goes should be decided, not defaulted.
+
 - [x] **Seed data rebuilt — deterministic, anchored to today, and shaped to tell a story**
       _(2026-08-09, `claude/revenue-chart`)_ — asked for "better seed data" after the revenue
       chart shipped. The interesting part was not aesthetics: **the seed's periods were anchored to

@@ -450,7 +450,10 @@ Transport     →   DTO    →   Entity  ←   Row
 
 ### Unit of Work Pattern
 
-**Contract Placement**: `application/contracts/unit-of-work.contract.ts`
+**Contract Placement**: `application/contracts/unit-of-work.contract.ts` — or, once a module's
+application layer is grouped by aggregate, alongside that aggregate's other contracts. The one
+implementation today follows the latter:
+`auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract.ts`.
 
 **Pattern**:
 
@@ -644,6 +647,6 @@ A module's top level should name its layers, not its frameworks — `auth/domain
 `auth/application/`, `auth/infrastructure/`, `auth/presentation/`. The full folder layout, down to
 the directories inside each layer, is in
 [naming-conventions-and-organization.md](naming-conventions-and-organization.md#folder-organization-modular-clean-architecture).
-Not every module carries every layer: the thin CRUD slices (`customers`, `banner`) skip
-`application/` — see [diagrams/module-layers.md](../diagrams/module-layers.md) for the real
-per-module map.
+Not every module carries every layer: `banner`, the thinnest slice, skips `application/`. Add a
+layer when there is orchestration to put in it, not up front — see
+[diagrams/module-layers.md](../diagrams/module-layers.md) for the real per-module map.
