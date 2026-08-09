@@ -3,6 +3,13 @@ import { LatestInvoicesSkeleton } from "@/modules/invoices/presentation/componen
 import { CardSkeleton } from "@/ui/skeletons/skeletons";
 import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
+/**
+ * Loading placeholder for the whole dashboard overview.
+ *
+ * Mirrors the real layout — heading, four cards, latest-invoices list — so the
+ * page does not jump when content arrives. Keep it in step with
+ * `DashboardOverview`; a skeleton of the wrong shape is worse than none.
+ */
 export function DashboardSkeleton(): JSX.Element {
 	return (
 		<div>

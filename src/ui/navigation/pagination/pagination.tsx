@@ -86,6 +86,14 @@ function toQueryObject(params: URLSearchParams): Record<string, string> {
 	return out;
 }
 
+/**
+ * Page navigation driven entirely by the URL.
+ *
+ * Reads the current page from the `page` search param and writes it back into
+ * links, **carrying every other param along** — that is what keeps table filters
+ * and sort order alive when you page through results. There is no internal
+ * state, so the browser back button works as a page-history control for free.
+ */
 export function Pagination({
 	totalPages,
 }: {

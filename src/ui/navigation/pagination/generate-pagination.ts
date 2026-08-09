@@ -8,6 +8,14 @@ import {
 	THIRD_PAGE,
 } from "@/ui/navigation/pagination/pagination.constants";
 
+/**
+ * Builds the page range to render, condensing long ranges with ellipses.
+ *
+ * @returns Page numbers interleaved with `ELLIPSIS` strings. Callers must branch
+ * on the element type — the strings are gap markers and must not be rendered as
+ * links. Ranges at or below {@link PAGINATION_SMALL_THRESHOLD} come back as a
+ * plain list of every page.
+ */
 export const generatePagination = (
 	currentPage: number,
 	totalPages: number,

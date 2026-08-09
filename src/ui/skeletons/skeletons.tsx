@@ -1,6 +1,12 @@
 import type { JSX } from "react";
 import { shimmer } from "@/ui/skeletons/skeletons.constants";
 
+/**
+ * Placeholder matching one `StatCardAtom`.
+ *
+ * Supplies the `relative` and `overflow-hidden` that `shimmer` needs; copy both
+ * if you build another skeleton on it.
+ */
 export function CardSkeleton(): JSX.Element {
 	return (
 		<div
@@ -17,6 +23,7 @@ export function CardSkeleton(): JSX.Element {
 	);
 }
 
+/** The dashboard's four summary cards. Renders a fragment, so the caller's grid owns the layout. */
 export function CardsSkeleton(): JSX.Element {
 	return (
 		<>
@@ -28,6 +35,7 @@ export function CardsSkeleton(): JSX.Element {
 	);
 }
 
+/** One placeholder table row. Must be rendered inside a `tbody` — it returns a bare `tr`. */
 export function TableRowSkeleton(): JSX.Element {
 	return (
 		<tr className="w-full border-bg-primary border-b last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
