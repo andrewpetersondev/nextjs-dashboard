@@ -4,7 +4,7 @@ This guide helps you set up, run, and develop the Next.js Dashboard locally.
 
 ## Prerequisites
 
-- Node 24 (pinned in [`.nvmrc`](../.nvmrc); CI reads the version from it, and `pnpm node:drift` asserts it matches `package.json` `engines.node` and the `Dockerfile`)
+- Node 24 (pinned in [`.nvmrc`](../.nvmrc); CI reads the version from it, and `pnpm node:drift` asserts it matches `package.json` `engines.node`, the `Dockerfile`, and the Node you are actually running)
 - pnpm 11 (pinned via the `packageManager` field in [`package.json`](../package.json))
 - PostgreSQL (local or remote)
 
@@ -47,6 +47,56 @@ That should print the version pinned in `packageManager`. If it does, corepack i
 
 Corepack prompts before downloading a package manager. To skip it, add
 `export COREPACK_ENABLE_DOWNLOAD_PROMPT=0` to your shell profile.
+
+### Make `.nvmrc` apply automatically (recommended)
+
+`nvm use` is a one-shot: it lasts until you close the shell. nvm's `default` alias decides
+every _new_ shell's version, and nothing reads `.nvmrc` unless you ask it to — so it is
+entirely possible to develop for weeks on a different Node major than you ship on, with
+`.nvmrc` correct the whole time and only CI ever obeying it. That happened here (dev on
+26, everything else on 24, 2026-08-07 → 2026-08-09); pnpm printed
+`[WARN] Unsupported engine` on every command throughout and it went unnoticed.
+
+Add a `chpwd` hook to `~/.zshrc` — after the block that loads nvm — so entering any
+project with an `.nvmrc` switches to it, and leaving returns you to your default:
+
+```sh
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local nvmrc_path nvmrc_node_version
+  nvmrc_path="$(nvm_find_nvmrc)"
+
+  # Status goes to STDERR, never stdout: this runs on every cd, including inside
+  # `$(zsh -ic '...')`, and a chatty stdout silently corrupts command substitution.
+  if [ -n "$nvmrc_path" ]; then
+    nvmrc_node_version="$(nvm version "$(cat "${nvmrc_path}")")"
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      print -u2 "nvm: $(cat "${nvmrc_path}") is not installed — run \`nvm install\` here."
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use --silent
+      print -u2 "nvm: using $(nvm version) per $(dirname "${nvmrc_path}")/.nvmrc"
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    nvm use default --silent
+    print -u2 "nvm: back to default ($(nvm version))"
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+```
+
+This is nvm's own README hook with two deliberate changes. It does **not** auto-install a
+missing version, because downloading a Node major as a side effect of `cd` is too
+surprising — it tells you to run `nvm install` instead. And its status lines go to
+**stderr**, not stdout: the upstream version uses `echo`, which corrupts any
+`$(zsh -ic '...')` command substitution by mixing "Now using node ..." into the captured
+output. That bit during this very change. Remember the corepack gotcha above when it
+switches you to a Node install you have not used before.
+
+`pnpm node:drift` reports a mismatch between the running major and the pinned one — as a
+warning locally (it is a workstation setting, not a repo defect) and as a hard failure in
+CI, where the version comes from `.nvmrc` by construction and a mismatch means a workflow
+stopped reading it.
 
 ## 2. Install Dependencies
 

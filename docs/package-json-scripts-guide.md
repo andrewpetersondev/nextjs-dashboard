@@ -133,12 +133,22 @@ Migrations, seeding, and resets per environment.
 - `pnpm db:studio:dev` — open Drizzle Studio against the development database.
 - `pnpm db:studio:test` — open Drizzle Studio against the test database.
 - `pnpm db:drift` — assert the dev/test/prod migration sets describe the same schema (the CI drift gate; no database needed).
-- `pnpm node:drift` — assert the Node major agrees across `.nvmrc`, `package.json` `engines.node`, and the `Dockerfile`.
-  None of those three reads the others: `.nvmrc` drives dev and CI, `engines.node` is the only one
+- `pnpm node:drift` — assert the Node major agrees across `.nvmrc`, `package.json` `engines.node`,
+  the `Dockerfile`, **and the Node this process is actually running**.
+  None of the three files reads the others: `.nvmrc` drives dev and CI, `engines.node` is the only one
   **Vercel** reads (it overrides the Project Settings version), and the `Dockerfile` drives the
   standalone image. It also rejects an open-ended `engines.node` range — Vercel resolves a range to
   the newest major it offers, so `>=24` would let production jump a Node major with no commit and no
-  CI run. No network or env vars needed.
+  CI run. No network needed.
+  The **runtime** check is asymmetric: a **warning** locally, a **hard failure** in CI (detected via
+  `CI`). All three files can agree perfectly while your shell runs something else — which is exactly
+  what happened 2026-08-07 → 2026-08-09 — so this is the one axis the file comparison cannot see.
+  It only warns locally because `check:fast` is the pre-commit gate and blocking a commit over a
+  workstation setting is how a gate teaches you to bypass it (the same reasoning that keeps knip out
+  of `check:fast`). In CI it fails, because there the running version comes from `.nvmrc` via
+  `actions/setup-node`, so a mismatch means a workflow job stopped reading it. To stop hitting the
+  local warning, set up the `.nvmrc` shell hook in
+  [getting-started.md](getting-started.md#make-nvmrc-apply-automatically-recommended).
 - `pnpm deps:drift` — assert every `overrides` entry in `pnpm-workspace.yaml` still matches the
   `package.json` range for the same package. Only the **overlap** is gated: `esbuild`, `vite` and
   `sharp` are override-only by design (they force a transitive resolution the project never depends

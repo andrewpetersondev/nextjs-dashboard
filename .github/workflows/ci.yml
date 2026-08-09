@@ -14,8 +14,10 @@
 # happened after it was already on `main`.
 #
 #   • check — fast, dependency-free checks (Biome lint + Markdown lint/format +
-#     Next.js typegen + type-check) plus the Node-, dependency- and migration-drift gates
-#     and the DB-free unit lane with coverage thresholds (~1 min).
+#     Next.js typegen + type-check) plus the Node-, dependency- and migration-drift gates,
+#     the knip dead-code gate, and the DB-free unit lane with coverage thresholds (~1 min).
+#     The Node gate additionally asserts the runner booted the major .nvmrc names —
+#     a hard failure here, only a warning on a workstation.
 #   • e2e — the slow Cypress end-to-end suite against a real `next dev` server
 #     backed by an ephemeral Postgres service container (recreates the
 #     `.env.test.local` from non-secret CI values, so no GitHub secrets needed).
@@ -112,25 +114,39 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
-      # 9. Dependency drift gate: assert every `overrides` entry in
-      #    pnpm-workspace.yaml still matches the `package.json` range for the
-      #    same package. Pure file parsing (no network, no database).
-      #    This is the gate aimed squarely at the bot PRs the `pull_request`
-      #    trigger above now covers: a bump moves the `package.json` range and
-      #    nothing moves the override with it, so the override silently stops
-      #    deduping and the graph forks into two copies. `postcss` did exactly
-      #    that between 2026-08-05 and 2026-08-07, caught only by hand.
+      # 9. Node drift gate: assert the Node major agrees across .nvmrc,
+      #    package.json `engines.node` and the Dockerfile — AND matches the Node
+      #    this runner actually booted.
+      #    Added here 2026-08-09. `pnpm node:drift` had existed since 2026-08-07
+      #    and ran in `check`/`check:fast`, but was wired into NO CI job — the
+      #    same "gate nothing executes" flaw that hid knip's drift and killed an
+      #    earlier standalone typecheck script.
+      #    The runtime half is a hard FAILURE here and only a warning locally,
+      #    and this step is what makes that real: the version below comes from
+      #    .nvmrc via `node-version-file` in step 3, so a mismatch here cannot be
+      #    a developer's shell — it means a job stopped reading .nvmrc.
+      - name: Node drift
+        run: pnpm node:drift
+
+      # 10. Dependency drift gate: assert every `overrides` entry in
+      #     pnpm-workspace.yaml still matches the `package.json` range for the
+      #     same package. Pure file parsing (no network, no database).
+      #     This is the gate aimed squarely at the bot PRs the `pull_request`
+      #     trigger above now covers: a bump moves the `package.json` range and
+      #     nothing moves the override with it, so the override silently stops
+      #     deduping and the graph forks into two copies. `postcss` did exactly
+      #     that between 2026-08-05 and 2026-08-07, caught only by hand.
       - name: Dependency drift
         run: pnpm deps:drift
 
-      # 10. Migration drift gate: assert the dev/test/prod drizzle migration sets
-      #    describe the same final schema. Pure file comparison (no database),
-      #    so it runs in plain CI. Catches the per-env drift that broke prod on
-      #    2026-06-11. See BACKLOG "Per-env migration drift guard".
+      # 11. Migration drift gate: assert the dev/test/prod drizzle migration sets
+      #     describe the same final schema. Pure file comparison (no database),
+      #     so it runs in plain CI. Catches the per-env drift that broke prod on
+      #     2026-06-11. See BACKLOG "Per-env migration drift guard".
       - name: Migration drift
         run: pnpm db:drift
 
-      # 11. Dead-code gate. Knip is static and env-free (no database, no .env),
+      # 12. Dead-code gate. Knip is static and env-free (no database, no .env),
       #     so it runs in plain CI, and at ~1s it is the cheapest step here.
       #     Added 2026-08-06: it previously ran only via `pnpm check:repo`, which
       #     nothing executed, so it drifted red unnoticed — the same
@@ -139,7 +155,7 @@ jobs:
       - name: Dead code
         run: pnpm knip
 
-      # 12. Unit tests + coverage. The unit lane is DB-free (dummy env + mocked
+      # 13. Unit tests + coverage. The unit lane is DB-free (dummy env + mocked
       #     DB), so it runs in plain CI. `test:coverage` also enforces the
       #     coverage floors in `vitest.config.ts` — a regression below them fails
       #     the build.

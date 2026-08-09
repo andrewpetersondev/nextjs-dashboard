@@ -21,14 +21,25 @@ import { fileURLToPath } from "node:url";
  * it offers. Production ran a different Node major than dev, CI, and Docker, and
  * nothing anywhere reported it. Aligned on 24 on 2026-08-07.
  *
- * Pure file parsing — no network, no env vars — so it runs in plain CI next to
- * the migration-drift gate.
+ * Pure file parsing — no network — so it runs in plain CI next to the
+ * migration-drift gate.
  *
  * It also rejects an OPEN-ENDED `engines.node` range (`>=24`, `*`, `>24`).
  * That is not a style preference: Vercel maps a range to the newest major it
  * supports, so an open range means production silently jumps a Node major the
  * day Vercel adds one — with no commit, no PR, and no CI run to catch it. Pin
  * the major (`24.x`) so that move is a deliberate edit.
+ *
+ * FOURTH AXIS, added 2026-08-09: the major this process is ACTUALLY RUNNING.
+ * The three checks above compare declarations against each other and never look
+ * at `process.versions.node`, so all three can agree perfectly while the
+ * developer runs something else entirely — which is what was happening here.
+ * `.nvmrc` had never been consulted on the workstation at all (nvm's `default`
+ * alias won, and no shell hook read the file), so dev ran Node 26 for days while
+ * CI, Docker and Vercel ran 24. pnpm printed `Unsupported engine` on every
+ * single command throughout and it was simply never noticed.
+ *
+ * The runtime check is asymmetric on purpose — see `reportRunningMajor`.
  */
 
 const ROOT = path.resolve(
@@ -117,6 +128,68 @@ function dockerfileMajors(): Source[] {
 	}));
 }
 
+/**
+ * Is this a CI run?
+ *
+ * GitHub Actions sets `CI=true` (alongside `GITHUB_ACTIONS=true`), and `CI` is
+ * the portable signal every provider agrees on, so that is what this reads. The
+ * explicit negatives are honoured so `CI=false` in a shell means what it says.
+ */
+function isContinuousIntegration(): boolean {
+	const flag = process.env.CI?.trim().toLowerCase();
+	return flag !== undefined && flag !== "" && flag !== "false" && flag !== "0";
+}
+
+/**
+ * Compare the major this process is RUNNING against the one the files agree on.
+ *
+ * Asymmetric on purpose: a hard failure in CI, a warning locally.
+ *
+ * In CI the running version is `.nvmrc` BY CONSTRUCTION — every job installs
+ * Node through `actions/setup-node` with `node-version-file: .nvmrc`. So a
+ * mismatch there cannot be somebody's shell; it means a job stopped reading that
+ * file, or pinned a version of its own. That is the "declared but wired into
+ * nothing" failure this repo keeps finding, and it earns a red build.
+ *
+ * Locally the cause is nearly always a shell that has not switched yet, and
+ * `pnpm check:fast` is the pre-commit gate. Failing a commit over a workstation
+ * setting is how a gate teaches you to bypass it — the same reasoning that keeps
+ * knip out of `check:fast`. So: say it on every run, and let the commit through.
+ */
+function reportRunningMajor(agreed: number): void {
+	const running = Number.parseInt(process.versions.node, 10);
+
+	if (running === agreed) {
+		console.log(
+			`[node-version] OK — this process is running Node ${process.versions.node}.`,
+		);
+		return;
+	}
+
+	const mismatch =
+		`the running Node major (${running}, from v${process.versions.node}) does not ` +
+		`match the pinned major (${agreed}).`;
+
+	if (isContinuousIntegration()) {
+		throw new Error(
+			`[node-version] FAIL — ${mismatch}\n\n` +
+				"  In CI the running version comes from .nvmrc via `actions/setup-node`\n" +
+				"  (node-version-file), so this is not a stray developer shell — a workflow\n" +
+				"  job has stopped reading it, or pins a version of its own. Fix the workflow\n" +
+				"  rather than the files; the three declarations already agree.",
+		);
+	}
+
+	console.warn(
+		`[node-version] WARN — ${mismatch}\n` +
+			"  You are developing on a different Node major than CI, Docker and Vercel\n" +
+			"  ship on, which is the exact scenario the three checks above exist to\n" +
+			"  prevent — they just cannot see the runtime. Run `nvm use` here, or set up\n" +
+			"  the .nvmrc shell hook in docs/getting-started.md so it happens on cd.\n" +
+			"  Not failing: this is a workstation setting, not a repo defect.",
+	);
+}
+
 function main(): void {
 	const sources: Source[] = [
 		nvmrcMajor(),
@@ -146,9 +219,17 @@ function main(): void {
 	}
 
 	const [major] = [...majors];
+	if (major === undefined) {
+		// Unreachable — nvmrcMajor() always contributes one — but stated rather
+		// than asserted away, so the runtime check below can never receive an
+		// undefined "agreed" major and silently compare against NaN.
+		throw new Error("[node-version] FAIL — no Node major could be determined.");
+	}
+
 	console.log(
 		`[node-version] OK — Node ${major} across ${sources.map((s) => s.file.split(" ")[0]).join(", ")}.`,
 	);
+	reportRunningMajor(major);
 }
 
 try {
