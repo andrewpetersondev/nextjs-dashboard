@@ -10,6 +10,13 @@ interface FormActionRowProps {
 	className?: string;
 }
 
+/**
+ * Right-aligned footer for a form: a cancel link, then whatever you pass.
+ *
+ * Cancel is a `Link`, not a button — it navigates away rather than resetting, so
+ * it never submits and never clears a half-filled form in place. Pass the submit
+ * button as `children`; it lands to the right of cancel.
+ */
 export function FormActionRow({
 	cancelHref,
 	cancelLabel,

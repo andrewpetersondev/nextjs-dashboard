@@ -20,6 +20,14 @@ if (mode !== "open" && mode !== "run") {
 // BACKLOG "e2e port-reuse guard".
 const ENV_TEST_FILE = ".env.test.local";
 
+/**
+ * Reads the authoritative test port from `.env.test.local`.
+ *
+ * @returns A validated TCP port.
+ * @throws When the file is unreadable, `PORT` is absent, or it is not a valid
+ * port number. Failing loudly is the point — a silently wrong port sends the
+ * whole suite at the wrong server.
+ */
 function readTestPort(): number {
 	let parsed: Record<string, string>;
 	try {

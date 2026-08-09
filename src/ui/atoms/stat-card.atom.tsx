@@ -7,6 +7,13 @@ interface StatCardProps {
 	value: number | string;
 }
 
+/**
+ * A single dashboard summary tile: icon, label, and one figure.
+ *
+ * The label renders as an `h2` to keep the dashboard's heading order intact
+ * (`h1` → `h2`); its size classes, not its level, control how large it looks.
+ * `value` is rendered as given, so pre-format currency before passing it.
+ */
 export function StatCardAtom({
 	icon: Icon,
 	title,

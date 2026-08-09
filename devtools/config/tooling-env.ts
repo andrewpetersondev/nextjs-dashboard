@@ -20,4 +20,11 @@ if (!parsed.success) {
 	);
 }
 
+/**
+ * The validated database connection string for build and tooling scripts.
+ *
+ * Importing this module throws if `DATABASE_ENV`, `DATABASE_URL`, or
+ * `SESSION_SECRET` is missing or malformed — the other two are checked but not
+ * exported, so this import doubles as a fail-fast presence check for all three.
+ */
 export const DATABASE_URL: string = parsed.data.databaseUrl;

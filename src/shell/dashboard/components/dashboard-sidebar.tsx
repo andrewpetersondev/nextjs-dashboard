@@ -6,9 +6,20 @@ import { DashboardNavLinks } from "@/shell/dashboard/components/dashboard-nav-li
 import { AcmeLogo } from "@/ui/brand/acme-logo";
 
 interface SideNavProps {
+	/**
+	 * Passed down rather than imported so this stays a presentational component;
+	 * the dashboard layout owns which action logging out actually runs.
+	 */
 	readonly logoutAction: () => Promise<void>;
 }
 
+/**
+ * The dashboard's persistent sidebar: wordmark, navigation, logout.
+ *
+ * Renders as a horizontal strip on mobile and a full-height column from `md` up.
+ * Role-dependent links are not decided here — `DashboardNavLinks` resolves those
+ * on the server.
+ */
 export const DashboardSidebar = ({
 	logoutAction,
 }: SideNavProps): JSX.Element => {
