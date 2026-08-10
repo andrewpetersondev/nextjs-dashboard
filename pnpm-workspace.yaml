@@ -14,14 +14,19 @@ overrides:
   # Deliberate major-7 hold: vitest 4 accepts ^6||^7||^8 and would otherwise resolve
   # vite 8. Drop only as part of an intentional vite 8 migration.
   vite: ^7.3.5
-  # next pins postcss 8.4.31 exact (patched, but old); dedupe the graph to one 8.5.x copy.
-  # Still true as of next 16.2.12 — dropping this override forks the graph back into two copies.
+  # next pins postcss exact (8.5.23 as of next 16.3.0, was 8.4.31 through 16.2.12); dedupe the
+  # graph to one 8.5.x copy. Still needed — the pin moved forward but stays below the range
+  # below, so dropping this override forks the graph back into two copies.
   # ⚠ MUST equal the `postcss` devDependency range in package.json. Nothing bumps this when
   #   that one moves, so it silently falls behind (it sat a patch back from 2026-08-05 until
   #   2026-08-07). When a postcss bump lands in package.json, change it here in the same commit.
   postcss: ^8.5.25
-  # GHSA-f88m-g3jw-g9cj (libvips CVEs inherited by sharp <0.35.0): next pins sharp ^0.34.5,
-  # so this override forces the patched line until next bumps. Verified via production build.
+  # GHSA-f88m-g3jw-g9cj (libvips CVEs inherited by sharp <0.35.0). Written when next pinned
+  # sharp ^0.34.5, to force the patched line "until next bumps" — next 16.3.0 HAS now bumped,
+  # to ^0.35.3, exactly this value, so as of 2026-08-09 the override is redundant belt-and-braces
+  # rather than load-bearing. Kept, not deleted: removing it is a graph change that deserves a
+  # deliberate review, and it still pins the floor if a future next regresses. Retire it whenever
+  # next's own pin is comfortably ahead.
   sharp: ^0.35.3
 
 # Vetted peer combos that upstream ranges haven't caught up to (both at latest release):
