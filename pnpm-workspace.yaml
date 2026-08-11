@@ -23,6 +23,13 @@ overrides:
   # GHSA-f88m-g3jw-g9cj (libvips CVEs inherited by sharp <0.35.0): next pins sharp ^0.34.5,
   # so this override forces the patched line until next bumps. Verified via production build.
   sharp: ^0.35.3
+  # GHSA-7p8r-x3mc-p8w7 (fast-uri, patched 3.1.5): dev-only, reached through
+  # cypress webpack preprocessor → webpack → schema-utils → ajv. Unlike the entries above,
+  # ajv 8.20.0 already declares ^3.0.1 and admits the fix — the lockfile was just pinned to
+  # 3.1.4 (released before it). pnpm only re-resolves DIRECT deps on `pnpm update`, so an
+  # override is the only way to move a transitive. Drop once the graph resolves >=3.1.5 on
+  # its own; stay on 3.x, since ^3.0.1 excludes the 4.x line.
+  fast-uri: ^3.1.5
 
 # Vetted peer combos that upstream ranges haven't caught up to (both at latest release):
 # - @cypress/webpack-batteries-included-preprocessor 4.2.0 declares peer ^6.0.4, but the e2e
