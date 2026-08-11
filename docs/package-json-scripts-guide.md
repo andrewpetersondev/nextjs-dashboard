@@ -150,11 +150,15 @@ Migrations, seeding, and resets per environment.
   local warning, set up the `.nvmrc` shell hook in
   [getting-started.md](getting-started.md#make-nvmrc-apply-automatically-recommended).
 - `pnpm deps:drift` — assert every `overrides` entry in `pnpm-workspace.yaml` still matches the
-  `package.json` range for the same package. Only the **overlap** is gated: `esbuild`, `vite`,
-  `sharp` and `fast-uri` are override-only by design (they force a transitive resolution the project
-  never depends on directly), so today `postcss` is the single package checked. Nothing reconciles
-  the two files, so a dependency bump silently leaves its override behind and the graph forks into
-  two copies — `postcss` did exactly that between 2026-08-05 and 2026-08-07. Equality is **exact
+  `package.json` range for the same package. Only the **overlap** is gated, because overrides come
+  in two kinds: **override-only** entries force a resolution for a transitive the project never
+  depends on directly (so there is no `package.json` counterpart to compare), while an override that
+  _does_ shadow a direct dependency must stay in lockstep with it. **Read the current split off the
+  guard's own OK line rather than from a list here** — it names both sets on every run, and an
+  enumeration in prose is exactly the thing that goes stale silently (this paragraph has been
+  falsified twice by new entries). Nothing reconciles the two files, so a dependency bump silently
+  leaves its override behind and the graph forks into two copies — `postcss` did exactly that
+  between 2026-08-05 and 2026-08-07. Equality is **exact
   string equality**, not semver compatibility, because "compatible but different" is precisely the
   state that produces the second copy. The guard fails rather than passing when it cannot read the
   `overrides` block at all, and its OK line always names what it compared, so a run that checked

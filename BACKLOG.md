@@ -121,6 +121,16 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       `16.3.1-canary.7`), re-read the issue, then bump. The weekly-maintenance routine will
       re-propose 16.3.x every Monday until it lands. Full mechanism in memory
       (`project_next163_standalone_vercel_break`).
+      **Re-checked and made structural 2026-08-11** (dependency-update lane): upstream #96646 is
+      **still open**, last updated 2026-08-07, and there is still no 16.3.1 stable — canaries have
+      moved on to `16.3.1-canary.11`. The hold itself was **discipline-dependent until now**: the
+      manifest said `"next": "^16.2.12"`, and a caret **admits 16.3.0**, so only the lockfile stood
+      between a routine `pnpm update` and a failed deploy. Now pinned **exact** in `package.json`
+      with a matching `next: 16.2.12` entry in `pnpm-workspace.yaml` carrying the reasoning, which
+      puts it under `pnpm deps:drift` — the gate now reports `2 overlapping package(s) agree
+      (postcss, next)`, so the two cannot silently diverge. **Un-pinning is now a deliberate
+      two-file edit**, which is the point. Same lesson as the four guards this repo has shipped that
+      quietly did nothing: a rule that lives only in prose is not a rule.
       **Origin:** [PR #131](https://github.com/andrewpetersondev/nextjs-dashboard/pull/131), whose
       Biome half (2.5.6 → 2.5.7) was split off and landed separately; the `next` bump and the two
       `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
@@ -202,6 +212,48 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Dependency update — 9 bumps, one advisory, and two declaration/runtime mismatches closed**
+      _(2026-08-11, `claude/package-updates-03686c`)_ — `pnpm outdated` listed ten; nine were taken
+      (`jose` 6.2.8, `pg` 8.23.0, `postcss` 8.5.26, `tsx` 4.23.12, `@types/pg` 8.21.0, `axe-core`
+      4.13.0, `cypress` 15.20.0, `knip` 6.32.1, plus `@types/node` — see below) and `next` 16.3.0
+      was **held**, per its own open item above.
+      **The headline find was not on that list at all.** `pnpm audit` reported a **high** advisory
+      — [GHSA-rgw5-rvv9-x895](https://github.com/advisories/GHSA-rgw5-rvv9-x895), `brace-expansion`
+      DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation — against
+      `brace-expansion@5.0.8`, reached dev-only through `rimraf → glob → minimatch`. **`pnpm
+      outdated` and `pnpm audit` answer different questions**: the first walks _direct_ dependencies
+      only, so a transitive advisory is structurally invisible to it. An update pass driven by
+      `outdated` alone would have shipped a clean-looking bump and left a high advisory in place.
+      Run both, every time.
+      Fixed with a `pnpm-workspace.yaml` override to `^5.0.9`, and the entry's comment records
+      **which kind of override it is** — `minimatch@10.2.6` already declares `brace-expansion:
+      ^5.0.8`, which admits the fix, so the blocker was a **stale lockfile**, not an upstream pin
+      below the patched line. That makes it a sibling of `fast-uri` and droppable once the graph
+      resolves ≥5.0.9 unaided — unlike `esbuild`/`sharp`, which cannot be dropped until upstream
+      moves. Audit is clean afterwards, and `pnpm why` confirms one copy.
+      **Two declaration/runtime mismatches closed, both the family `node:drift` exists for.**
+      (1) `next` was declared `^16.2.12` — and **a caret admits 16.3.0**, the version that fails
+      every Vercel deploy. The documented hold was one `pnpm update` away from being undone by
+      accident; it is now an exact pin plus a gated override (details in the open item above).
+      (2) `@types/node` was on the **26.x** line while `engines.node`, `.nvmrc`, and Vercel's
+      ceiling are all **24** — so `tsc` was typechecking against an API surface production does not
+      have, which fails at runtime rather than at build. Aligned to `^24.13.3`; the full typecheck
+      (app + Cypress) passes, so nothing had actually reached for a Node 26-only declaration.
+      **Two smaller mechanics worth keeping.** Every target version was **release-age checked before
+      being written into the manifest** — pnpm 11's ~24h `minimumReleaseAge` has failed Vercel here
+      before, and the youngest of these (`tsx@4.23.12`, ~33h) cleared it. And `node_modules/.pnpm`
+      briefly showed **two `postcss` directories**, which looks exactly like the graph fork the
+      override exists to prevent — it was orphaned store residue: `pnpm why` reported one version
+      and the lockfile carried **zero** references to the old one. **Ask the resolver, not the
+      directory listing.**
+      Validation on the final tree: Biome slate **0** (listed via `biome:summary`, never read off an
+      exit code), markdownlint 0, typecheck green, `node:drift` / `deps:drift` / `db:drift` all OK
+      — `deps:drift` now gating **two** overlapping packages (`postcss`, `next`) instead of one —
+      knip exit 0, unit **465/465**, integration **21/21**, e2e **44 passing / 0 failing**. The e2e
+      run is load-bearing here rather than ceremonial: `axe-core` 4.13.0 is the one bump that could
+      introduce new blocking a11y violations, and `cypress` 15.20.0 is the one that could break the
+      TS7 preprocessor chain. Both held.
 
 - [x] **Close the modern-git-spelling family in the destructive-git guard** _(2026-08-11)_ — the
       guard shipped that morning caught `git checkout main` but not `git switch main`. Probing for

@@ -19,7 +19,7 @@ overrides:
   # ⚠ MUST equal the `postcss` devDependency range in package.json. Nothing bumps this when
   #   that one moves, so it silently falls behind (it sat a patch back from 2026-08-05 until
   #   2026-08-07). When a postcss bump lands in package.json, change it here in the same commit.
-  postcss: ^8.5.25
+  postcss: ^8.5.26
   # GHSA-f88m-g3jw-g9cj (libvips CVEs inherited by sharp <0.35.0): next pins sharp ^0.34.5,
   # so this override forces the patched line until next bumps. Verified via production build.
   sharp: ^0.35.3
@@ -30,6 +30,26 @@ overrides:
   # override is the only way to move a transitive. Drop once the graph resolves >=3.1.5 on
   # its own; stay on 3.x, since ^3.0.1 excludes the 4.x line.
   fast-uri: ^3.1.5
+  # GHSA-rgw5-rvv9-x895 (brace-expansion, patched 5.0.9): dev-only, reached through
+  # rimraf → glob → minimatch. Same class as fast-uri above, NOT esbuild/sharp:
+  # minimatch 10.2.6 declares ^5.0.8, which already admits the fix, so the blocker was a
+  # lockfile pinned to 5.0.8 rather than an upstream pin below the patched line. Drop once
+  # the graph resolves >=5.0.9 on its own; stay on 5.x.
+  brace-expansion: ^5.0.9
+  # Deliberate hold at 16.2.12: `output: "standalone"` (next.config.ts, for the Docker path)
+  # plus Vercel's build adapter fails EVERY deploy on 16.3.x —
+  # `ENOENT … .next/next-server.js.nft.json` thrown from `onBuildComplete`. Next PR #93684
+  # stopped emitting that file when an adapter is active, but the standalone finalizer's
+  # `copyTracedFiles` still reads it unguarded; Vercel injects its adapter via
+  # NEXT_ADAPTER_PATH, so both sides are on. Upstream vercel/next.js#96646, still OPEN
+  # (re-checked 2026-08-11 — no 16.3.1 stable, canaries at 16.3.1-canary.11).
+  # ⚠ This repo's own gates CANNOT catch it: a plain `next build` runs no adapter, so the
+  #   `csp` job went green on the exact commit Vercel refused. On any next bump, the Vercel
+  #   check is the only signal.
+  # ⚠ EXACT, not a caret — `^16.2.12` admits 16.3.0, so a caret holds nothing.
+  # ⚠ MUST equal the `next` dependency range in package.json; `pnpm deps:drift` gates it.
+  # Drop both this and the package.json pin once 16.3.1 stable ships with the fix.
+  next: 16.2.12
 
 # Vetted peer combos that upstream ranges haven't caught up to (both at latest release):
 # - @cypress/webpack-batteries-included-preprocessor 4.2.0 declares peer ^6.0.4, but the e2e

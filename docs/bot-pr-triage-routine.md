@@ -63,7 +63,13 @@ bypass it. (This is what PR #36 hit in June.)
 
 - **Biome bumps** — 2.5.3 once panicked on 8 form `tsx` files while exiting 0, which is silent lint
   loss. `biome check` exits 0 on warnings, so the printed slate matters more than the exit code.
-- **`next` bumps** — TypeScript 7 requires `next >= 16.2.12`; anything lower is flagged.
+- **`next` bumps** — bounded on **both** sides. TypeScript 7 requires `next >= 16.2.12`, so anything
+  lower is flagged; and **16.3.x is held** because `output: "standalone"` plus Vercel's build adapter
+  fails every deployment (upstream `vercel/next.js#96646`, open as of 2026-08-11). Since 2026-08-11
+  `next` is therefore pinned **exact** in `package.json` with a matching `pnpm-workspace.yaml`
+  override, so it is a lockstep package too — a `next` bump means editing both files, and
+  `deps:drift` fails if only one moves. Do not lift the pin without a green **Vercel** check: no job
+  in `ci.yml` runs Vercel's adapter, so CI cannot see this class of breakage.
 - **`sharp`** — pinned via an override because `next` pins an older version, so a bump needs the
   override reviewed too.
 
