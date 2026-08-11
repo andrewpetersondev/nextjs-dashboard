@@ -203,6 +203,27 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Dependabot alert #49 — `fast-uri` host confusion (high)** _(2026-08-11,
+      `claude/modest-chaplygin-db5e18`)_ —
+      [GHSA-7p8r-x3mc-p8w7](https://github.com/advisories/GHSA-7p8r-x3mc-p8w7) / CVE-2026-18446,
+      CVSS 7.5: `fast-uri` needs a literal `//` to see an authority, so `\\evil.com` folds into the
+      path, while Node's WHATWG `URL` (and therefore `fetch`) reads it as a host — host-policy
+      checks and the eventual request disagree. **Dev-only and not exploitable here**: the single
+      copy arrives via cypress webpack preprocessor → webpack → schema-utils → ajv, and nothing in
+      the repo passes attacker input through it. Fixed by resolving `3.1.4` → `3.1.5`.
+      **The mechanical lesson is the durable part.** `pnpm update fast-uri` reported success but
+      changed nothing, and `pnpm update fast-uri --depth Infinity` said "Already up to date":
+      pnpm's lockfile is authoritative for transitives and `pnpm update` only re-resolves **direct**
+      dependencies, so a `pnpm-workspace.yaml` `overrides` entry is the only lever for a transitive
+      bump — expect this for every future transitive advisory. Note this override differs in kind
+      from `esbuild`/`sharp`, which exist because upstream pins _below_ the patched line: ajv 8.20.0
+      (latest) already declares `fast-uri: ^3.0.1`, which admits 3.1.5, so the blocker was a stale
+      lockfile, not upstream. Hence the range stays `^3.1.5` (4.x is outside ajv's caret) and the
+      entry is droppable as soon as the graph resolves >=3.1.5 unaided. `deps:drift` is unaffected —
+      `fast-uri` has no `package.json` counterpart, so it lands in `overrideOnly`, which the guard
+      counts but never gates ("4 override-only"). **Caught one doc drift of the known shape**:
+      `package-json-scripts-guide.md` _enumerated_ the override-only set ("esbuild, vite and
+      sharp"), so adding a fourth silently falsified it.
 - [x] **Full documentation review — every claim verified against code, not read for plausibility**
       _(2026-08-09, `claude/documentation-review`)_ — swept all 82 tracked Markdown files (~12k
       lines). The mechanical passes carried most of the weight: resolve every relative link, every
