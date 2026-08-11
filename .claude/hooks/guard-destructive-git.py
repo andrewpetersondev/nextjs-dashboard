@@ -39,8 +39,18 @@ DECISION = "deny"  # "deny" blocks; "ask" is swallowed by the blanket Bash(*) al
 
 MAX_SCRIPT_BYTES = 256 * 1024
 
-# Each entry mirrors a git rule from permissions.deny, plus the two gaps that
-# list never covered: `git filter-repo` and the `+refspec` force-push syntax.
+# Each entry mirrors a git rule from permissions.deny, plus the gaps that list
+# never covered: `git filter-repo`, the `+refspec` force-push syntax, and the
+# whole modern-spelling family below.
+#
+# Two rules of thumb, both learned by getting them wrong here:
+#   * A short-flag class like `-[a-zA-Z]*f` CANNOT match `--force` — the leading
+#     `-` is not in [a-zA-Z]. Every short flag needs its long form spelled out
+#     alongside, or `git branch --delete --force` walks straight through, which
+#     is precisely how the old prefix deny list failed.
+#   * Guard the operation, not one spelling of it. `switch` supersedes
+#     `checkout`, `restore` supersedes `checkout -- <path>`, and
+#     `switch --discard-changes` supersedes `reset --hard`.
 # `git\b[^;&|]*` spans intervening flags (-C <path>, --git-dir=…, -c k=v) while
 # stopping at a shell separator so two unrelated commands can't be spliced into
 # a false positive.
@@ -54,11 +64,23 @@ RULES: list[tuple[str, str]] = [
     (rf"{GIT}\bfilter-branch\b", "history rewrite (filter-branch)"),
     (rf"{GIT}\bfilter-repo\b", "history rewrite (filter-repo)"),
     (rf"{GIT}\breset\b[^;&|]*--hard\b", "hard reset (discards working tree)"),
-    (rf"{GIT}\bclean\b[^;&|]*\s-[a-zA-Z]*f", "git clean -f (deletes untracked files)"),
-    (rf"{GIT}\bbranch\b[^;&|]*\s-[a-zA-Z]*[dD]\b", "branch deletion"),
+    (rf"{GIT}\bswitch\b[^;&|]*--discard-changes\b",
+     "switch --discard-changes (discards working tree)"),
+    (rf"{GIT}\bclean\b[^;&|]*(?:\s-[a-zA-Z]*f|\s--force\b)",
+     "git clean --force (deletes untracked files)"),
+    (rf"{GIT}\bbranch\b[^;&|]*(?:\s-[a-zA-Z]*[dD]\b|\s--delete\b)", "branch deletion"),
     (rf"{GIT}\bstash\b\s+(?:drop|clear)\b", "stash drop/clear"),
     (rf"{GIT}\bupdate-ref\b[^;&|]*\s-d\b", "ref deletion"),
-    (rf"{GIT}\bcheckout\s+main\b", "checkout of main (work happens on lane branches)"),
+    # `main` as the switch TARGET, in either spelling. The inner lookahead lets
+    # ordinary flags through but refuses branch-creation flags, so
+    # `git switch -c lane main` — which branches OFF main rather than onto it —
+    # stays allowed.
+    (rf"{GIT}\b(?:checkout|switch)\s+(?:(?!-[bcBC]\b|--create\b)--?[\w-]+\s+)*main\b",
+     "switch to main (work happens on lane branches)"),
+    # Discarding uncommitted work: there is no reflog for it, so no recovery.
+    (rf"{GIT}\bcheckout\b[^;&|]*\s--\s", "checkout -- <path> (discards uncommitted changes)"),
+    (rf"{GIT}\brestore\b(?![^;&|]*--staged\b)", "git restore (discards uncommitted changes)"),
+    (rf"{GIT}\brestore\b[^;&|]*--worktree\b", "git restore (discards uncommitted changes)"),
 ]
 COMPILED = [(re.compile(p), label) for p, label in RULES]
 

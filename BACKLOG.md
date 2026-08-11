@@ -203,6 +203,23 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Close the modern-git-spelling family in the destructive-git guard** _(2026-08-11)_ — the
+      guard shipped that morning caught `git checkout main` but not `git switch main`. Probing for
+      siblings turned up **eight** misses, not one: `switch main` (both plain and via `-C`),
+      `branch --delete --force`, `clean --force`, `switch --discard-changes`, `restore <path>`,
+      `restore --staged --worktree`, and `checkout -- .`.
+      Two reusable rules came out of it. **A short-flag class cannot match a long flag** — `-[a-zA-Z]*f`
+      never matches `--force`, because the leading `-` is not in `[a-zA-Z]`. That is the precise
+      mechanism by which the original prefix deny list failed on `git branch --delete --force`, and
+      it had been reproduced verbatim in the replacement. **Guard the operation, not one spelling:**
+      `switch` supersedes `checkout`, `restore` supersedes `checkout -- <path>`, and
+      `switch --discard-changes` supersedes `reset --hard`.
+      Negatives held: `git switch -c lane main` and `git checkout -b feature main` branch _off_ main
+      rather than onto it and stay allowed, as does `git restore --staged` (index-only, recoverable).
+      39 pipe-tests, plus a live block of `git switch main` through the real harness. The same
+      spellings were mirrored into `permissions.deny`, which still matters as a second layer if hooks
+      are ever disabled.
+
 - [x] **Stop merge subjects re-introducing the agent lane prefix** _(2026-08-11)_ — the history
       rewrite earlier the same day stripped `claude/` from 57 merge subjects, and the very next
       merge would have put one straight back: both `git merge --no-ff` (as `branching-and-releases.md`
