@@ -1,6 +1,19 @@
 {
 	"$schema": "https://www.schemastore.org/claude-code-settings.json",
 	"hooks": {
+		"PreToolUse": [
+			{
+				"hooks": [
+					{
+						"command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-destructive-git.py\"",
+						"statusMessage": "Checking git safety…",
+						"timeout": 10,
+						"type": "command"
+					}
+				],
+				"matcher": "Bash"
+			}
+		],
 		"SessionStart": [
 			{
 				"hooks": [
@@ -36,6 +49,8 @@
 			"Bash(git stash clear*)",
 			"Bash(git checkout main*)",
 			"Bash(git filter-branch*)",
+			"Bash(git filter-repo*)",
+			"Bash(git-filter-repo*)",
 			"Bash(git push --force*)",
 			"Bash(git push -f*)",
 			"Bash(git push * --force*)",

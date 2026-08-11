@@ -203,6 +203,36 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Agent attribution stripped from history, and the git guard that should have gated it made
+      real** _(2026-08-11)_ — `main` went `f61a1b44` → `28cda630`. 337 commits rewritten (everything
+      before 2026-05-11 kept its SHA): 206 co-author trailers removed, one commit reassigned from an
+      `@anthropic.com` author, and the `claude/` segment stripped from 57 merge subjects plus 3 body
+      references. 69 PR bodies lost their generated-with footer via `gh pr edit`. **Content was
+      provably untouched — all 3319 tree hashes identical before and after**, which is the check
+      worth reusing for any future rewrite; a rewrite that changes a tree is a rewrite that changed
+      code. `.claude/`, `CLAUDE.md`, `AGENTS.md` and the `fix(claude):` commit scopes were kept on
+      purpose: they name files that are really in the repo, and scrubbing them would leave history
+      describing a tree that does not exist.
+      **Two things a rewrite cannot reach**, both verified against the API rather than assumed:
+      GitHub serves commits from `refs/pull/N/head` forever, so the pre-rewrite commits stay
+      readable at their old SHAs behind all 119 PRs; and the `claude/*` head-branch name on a closed
+      PR is immutable, so 78 PR pages still show it. Only repo deletion or GitHub Support clears
+      those.
+      **The guard that was supposed to stop all this did nothing.** `permissions.deny` listed
+      `Bash(git filter-branch*)` and `Bash(git push --force*)`, and neither fired: denies are
+      prefix-only, so `bash rewrite-history.sh` hid the rewrite inside a script and
+      `git -C <path> push --force-with-lease` did not start with `git push`. Replaced with
+      `.claude/hooks/guard-destructive-git.py`, a `PreToolUse` hook on `Bash` that matches the whole
+      command string and also reads any shell script it is asked to run. 23 pipe-tests cover the
+      four evasion forms, the bare forms, and the false-positive cases. Also closed two gaps the
+      deny list never had: `git filter-repo` (the modern replacement for the tool it did deny) and
+      the `+refspec` force-push syntax.
+      **The hook itself first shipped broken, in the same shape.** Returning
+      `permissionDecision: "ask"` is silently swallowed by the blanket `Bash(*)` allow rule — the
+      guarded command ran with no prompt. Only `"deny"` overrides an explicit allow. Caught by
+      running the thing end-to-end instead of trusting the config, which is now the documented
+      requirement in `AGENTS.md` for any future change here.
+
 - [x] **Full documentation review — every claim verified against code, not read for plausibility**
       _(2026-08-09, `claude/documentation-review`)_ — swept all 82 tracked Markdown files (~12k
       lines). The mechanical passes carried most of the weight: resolve every relative link, every
