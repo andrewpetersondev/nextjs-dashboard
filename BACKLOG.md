@@ -99,6 +99,33 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       entry at the top of this log.
 
 - [x] ~~**No guard on override/dependency drift**~~ — fixed 2026-08-09, see Done.
+
+- [ ] **`next` 16.3.x is HELD — it breaks every Vercel deploy. Added 2026-08-11.** This repo
+      sets `output: "standalone"` (for the Docker path, [next.config.ts](next.config.ts)), and on
+      16.3.0 that combination fails deployment deterministically with
+      `ENOENT … .next/next-server.js.nft.json` thrown from `onBuildComplete`. Upstream
+      [vercel/next.js#96646](https://github.com/vercel/next.js/issues/96646) — **open**: Next PR
+      #93684 (first stable in 16.3.0) stops emitting `next-server.js.nft.json` when a build
+      adapter is active, but the `output: 'standalone'` finalizer's `copyTracedFiles` still reads
+      it unguarded; Vercel injects its adapter via `NEXT_ADAPTER_PATH`, so both sides are on.
+      Minimal trigger is adapter + standalone — **either alone passes**, which is exactly why
+      nothing here caught it: a plain `next build` runs no adapter, so the `csp` job went green on
+      the same commit Vercel refused. Verified locally on 16.3.0 (built twice, with and without
+      `output: standalone` — both succeeded, both emitted the file). **The takeaway generalises
+      past this bug: a green `check` is not a green deploy, and on any `next` bump the Vercel
+      check is the only signal for `@vercel/next`-side breakage.** Two workarounds are verified
+      upstream and **both deliberately not taken** — `output: process.env.VERCEL ? undefined :
+      'standalone'` changes the build path that serves the live demo, and prefixing the Vercel
+      build command with `NEXT_ADAPTER_PATH=` is an untracked dashboard setting nothing re-checks.
+      **Next step:** wait for 16.3.1 stable (none exists as of 2026-08-11; still reproducing on
+      `16.3.1-canary.7`), re-read the issue, then bump. The weekly-maintenance routine will
+      re-propose 16.3.x every Monday until it lands. Full mechanism in memory
+      (`project_next163_standalone_vercel_break`).
+      **Origin:** [PR #131](https://github.com/andrewpetersondev/nextjs-dashboard/pull/131), whose
+      Biome half (2.5.6 → 2.5.7) was split off and landed separately; the `next` bump and the two
+      `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
+      `claude/weekly-maintenance-2026-08-09` and travel together whenever the bump is retaken.
+
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
