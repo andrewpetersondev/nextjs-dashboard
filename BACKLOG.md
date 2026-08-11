@@ -203,6 +203,27 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Stop merge subjects re-introducing the agent lane prefix** _(2026-08-11)_ — the history
+      rewrite earlier the same day stripped `claude/` from 57 merge subjects, and the very next
+      merge would have put one straight back: both `git merge --no-ff` (as `branching-and-releases.md`
+      documents it) and WebStorm's one-click **Merge into 'main'** write git's default message,
+      which quotes the branch verbatim. The first merge only escaped because it happened to
+      fast-forward. Renaming the prefix was considered and rejected — the harness names lane
+      branches `claude/<lane>` and there is no prefix setting (`worktree` config exposes only
+      `symlinkDirectories`, `sparsePaths`, `baseRef`, `bgIsolation`), so it would mean a manual
+      `git branch -m` before every merge. That is a discipline-dependent guard, and this repo has
+      shipped four of those that silently did nothing.
+      Fixed with a tracked `.githooks/prepare-commit-msg` that strips the prefix from merge
+      messages only, plus `git config core.hooksPath .githooks` — a **per-clone step**, since
+      `core.hooksPath` is local config. The relative path is deliberate: git resolves it against
+      each working tree's root, so every worktree picks up its own checked-out copy.
+      Verified on real non-fast-forward merges, **with a positive control** — without the hook the
+      subject still reads `Merge branch 'claude/…'`, which is what proves the merge was genuinely
+      non-fast-forward and the passing case is not just git fast-forwarding. Also checked: merge
+      topology unchanged (2 parents), `# Conflicts:` paths under `.claude/` survive intact (the
+      negative lookbehind that protects them is load-bearing), and ordinary commit messages pass
+      through verbatim.
+
 - [x] **Agent attribution stripped from history, and the git guard that should have gated it made
       real** _(2026-08-11)_ — `main` went `f61a1b44` → `28cda630`. 337 commits rewritten (everything
       before 2026-05-11 kept its SHA): 206 co-author trailers removed, one commit reassigned from an

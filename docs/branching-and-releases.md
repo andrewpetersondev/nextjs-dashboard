@@ -49,6 +49,16 @@ it automatically.
    remote round-trip. The **push** to `main` is what triggers CI and the Vercel
    production deploy.
 
+   `--no-ff` and WebStorm's one-click **Merge into 'main'** both write git's default merge
+   message, which quotes the branch verbatim — `Merge branch 'claude/<lane>'`. Agent lane
+   branches carry that `claude/` prefix from the harness and it is not configurable, so the
+   subject would put the prefix back into `main` after the 2026-08-11 rewrite stripped it
+   from 57 older merges. The [`prepare-commit-msg`](../.githooks/prepare-commit-msg) hook
+   removes it automatically, whichever tool performs the merge — but it only runs once
+   `core.hooksPath` is set, which is a per-clone step (see
+   [getting-started](getting-started.md)). Check with `git config --get core.hooksPath`
+   before assuming you are covered.
+
 There are no pull requests for **human** work in this model; review happens when you merge
 the branch in WebStorm. If you ever want a showcase PR, open one by hand — nothing here
 forbids it. **Bots do open PRs** (Dependabot, the weekly-maintenance routine), and those

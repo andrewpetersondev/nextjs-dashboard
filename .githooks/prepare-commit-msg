@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# prepare-commit-msg — keep agent lane names out of merge subjects.
+#
+# Sessions run in worktrees whose branches the harness names `claude/<lane>`;
+# that prefix is not configurable. Git's default merge message quotes the branch
+# verbatim, so any non-fast-forward merge writes `Merge branch 'claude/<lane>'`
+# into main — re-introducing exactly what the 2026-08-11 history rewrite removed
+# from 57 older merge commits. Renaming each lane by hand before merging would
+# work, and would be forgotten; this runs whether the merge comes from the CLI,
+# WebStorm's one-click "Merge into 'main'", or anything else.
+#
+# Strips the prefix rather than substituting another word, so new merges match
+# the rewritten ones (`Merge branch 'kind-fermi-454a6f'`).
+#
+# The negative lookbehind is load-bearing: a conflicted merge message lists
+# paths under `# Conflicts:`, and `.claude/settings.json` must survive intact.
+
+set -euo pipefail
+
+msg_file=${1:?prepare-commit-msg: missing message file}
+source_kind=${2:-}
+
+# Only merge commits carry an auto-generated branch name. Bail before spawning
+# anything for the ordinary commit path, which runs far more often.
+[ "$source_kind" = "merge" ] || exit 0
+
+perl -0pi -e 's{(?<!\.)\bclaude/}{}g' "$msg_file"

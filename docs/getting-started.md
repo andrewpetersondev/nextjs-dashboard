@@ -135,6 +135,24 @@ stopped reading it.
 pnpm install
 ```
 
+### Point git at the tracked hooks (one command per clone)
+
+```sh
+git config core.hooksPath .githooks
+```
+
+`core.hooksPath` is local config, so a fresh clone does not inherit it and the hooks in
+[`.githooks/`](../.githooks) sit inert until you run the line above. The relative path resolves
+against each working tree's root, which is what makes it correct in worktrees too — every lane
+checks `.githooks/` out for itself.
+
+Today that directory holds one hook. `prepare-commit-msg` strips the `claude/` prefix from
+merge subjects, because agent sessions run on worktree branches the harness names
+`claude/<lane>` and git quotes that name verbatim in the default merge message. Without the
+hook, any non-fast-forward merge writes `Merge branch 'claude/<lane>'` into `main` and undoes
+part of the history cleanup described in `BACKLOG.md`. Verify it is active with
+`git config --get core.hooksPath`.
+
 ## 3. Configure Environment
 
 Copy [`.env.example.local`](../.env.example.local) to one file per environment, then fill in real values:
