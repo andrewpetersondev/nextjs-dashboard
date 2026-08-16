@@ -113,7 +113,8 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       the same commit Vercel refused. Verified locally on 16.3.0 (built twice, with and without
       `output: standalone` — both succeeded, both emitted the file). **The takeaway generalises
       past this bug: a green `check` is not a green deploy, and on any `next` bump the Vercel
-      check is the only signal for `@vercel/next`-side breakage.** Two workarounds are verified
+      check is the only signal for `@vercel/next`-side breakage** — necessary, but **not
+      sufficient; qualified 2026-08-16 below**. Two workarounds are verified
       upstream and **both deliberately not taken** — `output: process.env.VERCEL ? undefined :
       'standalone'` changes the build path that serves the live demo, and prefixing the Vercel
       build command with `NEXT_ADAPTER_PATH=` is an untracked dashboard setting nothing re-checks.
@@ -135,6 +136,21 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Biome half (2.5.6 → 2.5.7) was split off and landed separately; the `next` bump and the two
       `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
       `claude/weekly-maintenance-2026-08-09` and travel together whenever the bump is retaken.
+      **The pin has a second effect, found 2026-08-16 — a bot's `next` PR now goes green on the
+      OLD version, Vercel check included.** Dependabot edits `package.json` only, the
+      `pnpm-workspace.yaml` override still says `16.2.12`, and **overrides win over the direct
+      dependency** — so the install resolves the version the PR exists to replace.
+      [PR #132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132) is the worked
+      example: its own CI log prints `+ next 16.2.12`, and its Vitest, CSP guard **and Vercel
+      preview deployment all passed having built 16.2.12**. Only `deps:drift` failed, because it
+      is the one check that compares the two files instead of building what they produced. The
+      contrast is the proof — PR #131's branch moved both files, genuinely installed 16.3.0, and
+      its preview deployment went `ERROR` (2026-08-10) where #132's went `READY` (2026-08-11):
+      same version string in the manifest, different version on disk. **So a bot PR's green
+      Vercel check is not evidence this hold can lift, and reading it as such is the likeliest way
+      to lift it by accident.** Before believing any check on a lockstep package, read the install
+      summary's `+ <pkg> <version>` line in that run's log. The general form: once a package is
+      under an override, its manifest version is a request, not a fact.
 
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full

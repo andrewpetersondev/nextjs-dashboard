@@ -40,6 +40,7 @@ Every open PR lands in exactly one bucket, each with one recommended action:
 | **Needs lockstep**      | The dep also appears in `overrides` / `pnpm-workspace.yaml`   | Bump the override first            |
 | **Failing**             | CI red for any other reason                                   | Investigate (log excerpt included) |
 | **Conflicted**          | Dirty merge state                                             | Rebase                             |
+| **Held**                | Package pinned exact _and_ carrying a matching override       | Close, don't merge                 |
 
 **"Checks green" now means something.** Until 2026-08-09 the only workflow on `pull_request` was
 `dependency-review.yml` — an advisory scan with no build, no types and no tests — so a green bot PR
@@ -51,6 +52,15 @@ linted, type-checked, drift-gated and tested before you look at it.
 fails any PR that bumps a package whose `overrides` entry does not move with it, so this bucket
 should now show up as a RED check rather than as a green PR with a caveat. Treat a green PR in this
 bucket as a sign the guard has a gap worth reporting.
+
+**Held and Needs-lockstep look identical and mean the opposite** (added 2026-08-16). Both buckets key
+off the same observable — a package present in both `package.json` and the overrides — but
+Needs-lockstep says _bump the override to match_ and Held says _close the PR_. Applying the wrong one
+to a held package performs exactly the two-file edit the hold exists to prevent. The only thing that
+distinguishes them is **why** the override is there, which lives in the comment beside it, so keep
+that comment saying which kind it is. The routine detects a hold structurally — exact version, no
+caret, plus a matching override entry — rather than from a remembered version number, so it stays
+correct once a hold is lifted.
 
 **Superseded is verified, not guessed** — the agent reads the current version in `package.json` on
 `main` and compares it against the PR's target, rather than inferring from titles.
@@ -68,8 +78,16 @@ bypass it. (This is what PR #36 hit in June.)
   fails every deployment (upstream `vercel/next.js#96646`, open as of 2026-08-11). Since 2026-08-11
   `next` is therefore pinned **exact** in `package.json` with a matching `pnpm-workspace.yaml`
   override, so it is a lockstep package too — a `next` bump means editing both files, and
-  `deps:drift` fails if only one moves. Do not lift the pin without a green **Vercel** check: no job
-  in `ci.yml` runs Vercel's adapter, so CI cannot see this class of breakage.
+  `deps:drift` fails if only one moves. No job in `ci.yml` runs Vercel's adapter, so CI cannot see
+  this class of breakage at all; the Vercel check is the only signal.
+  **But do not read a bot PR's green Vercel check as that signal** (corrected 2026-08-16). Because
+  overrides win over the direct dependency, a PR that edits only `package.json` installs the version
+  it was meant to replace — [PR #132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132)
+  logs `+ next 16.2.12` and passed Vitest, the CSP guard and its Vercel preview having built
+  `16.2.12`, while PR #131, which moved both files, genuinely built `16.3.0` and its preview
+  deployment errored. A Vercel check only means something once the install actually resolved the new
+  version, so read the run's `+ <pkg> <version>` line before trusting it. Full record in
+  [BACKLOG.md](../BACKLOG.md).
 - **`sharp`** — pinned via an override because `next` pins an older version, so a bump needs the
   override reviewed too.
 
