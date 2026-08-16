@@ -40,6 +40,13 @@ import { fileURLToPath } from "node:url";
  * single command throughout and it was simply never noticed.
  *
  * The runtime check is asymmetric on purpose — see `reportRunningMajor`.
+ *
+ * FIFTH AXIS, added 2026-08-12: `@types/node`. The four above all concern the
+ * runtime; this one concerns what the TYPE-CHECKER believes that runtime is.
+ * `@types/node` majors track Node majors, so a range above the pinned major hands
+ * `tsc` an API surface production does not have — and unlike the four above, that
+ * state is invisible in a green build, because a superset of the real API is not
+ * a type error. It went unnoticed here until 903fdf59. See `reportTypesMajor`.
  */
 
 const ROOT = path.resolve(
@@ -52,6 +59,10 @@ const ROOT = path.resolve(
 const NVMRC = ".nvmrc";
 const PACKAGE_JSON = "package.json";
 const DOCKERFILE = "Dockerfile";
+
+// Not a file — a dependency range inside package.json. Kept beside the three
+// above because it declares the same number they do, just for the type-checker.
+const TYPES_NODE = "@types/node";
 
 // `FROM node:24-alpine`, `FROM node:24.1.0-bookworm AS base`, etc. Captures the
 // major. Global: a multi-stage Dockerfile can pull `node:` more than once, and
@@ -190,6 +201,87 @@ function reportRunningMajor(agreed: number): void {
 	);
 }
 
+/**
+ * Compare the `@types/node` major against the major the three files agree on.
+ *
+ * Deliberately NOT folded into the set above. Those three declare a RUNTIME and
+ * share one failure message about shipping what you tested; this declares the API
+ * surface `tsc` believes that runtime has. Same number, different claim.
+ *
+ * Hard failure everywhere, unlike `reportRunningMajor`. That asymmetry is about
+ * cause rather than severity: a running-major mismatch is usually a workstation
+ * setting, while this range lives in `package.json` and is a repo defect wherever
+ * it is read.
+ *
+ * EQUALITY, not a ceiling (`<=`) — the deliberate call, recorded because the
+ * looser rule is defensible and someone will ask. Types ABOVE the runtime is the
+ * failure that prompted the guard: `tsc` accepts an API production does not have,
+ * and it lands as a runtime TypeError no type-check can reach. `@types/node` sat
+ * at `^26.2.0` against Node 24 until 903fdf59, and Dependabot re-proposed it
+ * GREEN six hours later (PR #133), because a superset is not a type error. Types
+ * BELOW the runtime is safe in isolation — a subset describes APIs that really
+ * exist — but not free: real APIs read as type errors, get silenced with `as any`
+ * or `@ts-expect-error`, and those casts outlive the eventual bump as permanent
+ * holes. A ceiling permits that whole band silently.
+ *
+ * The tiebreaker is this file's own thesis. It already refuses an open-ended
+ * `engines.node` (">=24") because a rule that admits a range leaves the choice to
+ * someone else and moves without a commit — and a ceiling is that same looseness.
+ * The cost is real and accepted: an intentional Node major migration must touch
+ * this line too, the way lifting the `next` hold is deliberately a two-file edit.
+ */
+function reportTypesMajor(agreed: number): void {
+	const pkg = JSON.parse(read(PACKAGE_JSON)) as {
+		dependencies?: Record<string, string>;
+		devDependencies?: Record<string, string>;
+	};
+	// Both maps: the range is in devDependencies today, but a guard that reads
+	// only one half would go quiet the day it moves rather than report on it.
+	const raw = { ...pkg.dependencies, ...pkg.devDependencies }[TYPES_NODE];
+
+	if (!raw) {
+		throw new Error(
+			`[node-version] FAIL — ${PACKAGE_JSON} declares no "${TYPES_NODE}".\n` +
+				"  Nothing then ties the type-checker's view of the Node API to the major\n" +
+				"  the files above pin, which is the drift this check exists to report.",
+		);
+	}
+
+	const match = PINNED_MAJOR.exec(raw);
+	if (!match?.[1]) {
+		throw new Error(
+			`[node-version] FAIL — "${TYPES_NODE}" is "${raw}", which does not pin a ` +
+				"single major.\n" +
+				"  Install would then be free to cross a Node major without an edit — the\n" +
+				`  same open-range problem "engines.node" is checked for above. Pin ${agreed}.x.`,
+		);
+	}
+
+	const major = Number(match[1]);
+	if (major === agreed) {
+		console.log(
+			`[node-version] OK — ${TYPES_NODE} ${raw} matches Node ${agreed}.`,
+		);
+		return;
+	}
+
+	const direction =
+		major > agreed
+			? "  The types describe an API surface WIDER than the runtime ships. `tsc`\n" +
+				"  accepts calls to Node APIs that production does not have, and the failure\n" +
+				"  arrives as a TypeError at runtime — no type-check can catch it. This is\n" +
+				"  why a bump here can pass every check and still be wrong.\n"
+			: "  The types describe an API surface NARROWER than the runtime ships, so real\n" +
+				"  APIs read as type errors and get silenced with casts that then outlive the\n" +
+				"  eventual bump.\n";
+
+	throw new Error(
+		`[node-version] FAIL — "${TYPES_NODE}" is "${raw}" (major ${major}) but the ` +
+			`pinned Node major is ${agreed}.\n\n${direction}\n` +
+			`  Set "${TYPES_NODE}" to the ${agreed}.x line.`,
+	);
+}
+
 function main(): void {
 	const sources: Source[] = [
 		nvmrcMajor(),
@@ -229,6 +321,9 @@ function main(): void {
 	console.log(
 		`[node-version] OK — Node ${major} across ${sources.map((s) => s.file.split(" ")[0]).join(", ")}.`,
 	);
+	// Declarations first, environment last: `@types/node` is a repo declaration
+	// like the three above, while the running major is a property of the machine.
+	reportTypesMajor(major);
 	reportRunningMajor(major);
 }
 

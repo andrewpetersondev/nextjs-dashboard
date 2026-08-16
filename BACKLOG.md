@@ -113,8 +113,9 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       the same commit Vercel refused. Verified locally on 16.3.0 (built twice, with and without
       `output: standalone` — both succeeded, both emitted the file). **The takeaway generalises
       past this bug: a green `check` is not a green deploy, and on any `next` bump the Vercel
-      check is the only signal for `@vercel/next`-side breakage** — necessary, but **not
-      sufficient; qualified 2026-08-16 below**. Two workarounds are verified
+      check is the only signal for `@vercel/next`-side breakage.** ⚠ **That last clause stopped
+      being true when the hold went structural — see the correction at the end of this item.**
+      Two workarounds are verified
       upstream and **both deliberately not taken** — `output: process.env.VERCEL ? undefined :
       'standalone'` changes the build path that serves the live demo, and prefixing the Vercel
       build command with `NEXT_ADAPTER_PATH=` is an untracked dashboard setting nothing re-checks.
@@ -132,25 +133,35 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       (postcss, next)`, so the two cannot silently diverge. **Un-pinning is now a deliberate
       two-file edit**, which is the point. Same lesson as the four guards this repo has shipped that
       quietly did nothing: a rule that lives only in prose is not a rule.
+      **Correction 2026-08-12 — the Vercel check is now BLIND to a `next` bump, not "the only
+      signal".** Verified on Dependabot
+      [PR #132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132) (`next` → 16.3.0):
+      Vercel reported **SUCCESS / READY in 44s**, and its build log reads
+      `Detected Next.js version: 16.2.12` → `▲ Next.js 16.2.12`. The `pnpm-workspace.yaml` override
+      pins the **whole graph including the direct dependency**, so a PR touching only
+      `package.json` never installs the new version — the lockfile's `next` resolution does not
+      move. **A green Vercel check on such a PR is not evidence 16.3.x deploys; it is evidence
+      16.3.x was never built**, so it must not be read as upstream-fixed. The only check that fires
+      is `deps:drift`. Re-testing 16.3.x for real therefore needs both files edited — the same
+      two-file edit described above, now doing double duty as the only way to get a true signal.
       **Origin:** [PR #131](https://github.com/andrewpetersondev/nextjs-dashboard/pull/131), whose
       Biome half (2.5.6 → 2.5.7) was split off and landed separately; the `next` bump and the two
       `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
       `claude/weekly-maintenance-2026-08-09` and travel together whenever the bump is retaken.
-      **The pin has a second effect, found 2026-08-16 — a bot's `next` PR now goes green on the
-      OLD version, Vercel check included.** Dependabot edits `package.json` only, the
-      `pnpm-workspace.yaml` override still says `16.2.12`, and **overrides win over the direct
-      dependency** — so the install resolves the version the PR exists to replace.
-      [PR #132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132) is the worked
-      example: its own CI log prints `+ next 16.2.12`, and its Vitest, CSP guard **and Vercel
-      preview deployment all passed having built 16.2.12**. Only `deps:drift` failed, because it
-      is the one check that compares the two files instead of building what they produced. The
-      contrast is the proof — PR #131's branch moved both files, genuinely installed 16.3.0, and
-      its preview deployment went `ERROR` (2026-08-10) where #132's went `READY` (2026-08-11):
-      same version string in the manifest, different version on disk. **So a bot PR's green
-      Vercel check is not evidence this hold can lift, and reading it as such is the likeliest way
-      to lift it by accident.** Before believing any check on a lockstep package, read the install
-      summary's `+ <pkg> <version>` line in that run's log. The general form: once a package is
-      under an override, its manifest version is a request, not a fact.
+
+- [ ] **Dependabot has no `ignore` rules, so both held bumps return every Monday. Added
+      2026-08-12.** `.github/dependabot.yml` carries grouping but no `ignore:` block at all, so the
+      two held packages are re-proposed weekly and each needs triaging by hand:
+      [#132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132) (`next` 16.3.0, red on
+      `deps:drift` — the hold working) and
+      [#133](https://github.com/andrewpetersondev/nextjs-dashboard/pull/133) (`@types/node`
+      26.2.0, green until the fifth drift axis shipped 2026-08-12). **Both should be closed, not
+      merged.** Two `ignore` entries would end the churn — `next` at `16.3.x` while the hold
+      stands, and `@types/node` above the `engines.node` major — and that churn is precisely what
+      [the bot-PR triage routine](docs/bot-pr-triage-routine.md) was written about (#105, #113,
+      #114, #116, #117, #119, #122 all closed rather than merged). While editing it, note that its
+      bucket table has **no row for "green, but re-proposes a deliberate revert"**, which is what
+      #133 was; the table sorts that case into **Clean → Merge**.
 
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
@@ -228,6 +239,35 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **`node:drift` gains a fifth axis — `@types/node` is now gated against the runtime pin**
+      _(2026-08-12, `fix/node-drift-types-node-major`)_ — the guard compared `.nvmrc`,
+      `engines.node`, the `Dockerfile` and the running process, but never the types. So the
+      mismatch closed by hand the day before could walk straight back in: **Dependabot re-proposed
+      `@types/node` `^24.13.3` → `^26.2.0` in
+      [PR #133](https://github.com/andrewpetersondev/nextjs-dashboard/pull/133) about six hours
+      after `903fdf59` aligned it down**, and it passed **every check green** — because typing
+      against a superset of the runtime's API is not a type error. What that re-opens is a
+      production `TypeError` no type-check can reach.
+      **The rule is equality, not a ceiling**, recorded in the guard's own comment because the
+      looser `<=` is defensible. Types _above_ the runtime is the failure that prompted this; types
+      _below_ is safe in isolation but not free, since real APIs then read as type errors and get
+      silenced with casts that outlive the eventual bump. The tiebreaker is the file's existing
+      thesis — it already rejects an open-ended `engines.node` because a rule that admits a range
+      leaves the choice to someone else and moves without a commit, and a ceiling is that same
+      looseness. Cost accepted: a Node major migration must now touch this line too, the way
+      lifting the `next` hold is deliberately a two-file edit.
+      **Verified by driving all four failure branches, not by reading config** — `^26.2.0` (wider,
+      the real #133 case), `^20.19.0` (narrower), `>=24` (unpinned) and an absent entry; each exits
+      1 with its own message, and the clean tree exits 0. The `Node drift` step in `ci.yml` was
+      re-confirmed to run the script that runs this file — the fifth guard checked that way after
+      four shipped here doing nothing.
+      **One trap avoided:** `pnpm node:drift` auto-installs on a fresh lane (715 packages here), so
+      mutating `package.json` as a fixture risks really installing the bad range — the
+      `pnpm-workspace.yaml` lesson, one file over. Tests ran `./node_modules/.bin/tsx` directly;
+      lockfile hash identical before and after.
+      Validation: Biome slate **0**, markdownlint 0, typecheck green, `node:drift` / `deps:drift` /
+      `db:drift` all OK, `check:fast` exit 0.
 
 - [x] **Dependency update — 9 bumps, one advisory, and two declaration/runtime mismatches closed**
       _(2026-08-11, `claude/package-updates-03686c`)_ — `pnpm outdated` listed ten; nine were taken
