@@ -149,20 +149,6 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
       `claude/weekly-maintenance-2026-08-09` and travel together whenever the bump is retaken.
 
-- [ ] **Dependabot has no `ignore` rules, so both held bumps return every Monday. Added
-      2026-08-12.** `.github/dependabot.yml` carries grouping but no `ignore:` block at all, so the
-      two held packages are re-proposed weekly and each needs triaging by hand:
-      [#132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132) (`next` 16.3.0, red on
-      `deps:drift` — the hold working) and
-      [#133](https://github.com/andrewpetersondev/nextjs-dashboard/pull/133) (`@types/node`
-      26.2.0, green until the fifth drift axis shipped 2026-08-12). **Both should be closed, not
-      merged.** Two `ignore` entries would end the churn — `next` at `16.3.x` while the hold
-      stands, and `@types/node` above the `engines.node` major — and that churn is precisely what
-      [the bot-PR triage routine](docs/bot-pr-triage-routine.md) was written about (#105, #113,
-      #114, #116, #117, #119, #122 all closed rather than merged). While editing it, note that its
-      bucket table has **no row for "green, but re-proposes a deliberate revert"**, which is what
-      #133 was; the table sorts that case into **Clean → Merge**.
-
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
       reasoning in `src/shared/http/notes/adr/001`)_ — **TTFB on production `/` fully
@@ -239,6 +225,19 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Dependabot `ignore` rules for the two held packages** _(2026-08-16,
+      `claude/open-prs-routines-378ac9`)_ — `.github/dependabot.yml` had grouping but no `ignore:`
+      block at all, so `next` and `@types/node` were re-proposed weekly and triaged by hand
+      ([#132](https://github.com/andrewpetersondev/nextjs-dashboard/pull/132),
+      [#133](https://github.com/andrewpetersondev/nextjs-dashboard/pull/133) — both closed, not
+      merged). Now `next` ignores `16.3.x` and `@types/node` ignores majors, with the 24.x line
+      still flowing normally. **Each entry records the condition that RETIRES it**, because an
+      ignore rule nobody revisits turns a temporary hold into a permanent one — the same failure
+      these holds exist to prevent. Note what the entry is NOT: the `next` hold is the exact pin
+      plus the matching override, and this only stops the churn. The routine doc gained the
+      matching note that a green bot PR can still be a deliberate revert — the gap that sorted
+      #133 into **Clean → Merge** — now caught mechanically by `node:drift`'s fifth axis.
 
 - [x] **`node:drift` gains a fifth axis — `@types/node` is now gated against the runtime pin**
       _(2026-08-12, `fix/node-drift-types-node-major`)_ — the guard compared `.nvmrc`,
