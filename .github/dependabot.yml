@@ -23,6 +23,31 @@ updates:
       dev-minor-patch:
         dependency-type: development
         update-types: ["minor", "patch"]
+    # Two packages this repo deliberately pins, where a bot PR can only ever be
+    # wrong. Both were re-proposed weekly and closed by hand (#132, #133). Each
+    # entry names the condition that RETIRES it: an ignore rule nobody revisits
+    # quietly turns a temporary hold into a permanent one, which is the failure
+    # mode these two holds were written to avoid in the first place.
+    ignore:
+      # 16.3.x breaks every Vercel deployment of this repo — `output: "standalone"`
+      # plus Vercel's injected build adapter throws ENOENT on
+      # next-server.js.nft.json (upstream vercel/next.js#96646). Note this entry is
+      # not the hold; the exact pin in package.json plus the matching
+      # pnpm-workspace.yaml override is. Because overrides win over the direct
+      # dependency, a PR that edits only the manifest installs 16.2.12 anyway and
+      # fails `deps:drift`, so a bot cannot produce a correct bump while the pin
+      # stands. This entry only stops the weekly churn.
+      # RETIRE: in the same edit that lifts the pin, once 16.3.1+ ships the fix.
+      - dependency-name: "next"
+        versions: ["16.3.x"]
+      # Must EQUAL the pinned Node major (24), not merely stay under it — that is
+      # the fifth axis of `pnpm node:drift`. A major bump hands tsc an API surface
+      # production does not have, which is not a type error: PR #133 passed every
+      # check green while re-opening a runtime TypeError. Minor/patch on the 24.x
+      # line is still proposed normally.
+      # RETIRE: whenever engines.node / .nvmrc move to a new major, in that edit.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   # Keep the action versions used inside .github/workflows current
   # (e.g. actions/checkout, pnpm/action-setup), batched into one PR.

@@ -62,6 +62,16 @@ that comment saying which kind it is. The routine detects a hold structurally �
 caret, plus a matching override entry — rather than from a remembered version number, so it stays
 correct once a hold is lifted.
 
+**A green bot PR can still be a deliberate revert** (added 2026-08-16). `903fdf59` aligned
+`@types/node` _down_ to the 24.x line so the types match the runtime; Dependabot re-proposed 26.2.0
+about six hours later in [#133](https://github.com/andrewpetersondev/nextjs-dashboard/pull/133), and
+it passed **every check**, because typing against a superset of the runtime's API is not a type
+error. Nothing in the table above sorted that anywhere but **Clean → Merge**. Two things now stop it:
+`node:drift`'s fifth axis fails the bump, and `.github/dependabot.yml` no longer proposes it. The
+general form is worth carrying past this instance — "checks green" answers _does it build_, never
+_was this already decided against_ — so when a bump reverses a recent deliberate change, read the log
+for that change before recommending merge.
+
 **Superseded is verified, not guessed** — the agent reads the current version in `package.json` on
 `main` and compares it against the PR's target, rather than inferring from titles.
 
