@@ -119,9 +119,11 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       upstream and **both deliberately not taken** — `output: process.env.VERCEL ? undefined :
       'standalone'` changes the build path that serves the live demo, and prefixing the Vercel
       build command with `NEXT_ADAPTER_PATH=` is an untracked dashboard setting nothing re-checks.
-      **Next step:** wait for 16.3.1 stable (none exists as of 2026-08-11; still reproducing on
-      `16.3.1-canary.7`), re-read the issue, then bump. The weekly-maintenance routine will
-      re-propose 16.3.x every Monday until it lands. Full mechanism in memory
+      **Next step — the condition originally written here is now MET ON ITS FACE AND STILL WRONG;
+      read the 2026-08-17 entry at the end of this item before acting.** It said "wait for 16.3.1
+      stable, re-read the issue, then bump": 16.3.1 shipped and #96646 is closed, and the hold
+      still stands. Lift it only for a stable release that **contains** the fix commit — never for
+      one that merely post-dates the issue closing. Full mechanism in memory
       (`project_next163_standalone_vercel_break`).
       **Re-checked and made structural 2026-08-11** (dependency-update lane): upstream #96646 is
       **still open**, last updated 2026-08-07, and there is still no 16.3.1 stable — canaries have
@@ -148,6 +150,53 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Biome half (2.5.6 → 2.5.7) was split off and landed separately; the `next` bump and the two
       `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
       `claude/weekly-maintenance-2026-08-09` and travel together whenever the bump is retaken.
+      **HOLD STAYS 2026-08-17 (weekly maintenance) — and the retirement signal this item told you to
+      wait for has arrived while being WRONG.** Both halves of the old condition are now true:
+      **`next@16.3.1` is stable** (published 2026-08-13T22:48:45Z) and **#96646 is CLOSED**
+      (2026-08-14T09:09:04Z). Neither means the bug is fixed. The fix is
+      [PR #97287](https://github.com/vercel/next.js/pull/97287) — it re-scopes the #93684 gate so the
+      whole-app server NFTs are still emitted when `output: 'standalone'` is set alongside an adapter,
+      and guards the `copyTracedFiles` read — and it merged **into `canary`** as `c7b87c23` at
+      **2026-08-14T09:09:02Z**, i.e. **~10 hours AFTER 16.3.1 was published**. The issue closed two
+      seconds later because that merge auto-closed it. Verified three ways rather than inferred:
+      16.3.1's release notes list 20 backports and **#97287 is not among them**; `npm view next
+      versions` shows **nothing newer than 16.3.1** on the 16.3.x line (no 16.3.2); and a search for a
+      backport PR onto the release branch returns **none**. So the fix is **canary-only** and
+      **16.3.1 still contains the deploy-breaking bug**.
+      **The generalisable trap — this is the same mistake as the "green Vercel check", one layer out.**
+      Twice now the tempting signal has been a _proxy_ for the fix rather than the fix: a green Vercel
+      check that never built 16.3.x, and now a closed issue plus a newer stable that predates the
+      merge. **A closed upstream issue is not a shipped fix, and a release that post-dates the closure
+      is not a release that contains it.** Retirement condition restated so it is directly
+      checkable: lift the pin when a **stable `next` release contains commit `c7b87c23`** (check the
+      release notes for #97287, or `npm view next@<v>` and confirm the emitted
+      `next-server.js.nft.json` guard is present) — then do the two-file edit, and let the **Vercel
+      check on a branch where both files moved** be the proof.
+      `.github/dependabot.yml`'s `next: ["16.3.x"]` ignore entry stays correct and its stated
+      retirement ("once 16.3.1+ ships the fix") still reads right — note it turns on _ships the fix_,
+      not on 16.3.1 existing. ⚠ When the fix does land in, say, 16.3.2, that ignore entry **also
+      blocks the good version**, so it must be retired in the same edit that lifts the pin.
+
+- [ ] **`node:drift`'s `@types/node` axis has a transitive blind spot — found 2026-08-17, NOT fixed.**
+      The fifth axis added on 2026-08-12 pins the **declared** `@types/node` range in `package.json` to
+      equal the runtime major (24). It cannot see a transitive open range, and there is one:
+      **`@types/pg@8.21.0` declares `"@types/node": "*"`**, so pnpm resolves it to **26.2.0**, and
+      `@types/pg/index.d.ts` line 1 is `/// <reference types="node" />`. Under pnpm's isolated layout
+      `@types/pg` gets its own symlink — verified pointing at `@types+node@26.2.0` — so a second,
+      Node-26 typings copy is physically installed and reachable through a **direct devDependency**
+      while `node:drift` reports `OK — @types/node ^24.13.3 matches Node 24`. The root
+      `node_modules/@types/node` correctly resolves to 24.13.3, and there are two `@types/node`
+      package entries in the lockfile (both were already on `main`; this is pre-existing, not new).
+      **Scoped honestly: reachability is proven, harm is not.** `pnpm typecheck` (app + Cypress) is
+      green, and TypeScript generally collapses duplicate global declarations to one copy, so no
+      Node-26-only API is currently being accepted. The concern is that the guard's stated invariant —
+      "tsc never sees an API surface production lacks" — is weaker than it reads, which is the same
+      shape as [PR #133](https://github.com/andrewpetersondev/nextjs-dashboard/pull/133): typing
+      against a superset of the runtime is not a type error, so nothing fails loudly.
+      Options if it is worth closing: a `@types/node` entry in `pnpm-workspace.yaml` `overrides` would
+      force one 24.x copy graph-wide (and would then be gated by `deps:drift` like `postcss`/`next`),
+      or extend `node:drift` to walk resolved `@types/node` copies rather than only the manifest.
+      Neither taken — this run is report-only on findings. **Andrew's call.**
 
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
@@ -225,6 +274,37 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Weekly maintenance — Biome 2.5.8, and the `next` hold's retirement signal caught arriving
+      false** _(2026-08-17, `claude/weekly-maintenance-2026-08-17`)_ — the only bump taken was
+      **`@biomejs/biome` 2.5.7 → 2.5.8** (released 2026-08-11, clears the 3-day rule);
+      `biome migrate --write` touched **only the `$schema` URL**, so 2.5.8 needs no config
+      restructuring here. Release notes were grepped for `panicked` first, per the standing rule from
+      the 2.5.3 hold — the single hit is a **fix** for a `noUselessFragments` panic, not a new one.
+      Two rule-level risks were checked rather than assumed, because this repo enables `nursery` at
+      `preset: recommended` **and** `useSortedClasses: "on"`: 2.5.8 changes variant ordering in
+      `sort_v4` (#11249) and adds four nursery rules, yet the slate stayed at **0** across 687 files
+      and `useSortedClasses` rewrote nothing. Slate listed via the summary reporter, never read off an
+      exit code.
+      **The substantive find was not a bump.** `next@16.3.1` went stable and upstream #96646 closed —
+      the exact two conditions this list said to wait for — and the hold still stands, because the fix
+      merged to `canary` ~10h **after** 16.3.1 was cut. Details and the restated, directly-checkable
+      retirement condition are in the open `next` item above; the short version is that **a closed
+      upstream issue is not a shipped fix**, which is the "green Vercel check" lesson one layer out.
+      **Reported, not fixed** (audit is report-only in this routine): a **new high advisory**,
+      [GHSA-2v37-7h3g-55p8](https://github.com/advisories/GHSA-2v37-7h3g-55p8) — `nanoid` <3.3.18
+      infinite-loops in custom generators at size zero — against the single installed `nanoid@3.3.17`,
+      reached via `next → postcss → nanoid` plus the cypress webpack chain (18 paths). Diagnosed to
+      save a step: `postcss@8.5.26` already declares `^3.3.17`, which **admits** the patched 3.3.18
+      (published 2026-08-07), so this is the **droppable stale-lockfile class** like `fast-uri` and
+      `brace-expansion` — a `pnpm-workspace.yaml` override is the only lever, since `pnpm update`
+      cannot move a transitive. Nothing in this repo imports `nanoid`, so the size-zero path is not
+      reachable from our code.
+      Validation: Biome slate **0**, markdownlint 0, dprint clean, typecheck (app + Cypress) green,
+      `node:drift` / `deps:drift` / `db:drift` all OK, knip clean, unit **465/465**. E2E not run (per
+      the routine). One environment gotcha re-confirmed: the non-interactive shell inherited **Node
+      26** because the `.nvmrc` chpwd hook is interactive-only, so the checks were run under
+      `nvm use 24` — otherwise `node:drift` fails for an environment reason and reads as a repo break.
 
 - [x] **Dependabot `ignore` rules for the two held packages** _(2026-08-16,
       `claude/open-prs-routines-378ac9`)_ — `.github/dependabot.yml` had grouping but no `ignore:`
