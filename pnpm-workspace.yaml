@@ -41,14 +41,28 @@ overrides:
   # `ENOENT … .next/next-server.js.nft.json` thrown from `onBuildComplete`. Next PR #93684
   # stopped emitting that file when an adapter is active, but the standalone finalizer's
   # `copyTracedFiles` still reads it unguarded; Vercel injects its adapter via
-  # NEXT_ADAPTER_PATH, so both sides are on. Upstream vercel/next.js#96646, still OPEN
-  # (re-checked 2026-08-11 — no 16.3.1 stable, canaries at 16.3.1-canary.11).
+  # NEXT_ADAPTER_PATH, so both sides are on.
+  # ⚠ Re-verified 2026-08-24 against next 16.3.2 (latest stable, released 2026-08-21) — the
+  #   hold STILL STANDS. Upstream vercel/next.js#96646 is CLOSED and both 16.3.1 (2026-08-13)
+  #   and 16.3.2 (2026-08-21) are stable, but neither contains the actual fix,
+  #   vercel/next.js#97287 (merge commit c7b87c23), which landed on CANARY only
+  #   (2026-08-14, ~10h after 16.3.1 shipped) and is what auto-closed the issue.
+  #   Checked directly, not inferred from dates: `gh api
+  #   repos/vercel/next.js/compare/c7b87c23...v16.3.2 -q .status` → "diverged" (fix commit is
+  #   NOT an ancestor of the 16.3.2 tag); same result for v16.3.1.
   # ⚠ This repo's own gates CANNOT catch it: a plain `next build` runs no adapter, so the
   #   `csp` job went green on the exact commit Vercel refused. On any next bump, the Vercel
-  #   check is the only signal.
+  #   check is the only signal — and even that is blind unless BOTH this override and the
+  #   package.json pin move together (see next bullet), since the override otherwise pins
+  #   the whole graph including the direct dependency and the new version is never installed.
   # ⚠ EXACT, not a caret — `^16.2.12` admits 16.3.0, so a caret holds nothing.
   # ⚠ MUST equal the `next` dependency range in package.json; `pnpm deps:drift` gates it.
-  # Drop both this and the package.json pin once 16.3.1 stable ships with the fix.
+  # RETIRE: only when a STABLE release CONTAINS commit c7b87c23 — never merely because a
+  #   release post-dates the issue closing. Directly checkable:
+  #   `gh api repos/vercel/next.js/compare/c7b87c23...v<tag> -q .status` must read "ahead" or
+  #   "identical", never "diverged". Then lift this override, the package.json pin, and the
+  #   `next: ["16.3.x"]` ignore in .github/dependabot.yml (which would otherwise also block
+  #   the fixed version) in ONE edit, and let the Vercel check on that branch be the proof.
   next: 16.2.12
 
 # Vetted peer combos that upstream ranges haven't caught up to (both at latest release):

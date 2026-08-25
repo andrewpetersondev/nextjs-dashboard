@@ -17,7 +17,7 @@
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.5.8",
+		"@biomejs/biome": "2.5.10",
 		"@cypress/webpack-batteries-included-preprocessor": "^4.2.0",
 		"@cypress/webpack-preprocessor": "^7.1.1",
 		"@tailwindcss/postcss": "^4.3.3",
@@ -28,10 +28,10 @@
 		"@types/pg": "^8.21.0",
 		"@types/react": "19.2.18",
 		"@types/react-dom": "19.2.4",
-		"@vitest/coverage-v8": "4.1.10",
-		"@vitest/ui": "4.1.10",
+		"@vitest/coverage-v8": "4.1.11",
+		"@vitest/ui": "4.1.11",
 		"axe-core": "^4.13.0",
-		"cypress": "^15.20.0",
+		"cypress": "^15.21.0",
 		"cypress-axe": "^1.7.0",
 		"dotenv": "^17.4.2",
 		"dotenv-cli": "^11.0.0",
@@ -47,7 +47,7 @@
 		"tsx": "^4.23.12",
 		"typescript": "^7.0.2",
 		"vite-tsconfig-paths": "^6.1.1",
-		"vitest": "4.1.10"
+		"vitest": "4.1.11"
 	},
 	"engines": {
 		"node": "24.x"
