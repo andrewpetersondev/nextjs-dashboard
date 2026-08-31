@@ -176,6 +176,13 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       retirement ("once 16.3.1+ ships the fix") still reads right — note it turns on _ships the fix_,
       not on 16.3.1 existing. ⚠ When the fix does land in, say, 16.3.2, that ignore entry **also
       blocks the good version**, so it must be retired in the same edit that lifts the pin.
+      **HOLD STAYS 2026-08-24 (weekly maintenance) — re-checked against 16.3.2, still diverged.**
+      `next@16.3.2` shipped stable 2026-08-21 (3 days old, past this routine's freshness floor).
+      Checked directly rather than inferred from dates: `gh api
+      repos/vercel/next.js/compare/c7b87c23...v16.3.2 -q .status` → **"diverged"** — the fix commit
+      is not an ancestor of the 16.3.2 tag (same result for v16.3.1). The retirement condition from
+      2026-08-17 is unchanged and still not met; `pnpm-workspace.yaml`'s override comment carries
+      the same re-verification.
 
 - [ ] **`node:drift`'s `@types/node` axis has a transitive blind spot — found 2026-08-17, NOT fixed.**
       The fifth axis added on 2026-08-12 pins the **declared** `@types/node` range in `package.json` to
@@ -274,6 +281,37 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Weekly maintenance — Biome 2.5.10, vitest/cypress patch bumps, `next` hold re-verified a
+      second time** _(2026-08-24, `claude/weekly-maintenance-2026-08-24`)_ — bumps taken (all clear
+      the 3-day freshness floor): **`@biomejs/biome` 2.5.8 → 2.5.10** (`biome migrate --write`
+      touched only the `$schema` URL, no config restructuring; slate stayed **0** across 687 files,
+      no `panicked` in the diff); **`vitest`/`@vitest/coverage-v8`/`@vitest/ui` 4.1.10 → 4.1.11**
+      (kept in lockstep, matching versions); **`cypress` 15.20.0 → 15.21.0** (already caret-ranged,
+      `pnpm update` alone moved it). `react`/`react-dom`, `drizzle-kit`/`drizzle-orm`, and
+      `typescript` are all already on latest stable. `pnpm` itself stays at `11.22.0` — latest is
+      `11.23.0` but it published 2026-08-23, one day old, so it's held back by the freshness rule
+      until next week.
+      **`next` hold re-verified against 16.3.2** (latest stable, released 2026-08-21) — **still
+      diverged from the fix.** Independently re-ran the check the 2026-08-17 entry established:
+      `gh api repos/vercel/next.js/compare/c7b87c23...v16.3.2 -q .status` → `"diverged"` (same for
+      v16.3.1). The retirement condition is unchanged; see the open item above and the
+      `pnpm-workspace.yaml` override comment, both updated with this date.
+      **`nanoid` <3.3.18 advisory (GHSA-2v37-7h3g-55p8) recurred** — same finding as 2026-08-17,
+      still unaddressed (report-only per this routine; `postcss@8.5.26` already admits the patched
+      3.3.18, so it remains a one-line `pnpm-workspace.yaml` override away, same class as
+      `fast-uri`/`brace-expansion` — **Andrew's call**, second week running).
+      **Found, not touched: uncommitted changes already sitting on `main`'s primary checkout**
+      (`biome.json`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`) that closely
+      resemble an interrupted prior maintenance pass — same Biome 2.5.8→2.5.10 bump, a jose
+      6.2.9→6.2.10 bump not repeated here, and a `next`-hold re-verification dated 2026-08-23
+      reaching the same "still diverged" conclusion independently. Left as-is per the
+      never-touch-`main`-directly rule; this run did its own independent verification instead of
+      trusting or applying that WIP. **Andrew should look at that diff before it's lost** — either
+      commit it separately or `git restore` it once reconciled against this branch.
+      Validation: Biome slate **0**, markdownlint 0, dprint clean, typecheck (app + Cypress) green,
+      `node:drift` / `deps:drift` / `db:drift` all OK (drift check: dev/test/prod migrations agree
+      on final schema), knip clean, unit **465/465**. E2E not run (per the routine).
 
 - [x] **Weekly maintenance — Biome 2.5.8, and the `next` hold's retirement signal caught arriving
       false** _(2026-08-17, `claude/weekly-maintenance-2026-08-17`)_ — the only bump taken was
