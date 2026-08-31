@@ -46,22 +46,6 @@ function getEnvVariableResult<K extends EnvVariables>(
 }
 
 /**
- * Get a required env var value or throw.
- *
- * @param key - The environment variable key to retrieve.
- * @returns The trimmed string value.
- * @throws {Error} When the environment variable is missing or empty.
- */
-// biome-ignore lint/style/useExportsLast: fix at some point
-export function getEnvVariable<K extends EnvVariables>(key: K): string {
-	const result = getEnvVariableResult(key);
-	if (result.ok) {
-		return result.value;
-	}
-	throw new Error(result.error.message);
-}
-
-/**
  * Validate required environment variables as a Result.
  *
  * @param requiredVars - Array of environment variable keys to validate.
@@ -111,6 +95,21 @@ function _validateEnv(
 	if (!result.ok) {
 		throw new Error(result.error.message);
 	}
+}
+
+/**
+ * Get a required env var value or throw.
+ *
+ * @param key - The environment variable key to retrieve.
+ * @returns The trimmed string value.
+ * @throws {Error} When the environment variable is missing or empty.
+ */
+export function getEnvVariable<K extends EnvVariables>(key: K): string {
+	const result = getEnvVariableResult(key);
+	if (result.ok) {
+		return result.value;
+	}
+	throw new Error(result.error.message);
 }
 
 /**

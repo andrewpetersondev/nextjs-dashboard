@@ -16,7 +16,6 @@ import { formatCurrency } from "@/shared/primitives/money/convert";
 import { DashboardOverview } from "@/shell/dashboard/components/dashboard-overview";
 import { DASHBOARD_TITLES } from "@/shell/dashboard/constants";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const dynamic = "force-dynamic";
 
 /**

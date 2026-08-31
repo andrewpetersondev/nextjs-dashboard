@@ -1,13 +1,14 @@
 "use client";
 
-// biome-ignore lint/nursery/useExplicitType: <fix later>
+import type { JSX } from "react";
+
 export default function GlobalError({
 	error,
 	reset,
 }: {
 	error: Error & { digest?: string };
 	reset: () => void;
-}) {
+}): JSX.Element {
 	return (
 		// global-error must include html and body tags; it replaces the root
 		// layout entirely, so it declares its own lang (kept in sync with

@@ -145,9 +145,7 @@ class LoggingClient extends BaseLogger implements LoggingClientContract {
 
 		// Double cast to bypass missing index signature in AppError
 		const rawError = error as unknown as Record<string, unknown>;
-		// TODO: INDICATES A POSSIBLE CONCERN
-		// biome-ignore lint/complexity/useLiteralKeys: POSSIBLE ISSUE
-		const originalCause = rawError["originalCause"];
+		const originalCause = rawError.originalCause;
 		const hasOriginalCause = originalCause !== undefined;
 
 		return {

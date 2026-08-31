@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/style/noMagicNumbers: find a better solution */
-
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UPDATE_SESSION_OUTCOME_REASON } from "@/modules/auth/application/session/dtos/responses/update-session-outcome.dto";
 import { toUnixSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
@@ -15,7 +13,7 @@ vi.mock("@/shared/core/config/server/env-server", () => ({
 }));
 
 describe("Session Rotation Integration", () => {
-	// biome-ignore lint/suspicious/noExplicitAny: is this okay?
+	// biome-ignore lint/suspicious/noExplicitAny: the mocked cookie jar is Next's cookies() return shape plus vitest's mock methods; no exported type describes that combination.
 	let mockCookies: any;
 
 	beforeEach(async () => {
@@ -31,10 +29,10 @@ describe("Session Rotation Integration", () => {
 		vi.spyOn(SessionCookieStoreAdapter.prototype, "get").mockRestore();
 	});
 
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
+	// biome-ignore lint/nursery/useExplicitType: the codec is reached through the `as any` below, so there is no nameable type to annotate here.
 	const getCodec = async () => {
 		const auth = await makeAuthComposition();
-		// biome-ignore lint/suspicious/noExplicitAny: is this okay?
+		// biome-ignore lint/suspicious/noExplicitAny: reaches a private `deps` field to get the codec — the composition exposes no public accessor, and these tests need the real one.
 		const tokenService = (auth.services.sessionService as any).deps
 			.sessionTokenService;
 		return tokenService.codec;
@@ -45,12 +43,11 @@ describe("Session Rotation Integration", () => {
 	 *   token with no `auth_time` claim at all (what live tokens looked like before
 	 *   the absolute ceiling was anchored).
 	 */
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
 	const createTokenWithDates = async (
 		iat: number,
 		exp: number,
 		authTime?: number,
-	) => {
+	): Promise<string> => {
 		const codec = await getCodec();
 
 		const claims = {
@@ -72,7 +69,7 @@ describe("Session Rotation Integration", () => {
 	};
 
 	/** Decodes a signed token back to raw JWT claims (no semantic validation). */
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
+	// biome-ignore lint/nursery/useExplicitType: claims come back through getCodec's `any`, so an annotation here would assert a shape rather than check one.
 	const decodeToken = async (token: string) => {
 		const codec = await getCodec();
 		const result = await codec.decode(token);
@@ -82,7 +79,7 @@ describe("Session Rotation Integration", () => {
 		return result.value;
 	};
 
-	// biome-ignore lint/nursery/useExplicitType: <fix later>
+	// biome-ignore lint/nursery/useExplicitType: returns vitest's MockInstance for a spied prototype method; naming it adds no information the call sites use.
 	const stubCookieWith = async (token: string) => {
 		const { SessionCookieStoreAdapter } = await import(
 			"@/modules/auth/infrastructure/session/adapters/session-cookie-store.adapter"

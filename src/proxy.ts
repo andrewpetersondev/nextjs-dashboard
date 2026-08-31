@@ -22,6 +22,9 @@ import {
 } from "@/shared/routing/routes";
 import { logger as defaultLogger } from "@/shared/telemetry/logging/infrastructure/logging.client";
 
+/** Characters of a UUID kept when synthesising a request id, enough to disambiguate in logs. */
+const REQUEST_ID_SUFFIX_LENGTH = 8;
+
 /**
  * Per-request CSP context.
  *
@@ -78,10 +81,7 @@ export default async function proxy(req: NextRequest): Promise<NextResponse> {
 	 */
 	const requestId =
 		req.headers.get("x-request-id") ??
-		`mw-${crypto
-			.randomUUID()
-			// biome-ignore lint/style/noMagicNumbers: <ignore for now>
-			.slice(0, 8)}`;
+		`mw-${crypto.randomUUID().slice(0, REQUEST_ID_SUFFIX_LENGTH)}`;
 
 	const logger = defaultLogger
 		.withContext("auth:middleware")

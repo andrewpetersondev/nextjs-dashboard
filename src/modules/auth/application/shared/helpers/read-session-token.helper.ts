@@ -41,7 +41,27 @@ async function tryCleanupInvalidToken(
  * @param options - Configuration options (e.g., whether to cleanup on invalid token).
  * @returns A Result containing the read session token outcome or an AppError.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+type InvalidTokenKind =
+	| "invalid_claims"
+	| "invalid_claims_semantics"
+	| "invalid_token";
+
+/**
+ * Classifies why a session token failed validation.
+ * @param error - The failure from `sessionTokenService.validate`.
+ */
+function classifyInvalidToken(error: AppError): InvalidTokenKind {
+	const metadataReason =
+		error.key === "validation"
+			? (error.metadata as Readonly<{ reason?: string }>).reason
+			: undefined;
+
+	if (metadataReason === "invalid_schema") {
+		return "invalid_claims";
+	}
+	return metadataReason ? "invalid_claims_semantics" : "invalid_token";
+}
+
 export async function readSessionTokenHelper(
 	deps: Readonly<{
 		logger: LoggingClientContract;
@@ -89,22 +109,7 @@ export async function readSessionTokenHelper(
 	);
 
 	if (!validatedResult.ok) {
-		const metadataReason =
-			validatedResult.error.key === "validation"
-				? (validatedResult.error.metadata as Readonly<{ reason?: string }>)
-						.reason
-				: undefined;
-
-		const kind:
-			| "invalid_claims"
-			| "invalid_claims_semantics"
-			| "invalid_token" =
-			metadataReason === "invalid_schema"
-				? "invalid_claims"
-				: // biome-ignore lint/style/noNestedTernary: TODO: POSSIBLY NEED TO REFACTOR
-					metadataReason
-					? "invalid_claims_semantics"
-					: "invalid_token";
+		const kind = classifyInvalidToken(validatedResult.error);
 
 		const didCleanup = await tryCleanupInvalidToken({
 			logger: deps.logger,

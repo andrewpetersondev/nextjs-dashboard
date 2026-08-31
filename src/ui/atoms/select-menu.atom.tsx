@@ -45,7 +45,7 @@ export interface SelectMenuProps<
  * Supports both controlled and uncontrolled usage.
  * @template T - The type of the option object.
  */
-// biome-ignore lint/style/useExportsLast: <this follows convention>
+// biome-ignore lint/style/useExportsLast: React's `displayName` has to be assigned after the component is defined, so a trailing statement always follows the exports in this file.
 export const SelectMenuAtom: SelectMenuComponent = React.memo(
 	function SelectMenuInner<T extends { id: string; name: string }>({
 		className,

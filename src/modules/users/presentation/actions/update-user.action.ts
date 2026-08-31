@@ -147,8 +147,7 @@ export async function updateUserAction(
 
 		// Read existing user via service
 		const existingRes = await service.readUserById(idRes.value);
-		// biome-ignore lint/complexity/useSimplifiedLogicExpression: fix later
-		if (!existingRes.ok || !existingRes.value) {
+		if (!(existingRes.ok && existingRes.value)) {
 			return notFoundResult(fields);
 		}
 

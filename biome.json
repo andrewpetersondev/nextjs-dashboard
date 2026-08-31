@@ -511,6 +511,16 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["src/app/**/*.{ts,tsx}"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useComponentExportOnlyModules": "off"
+					}
+				}
+			}
 		}
 	],
 	"root": true,

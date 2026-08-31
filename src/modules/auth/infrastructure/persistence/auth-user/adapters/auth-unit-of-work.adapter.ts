@@ -1,5 +1,5 @@
 import "server-only";
-// biome-ignore lint/correctness/noNodejsModules: <server-only file>
+// biome-ignore lint/correctness/noNodejsModules: the `server-only` import above turns any client-bundle reference to this module into a build error, so node: builtins are safe here.
 import { randomUUID } from "node:crypto";
 import type { AuthTxDeps } from "@/modules/auth/application/auth-user/contracts/repositories/auth-tx.deps";
 import type { AuthUnitOfWorkContract } from "@/modules/auth/application/auth-user/contracts/repositories/auth-unit-of-work.contract";
