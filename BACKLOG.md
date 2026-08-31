@@ -315,6 +315,47 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       inside the project. `biome check <single-file>` is likewise not a substitute — it skips the
       project-wide pass and reported this file clean even in a healthy tree.
 
+- [x] **`nanoid` <3.3.18 advisory (GHSA-2v37-7h3g-55p8) closed — the third stale-lockfile override**
+      _(2026-08-31, `claude/pnpm-audit-high-severity-5d7949`)_ — the high advisory that the
+      2026-08-17 and 2026-08-24 maintenance runs each reported and left open (report-only routine,
+      then "Andrew's call") is fixed with the one-line `pnpm-workspace.yaml` override those
+      entries predicted: `nanoid: ^3.3.18`. `pnpm audit` goes from **1 high** to **"No known
+      vulnerabilities found"**, and the lockfile diff is **five lines** — the `nanoid@3.3.17` →
+      `3.3.18` entry plus `postcss`'s edge to it — so the graph keeps **one** nanoid copy instead of
+      forking, which is the failure mode an override is most likely to cause.
+      **Re-derived rather than trusted from those entries**, since a diagnosis two weeks old is a
+      claim, not a fact: `postcss@8.5.26` is still latest and still declares `nanoid: ^3.3.17`,
+      which **admits** the patched 3.3.18. So this stays the **droppable stale-lockfile class**
+      alongside `fast-uri` and `brace-expansion` — the blocker was only that 3.3.18 published four
+      days after 3.3.17 was locked — and not the upstream-pins-low class of `esbuild`/`sharp`. It
+      pins `^3.3.18` inside 3.x deliberately: `postcss`'s `^3.3.17` excludes the 4.x/5.x lines, so a
+      wider range would fork the graph rather than dedupe it. 3.3.18 published 2026-08-07, three
+      weeks clear of pnpm 11's `minimumReleaseAge` floor, so it carries no repeat of the
+      <24h-old-package Vercel failure.
+      Two details worth keeping. **`nanoid` is on the prod path**, unlike both its siblings —
+      `next → postcss → nanoid`, with the cypress webpack chain only adding more paths — which is
+      why `pnpm audit` reports it as `"dev": false`; nothing in this repo imports `nanoid`, so the
+      size-zero loop was never reachable from our own code, but the "dev-only, therefore low
+      urgency" reflex from the last two overrides does not transfer here. And **`deps:drift` does
+      not gate this entry**: `nanoid` has no `package.json` counterpart, so it lands in the
+      `overrideOnly` bucket with nothing to stay in lockstep with — the drift risk that bit
+      `postcss` does not exist for it.
+      Validation: every `check:fast` gate green — markdownlint 0, dprint clean, `next typegen` OK,
+      typecheck (app + Cypress) green, and `node:drift` / `deps:drift` / `db:drift` all OK, with
+      `deps:drift` naming the split this change created: **2 overlapping (`postcss`, `next`) agree,
+      6 override-only** now including `nanoid`. Run under `nvm use 24` — the non-interactive shell
+      inherits Node 26, which fails `node:drift` for an environment reason and reads as a repo break
+      (same gotcha as the 2026-08-17 run).
+      **Biome slate was 2, not 0 — but pre-existing and unrelated to this change**, which touches no
+      `.tsx`: the Biome **2.5.11** bump in `29a7c981` fixed the ref false positive that the two
+      `noUnnecessaryConditions` suppressions in
+      [`session-refresh.tsx`](src/modules/auth/presentation/session/session-refresh.tsx) were added
+      for on 2026-07-30, so both now warn as `suppressions/unused`. Deleting the two stale comments
+      restores the 0 slate; left out of this commit deliberately to keep a security fix free of
+      unrelated source edits. **Note the standing rule still held** — the warnings were found by
+      listing diagnostics, not by exit code: `biome check` exits **0** with warnings outstanding, so
+      `check:fast` walked straight past them.
+
 - [x] **Suppression sweep — every `biome-ignore` now states a verifiable reason**
       _(2026-08-31, `claude/biome-stale-suppressions`)_ — the repo had **112** `biome-ignore`
       comments, **66** of them justified only by a placeholder (`fix later`, `<ignore for now>`,

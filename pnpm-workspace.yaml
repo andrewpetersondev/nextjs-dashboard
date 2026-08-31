@@ -36,6 +36,14 @@ overrides:
   # lockfile pinned to 5.0.8 rather than an upstream pin below the patched line. Drop once
   # the graph resolves >=5.0.9 on its own; stay on 5.x.
   brace-expansion: ^5.0.9
+  # GHSA-2v37-7h3g-55p8 (nanoid, patched 3.3.18): custom generators loop forever at size 0.
+  # Same stale-lockfile class as fast-uri/brace-expansion — postcss 8.5.26 (latest) already
+  # declares ^3.3.17, which admits the fix; the lockfile was just pinned to 3.3.17 (released
+  # 4 days before it). Reached on the PROD path (next → postcss → nanoid) as well as the
+  # cypress webpack chain, though nothing here imports nanoid, so the size-0 path is not
+  # reachable from our code. Drop once the graph resolves >=3.3.18 on its own; stay on 3.x,
+  # since postcss's ^3.3.17 excludes the 4.x/5.x lines.
+  nanoid: ^3.3.18
   # Deliberate hold at 16.2.12: `output: "standalone"` (next.config.ts, for the Docker path)
   # plus Vercel's build adapter fails EVERY deploy on 16.3.x —
   # `ENOENT … .next/next-server.js.nft.json` thrown from `onBuildComplete`. Next PR #93684
