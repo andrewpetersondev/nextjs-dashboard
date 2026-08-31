@@ -142,9 +142,11 @@ function useSessionRefresh(): void {
 
 		return () => {
 			aborted = true;
+			// biome-ignore lint/suspicious/noUnnecessaryConditions: type-inference false positive (still present in Biome 2.5.11) — the ref holds a timer handle assigned earlier in this effect, but Biome cannot resolve `ReturnType<typeof setTimeout>` and collapses the type to `null`.
 			if (kickoffRef.current) {
 				clearTimeout(kickoffRef.current);
 			}
+			// biome-ignore lint/suspicious/noUnnecessaryConditions: type-inference false positive (still present in Biome 2.5.11) — the ref holds a timer handle assigned earlier in this effect, but Biome cannot resolve `ReturnType<typeof setTimeout>` and collapses the type to `null`.
 			if (intervalRef.current) {
 				clearInterval(intervalRef.current);
 			}

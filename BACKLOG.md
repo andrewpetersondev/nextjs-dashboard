@@ -282,12 +282,47 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Restored two ref suppressions — a type-aware rule that silently cannot run reads exactly
+      like a rule that passes** _(2026-08-31, `claude/biome-stale-suppressions`)_ — the two
+      `noUnnecessaryConditions` suppressions in
+      [`session-refresh.tsx`](src/modules/auth/presentation/session/session-refresh.tsx) were
+      **never stale**, and deleting them put 2 warnings on `main`. Restored at the same two guards,
+      with a justification that no longer names a version. Total suppressions: 75 → **77**.
+      **The false premise.** `noUnnecessaryConditions` is **type-aware** — its own message says
+      _"The value's type can never be truthy"_ — so it needs a resolvable `node_modules` to type
+      `ReturnType<typeof setTimeout>`. The session that deleted them ran in a worktree that had
+      **no `node_modules` at all** at that moment, and later only one whose virtual store was
+      redirected outside the project root to work around a sandbox restriction. In both states the
+      rule cannot run, so it emits nothing — and Biome then reports the still-correct suppression as
+      `suppressions/unused`. That warning was read as "2.5.11 fixed the false positive". It had not:
+      the bug is still present in **2.5.11**, and the ref genuinely does hold a timer handle
+      assigned earlier in the same effect.
+      **Proved both directions before believing it**, in a throwaway worktree at `main` with a
+      normal `pnpm install`: without the suppressions, the 2 warnings reproduce exactly (`@types/node`
+      resolving to `../.pnpm/...` rather than out to `/tmp`); with them restored, Biome reports
+      **zero diagnostics**. The broken environment is symmetric and therefore especially misleading —
+      it hides the rule _and_ flags its suppression as unused, so each half corroborates the wrong
+      conclusion.
+      **The rest of the sweep re-validated clean** in that same correct environment — `check:fast`
+      fully green, knip clean, unit **465/465** — so only these two were affected. Also worth
+      recording: `pnpm biome:lint` and `pnpm check:fast` both exited **0** on the warnings, because
+      `biome check` exits 0 with warnings outstanding; the merge did not break the build, it broke
+      the zero-diagnostic standard.
+      **The durable lesson is about the harness, not Biome.** A linter finding is only as
+      trustworthy as the environment that produced it, and type-aware rules fail _silently_ rather
+      than loudly when they cannot resolve types. Before acting on a `suppressions/unused` warning
+      for a type-aware rule, confirm the rule can actually run: check that `node_modules` resolves
+      inside the project. `biome check <single-file>` is likewise not a substitute — it skips the
+      project-wide pass and reported this file clean even in a healthy tree.
+
 - [x] **Suppression sweep — every `biome-ignore` now states a verifiable reason**
       _(2026-08-31, `claude/biome-stale-suppressions`)_ — the repo had **112** `biome-ignore`
       comments, **66** of them justified only by a placeholder (`fix later`, `<ignore for now>`,
       `close enough`, `is this okay?`, `TODO FIND A BETTER SOLUTION LATER`). Now: **75 suppressions,
       0 placeholders**, and Biome still reports **zero diagnostics of any severity** across 687
       files. 37 suppressions are gone outright; every survivor names a reason that can be checked.
+      _(Later corrected to **77**: two ref suppressions were restored — see the top entry. The rest
+      of this sweep was re-validated in a correctly-installed environment and stands.)_
       **The biggest win was config, not edits.** `useComponentExportOnlyModules` is _categorically_
       inapplicable under `src/app/**` — App Router requires `metadata` / `dynamic` /
       `generateMetadata` to be exported from the same module as the component — so one scoped
@@ -342,7 +377,11 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       justifications standing in for an unfinished refactor, not settled decisions. They are part of
       a repo-wide pattern: ~120 `biome-ignore` comments, a large share reading `fix later`,
       `<ignore for now>` or `close enough`.
-      **The two stale ones.** Biome **2.5.11** (bumped in `29a7c981`) fixed the 2.5.6
+      **The two stale ones.** ⚠ **CORRECTED 2026-08-31 — this paragraph's premise was wrong; see
+      the top entry.** Biome 2.5.11 did **not** fix the 2.5.6 `noUnnecessaryConditions` false
+      positive; the rule is type-aware and simply could not run in the session's environment, so a
+      correct suppression looked unused. Both comments have been restored. The original claim,
+      left for the record: Biome **2.5.11** (bumped in `29a7c981`) fixed the 2.5.6
       `noUnnecessaryConditions` false positive on refs, so the suppressions added for it on
       2026-07-30 started warning as `suppressions/unused`. Deleted both comments; the
       `if (kickoffRef.current)` / `if (intervalRef.current)` guards **stay** — they are real teardown
