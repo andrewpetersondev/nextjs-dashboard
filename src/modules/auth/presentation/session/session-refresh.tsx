@@ -90,7 +90,7 @@ function useSessionRefresh(): void {
 	useEffect(() => {
 		let aborted = false;
 
-		const ping = async (): Promise<void> => {
+		const runPing = async (): Promise<void> => {
 			if (aborted || inFlightRef.current) {
 				return;
 			}
@@ -105,10 +105,18 @@ function useSessionRefresh(): void {
 			}
 		};
 
+		// Timers and listeners take sync callbacks, so the rejection is handled here once
+		// rather than discarded at each call site: performSessionPing's localStorage access
+		// sits outside its own try/catch and throws when the browser blocks site data.
+		const ping = (): void => {
+			runPing().catch(() => {
+				// Transient failure; the next interval tick retries.
+			});
+		};
+
 		// Kickoff once after a short delay with jitter.
 		kickoffRef.current = setTimeout(
 			() => {
-				// biome-ignore lint/nursery/noFloatingPromises: ignore for now
 				ping();
 			},
 			KICKOFF_TIMEOUT_MS + Math.floor(Math.random() * REFRESH_JITTER_MS),
@@ -117,40 +125,31 @@ function useSessionRefresh(): void {
 		// Periodic checks; ping also runs on focus/visibilitychange.
 		intervalRef.current = setInterval(
 			() => {
-				// biome-ignore lint/nursery/noFloatingPromises: ignore for now
 				ping();
 			},
 			REFRESH_INTERVAL_MS + Math.floor(Math.random() * REFRESH_JITTER_MS),
 		);
 
-		const onFocus = (): void => {
+		// Both events mean "the tab is usable again", so they share one handler.
+		const onWake = (): void => {
 			if (!(document.hidden || inFlightRef.current)) {
-				// biome-ignore lint/nursery/noFloatingPromises: ignore for now
-				ping();
-			}
-		};
-		const onVisibility = (): void => {
-			if (!(document.hidden || inFlightRef.current)) {
-				// biome-ignore lint/nursery/noFloatingPromises: ignore for now
 				ping();
 			}
 		};
 
-		window.addEventListener("focus", onFocus);
-		document.addEventListener("visibilitychange", onVisibility);
+		window.addEventListener("focus", onWake);
+		document.addEventListener("visibilitychange", onWake);
 
 		return () => {
 			aborted = true;
-			// biome-ignore lint/suspicious/noUnnecessaryConditions: Biome 2.5.6 false positive on refs — .current is assigned a timer handle earlier in this effect
 			if (kickoffRef.current) {
 				clearTimeout(kickoffRef.current);
 			}
-			// biome-ignore lint/suspicious/noUnnecessaryConditions: Biome 2.5.6 false positive on refs — .current is assigned a timer handle earlier in this effect
 			if (intervalRef.current) {
 				clearInterval(intervalRef.current);
 			}
-			window.removeEventListener("focus", onFocus);
-			document.removeEventListener("visibilitychange", onVisibility);
+			window.removeEventListener("focus", onWake);
+			document.removeEventListener("visibilitychange", onWake);
 		};
 	}, []);
 }
