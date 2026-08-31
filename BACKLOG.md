@@ -148,6 +148,29 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Biome half (2.5.6 → 2.5.7) was split off and landed separately; the `next` bump and the two
       `pnpm-workspace.yaml` override-comment rewrites that describe 16.3.0 stayed behind on
       `claude/weekly-maintenance-2026-08-09` and travel together whenever the bump is retaken.
+      **Re-verified 2026-08-30 (weekly-maintenance routine) — hold STILL STANDS, and the
+      stakes just changed.** Latest stable is now **16.3.3** (2026-08-25). Same three-way
+      check as 2026-08-23, re-run against 16.3.3: `gh api
+      repos/vercel/next.js/compare/c7b87c23...v16.3.3` → **`diverged`** — the standalone+adapter
+      NFT fix (PR #97287) is still canary-only, not backported to any 16.3.x stable. Issue
+      #96646 stays closed (that's the canary merge auto-closing it), which is why "issue
+      closed" keeps reading as a false go-signal — checked directly, not inferred from dates.
+      **New this week:** 16.3.3 is a **security release** — GHSA-p293-qw3h-jr36 (critical,
+      Windows-hosted path-traversal RCE — not applicable, this repo deploys to Vercel/Linux)
+      and GHSA-2xp9-vwfh-vxw4 (critical, `libheif`/AVIF RCE in Next's Image Optimization API —
+      **applies broadly, no OS restriction**). Both list 16.2.12 as vulnerable and 16.3.3 as the
+      patched version; no 16.2.x backport exists (16.2.12, 2026-07-25, is still the newest
+      16.2.x release). This repo has no `images` block in `next.config.ts`, so optimization is
+      on with its default formats (AVIF included), and 6 files render via `next/image` — so the
+      AVIF advisory is a live, unmitigated exposure on the pinned version, not a theoretical one.
+      This is now a real trade-off, not just a deploy-breakage wait: staying pinned avoids the
+      Vercel `ENOENT` failure but leaves a critical, broadly-applicable image-optimization RCE
+      unpatched; bumping to 16.3.3 fixes that but reintroduces the deploy break. A cheap
+      stopgap worth considering **without touching the `next` pin**: restrict
+      `images.formats` to drop AVIF (e.g. `['image/webp']`) or otherwise disable AVIF
+      processing, closing the GHSA-2xp9 surface while the deploy-breaking hold stays in force.
+      That edit is scoped and low-risk enough to do outside this report-only routine, but it's
+      Andrew's call, same as lifting the hold itself.
 
 - [ ] **CSP follow-ups** ([#126](https://github.com/andrewpetersondev/nextjs-dashboard/issues/126))
       _(added 2026-08-03, from the security-headers lane — full
