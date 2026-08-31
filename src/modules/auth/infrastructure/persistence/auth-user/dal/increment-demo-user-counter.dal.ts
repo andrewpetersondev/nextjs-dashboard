@@ -22,7 +22,7 @@ import type { LoggingClientContract } from "@/shared/telemetry/logging/core/logg
  * @param logger - Logging client.
  * @returns Result containing the counter id, or AppError.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: a guard-clause chain over one insert — each invariant logs and returns its own typed AppError, which is the length.
 export async function incrementDemoUserCounterDal(
 	db: AppDatabase,
 	role: UserRole,

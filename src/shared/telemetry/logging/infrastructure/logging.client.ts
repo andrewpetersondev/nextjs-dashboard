@@ -118,9 +118,7 @@ class LoggingClient extends BaseLogger implements LoggingClientContract {
 		});
 	}
 
-	// TODO: INDICATES A POSSIBLE ISSUE
-	// biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
-	private buildErrorPayload(error: AppError<any>): BaseErrorLogPayload {
+	private buildErrorPayload(error: AppError): BaseErrorLogPayload {
 		const baseJson = error.toDto();
 		const diagnosticId = this.extractDiagnosticId(error.metadata);
 

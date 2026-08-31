@@ -21,7 +21,7 @@ const REFRESH_LOCK_THRESHOLD_MS = 10_000;
  * Checks if the session needs a refresh and performs the request.
  * @returns Promise that resolves when the check is complete.
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: ignore for now
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: a chain of independent early-outs (hidden tab, offline, multi-tab lock, 204, content-type, outcome) — each is one flat guard, not nested logic.
 async function performSessionPing(): Promise<void> {
 	if (document.hidden) {
 		return;
@@ -81,7 +81,7 @@ async function performSessionPing(): Promise<void> {
 	}
 }
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: one effect owning three subscriptions (kickoff timer, interval, wake listeners); they share `aborted` and the in-flight ref, so splitting them would leak that state across hooks.
 function useSessionRefresh(): void {
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const kickoffRef = useRef<ReturnType<typeof setTimeout> | null>(null);

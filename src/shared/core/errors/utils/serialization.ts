@@ -5,8 +5,8 @@
  * (`bigint`→string, `Date`→ISO, `Error`→plain object); or a
  * `{ note, originalType, preview }` descriptor when neither is possible.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: <ignore for now>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: a flat type-dispatch table — one branch per input kind, in the order they are cheapest to test; splitting it would scatter the dispatch.
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: the branch count IS the contract here — every branch is one input kind this must never throw on.
 export function redactNonSerializable(value: unknown): unknown {
 	if (value === null || value === undefined) {
 		return value;
@@ -27,8 +27,8 @@ export function redactNonSerializable(value: unknown): unknown {
 			name: value.name,
 			// Avoid stack traces in production for security and payload size
 			stack:
-				// biome-ignore lint/correctness/noProcessGlobal: <ignore for now>
-				// biome-ignore lint/style/noProcessEnv: <ignore for now>
+				// biome-ignore lint/correctness/noProcessGlobal: errors core cannot import the config layer — env-shared.ts imports AppError from here, so isDev() would close a cycle; the typeof guard covers the client bundle.
+				// biome-ignore lint/style/noProcessEnv: same cycle — reading NODE_ENV directly is what keeps errors core dependency-free.
 				typeof process !== "undefined" && process.env.NODE_ENV === "development"
 					? value.stack
 					: undefined,

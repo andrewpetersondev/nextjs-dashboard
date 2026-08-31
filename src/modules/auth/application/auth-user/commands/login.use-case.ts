@@ -44,6 +44,30 @@ export class LoginUseCase {
 	}
 
 	/**
+	 * Emits one login-step log with the tracker's timings attached.
+	 *
+	 * @param entry - Severity, message, tracker and identifiers for the step.
+	 */
+	private logStep(
+		entry: Readonly<{
+			identifiers: Record<string, unknown>;
+			level: "info" | "warn";
+			message: string;
+			operationName: string;
+			tracker: PerformanceTracker;
+		}>,
+	): void {
+		const { identifiers, level, message, operationName, tracker } = entry;
+		this.logger.operation(level, message, {
+			duration: tracker.getTotalDuration(),
+			operationContext: "auth:use-case",
+			operationIdentifiers: identifiers,
+			operationName,
+			timings: tracker.getAllTimings(),
+		});
+	}
+
+	/**
 	 * Executes the login business logic.
 	 *
 	 * @param input - The login credentials (email and password).
@@ -57,12 +81,12 @@ export class LoginUseCase {
 	 *
 	 * @throws {Error} If an unexpected system failure occurs (wrapped in Result by safeExecute).
 	 */
-	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: linear Result pipeline — the length is the step count, and each step logs its own timing before returning, so any split would separate a step from the log that explains it.
 	execute(
 		input: Readonly<LoginCommand>,
 	): Promise<Result<AuthenticatedUserDto, AppError>> {
 		return safeExecute(
-			// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+			// biome-ignore lint/complexity/noExcessiveLinesPerFunction: linear Result pipeline — the length is the step count, and each step logs its own timing before returning, so any split would separate a step from the log that explains it.
 			async () => {
 				const tracker = new PerformanceTracker();
 
@@ -71,12 +95,12 @@ export class LoginUseCase {
 				);
 
 				if (!userResult.ok) {
-					this.logger.operation("warn", "Login use case failed at repository", {
-						duration: tracker.getTotalDuration(),
-						operationContext: "auth:use-case",
-						operationIdentifiers: { email: input.email },
+					this.logStep({
+						identifiers: { email: input.email },
+						level: "warn",
+						message: "Login use case failed at repository",
 						operationName: "login.repo.failed",
-						timings: tracker.getAllTimings(),
+						tracker,
 					});
 					return userResult;
 				}
@@ -84,12 +108,12 @@ export class LoginUseCase {
 				const user = userResult.value;
 
 				if (!user) {
-					this.logger.operation("warn", "Login use case: user not found", {
-						duration: tracker.getTotalDuration(),
-						operationContext: "auth:use-case",
-						operationIdentifiers: { email: input.email },
+					this.logStep({
+						identifiers: { email: input.email },
+						level: "warn",
+						message: "Login use case: user not found",
 						operationName: "login.user_not_found",
-						timings: tracker.getAllTimings(),
+						tracker,
 					});
 					return Err(
 						AuthErrorFactory.makeCredentialFailure("user_not_found", {
@@ -103,27 +127,23 @@ export class LoginUseCase {
 				);
 
 				if (!passwordOkResult.ok) {
-					this.logger.operation(
-						"warn",
-						"Login use case failed at password hash",
-						{
-							duration: tracker.getTotalDuration(),
-							operationContext: "auth:use-case",
-							operationIdentifiers: { email: input.email, userId: user.id },
-							operationName: "login.hasher.failed",
-							timings: tracker.getAllTimings(),
-						},
-					);
+					this.logStep({
+						identifiers: { email: input.email, userId: user.id },
+						level: "warn",
+						message: "Login use case failed at password hash",
+						operationName: "login.hasher.failed",
+						tracker,
+					});
 					return Err(passwordOkResult.error);
 				}
 
 				if (!passwordOkResult.value) {
-					this.logger.operation("warn", "Login use case: invalid password", {
-						duration: tracker.getTotalDuration(),
-						operationContext: "auth:use-case",
-						operationIdentifiers: { email: input.email, userId: user.id },
+					this.logStep({
+						identifiers: { email: input.email, userId: user.id },
+						level: "warn",
+						message: "Login use case: invalid password",
 						operationName: "login.invalid_password",
-						timings: tracker.getAllTimings(),
+						tracker,
 					});
 					return Err(
 						AuthErrorFactory.makeCredentialFailure("invalid_password", {
@@ -137,12 +157,12 @@ export class LoginUseCase {
 					() => toAuthenticatedUserDto(user),
 				);
 
-				this.logger.operation("info", "Login use case completed successfully", {
-					duration: tracker.getTotalDuration(),
-					operationContext: "auth:use-case",
-					operationIdentifiers: { email: input.email, userId: user.id },
+				this.logStep({
+					identifiers: { email: input.email, userId: user.id },
+					level: "info",
+					message: "Login use case completed successfully",
 					operationName: "login.success",
-					timings: tracker.getAllTimings(),
+					tracker,
 				});
 
 				return Ok(authenticatedUser);

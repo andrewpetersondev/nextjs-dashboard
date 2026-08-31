@@ -48,7 +48,7 @@ function buildCspContext(req: NextRequest): Readonly<{
 	return { policy, requestHeaders };
 }
 
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: close enough
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: every exit must pass through withCsp/nextWithCsp, so the response paths are deliberately kept in one function where that invariant is checkable by eye.
 export default async function proxy(req: NextRequest): Promise<NextResponse> {
 	const csp = buildCspContext(req);
 

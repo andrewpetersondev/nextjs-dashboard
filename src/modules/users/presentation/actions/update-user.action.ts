@@ -115,7 +115,7 @@ function buildPatch(
 /**
  * Updates an existing user (admin only).
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <fix later>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary — authorize, validate, map, call the service, map the result; the steps are sequential and each is needed at this layer.
 export async function updateUserAction(
 	id: string,
 	_prevState: FormState<unknown>,

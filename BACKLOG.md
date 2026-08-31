@@ -282,6 +282,57 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Suppression sweep — every `biome-ignore` now states a verifiable reason**
+      _(2026-08-31, `claude/biome-stale-suppressions`)_ — the repo had **112** `biome-ignore`
+      comments, **66** of them justified only by a placeholder (`fix later`, `<ignore for now>`,
+      `close enough`, `is this okay?`, `TODO FIND A BETTER SOLUTION LATER`). Now: **75 suppressions,
+      0 placeholders**, and Biome still reports **zero diagnostics of any severity** across 687
+      files. 37 suppressions are gone outright; every survivor names a reason that can be checked.
+      **The biggest win was config, not edits.** `useComponentExportOnlyModules` is _categorically_
+      inapplicable under `src/app/**` — App Router requires `metadata` / `dynamic` /
+      `generateMetadata` to be exported from the same module as the component — so one scoped
+      `biome.json` override replaced **25** copies of the same comment. When one structural fact
+      produces N identical suppressions, the fact belongs in config: N per-site comments each claim
+      "this case is special", and 25 of them prove none is.
+      **Fixed rather than suppressed** (the suppression disappears): a nested ternary extracted to
+      `classifyInvalidToken`, which also pulled `readSessionTokenHelper` under the length limit —
+      two suppressions for one extraction; De Morgan on `!a || !b`; `rawError.originalCause` (the
+      receiver was already `Record<string, unknown>`, so the literal key was never needed);
+      `AppError<any>` → `AppError` (the sole caller always passed the default); named constants for
+      a request-id slice and the TCP port bounds; a `const fields = SIGNUP_FIELDS_LIST` alias that
+      added nothing; `getEnvVariable` moved below the non-exported helpers; a real `JSX.Element`
+      return type on `global-error`; and a `biome-ignore-all` for `noMagicNumbers` in a test that
+      `biome.json` **already** disables for tests.
+      **Kept, with the reason verified rather than asserted.** Three were checked by trying the
+      "obvious" fix and watching it fail, which is the part worth keeping: (1) annotating `ROUTES`
+      with the `RoutesShape` sitting right above it — the TODO called this a "HIGH PRIORITY
+      REFACTOR" — **widens each path to `Route` and breaks `src/proxy.ts`**, where prefixes must
+      stay `` `/${string}` ``; the existing `as const satisfies RoutesShape` already checks the
+      shape without the widening. (2) `serialization.ts` cannot call `isDev()`: `env-shared.ts`
+      imports `AppError` from errors core, so the import would close a cycle — confirmed by grep in
+      both directions, not assumed. (3) `APP_ERROR_REGISTRY` must stay inferred because
+      `AppErrorMetadataValueByKey` indexes `typeof APP_ERROR_REGISTRY` to recover each key's own
+      `metadataSchema`. Also: React `displayName` must be assigned after the component is defined,
+      so a trailing statement always follows the exports in the atom files.
+      **The long-function cluster was justified, not refactored, and that is a deliberate call.**
+      Eleven `noExcessiveLinesPerFunction` sites are linear Result pipelines (login,
+      establish-session, the Server Actions, the DAL, `proxy`) at 51–76 lines against a max of 50.
+      The evidence: `login.use-case` had five copies of the same log envelope, so its
+      `logStep` extraction looked like the fix — it removed the duplication but moved the count only
+      **76 → 73**, because five call sites cost the same height either way. **The length is the step
+      count, not duplication**, so each now says which pipeline it is and why a split would separate
+      a step from the log explaining it. The `logStep` dedup was kept on its own merit (one envelope
+      instead of five) and takes an options object, since five positional params tripped
+      `useMaxParams`.
+      **Two mechanics worth remembering.** A `biome-ignore` justification must fit on **one line** —
+      a wrapped continuation detaches the suppression, which then reports `suppressions/unused`
+      while the rule fires again (hit twice before it was understood). And
+      `noExcessiveLinesPerFunction` **counts comment lines**, so explaining a suppression can push a
+      function over the limit and trigger a different one.
+      Validation: `check:fast` green (Biome **0 diagnostics**, markdownlint 0, dprint clean, typegen
+      OK, typecheck app + Cypress, `node:drift` / `deps:drift` / `db:drift`), **knip clean**, unit
+      **465/465**. E2E not run.
+
 - [x] **`session-refresh.tsx` suppressions cleared — including a real unhandled-rejection path**
       _(2026-08-31, `claude/biome-stale-suppressions`)_ — the file carried six `biome-ignore`
       comments; four are gone. Biome now reports **zero diagnostics of any severity** across 687
