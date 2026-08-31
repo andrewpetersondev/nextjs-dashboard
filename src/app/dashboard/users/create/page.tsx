@@ -4,13 +4,11 @@ import { CreateUserForm } from "@/modules/users/presentation/forms/create-user-f
 import { ROUTES } from "@/shared/routing/routes";
 import { Breadcrumbs } from "@/ui/navigation/breadcrumbs";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
 	title: "Create User",
 };
 
 // force this page to be dynamic, so it doesn't get cached
-// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const dynamic = "force-dynamic";
 
 export default function Page(): JSX.Element {

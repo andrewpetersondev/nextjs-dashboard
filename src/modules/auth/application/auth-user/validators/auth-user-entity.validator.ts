@@ -25,7 +25,7 @@ import { UsernameSchema } from "@/shared/policies/username/username.schema";
  * - Role must be valid
  * - Password hash must be present (for authentication entities)
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <FIX LATER>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: one safeParse plus one typed AppError per field — a flat validation table whose length is the field count.
 export function validateAuthUserEntity(
 	entity: AuthUserEntity,
 ): Result<AuthUserEntity, AppError> {

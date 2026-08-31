@@ -11,7 +11,7 @@ import {
  * until it is translated, which is why `translator`'s missing-key fallback is
  * effectively unreachable.
  */
-// biome-ignore lint/nursery/useExplicitType: fix later
+// biome-ignore lint/nursery/useExplicitType: the `satisfies` clause below is the contract — an explicit annotation would replace it and widen the values, losing the exhaustiveness check described above
 export const enInvoices = {
 	[INVOICE_MSG.amountRequired]: "Amount is required.",
 	[INVOICE_MSG.createFailed]: "Failed to create invoice.",

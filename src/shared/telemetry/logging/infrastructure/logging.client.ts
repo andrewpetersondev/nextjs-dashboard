@@ -118,9 +118,7 @@ class LoggingClient extends BaseLogger implements LoggingClientContract {
 		});
 	}
 
-	// TODO: INDICATES A POSSIBLE ISSUE
-	// biome-ignore lint/suspicious/noExplicitAny: keep until a better solution
-	private buildErrorPayload(error: AppError<any>): BaseErrorLogPayload {
+	private buildErrorPayload(error: AppError): BaseErrorLogPayload {
 		const baseJson = error.toDto();
 		const diagnosticId = this.extractDiagnosticId(error.metadata);
 
@@ -145,9 +143,7 @@ class LoggingClient extends BaseLogger implements LoggingClientContract {
 
 		// Double cast to bypass missing index signature in AppError
 		const rawError = error as unknown as Record<string, unknown>;
-		// TODO: INDICATES A POSSIBLE CONCERN
-		// biome-ignore lint/complexity/useLiteralKeys: POSSIBLE ISSUE
-		const originalCause = rawError["originalCause"];
+		const originalCause = rawError.originalCause;
 		const hasOriginalCause = originalCause !== undefined;
 
 		return {

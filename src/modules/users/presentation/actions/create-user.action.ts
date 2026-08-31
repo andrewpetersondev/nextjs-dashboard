@@ -27,7 +27,7 @@ import { toUserRole } from "@/shared/policies/user-role/user-role.parser";
 /**
  * Creates a new user (admin only).
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary — authorize, validate, map, call the service, map the result; the steps are sequential and each is needed at this layer.
 export async function createUserAction(
 	_prevState: FormState<unknown>,
 	formData: FormData,

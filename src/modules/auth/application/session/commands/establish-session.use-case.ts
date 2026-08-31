@@ -47,12 +47,12 @@ export class EstablishSessionUseCase {
 	 *
 	 * @throws {Error} If an unexpected system failure occurs (wrapped in Result).
 	 */
-	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+	// biome-ignore lint/complexity/noExcessiveLinesPerFunction: linear Result pipeline — the length is the step count, and each step logs its own timing before returning, so any split would separate a step from the log that explains it.
 	execute(
 		user: SessionPrincipalDto,
 	): Promise<Result<SessionPrincipalDto, AppError>> {
 		return safeExecute(
-			// biome-ignore lint/complexity/noExcessiveLinesPerFunction: fix later
+			// biome-ignore lint/complexity/noExcessiveLinesPerFunction: linear Result pipeline — the length is the step count, and each step logs its own timing before returning, so any split would separate a step from the log that explains it.
 			async () => {
 				const tracker = new PerformanceTracker();
 

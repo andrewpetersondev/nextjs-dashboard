@@ -10,13 +10,10 @@ const ACCENT = "#0ea5e9"; // sky-500
 const TEXT = "#f9fafb"; // gray-50
 const MUTED = "#9ca3af"; // gray-400
 
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js opengraph-image file convention requires the alt export beside the default component
 export const alt = "Acme Dashboard — a portfolio dashboard by Andrew Peterson";
 
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js opengraph-image file convention requires the size export beside the default component
 export const size = { height: 630, width: 1200 };
 
-// biome-ignore lint/style/useComponentExportOnlyModules: Next.js opengraph-image file convention requires the contentType export beside the default component
 export const contentType = "image/png";
 
 // Statically generated at build time (no request-time APIs) — identical on

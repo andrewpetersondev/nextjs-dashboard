@@ -4,11 +4,11 @@ import { PasswordSchema } from "@/shared/policies/password/password.schema";
 import { UserRoleFormSchema } from "@/shared/policies/user-role/user-role.schema";
 import { UsernameSchema } from "@/shared/policies/username/username.schema";
 
-// biome-ignore lint/nursery/useExplicitType: fix later
+// biome-ignore lint/nursery/useExplicitType: inferred Zod type is the source of truth
 const toUndefinedIfEmptyString = (v: unknown) =>
 	typeof v === "string" && v.trim() === "" ? undefined : v;
 
-// biome-ignore lint/nursery/useExplicitType: fix later
+// biome-ignore lint/nursery/useExplicitType: inferred Zod type is the source of truth
 function optionalEdit<T extends z.ZodType>(schema: T) {
 	// Empty string means "leave unchanged": preprocess turns "" into undefined,
 	// and the inner .optional() accepts that undefined. Without the inner
@@ -41,7 +41,7 @@ const usernameEdit = optionalEdit(UsernameSchema);
 // Zod Input (pre-parse) - Raw form values
 type EditUserFormInput = z.input<typeof EditUserFormSchema>;
 
-// biome-ignore lint/nursery/useExplicitType: fix later
+// biome-ignore lint/nursery/useExplicitType: inferred Zod type is the source of truth
 export const CreateUserFormSchema = UserFormBaseSchema;
 
 /**

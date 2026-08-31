@@ -31,7 +31,7 @@ import { logger } from "@/shared/telemetry/logging/infrastructure/logging.client
 /**
  * Server action for creating a new invoice.
  */
-// biome-ignore lint/complexity/noExcessiveLinesPerFunction: <ignore for now>
+// biome-ignore lint/complexity/noExcessiveLinesPerFunction: Server Action boundary — authorize, validate, map, call the service, map the result; the steps are sequential and each is needed at this layer.
 export async function createInvoiceAction(
 	_prevState: FormState<CreateInvoicePayload>,
 	formData: FormData,

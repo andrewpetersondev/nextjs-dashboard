@@ -15,13 +15,11 @@ interface EditCustomerPageProps {
 	params: Promise<EditCustomerPageParams>;
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const metadata: Metadata = {
 	title: "Edit Customer",
 };
 
 // force this page to be dynamic, so it doesn't get cached
-// biome-ignore lint/style/useComponentExportOnlyModules: <learn about this change in nextjs 16>
 export const dynamic = "force-dynamic";
 
 // promises are allowed in props params because Partial Pre-Rendering is enabled

@@ -33,8 +33,8 @@ type RoutesShape = Readonly<{
 }>;
 
 // Core route map (preserved keys/shape for compatibility)
-// biome-ignore lint/style/useExportsLast: fine for now
-// biome-ignore lint/nursery/useExplicitType: TODO: HIGH PRIORITY REFACTOR FOR NEXT ROUTES
+// biome-ignore lint/style/useExportsLast: the route map leads this file on purpose — every helper below operates on it, so it reads first.
+// biome-ignore lint/nursery/useExplicitType: the `as const satisfies RoutesShape` on the closing line already checks the shape while preserving each path's literal type; an annotation widens them to `Route`, which breaks src/proxy.ts where prefixes must stay `/${string}`.
 export const ROUTES = {
 	auth: {
 		forgotPassword: "/auth/forgot-password",

@@ -20,9 +20,6 @@ import { validateForm } from "@/shared/forms/server/validate-form";
 import { ROUTES } from "@/shared/routing/routes";
 import { PerformanceTracker } from "@/shared/telemetry/core/performance-tracker";
 
-// biome-ignore lint/nursery/useExplicitType: fix
-const fields = SIGNUP_FIELDS_LIST;
-
 /**
  * Next.js Server Action for user registration (signup).
  *
@@ -60,7 +57,7 @@ export async function signupAction(
 	});
 
 	const validated = await tracker.measure("validation", () =>
-		validateForm(formData, SignupFormSchema, fields, {
+		validateForm(formData, SignupFormSchema, SIGNUP_FIELDS_LIST, {
 			echoFields: SIGNUP_ECHO_FIELDS_LIST,
 		}),
 	);

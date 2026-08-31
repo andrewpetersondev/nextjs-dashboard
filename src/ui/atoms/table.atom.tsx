@@ -4,7 +4,7 @@ import { cn } from "@/ui/utils/cn";
 /**
  * Responsive table wrapper.
  */
-// biome-ignore lint/style/useExportsLast: this follows convention
+// biome-ignore lint/style/useExportsLast: React's `displayName` has to be assigned after the component is defined, so a trailing statement always follows the exports in this file.
 export function TableAtom({
 	className,
 	...props

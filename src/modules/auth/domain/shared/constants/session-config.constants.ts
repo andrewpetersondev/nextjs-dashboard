@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/noMagicNumbers: <ok in this file> */
+/** biome-ignore-all lint/style/noMagicNumbers: this file exists to define the session timings — each literal is named and documented at its declaration, so there is nothing left to extract. */
 import type { DurationSeconds } from "@/modules/auth/domain/session/value-objects/auth-brands.value";
 import { toDurationSeconds } from "@/modules/auth/domain/session/value-objects/time.value";
 
