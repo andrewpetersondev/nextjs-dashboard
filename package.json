@@ -58,7 +58,7 @@
 	"scripts": {
 		"biome:format": "biome format --write",
 		"biome:format:check": "biome format",
-		"biome:lint": "biome check",
+		"biome:lint": "biome check --error-on-warnings",
 		"biome:lint:fix": "biome check --write",
 		"biome:summary": "biome check --reporter=summary",
 		"check": "pnpm biome:lint && pnpm md:check && pnpm next:typegen && pnpm typecheck && pnpm node:drift && pnpm deps:drift && pnpm db:drift && pnpm knip && pnpm test:all && pnpm cy:e2e",

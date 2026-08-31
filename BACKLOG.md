@@ -282,6 +282,28 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Warnings now fail the lint gate — `biome:lint` runs `--error-on-warnings`**
+      _(2026-08-31, `claude/biome-error-on-warnings`)_ — the zero-diagnostic slate was a **standard
+      with no enforcement**: `biome check` exits 0 on warnings, so the only thing holding the line
+      was a human reading output. That failed exactly as you would expect — the deleted-suppression
+      regression reached `main` past a green local `check:fast` and a green CI run. One flag on one
+      script closes it, and because `lint`, `check`, `check:fast` and the CI lint job
+      ([`ci.yml:100`](.github/workflows/ci.yml)) all call `pnpm biome:lint`, nothing else needed
+      wiring — the failure mode where a new guard exists but runs in no CI job does not apply here.
+      **Proved by positive control, not by a passing run.** A gate that has never been seen to fail
+      is not known to work: on the clean tree `pnpm biome:lint` still exits **0**; re-introducing the
+      exact two-warning regression makes it exit **1** where it previously exited 0, and
+      `check:fast` then stops at the lint stage instead of running on.
+      **Two gaps left open on purpose.** Infos still exit 0 — Biome has no `--error-on-infos`, and
+      rules such as `noExcessiveLinesPerFunction` report at info level here, so the printed slate is
+      still the only check for those. And the flag is on the npm script, so bare
+      `pnpm exec biome check` is unchanged. Both are written down in
+      [`docs/biome.md`](docs/biome.md) rather than left to be rediscovered.
+      `biome:lint:fix` was deliberately left alone: it exists to apply fixes, and failing it on
+      warnings it has just fixed would only make `pnpm fix` noisier.
+      Validation: `check:fast` green, unit **465/465**, run in a worktree with a normal
+      `pnpm install` — the type-aware rules this gate now enforces are silently inert without one.
+
 - [x] **Restored two ref suppressions — a type-aware rule that silently cannot run reads exactly
       like a rule that passes** _(2026-08-31, `claude/biome-stale-suppressions`)_ — the two
       `noUnnecessaryConditions` suppressions in

@@ -82,7 +82,9 @@ bypass it. (This is what PR #36 hit in June.)
 ### Standing holds it checks regardless of bucket
 
 - **Biome bumps** — 2.5.3 once panicked on 8 form `tsx` files while exiting 0, which is silent lint
-  loss. `biome check` exits 0 on warnings, so the printed slate matters more than the exit code.
+  loss. Since 2026-08-31 `pnpm biome:lint` passes `--error-on-warnings`, so a warning does fail the
+  job — but bare `biome check` and info-level diagnostics still exit 0, so the printed slate still
+  matters more than the exit code.
 - **`next` bumps** — bounded on **both** sides. TypeScript 7 requires `next >= 16.2.12`, so anything
   lower is flagged; and **16.3.x is held** because `output: "standalone"` plus Vercel's build adapter
   fails every deployment (upstream `vercel/next.js#96646`, open as of 2026-08-11). Since 2026-08-11

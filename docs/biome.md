@@ -9,10 +9,31 @@ pnpm biome:lint
 
 ## The warning slate is zero, and that is the contract
 
-`biome check` **exits 0 on warnings and infos**. Reading the exit code alone will tell you
-a run is clean when it is not. Read the printed slate: the repo has stood at **zero
-warnings and zero infos** since 2026-07-30, so any new diagnostic is a regression
-introduced by the change in front of you, not background noise to step over.
+Since 2026-08-31 `pnpm biome:lint` runs `biome check --error-on-warnings`, so **a warning
+now fails the command** — and with it `check`, `check:fast`, and the CI lint job, which all
+call this script. That is deliberate: the slate had been enforced only by a human reading
+output, and a regression duly reached `main` past a green local run.
+
+Two things the flag does **not** change, both of which still bite:
+
+- **Infos still exit 0.** Rules configured at info level (for example
+  `noExcessiveLinesPerFunction`) are invisible to the exit code, and the contract here is
+  zero diagnostics of _any_ severity. For infos, reading the printed slate is still the only
+  check.
+- **Bare `biome check` is unchanged.** The flag lives on the npm script, so `pnpm exec biome
+  check` and any ad-hoc invocation still exit 0 on warnings. Prefer `pnpm biome:lint`.
+
+The repo has stood at zero warnings and zero infos since 2026-07-30, so any new diagnostic
+is a regression introduced by the change in front of you, not background noise to step over.
+
+⚠ **A clean run only means something if the rules could actually run.** Biome's type-aware
+rules (`noUnnecessaryConditions`, `noFloatingPromises`) need a resolvable `node_modules`;
+when they cannot resolve types they emit **nothing** rather than failing, and Biome then
+reports their still-correct `biome-ignore` comments as `suppressions/unused`. That symmetry
+is what makes it dangerous — it hides the rule _and_ accuses its suppression. Before acting
+on a `suppressions/unused` warning, confirm `ls -l node_modules/@types/node` points inside
+the project rather than at a temp directory. Note also that `biome check <single-file>`
+skips the project-wide pass and can report a file clean that a full run flags.
 
 ## Why `biome.json` has no comments explaining its rules
 

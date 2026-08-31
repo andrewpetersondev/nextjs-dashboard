@@ -41,7 +41,9 @@ Static analysis and formatting.
 
 - `pnpm biome:format` — format files with Biome.
 - `pnpm biome:format:check` — check formatting without writing changes.
-- `pnpm biome:lint` — run Biome checks (lint + format).
+- `pnpm biome:lint` — run Biome checks (lint + format). Runs with `--error-on-warnings`, so a
+  warning fails it (and therefore `lint`, `check`, `check:fast`, and the CI lint job). Infos still
+  exit 0 — see [biome.md](biome.md).
 - `pnpm biome:lint:fix` — run Biome checks and apply fixes.
 - `pnpm biome:summary` — print a compact check report.
 - `pnpm lint` — Biome **and** Markdown, report-only; runs both halves even if the first fails (backs `/lint`).
