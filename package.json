@@ -6,7 +6,7 @@
 		"clsx": "^2.1.1",
 		"date-fns": "^4.4.0",
 		"drizzle-orm": "^0.45.2",
-		"jose": "^6.2.9",
+		"jose": "^6.2.10",
 		"next": "16.2.12",
 		"pg": "^8.23.0",
 		"react": "^19.2.8",
@@ -14,7 +14,7 @@
 		"server-only": "^0.0.1",
 		"tailwind-merge": "^3.6.0",
 		"use-debounce": "^10.1.1",
-		"zod": "^4.4.3"
+		"zod": "^4.5.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.11",
