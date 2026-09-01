@@ -18,7 +18,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.11",
-		"@cypress/webpack-batteries-included-preprocessor": "^4.2.0",
+		"@cypress/webpack-batteries-included-preprocessor": "^5.0.0",
 		"@cypress/webpack-preprocessor": "^7.1.1",
 		"@tailwindcss/postcss": "^4.3.3",
 		"@testing-library/cypress": "^10.1.3",
