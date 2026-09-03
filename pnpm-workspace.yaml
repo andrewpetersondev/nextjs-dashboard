@@ -74,8 +74,15 @@ overrides:
   next: 16.2.12
 
 # Vetted peer combos that upstream ranges haven't caught up to (both at latest release):
-# - @cypress/webpack-batteries-included-preprocessor 4.2.0 declares peer ^6.0.4, but the e2e
-#   suite runs green against @cypress/webpack-preprocessor 7.x.
+# - @cypress/webpack-batteries-included-preprocessor 5.0.0 declares peer ^6.0.4, but the e2e
+#   suite runs green against @cypress/webpack-preprocessor 7.x. Re-checked on the 4.2.0 -> 5.0.0
+#   major (2026-09-03), which is what the re-check note below asks for: upstream did NOT widen —
+#   5.0.0 still declares ^6.0.4, so this entry stays. The major's ONLY breaking change is
+#   CoffeeScript removal (coffee-loader + coffeescript dropped, the /\.coffee$/ rule and the
+#   .coffee resolve extension deleted); this repo has no .coffee files, and the `typescript`
+#   option cypress.config.ts passes is byte-identical between 4.2.0 and 5.0.0. Verified by
+#   running the full 23-spec e2e suite against 5.0.0 before the bump landed — CI cannot do this,
+#   since the e2e job skips on pull_request (see .github/workflows/ci.yml).
 # - tsconfck 3.1.6 (via vite-tsconfig-paths) declares peer typescript ^5, works with TS 7.
 # - @napi-rs/wasm-runtime 1.2.x (optional wasm32-wasi fallback under knip's oxc bindings)
 #   declares peer @emnapi/core+runtime ^2.0.0-alpha.3, but only stable 1.x is published;

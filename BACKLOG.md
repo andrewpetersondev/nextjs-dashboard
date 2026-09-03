@@ -278,9 +278,63 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Adding `requireSession` to the nine is consistency work; `read-customer-by-id.action.ts`
       shows it is safe to call from a Server Component page. **Andrew's call.**
 
+- [ ] **`dashboard.cy.ts` a11y spec races Next's streaming boundary — confirmed flaky 2026-09-03.**
+      `core dashboard pages have no axe violations` failed one full-suite run with
+      `page-has-heading-one` on `html`, then **passed the very next full-suite run on the identical
+      commit** (and 3/3 in isolation), so it is nondeterministic, not a regression — a fixed
+      dependency set cannot produce a varying result. The failure screenshot shows the overview
+      still rendering its **Suspense skeleton**: axe ran before the `<h1>` existed. Two corroborating
+      signals: the failing run finished **faster** (~1s) than the passing one (3.0–3.7s), which is an
+      assertion outrunning the work rather than the work breaking; and the seed is deterministic
+      (mulberry32, see `devtools/seed/seed.random.ts`), so data variance is excluded.
+      **Cause:** the spec's first `cy.checkA11yStrict()` fires straight after `cy.loginAsDemoAdmin()`
+      with nothing anchoring it to _rendered_ content, unlike the later `cy.visit()` calls which at
+      least assert on `pathname`. **Fix shape:** assert a real heading is present before injecting
+      axe (e.g. `cy.findByRole("heading", { level: 1 })`), rather than adding a retry —
+      `retries: {openMode: 0, runMode: 0}` is a deliberate "flakes must fail loudly" choice
+      (`cypress.config.ts`) and should stay. **Not fixed here:** found while validating a
+      dependency bump; folding a spec change into that branch would have mixed two concerns.
+      Note this fails **post-merge on `main`**, never on a PR — the e2e job skips `pull_request`.
+
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **Dependabot batch — knip 6.33.0, jose 6.2.10 + zod 4.5.2, and the preprocessor 4.2.0 → 5.0.0
+      major** _(2026-09-03, `deps/dependabot-2026-09-03`)_ — all three open bot PRs taken together:
+      **#143** (`knip` 6.32.3 → 6.33.0), **#142** (`jose` 6.2.9 → 6.2.10, `zod` 4.4.3 → 4.5.2 — the
+      jose half is the bump the 2026-08-24 entry saw sitting uncommitted on `main` and did not
+      repeat), and **#144** (`@cypress/webpack-batteries-included-preprocessor` 4.2.0 → **5.0.0**).
+      Each was `MERGEABLE`/`CLEAN` and 0 commits behind `main`, but they **conflict with each other**
+      on `pnpm-lock.yaml`; resolved by regenerating the lock once (`pnpm install --lockfile-only`)
+      rather than hand-merging, then proven by a clean `--frozen-lockfile` install. The importers
+      diff is exactly three lines — no collateral re-resolution. None of the four packages is under
+      a `pnpm-workspace.yaml` override, so the "override shadows the bump" trap does not apply and
+      `deps:drift` was never in play; `next` stays pinned at 16.2.12.
+      **The substantive finding is a CI blind spot, not a bump.** The `e2e` job is
+      `if: github.event_name != 'pull_request'` ([`ci.yml:304`](.github/workflows/ci.yml)) — a sound
+      cost trade-off in general, but it means **#144's only real risk surface was the one job that
+      never ran**: the preprocessor compiles the specs and is in no production bundle, so lint,
+      types, vitest and the CSP build are all structurally incapable of exercising it. It would have
+      gone green on the PR and failed only after reaching `main`. Verified by hand instead: the
+      **full 23-spec suite run against 5.0.0** before merging.
+      **v5's only breaking change is CoffeeScript removal** — established by diffing the published
+      4.2.0 and 5.0.0 tarballs, not from release notes: `coffee-loader` + `coffeescript` dropped,
+      the `/\.coffee$/` rule and the `.coffee` resolve extension deleted, and **nothing else moved**
+      — `getFullWebpackOptions(filePath?, typescript?)` and the `typescript` option that
+      `cypress.config.ts` passes are byte-identical. This repo has no `.coffee` files.
+      **Peer rule re-checked and kept**: v5 **still** declares peer `@cypress/webpack-preprocessor`
+      `^6.0.4`, so the `peerDependencyRules` entry stays; its comment named 4.2.0 and is updated to
+      5.0.0 with the finding, satisfying that block's own "re-check on major bumps" instruction.
+      **Also noticed, not changed:** `cypress/node/types/cypress-webpack-preprocessor.d.ts` claims
+      the package "ships no type definitions" — false for **both** 4.2.0 and 5.0.0, which set
+      `"types": "dist/index.d.ts"` and declare `typescript?: string | boolean`. The local
+      `declare module` shadows the real types rather than filling a gap. Pre-existing; left alone.
+      Validation on the merged tree: `check:fast` green (Biome **0 diagnostics** / 687 files under
+      `--error-on-warnings`, markdownlint 0, dprint clean, typecheck app + Cypress, `node:drift` /
+      `deps:drift` / `db:drift` all OK), unit **465/465** across 72 files, and the **full e2e suite
+      23/23**. One earlier full run flaked on the dashboard a11y spec and passed on re-run — filed
+      as its own open item above, not a bump regression.
 
 - [x] **Warnings now fail the lint gate — `biome:lint` runs `--error-on-warnings`**
       _(2026-08-31, `claude/biome-error-on-warnings`)_ — the zero-diagnostic slate was a **standard
