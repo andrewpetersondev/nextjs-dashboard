@@ -278,27 +278,32 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
       Adding `requireSession` to the nine is consistency work; `read-customer-by-id.action.ts`
       shows it is safe to call from a Server Component page. **Andrew's call.**
 
-- [ ] **`dashboard.cy.ts` a11y spec races Next's streaming boundary — confirmed flaky 2026-09-03.**
-      `core dashboard pages have no axe violations` failed one full-suite run with
-      `page-has-heading-one` on `html`, then **passed the very next full-suite run on the identical
-      commit** (and 3/3 in isolation), so it is nondeterministic, not a regression — a fixed
-      dependency set cannot produce a varying result. The failure screenshot shows the overview
-      still rendering its **Suspense skeleton**: axe ran before the `<h1>` existed. Two corroborating
-      signals: the failing run finished **faster** (~1s) than the passing one (3.0–3.7s), which is an
-      assertion outrunning the work rather than the work breaking; and the seed is deterministic
-      (mulberry32, see `devtools/seed/seed.random.ts`), so data variance is excluded.
-      **Cause:** the spec's first `cy.checkA11yStrict()` fires straight after `cy.loginAsDemoAdmin()`
-      with nothing anchoring it to _rendered_ content, unlike the later `cy.visit()` calls which at
-      least assert on `pathname`. **Fix shape:** assert a real heading is present before injecting
-      axe (e.g. `cy.findByRole("heading", { level: 1 })`), rather than adding a retry —
-      `retries: {openMode: 0, runMode: 0}` is a deliberate "flakes must fail loudly" choice
-      (`cypress.config.ts`) and should stay. **Not fixed here:** found while validating a
-      dependency bump; folding a spec change into that branch would have mixed two concerns.
-      Note this fails **post-merge on `main`**, never on a PR — the e2e job skips `pull_request`.
-
 ## Done
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
+
+- [x] **`dashboard.cy.ts` a11y flake fixed — the spec now waits for the overview heading**
+      _(2026-09-03, `deps/dependabot-2026-09-03`)_ — `core dashboard pages have no axe violations`
+      intermittently failed `page-has-heading-one` on `html`. **Diagnosed, not guessed:** the
+      failure screenshot showed the overview still painting its Suspense skeleton, the same commit
+      passed the very next full-suite run (a fixed dependency set cannot produce a varying result),
+      the failing run finished **faster** (~1s) than a passing one (3.0–3.7s) — an assertion
+      outrunning the work — and the seed is deterministic (`devtools/seed/seed.random.ts`), which
+      excludes data variance. **Cause:** `loginAsDemoAdmin` → `assertOnDashboard` waits only on
+      `pathname`, which flips the instant the client-side navigation commits, while
+      `(overview)/loading.tsx` is still rendering `DashboardSkeleton` — which has no `<h1>`. Axe ran
+      against the fallback. Every other login spec (`home`, `login`, `demo-user`, `access-control`,
+      `signup`) was immune only **incidentally**: each asserts on the dashboard heading right after
+      logging in, which doubles as a render barrier. This spec was the only one going straight from
+      `pathname` to a DOM assertion. **Fix:** one `cy.findByRole("heading", { name:
+      ADMIN_DASHBOARD_H1 }).should("be.visible")` before the first `checkA11yStrict()`, matching the
+      idiom the other five already use — deliberately **not** a retry, since `retries: 0`
+      (`cypress.config.ts`) is the suite's "a flake must fail loudly" choice and is worth keeping.
+      Scoped to the first check only: the other five run after `cy.visit()`, and those routes have
+      no `loading.tsx`, so their `<h1>` arrives in the first flush. Verified: the spec **8/8** in a
+      row (one at 8s — the slow render that previously would have raced) plus the **full suite
+      23/23**. Note a finite run count cannot prove an intermittent flake gone; the claim rests on
+      the mechanism — the anchor is the exact heading whose absence produced the violation.
 
 - [x] **Dependabot batch — knip 6.33.0, jose 6.2.10 + zod 4.5.2, and the preprocessor 4.2.0 → 5.0.0
       major** _(2026-09-03, `deps/dependabot-2026-09-03`)_ — all three open bot PRs taken together:
@@ -334,7 +339,7 @@ Terse log — newest first. Full detail lives in the `project_*` memory files.
       `--error-on-warnings`, markdownlint 0, dprint clean, typecheck app + Cypress, `node:drift` /
       `deps:drift` / `db:drift` all OK), unit **465/465** across 72 files, and the **full e2e suite
       23/23**. One earlier full run flaked on the dashboard a11y spec and passed on re-run — filed
-      as its own open item above, not a bump regression.
+      and fixed separately — see the entry above — not a bump regression.
 
 - [x] **Warnings now fail the lint gate — `biome:lint` runs `--error-on-warnings`**
       _(2026-08-31, `claude/biome-error-on-warnings`)_ — the zero-diagnostic slate was a **standard

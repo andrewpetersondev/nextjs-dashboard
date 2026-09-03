@@ -5,6 +5,7 @@ import {
 	DASHBOARD_USERS_PATH,
 	INVOICES_PATH,
 } from "@cypress/e2e/shared/paths";
+import { ADMIN_DASHBOARD_H1 } from "@cypress/e2e/shared/regex";
 
 /**
  * Dashboard accessibility smoke test.
@@ -22,7 +23,16 @@ describe("Dashboard accessibility smoke test", () => {
 	it("core dashboard pages have no axe violations", () => {
 		cy.loginAsDemoAdmin();
 
-		// Overview (landing target of the demo login).
+		// Overview (landing target of the demo login). `loginAsDemoAdmin` waits
+		// only on `pathname`, which flips as soon as the client-side navigation
+		// commits — while `(overview)/loading.tsx` is still painting
+		// `DashboardSkeleton`, which contains no <h1>. Axe run in that window
+		// fails `page-has-heading-one` against the skeleton. Anchoring on the
+		// rendered heading closes it: the page emits its <h1> before the inner
+		// Suspense boundaries stream, so a visible heading means the route's own
+		// content has replaced the fallback. NOT a retry — `retries: 0` in
+		// cypress.config.ts is the deliberate "a flake must fail loudly" choice.
+		cy.findByRole("heading", { name: ADMIN_DASHBOARD_H1 }).should("be.visible");
 		cy.checkA11yStrict();
 
 		// Invoices list — class-bearing page wrapper, filter + table + pagination.
