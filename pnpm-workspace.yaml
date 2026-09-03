@@ -53,6 +53,17 @@ overrides:
   # reachable from our code. Drop once the graph resolves >=3.3.18 on its own; stay on 3.x,
   # since postcss's ^3.3.17 excludes the 4.x/5.x lines.
   nanoid: ^3.3.18
+  # GHSA-x5fp-wj9c-mxmx (array-limit bypass via bracket-key comma parsing, patched 6.15.4)
+  # and GHSA-4mjr-xmp4-gh2g (DoS via attacker-controlled isBuffer, patched 6.16.0) — both
+  # moderate, both dev-only, reached through cypress -> @cypress/request -> qs (and the same
+  # chain under @testing-library/cypress / cypress-axe, which pull their own cypress).
+  # Same stale-lockfile class as fast-uri/brace-expansion/nanoid above, NOT esbuild/sharp:
+  # @cypress/request 4.0.1 already declares ^6.15.2, which admits both fixes — the graph sat
+  # on 6.15.3 only because the lockfile resolved before 6.16.0 shipped. pnpm only re-resolves
+  # DIRECT deps on `pnpm update`, so an override is the only lever, and Dependabot opens no
+  # bump PR for a transitive. Cypress 16 would also pull it in; that major is not needed for
+  # this. Stay on 6.x. Drop once the graph resolves >=6.16.0 on its own.
+  qs: ^6.16.0
   # Deliberate hold at 16.2.12: `output: "standalone"` (next.config.ts, for the Docker path)
   # plus Vercel's build adapter fails EVERY deploy on 16.3.x —
   # `ENOENT … .next/next-server.js.nft.json` thrown from `onBuildComplete`. Next PR #93684

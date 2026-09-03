@@ -237,6 +237,35 @@ the matching `project_*` memory file — that is what it is for, and duplicating
 here is what grew this section past 1,800 lines once already. When an item is worth
 more than a paragraph, write the paragraph and name the memory file.
 
+- [x] **Two moderate `qs` advisories closed by override, plus `knip` 6.34.0 — the fourth
+      stale-lockfile case** _(2026-09-03, `claude/pnpm-package-updates-2f591e`)_ — closes the
+      "found, not fixed / Andrew's call" hand-off left by the `fast-uri` entry below.
+      GHSA-x5fp-wj9c-mxmx (array-limit bypass) and GHSA-4mjr-xmp4-gh2g (DoS via
+      attacker-controlled `isBuffer`), both dev-only via `cypress → @cypress/request → qs`,
+      both patched in 6.16.0. Mechanically identical to `fast-uri`/`brace-expansion`/`nanoid`:
+      `@cypress/request@4.0.1` already declares `qs: ^6.15.2`, so the caret admitted the fix and
+      only the lockfile was behind — one `pnpm-workspace.yaml` line forces re-resolution.
+      **`cypress` 16.0.0 would also have fixed it** (it pulls `@cypress/request ^4.0.0`), and was
+      deliberately not taken: a major to close a moderate dev advisory is the expensive path when
+      the declaring caret already admits the patch. `pnpm audit` now reports **no known
+      vulnerabilities**; `deps:drift` moved to "2 overlapping agree; 7 override-only".
+      **Nothing else was due.** Every in-range dependency was already at latest except `knip`
+      (6.33.0 → 6.34.0, a stale lockfile entry). The three remaining out-of-range majors stay:
+      `@types/node` 26 (must track `engines.node: 24.x`), `@cypress/webpack-preprocessor` 8 (the
+      `peerDependencyRules` exception for 7 is still load-bearing), and `cypress` 16.
+      **`next` hold re-verified against every 16.3.x tag** — `gh api
+      repos/vercel/next.js/compare/c7b87c23...v<tag> -q .status` returns `diverged` for v16.3.1,
+      v16.3.2, v16.3.3 **and v16.3.4** (latest). The fix is still canary-only; the hold stands.
+      **Read `pnpm outdated` carefully in a fresh worktree**: with no `node_modules` every row's
+      Current column says `missing (wanted X)`, which is the absence of an install, not a stale
+      dependency — the signal is wanted vs latest. Mechanism in memory
+      (`project_transitive_dep_advisory_fix`, fourth instance).
+      Validation: `check:fast` all green on Node 24 (Biome **0 diagnostics** / 687 files,
+      markdownlint 0, dprint clean, typegen, typecheck app + Cypress, `node:drift` / `deps:drift`
+      / `db:drift`), knip exit 0, unit **465/465** across 72 files, integration **21/21**, and the
+      full **23-spec** Cypress suite **exit 0** — run because `qs` sits inside Cypress's own HTTP
+      client and the e2e job skips on `pull_request`, so nothing in CI would have exercised it.
+
 - [x] **`BACKLOG.md` split — `Done` is now a rolling 10, the rest lives in `docs/backlog-archive.md`**
       _(2026-09-03, `claude/backlog-file-size-b7fa48`)_ — the file had reached **2,121 lines / 187 KB**
       and was slowing the IDE; `## Done` was 87% of it. **Count, not volume, was the wrong diagnosis:**
@@ -497,51 +526,7 @@ more than a paragraph, write the paragraph and name the memory file.
       OK, typecheck app + Cypress, `node:drift` / `deps:drift` / `db:drift`), **knip clean**, unit
       **465/465**. E2E not run.
 
-- [x] **`session-refresh.tsx` suppressions cleared — including a real unhandled-rejection path**
-      _(2026-08-31, `claude/biome-stale-suppressions`)_ — the file carried six `biome-ignore`
-      comments; four are gone. Biome now reports **zero diagnostics of any severity** across 687
-      files (not just zero warnings — no infos either). The two that remain (`ignore for now` on
-      `performSessionPing`'s cognitive complexity, `close enough` on `useSessionRefresh`'s length)
-      are still doing real work — Biome does not flag them as unused — but both are placeholder
-      justifications standing in for an unfinished refactor, not settled decisions. They are part of
-      a repo-wide pattern: ~120 `biome-ignore` comments, a large share reading `fix later`,
-      `<ignore for now>` or `close enough`.
-      **The two stale ones.** ⚠ **CORRECTED 2026-08-31 — this paragraph's premise was wrong; see
-      the top entry.** Biome 2.5.11 did **not** fix the 2.5.6 `noUnnecessaryConditions` false
-      positive; the rule is type-aware and simply could not run in the session's environment, so a
-      correct suppression looked unused. Both comments have been restored. The original claim,
-      left for the record: Biome **2.5.11** (bumped in `29a7c981`) fixed the 2.5.6
-      `noUnnecessaryConditions` false positive on refs, so the suppressions added for it on
-      2026-07-30 started warning as `suppressions/unused`. Deleted both comments; the
-      `if (kickoffRef.current)` / `if (intervalRef.current)` guards **stay** — they are real teardown
-      logic (`.current` is `undefined` until the timer is scheduled, and cleanup can run first).
-      Only Biome's analysis changed, not the runtime facts.
-      **The four `noFloatingPromises: ignore for now` ones were hiding a live bug**, not just noise.
-      `performSessionPing` wraps its `fetch` in `try/catch`, but the `localStorage.getItem` on the
-      line above sits **outside** it — and that throws `SecurityError` when a browser blocks site
-      data (Safari private mode). So `ping()` could genuinely reject, and all four call sites
-      discarded the promise, turning it into an `unhandledrejection` instead of a skipped refresh.
-      Fixed at the cause: `runPing` keeps the `try/finally`, and a small sync `ping` wrapper handles
-      the rejection **once** via `.catch()`, so the four call sites are plain `ping()` calls with no
-      suppression. Note `void ping()` — the reflex fix — is wrong here twice over: this repo enables
-      `noVoid`, so it merely trades one warning for another, and it would have satisfied the linter
-      while leaving the rejection path intact.
-      Two smaller things fell out. `onFocus`/`onVisibility` had **byte-identical** bodies, so they
-      collapse into one `onWake` handler bound to both events. And `noExcessiveLinesPerFunction`
-      **counts comment lines** — the effect tipped to 51/50 on the explanatory comments alone, which
-      is what forced the dedup and some tightening. The `close enough` suppression on
-      `useSessionRefresh` is still load-bearing and stays.
-      **Biome exited 0 at every step** — before the fix with 2 warnings, mid-fix with 5, and after
-      with none — so the slate was read off the diagnostics list each time, never the exit code.
-      This was found while fixing an unrelated advisory on
-      `claude/pnpm-audit-high-severity-5d7949`; keeping it off that branch is why it is a separate
-      commit rather than a security diff with a stray `.tsx` edit in it.
-      Validation: every `check:fast` gate green — Biome **0 diagnostics**, markdownlint 0, dprint
-      clean, typegen OK, typecheck (app + Cypress) green, `node:drift` / `deps:drift` (2 overlapping
-      agree; 5 override-only) / `db:drift` all OK. Unit **465/465** across 72 files, run because this
-      one changes runtime behaviour in an auth path rather than only deleting comments.
-
 ---
 
-Older completed items — 73 of them, 2026-06-11 through 2026-08-24 — are in
+Older completed items — 74 of them, 2026-06-11 through 2026-08-31 — are in
 [`docs/backlog-archive.md`](docs/backlog-archive.md).

@@ -21,6 +21,50 @@ this archive.
 
 ## Done — archived
 
+- [x] **`session-refresh.tsx` suppressions cleared — including a real unhandled-rejection path**
+      _(2026-08-31, `claude/biome-stale-suppressions`)_ — the file carried six `biome-ignore`
+      comments; four are gone. Biome now reports **zero diagnostics of any severity** across 687
+      files (not just zero warnings — no infos either). The two that remain (`ignore for now` on
+      `performSessionPing`'s cognitive complexity, `close enough` on `useSessionRefresh`'s length)
+      are still doing real work — Biome does not flag them as unused — but both are placeholder
+      justifications standing in for an unfinished refactor, not settled decisions. They are part of
+      a repo-wide pattern: ~120 `biome-ignore` comments, a large share reading `fix later`,
+      `<ignore for now>` or `close enough`.
+      **The two stale ones.** ⚠ **CORRECTED 2026-08-31 — this paragraph's premise was wrong; see
+      the top entry.** Biome 2.5.11 did **not** fix the 2.5.6 `noUnnecessaryConditions` false
+      positive; the rule is type-aware and simply could not run in the session's environment, so a
+      correct suppression looked unused. Both comments have been restored. The original claim,
+      left for the record: Biome **2.5.11** (bumped in `29a7c981`) fixed the 2.5.6
+      `noUnnecessaryConditions` false positive on refs, so the suppressions added for it on
+      2026-07-30 started warning as `suppressions/unused`. Deleted both comments; the
+      `if (kickoffRef.current)` / `if (intervalRef.current)` guards **stay** — they are real teardown
+      logic (`.current` is `undefined` until the timer is scheduled, and cleanup can run first).
+      Only Biome's analysis changed, not the runtime facts.
+      **The four `noFloatingPromises: ignore for now` ones were hiding a live bug**, not just noise.
+      `performSessionPing` wraps its `fetch` in `try/catch`, but the `localStorage.getItem` on the
+      line above sits **outside** it — and that throws `SecurityError` when a browser blocks site
+      data (Safari private mode). So `ping()` could genuinely reject, and all four call sites
+      discarded the promise, turning it into an `unhandledrejection` instead of a skipped refresh.
+      Fixed at the cause: `runPing` keeps the `try/finally`, and a small sync `ping` wrapper handles
+      the rejection **once** via `.catch()`, so the four call sites are plain `ping()` calls with no
+      suppression. Note `void ping()` — the reflex fix — is wrong here twice over: this repo enables
+      `noVoid`, so it merely trades one warning for another, and it would have satisfied the linter
+      while leaving the rejection path intact.
+      Two smaller things fell out. `onFocus`/`onVisibility` had **byte-identical** bodies, so they
+      collapse into one `onWake` handler bound to both events. And `noExcessiveLinesPerFunction`
+      **counts comment lines** — the effect tipped to 51/50 on the explanatory comments alone, which
+      is what forced the dedup and some tightening. The `close enough` suppression on
+      `useSessionRefresh` is still load-bearing and stays.
+      **Biome exited 0 at every step** — before the fix with 2 warnings, mid-fix with 5, and after
+      with none — so the slate was read off the diagnostics list each time, never the exit code.
+      This was found while fixing an unrelated advisory on
+      `claude/pnpm-audit-high-severity-5d7949`; keeping it off that branch is why it is a separate
+      commit rather than a security diff with a stray `.tsx` edit in it.
+      Validation: every `check:fast` gate green — Biome **0 diagnostics**, markdownlint 0, dprint
+      clean, typegen OK, typecheck (app + Cypress) green, `node:drift` / `deps:drift` (2 overlapping
+      agree; 5 override-only) / `db:drift` all OK. Unit **465/465** across 72 files, run because this
+      one changes runtime behaviour in an auth path rather than only deleting comments.
+
 - [x] **Weekly maintenance — Biome 2.5.10, vitest/cypress patch bumps, `next` hold re-verified a
       second time** _(2026-08-24, `claude/weekly-maintenance-2026-08-24`)_ — bumps taken (all clear
       the 3-day freshness floor): **`@biomejs/biome` 2.5.8 → 2.5.10** (`biome migrate --write`
