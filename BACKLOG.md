@@ -268,6 +268,15 @@ more than a paragraph, write the paragraph and name the memory file.
       clean, `pnpm why cypress` → **Found 1 version**, and the full Cypress suite **23 specs /
       44 tests / 0 failing / 0 pending, exit 0** on 16.0.0. CI could not have caught any of this:
       the e2e job skips on `pull_request` (`ci.yml`).
+      **The `qs` override does NOT become droppable on the back of this** — checked, because it
+      looks like it should. Cypress 16 depends on `@cypress/request ^4.0.0`, which resolves to the
+      same 4.0.1 and the same `qs: ^6.15.2`, a range that still admits the vulnerable 6.15.3. What
+      holds the graph at 6.16.0 is the **lockfile**, not resolution. Proved with a control:
+      forcing the override to 6.15.3 moves the graph (so the test works), and then _removing_ the
+      override leaves it on 6.15.3 — `pnpm install` prints "Already up to date". Dropping the line
+      would be an invisible no-op until something regenerated that entry lower. Kept, with the
+      evidence in the override comment; re-test on a future `@cypress/request` major, never infer
+      it from a `cypress` bump.
 
 - [x] **Two moderate `qs` advisories closed by override, plus `knip` 6.34.0 — the fourth
       stale-lockfile case** _(2026-09-03, `claude/pnpm-package-updates-2f591e`)_ — closes the

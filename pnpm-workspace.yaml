@@ -63,6 +63,19 @@ overrides:
   # DIRECT deps on `pnpm update`, so an override is the only lever, and Dependabot opens no
   # bump PR for a transitive. Cypress 16 would also pull it in; that major is not needed for
   # this. Stay on 6.x. Drop once the graph resolves >=6.16.0 on its own.
+  # ⚠ TESTED against cypress 16.0.0 on 2026-09-03 and it is NOT yet droppable — cypress 16 does
+  #   NOT raise this floor. It depends on @cypress/request ^4.0.0, which resolves to the same
+  #   4.0.1 cypress 15 used, declaring the same qs: ^6.15.2 — a range that still admits the
+  #   vulnerable 6.15.3. What holds the graph at 6.16.0 is the LOCKFILE, not resolution logic.
+  #   Verified with a control, since a check that always passes is indistinguishable from a
+  #   working one: (1) override forced to 6.15.3 -> graph moves to 6.15.3, so the test can move
+  #   it; (2) override then REMOVED and reinstalled -> pnpm prints "Already up to date" and the
+  #   graph STAYS on 6.15.3. pnpm never re-resolves a transitive that already satisfies its
+  #   range, in either direction, so with no override nothing pulls it back up. Removing this
+  #   line looks like a no-op today and would stay invisible until something regenerates the
+  #   lockfile entry lower (a conflict resolved on pnpm-lock.yaml, a future @cypress/request
+  #   re-pin), at which point the advisory returns with no guard.
+  #   Re-test the same way on a future @cypress/request major; do not infer it from a cypress bump.
   qs: ^6.16.0
   # Deliberate hold at 16.2.12: `output: "standalone"` (next.config.ts, for the Docker path)
   # plus Vercel's build adapter fails EVERY deploy on 16.3.x —
