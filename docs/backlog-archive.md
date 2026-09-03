@@ -639,6 +639,42 @@ this archive.
       triggers, the `e2e` condition, the new step's placement, and that all four job names are
       unchanged. Integration/e2e not run locally — this worktree has no `.env.test.local`; CI is the
       first real proof, and no runtime path changed.
+- [x] **Renovate adoption — built in full, then DROPPED. Do not re-propose.**
+      _(2026-08-07, `claude/issue-124-326e7f`,
+      [#124](https://github.com/andrewpetersondev/nextjs-dashboard/issues/124))_ — config, grouping,
+      lockstep rules, automerge and docs all landed and validated, then were **reverted**: installing
+      the Mend Renovate GitHub App asks for credit-card details at the GitHub Marketplace checkout,
+      and that is not a cost this project takes on. Dependabot stays. Recoverable from `main`'s own
+      history if the calculus ever changes — `9e41b2c8` (Renovate) and `58aff82f` (automerge), undone
+      by `00966804`; nothing depends on the `claude/issue-124-326e7f` branch surviving. Two findings
+      outlived the attempt and were fixed separately on 2026-08-09 — bot PRs running essentially no
+      CI, and the absence of an override/dependency drift guard; both are in the
+      "Gating the dependency-update path" entry above.
+
+- [x] **`postcss` override resynced with its dependency** _(2026-08-07)_ — override
+      resynced `^8.5.24` → `^8.5.25` to match the `package.json` devDependency, lockfile
+      regenerated (its `overrides:` block records the range, so leaving it stale would have
+      failed CI's `--frozen-lockfile`). Verified still one `postcss@8.5.25` copy. The override
+      itself stays: `next@16.2.12` still pins `postcss 8.4.31` exact, so dropping it forks the
+      graph into two copies. Two structural fixes were considered and rejected — pnpm's
+      `"$postcss"` reference works but pnpm 11 warns it is **deprecated** in favour of
+      catalogs, and catalogs would make `package.json` read `"postcss": "catalog:"`, which
+      Dependabot cannot bump. See the override-drift guard below for the durable fix.
+
+- [x] **Node version aligned across `.nvmrc`, `engines.node` and the `Dockerfile`** _(2026-08-07)_ —
+      `.nvmrc` and the `Dockerfile` said **26** while `engines.node` said `>=24`, which Vercel
+      resolves to the newest major it offers — and Vercel tops out at **24.x** and never reads
+      `.nvmrc`. So production ran Node 24 while dev, CI, and Docker ran 26, and nothing
+      reported it. **Aligned on 24** (`.nvmrc`, `Dockerfile`, `engines.node: "24.x"`), which is
+      the version production was already proven on. Verified first that none of the 392
+      packages declaring `engines.node` requires ≥25 (highest floors are cypress/vitest at
+      `>=24.0.0`). New gate `pnpm node:drift` keeps the three in sync and additionally rejects
+      an open-ended `engines.node` range, since a range lets Vercel move production a major
+      with no commit and no CI run. Wired into `check` and `check:fast`. **Superseded 2026-08-09**
+      — that wiring turned out to reach no CI job at all, and the guard could not see the Node
+      actually running (dev was on 26 the whole time). Both closed; see the Node-runtime-alignment
+      entry at the top of this log.
+
 - [x] **knip triage + wiring it into a pipeline that runs** _(2026-08-06,
       `claude/what-is-next-6181ec`)_ — `pnpm knip` was exiting 1 on `main` and nothing noticed,
       because **nothing executed it**: not `check`, not `check:fast`, not CI. Its only caller was

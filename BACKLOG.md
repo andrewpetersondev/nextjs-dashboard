@@ -27,24 +27,24 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 > in memory (`project_job_hunt_priority_shift`). If week 2 runs long, ship the week-1
 > polish on its own — a clean demo beats a half-built feature.
 >
-> **Lane plan — decided 2026-08-03** (from the verified best-practice review, see Done):
+> **Lane plan — decided 2026-08-03** (from the verified best-practice review, see the archive):
 > **Lane A (invoice status lifecycle) SHIPPED + deployed** and **Lane B (demo-surface
 > polish) SHIPPED + deployed 2026-08-03**; the **a11y pass (item 3, the serial last
-> phase) BUILT 2026-08-03** on the `claude/a11y-pass` lane — see Done. With that, the
+> phase) BUILT 2026-08-03** on the `claude/a11y-pass` lane — see the archive. With that, the
 > demo-first "Now" list is complete, and the **invoice amount-cap mismatch** (the
-> last known demo wart) **landed 2026-08-03** — see Done. Next work comes from "Later".
+> last known demo wart) **landed 2026-08-03** — see the archive. Next work comes from "Later".
 > Before any push: run the full unit + e2e suites on the merged tree (`check:fast`
 > contains no tests).
 
 ### Now — job-hunt focus (demo-first, ~2 weeks)
 
-1. **Kill the demo dead-ends** — COMPLETE 2026-08-03 (Lane B), see Done.
+1. **Kill the demo dead-ends** — COMPLETE 2026-08-03 (Lane B), see the archive.
    - [x] ~~`forgot-password` live stub~~ — done 2026-07-22.
    - [x] ~~Stub/empty module READMEs~~ — done 2026-08-03 (deleted 7 auth leaf stubs,
          wrote 7 real shared-capability READMEs incl. `policies`/`telemetry`).
    - [x] ~~Font experiment + middleware debug card~~ — resolved "drop" 2026-07-30.
    - [x] ~~Template SVG residue in `public/`~~ — deleted 2026-08-03 (zero refs re-verified).
-2. **First impression** — COMPLETE 2026-08-03 (Lane B), see Done.
+2. **First impression** — COMPLETE 2026-08-03 (Lane B), see the archive.
    - [x] ~~Real landing page~~ — done 2026-07-30.
    - [x] ~~Architecture diagrams on README + drift fixes~~ — done 2026-07-30/31.
    - [x] ~~OG/social-preview image~~ — done 2026-08-03 (`src/app/opengraph-image.tsx`,
@@ -58,52 +58,28 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
          span with size prop; landing header, sidebar, and auth pages all consume it;
          auth title promoted to h1; dashboard double-H1 fixed; `BRAND_LOGO_SRC` deleted —
          `brand.constants.ts` now holds brand COPY: `BRAND_NAME` + `HERO_TAGLINE`).
-3. **a11y pass** — BUILT 2026-08-03 (`claude/a11y-pass` lane), see Done. Landmarks,
+3. **a11y pass** — BUILT 2026-08-03 (`claude/a11y-pass` lane), see the archive. Landmarks,
    blocking moderate-impact axe coverage, live regions, and the review's loose ends
    (global-error, missing error boundaries, lane-map refresh) all landed to the
    2026-08-02 verified designs, plus the contrast/label fixes the new blocking checks
-   surfaced. **Lighthouse pass since run against prod (2026-08-04) — see Done;
+   surfaced. **Lighthouse pass since run against prod (2026-08-04) — see the archive;
    a11y 100 on both presets, so the axe work holds up under a second engine.**
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 
-- [x] ~~**Renovate adoption** ([#124](https://github.com/andrewpetersondev/nextjs-dashboard/issues/124))~~
-      — **DROPPED 2026-08-07. Do not re-propose.** Fully built and validated on
-      `claude/issue-124-326e7f` (config, grouping, lockstep rules, automerge, docs), then
-      **reverted** — installing the Mend Renovate GitHub App asked for credit-card details at
-      the GitHub Marketplace checkout, and that is not a cost this project takes on. Dependabot
-      stays. The build is recoverable from `main`'s own history if the calculus ever changes —
-      `9e41b2c8` (Renovate) and `58aff82f` (automerge), undone by `00966804`; nothing depends on
-      the `claude/issue-124-326e7f` branch surviving. Two findings from the attempt outlived it
-      and are listed below.
-
-- [x] ~~**Bot PRs run essentially no CI**~~ — fixed 2026-08-09, see Done.
-
-- [x] ~~**`postcss` override has drifted from its dependency**~~ — fixed 2026-08-07. Override
-      resynced `^8.5.24` → `^8.5.25` to match the `package.json` devDependency, lockfile
-      regenerated (its `overrides:` block records the range, so leaving it stale would have
-      failed CI's `--frozen-lockfile`). Verified still one `postcss@8.5.25` copy. The override
-      itself stays: `next@16.2.12` still pins `postcss 8.4.31` exact, so dropping it forks the
-      graph into two copies. Two structural fixes were considered and rejected — pnpm's
-      `"$postcss"` reference works but pnpm 11 warns it is **deprecated** in favour of
-      catalogs, and catalogs would make `package.json` read `"postcss": "catalog:"`, which
-      Dependabot cannot bump. See the override-drift guard below for the durable fix.
-
-- [x] ~~**Node version declared in three files that never agree**~~ — fixed 2026-08-07.
-      `.nvmrc` and the `Dockerfile` said **26** while `engines.node` said `>=24`, which Vercel
-      resolves to the newest major it offers — and Vercel tops out at **24.x** and never reads
-      `.nvmrc`. So production ran Node 24 while dev, CI, and Docker ran 26, and nothing
-      reported it. **Aligned on 24** (`.nvmrc`, `Dockerfile`, `engines.node: "24.x"`), which is
-      the version production was already proven on. Verified first that none of the 392
-      packages declaring `engines.node` requires ≥25 (highest floors are cypress/vitest at
-      `>=24.0.0`). New gate `pnpm node:drift` keeps the three in sync and additionally rejects
-      an open-ended `engines.node` range, since a range lets Vercel move production a major
-      with no commit and no CI run. Wired into `check` and `check:fast`. **Superseded 2026-08-09**
-      — that wiring turned out to reach no CI job at all, and the guard could not see the Node
-      actually running (dev was on 26 the whole time). Both closed; see the Node-runtime-alignment
-      entry at the top of this log.
-
-- [x] ~~**No guard on override/dependency drift**~~ — fixed 2026-08-09, see Done.
+> **Standing decisions — resolved, kept here so they are not re-proposed.** The work and the
+> reasoning are in [`docs/backlog-archive.md`](docs/backlog-archive.md); these
+> lines exist only to stop a future session re-opening a settled question.
+>
+> - **Renovate: dropped 2026-08-07, do not re-propose.** Built and validated in full, then reverted
+>   — the Mend Renovate GitHub App asks for credit-card details at Marketplace checkout. Dependabot
+>   stays.
+> - **The `postcss` override stays, and not as a catalog.** `next` still pins `postcss 8.4.31` exact,
+>   so dropping the override forks the graph into two copies; the "must equal the devDependency
+>   range" warning lives in [`pnpm-workspace.yaml`](pnpm-workspace.yaml) next to the pin. Both
+>   tidier-looking alternatives were considered and rejected — pnpm's `"$postcss"` reference is
+>   deprecated in pnpm 11, and a catalog would make `package.json` read `"postcss": "catalog:"`,
+>   which Dependabot cannot bump.
 
 - [ ] **`next` 16.3.x is HELD — it breaks every Vercel deploy. Added 2026-08-11.** This repo
       sets `output: "standalone"` (for the Docker path, [next.config.ts](next.config.ts)), and on
