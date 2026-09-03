@@ -62,10 +62,10 @@ when done.
 
 ## Today's BACKLOG, mapped onto lanes
 
-With the job-hunt "Now" items landed (invoice lifecycle, demo surface, a11y pass) and the tooling
-sweep behind them (rootfiles decisions, integration CI lane, Cypress typecheck lane, forms taxonomy
-flattening, docs consolidation, knip wiring, Node alignment, dependency-update gates), the open list
-is down to two items:
+With the demo-first push landed (invoice lifecycle, demo surface, a11y pass) and the tooling sweep
+behind them (rootfiles decisions, integration CI lane, Cypress typecheck lane, forms taxonomy
+flattening, docs consolidation, knip wiring, Node alignment, dependency-update gates), only two of
+`BACKLOG.md`'s open items are lane-shaped work:
 
 | BACKLOG item          | Lane               | Edit footprint               |
 | --------------------- | ------------------ | ---------------------------- |
@@ -77,6 +77,12 @@ on decisions rather than effort** (`require-trusted-types-for` needs a report co
 not exist yet; the HSTS `includeSubDomains` call cannot be made until there is a custom domain), and
 Skills exploration writes no code. Neither touches the shared kernel, which is where the
 single-thread rule bites. Renovate (#124) is **dropped, not pending** — do not re-add it here.
+
+The rest of the open list is not missing from this table, it is not lane work: the `next` 16.3.x
+entry is a **hold**, the action-guard asymmetry is a **pending decision**, and the `@types/node`
+blind spot and the TSDoc coverage pass are single-thread chores with no parallelism to exploit.
+Re-check this table against `BACKLOG.md` when adding a lane — it drifted four items behind between
+2026-08-11 and 2026-09-03.
 
 ## The protocol
 

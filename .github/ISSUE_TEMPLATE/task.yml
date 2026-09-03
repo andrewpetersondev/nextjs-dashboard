@@ -53,7 +53,7 @@ body:
     id: priority
     attributes:
       label: Priority
-      description: Mirrors the Now / Later split in `BACKLOG.md`.
+      description: A hint for triage. `BACKLOG.md` no longer carries a priority split — it is one flat open list — so this is the issue's own urgency, not a section name.
       options:
         - "now — active focus"
         - "next — queued behind the current focus"

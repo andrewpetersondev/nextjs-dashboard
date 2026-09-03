@@ -20,30 +20,17 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 ## Open
 
-> **Priority focus — set 2026-06-25 (active job hunt, ~1–2 week window).** Shifted the
-> emphasis from infrastructure/tooling to the **demo surface a hiring manager actually
-> experiences in 60 seconds**: kill demo dead-ends → first impression → one memorable
-> feature. The infra-polish items still matter but drop to "Later" below. Full rationale
-> in memory (`project_job_hunt_priority_shift`). If week 2 runs long, ship the week-1
-> polish on its own — a clean demo beats a half-built feature.
+> **Current focus — steady-state maintenance (set 2026-09-03).** The demo-first push that shaped
+> this list from 2026-06-25 is **finished**: invoice status lifecycle, demo-surface polish, and the
+> a11y pass all shipped and deployed 2026-08-03, and prod Lighthouse confirmed them the day after.
+> The Now/Later priority split was retired with it — the items below are the whole open list, in no
+> forced order; pick by what is blocking or by appetite. Rationale for the phase that ended is in
+> memory (`project_job_hunt_priority_shift`); the work itself is in
+> [`docs/backlog-archive.md`](docs/backlog-archive.md) (2026-07-22 → 2026-08-04).
 >
-> **Lane plan — decided 2026-08-03** (from the verified best-practice review). The demo-first
-> "Now" list is **complete**: Lane A (invoice status lifecycle) and Lane B (demo-surface polish)
-> both shipped and deployed 2026-08-03, the a11y pass built the same day on `claude/a11y-pass`,
-> and the invoice amount-cap mismatch — the last known demo wart — landed with them. Per-item
-> detail is in [`docs/backlog-archive.md`](docs/backlog-archive.md) (2026-07-22 → 2026-08-04).
-> Next work comes from "Later".
+> **Before any push:** run the full unit + e2e suites on the merged tree — `check:fast` contains
+> no tests.
 >
-> Before any push: run the full unit + e2e suites on the merged tree (`check:fast`
-> contains no tests).
-
-### Now — job-hunt focus (demo-first)
-
-_Cleared 2026-08-03 — nothing outstanding. New demo-surface work goes here; until then, pull
-from "Later" below._
-
-### Later — lower priority during the job hunt (infra/tooling polish)
-
 > **Standing decisions — resolved, kept here so they are not re-proposed.** The work and the
 > reasoning are in [`docs/backlog-archive.md`](docs/backlog-archive.md); these
 > lines exist only to stop a future session re-opening a settled question.
