@@ -61,6 +61,16 @@ without a commit:
   prompts instead: each one names the exact commands to run, forbids codebase exploration, and exits
   early on the common no-op outcome.
 
+## Planning
+
+| Doc                                      | The question it answers                                                                                 |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| [backlog-archive.md](backlog-archive.md) | "This was done once — what was the verdict, and why is that hold / override / dead end still standing?" |
+
+The live planning record is [`BACKLOG.md`](../BACKLOG.md) at the repo root: `## Open`, plus only the 10
+most recent completed items. Older completed items roll down to the archive above, unchanged and
+newest-first. Grep it; don't read it.
+
 ## Build tooling & configuration
 
 | Doc                                                            | The question it answers                                                                                         |

@@ -22,6 +22,13 @@ Run these steps in order. If a step's precondition fails, STOP and report — do
    `BACKLOG.md` item, mark it done; update `memory/` or `docs/` only if project state actually moved.
    Keep edits small and factual. If nothing needs reconciling, say so and move on — don't invent entries.
 
+   When you add a `Done` entry, hold the file to its budget: **one paragraph, ~6 lines** — what changed,
+   the date and branch, and the one fact a future session would otherwise rediscover. Evidence,
+   verification output, and the reasoning behind a verdict go in the matching `project_*` memory file,
+   not here. Then **rotate**: `## Done` keeps only the **10 most recent** items, so move any beyond the
+   tenth to the top of the `## Done — archived` list in `docs/backlog-archive.md`, unchanged. Move, never
+   delete — memory files cite these entries by name.
+
 4. **Validate (hard gate).** Run `pnpm check:fast` (Biome + Markdown + typegen + typecheck + drift) —
    this also covers the reconcile edits from step 3. If anything fails, STOP, report failures with
    `file:line`, and do not commit. This local gate stands in for pre-merge CI, so it must be green before

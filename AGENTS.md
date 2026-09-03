@@ -28,7 +28,9 @@ The two are a **hybrid**, not duplicates, and each has one job:
 
 - [`BACKLOG.md`](BACKLOG.md) is the complete planning record and the file AI sessions read and update.
   It travels into every worktree, so it works offline and needs no network round-trip. Everything goes
-  here, including work too small to be worth a reader's attention.
+  here, including work too small to be worth a reader's attention. It holds `## Open` plus only the
+  **10 most recent** completed items; older ones roll down to
+  [`docs/backlog-archive.md`](docs/backlog-archive.md) unchanged.
 - **GitHub Issues** track only the **narratable units** — the ones a reader would care about. Not every
   backlog line earns an issue, and that asymmetry is deliberate.
 
@@ -38,6 +40,13 @@ reaches `main`. In a bot PR, the reference goes in the PR description as usual.
 
 When an issue closes, reconcile `BACKLOG.md` in the **same** commit — a closed issue and a stale
 backlog line is the failure mode this hybrid exists to avoid.
+
+**Keep `Done` entries to one paragraph (~6 lines).** Say what changed, the date and branch, and the one
+fact a future session would otherwise rediscover; put evidence, verification transcripts, and the
+reasoning behind a verdict in the matching `project_*` memory file. This file is read at the start of
+every session, so its size is a running cost. When adding the 11th `Done` entry, move the oldest to
+`docs/backlog-archive.md` rather than letting the section grow — the count-based window is what keeps
+the live file from swinging with how busy a month was.
 
 ## Next.js: ALWAYS read docs before coding
 
