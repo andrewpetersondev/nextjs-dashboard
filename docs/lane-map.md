@@ -45,6 +45,7 @@ The codebase has three tiers — the documented rule is `shared/ui → modules �
 | **customers**       | `src/modules/customers`                                             | ✅                          |
 | **invoices**        | `src/modules/invoices`                                              | ✅ (downstream — see above) |
 | **banner**          | `src/modules/banner`                                                | ✅                          |
+| **app / shell**     | `src/app/**`, `src/shell/**` (route glue, layouts, page wiring)     | ✅ (see caveat below)       |
 | **docs**            | `docs/**` (stable areas not under active code change)               | ✅                          |
 | **chore**           | one isolated file/config (a dep, `tsconfig`, a font)                | ✅ (if footprints disjoint) |
 | **kernel / schema** | `src/shared/**`, `src/ui/**`, `src/server/**`, `database/schema/**` | ⛔ **single-thread**        |
@@ -52,6 +53,8 @@ The codebase has three tiers — the documented rule is `shared/ui → modules �
 The kernel row is the exception: cross-cutting changes to shared code, the design system, infra, or the
 DB schema should be **one session at a time**, because everything depends on them. Don't run two kernel
 refactors at once, and don't run a kernel refactor next to a module lane it will break.
+
+The **app / shell** row is parallel-safe against the module lanes — `src/app` imports the modules but does not edit them — with one caveat: it is where a feature's _routes_ live, so a module lane that adds or moves a page lands in the same footprint. Run it beside module lanes doing in-place work, not beside one building a new screen.
 
 ## How many at once
 
@@ -62,27 +65,43 @@ when done.
 
 ## Today's BACKLOG, mapped onto lanes
 
-With the demo-first push landed (invoice lifecycle, demo surface, a11y pass) and the tooling sweep
-behind them (rootfiles decisions, integration CI lane, Cypress typecheck lane, forms taxonomy
-flattening, docs consolidation, knip wiring, Node alignment, dependency-update gates), only two of
-`BACKLOG.md`'s open items are lane-shaped work:
+Every open item in [`BACKLOG.md`](../BACKLOG.md) appears here, so a gap in this table means the table
+is stale rather than the item being untracked. Footprints below were read off the files, not inferred.
 
-| BACKLOG item          | Lane               | Edit footprint               |
-| --------------------- | ------------------ | ---------------------------- |
-| CSP follow-ups (#126) | chore (security)   | `next.config.ts`, `proxy.ts` |
-| Skills exploration    | research (no code) | none                         |
+| BACKLOG item             | Lane                     | Edit footprint                                                                 | Blocked on                                        |
+| ------------------------ | ------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------- |
+| `@types/node` blind spot | chore (tooling)          | `devtools/cli/node-version-drift.cli.ts`                                       | nothing — ready                                   |
+| TSDoc coverage pass      | app / shell              | `src/app/**` (29 files, comments only)                                         | nothing — ready                                   |
+| Skills exploration       | research (no code)       | none                                                                           | nothing — ready                                   |
+| CSP follow-ups (#126)    | ⛔ **kernel**            | `src/shared/http/server/security-headers.ts`, `src/proxy.ts`, `next.config.ts` | decisions — see below                             |
+| Action-guard asymmetry   | customers **+** invoices | 9 `*.action.ts` under `src/modules/{customers,invoices}/presentation/actions/` | your call — consistency work, not a fix           |
+| `next` 16.3.x hold       | chore (deps)             | `package.json`, `pnpm-workspace.yaml`                                          | upstream — a stable release containing `c7b87c23` |
 
-The two footprints are disjoint, but this is a one-lane list in practice: the CSP work is **blocked
-on decisions rather than effort** (`require-trusted-types-for` needs a report collector that does
-not exist yet; the HSTS `includeSubDomains` call cannot be made until there is a custom domain), and
-Skills exploration writes no code. Neither touches the shared kernel, which is where the
-single-thread rule bites. Renovate (#124) is **dropped, not pending** — do not re-add it here.
+**Three are ready and mutually disjoint** — the tooling CLI, `src/app`, and a no-code research task
+share no files, so they are a genuine three-lane run if you want one. That is the most parallelism
+this list currently offers.
 
-The rest of the open list is not missing from this table, it is not lane work: the `next` 16.3.x
-entry is a **hold**, the action-guard asymmetry is a **pending decision**, and the `@types/node`
-blind spot and the TSDoc coverage pass are single-thread chores with no parallelism to exploit.
-Re-check this table against `BACKLOG.md` when adding a lane — it drifted four items behind between
-2026-08-11 and 2026-09-03.
+**Correction, 2026-09-03: CSP follow-ups is kernel work, not a chore lane.** This table previously
+gave its footprint as `next.config.ts, proxy.ts` and filed it under `chore (security)`, which would
+have invited running it beside another lane. The policy is actually built in
+`src/shared/http/server/security-headers.ts` — `src/proxy.ts` imports the builder to attach the
+per-request nonce, and `next.config.ts` only imports `STATIC_SECURITY_HEADERS` — so the real
+footprint lands in `src/shared/**`, which this document's own rule marks **single-thread**. Its
+tests (`src/shared/http/__tests__/unit/security-headers.test.ts`) and the invariant guard
+(`devtools/cli/csp-guard.cli.ts`) move with it. Do not run it next to any other kernel work.
+
+**Three are not blocked on effort.** The CSP work needs decisions that do not exist yet
+(`require-trusted-types-for` wants a report collector; the HSTS `includeSubDomains` call cannot be made
+until there is a custom domain). The `next` hold lifts only when upstream ships a stable release
+containing the fix — 16.3.1 and the closed issue are both false go-signals. The action-guard item is
+consistency work behind a verdict of _not a vulnerability_, so it waits on you, not on capacity.
+
+**The action-guard item is the only one that spans two lanes.** Its nine files sit in `customers` and
+`invoices`, so running it occupies both module lanes at once — or splits into two sessions along the
+3/6 module boundary, which is clean since the files do not import each other. Don't start it beside
+a `customers` or `invoices` feature lane either way.
+
+Renovate (#124) is **dropped, not pending** — do not re-add it here.
 
 ## The protocol
 
