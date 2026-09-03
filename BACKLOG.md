@@ -282,6 +282,22 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **`/clean-worktrees` now proves content containment with `git cherry`, not just reachability**
+      _(2026-09-03, `claude/clean-worktrees-8ac075`)_ — the command classified a branch SAFE only when
+      `git rev-list --count origin/main..<branch>` was `0`. That is a **reachability** test, correct for
+      this repo's local-first merge-commit flow but permanently wrong for Dependabot lanes: their bumps
+      are **cherry-picked** onto `main`, so the commit keeps a distinct SHA, stays unreachable, and gets
+      re-reported as "possibly unmerged" every single run. Added step 3b — nonzero-count branches now go
+      through `git cherry -v origin/main <branch>`, which compares by **patch-id** (the normalized diff)
+      so a cherry-pick and its source collapse together; all-`-` output means CONTAINED-BY-CONTENT, any
+      `+` means genuinely UNMERGED. Verified on the three real cases from the same session (`ddf887f4`
+      → `81520f51`, `014fa6a6` → `8e3838b2`) **with both controls run**, since a check that always
+      prints `-` is indistinguishable from a working one. Deliberate design call: a patch-id match does
+      **not** promote a branch into the routine delete block — it needs `git branch -D` (`-d` consults
+      ancestry and refuses), so step 7 emits a **separate**, labelled `-D` block with an evidence table.
+      Keeping them apart preserves the property that step 6's `-d` block is safe to paste unread. Still
+      never runs any deletion itself.
+
 - [x] **Four HIGH `fast-uri` advisories closed by raising the override to `^3.1.6`, plus zod /
       dprint / tsx bumps** _(2026-09-03, `deps/fast-uri-and-bumps-2026-09-03`)_ — **the security
       work was not in either bot PR.** #145 (`zod` 4.5.2 → 4.5.4) and #146 (`dprint` 0.56.1 →
