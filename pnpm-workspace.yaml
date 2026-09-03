@@ -23,13 +23,22 @@ overrides:
   # GHSA-f88m-g3jw-g9cj (libvips CVEs inherited by sharp <0.35.0): next pins sharp ^0.34.5,
   # so this override forces the patched line until next bumps. Verified via production build.
   sharp: ^0.35.3
-  # GHSA-7p8r-x3mc-p8w7 (fast-uri, patched 3.1.5): dev-only, reached through
-  # cypress webpack preprocessor → webpack → schema-utils → ajv. Unlike the entries above,
-  # ajv 8.20.0 already declares ^3.0.1 and admits the fix — the lockfile was just pinned to
-  # 3.1.4 (released before it). pnpm only re-resolves DIRECT deps on `pnpm update`, so an
-  # override is the only way to move a transitive. Drop once the graph resolves >=3.1.5 on
-  # its own; stay on 3.x, since ^3.0.1 excludes the 4.x line.
-  fast-uri: ^3.1.5
+  # fast-uri, dev-only, reached through cypress webpack preprocessor → webpack →
+  # schema-utils → ajv. Unlike esbuild/sharp above, ajv 8.20.0 already declares ^3.0.1 and
+  # admits every fix — the lockfile was simply pinned to a version released before it. pnpm
+  # only re-resolves DIRECT deps on `pnpm update`, so an override is the only lever on a
+  # transitive. Stay on 3.x: ajv's ^3.0.1 excludes the 4.x line.
+  # ⚠ RAISED 2026-09-03 to ^3.1.6, superseding the original GHSA-7p8r-x3mc-p8w7 (patched
+  #   3.1.5) entry. Four further HIGH advisories landed against <3.1.6, all patched there:
+  #   GHSA-f65p-4m7j-42xc (SSRF, malformed IPv6 normalization), GHSA-jqff-g426-hqxp (host
+  #   confusion, percent-encoded scheme), GHSA-fph4-wmhf-6fwf (SSRF, repeated hostname
+  #   percent-decoding), GHSA-5jgf-p345-68v8 (host confusion, skipped IDN canonicalization).
+  #   Note ^3.1.5 ALREADY admitted 3.1.6 — the graph was on 3.1.5 only because the lockfile
+  #   resolved before 3.1.6 shipped, so bumping this line is what forces re-resolution.
+  #   Dependabot cannot raise this: an override-controlled transitive gets no bump PR, which
+  #   is why all four alerts sat open with no branch attached.
+  # Drop once the graph resolves >=3.1.6 on its own.
+  fast-uri: ^3.1.6
   # GHSA-rgw5-rvv9-x895 (brace-expansion, patched 5.0.9): dev-only, reached through
   # rimraf → glob → minimatch. Same class as fast-uri above, NOT esbuild/sharp:
   # minimatch 10.2.6 declares ^5.0.8, which already admits the fix, so the blocker was a

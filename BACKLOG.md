@@ -282,6 +282,32 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 
 Terse log — newest first. Full detail lives in the `project_*` memory files.
 
+- [x] **Four HIGH `fast-uri` advisories closed by raising the override to `^3.1.6`, plus zod /
+      dprint / tsx bumps** _(2026-09-03, `deps/fast-uri-and-bumps-2026-09-03`)_ — **the security
+      work was not in either bot PR.** #145 (`zod` 4.5.2 → 4.5.4) and #146 (`dprint` 0.56.1 →
+      0.57.0, `tsx` 4.23.12 → 4.23.13) are routine version updates carrying only the
+      `dependencies`/`javascript` labels; meanwhile **four open HIGH alerts** sat with no branch
+      attached: GHSA-f65p-4m7j-42xc, GHSA-jqff-g426-hqxp, GHSA-fph4-wmhf-6fwf and
+      GHSA-5jgf-p345-68v8 — SSRF and host-confusion in `fast-uri`, all patched in **3.1.6**, with
+      the override pinned at `^3.1.5` and 3.1.5 installed, inside every vulnerable range.
+      **Why no PR existed:** `fast-uri` is a transitive governed by a `pnpm-workspace.yaml`
+      override, and Dependabot cannot bump that — so these alerts would have stayed open
+      indefinitely. This is the failure mode the override comments already warn about, now seen
+      from the alert side rather than the audit side. **The caret already admitted the fix**
+      (`^3.1.5` permits 3.1.6); the graph sat on 3.1.5 only because the lockfile resolved before
+      3.1.6 shipped, so editing the override line is what forces re-resolution — same
+      stale-lockfile class as the original `fast-uri` entry and as `brace-expansion`/`nanoid`.
+      Verified the fix reaches the graph rather than just the manifest: **zero** `3.1.5` references
+      remain in `pnpm-lock.yaml`, `ajv@8.20.0` links to `fast-uri@3.1.6`, every store symlink
+      resolves to 3.1.6, and `pnpm audit` no longer lists `fast-uri` at all.
+      **dprint 0.57.0 is a formatter MINOR** — the one bump here that could reformat files and turn
+      `md:check` red only _after_ merge. Checked before taking it: **0 changes across 82 files**,
+      run against the post-merge content rather than the PR's base.
+      **Found, not fixed:** with the HIGHs cleared, `pnpm audit` now surfaces **2 moderate `qs`**
+      advisories (GHSA-x5fp-wj9c-mxmx, GHSA-4mjr-xmp4-gh2g; `<6.16.0`, patched 6.16.0), dev-only via
+      cypress → `@cypress/request` → `qs`. `@cypress/request@4.0.1` declares `qs: ^6.15.2`, which
+      already admits 6.16.0 — so it is a one-line override of the same class. **Andrew's call.**
+
 - [x] **`dashboard.cy.ts` a11y flake fixed — the spec now waits for the overview heading**
       _(2026-09-03, `deps/dependabot-2026-09-03`)_ — `core dashboard pages have no axe violations`
       intermittently failed `page-has-heading-one` on `html`. **Diagnosed, not guessed:** the
