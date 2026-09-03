@@ -237,6 +237,38 @@ the matching `project_*` memory file — that is what it is for, and duplicating
 here is what grew this section past 1,800 lines once already. When an item is worth
 more than a paragraph, write the paragraph and name the memory file.
 
+- [x] **`cypress` 15.21.1 → 16.0.0 — a major whose only code change was deleting one config
+      key** _(2026-09-03, `claude/pnpm-package-updates-2f591e`)_ — checked against the published
+      16.0.0 breaking-change list rather than by upgrading and seeing what broke. Of everything
+      removed, **exactly one applied**: `allowCypressEnv`, which 16 deleted along with
+      `Cypress.env()` itself. `Cypress.env()`, `cy.exec()`, `cy.end()`, `Cypress.config()` for
+      viewport/`blockHosts`, command `overwrite()` on the now-retryable cookie/storage queries,
+      and every `experimental*` flag 16 retired are all unused here — the 2026-06-13 secrets
+      hardening had already removed the `Cypress.env()` surface for unrelated reasons, which is
+      why a major landed as a one-key diff.
+      **Deleting `allowCypressEnv: false` is not a loosening.** Under 15 it hard-disabled a
+      blanket browser-side accessor; 16 removed that accessor outright and split the config into
+      `env` (sensitive, async `cy.env()`, yields only requested keys) and `expose` (public, sync
+      `Cypress.expose()`). The framework now enforces what that line asserted, so the reasoning
+      moved onto the `env: {}` / `expose: {}` keys instead of being dropped. The four code
+      comments and the `cypress/README.md` bullet that described the old model were rewritten in
+      the same commit — a stale security rationale is worse than none.
+      **The real blocker was not Cypress.** `cypress-axe@1.7.0` is the latest release and still
+      declares peer `cypress ^10||…||^15`; it has not widened for 16. Added a
+      `peerDependencyRules.allowedVersions` entry — the third such exception — justified by the
+      package being a thin `cy.window()` + axe-core injector that touches none of the removed
+      APIs, and verified by the three a11y specs that actually use it.
+      **Version floors checked, none binding:** Node 20/25 dropped (repo is 24, CI reads
+      `.nvmrc`), Next 14 dropped (on 16.2.12), and the Vite 8 minimum applies to component
+      testing only — this suite is e2e-only, so the deliberate `vite: ^7.3.5` hold is untouched.
+      The changed `cy.type()` `keystrokeDelay` default (10ms → 0) was the suspected risk given
+      `use-debounce` on invoice search; it changed nothing.
+      Validation: `check:fast` green (Biome **0 diagnostics** / 687 files, markdownlint 0, dprint,
+      typegen, typecheck app + Cypress, `node:drift` / `deps:drift` / `db:drift`), `pnpm audit`
+      clean, `pnpm why cypress` → **Found 1 version**, and the full Cypress suite **23 specs /
+      44 tests / 0 failing / 0 pending, exit 0** on 16.0.0. CI could not have caught any of this:
+      the e2e job skips on `pull_request` (`ci.yml`).
+
 - [x] **Two moderate `qs` advisories closed by override, plus `knip` 6.34.0 — the fourth
       stale-lockfile case** _(2026-09-03, `claude/pnpm-package-updates-2f591e`)_ — closes the
       "found, not fixed / Andrew's call" hand-off left by the `fast-uri` entry below.
@@ -253,6 +285,9 @@ more than a paragraph, write the paragraph and name the memory file.
       (6.33.0 → 6.34.0, a stale lockfile entry). The three remaining out-of-range majors stay:
       `@types/node` 26 (must track `engines.node: 24.x`), `@cypress/webpack-preprocessor` 8 (the
       `peerDependencyRules` exception for 7 is still load-bearing), and `cypress` 16.
+      ⚠ **`cypress` 16 was taken later the same day — see the entry above.** It stayed here only
+      because closing a moderate dev advisory did not justify a major; asked for on its own merits,
+      it turned out to be a near-no-op migration.
       **`next` hold re-verified against every 16.3.x tag** — `gh api
       repos/vercel/next.js/compare/c7b87c23...v<tag> -q .status` returns `diverged` for v16.3.1,
       v16.3.2, v16.3.3 **and v16.3.4** (latest). The fix is still canary-only; the hold stands.
@@ -473,60 +508,7 @@ more than a paragraph, write the paragraph and name the memory file.
       listing diagnostics, not by exit code: `biome check` exits **0** with warnings outstanding, so
       `check:fast` walked straight past them.
 
-- [x] **Suppression sweep — every `biome-ignore` now states a verifiable reason**
-      _(2026-08-31, `claude/biome-stale-suppressions`)_ — the repo had **112** `biome-ignore`
-      comments, **66** of them justified only by a placeholder (`fix later`, `<ignore for now>`,
-      `close enough`, `is this okay?`, `TODO FIND A BETTER SOLUTION LATER`). Now: **75 suppressions,
-      0 placeholders**, and Biome still reports **zero diagnostics of any severity** across 687
-      files. 37 suppressions are gone outright; every survivor names a reason that can be checked.
-      _(Later corrected to **77**: two ref suppressions were restored — see the top entry. The rest
-      of this sweep was re-validated in a correctly-installed environment and stands.)_
-      **The biggest win was config, not edits.** `useComponentExportOnlyModules` is _categorically_
-      inapplicable under `src/app/**` — App Router requires `metadata` / `dynamic` /
-      `generateMetadata` to be exported from the same module as the component — so one scoped
-      `biome.json` override replaced **25** copies of the same comment. When one structural fact
-      produces N identical suppressions, the fact belongs in config: N per-site comments each claim
-      "this case is special", and 25 of them prove none is.
-      **Fixed rather than suppressed** (the suppression disappears): a nested ternary extracted to
-      `classifyInvalidToken`, which also pulled `readSessionTokenHelper` under the length limit —
-      two suppressions for one extraction; De Morgan on `!a || !b`; `rawError.originalCause` (the
-      receiver was already `Record<string, unknown>`, so the literal key was never needed);
-      `AppError<any>` → `AppError` (the sole caller always passed the default); named constants for
-      a request-id slice and the TCP port bounds; a `const fields = SIGNUP_FIELDS_LIST` alias that
-      added nothing; `getEnvVariable` moved below the non-exported helpers; a real `JSX.Element`
-      return type on `global-error`; and a `biome-ignore-all` for `noMagicNumbers` in a test that
-      `biome.json` **already** disables for tests.
-      **Kept, with the reason verified rather than asserted.** Three were checked by trying the
-      "obvious" fix and watching it fail, which is the part worth keeping: (1) annotating `ROUTES`
-      with the `RoutesShape` sitting right above it — the TODO called this a "HIGH PRIORITY
-      REFACTOR" — **widens each path to `Route` and breaks `src/proxy.ts`**, where prefixes must
-      stay `` `/${string}` ``; the existing `as const satisfies RoutesShape` already checks the
-      shape without the widening. (2) `serialization.ts` cannot call `isDev()`: `env-shared.ts`
-      imports `AppError` from errors core, so the import would close a cycle — confirmed by grep in
-      both directions, not assumed. (3) `APP_ERROR_REGISTRY` must stay inferred because
-      `AppErrorMetadataValueByKey` indexes `typeof APP_ERROR_REGISTRY` to recover each key's own
-      `metadataSchema`. Also: React `displayName` must be assigned after the component is defined,
-      so a trailing statement always follows the exports in the atom files.
-      **The long-function cluster was justified, not refactored, and that is a deliberate call.**
-      Eleven `noExcessiveLinesPerFunction` sites are linear Result pipelines (login,
-      establish-session, the Server Actions, the DAL, `proxy`) at 51–76 lines against a max of 50.
-      The evidence: `login.use-case` had five copies of the same log envelope, so its
-      `logStep` extraction looked like the fix — it removed the duplication but moved the count only
-      **76 → 73**, because five call sites cost the same height either way. **The length is the step
-      count, not duplication**, so each now says which pipeline it is and why a split would separate
-      a step from the log explaining it. The `logStep` dedup was kept on its own merit (one envelope
-      instead of five) and takes an options object, since five positional params tripped
-      `useMaxParams`.
-      **Two mechanics worth remembering.** A `biome-ignore` justification must fit on **one line** —
-      a wrapped continuation detaches the suppression, which then reports `suppressions/unused`
-      while the rule fires again (hit twice before it was understood). And
-      `noExcessiveLinesPerFunction` **counts comment lines**, so explaining a suppression can push a
-      function over the limit and trigger a different one.
-      Validation: `check:fast` green (Biome **0 diagnostics**, markdownlint 0, dprint clean, typegen
-      OK, typecheck app + Cypress, `node:drift` / `deps:drift` / `db:drift`), **knip clean**, unit
-      **465/465**. E2E not run.
-
 ---
 
-Older completed items — 74 of them, 2026-06-11 through 2026-08-31 — are in
+Older completed items — 75 of them, 2026-06-11 through 2026-08-31 — are in
 [`docs/backlog-archive.md`](docs/backlog-archive.md).

@@ -103,14 +103,22 @@ overrides:
 #   option cypress.config.ts passes is byte-identical between 4.2.0 and 5.0.0. Verified by
 #   running the full 23-spec e2e suite against 5.0.0 before the bump landed — CI cannot do this,
 #   since the e2e job skips on pull_request (see .github/workflows/ci.yml).
+# - cypress-axe 1.7.0 (latest) declares peer cypress ^10||^11||^12||^13||^14||^15 — it has NOT
+#   widened for cypress 16, and 1.7.0 is the newest release. The package is a thin wrapper: it
+#   injects axe-core via cy.window() and exposes injectAxe/checkA11y, touching none of the APIs
+#   16 removed (Cypress.env, cy.exec, cy.end, experimentalSourceRewriting). Verified by running
+#   the three a11y specs that use it against cypress 16 before the bump landed. Drop once
+#   upstream adds 16 to the range.
 # - tsconfck 3.1.6 (via vite-tsconfig-paths) declares peer typescript ^5, works with TS 7.
 # - @napi-rs/wasm-runtime 1.2.x (optional wasm32-wasi fallback under knip's oxc bindings)
 #   declares peer @emnapi/core+runtime ^2.0.0-alpha.3, but only stable 1.x is published;
 #   knip runs on the native bindings, so the wasm fallback peers are inert here.
-# Re-check on major bumps of cypress preprocessors / typescript; drop entries once upstream widens.
+# Re-check on major bumps of cypress / its preprocessors / typescript; drop entries once
+# upstream widens.
 peerDependencyRules:
   allowedVersions:
     "@cypress/webpack-batteries-included-preprocessor>@cypress/webpack-preprocessor": "7"
     "@napi-rs/wasm-runtime>@emnapi/core": "1"
     "@napi-rs/wasm-runtime>@emnapi/runtime": "1"
+    "cypress-axe>cypress": "16"
     "tsconfck>typescript": "7"

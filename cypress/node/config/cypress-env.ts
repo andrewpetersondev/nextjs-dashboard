@@ -24,4 +24,5 @@ export const DATABASE_ENV = parsed.data.databaseEnv;
 export const DATABASE_URL: string = parsed.data.databaseUrl;
 // `sessionSecret` is still validated above (fail-fast on a misconfigured
 // .env.test.local) but intentionally not exported: Cypress never needs it, and
-// re-exporting it invites leaking it back into browser-side Cypress.env().
+// re-exporting it invites leaking it back into `config.env`, which specs can
+// read through `cy.env()`.

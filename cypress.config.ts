@@ -11,11 +11,6 @@ import { registerCypressTasks } from "./cypress/node/tasks/register-tasks";
 const projectRequire = createRequire(path.join(process.cwd(), "package.json"));
 
 export default defineConfig({
-	// Hard-disable browser-side `Cypress.env()` (defaults to enabled in Cypress
-	// 15). Specs read no env values directly — DB-env checks go through the
-	// Node-side `db:env` task — so this closes the exposure even if a value is
-	// ever added to `config.env` later. Also silences the deprecation warning.
-	allowCypressEnv: false,
 	e2e: {
 		baseUrl: CYPRESS_BASE_URL,
 
@@ -23,8 +18,8 @@ export default defineConfig({
 			config.baseUrl = CYPRESS_BASE_URL;
 
 			// Secrets (DATABASE_URL, SESSION_SECRET) are deliberately NOT written
-			// into config.env — anything there is readable browser-side via
-			// Cypress.env(). DB-env assertions go through the Node-side `db:env`
+			// into config.env — under Cypress 16 that key is reachable from specs
+			// via `cy.env()`. DB-env assertions go through the Node-side `db:env`
 			// task, which returns only a non-secret summary.
 			registerCypressTasks(on, config);
 
@@ -45,6 +40,15 @@ export default defineConfig({
 		specPattern: "cypress/e2e/**/*.cy.ts",
 		supportFile: "cypress/support/e2e.ts",
 	},
+	// Both deliberately empty, and they are no longer the same channel: Cypress 16
+	// removed `Cypress.env()` outright, splitting `config.env` (sensitive, read
+	// asynchronously via `cy.env()`, yields only the keys asked for) from `expose`
+	// (public, read synchronously via `Cypress.expose()`). The `allowCypressEnv:
+	// false` that used to sit above was the 15-era way to shut the old blanket
+	// accessor off; 16 removed the option along with the API, so the framework now
+	// enforces what that line asserted. Secrets still never reach either key —
+	// DATABASE_URL and SESSION_SECRET stay Node-side and specs read the `db:env`
+	// task's non-secret summary — so nothing here depends on that split.
 	env: {},
 	expose: {},
 	// Explicit rather than inherited: a flake must fail loudly. Retrying would

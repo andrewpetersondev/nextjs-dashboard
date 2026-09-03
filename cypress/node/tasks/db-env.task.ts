@@ -4,9 +4,9 @@ import { DATABASE_ENV, DATABASE_URL } from "@cypress/node/config/cypress-env";
  * Non-secret summary of the test database environment.
  *
  * Specs use this to assert the suite is pointed at `test_db` without the
- * credential-bearing `DATABASE_URL` (or `SESSION_SECRET`) ever crossing into
- * browser-side `Cypress.env()`. The values are derived Node-side from the
- * already-validated env in `cypress-env.ts`.
+ * credential-bearing `DATABASE_URL` (or `SESSION_SECRET`) ever reaching
+ * `config.env`, which specs can read via `cy.env()`. The values are derived
+ * Node-side from the already-validated env in `cypress-env.ts`.
  */
 export type DbEnvSummary = {
 	databaseEnv: string;

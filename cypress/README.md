@@ -332,8 +332,8 @@ Kept honest on purpose — a doc that hides the warts isn't worth much.
   `AppErrorJsonDto` objects (not `AppError` class instances), so the previously skipped
   `update-form` / `auth-actions` error-banner specs are active again.
 - **Secrets stay Node-side.** `DATABASE_URL` and `SESSION_SECRET` are never
-  written into `config.env`, so they can't be read browser-side via
-  `Cypress.env()` (and can't leak into the command log or screenshots). Specs
+  written into `config.env`, so specs can't read them via `cy.env()` (and they
+  can't leak into the command log or screenshots). Specs
   that need to confirm the target DB use the Node-side `db:env` task, which
   returns only a non-secret `{ databaseEnv, databaseName }` summary (see
   `smoke/db-env-guard.cy.ts`).
