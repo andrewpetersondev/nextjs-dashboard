@@ -27,43 +27,20 @@ same commit. Convention in [`AGENTS.md`](AGENTS.md).
 > in memory (`project_job_hunt_priority_shift`). If week 2 runs long, ship the week-1
 > polish on its own — a clean demo beats a half-built feature.
 >
-> **Lane plan — decided 2026-08-03** (from the verified best-practice review, see the archive):
-> **Lane A (invoice status lifecycle) SHIPPED + deployed** and **Lane B (demo-surface
-> polish) SHIPPED + deployed 2026-08-03**; the **a11y pass (item 3, the serial last
-> phase) BUILT 2026-08-03** on the `claude/a11y-pass` lane — see the archive. With that, the
-> demo-first "Now" list is complete, and the **invoice amount-cap mismatch** (the
-> last known demo wart) **landed 2026-08-03** — see the archive. Next work comes from "Later".
+> **Lane plan — decided 2026-08-03** (from the verified best-practice review). The demo-first
+> "Now" list is **complete**: Lane A (invoice status lifecycle) and Lane B (demo-surface polish)
+> both shipped and deployed 2026-08-03, the a11y pass built the same day on `claude/a11y-pass`,
+> and the invoice amount-cap mismatch — the last known demo wart — landed with them. Per-item
+> detail is in [`docs/backlog-archive.md`](docs/backlog-archive.md) (2026-07-22 → 2026-08-04).
+> Next work comes from "Later".
+>
 > Before any push: run the full unit + e2e suites on the merged tree (`check:fast`
 > contains no tests).
 
-### Now — job-hunt focus (demo-first, ~2 weeks)
+### Now — job-hunt focus (demo-first)
 
-1. **Kill the demo dead-ends** — COMPLETE 2026-08-03 (Lane B), see the archive.
-   - [x] ~~`forgot-password` live stub~~ — done 2026-07-22.
-   - [x] ~~Stub/empty module READMEs~~ — done 2026-08-03 (deleted 7 auth leaf stubs,
-         wrote 7 real shared-capability READMEs incl. `policies`/`telemetry`).
-   - [x] ~~Font experiment + middleware debug card~~ — resolved "drop" 2026-07-30.
-   - [x] ~~Template SVG residue in `public/`~~ — deleted 2026-08-03 (zero refs re-verified).
-2. **First impression** — COMPLETE 2026-08-03 (Lane B), see the archive.
-   - [x] ~~Real landing page~~ — done 2026-07-30.
-   - [x] ~~Architecture diagrams on README + drift fixes~~ — done 2026-07-30/31.
-   - [x] ~~OG/social-preview image~~ — done 2026-08-03 (`src/app/opengraph-image.tsx`,
-         statically prerendered; shared HERO_TAGLINE constant; og/twitter meta in root
-         layout; e2e smoke). Unfurl confirmed 2026-08-03 via LinkedIn Post Inspector
-         (card renders image/title/domain; image ingested to LinkedIn's CDN).
-   - [x] ~~Role-guarding demoable from landing~~ — done 2026-08-03 ("or explore as
-         admin" quiet link, per-scheme pinned contrast colors, e2e asserts the ADMIN
-         dashboard + Users nav link).
-   - [x] ~~Brand-mark dedup / CDN logo gone~~ — done 2026-08-03 (AcmeLogo = non-heading
-         span with size prop; landing header, sidebar, and auth pages all consume it;
-         auth title promoted to h1; dashboard double-H1 fixed; `BRAND_LOGO_SRC` deleted —
-         `brand.constants.ts` now holds brand COPY: `BRAND_NAME` + `HERO_TAGLINE`).
-3. **a11y pass** — BUILT 2026-08-03 (`claude/a11y-pass` lane), see the archive. Landmarks,
-   blocking moderate-impact axe coverage, live regions, and the review's loose ends
-   (global-error, missing error boundaries, lane-map refresh) all landed to the
-   2026-08-02 verified designs, plus the contrast/label fixes the new blocking checks
-   surfaced. **Lighthouse pass since run against prod (2026-08-04) — see the archive;
-   a11y 100 on both presets, so the axe work holds up under a second engine.**
+_Cleared 2026-08-03 — nothing outstanding. New demo-surface work goes here; until then, pull
+from "Later" below._
 
 ### Later — lower priority during the job hunt (infra/tooling polish)
 

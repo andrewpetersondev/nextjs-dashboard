@@ -1296,7 +1296,7 @@ this archive.
       hexes, statically prerendered — verified `○ /opengraph-image` in the build
       manifest and rendered in the browser); hero tagline hoisted to `HERO_TAGLINE`
       shared with the hero; net-new `openGraph` + `twitter.card` root metadata; e2e
-      smoke asserts 200 + image/png. **(4) Landing admin link** — quiet underlined
+      smoke asserts 200 + image/png; the real unfurl was confirmed the same day via LinkedIn's Post Inspector (card renders image/title/domain, image ingested to LinkedIn's CDN) — the only check that exercises the consumer rather than the route. **(4) Landing admin link** — quiet underlined
       "or explore as admin" wired to the existing `demoAdminAction`, per-scheme pinned
       sky shades (light AND dark verified in the preview), new e2e clicks it and
       asserts the ADMIN dashboard + role-gated Users nav link. **(5) Brand-mark dedup**
